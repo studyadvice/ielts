@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-badge 互動調色盤</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="ui-badge.js"></script>
+<style>
+/* ── 色彩 token（全部 opaque） ─────────────────────────────────────────── */
+:root {
+  --bg:          #0C0D0C;
+  --bg-panel:    #111211;
+  --bg-card:     #191A19;
+  --bg-input:    #1E1F1E;
+  --bg-code:     #0A0B0A;
+  --bg-btn:      #242524;
+  --bg-btn-h:    #2D2E2D;
+  --bg-btn-on:   #30234A;
+  --border:      #2A2B2A;
+  --border-acc:  #3D3E3C;
+  --text:        #C6C7BD;
+  --text-dim:    #797A76;
+  --text-vdim:   #474846;
+  --lavender:    #C3A5E5;
+  --sky:         #95c9de;
+  --ocean:       #0ABDC6;
+  --safe:        #299459;
+  --teal:        #0DA591;
+  --vanilla:     #DBEDD8;
+  --yellow:      #DECA4B;
+  --focus:       #E0BE79;
+  --special:     #b3de73;
+  --info:        #1E65C7;
+  --indigo:      #9B72CF;
+  --pink:        #FFB3D9;
+  --orange:      #EDA109;
+  --warning:     #F08080;
+  --salmon:      #E5C3B3;
+}
+
+html { font-size: 18px; }
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* ── 版面 ─────────────────────────────────────────────────────────────── */
+.app-hdr {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 58px;
+}
+.app-hdr h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--lavender);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+.app-hdr p {
+  font-size: 1rem;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.main-wrap {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  height: calc(100vh - 58px);
+  overflow: hidden;
+}
+
+/* ── 控制面板 ─────────────────────────────────────────────────────────── */
+.ctrl-panel {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  padding: 18px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ctrl-group { margin-bottom: 16px; }
+
+.ctrl-lbl {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sky);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+hr.div { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+/* Pill 按鈕 */
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill {
+  background: var(--bg-btn);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 4px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.pill:hover { background: var(--bg-btn-h); border-color: var(--border-acc); }
+.pill.on {
+  background: var(--bg-btn-on);
+  border-color: var(--lavender);
+  color: var(--lavender);
+  font-weight: 600;
+}
+
+/* Slider */
+.slider-row { display: flex; align-items: center; gap: 12px; }
+.slider-row input[type="range"] { flex: 1; accent-color: var(--lavender); cursor: pointer; }
+.slider-val { min-width: 52px; text-align: right; color: var(--lavender); font-weight: 600; font-size: 1rem; }
+
+/* 文字輸入 */
+.txt-in {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  line-height: 1.4;
+}
+.txt-in:focus { outline: none; border-color: var(--lavender); }
+
+/* 色票 */
+.sw-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+.swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s;
+  flex-shrink: 0;
+}
+.swatch:hover { transform: scale(1.18); }
+/* rgba(255,255,255,0.8) → alpha = 0.8 ≥ 0.76 ✓ */
+.swatch.on { border-color: #FFFFFF; box-shadow: 0 0 0 2px rgba(255,255,255,0.8); }
+
+/* 色碼 row */
+.color-row { display: flex; align-items: center; gap: 8px; }
+.c-prev {
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.hex-in {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Consolas', 'Courier New', monospace;
+  line-height: 1.4;
+}
+.hex-in:focus { outline: none; border-color: var(--lavender); }
+input[type="color"] {
+  width: 34px; height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px;
+  background: var(--bg-input);
+  cursor: pointer;
+}
+
+/* 自動反色 toggle */
+.auto-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.auto-row label {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; color: var(--text-dim); font-size: 1rem;
+}
+.auto-row input { accent-color: var(--teal); }
+
+/* ── 右側預覽區 ─────────────────────────────────────────────────────── */
+.preview-area {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+/* 卡片 */
+.card-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.card-ttl {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sky);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* 預覽徽章置中區 */
+.badge-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  margin-bottom: 14px;
+}
+
+/* 代碼區塊 */
+.code-blk {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 1rem;
+  color: var(--vanilla);
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+/* 按鈕 */
+.act-btn {
+  background: var(--bg-btn);
+  border: 1px solid var(--border-acc);
+  color: var(--lavender);
+  padding: 5px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: background 0.12s;
+}
+.act-btn:hover { background: var(--bg-btn-h); }
+.act-btn.sm { padding: 3px 12px; }
+
+/* Click 紀錄 */
+.click-log {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 1rem;
+  height: 112px;
+  overflow-y: auto;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+.log-entry { color: var(--ocean); }
+.log-entry.fresh { color: var(--special); }
+.log-empty { color: var(--text-vdim); }
+
+/* 形狀展示 */
+.shape-row { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-end; }
+.shape-item { text-align: center; }
+.shape-lbl  { display: block; font-size: 1rem; color: var(--text-dim); margin-top: 6px; }
+
+/* 字符格 */
+.char-grid { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* 雙欄 top cards */
+.top-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* Bootstrap alert 字色修正 */
+.alert { font-size: 1rem; }
+.alert-dismissible .btn-close { filter: invert(0.8); }
+
+/* 符號選擇器 demo */
+.pm-lbl {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sky);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ───────────────────────────────────────────────────────────── -->
+<header class="app-hdr">
+  <h1>⬡ ui-badge 互動調色盤</h1>
+  <p>即時調整所有屬性，探索形狀與色彩組合</p>
+</header>
+
+<div class="main-wrap">
+
+  <!-- ── 控制面板 ────────────────────────────────────────────────────────── -->
+  <aside class="ctrl-panel">
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">字符 Char</label>
+      <input class="txt-in" id="charIn" type="text" value="A" maxlength="8"
+             placeholder="任意字符（emoji、漢字⋯）">
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">形狀 Shape</label>
+      <div class="pills" id="shapeGrp">
+        <button class="pill on" data-v="circle">圓形</button>
+        <button class="pill"    data-v="square">方形</button>
+        <button class="pill"    data-v="triangle">三角</button>
+        <button class="pill"    data-v="hexagon">六角</button>
+        <button class="pill"    data-v="diamond">菱形</button>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">填色 Fill</label>
+      <div class="pills" id="fillGrp">
+        <button class="pill"    data-v="solid">實心</button>
+        <button class="pill on" data-v="outline">空心</button>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">尺寸 Size</label>
+      <div class="slider-row">
+        <input type="range" id="sizeSldr" min="20" max="96" step="2" value="36">
+        <span class="slider-val" id="sizeVal">36px</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group" id="strokeWrap">
+      <label class="ctrl-lbl">描邊 Stroke</label>
+      <div class="slider-row">
+        <input type="range" id="strokeSldr" min="1" max="5" step="0.5" value="2">
+        <span class="slider-val" id="strokeVal">2px</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group" id="radiusWrap" style="display:none;">
+      <label class="ctrl-lbl">圓角 Radius</label>
+      <div class="slider-row">
+        <input type="range" id="radiusSldr" min="0" max="30" step="1" value="6">
+        <span class="slider-val" id="radiusVal">6</span>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">字重 Weight</label>
+      <div class="pills" id="weightGrp">
+        <button class="pill"    data-v="400">400</button>
+        <button class="pill"    data-v="600">600</button>
+        <button class="pill on" data-v="700">700</button>
+        <button class="pill"    data-v="900">900</button>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">背景色 Background</label>
+      <div class="sw-grid" id="bgSwatches"></div>
+      <div class="color-row">
+        <div class="c-prev" id="bgPrev"></div>
+        <input class="hex-in" id="bgHex" type="text" value="#C3A5E5" maxlength="7">
+        <input id="bgPicker" type="color" value="#C3A5E5">
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <div class="ctrl-group">
+      <label class="ctrl-lbl">文字色 Text</label>
+      <div class="auto-row">
+        <label>
+          <input type="checkbox" id="autoColor" checked>
+          自動反色（solid 時依亮度判斷）
+        </label>
+      </div>
+      <div id="manualColorWrap" style="opacity:0.35;pointer-events:none;">
+        <div class="color-row">
+          <div class="c-prev" id="textPrev"></div>
+          <input class="hex-in" id="textHex" type="text" value="#C6C7BD" maxlength="7">
+          <input id="textPicker" type="color" value="#C6C7BD">
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── 預覽區 ──────────────────────────────────────────────────────────── -->
+  <main class="preview-area">
+
+    <div id="alertArea"></div>
+
+    <!-- 上排：預覽卡 + Click 紀錄 -->
+    <div class="top-cards">
+
+      <!-- 預覽卡 -->
+      <div class="card-box">
+        <div class="card-ttl">預覽 Preview</div>
+        <div class="badge-center">
+          <ui-badge id="prevBadge"
+            char="A" shape="circle" fill="outline"
+            size="80" bg="#C3A5E5"
+            on-click="onPreviewClick">
+          </ui-badge>
+        </div>
+        <div class="code-blk" id="codeBlk"></div>
+        <button class="act-btn" onclick="copyCode()">複製屬性代碼</button>
+      </div>
+
+      <!-- Click 紀錄卡 -->
+      <div class="card-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <span class="card-ttl" style="margin:0;">Click 事件</span>
+          <button class="act-btn sm" onclick="clearLog()">清除</button>
+        </div>
+        <div class="click-log" id="clickLog">
+          <div class="log-empty">點擊上方預覽徽章觸發事件⋯</div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="card-ttl">三種掛鉤方式</div>
+          <div class="code-blk" style="height:auto;">// 1. Attribute
+&lt;ui-badge on-click="myFn"&gt;
+window.myFn = (d) => { console.log(d) }
+
+// 2. Property
+el.onClick = (d) => { ... }
+
+// 3. CustomEvent (bubbles)
+document.addEventListener(
+  'ui-badge:click',
+  e => console.log(e.detail)
+)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 全形狀展示 -->
+    <div class="card-box">
+      <div class="card-ttl">全形狀 All Shapes</div>
+      <div class="shape-row" id="shapeRow"></div>
+    </div>
+
+    <!-- A-Z 0-9 字符格 -->
+    <div class="card-box">
+      <div class="card-ttl">
+        字符集 A–Z &amp; 0–9
+        <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0;font-size:1rem;">
+          （點擊任意徽章以更新字符輸入）
+        </span>
+      </div>
+      <div class="char-grid" id="charGrid"></div>
+    </div>
+
+    <!-- ── 符號選擇器 ────────────────────────────────────────────────────── -->
+    <div class="card-box">
+      <div class="card-ttl">
+        符號選擇器 Symbol Picker
+        <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0;font-size:1rem;">
+          （選擇任意符號直接更新字符輸入與所有預覽）
+        </span>
+      </div>
+
+      <!-- Inline 模式 -->
+      <div style="margin-bottom:22px;">
+        <div class="pm-lbl">Inline 模式</div>
+        <ui-symbol-picker mode="inline" target="#charIn" on-select="onPickerSelect"></ui-symbol-picker>
+      </div>
+
+      <!-- Compact + Popup 並排 -->
+      <div style="display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start;margin-bottom:22px;">
+
+        <div>
+          <div class="pm-lbl">Compact 模式</div>
+          <ui-symbol-picker mode="compact" target="#charIn" on-select="onPickerSelect"></ui-symbol-picker>
+        </div>
+
+        <div>
+          <div class="pm-lbl">Popup 模式（自動按鈕）</div>
+          <ui-symbol-picker mode="popup" target="#charIn" on-select="onPickerSelect"></ui-symbol-picker>
+          <p style="margin:8px 0 0;font-size:1rem;color:var(--text-dim);">點擊開啟 · Esc 或點外部收起</p>
+        </div>
+
+        <div>
+          <div class="pm-lbl">Popup 模式（外部 Trigger）</div>
+          <button id="extTrigBtn" class="act-btn" style="margin-bottom:8px;">★ 雜項符號</button>
+          <ui-symbol-picker mode="popup" trigger="#extTrigBtn"
+            target="#charIn" category="misc" on-select="onPickerSelect"></ui-symbol-picker>
+          <p style="margin:8px 0 0;font-size:1rem;color:var(--text-dim);">預設開啟「雜項」分類</p>
+        </div>
+
+      </div>
+
+      <!-- 分類白名單篩選示範 -->
+      <div style="margin-bottom:22px;">
+        <div class="pm-lbl">categories 白名單示範（compact 模式）</div>
+        <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;">
+
+          <div>
+            <p style="margin:0 0 8px;font-size:1rem;color:var(--text-dim);">
+              categories="geometric,arrow,number"
+            </p>
+            <ui-symbol-picker mode="compact"
+              categories="geometric,arrow,number"
+              target="#charIn"></ui-symbol-picker>
+          </div>
+
+          <div>
+            <p style="margin:0 0 8px;font-size:1rem;color:var(--text-dim);">
+              categories="drawing,math"
+            </p>
+            <ui-symbol-picker mode="compact"
+              categories="drawing,math"
+              category="math"
+              target="#charIn"></ui-symbol-picker>
+          </div>
+
+          <div>
+            <p style="margin:0 0 8px;font-size:1rem;color:var(--text-dim);">
+              categories="emoji,misc,game" &nbsp;<span style="color:var(--focus);">← 開啟表情符號</span>
+            </p>
+            <ui-symbol-picker mode="compact"
+              categories="emoji,misc,game"
+              target="#charIn"></ui-symbol-picker>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 事件紀錄 -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span class="card-ttl" style="margin:0;">ui-symbol-picker:select 事件</span>
+        <button class="act-btn sm" onclick="clearPickerLog()">清除</button>
+      </div>
+      <div class="click-log" id="pickerLog">
+        <div class="log-empty">點擊任意符號觸發事件⋯</div>
+      </div>
+    </div>
+
+    <!-- ── ui-ring 環形圖 ────────────────────────────────────────────────── -->
+    <div class="card-box">
+      <div class="card-ttl">環形圖 ui-ring</div>
+
+      <div style="display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start;margin-bottom:24px;">
+
+        <!-- 點擊中心：source → target -->
+        <div>
+          <div class="pm-lbl">點擊中心文字 → 複製 innerHTML</div>
+          <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+            <ui-ring
+              size="180" center="點我" center-size="1.5rem"
+              source="#ring-src" target="#ring-tgt"
+              gap="10" ring-width="8" track-color="#3A3B39"
+              rings='[
+                {"from":150,"to":190,"color":"#299459"},
+                {"from":280,"to":340,"color":"#1E65C7"}
+              ]'>
+            </ui-ring>
+            <div>
+              <div style="color:var(--text-dim);font-size:1rem;margin-bottom:8px;">#ring-tgt 輸出：</div>
+              <div id="ring-tgt"
+                style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:220px;min-height:64px;color:var(--text);font-size:1rem;line-height:1.5;">
+                <span style="color:var(--text-vdim);">（點擊左側中心文字）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 三環 -->
+        <div>
+          <div class="pm-lbl">三環</div>
+          <ui-ring size="200" center="⬡" center-color="#C3A5E5" center-size="2.5rem"
+            gap="12" ring-width="9" track-color="#3A3B39"
+            rings='[
+              {"from":0,"to":90,"color":"#C3A5E5"},
+              {"from":45,"to":200,"color":"#0ABDC6"},
+              {"from":270,"to":355,"color":"#EDA109"}
+            ]'>
+          </ui-ring>
+        </div>
+
+        <!-- margin + padding 容器示範 -->
+        <div>
+          <div class="pm-lbl">margin / padding 容器</div>
+          <div style="background:#131413;border:1px dashed #3D3E3C;display:inline-block;">
+            <ui-ring size="150" center="M/P" center-size="1.2rem" center-color="#DECA4B"
+              margin="16px" padding="12px" gap="8" ring-width="6" track-color="#3A3B39"
+              rings='[
+                {"from":0,"to":270,"color":"#b3de73"},
+                {"from":180,"to":340,"color":"#FFB3D9"}
+              ]'>
+            </ui-ring>
+          </div>
+          <p style="font-size:1rem;color:var(--text-dim);margin:8px 0 0;">虛線框＝外部容器邊界</p>
+        </div>
+
+        <!-- 五環（含跨零點弧） -->
+        <div>
+          <div class="pm-lbl">五環（含跨零點弧）</div>
+          <ui-ring size="240" center="5" center-size="2.8rem"
+            gap="6" ring-width="7" track-color="#3A3B39"
+            rings='[
+              {"from":0,"to":60,"color":"#C3A5E5"},
+              {"from":90,"to":180,"color":"#0ABDC6"},
+              {"from":200,"to":250,"color":"#299459"},
+              {"from":270,"to":330,"color":"#EDA109"},
+              {"from":340,"to":30,"color":"#F08080"}
+            ]'>
+          </ui-ring>
+          <p style="font-size:1rem;color:var(--text-dim);margin:8px 0 0;">最後一環 from=340° → to=30°（跨零點 50°）</p>
+        </div>
+
+      </div>
+
+      <div class="card-ttl" style="margin-top:4px;">屬性速查</div>
+      <div class="code-blk" style="height:auto;line-height:1.5;">&lt;ui-ring
+  size="200"              &lt;!-- SVG 尺寸 px --&gt;
+  center="文字"           &lt;!-- 中心單行文字（支援 emoji、Unicode）--&gt;
+  center-size="2rem"      center-color="#C6C7BD"  center-weight="700"
+  gap="12"                &lt;!-- 環間等距 px（所有環相同）--&gt;
+  ring-width="8"          &lt;!-- 所有環寬 px（全域統一）--&gt;
+  track-color="#2A2B2A"   track-width="1.5"
+  linecap="round"         &lt;!-- 弧端：round | butt | square --&gt;
+  margin="0"              &lt;!-- 容器對外邊距（CSS 簡寫）--&gt;
+  padding="0"             &lt;!-- 容器對內邊距（CSS 簡寫）--&gt;
+  source="#srcId"         &lt;!-- 點擊來源（掛載時自動 display:none）--&gt;
+  target="#tgtId"         &lt;!-- 點擊目標（寫入 innerHTML）--&gt;
+  rings='[
+    {"from":150,"to":190,"color":"#299459"},
+    {"from":280,"to":340,"color":"#1E65C7"}
+  ]'&gt;&lt;/ui-ring&gt;
+
+&lt;!-- rings[0]=最外環。from=to 不畫弧。跨零點：from=350,to=20 → 順時針 30° --&gt;</div>
+
+    </div><!-- /ui-ring card -->
+
+    <!-- ── btn-switch 行為控制器 ─────────────────────────────────────────── -->
+    <div class="card-box">
+      <div class="card-ttl">行為控制器 btn-switch</div>
+      <p style="color:var(--text-dim);font-size:1rem;margin:0 0 20px;">
+        自身 <code style="color:var(--sky);">display:none</code>，把任意 id 容器變成觸發器。
+        所有 source 掛載時自動隱藏，點擊後寫入 target 的 innerHTML。
+      </p>
+
+      <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start;margin-bottom:24px;">
+
+        <!-- 單一來源 -->
+        <div>
+          <div class="pm-lbl">單一來源</div>
+          <div id="bsw-btn-1"
+            style="display:inline-block;background:var(--bg-btn);border:1px solid var(--border-acc);border-radius:8px;padding:8px 20px;color:var(--lavender);font-size:1rem;margin-bottom:12px;">
+            載入說明 ▶
+          </div>
+          <btn-switch link="bsw-btn-1" source="#bsw-src-1" target="#bsw-tgt-1"></btn-switch>
+          <div id="bsw-tgt-1"
+            style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:200px;min-height:64px;font-size:1rem;line-height:1.5;">
+            <span style="color:var(--text-vdim);">（點擊上方）</span>
+          </div>
+        </div>
+
+        <!-- 三來源輪換 -->
+        <div>
+          <div class="pm-lbl">三來源輪換（末尾自動回第一個）</div>
+          <div id="bsw-btn-2"
+            style="display:inline-block;background:var(--bg-btn);border:1px solid var(--border-acc);border-radius:8px;padding:8px 20px;color:var(--ocean);font-size:1rem;margin-bottom:12px;">
+            切換內容 ▶
+          </div>
+          <btn-switch link="bsw-btn-2"
+            source="#bsw-src-a,#bsw-src-b,#bsw-src-c"
+            target="#bsw-tgt-2">
+          </btn-switch>
+          <div id="bsw-tgt-2"
+            style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:220px;min-height:80px;font-size:1rem;line-height:1.5;">
+            <span style="color:var(--text-vdim);">（每點一次切換不同內容，第 3 次後回第 1 個）</span>
+          </div>
+        </div>
+
+        <!-- 任意元素：ui-badge 包在 div 中作觸發 -->
+        <div>
+          <div class="pm-lbl">任意元素作觸發（ui-badge）</div>
+          <div id="bsw-btn-3"
+            style="display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <ui-badge char="▶" shape="circle" fill="solid" bg="#C3A5E5" size="48"></ui-badge>
+            <span style="color:var(--text-dim);font-size:1rem;">點擊 badge</span>
+          </div>
+          <btn-switch link="bsw-btn-3" source="#bsw-src-1" target="#bsw-tgt-3"></btn-switch>
+          <div id="bsw-tgt-3"
+            style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:200px;min-height:64px;font-size:1rem;line-height:1.5;">
+            <span style="color:var(--text-vdim);">（點擊左側 badge）</span>
+          </div>
+        </div>
+
+        <!-- 任意元素：ui-ring 作觸發（無內建 source/target）-->
+        <div>
+          <div class="pm-lbl">任意元素作觸發（ui-ring）</div>
+          <ui-ring id="bsw-ring-btn"
+            size="120" center="點我" center-size="1.1rem" center-color="#DECA4B"
+            gap="8" ring-width="6" track-color="#FFFFFF"
+            rings='[{"from":60,"to":280,"color":"#DECA4B"}]'>
+          </ui-ring>
+          <btn-switch link="bsw-ring-btn"
+            source="#bsw-src-a,#bsw-src-b,#bsw-src-c"
+            target="#bsw-tgt-3">
+          </btn-switch>
+          <p style="font-size:1rem;color:var(--text-dim);margin:6px 0 0;">輸出共用 bsw-tgt-3（與上方獨立 index）</p>
+        </div>
+
+      </div>
+
+      <div class="card-ttl" style="margin-top:4px;">使用方式</div>
+      <div class="code-blk" style="height:auto;line-height:1.5;">&lt;!-- link = id 純字串（不帶 #）。source/target 使用 CSS 選擇器 --&gt;
+
+&lt;!-- 單一來源 --&gt;
+&lt;div id="my-btn"&gt;點我&lt;/div&gt;
+&lt;btn-switch link="my-btn" source="#info" target="#output"&gt;&lt;/btn-switch&gt;
+
+&lt;!-- 多來源輪換（逗號分隔，末尾自動回第一個）--&gt;
+&lt;div id="cycle-btn"&gt;切換 ▶&lt;/div&gt;
+&lt;btn-switch link="cycle-btn" source="#s1,#s2,#s3" target="#output"&gt;&lt;/btn-switch&gt;
+
+&lt;!-- 任意元素：id 容器、ui-badge、ui-ring、自訂元件皆可 --&gt;
+&lt;ui-ring id="ring-btn" center="點我" ...&gt;&lt;/ui-ring&gt;
+&lt;btn-switch link="ring-btn" source="#info" target="#output"&gt;&lt;/btn-switch&gt;
+
+&lt;!-- source 不需手動 display:none，元件自動處理 --&gt;
+&lt;div id="info"&gt;任意 HTML 內容&lt;/div&gt;
+
+&lt;!-- link 缺少 → console.error；找不到 id → console.error --&gt;</div>
+
+    </div><!-- /btn-switch card -->
+
+    <!-- ── 隱藏來源（由各元件自動 display:none）─────────────────────────── -->
+    <!-- #ring-src 由 ui-ring 自動隱藏，HTML 中無需寫 display:none -->
+    <div id="ring-src">
+      <p style="margin:0 0 6px;color:#C3A5E5;font-weight:600;">來自 #ring-src 的 HTML</p>
+      <p style="margin:0;color:#C6C7BD;">這是隱藏來源的 <code style="color:#95c9de;">innerHTML</code>，可包含任意 HTML 標籤。</p>
+      <p style="margin:6px 0 0;color:#0ABDC6;">點擊左側環形圖中心文字後，此內容複製到右側 #ring-tgt。</p>
+    </div>
+
+    <!-- btn-switch 來源（由 btn-switch 自動隱藏）-->
+    <div id="bsw-src-1">
+      <p style="margin:0 0 4px;color:#C3A5E5;font-weight:600;">來自 #bsw-src-1</p>
+      <p style="margin:0;color:#C6C7BD;">這是單一來源的 HTML 內容，可包含任意標籤。</p>
+    </div>
+    <div id="bsw-src-a">
+      <p style="margin:0;font-weight:600;color:#299459;">第 1 頁：safe（綠）</p>
+      <p style="margin:4px 0 0;color:#C6C7BD;">#bsw-src-a 的 innerHTML。</p>
+    </div>
+    <div id="bsw-src-b">
+      <p style="margin:0;font-weight:600;color:#0ABDC6;">第 2 頁：ocean（藍）</p>
+      <p style="margin:4px 0 0;color:#C6C7BD;">#bsw-src-b 的 innerHTML。</p>
+    </div>
+    <div id="bsw-src-c">
+      <p style="margin:0;font-weight:600;color:#EDA109;">第 3 頁：orange（橙）</p>
+      <p style="margin:4px 0 0;color:#C6C7BD;">#bsw-src-c 的 innerHTML，再點後回第 1 頁。</p>
+    </div>
+
+  </main>
+
+</div><!-- /.main-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ── 品牌色票 ────────────────────────────────────────────────────────────── */
+const BRAND = [
+  { n:'lavender', h:'#C3A5E5' },
+  { n:'sky',      h:'#95C9DE' },
+  { n:'ocean',    h:'#0ABDC6' },
+  { n:'teal',     h:'#0DA591' },
+  { n:'safe',     h:'#299459' },
+  { n:'special',  h:'#B3DE73' },
+  { n:'vanilla',  h:'#DBEDD8' },
+  { n:'shell',    h:'#C6C7BD' },
+  { n:'salmon',   h:'#E5C3B3' },
+  { n:'pink',     h:'#FFB3D9' },
+  { n:'warning',  h:'#F08080' },
+  { n:'orange',   h:'#EDA109' },
+  { n:'yellow',   h:'#DECA4B' },
+  { n:'focus',    h:'#E0BE79' },
+  { n:'indigo',   h:'#9B72CF' },
+  { n:'info',     h:'#1E65C7' },
+];
+
+/* ── 全域狀態 ─────────────────────────────────────────────────────────────── */
+const S = {
+  char:   'A',
+  shape:  'circle',
+  fill:   'outline',
+  size:   36,
+  stroke: 2,
+  radius: 6,
+  weight: '700',
+  bg:     '#C3A5E5',
+  color:  null,     // null = 自動反色
+};
+
+/* ── 通知 ────────────────────────────────────────────────────────────────── */
+function showAlert(msg, type = 'success') {
+  const area = document.getElementById('alertArea');
+  const d = document.createElement('div');
+  d.className = `alert alert-${type} alert-dismissible fade show`;
+  d.role = 'alert';
+  d.innerHTML = `${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+  area.appendChild(d);
+  setTimeout(() => { d.classList.remove('show'); }, 2600);
+  setTimeout(() => { d.remove(); }, 2900);
+}
+
+/* ── 色票初始化 ──────────────────────────────────────────────────────────── */
+function initSwatches() {
+  const wrap = document.getElementById('bgSwatches');
+  BRAND.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'swatch';
+    el.style.background = c.h;
+    el.dataset.hex = c.h.toLowerCase();
+    el.title = c.n + ' ' + c.h;
+    el.onclick = () => setBg(c.h);
+    if (c.h.toLowerCase() === S.bg.toLowerCase()) el.classList.add('on');
+    wrap.appendChild(el);
+  });
+}
+
+function setBg(hex) {
+  S.bg = hex;
+  const lhex = hex.toLowerCase();
+  document.getElementById('bgHex').value    = hex;
+  document.getElementById('bgPrev').style.background = hex;
+  try { document.getElementById('bgPicker').value = lhex; } catch(e) {}
+  document.querySelectorAll('.swatch').forEach(s =>
+    s.classList.toggle('on', s.dataset.hex === lhex)
+  );
+  update();
+}
+
+/* ── Pill 按鈕群 ─────────────────────────────────────────────────────────── */
+function initPills(groupId, key) {
+  document.getElementById(groupId).querySelectorAll('.pill').forEach(btn => {
+    btn.onclick = () => {
+      document.getElementById(groupId).querySelectorAll('.pill').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      S[key] = btn.dataset.v;
+      update();
+    };
+  });
+}
+
+/* ── 建立屬性物件（供套用到 badge 或產生代碼） ──────────────────────────── */
+function makeAttrs(overrideSize, overrideShape) {
+  const sz = overrideSize  ?? S.size;
+  const sh = overrideShape ?? S.shape;
+  const o  = {
+    char:          S.char,
+    shape:         sh,
+    fill:          S.fill,
+    bg:            S.bg,
+    size:          sz,
+    'font-weight': S.weight,
+  };
+  if (S.fill === 'outline') o.stroke = S.stroke;
+  if (sh === 'square')      o.radius = S.radius;
+  if (S.color)              o.color  = S.color;
+  return o;
+}
+
+function applyToBadge(el, attrs) {
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  if (!S.color) el.removeAttribute('color');
+}
+
+/* ── 主更新函式 ──────────────────────────────────────────────────────────── */
+function update() {
+  // 預覽徽章（固定 80px 方便觀察）
+  applyToBadge(document.getElementById('prevBadge'), makeAttrs(80));
+
+  // 代碼區塊（顯示實際 S.size）
+  const code = '<ui-badge\n' +
+    Object.entries(makeAttrs()).map(([k, v]) => `  ${k}="${v}"`).join('\n') +
+    '\n></ui-badge>';
+  document.getElementById('codeBlk').textContent = code;
+
+  // 條件控制項顯示
+  document.getElementById('strokeWrap').style.display = S.fill  === 'outline' ? '' : 'none';
+  document.getElementById('radiusWrap').style.display = S.shape === 'square'  ? '' : 'none';
+
+  renderShapeRow();
+  renderCharGrid();
+}
+
+/* ── 形狀展示列（固定 52px） ────────────────────────────────────────────── */
+function renderShapeRow() {
+  const shapes = ['circle','square','triangle','hexagon','diamond'];
+  const labels = ['圓形','方形','三角','六角','菱形'];
+  document.getElementById('shapeRow').innerHTML = shapes.map((sh, i) => {
+    const a = makeAttrs(52, sh);
+    const aStr = Object.entries(a).map(([k,v]) => `${k}="${v}"`).join(' ');
+    return `<div class="shape-item">` +
+           `<ui-badge ${aStr}></ui-badge>` +
+           `<span class="shape-lbl">${labels[i]}</span>` +
+           `</div>`;
+  }).join('');
+}
+
+/* ── A-Z 0-9 字符格（尺寸跟隨 S.size） ─────────────────────────────────── */
+function renderCharGrid() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+  const wrap  = document.getElementById('charGrid');
+  wrap.innerHTML = chars.map(ch => {
+    const a = makeAttrs();
+    a.char  = ch;
+    const aStr = Object.entries(a).map(([k,v]) => `${k}="${v}"`).join(' ');
+    return `<ui-badge ${aStr} data-char="${ch}"></ui-badge>`;
+  }).join('');
+
+  // 點擊字符更新 char 輸入，並強制 cursor:pointer
+  wrap.querySelectorAll('ui-badge').forEach(el => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => {
+      const ch = el.dataset.char;
+      S.char = ch;
+      document.getElementById('charIn').value = ch;
+      update();
+    });
+  });
+}
+
+/* ── 複製代碼 ────────────────────────────────────────────────────────────── */
+function copyCode() {
+  const code = document.getElementById('codeBlk').textContent;
+  navigator.clipboard.writeText(code)
+    .then(() => showAlert('屬性代碼已複製到剪貼簿。', 'success'))
+    .catch(() => showAlert('複製失敗，請手動選取文字。', 'danger'));
+}
+
+/* ── Click 紀錄 ──────────────────────────────────────────────────────────── */
+function clearLog() {
+  document.getElementById('clickLog').innerHTML =
+    '<div class="log-empty">點擊上方預覽徽章觸發事件⋯</div>';
+}
+
+function addLog(detail) {
+  const log = document.getElementById('clickLog');
+  log.querySelector('.log-empty')?.remove();
+  log.querySelectorAll('.log-entry.fresh').forEach(e => e.classList.remove('fresh'));
+  const ts = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+  const d  = document.createElement('div');
+  d.className = 'log-entry fresh';
+  d.textContent = `[${ts}] char="${detail.char}" shape="${detail.shape}" fill="${detail.fill}" bg="${detail.bg}"`;
+  log.insertBefore(d, log.firstChild);
+}
+
+/* ── 預覽徽章 click handler（Layer 1 attribute） ─────────────────────────── */
+window.onPreviewClick = function(detail) { addLog(detail); };
+
+/* ── 符號選擇器 on-select handler ─────────────────────────────────────────── */
+window.onPickerSelect = function(detail) {
+  // 更新狀態（picker 已透過 target="#charIn" 觸發 input 事件）
+  // 這裡只記錄 log
+  addPickerLog(detail);
+};
+
+function addPickerLog(detail) {
+  const log = document.getElementById('pickerLog');
+  if (!log) return;
+  log.querySelector('.log-empty')?.remove();
+  log.querySelectorAll('.log-entry.fresh').forEach(e => e.classList.remove('fresh'));
+  const ts = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+  const d  = document.createElement('div');
+  d.className = 'log-entry fresh';
+  d.textContent = `[${ts}] char="${detail.char}"  ${detail.codepoint}  category="${detail.categoryLabel}"`;
+  log.insertBefore(d, log.firstChild);
+}
+
+function clearPickerLog() {
+  const log = document.getElementById('pickerLog');
+  if (log) log.innerHTML = '<div class="log-empty">點擊任意符號觸發事件⋯</div>';
+}
+
+/* ── 初始化 ──────────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  initSwatches();
+  initPills('shapeGrp',  'shape');
+  initPills('fillGrp',   'fill');
+  initPills('weightGrp', 'weight');
+
+  /* 字符輸入 */
+  document.getElementById('charIn').addEventListener('input', e => {
+    S.char = e.target.value || '?';
+    update();
+  });
+
+  /* 尺寸 slider */
+  document.getElementById('sizeSldr').addEventListener('input', e => {
+    S.size = +e.target.value;
+    document.getElementById('sizeVal').textContent = S.size + 'px';
+    update();
+  });
+
+  /* 描邊 slider */
+  document.getElementById('strokeSldr').addEventListener('input', e => {
+    S.stroke = +e.target.value;
+    document.getElementById('strokeVal').textContent = S.stroke + 'px';
+    update();
+  });
+
+  /* 圓角 slider */
+  document.getElementById('radiusSldr').addEventListener('input', e => {
+    S.radius = +e.target.value;
+    document.getElementById('radiusVal').textContent = S.radius;
+    update();
+  });
+
+  /* BG 色碼輸入 */
+  document.getElementById('bgHex').addEventListener('input', e => {
+    let v = e.target.value.trim();
+    if (!v.startsWith('#')) v = '#' + v;
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) setBg(v);
+  });
+
+  /* BG 色彩選擇器 */
+  document.getElementById('bgPicker').addEventListener('input', e => setBg(e.target.value));
+
+  /* 自動反色 checkbox */
+  document.getElementById('autoColor').addEventListener('change', e => {
+    const auto = e.target.checked;
+    const wrap = document.getElementById('manualColorWrap');
+    wrap.style.opacity      = auto ? '0.35' : '1';
+    wrap.style.pointerEvents = auto ? 'none' : 'auto';
+    S.color = auto ? null : document.getElementById('textHex').value;
+    update();
+  });
+
+  /* 文字色選擇器 */
+  document.getElementById('textPicker').addEventListener('input', e => {
+    S.color = e.target.value;
+    document.getElementById('textHex').value = e.target.value;
+    document.getElementById('textPrev').style.background = e.target.value;
+    update();
+  });
+
+  /* 文字色色碼輸入 */
+  document.getElementById('textHex').addEventListener('input', e => {
+    let v = e.target.value.trim();
+    if (!v.startsWith('#')) v = '#' + v;
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+      S.color = v;
+      document.getElementById('textPicker').value = v;
+      document.getElementById('textPrev').style.background = v;
+      update();
+    }
+  });
+
+  /* 初始化色彩預覽格 */
+  document.getElementById('bgPrev').style.background   = S.bg;
+  document.getElementById('textPrev').style.background = '#C6C7BD';
+
+  /* 首次渲染 */
+  update();
+});
+</script>
+</body>
+</html>

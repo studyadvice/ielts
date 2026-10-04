@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>text-splitter 元件展示</title>
+<style>
+  /* ── 色彩系統 ─────────────────────────────── */
+  :root {
+    --bg      : #0C0D0C;
+    --shell   : #C6C7BD;
+    --lavender: #C3A5E5;
+    --special : #b3de73;
+    --warning : #F08080;
+    --salmon  : #E5C3B3;
+    --sky     : #95c9de;
+    --safe    : #299459;
+    --vanilla : #DBEDD8;
+    --yellow  : #DECA4B;
+    --focus   : #E0BE79;
+    --info    : #1E65C7;
+    --stone   : #95c9de;
+    --indigo  : #9B72CF;
+    --pink    : #FFB3D9;
+    --orange  : #EDA109;
+    --surface : #181919;
+    --border  : #2a2b2a;
+  }
+
+  /* ── 基礎 ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background : var(--bg);
+    color      : var(--shell);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size  : 1rem;
+    line-height: 1.7;
+    padding    : 0 0 80px;
+  }
+
+  /* ── 標題帶 ───────────────────────────────── */
+  .page-header {
+    background : var(--surface);
+    border-bottom: 2px solid var(--special);
+    padding    : 36px 48px 32px;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-size  : 2rem;
+    font-weight: 700;
+    color      : var(--special);
+    letter-spacing: 0.04em;
+  }
+  .page-header p {
+    color      : var(--stone);
+    margin-top : 8px;
+    font-size  : 0.95rem;
+  }
+
+  /* ── 版面容器 ─────────────────────────────── */
+  .wrap {
+    max-width : 1200px;
+    margin    : 0 auto;
+    padding   : 0 48px;
+  }
+
+  /* ── 章節 ─────────────────────────────────── */
+  .section {
+    margin-bottom: 64px;
+  }
+  .section-label {
+    display     : inline-block;
+    font-size   : 0.72rem;
+    font-weight : 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color       : var(--bg);
+    background  : var(--lavender);
+    padding     : 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+  .section h2 {
+    font-size  : 1.25rem;
+    color      : var(--lavender);
+    margin-bottom: 6px;
+  }
+  .section .desc {
+    font-size  : 0.88rem;
+    color      : var(--stone);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .section .desc code {
+    background: var(--border);
+    color     : var(--special);
+    padding   : 1px 6px;
+    border-radius: 3px;
+    font-size : 0.85em;
+  }
+
+  /* ── 分欄格線 ─────────────────────────────── */
+  .grid-2 {
+    display              : grid;
+    grid-template-columns: 1fr 1fr;
+    gap                  : 20px;
+  }
+  .grid-3 {
+    display              : grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap                  : 20px;
+  }
+  .grid-4 {
+    display              : grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap                  : 16px;
+  }
+
+  /* ── 目標區塊樣式 ─────────────────────────── */
+  .block {
+    background   : var(--surface);
+    border       : 1px solid var(--border);
+    border-radius: 6px;
+    padding      : 20px 22px;
+    position     : relative;
+    min-height   : 80px;
+  }
+  .block::before {
+    content    : attr(data-label);
+    position   : absolute;
+    top        : -1px;
+    left       : 16px;
+    font-size  : 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background : var(--bg);
+    color      : var(--border);
+    padding    : 0 6px;
+    border     : 1px solid var(--border);
+    border-radius: 0 0 3px 3px;
+  }
+  .block p { margin-bottom: 8px; }
+  .block p:last-child { margin-bottom: 0; }
+
+  /* 顏色變體標題框 */
+  .block.sky-border   { border-color: var(--sky); }
+  .block.sky-border::before   { border-color: var(--sky);    color: var(--sky);    }
+  .block.focus-border { border-color: var(--focus); }
+  .block.focus-border::before { border-color: var(--focus);  color: var(--focus);  }
+  .block.salmon-border{ border-color: var(--salmon); }
+  .block.salmon-border::before{ border-color: var(--salmon); color: var(--salmon); }
+  .block.yellow-border{ border-color: var(--yellow); }
+  .block.yellow-border::before{ border-color: var(--yellow); color: var(--yellow); }
+  .block.indigo-border{ border-color: var(--indigo); }
+  .block.indigo-border::before{ border-color: var(--indigo); color: var(--indigo); }
+  .block.pink-border  { border-color: var(--pink); }
+  .block.pink-border::before  { border-color: var(--pink);   color: var(--pink);   }
+  .block.orange-border{ border-color: var(--orange); }
+  .block.orange-border::before{ border-color: var(--orange); color: var(--orange); }
+
+  /* ── 分隔線 ───────────────────────────────── */
+  .divider {
+    border : none;
+    border-top: 1px solid var(--border);
+    margin : 60px 0;
+  }
+
+  /* ── 中間間隔假元素 ───────────────────────── */
+  .spacer {
+    background : var(--surface);
+    border     : 1px dashed var(--border);
+    border-radius: 6px;
+    padding    : 16px 20px;
+    color      : var(--stone);
+    font-size  : 0.85rem;
+    font-style : italic;
+    margin     : 20px 0;
+    text-align : center;
+  }
+
+  /* ── 互動展示控制區 ───────────────────────── */
+  .control-panel {
+    background   : var(--surface);
+    border       : 1px solid var(--border);
+    border-radius: 8px;
+    padding      : 24px;
+    margin-bottom: 20px;
+  }
+  .control-panel label {
+    display    : block;
+    font-size  : 0.82rem;
+    color      : var(--stone);
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .control-panel textarea {
+    width         : 100%;
+    background    : var(--bg);
+    color         : var(--shell);
+    border        : 1px solid var(--border);
+    border-radius : 4px;
+    padding       : 10px 12px;
+    font-size     : 0.9rem;
+    font-family   : inherit;
+    resize        : vertical;
+    rows          : 11;
+    outline       : none;
+  }
+  .control-panel textarea:focus {
+    border-color: var(--sky);
+  }
+  .control-panel .row {
+    display: flex;
+    gap    : 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .control-panel select,
+  .control-panel input[type=text] {
+    background   : var(--bg);
+    color        : var(--shell);
+    border       : 1px solid var(--border);
+    border-radius: 4px;
+    padding      : 7px 10px;
+    font-size    : 0.88rem;
+    outline      : none;
+  }
+  .control-panel select:focus,
+  .control-panel input[type=text]:focus { border-color: var(--sky); }
+  .control-panel .ctrl-label {
+    font-size  : 0.78rem;
+    color      : var(--stone);
+    white-space: nowrap;
+  }
+
+  /* ── 按鈕 ─────────────────────────────────── */
+  .btn {
+    display      : inline-block;
+    padding      : 8px 20px;
+    border-radius: 4px;
+    font-size    : 0.9rem;
+    font-weight  : 600;
+    cursor       : pointer;
+    border       : none;
+    transition   : opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-sky    { background: var(--sky);    color: var(--bg); }
+  .btn-safe   { background: var(--safe);   color: var(--bg); }
+  .btn-indigo { background: var(--indigo); color: #fff; }
+  .btn-warn   { background: var(--warning);color: var(--bg); }
+
+  /* ── 屬性速查表 ───────────────────────────── */
+  .attr-table {
+    width          : 100%;
+    border-collapse: collapse;
+    font-size      : 0.88rem;
+    margin-top     : 20px;
+  }
+  .attr-table th {
+    text-align : left;
+    padding    : 8px 14px;
+    color      : var(--special);
+    border-bottom: 1px solid var(--border);
+    font-size  : 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .attr-table td {
+    padding    : 8px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .attr-table tr:last-child td { border-bottom: none; }
+  .attr-table td:first-child { color: var(--lavender); font-family: monospace; }
+  .attr-table td:nth-child(2){ color: var(--yellow);   font-family: monospace; }
+  .attr-table td:nth-child(3){ color: var(--stone); }
+
+  /* ── 程式碼區塊 ───────────────────────────── */
+  pre {
+    background   : #111;
+    border       : 1px solid var(--border);
+    border-radius: 6px;
+    padding      : 18px 20px;
+    font-size    : 0.82rem;
+    overflow-x   : auto;
+    color        : var(--vanilla);
+    margin-top   : 12px;
+    line-height  : 1.65;
+  }
+  pre .c  { color: var(--stone); font-style: italic; }   /* comment */
+  pre .k  { color: var(--lavender); }                    /* keyword */
+  pre .s  { color: var(--safe); }                        /* string  */
+  pre .a  { color: var(--yellow); }                      /* attr    */
+  pre .v  { color: var(--special); }                     /* value   */
+
+  /* ── 事件 log ─────────────────────────────── */
+  #event-log {
+    background   : #111;
+    border       : 1px solid var(--border);
+    border-radius: 6px;
+    padding      : 14px 16px;
+    font-size    : 0.82rem;
+    color        : var(--safe);
+    font-family  : monospace;
+    min-height   : 60px;
+    max-height   : 140px;
+    overflow-y   : auto;
+    margin-top   : 12px;
+  }
+  .log-line { margin-bottom: 4px; }
+  .log-line .log-time { color: var(--stone); margin-right: 8px; }
+
+  /* ── 隱藏來源容器 ─────────────────────────── */
+  [data-split-source] { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     頁首
+══════════════════════════════════════════ -->
+<header class="page-header">
+  <h1>&lt;text-splitter&gt; 元件展示</h1>
+  <p>將一段文字（含 HTML 標籤）大約等分至頁面任意處的多個目標區塊。</p>
+</header>
+
+<main class="wrap">
+
+  <!-- ════════════════════════════════════════
+       §1  delimiter 模式（強制切割）
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">範例 1</span>
+    <h2>delimiter 模式 — 強制切割（最精準）</h2>
+    <p class="desc">
+      文字中含 <code>|||</code>（預設符號）時，無論 <code>mode</code> 為何皆優先以符號切割。<br>
+      幾個符號就分幾份，目標數量自動對應。
+    </p>
+
+    <!-- 來源：隱藏容器 -->
+    <div id="src-delim" data-split-source>
+      <p>學習語言最重要的一步，是<strong>開口說</strong>。別等到完全準備好才說話，在錯誤中積累的語感，比任何教材都有效率。</p>
+      |||
+      <p>閱讀是輸入，寫作是輸出，口說則是即時整合兩者的能力。每天花 15 分鐘進行影子跟讀，效果往往超乎預期。</p>
+      |||
+      <p>詞彙量決定表達的上限，而文法則是讓詞彙有序排列的工具。兩者缺一不可，但初學者可以先以溝通為目標，再逐步精確。</p>
+    </div>
+
+    <!-- 控制元件：src 指向上方隱藏容器 -->
+    <text-splitter
+      id="ts-delim"
+      src="#src-delim"
+      targets="#blk-d1, #blk-d2, #blk-d3"
+    ></text-splitter>
+
+    <div class="grid-3">
+      <div class="block sky-border"    id="blk-d1" data-label="區塊 A"></div>
+      <div class="block focus-border"  id="blk-d2" data-label="區塊 B"></div>
+      <div class="block salmon-border" id="blk-d3" data-label="區塊 C"></div>
+    </div>
+
+    <pre><span class="c">&lt;!-- 來源容器（隱藏） --&gt;</span>
+&lt;<span class="k">div</span> <span class="a">id</span>=<span class="s">"src-delim"</span> <span class="a">style</span>=<span class="s">"display:none"</span>&gt;
+  &lt;<span class="k">p</span>&gt;第一段落...&lt;/<span class="k">p</span>&gt;
+  <span class="v">|||</span>
+  &lt;<span class="k">p</span>&gt;第二段落...&lt;/<span class="k">p</span>&gt;
+  <span class="v">|||</span>
+  &lt;<span class="k">p</span>&gt;第三段落...&lt;/<span class="k">p</span>&gt;
+&lt;/<span class="k">div</span>&gt;
+
+<span class="c">&lt;!-- 控制元件 --&gt;</span>
+&lt;<span class="k">text-splitter</span>
+  <span class="a">src</span>=<span class="s">"#src-delim"</span>
+  <span class="a">targets</span>=<span class="s">"#blk-d1, #blk-d2, #blk-d3"</span>
+&gt;&lt;/<span class="k">text-splitter</span>&gt;</pre>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       §2  sentence 模式
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">範例 2</span>
+    <h2>sentence 模式 — 自動依句子均分（預設模式）</h2>
+    <p class="desc">
+      以句末標點（<code>。！？.!?</code>）為單位，依字元數均衡分配至兩個區塊。<br>
+      文字直接寫在 <code>text</code> 屬性。同時展示 <code>font-size</code> 與 <code>color</code> 的套用。
+    </p>
+
+    <text-splitter
+      id="ts-sent"
+      mode="sentence"
+      font-size="1.05rem"
+      color="#DBEDD8"
+      targets="#blk-s1, #blk-s2"
+      text="在學習英語的路上，持續性遠比強度更重要。每天固定練習，哪怕只有二十分鐘，也會在潛移默化中建立語感。初學者常犯的錯誤，是同時追求太多目標，結果每一樣都只學到皮毛。建議先專注在聽力與口說，把耳朵訓練好，嘴巴自然就會跟上。記憶單字時，搭配例句遠比死背字典有效。句子提供了語境，讓單字在真實的情境中被記住。文法不是目的，而是讓溝通更清晰的工具。不要因為怕犯錯而不敢開口，每一次錯誤都是寶貴的回饋訊號。"
+    ></text-splitter>
+
+    <div class="grid-2">
+      <div class="block yellow-border" id="blk-s1" data-label="前半段"></div>
+      <div class="block indigo-border" id="blk-s2" data-label="後半段"></div>
+    </div>
+
+    <pre>&lt;<span class="k">text-splitter</span>
+  <span class="a">mode</span>=<span class="s">"sentence"</span>
+  <span class="a">font-size</span>=<span class="s">"1.05rem"</span>
+  <span class="a">color</span>=<span class="s">"#DBEDD8"</span>
+  <span class="a">targets</span>=<span class="s">"#blk-s1, #blk-s2"</span>
+  <span class="a">text</span>=<span class="s">"在學習英語的路上……"</span>
+&gt;&lt;/<span class="k">text-splitter</span>&gt;</pre>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       §3  paragraph 模式（四欄）
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">範例 3</span>
+    <h2>paragraph 模式 — 區塊元素各自為單元，四欄分配</h2>
+    <p class="desc">
+      將 HTML 頂層區塊元素（<code>&lt;p&gt;</code>、<code>&lt;h2&gt;</code> 等）視為獨立段落單元，
+      按字元數均衡分配至四個欄位。目標欄可散落在頁面任意位置。
+    </p>
+
+    <div id="src-para" data-split-source>
+      <h2>發音基礎</h2>
+      <p>英語的音節結構與中文差異極大。母音的長短、子音的清濁，都直接影響溝通是否成功。建議在學習初期就投資時間在 KK 音標上。</p>
+      <h2>字彙策略</h2>
+      <p>詞彙的積累應以「頻率」為優先。掌握最常見的一千個單字，便能理解日常對話的絕大多數內容。使用間隔重複系統（SRS）效率最高。</p>
+      <h2>聽力訓練</h2>
+      <p>聽力是輸入的核心。大量接觸母語者的真實語音，而非教材中刻意放慢的語速，才能訓練出對「真實英語」的辨識能力。</p>
+      <h2>口說練習</h2>
+      <p>語言輸出不能只靠背誦，需要在真實情境中使用。即使找不到母語者，與 AI 對話或自言自語也是有效的練習方式。</p>
+    </div>
+
+    <text-splitter
+      src="#src-para"
+      mode="paragraph"
+      targets="#blk-p1, #blk-p2, #blk-p3, #blk-p4"
+    ></text-splitter>
+
+    <!-- 刻意在 HTML 結構中插入其他元素，展示「任意位置」特性 -->
+    <div class="grid-4">
+      <div class="block sky-border"    id="blk-p1" data-label="欄 1"></div>
+      <div class="block focus-border"  id="blk-p2" data-label="欄 2"></div>
+      <div class="block salmon-border" id="blk-p3" data-label="欄 3"></div>
+      <div class="block yellow-border" id="blk-p4" data-label="欄 4"></div>
+    </div>
+
+    <pre>&lt;<span class="k">div</span> <span class="a">id</span>=<span class="s">"src-para"</span> <span class="a">style</span>=<span class="s">"display:none"</span>&gt;
+  &lt;<span class="k">h2</span>&gt;發音基礎&lt;/<span class="k">h2</span>&gt;&lt;<span class="k">p</span>&gt;...&lt;/<span class="k">p</span>&gt;
+  &lt;<span class="k">h2</span>&gt;字彙策略&lt;/<span class="k">h2</span>&gt;&lt;<span class="k">p</span>&gt;...&lt;/<span class="k">p</span>&gt;
+  <span class="c">&lt;!-- 共 8 個頂層元素，分配到 4 欄 --&gt;</span>
+&lt;/<span class="k">div</span>&gt;
+
+&lt;<span class="k">text-splitter</span>
+  <span class="a">src</span>=<span class="s">"#src-para"</span>
+  <span class="a">mode</span>=<span class="s">"paragraph"</span>
+  <span class="a">targets</span>=<span class="s">"#blk-p1, #blk-p2, #blk-p3, #blk-p4"</span>
+&gt;&lt;/<span class="k">text-splitter</span>&gt;</pre>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       §4  跨區域散落展示
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">範例 4</span>
+    <h2>跨位置散落 — 目標區塊不相鄰</h2>
+    <p class="desc">
+      第一區塊與第二區塊之間刻意插入其他頁面內容，
+      展示 <code>targets</code> 可指向頁面任意位置的元素。
+    </p>
+
+    <text-splitter
+      id="ts-scatter"
+      mode="sentence"
+      color="#C3A5E5"
+      targets="#scatter-a, #scatter-b"
+      text="成人學習語言有一個很大的優勢：邏輯理解力。你能快速掌握文法規則背後的邏輯，也能主動規劃學習策略。相對地，成人的挑戰在於心理障礙。害怕犯錯、在意他人眼光，往往成為開口的最大阻力。克服這一點，語言學習就會豁然開朗。保持好奇心，把每一次對話都視為探索機會，而不是考試。"
+    ></text-splitter>
+
+    <div class="block pink-border" id="scatter-a" data-label="上半段（此處）"></div>
+
+    <div class="spacer">
+      ↑ scatter-a　　　　 頁面的其他內容區域（可以是圖片、表格、廣告等任何元素）　　　　 scatter-b ↓
+    </div>
+
+    <div class="block orange-border" id="scatter-b" data-label="下半段（跨位置）"></div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       §5  自訂分割符號
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">範例 5</span>
+    <h2>自訂分割符號 — <code>delimiter="---"</code></h2>
+    <p class="desc">
+      使用 <code>delimiter</code> 屬性改為 <code>---</code> 作為切割符號。
+    </p>
+
+    <text-splitter
+      mode="delimiter"
+      delimiter="---"
+      targets="#blk-cust1, #blk-cust2"
+      text="第一區：<strong>強調文字</strong>的段落，支援任意 HTML 標籤。---第二區：<em>斜體</em>與 <mark style='background:var(--yellow);color:var(--bg);padding:0 4px;border-radius:2px'>標記</mark> 都能正常保留。"
+    ></text-splitter>
+
+    <div class="grid-2">
+      <div class="block indigo-border" id="blk-cust1" data-label="區塊 1"></div>
+      <div class="block sky-border"    id="blk-cust2" data-label="區塊 2"></div>
+    </div>
+
+    <pre>&lt;<span class="k">text-splitter</span>
+  <span class="a">mode</span>=<span class="s">"delimiter"</span>
+  <span class="a">delimiter</span>=<span class="s">"---"</span>
+  <span class="a">targets</span>=<span class="s">"#blk-cust1, #blk-cust2"</span>
+  <span class="a">text</span>=<span class="s">"第一區：&lt;strong&gt;強調&lt;/strong&gt;---第二區：&lt;em&gt;斜體&lt;/em&gt;"</span>
+&gt;&lt;/<span class="k">text-splitter</span>&gt;</pre>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       §6  互動展示 — JS API
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">範例 6</span>
+    <h2>互動展示 — JS API：<code>setText()</code> 與 <code>clearOverride()</code></h2>
+    <p class="desc">
+      透過 <code>el.setText(html)</code> 動態更新內容並立即重新分割；
+      <code>el.clearOverride()</code> 回復原始 <code>text</code> 屬性。
+      <br>元件會在分割完成後發出 <code>text-split</code> 事件。
+    </p>
+
+    <!-- 互動控制面板 -->
+    <div class="control-panel">
+      <label>輸入文字（支援 HTML 標籤，可含 <code>|||</code> 強制切割）：</label>
+      <textarea id="dyn-input" rows="5" placeholder="輸入要分割的文字或 HTML...">雅思口說第二部分，需要清楚描述個人經驗。|||選一個對你有意義的事件，從背景、過程到感受依序展開。|||別急著求完美，先把想法完整表達出來，流暢度往往比正確性更重要。</textarea>
+      <div class="row">
+        <span class="ctrl-label">模式</span>
+        <select id="dyn-mode">
+          <option value="sentence">sentence</option>
+          <option value="paragraph">paragraph</option>
+          <option value="word">word</option>
+          <option value="delimiter">delimiter</option>
+        </select>
+        <span class="ctrl-label">分割符號</span>
+        <input type="text" id="dyn-delim" value="|||" style="width:80px">
+        <span class="ctrl-label">字色</span>
+        <input type="text" id="dyn-color" value="#b3de73" style="width:100px">
+        <button class="btn btn-sky"   onclick="doSetText()">套用 setText()</button>
+        <button class="btn btn-safe"  onclick="doClear()">clearOverride()</button>
+        <button class="btn btn-indigo" onclick="doReSplit()">重新 split()</button>
+      </div>
+    </div>
+
+    <!-- 控制元件（原始內容由 text 屬性給予） -->
+    <text-splitter
+      id="ts-dyn"
+      mode="sentence"
+      targets="#blk-dyn1, #blk-dyn2, #blk-dyn3"
+      text="這是原始的 <strong>text 屬性</strong>內容。按下「clearOverride()」可回復至此文字。第二句話出現在這裡。第三句話讓整段更完整，分配給三個區塊。"
+    ></text-splitter>
+
+    <div class="grid-3">
+      <div class="block sky-border"    id="blk-dyn1" data-label="動態 A"></div>
+      <div class="block focus-border"  id="blk-dyn2" data-label="動態 B"></div>
+      <div class="block salmon-border" id="blk-dyn3" data-label="動態 C"></div>
+    </div>
+
+    <div>
+      <div style="font-size:.78rem;color:var(--stone);margin-top:16px;margin-bottom:4px;">
+        text-split 事件 log：
+      </div>
+      <div id="event-log"></div>
+    </div>
+
+    <pre><span class="c">// 取得元件參考</span>
+<span class="k">const</span> ts = document.querySelector(<span class="s">'#ts-dyn'</span>);
+
+<span class="c">// 動態更新文字</span>
+ts.setText(<span class="s">'新內容 A |||新內容 B |||新內容 C'</span>);
+
+<span class="c">// 回復原始 text 屬性</span>
+ts.clearOverride();
+
+<span class="c">// 手動重新分割（如 DOM 已更新）</span>
+ts.split();
+
+<span class="c">// 監聽分割完成事件</span>
+ts.addEventListener(<span class="s">'text-split'</span>, e => {
+  console.log(e.detail.parts);       <span class="c">// 各區塊 HTML 陣列</span>
+  console.log(e.detail.targetCount); <span class="c">// 目標區塊數</span>
+});</pre>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       §7  全域設定
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <span class="section-label">參考</span>
+    <h2>全域設定 <code>TextSplitter.config()</code></h2>
+    <p class="desc">
+      在載入元件後立即呼叫，可為所有 <code>&lt;text-splitter&gt;</code> 設定預設值，
+      個別元件的屬性值仍可覆蓋全域設定。
+    </p>
+
+    <pre><span class="c">// 引入元件</span>
+&lt;<span class="k">script</span> <span class="a">src</span>=<span class="s">"text-splitter.js"</span>&gt;&lt;/<span class="k">script</span>&gt;
+
+<span class="c">// 設定全域預設</span>
+TextSplitter.config({
+  mode      : <span class="s">'sentence'</span>,  <span class="c">// sentence | word | paragraph | delimiter</span>
+  delimiter : <span class="s">'|||'</span>,       <span class="c">// 強制切割符號</span>
+  trimEmpty : <span class="k">true</span>,        <span class="c">// 是否去除空白段落</span>
+  balance   : <span class="s">'char'</span>,      <span class="c">// 等分計算依據</span>
+  fontSize  : <span class="s">'1rem'</span>,      <span class="c">// 套用到目標區塊的字體大小</span>
+  color     : <span class="s">'#C6C7BD'</span>,   <span class="c">// 套用到目標區塊的文字色彩</span>
+});
+
+<span class="c">// 回復所有預設值</span>
+TextSplitter.resetConfig();</pre>
+
+    <!-- 屬性速查表 -->
+    <table class="attr-table">
+      <thead>
+        <tr>
+          <th>屬性</th>
+          <th>預設值</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>src</td><td>—</td><td>隱藏容器的 CSS 選擇器，取其 innerHTML 作為來源</td></tr>
+        <tr><td>text</td><td>—</td><td>直接傳入 HTML 字串（支援標籤）</td></tr>
+        <tr><td>targets</td><td>—</td><td>逗號分隔的目標區塊 CSS 選擇器，可散落頁面任意位置</td></tr>
+        <tr><td>mode</td><td>sentence</td><td>sentence / word / paragraph / delimiter</td></tr>
+        <tr><td>delimiter</td><td>|||</td><td>強制切割符號；文字中含此符號時最優先使用</td></tr>
+        <tr><td>balance</td><td>char</td><td>等分計算依據（目前支援 char）</td></tr>
+        <tr><td>trim-empty</td><td>true</td><td>是否略過空白段落</td></tr>
+        <tr><td>font-size</td><td>—</td><td>套用至每個目標區塊的字體大小</td></tr>
+        <tr><td>color</td><td>—</td><td>套用至每個目標區塊的文字色彩</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════
+     元件引入
+══════════════════════════════════════════ -->
+<script src="text-splitter.js"></script>
+
+<script>
+/* ── 範例 6：互動 JS ───────────────────────── */
+
+const tsDyn   = document.getElementById('ts-dyn');
+const log     = document.getElementById('event-log');
+
+function addLog(msg) {
+  const t = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-time">${t}</span>${msg}`;
+  log.prepend(line);
+}
+
+// 監聽所有 text-splitter 的分割事件
+document.addEventListener('text-split', e => {
+  const src = e.target.id || 'text-splitter';
+  addLog(`[${src}] 分割完成 — ${e.detail.targetCount} 個區塊，各段字數：${e.detail.parts.map(p => {
+    const d = document.createElement('div');
+    d.innerHTML = p;
+    return d.textContent.length;
+  }).join(' / ')}`);
+});
+
+function doSetText() {
+  const html   = document.getElementById('dyn-input').value;
+  const mode   = document.getElementById('dyn-mode').value;
+  const delim  = document.getElementById('dyn-delim').value;
+  const color  = document.getElementById('dyn-color').value;
+
+  tsDyn.setAttribute('mode',      mode);
+  tsDyn.setAttribute('delimiter', delim);
+  tsDyn.setAttribute('color',     color);
+  tsDyn.setText(html);
+}
+
+function doClear() {
+  tsDyn.clearOverride();
+  addLog('[ts-dyn] clearOverride() — 已回復原始 text 屬性');
+}
+
+function doReSplit() {
+  tsDyn.split();
+  addLog('[ts-dyn] split() 手動觸發');
+}
+</script>
+
+</body>
+</html>

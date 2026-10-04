@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bp-stepper v2.0 — 元件展示</title>
+<style>
+  :root {
+    --bg:       #0c0d0c;
+    --shell:    #c6c7bd;
+    --lavender: #C3A5E5;
+    --special:  #b3de73;
+    --warning:  #F08080;
+    --salmon:   #E5C3B3;
+    --sky:      #95c9de;
+    --safe:     #299459;
+    --yellow:   #DECA4B;
+    --info:     #1E65C7;
+    --stone:    #7090A8;
+    --pink:     #FFB3D9;
+    --orange:   #eda109;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 0 0 80px;
+  }
+
+  /* ── 頂部標題列 ── */
+  .page-header {
+    background: linear-gradient(135deg, rgba(195,165,229,0.08) 0%, rgba(149,201,222,0.06) 100%);
+    border-bottom: 1px solid rgba(195,165,229,0.2);
+    padding: 48px 40px 36px;
+  }
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--lavender);
+    letter-spacing: -0.02em;
+  }
+  .page-header h1 span { color: var(--special); }
+  .page-header p {
+    color: var(--shell);
+    opacity: 0.75;
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+  .badge-version {
+    display: inline-block;
+    background: rgba(195,165,229,0.15);
+    border: 1px solid rgba(195,165,229,0.35);
+    color: var(--lavender);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+
+  /* ── 版面 ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+  /* ── 區塊 ── */
+  .section {
+    margin-top: 56px;
+  }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--shell);
+    margin-bottom: 4px;
+  }
+  .section-desc {
+    font-size: 0.88rem;
+    color: var(--shell);
+    opacity: 0.6;
+    margin-bottom: 24px;
+  }
+  .section-divider {
+    border: none;
+    border-top: 1px solid rgba(198,199,189,0.1);
+    margin: 56px 0 0;
+  }
+
+  /* ── 卡片（展示用） ── */
+  .demo-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(198,199,189,0.1);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .demo-card + .demo-card { margin-top: 0; }
+  .demo-label {
+    font-size: 0.75rem;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  /* ── 主題格線 ── */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── API 控制介面 ── */
+  .control-panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(198,199,189,0.1);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .control-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    background: transparent;
+  }
+  .btn:hover { opacity: 0.8; }
+  .btn:active { transform: scale(0.97); }
+  .btn-done    { border-color: var(--safe);    color: var(--safe);    }
+  .btn-active  { border-color: var(--special); color: var(--special); }
+  .btn-error   { border-color: var(--warning); color: var(--warning); }
+  .btn-reset   { border-color: var(--stone);   color: var(--stone);   }
+
+  /* ── 訊息提示 ── */
+  .alert-area { min-height: 36px; margin-top: 14px; }
+  .alert-msg {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    background: rgba(41,148,89,0.12);
+    border: 1px solid rgba(41,148,89,0.3);
+    color: var(--safe);
+    animation: fadeIn .25s ease;
+  }
+  .alert-msg.err {
+    background: rgba(240,128,128,0.12);
+    border-color: rgba(240,128,128,0.3);
+    color: var(--warning);
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* ── 屬性對照表 ── */
+  .attr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .attr-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    color: var(--stone);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(198,199,189,0.12);
+  }
+  .attr-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(198,199,189,0.07);
+    vertical-align: top;
+  }
+  .attr-table tr:last-child td { border-bottom: none; }
+  .attr-table code {
+    font-family: 'Consolas', 'Fira Code', monospace;
+    font-size: 0.82rem;
+    color: var(--lavender);
+    background: rgba(195,165,229,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .attr-table .val { color: var(--special); }
+  .attr-table .desc { color: var(--shell); opacity: 0.75; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── 色票 ── */
+  .color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--shell);
+    opacity: 0.8;
+  }
+  .swatch-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ 頁首 ══════════════════════════════════════ -->
+<header class="page-header">
+  <div class="container">
+    <h1>bp-stepper <span class="badge-version">v 2.0</span></h1>
+    <p>橫向／縱向步驟流程元件　·　九種主題　·　多狀態系統　·　彈性全域設定</p>
+    <div class="color-swatches" style="margin-top:16px;">
+      <div class="swatch"><div class="swatch-dot" style="background:#C3A5E5"></div>lavender</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#b3de73"></div>special</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#95c9de"></div>sky</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#299459"></div>safe</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#F08080"></div>warning</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#E5C3B3"></div>salmon</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#7090A8"></div>stone</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#FFB3D9"></div>pink</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#eda109"></div>orange</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ══ 1. 預設主題（lavender）═══════════════════ -->
+  <div class="section">
+    <div class="section-label">Section 01</div>
+    <div class="section-title">預設樣式</div>
+    <div class="section-desc">無任何 data 屬性，使用全域 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.defaults</code> 設定。</div>
+
+    <div class="demo-card">
+      <bp-stepper>
+        <bp-step data-state="done">
+          <bp-step-title>建立帳號</bp-step-title>
+          <bp-step-content>填寫基本資料與電子信箱</bp-step-content>
+        </bp-step>
+        <bp-step data-state="done">
+          <bp-step-title>驗證信箱</bp-step-title>
+          <bp-step-content>點擊驗證連結啟用帳號</bp-step-content>
+        </bp-step>
+        <bp-step data-state="active">
+          <bp-step-title>完善個人資料</bp-step-title>
+          <bp-step-content>上傳照片與填寫個人介紹</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>設定偏好</bp-step-title>
+          <bp-step-content>選擇通知方式與語言</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>開始使用</bp-step-title>
+          <bp-step-content>探索所有功能</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+    </div>
+  </div>
+
+  <!-- ══ 2. 主題展示格線 ══════════════════════════ -->
+  <hr class="section-divider">
+  <div class="section">
+    <div class="section-label">Section 02</div>
+    <div class="section-title">九種品牌主題</div>
+    <div class="section-desc">透過 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-theme=""</code> 切換。</div>
+
+    <div class="theme-grid">
+      <!-- sky -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="sky"</div>
+        <bp-stepper data-theme="sky">
+          <bp-step data-state="done">
+            <span class="bp-step-icon">☁️</span>
+            <bp-step-title>分析需求</bp-step-title>
+            <bp-step-content>收集使用者反饋</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <span class="bp-step-icon">⚡</span>
+            <bp-step-title>開發功能</bp-step-title>
+            <bp-step-content>實作核心邏輯</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <span class="bp-step-icon">🚀</span>
+            <bp-step-title>部署上線</bp-step-title>
+            <bp-step-content>推送至生產環境</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- special -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="special"</div>
+        <bp-stepper data-theme="special">
+          <bp-step data-state="done">
+            <bp-step-title>企劃提案</bp-step-title>
+            <bp-step-content>撰寫專案計畫書</bp-step-content>
+          </bp-step>
+          <bp-step data-state="done">
+            <bp-step-title>預算核准</bp-step-title>
+            <bp-step-content>提交財務審核</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>執行推進</bp-step-title>
+            <bp-step-content>每週進度追蹤</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- safe -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="safe"</div>
+        <bp-stepper data-theme="safe">
+          <bp-step data-state="done">
+            <bp-step-title>資料備份</bp-step-title>
+            <bp-step-content>完整快照</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>系統更新</bp-step-title>
+            <bp-step-content>版本升級中</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>功能驗證</bp-step-title>
+            <bp-step-content>回歸測試</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- warning -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="warning"</div>
+        <bp-stepper data-theme="warning">
+          <bp-step data-state="done">
+            <bp-step-title>偵測異常</bp-step-title>
+            <bp-step-content>監控觸發警示</bp-step-content>
+          </bp-step>
+          <bp-step data-state="error">
+            <bp-step-title>根因分析</bp-step-title>
+            <bp-step-content>找出問題來源</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>修復驗證</bp-step-title>
+            <bp-step-content>確認問題解決</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- salmon（原本錯寫 data-theme="shell"，已修正） -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="salmon"</div>
+        <bp-stepper data-theme="salmon">
+          <bp-step data-state="done">
+            <bp-step-title>訂單確認</bp-step-title>
+            <bp-step-content>付款成功</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>備料包裝</bp-step-title>
+            <bp-step-content>倉庫處理中</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>配送出貨</bp-step-title>
+            <bp-step-content>預計 3–5 天</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- pink -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="pink"</div>
+        <bp-stepper data-theme="pink">
+          <bp-step data-state="done">
+            <bp-step-title>上傳素材</bp-step-title>
+            <bp-step-content>圖片與文案</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>AI 生成</bp-step-title>
+            <bp-step-content>產生設計草稿</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>匯出成品</bp-step-title>
+            <bp-step-content>下載高解析檔案</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- stone -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="stone"</div>
+        <bp-stepper data-theme="stone">
+          <bp-step data-state="done">
+            <bp-step-title>需求訪談</bp-step-title>
+            <bp-step-content>使用者研究</bp-step-content>
+          </bp-step>
+          <bp-step data-state="done">
+            <bp-step-title>原型設計</bp-step-title>
+            <bp-step-content>低忠實度線框</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>可用性測試</bp-step-title>
+            <bp-step-content>邀請 5 位受測者</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <!-- orange -->
+      <div class="demo-card">
+        <div class="demo-label">data-theme="orange"</div>
+        <bp-stepper data-theme="orange">
+          <bp-step data-state="done">
+            <bp-step-title>識別品牌</bp-step-title>
+            <bp-step-content>定義視覺風格</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>內容規劃</bp-step-title>
+            <bp-step-content>文案與素材製作</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>廣告投放</bp-step-title>
+            <bp-step-content>多平台推廣</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 3. 連接線樣式 ══════════════════════════════ -->
+  <hr class="section-divider">
+  <div class="section">
+    <div class="section-label">Section 03</div>
+    <div class="section-title">連接線樣式</div>
+    <div class="section-desc">透過 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-connector="dashed | dotted"</code> 切換。</div>
+
+    <div class="demo-card">
+      <div class="demo-label">solid（預設）</div>
+      <bp-stepper data-theme="sky">
+        <bp-step data-state="done"><bp-step-title>步驟一</bp-step-title></bp-step>
+        <bp-step data-state="active"><bp-step-title>步驟二</bp-step-title></bp-step>
+        <bp-step><bp-step-title>步驟三</bp-step-title></bp-step>
+        <bp-step><bp-step-title>步驟四</bp-step-title></bp-step>
+      </bp-stepper>
+    </div>
+
+    <div class="demo-card" style="margin-top:16px;">
+      <div class="demo-label">dashed</div>
+      <bp-stepper data-theme="sky" data-connector="dashed">
+        <bp-step data-state="done"><bp-step-title>步驟一</bp-step-title></bp-step>
+        <bp-step data-state="active"><bp-step-title>步驟二</bp-step-title></bp-step>
+        <bp-step><bp-step-title>步驟三</bp-step-title></bp-step>
+        <bp-step><bp-step-title>步驟四</bp-step-title></bp-step>
+      </bp-stepper>
+    </div>
+
+    <div class="demo-card" style="margin-top:16px;">
+      <div class="demo-label">dotted</div>
+      <bp-stepper data-theme="sky" data-connector="dotted">
+        <bp-step data-state="done"><bp-step-title>步驟一</bp-step-title></bp-step>
+        <bp-step data-state="active"><bp-step-title>步驟二</bp-step-title></bp-step>
+        <bp-step><bp-step-title>步驟三</bp-step-title></bp-step>
+        <bp-step><bp-step-title>步驟四</bp-step-title></bp-step>
+      </bp-stepper>
+    </div>
+  </div>
+
+  <!-- ══ 4. 縱向版型 ════════════════════════════════ -->
+  <hr class="section-divider">
+  <div class="section">
+    <div class="section-label">Section 04</div>
+    <div class="section-title">縱向版型</div>
+    <div class="section-desc">加入 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-layout="vertical"</code>。</div>
+
+    <div class="two-col">
+      <div class="demo-card">
+        <div class="demo-label">vertical + stone + dashed</div>
+        <bp-stepper data-theme="stone" data-layout="vertical" data-connector="dashed" data-card-width="280px">
+          <bp-step data-state="done">
+            <bp-step-title>需求確認</bp-step-title>
+            <bp-step-content>與客戶對齊目標與時程</bp-step-content>
+          </bp-step>
+          <bp-step data-state="done">
+            <bp-step-title>系統設計</bp-step-title>
+            <bp-step-content>架構圖與 API 規格</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <bp-step-title>開發實作</bp-step-title>
+            <bp-step-content>前後端功能開發</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>測試驗收</bp-step-title>
+            <bp-step-content>QA 全覆蓋測試</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>正式上線</bp-step-title>
+            <bp-step-content>部署並通知使用者</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-label">vertical + salmon + error 狀態</div>
+        <bp-stepper data-theme="salmon" data-layout="vertical" data-card-width="280px">
+          <bp-step data-state="done">
+            <bp-step-title>提交申請</bp-step-title>
+            <bp-step-content>填寫線上申請表</bp-step-content>
+          </bp-step>
+          <bp-step data-state="done">
+            <bp-step-title>初步審核</bp-step-title>
+            <bp-step-content>人工核對資料</bp-step-content>
+          </bp-step>
+          <bp-step data-state="error">
+            <bp-step-title>補件要求</bp-step-title>
+            <bp-step-content>請補充身分證明文件</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <bp-step-title>最終核准</bp-step-title>
+            <bp-step-content>通知申請結果</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 5. 自訂屬性 ════════════════════════════════ -->
+  <hr class="section-divider">
+  <div class="section">
+    <div class="section-label">Section 05</div>
+    <div class="section-title">個別屬性覆寫</div>
+    <div class="section-desc">每個 data-* 屬性都可以覆寫對應的 CSS 變數，不需依賴預設主題。</div>
+
+    <div class="demo-card">
+      <div class="demo-label">自訂色彩、粗細、卡片寬度</div>
+      <bp-stepper
+           data-color="#DECA4B"
+           data-color-active="#eda109"
+           data-color-done="#299459"
+           data-stroke="3px"
+           data-card-width="200px"
+           data-radius="6px"
+           data-gap="44px"
+           data-arrow-size="8px">
+        <bp-step data-state="done">
+          <bp-step-title>黃色主題</bp-step-title>
+          <bp-step-content>手動設定</bp-step-content>
+        </bp-step>
+        <bp-step data-state="active">
+          <bp-step-title>橘色進行中</bp-step-title>
+          <bp-step-content>colorActive = orange</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>待處理步驟</bp-step-title>
+          <bp-step-content>粗線條 3px</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+    </div>
+  </div>
+
+  <!-- ══ 6. JS API 互動展示 ═════════════════════════ -->
+  <hr class="section-divider">
+  <div class="section">
+    <div class="section-label">Section 06</div>
+    <div class="section-title">JS API 互動</div>
+    <div class="section-desc">使用 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.setActive(el, index)</code>、<code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">setError(el, index)</code>、<code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">resetStates(el)</code> 動態控制。</div>
+
+    <div class="control-panel">
+      <bp-stepper id="api-demo" data-theme="sky">
+        <bp-step>
+          <bp-step-title>蒐集資料</bp-step-title>
+          <bp-step-content>API 呼叫與解析</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>資料清洗</bp-step-title>
+          <bp-step-content>格式驗證</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>模型訓練</bp-step-title>
+          <bp-step-content>批次處理</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>評估測試</bp-step-title>
+          <bp-step-content>準確率 > 95%</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <bp-step-title>部署推論</bp-step-title>
+          <bp-step-content>服務上線</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+
+      <div class="control-row">
+        <button class="btn btn-active" onclick="apiSetActive(0)">setActive(0)</button>
+        <button class="btn btn-active" onclick="apiSetActive(1)">setActive(1)</button>
+        <button class="btn btn-active" onclick="apiSetActive(2)">setActive(2)</button>
+        <button class="btn btn-active" onclick="apiSetActive(3)">setActive(3)</button>
+        <button class="btn btn-active" onclick="apiSetActive(4)">setActive(4)</button>
+        <button class="btn btn-error"  onclick="apiSetError(2)">setError(2)</button>
+        <button class="btn btn-reset"  onclick="apiReset()">resetStates</button>
+      </div>
+
+      <div class="alert-area" id="alert-area"></div>
+    </div>
+  </div>
+
+  <!-- ══ 7. 屬性完整參考表 ══════════════════════════ -->
+  <hr class="section-divider">
+  <div class="section">
+    <div class="section-label">Section 07</div>
+    <div class="section-title">data-* 屬性完整參考</div>
+    <div class="section-desc">所有屬性均可在容器或透過 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.defaults</code> 設定全域值。</div>
+
+    <div class="demo-card">
+      <table class="attr-table">
+        <thead>
+          <tr>
+            <th>data-* 屬性</th>
+            <th>CSS 變數</th>
+            <th>預設值</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>data-theme</code></td><td>—</td><td class="val">null</td><td class="desc">主題名稱：lavender / sky / safe / special / warning / salmon / stone / pink / orange</td></tr>
+          <tr><td><code>data-connector</code></td><td>—</td><td class="val">solid</td><td class="desc">連接線樣式：solid / dashed / dotted</td></tr>
+          <tr><td><code>data-layout</code></td><td>—</td><td class="val">—</td><td class="desc">版型：vertical（縱向）</td></tr>
+          <tr><td><code>data-auto-number</code></td><td>—</td><td class="val">true</td><td class="desc">自動注入步驟號徽章，設 false 關閉</td></tr>
+          <tr><td><code>data-color</code></td><td><code>--bps-color</code></td><td class="val">#C3A5E5</td><td class="desc">主強調色（邊框、連接線、徽章輪廓）</td></tr>
+          <tr><td><code>data-color-active</code></td><td><code>--bps-color-active</code></td><td class="val">#b3de73</td><td class="desc">進行中步驟色</td></tr>
+          <tr><td><code>data-color-done</code></td><td><code>--bps-color-done</code></td><td class="val">#299459</td><td class="desc">已完成步驟色</td></tr>
+          <tr><td><code>data-color-error</code></td><td><code>--bps-color-error</code></td><td class="val">#F08080</td><td class="desc">錯誤步驟色</td></tr>
+          <tr><td><code>data-text-color</code></td><td><code>--bps-text</code></td><td class="val">#c6c7bd</td><td class="desc">卡片說明文字顏色</td></tr>
+          <tr><td><code>data-title-color</code></td><td><code>--bps-title</code></td><td class="val">#C3A5E5</td><td class="desc">卡片標題顏色</td></tr>
+          <tr><td><code>data-badge-bg</code></td><td><code>--bps-badge-bg</code></td><td class="val">rgba(...)</td><td class="desc">步驟號徽章背景</td></tr>
+          <tr><td><code>data-card-bg</code></td><td><code>--bps-card-bg</code></td><td class="val">rgba(...)</td><td class="desc">卡片背景</td></tr>
+          <tr><td><code>data-card-bg-active</code></td><td><code>--bps-card-bg-act</code></td><td class="val">rgba(...)</td><td class="desc">進行中卡片背景</td></tr>
+          <tr><td><code>data-card-bg-done</code></td><td><code>--bps-card-bg-done</code></td><td class="val">rgba(...)</td><td class="desc">完成卡片背景</td></tr>
+          <tr><td><code>data-card-bg-error</code></td><td><code>--bps-card-bg-err</code></td><td class="val">rgba(...)</td><td class="desc">錯誤卡片背景</td></tr>
+          <tr><td><code>data-stroke</code></td><td><code>--bps-stroke</code></td><td class="val">2px</td><td class="desc">邊框 / 連接線粗細</td></tr>
+          <tr><td><code>data-radius</code></td><td><code>--bps-radius</code></td><td class="val">12px</td><td class="desc">卡片圓角</td></tr>
+          <tr><td><code>data-card-width</code></td><td><code>--bps-width</code></td><td class="val">220px</td><td class="desc">卡片寬度</td></tr>
+          <tr><td><code>data-card-padding</code></td><td><code>--bps-padding</code></td><td class="val">16px 18px</td><td class="desc">卡片內距（支援 CSS 縮寫）</td></tr>
+          <tr><td><code>data-gap</code></td><td><code>--bps-gap</code></td><td class="val">36px</td><td class="desc">步驟間距（同時控制連接線長度）</td></tr>
+          <tr><td><code>data-badge-size</code></td><td><code>--bps-badge-sz</code></td><td class="val">28px</td><td class="desc">步驟號徽章大小</td></tr>
+          <tr><td><code>data-font-size</code></td><td><code>--bps-fs</code></td><td class="val">0.9rem</td><td class="desc">說明文字大小</td></tr>
+          <tr><td><code>data-title-size</code></td><td><code>--bps-title-fs</code></td><td class="val">1rem</td><td class="desc">標題文字大小</td></tr>
+          <tr><td><code>data-badge-font-size</code></td><td><code>--bps-badge-fs</code></td><td class="val">0.82rem</td><td class="desc">步驟號大小</td></tr>
+          <tr><td><code>data-arrow-size</code></td><td><code>--bps-arrow</code></td><td class="val">6px</td><td class="desc">箭頭尺寸</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- 載入元件 -->
+<script src="bp-stepper.js"></script>
+
+<script>
+  /* ── API 展示用函式 ── */
+  const apiEl = document.getElementById('api-demo');
+
+  function showMsg(text, isErr = false) {
+    const area = document.getElementById('alert-area');
+    const msg  = document.createElement('span');
+    msg.className = 'alert-msg' + (isErr ? ' err' : '');
+    msg.textContent = text;
+    area.innerHTML = '';
+    area.appendChild(msg);
+    setTimeout(() => { if (msg.parentNode) msg.parentNode.removeChild(msg); }, 3000);
+  }
+
+  function apiSetActive(i) {
+    BPStepper.setActive(apiEl, i);
+    showMsg(`setActive(${i}) → 第 ${i + 1} 步設為進行中，前面全部完成。`);
+  }
+
+  function apiSetError(i) {
+    BPStepper.setError(apiEl, i);
+    showMsg(`setError(${i}) → 第 ${i + 1} 步標記為錯誤。`, true);
+  }
+
+  function apiReset() {
+    BPStepper.resetStates(apiEl);
+    showMsg('resetStates() → 所有步驟已清除狀態。');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bp-popnote 視覺編輯器</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.6/css/bootstrap.min.css">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Two-colour palette
+   Surface family : #0C0D0C → #141514 → #1e1f1e → #272827
+   Accent (one)   : #C3A5E5  (lavender)
+───────────────────────────────────────────────────────── */
+:root {
+  --bg0:   #0C0D0C;
+  --bg1:   #141514;
+  --bg2:   #1e1f1e;
+  --bg3:   #272827;
+  --ac:    #C3A5E5;
+  --ac15:  rgba(195,165,229,.15);
+  --ac30:  rgba(195,165,229,.30);
+  --tx:    #C6C7BD;
+  --tx50:  rgba(198,199,189,.50);
+  --tx25:  rgba(198,199,189,.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg0);
+  color: var(--tx);
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  font-size: 0.9rem;
+  overflow: hidden;
+}
+
+/* ── App shell ───────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  grid-template-columns: 360px 1fr;
+  height: 100vh;
+}
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--ac30);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 14px;
+}
+.topbar-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--ac);
+  text-transform: uppercase;
+}
+.topbar-chip {
+  font-size: 0.7rem;
+  border: 1px solid var(--ac30);
+  border-radius: 4px;
+  padding: 2px 7px;
+  color: var(--tx50);
+  letter-spacing: .04em;
+}
+.topbar-hint {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--tx25);
+  letter-spacing: .02em;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.sidebar {
+  background: var(--bg1);
+  border-right: 1px solid var(--ac30);
+  overflow-y: auto;
+  padding: 18px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--ac30); border-radius: 2px; }
+
+/* field blocks */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ac);
+  opacity: .75;
+}
+.field-sub {
+  font-size: 0.72rem;
+  color: var(--tx50);
+  line-height: 1.4;
+}
+.sep {
+  height: 1px;
+  background: var(--ac30);
+}
+
+/* inputs */
+.x-in, .x-ta, .x-sel {
+  background: var(--bg2);
+  border: 1px solid var(--ac30);
+  border-radius: 5px;
+  color: var(--tx);
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 7px 11px;
+  width: 100%;
+  outline: none;
+  transition: border-color .18s;
+}
+.x-in:focus, .x-ta:focus, .x-sel:focus { border-color: var(--ac); }
+.x-ta { resize: vertical; line-height: 1.55; }
+.x-sel { cursor: pointer; }
+.x-sel option { background: var(--bg2); }
+
+/* theme swatches */
+.sw-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+.sw {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 3px;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  transition: transform .14s, border-color .14s;
+}
+.sw:hover { transform: scale(1.1); }
+.sw.on { border-color: #fff; transform: scale(1.12); }
+
+/* mode tabs */
+.mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.mt {
+  padding: 6px 4px;
+  background: var(--bg2);
+  border: 1px solid var(--ac30);
+  border-radius: 5px;
+  color: var(--tx50);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: all .15s;
+}
+.mt:hover { color: var(--tx); border-color: var(--ac); }
+.mt.on { background: var(--ac15); border-color: var(--ac); color: var(--ac); }
+
+/* compass */
+.compass {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 1fr;
+  grid-template-rows: repeat(3, auto);
+  gap: 4px;
+  width: 150px;
+  margin: 0 auto;
+}
+.cb {
+  padding: 5px 6px;
+  background: var(--bg2);
+  border: 1px solid var(--ac30);
+  border-radius: 5px;
+  color: var(--tx50);
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: all .15s;
+}
+.cb:hover { color: var(--tx); border-color: var(--ac); }
+.cb.on { background: var(--ac15); border-color: var(--ac); color: var(--ac); }
+.cb-center {
+  background: var(--bg0);
+  border: 1px dashed var(--ac30);
+  opacity: .3;
+  border-radius: 5px;
+}
+
+/* toggle */
+.tog-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tog-lbl { font-size: 0.85rem; color: var(--tx); }
+.tog {
+  position: relative;
+  width: 34px; height: 18px;
+  flex-shrink: 0;
+}
+.tog input { opacity: 0; width: 0; height: 0; }
+.tog-tr {
+  position: absolute;
+  inset: 0;
+  background: var(--bg3);
+  border: 1px solid var(--ac30);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: background .18s;
+}
+.tog input:checked + .tog-tr { background: var(--ac15); border-color: var(--ac); }
+.tog-tr::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  background: var(--tx50);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: transform .18s, background .18s;
+}
+.tog input:checked + .tog-tr::after { transform: translateX(16px); background: var(--ac); }
+
+/* conditional sections */
+.mode-sec { display: none; flex-direction: column; gap: 10px; }
+.mode-sec.on { display: flex; }
+
+/* ── Preview pane ────────────────────────────────────────── */
+.preview-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 48px;
+  position: relative;
+  background: var(--bg0);
+}
+.stage-label {
+  position: absolute;
+  top: 14px; left: 18px;
+  font-size: 0.68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tx25);
+}
+
+/* trigger wrapper card */
+.trigger-card {
+  background: var(--bg1);
+  border: 1px solid var(--ac30);
+  border-radius: 10px;
+  padding: 28px 40px;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.8;
+  min-width: 280px;
+  max-width: 520px;
+}
+
+/* panel preview area */
+#panel-preview-area {
+  display: none;
+  width: 100%;
+  max-width: 520px;
+}
+#panel-preview-area.on { display: block; }
+#preview-panel-target {
+  border: 1px dashed var(--ac30);
+  border-radius: 8px;
+  min-height: 80px;
+  background: var(--bg1);
+}
+.panel-label {
+  font-size: 0.68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tx25);
+  text-align: center;
+  padding: 10px 0 6px;
+}
+
+/* ── Code panel ──────────────────────────────────────────── */
+.code-panel {
+  background: var(--bg1);
+  border-top: 1px solid var(--ac30);
+  padding: 14px 18px;
+  flex-shrink: 0;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.code-title {
+  font-size: 0.68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ac);
+  opacity: .7;
+}
+.copy-btn {
+  background: var(--ac15);
+  border: 1px solid var(--ac30);
+  color: var(--ac);
+  border-radius: 4px;
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.copy-btn:hover { background: rgba(195,165,229,.25); }
+.copy-btn.ok { color: #299459; border-color: rgba(41,148,89,.4); background: rgba(41,148,89,.08); }
+
+pre.code-out {
+  background: var(--bg0);
+  border: 1px solid var(--ac30);
+  border-radius: 5px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: var(--tx);
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.65;
+  max-height: 130px;
+  overflow-y: auto;
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+pre.code-out::-webkit-scrollbar { width: 4px; }
+pre.code-out::-webkit-scrollbar-thumb { background: var(--ac30); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── Top bar ── -->
+  <header class="topbar">
+    <span class="topbar-title">bp-popnote</span>
+    <span class="topbar-chip">視覺編輯器</span>
+    <span class="topbar-chip">Bootstrap 5.3.6</span>
+    <span class="topbar-hint">在右側點擊觸發文字測試效果</span>
+  </header>
+
+  <!-- ══════════════ Sidebar ══════════════ -->
+  <aside class="sidebar">
+
+    <!-- 觸發文字 -->
+    <div class="field">
+      <div class="field-label">觸發文字</div>
+      <input class="x-in" id="c-text" value="點我查看說明" placeholder="顯示在頁面中的文字">
+    </div>
+
+    <!-- 內容 -->
+    <div class="field">
+      <div class="field-label">內容（支援 HTML）</div>
+      <textarea class="x-ta" id="c-content" rows="5">這是一段<b>說明文字</b>，支援
+<span style="color:#95c9de">HTML 標籤</span>與自訂樣式。</textarea>
+    </div>
+
+    <!-- 標題 -->
+    <div class="field">
+      <div class="field-label">標題（選填）</div>
+      <input class="x-in" id="c-title" placeholder="留空則不顯示標題列">
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- 主題色 -->
+    <div class="field">
+      <div class="field-label">主題色</div>
+      <div class="sw-grid" id="sw-grid"></div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- 輸出模式 -->
+    <div class="field">
+      <div class="field-label">輸出模式</div>
+      <div class="mode-tabs">
+        <button class="mt on" data-mode="float">浮動</button>
+        <button class="mt" data-mode="modal">對話框</button>
+        <button class="mt" data-mode="offcanvas">側邊</button>
+        <button class="mt" data-mode="panel">面板</button>
+      </div>
+    </div>
+
+    <!-- ── Float options ── -->
+    <div class="mode-sec on" id="sec-float">
+      <div class="field" style="gap:8px">
+        <div class="field-label" style="font-size:.66rem">彈出方向</div>
+        <div class="compass">
+          <div></div>
+          <button class="cb on" data-pl="top">↑ 上</button>
+          <div></div>
+          <button class="cb" data-pl="left">← 左</button>
+          <div class="cb-center"></div>
+          <button class="cb" data-pl="right">右 →</button>
+          <div></div>
+          <button class="cb" data-pl="bottom">↓ 下</button>
+          <div></div>
+        </div>
+      </div>
+      <div class="tog-row">
+        <span class="tog-lbl">顯示箭頭</span>
+        <label class="tog"><input type="checkbox" id="c-arrow" checked><span class="tog-tr"></span></label>
+      </div>
+      <div class="field" style="gap:5px">
+        <div class="field-sub">最大寬度</div>
+        <input class="x-in" id="c-maxw" value="560px" placeholder="560px">
+      </div>
+    </div>
+
+    <!-- ── Modal options ── -->
+    <div class="mode-sec" id="sec-modal">
+      <div class="field" style="gap:5px">
+        <div class="field-sub">寬度（CSS 值 或 sm / lg / xl，留空為預設）</div>
+        <input class="x-in" id="c-msize" placeholder="例：600px 或 lg">
+      </div>
+      <div class="tog-row">
+        <span class="tog-lbl">Static backdrop</span>
+        <label class="tog"><input type="checkbox" id="c-mstatic"><span class="tog-tr"></span></label>
+      </div>
+    </div>
+
+    <!-- ── Offcanvas options ── -->
+    <div class="mode-sec" id="sec-offcanvas">
+      <div class="field" style="gap:8px">
+        <div class="field-label" style="font-size:.66rem">滑出方向</div>
+        <div class="compass">
+          <div></div>
+          <button class="cb" data-oc="top">↑ 上</button>
+          <div></div>
+          <button class="cb" data-oc="start">← 左</button>
+          <div class="cb-center"></div>
+          <button class="cb on" data-oc="end">右 →</button>
+          <div></div>
+          <button class="cb" data-oc="bottom">↓ 下</button>
+          <div></div>
+        </div>
+      </div>
+      <div class="field" style="gap:5px">
+        <div class="field-sub">寬度 / 高度（CSS 值，留空為預設）</div>
+        <input class="x-in" id="c-ocsize" placeholder="例：480px 或 40vh">
+      </div>
+      <div class="tog-row">
+        <span class="tog-lbl">Static backdrop</span>
+        <label class="tog"><input type="checkbox" id="c-ocstatic"><span class="tog-tr"></span></label>
+      </div>
+    </div>
+
+    <!-- ── Panel options ── -->
+    <div class="mode-sec" id="sec-panel">
+      <div class="field" style="gap:5px">
+        <div class="field-sub">目標容器選擇器</div>
+        <input class="x-in" id="c-panel" value="#preview-panel-target">
+        <div class="field-sub">右側已備妥 <code style="color:var(--ac);font-size:.78rem">#preview-panel-target</code> 可即時測試</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════ Preview pane ══════════════ -->
+  <div class="preview-pane">
+
+    <div class="stage">
+      <span class="stage-label">預覽區域</span>
+
+      <div class="trigger-card" id="trigger-card">
+        <!-- span injected by JS -->
+      </div>
+
+      <!-- panel preview slot -->
+      <div id="panel-preview-area">
+        <div class="panel-label">#preview-panel-target — 面板輸出於此</div>
+        <div id="preview-panel-target"></div>
+      </div>
+    </div>
+
+    <!-- code output -->
+    <div class="code-panel">
+      <div class="code-header">
+        <span class="code-title">產生的 HTML</span>
+        <button class="copy-btn" id="copy-btn">複製</button>
+      </div>
+      <pre class="code-out" id="code-out"></pre>
+    </div>
+
+  </div>
+
+</div><!-- /.app -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.6/js/bootstrap.bundle.min.js"></script>
+<script src="bp-popnote.js"></script>
+<script>
+// ── Theme catalogue (mirrors THEMES in bp-popnote.js) ────────────────────────
+const THEMES = [
+  { id:'dark',     label:'Dark',    color:'#C3A5E5', bg:'#130e1e' },
+  { id:'sky',      label:'Sky',     color:'#95c9de', bg:'#091522' },
+  { id:'safe',     label:'Safe',    color:'#299459', bg:'#0a160f' },
+  { id:'special',  label:'Lime',    color:'#b3de73', bg:'#111605' },
+  { id:'warning',  label:'Warn',    color:'#F08080', bg:'#190d0d' },
+  { id:'yellow',   label:'Note',    color:'#DECA4B', bg:'#161205' },
+  { id:'salmon',   label:'Salmon',  color:'#E5C3B3', bg:'#180e0a' },
+  { id:'pink',     label:'Pink',    color:'#FFB3D9', bg:'#180a12' },
+  { id:'stone',    label:'Stone',   color:'#95c9de', bg:'#0d1620' },
+  { id:'orange',   label:'Orange',  color:'#eda109', bg:'#181005' },
+  { id:'info',     label:'Info',    color:'#1E65C7', bg:'#0a1522' },
+  { id:'vanilla',  label:'Vanilla', color:'#DBEDD8', bg:'#181614' },
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const S = {
+  text:      '點我查看說明',
+  content:   '這是一段<b>說明文字</b>，支援\n<span style="color:#95c9de">HTML 標籤</span>與自訂樣式。',
+  title:     '',
+  theme:     'dark',
+  mode:      'float',
+  placement: 'top',
+  arrow:     true,
+  maxw:      '560px',
+  msize:     '',
+  mstatic:   false,
+  ocdir:     'end',
+  ocsize:    '',
+  ocstatic:  false,
+  panel:     '#preview-panel-target',
+};
+
+// ── Build theme swatches ──────────────────────────────────────────────────────
+const swGrid = document.getElementById('sw-grid');
+THEMES.forEach(t => {
+  const b = document.createElement('button');
+  b.className = 'sw' + (t.id === S.theme ? ' on' : '');
+  b.style.cssText = `background:${t.bg};border-color:${t.color};color:${t.color}`;
+  b.textContent  = t.label;
+  b.dataset.th   = t.id;
+  b.title        = t.id;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.sw').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    S.theme = t.id;
+    render();
+  });
+  swGrid.appendChild(b);
+});
+
+// ── Mode tabs ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.mt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mt').forEach(x => x.classList.remove('on'));
+    btn.classList.add('on');
+    S.mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-sec').forEach(x => x.classList.remove('on'));
+    document.getElementById('sec-' + S.mode)?.classList.add('on');
+    document.getElementById('panel-preview-area').classList.toggle('on', S.mode === 'panel');
+    render();
+  });
+});
+
+// ── Placement compass ─────────────────────────────────────────────────────────
+document.querySelectorAll('[data-pl]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-pl]').forEach(x => x.classList.remove('on'));
+    btn.classList.add('on');
+    S.placement = btn.dataset.pl;
+    render();
+  });
+});
+
+// ── Offcanvas compass ─────────────────────────────────────────────────────────
+document.querySelectorAll('[data-oc]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-oc]').forEach(x => x.classList.remove('on'));
+    btn.classList.add('on');
+    S.ocdir = btn.dataset.oc;
+    render();
+  });
+});
+
+// ── Input bindings ────────────────────────────────────────────────────────────
+function bind(id, key, xform) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', () => {
+    S[key] = xform ? xform(el) : el.value;
+    render();
+  });
+}
+bind('c-text',     'text');
+bind('c-content',  'content');
+bind('c-title',    'title');
+bind('c-arrow',    'arrow',    el => el.checked);
+bind('c-maxw',     'maxw');
+bind('c-msize',    'msize');
+bind('c-mstatic',  'mstatic',  el => el.checked);
+bind('c-ocsize',   'ocsize');
+bind('c-ocstatic', 'ocstatic', el => el.checked);
+bind('c-panel',    'panel');
+
+// ── Code generation ───────────────────────────────────────────────────────────
+function buildAttrs() {
+  const a = [];
+
+  // always: content
+  a.push(['data-popover-content', S.content.replace(/\n/g, '')]);
+
+  // title
+  if (S.title.trim()) a.push(['data-popover-title', S.title]);
+
+  // theme
+  if (S.theme !== 'dark') a.push(['data-popover-theme', S.theme]);
+
+  if (S.mode === 'float') {
+    if (S.placement !== 'top')    a.push(['data-popover-placement', S.placement]);
+    if (!S.arrow)                  a.push(['data-popover-arrow', 'false']);
+    if (S.maxw && S.maxw !== '560px') a.push(['data-popover-maxwidth', S.maxw]);
+
+  } else if (S.mode === 'modal') {
+    a.push(['data-popover-modal', 'dialog']);
+    if (S.msize)   a.push(['data-popover-modal-size',   S.msize]);
+    if (S.mstatic) a.push(['data-popover-modal-static', 'true']);
+
+  } else if (S.mode === 'offcanvas') {
+    a.push(['data-popover-modal', S.ocdir]);
+    if (S.ocsize)   a.push(['data-popover-modal-size',   S.ocsize]);
+    if (S.ocstatic) a.push(['data-popover-modal-static', 'true']);
+
+  } else if (S.mode === 'panel') {
+    a.push(['data-popover-panel', S.panel]);
+  }
+
+  return a;
+}
+
+function buildCode() {
+  const attrs = buildAttrs();
+  const indent = '  ';
+  const inner  = attrs
+    .map(([k, v]) => `${k}="${v.replace(/"/g, '&quot;')}"`)
+    .join('\n' + indent);
+  return `<span ${inner}>${S.text || '(空白)'}</span>`;
+}
+
+// ── Render preview ────────────────────────────────────────────────────────────
+function applyDataAttrs(el, attrs) {
+  // remove all popover data attrs first
+  Object.keys(el.dataset).forEach(k => {
+    if (k.startsWith('popover')) delete el.dataset[k];
+  });
+  attrs.forEach(([k, v]) => {
+    // data-popover-content → dataset.popoverContent
+    const key = k.replace('data-', '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    el.dataset[key] = v;
+  });
+}
+
+function render() {
+  const card = document.getElementById('trigger-card');
+  card.innerHTML = '';
+
+  const span = document.createElement('span');
+  applyDataAttrs(span, buildAttrs());
+  span.innerHTML = S.text || '<em style="opacity:.4">(觸發文字)</em>';
+  card.appendChild(span);
+
+  document.getElementById('code-out').textContent = buildCode();
+}
+
+// ── Copy ──────────────────────────────────────────────────────────────────────
+document.getElementById('copy-btn').addEventListener('click', function () {
+  navigator.clipboard.writeText(
+    document.getElementById('code-out').textContent
+  ).then(() => {
+    this.textContent = '已複製 ✓';
+    this.classList.add('ok');
+    setTimeout(() => { this.textContent = '複製'; this.classList.remove('ok'); }, 2000);
+  });
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>

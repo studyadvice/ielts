@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dual-line.js — 元件展示</title>
+<script src="dual-line.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0c0d0c;
+    --bg2:      #111312;
+    --bg3:      #161918;
+    --shell:    #c6c7bd;
+    --lavender: #C3A5E5;
+    --special:  #b3de73;
+    --warning:  #F08080;
+    --salmon:   #E5C3B3;
+    --sky:      #95c9de;
+    --safe:     #299459;
+    --yellow:   #DECA4B;
+    --info:     #1E65C7;
+    --stone:    #7090A8;
+    --pink:     #FFB3D9;
+    --orange:   #eda109;
+    --border:   #1e2320;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    padding: 48px 56px 80px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── 標題群 ── */
+  .page-eyebrow {
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-size: 1.8rem;
+    color: var(--special);
+    letter-spacing: .03em;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    font-size: .9rem;
+    color: var(--stone);
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 1rem;
+    color: var(--lavender);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin: 40px 0 16px;
+  }
+
+  /* ── 卡片 ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+
+  .demo-label {
+    font-size: .73rem;
+    font-family: 'Fira Mono', 'Consolas', monospace;
+    color: #3e4a3e;
+    margin-bottom: 7px;
+  }
+  .demo-label b { color: var(--stone); font-weight: normal; }
+
+  /* ── 垂直線示範容器 ── */
+  .vr-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+  .vr-row-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+  .vr-label {
+    font-size: .68rem;
+    color: #3e4a3e;
+    font-family: monospace;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ── 程式碼 ── */
+  pre {
+    background: #0a0b0a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: 'Fira Mono', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--shell);
+    line-height: 1.65;
+    margin: 10px 0 0;
+  }
+  .kw  { color: var(--lavender); }
+  .str { color: var(--safe); }
+  .cmt { color: #354535; font-style: italic; }
+  .tag { color: var(--sky); }
+  .atr { color: var(--salmon); }
+  .val { color: var(--yellow); }
+  .fn  { color: var(--special); }
+
+  /* ── 屬性表 ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem;
+    margin: 4px 0 0;
+  }
+  th {
+    text-align: left;
+    color: var(--lavender);
+    font-weight: 600;
+    padding: 7px 10px 7px 0;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 7px 10px 7px 0;
+    color: var(--shell);
+    vertical-align: top;
+    border-bottom: 1px solid #141614;
+    font-size: .83rem;
+  }
+  td:first-child { color: var(--yellow); font-family: monospace; white-space: nowrap; }
+  td:nth-child(3) { color: var(--stone); font-size: .78rem; }
+
+  /* ── 色票格 ── */
+  .palette-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin: 12px 0 0;
+  }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .75rem;
+    color: var(--stone);
+    font-family: monospace;
+  }
+  .swatch-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── badge ── */
+  .badge {
+    display: inline-block;
+    font-size: .65rem;
+    font-family: monospace;
+    letter-spacing: .05em;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .badge-solid   { background:#1e2820; color: var(--safe); }
+  .badge-dashed  { background:#1e1a28; color: var(--lavender); }
+  .badge-dotted  { background:#28201e; color: var(--salmon); }
+</style>
+</head>
+<body>
+
+<div class="page-eyebrow">Web Component  ·  dual-line.js v1.2.0</div>
+<h1>&lt;dual-hr&gt; ＋ &lt;dual-vr&gt;</h1>
+<p class="page-sub">雙色水平線與垂直線元件。支援 solid／dashed／dotted 三種樣式，全域配置系統，零依賴。</p>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     水平線
+══════════════════════════════════════════════════════════ -->
+<h2>水平線 &lt;dual-hr&gt;</h2>
+
+<!-- solid -->
+<div class="card">
+  <div class="demo-label"><b>solid</b> — yellow : sky = 3:7，1px（預設）</div>
+  <dual-hr color-left="yellow" color-right="sky" ratio="3:7"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — lavender : safe = 1:1，3px</div>
+  <dual-hr color-left="lavender" color-right="safe" ratio="1:1" thickness="3px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — warning : stone = 7:3，2px</div>
+  <dual-hr color-left="warning" color-right="stone" ratio="7:3" thickness="2px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — orange : sky = 2:8，4px</div>
+  <dual-hr color-left="orange" color-right="sky" ratio="2:8" thickness="4px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — 自訂 hex：#ff3e80 : #00e5b0 = 5:5，2px</div>
+  <dual-hr color-left="#ff3e80" color-right="#00e5b0" ratio="5:5" thickness="2px"></dual-hr>
+</div>
+
+<!-- dashed -->
+<div class="card">
+  <div class="demo-label"><b>dashed</b> — yellow : sky = 3:7，1px，dash=8px gap=5px（預設）</div>
+  <dual-hr color-left="yellow" color-right="sky" ratio="3:7" line-style="dashed"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — lavender : orange = 1:1，3px，dash=10px gap=6px</div>
+  <dual-hr color-left="lavender" color-right="orange" ratio="1:1" thickness="3px"
+           line-style="dashed" dash="10px" gap="6px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — warning : safe = 7:3，2px，細密 dash=4px gap=3px</div>
+  <dual-hr color-left="warning" color-right="safe" ratio="7:3" thickness="2px"
+           line-style="dashed" dash="4px" gap="3px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — pink : info = 4:6，4px，寬鬆 dash=16px gap=8px</div>
+  <dual-hr color-left="pink" color-right="info" ratio="4:6" thickness="4px"
+           line-style="dashed" dash="16px" gap="8px"></dual-hr>
+</div>
+
+<!-- dotted -->
+<div class="card">
+  <div class="demo-label"><b>dotted</b> — yellow : sky = 5:5，4px（圓點建議 thickness ≥ dash）</div>
+  <dual-hr color-left="yellow" color-right="sky" ratio="5:5" thickness="4px"
+           line-style="dotted" dash="4px" gap="5px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — salmon : lavender = 3:7，8px，大圓點</div>
+  <dual-hr color-left="salmon" color-right="lavender" ratio="3:7" thickness="8px"
+           line-style="dotted" dash="8px" gap="6px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — safe : orange = 6:4，6px</div>
+  <dual-hr color-left="safe" color-right="orange" ratio="6:4" thickness="6px"
+           line-style="dotted" dash="6px" gap="5px"></dual-hr>
+
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — 細線 2px（退化為短方塊）— sky : pink = 1:1</div>
+  <dual-hr color-left="sky" color-right="pink" ratio="1:1" thickness="2px"
+           line-style="dotted" dash="4px" gap="4px"></dual-hr>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     垂直線
+══════════════════════════════════════════════════════════ -->
+<h2>垂直線 &lt;dual-vr&gt;</h2>
+
+<!-- solid -->
+<div class="vr-row">
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="yellow" color-bottom="sky" ratio="5:5" height="100px"></dual-vr>
+    <div class="vr-label">yellow:sky<br>5:5 · 1px · solid</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="lavender" color-bottom="orange" ratio="3:7" thickness="3px" height="100px"></dual-vr>
+    <div class="vr-label">lavender:orange<br>3:7 · 3px · solid</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="warning" color-bottom="safe" ratio="6:4" thickness="2px" height="100px"></dual-vr>
+    <div class="vr-label">warning:safe<br>6:4 · 2px · solid</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="pink" color-bottom="stone" ratio="1:1" thickness="4px" height="100px"></dual-vr>
+    <div class="vr-label">pink:stone<br>1:1 · 4px · solid</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="#ff3e80" color-bottom="#00e5b0" ratio="4:6" thickness="2px" height="100px"></dual-vr>
+    <div class="vr-label">#ff3e80:#00e5b0<br>4:6 · 2px · solid</div>
+  </div>
+</div>
+
+<!-- dashed -->
+<div class="vr-row">
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="yellow" color-bottom="sky" ratio="5:5" height="120px"
+             line-style="dashed"></dual-vr>
+    <div class="vr-label">yellow:sky<br>dashed · 預設</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="lavender" color-bottom="orange" ratio="3:7" thickness="3px" height="120px"
+             line-style="dashed" dash="10px" gap="6px"></dual-vr>
+    <div class="vr-label">lavender:orange<br>3:7 · 3px · dashed</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="warning" color-bottom="safe" ratio="6:4" thickness="2px" height="120px"
+             line-style="dashed" dash="4px" gap="3px"></dual-vr>
+    <div class="vr-label">warning:safe<br>6:4 · 細密 dashed</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="salmon" color-bottom="info" ratio="1:1" thickness="2px" height="120px"
+             line-style="dashed" dash="16px" gap="8px"></dual-vr>
+    <div class="vr-label">salmon:info<br>1:1 · 寬鬆 dashed</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="special" color-bottom="stone" ratio="7:3" thickness="2px" height="120px"
+             line-style="dashed" dash="6px" gap="4px"></dual-vr>
+    <div class="vr-label">special:stone<br>7:3 · dashed</div>
+  </div>
+</div>
+
+<!-- dotted -->
+<div class="vr-row">
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="yellow" color-bottom="sky" ratio="5:5" thickness="4px" height="120px"
+             line-style="dotted" dash="4px" gap="5px"></dual-vr>
+    <div class="vr-label">yellow:sky<br>4px · dotted</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="salmon" color-bottom="lavender" ratio="3:7" thickness="8px" height="120px"
+             line-style="dotted" dash="8px" gap="6px"></dual-vr>
+    <div class="vr-label">salmon:lavender<br>8px · 大圓點</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="safe" color-bottom="orange" ratio="6:4" thickness="6px" height="120px"
+             line-style="dotted" dash="6px" gap="5px"></dual-vr>
+    <div class="vr-label">safe:orange<br>6px · dotted</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="pink" color-bottom="info" ratio="1:1" thickness="10px" height="120px"
+             line-style="dotted" dash="10px" gap="7px"></dual-vr>
+    <div class="vr-label">pink:info<br>10px · 大圓點</div>
+  </div>
+  <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+    <dual-vr color-top="sky" color-bottom="warning" ratio="2:8" thickness="2px" height="120px"
+             line-style="dotted" dash="4px" gap="4px"></dual-vr>
+    <div class="vr-label">sky:warning<br>2px · dotted（細線）</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     alias 示範：color-left / color-right 用在 dual-vr
+══════════════════════════════════════════════════════════ -->
+<h2>別名示範</h2>
+<div class="card">
+  <div class="demo-label">
+    &lt;dual-vr&gt; 也接受 <b>color-left</b> / <b>color-right</b>，與 color-top / color-bottom 等效
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;padding:12px 0">
+    <dual-vr color-left="special" color-right="pink" ratio="4:6" thickness="3px" height="80px"></dual-vr>
+    <span style="font-size:.8rem;color:var(--stone)">← color-left="special" / color-right="pink"</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     全域配置 API
+══════════════════════════════════════════════════════════ -->
+<h2>全域配置 API</h2>
+
+<div class="card">
+  <div class="demo-label">
+    呼叫 <b>DualLine.configureHR()</b> 後所有未帶屬性的 &lt;dual-hr&gt; 立即更新
+  </div>
+  <dual-hr id="api-demo-hr"></dual-hr>
+  <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+    <button onclick="setPreset('A')"
+      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--yellow);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
+      Preset A：salmon + stone
+    </button>
+    <button onclick="setPreset('B')"
+      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--lavender);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
+      Preset B：lavender + sky · dashed
+    </button>
+    <button onclick="setPreset('C')"
+      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--safe);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
+      Preset C：safe + orange · dotted 4px
+    </button>
+  </div>
+</div>
+
+<pre>
+<span class="cmt">// 設定 &lt;dual-hr&gt; 全域預設</span>
+<span class="fn">DualLine</span>.configureHR({
+  colorLeft:  <span class="str">'salmon'</span>,
+  colorRight: <span class="str">'stone'</span>,
+  ratio:      <span class="str">'6:4'</span>,
+  thickness:  <span class="str">'2px'</span>,
+  lineStyle:  <span class="str">'dashed'</span>,
+  dash:       <span class="str">'8px'</span>,
+  gap:        <span class="str">'5px'</span>,
+});
+
+<span class="cmt">// 設定 &lt;dual-vr&gt; 全域預設</span>
+<span class="fn">DualLine</span>.configureVR({
+  colorTop:    <span class="str">'pink'</span>,
+  colorBottom: <span class="str">'info'</span>,
+  thickness:   <span class="str">'2px'</span>,
+  height:      <span class="str">'100px'</span>,
+});
+
+<span class="cmt">// 同時更新兩者（只更新共用屬性如 lineStyle）</span>
+<span class="fn">DualLine</span>.configure({ lineStyle: <span class="str">'dotted'</span>, dash: <span class="str">'4px'</span>, gap: <span class="str">'4px'</span> });
+
+<span class="cmt">// 新增自訂色票</span>
+<span class="fn">DualLine</span>.addColor(<span class="str">'brand'</span>, <span class="str">'#299459'</span>);
+<span class="cmt">// 之後即可使用 color-left="brand"</span>
+</pre>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     屬性速查表
+══════════════════════════════════════════════════════════ -->
+<h2>屬性速查</h2>
+
+<div class="card">
+  <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">&lt;dual-hr&gt; 水平線</p>
+  <table>
+    <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+    <tbody>
+      <tr><td>color-left</td><td>左段色彩（色票名稱或 CSS 色碼）</td><td>yellow</td></tr>
+      <tr><td>color-right</td><td>右段色彩</td><td>sky</td></tr>
+      <tr><td>ratio</td><td>左:右寬度比，如 3:7</td><td>5:5</td></tr>
+      <tr><td>thickness</td><td>線條高度</td><td>1px</td></tr>
+      <tr><td>margin</td><td>上下外距</td><td>8px 0</td></tr>
+      <tr><td>line-style</td><td>solid ｜ dashed ｜ dotted</td><td>solid</td></tr>
+      <tr><td>dash</td><td>虛線段長度</td><td>8px</td></tr>
+      <tr><td>gap</td><td>虛線段間距</td><td>5px</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:.8rem;color:var(--stone);margin-top:20px;margin-bottom:12px">&lt;dual-vr&gt; 垂直線</p>
+  <table>
+    <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+    <tbody>
+      <tr><td>color-top</td><td>上段色彩（可用 color-left 別名）</td><td>yellow</td></tr>
+      <tr><td>color-bottom</td><td>下段色彩（可用 color-right 別名）</td><td>sky</td></tr>
+      <tr><td>ratio</td><td>上:下高度比</td><td>5:5</td></tr>
+      <tr><td>thickness</td><td>線條寬度</td><td>1px</td></tr>
+      <tr><td>height</td><td>線條總高度</td><td>80px</td></tr>
+      <tr><td>margin</td><td>左右外距</td><td>0 8px</td></tr>
+      <tr><td>line-style</td><td>solid ｜ dashed ｜ dotted</td><td>solid</td></tr>
+      <tr><td>dash</td><td>虛線段長度</td><td>8px</td></tr>
+      <tr><td>gap</td><td>虛線段間距</td><td>5px</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     色票
+══════════════════════════════════════════════════════════ -->
+<h2>內建色票</h2>
+<div class="card">
+  <div class="palette-grid" id="palette-grid"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     Script
+══════════════════════════════════════════════════════════ -->
+<script>
+  // ── 色票格 ─────────────────────────────────────────────────
+  const PALETTE_COLORS = {
+    shell:'#c6c7bd', lavender:'#C3A5E5', special:'#b3de73',
+    warning:'#F08080', salmon:'#E5C3B3', sky:'#95c9de',
+    safe:'#299459', yellow:'#DECA4B', info:'#1E65C7',
+    stone:'#7090A8', pink:'#FFB3D9', orange:'#eda109',
+  };
+  const grid = document.getElementById('palette-grid');
+  Object.entries(PALETTE_COLORS).forEach(([name, hex]) => {
+    const el = document.createElement('div');
+    el.className = 'swatch';
+    el.innerHTML = `<span class="swatch-dot" style="background:${hex}"></span><span>${name}</span>`;
+    grid.appendChild(el);
+  });
+
+  // ── 全域配置 Demo ──────────────────────────────────────────
+  const presets = {
+    A: { colorLeft:'salmon',   colorRight:'stone',    ratio:'6:4', thickness:'2px', lineStyle:'solid'  },
+    B: { colorLeft:'lavender', colorRight:'sky',      ratio:'5:5', thickness:'2px', lineStyle:'dashed', dash:'8px',  gap:'5px' },
+    C: { colorLeft:'safe',     colorRight:'orange',   ratio:'4:6', thickness:'4px', lineStyle:'dotted', dash:'4px',  gap:'4px' },
+  };
+  function setPreset(key) {
+    // 只更新 #api-demo-hr 這一條，示範動態切換
+    const el = document.getElementById('api-demo-hr');
+    const p  = presets[key];
+    el.setAttribute('color-left',  p.colorLeft);
+    el.setAttribute('color-right', p.colorRight);
+    el.setAttribute('ratio',       p.ratio);
+    el.setAttribute('thickness',   p.thickness);
+    el.setAttribute('line-style',  p.lineStyle);
+    if (p.dash) el.setAttribute('dash', p.dash); else el.removeAttribute('dash');
+    if (p.gap)  el.setAttribute('gap',  p.gap);  else el.removeAttribute('gap');
+  }
+  // 預設套用 A
+  setPreset('A');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote.js 事後標注示範</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root {
+  --bg:#0C0D0C; --shell:#C6C7BD; --lavender:#C3A5E5; --sky:#82C8E5;
+  --ocean:#1CCAE8; --teal:#0DA591; --yellow:#E3D322; --special:#B3DE73;
+  --warning:#E6374B; --salmon:#E5C3B3; --orange:#EDA109; --indigo:#7849C9;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--shell);font-size:1.125rem;line-height:1.45;
+  font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:rgba(198,199,189,0.18);border-radius:3px}
+
+/* ── Layout ── */
+.demo-layout{display:grid;grid-template-columns:220px 1fr;grid-template-rows:auto 1fr;min-height:100vh}
+.demo-header{
+  grid-column:1/-1;
+  background:linear-gradient(120deg,rgba(195,165,229,0.09) 0%,rgba(12,13,12,0) 60%);
+  border-bottom:1px solid rgba(198,199,189,0.1);
+  padding:24px 40px;display:flex;align-items:center;gap:16px;
+}
+.demo-header h1{font-size:1.5rem;font-weight:800;color:var(--lavender)}
+.demo-header p{font-size:0.88rem;color:rgba(198,199,189,0.52);margin-top:3px}
+
+/* ── Sidebar ── */
+.demo-sidebar{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  background:rgba(198,199,189,0.025);
+  border-right:1px solid rgba(198,199,189,0.09);
+  padding:16px 0 40px;scrollbar-width:thin;
+}
+.nav-gl{font-size:0.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(198,199,189,0.32);padding:16px 18px 5px}
+.nav-a{display:flex;align-items:center;gap:7px;padding:7px 18px;
+  color:rgba(198,199,189,0.58);text-decoration:none;font-size:0.88rem;
+  border-left:2px solid transparent;transition:color .15s,background .15s,border-color .15s}
+.nav-a:hover{color:var(--shell);background:rgba(198,199,189,0.05);text-decoration:none}
+.nav-a.act{color:var(--lavender);border-left-color:var(--lavender);background:rgba(195,165,229,0.07)}
+.nav-a i{font-size:0.85rem;flex-shrink:0}
+
+/* ── Main ── */
+.demo-main{padding:36px 52px 80px;overflow-x:hidden}
+.sec-anchor{display:block;visibility:hidden;height:0;padding-top:80px;margin-top:-80px}
+.sec-hr{border:none;border-top:1px solid rgba(198,199,189,0.07);margin:52px 0}
+
+/* ── Section header ── */
+.sec-hdr{display:flex;align-items:center;gap:14px;margin-bottom:22px;
+  padding-bottom:16px;border-bottom:1px solid rgba(198,199,189,0.08)}
+.sec-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:1.25rem;flex-shrink:0}
+.sec-t h2{font-size:1.3rem;font-weight:700}
+.sec-t p{font-size:0.86rem;color:rgba(198,199,189,0.52);margin-top:3px}
+
+/* ── Demo cards ── */
+.dcard{background:rgba(198,199,189,0.033);border:1px solid rgba(198,199,189,0.08);
+  border-radius:12px;padding:22px 24px;margin-bottom:14px}
+.dcard-title{font-size:0.98rem;font-weight:700;color:var(--yellow);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{font-family:monospace;font-size:0.76rem;background:rgba(227,211,34,0.09);
+  border:1px solid rgba(227,211,34,0.19);color:var(--yellow);padding:2px 7px;border-radius:5px}
+.dcard-desc{font-size:0.86rem;color:rgba(198,199,189,0.52);margin-bottom:14px;line-height:1.45}
+
+/* ── Article area ── */
+.article-wrap{
+  background:rgba(0,0,0,0.2);border:1px solid rgba(198,199,189,0.08);
+  border-radius:10px;padding:28px 32px;font-size:1.05rem;line-height:1.7;
+}
+.article-wrap h2{font-size:1.2rem;font-weight:700;color:var(--lavender);
+  margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(195,165,229,0.18)}
+.article-wrap h2:first-child{margin-top:0}
+.article-wrap p{margin-bottom:14px;color:var(--shell)}
+.article-wrap p:last-child{margin-bottom:0}
+
+/* ── Code block ── */
+.code-blk{background:rgba(0,0,0,0.32);border:1px solid rgba(198,199,189,0.09);
+  border-radius:6px;padding:14px 18px;font-family:monospace;font-size:0.84rem;
+  color:#DBEDD8;white-space:pre;overflow-x:auto;line-height:1.6;margin-top:12px}
+.c-k{color:#82C8E5}.c-s{color:#E5C3B3}.c-c{color:rgba(198,199,189,0.38)}.c-p{color:#C3A5E5}
+
+/* ── Annotation rule list ── */
+.rule-list{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.rule-item{background:rgba(0,0,0,0.22);border-radius:8px;
+  padding:12px 16px;font-size:0.86rem;display:flex;gap:12px;align-items:flex-start}
+.rule-badge{flex-shrink:0;padding:2px 8px;border-radius:4px;font-size:0.75rem;
+  font-weight:700;font-family:monospace;line-height:1.4}
+.rule-detail{flex:1;line-height:1.5;color:var(--shell)}
+.rule-detail .hi{color:var(--yellow);font-weight:700}
+.rule-detail .scope{color:var(--ocean);font-family:monospace;font-size:0.82rem}
+.rule-detail .ctx{color:var(--teal);font-size:0.82rem}
+
+/* ── Panel output ── */
+.panel-target{
+  background:rgba(0,0,0,0.22);border:1px dashed rgba(198,199,189,0.15);
+  border-radius:8px;padding:16px;min-height:56px;margin-top:12px;
+  color:rgba(198,199,189,0.35);font-size:0.88rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.panel-target:has(.xpop-panel-wrap){display:block;padding:0}
+
+/* ── Controls ── */
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cbtn{background:rgba(198,199,189,0.08);border:1px solid rgba(198,199,189,0.16);
+  color:var(--shell);border-radius:8px;padding:8px 14px;font-size:1rem;
+  cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .15s}
+.cbtn:hover{background:rgba(198,199,189,0.14)}
+.cbtn.danger{border-color:rgba(230,55,75,0.3);color:var(--warning)}
+.cbtn.danger:hover{background:rgba(230,55,75,0.1)}
+
+/* ── Config table ── */
+.cfg-table{width:100%;border-collapse:collapse;font-size:0.88rem}
+.cfg-table th{text-align:left;padding:9px 14px;font-size:0.72rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:rgba(198,199,189,0.38);
+  border-bottom:1px solid rgba(198,199,189,0.09)}
+.cfg-table td{padding:9px 14px;border-bottom:1px solid rgba(198,199,189,0.05);vertical-align:top}
+.cfg-table tr:last-child td{border-bottom:none}
+.ck{font-family:monospace;color:var(--sky)}
+.cv{font-family:monospace;color:var(--salmon)}
+.cd{color:rgba(198,199,189,0.52);font-size:0.84rem}
+
+/* ── Status banner ── */
+.status-banner{padding:8px 14px;border-radius:6px;font-size:0.85rem;margin-top:10px;
+  background:rgba(179,222,115,0.1);border:1px solid rgba(179,222,115,0.2);
+  color:var(--special);display:none}
+.status-banner.show{display:block}
+</style>
+</head>
+<body>
+<div class="demo-layout">
+
+<!-- HEADER -->
+<header class="demo-header">
+  <div style="font-size:2rem;color:var(--lavender);flex-shrink:0">
+    <i class="bi bi-pencil-square"></i>
+  </div>
+  <div>
+    <h1>bp-popnote.js — 事後標注示範</h1>
+    <p>BpPopnote.annotate() ：對已存在文字事後掛上 popover，文章 HTML 完全不動</p>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="demo-sidebar">
+  <div class="nav-gl">示範模式</div>
+  <a class="nav-a act" href="#sec-within"><i class="bi bi-geo-alt-fill"></i>within 定位</a>
+  <a class="nav-a" href="#sec-context"><i class="bi bi-search-heart"></i>context 前後文</a>
+  <a class="nav-a" href="#sec-occurrence"><i class="bi bi-list-ol"></i>occurrence 第 N 個</a>
+  <a class="nav-a" href="#sec-mixed"><i class="bi bi-layers-half"></i>混合使用</a>
+  <a class="nav-a" href="#sec-panel"><i class="bi bi-layout-sidebar-reverse"></i>panel 模式</a>
+  <a class="nav-a" href="#sec-clear"><i class="bi bi-eraser-fill"></i>clearAnnotations</a>
+  <div class="nav-gl">參考</div>
+  <a class="nav-a" href="#sec-api"><i class="bi bi-code-slash"></i>完整 API</a>
+</nav>
+
+<!-- MAIN -->
+<main class="demo-main">
+
+<!-- ═══ 示範文章說明 ═══ -->
+<div class="dcard" style="border-color:rgba(195,165,229,0.2);background:rgba(195,165,229,0.04)">
+  <div class="dcard-title" style="color:var(--lavender)">
+    <i class="bi bi-info-circle-fill"></i> 示範文章結構
+  </div>
+  <p class="dcard-desc" style="margin-bottom:0">
+    下方各節共用同一篇文章，分成三個 <code>&lt;section&gt;</code>，id 分別為 <code>#sec-ai-1</code>、<code>#sec-ai-2</code>、<code>#sec-ai-3</code>。
+    「模型」、「訓練」、「損失函數」等詞彙在多個段落重複出現，用來驗證各種定位策略。
+    文章 HTML 本身完全不含任何 <code>data-popover-*</code> 屬性，所有標注均由 <code>BpPopnote.annotate()</code> 在 DOMContentLoaded 後注入。
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════
+     within 定位
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-within"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(28,202,232,0.11)">
+    <i class="bi bi-geo-alt-fill" style="color:var(--ocean)"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:var(--ocean)">within — 限定搜尋範圍</h2>
+    <p>最常用的定位策略，把搜尋鎖在一個 CSS selector 所圈出的 DOM 區塊內</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title">規則設計 <span class="chip">within</span></div>
+  <p class="dcard-desc">「模型」在第一節出現一次，在第二節出現兩次。加上 <code>within</code> 後每條規則各自只在指定 section 內搜尋，互不干擾。</p>
+  <div class="rule-list">
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(195,165,229,0.15);color:#C3A5E5">規則 A</span>
+      <div class="rule-detail">
+        <span class="hi">「模型」</span> 限定在 <span class="scope">#sec-ai-1</span> — 解釋「機器學習模型」基礎定義（lavender 主題）
+      </div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(13,165,145,0.15);color:#0DA591">規則 B</span>
+      <div class="rule-detail">
+        <span class="hi">「訓練集」</span> 限定在 <span class="scope">#sec-ai-1</span> — 解釋訓練集概念（teal 主題）
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="article-wrap" id="sec-ai-1">
+  <h2>第一節：基礎概念</h2>
+  <p>機器學習的核心是讓電腦從資料中自動學習規律，而不需要人工手動設計規則。為了達到這個目標，我們需要建構一個模型，它本質上是一個數學函數，負責將輸入資料映射到預測的輸出結果。</p>
+  <p>模型的品質取決於訓練集的品質與規模。訓練集是用來讓模型調整內部參數的標記資料集合。若訓練集過小或帶有偏差，模型的泛化能力將大打折扣。</p>
+</div>
+
+<hr class="sec-hr">
+
+<!-- ══════════════════════════════════════
+     context 前後文
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-context"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(13,165,145,0.11)">
+    <i class="bi bi-search-heart" style="color:var(--teal)"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:var(--teal)">context — 前後文字確認</h2>
+    <p>when 同一個詞在同一 section 出現多次，加上 before / after 確認周圍文字</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title">規則設計 <span class="chip">within</span> + <span class="chip">context</span></div>
+  <p class="dcard-desc">第二節裡「模型」出現兩次：一次是「預訓練模型」，一次是「基礎模型」。用 <code>context.before</code> 分別定位，各給不同解釋。</p>
+  <div class="rule-list">
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(130,200,229,0.15);color:#82C8E5">規則 C</span>
+      <div class="rule-detail">
+        <span class="hi">「模型」</span> within <span class="scope">#sec-ai-2</span>，
+        <span class="ctx">context.before: "預訓練"</span> — 命中「預訓練模型」（sky 主題）
+      </div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(179,222,115,0.15);color:#B3DE73">規則 D</span>
+      <div class="rule-detail">
+        <span class="hi">「模型」</span> within <span class="scope">#sec-ai-2</span>，
+        <span class="ctx">context.before: "基礎"</span> — 命中「基礎模型」（special 主題）
+      </div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(237,161,9,0.15);color:#EDA109">規則 E</span>
+      <div class="rule-detail">
+        <span class="hi">「損失函數」</span> within <span class="scope">#sec-ai-2</span>，
+        <span class="ctx">context.after: "最小化"</span> — 確認是「最小化損失函數」語境（orange 主題）
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="article-wrap" id="sec-ai-2">
+  <h2>第二節：訓練流程</h2>
+  <p>現代深度學習廣泛採用預訓練模型策略：先在超大規模語料上學習通用表示，再針對特定任務進行微調，大幅降低了從零訓練的成本。</p>
+  <p>另一種常見做法是以輕量化的基礎模型為起點，再透過蒸餾技術壓縮為更小的可部署版本。在訓練流程中，最小化損失函數是核心目標，優化器（如 Adam）透過反向傳播不斷調整模型權重，直到損失函數收斂為止。</p>
+</div>
+
+<hr class="sec-hr">
+
+<!-- ══════════════════════════════════════
+     occurrence 第 N 個
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-occurrence"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(227,211,34,0.1)">
+    <i class="bi bi-list-ol" style="color:var(--yellow)"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:var(--yellow)">occurrence — 指定第 N 個</h2>
+    <p>within 範圍內找到多個符合、且 context 無法區分時，直接指定要第幾個</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title">規則設計 <span class="chip">within</span> + <span class="chip">occurrence</span></div>
+  <p class="dcard-desc">第三節「訓練」出現兩次。第一個是「訓練資料」，第二個是「模型訓練」。兩者語境類似，context 難以區分，改用 occurrence 直接指定。</p>
+  <div class="rule-list">
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(227,211,34,0.12);color:#E3D322">規則 F</span>
+      <div class="rule-detail">
+        <span class="hi">「訓練」</span> within <span class="scope">#sec-ai-3</span>，
+        <span class="ctx">occurrence: 1</span> → 第一個「訓練資料」（note 主題）
+      </div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-badge" style="background:rgba(120,73,201,0.15);color:#7849C9">規則 G</span>
+      <div class="rule-detail">
+        <span class="hi">「訓練」</span> within <span class="scope">#sec-ai-3</span>，
+        <span class="ctx">occurrence: 2</span> → 第二個「模型訓練」（indigo 主題）
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="article-wrap" id="sec-ai-3">
+  <h2>第三節：常見挑戰</h2>
+  <p>在實務上，訓練資料的品質往往比資料量更重要。標注錯誤、類別不平衡或資料洩漏，都可能導致模型在評估集上表現良好，卻在實際部署後失效。</p>
+  <p>另一項挑戰是計算成本。現代大型語言模型訓練動輒耗費數千個 GPU 小時，如何在有限預算內達到足夠精度，是業界持續研究的課題。</p>
+</div>
+
+<hr class="sec-hr">
+
+<!-- ══════════════════════════════════════
+     混合使用
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-mixed"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(229,195,179,0.11)">
+    <i class="bi bi-layers-half" style="color:var(--salmon)"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:var(--salmon)">混合使用</h2>
+    <p>手動 data-popover-* 與 annotate() 在同一篇文章中共存</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title">場景說明</div>
+  <p class="dcard-desc">
+    文章作者在寫稿時就預知「過擬合」需要解釋，直接在 HTML 加了 <code>data-popover-content</code>。
+    事後編輯者再用 <code>annotate()</code> 追加「正則化」的解釋，兩種方式互不影響。
+  </p>
+</div>
+
+<div class="article-wrap" id="sec-ai-mix">
+  <h2>附加說明：泛化能力</h2>
+  <p>
+    當模型在訓練集上表現極佳但在測試集上大幅衰退時，稱為
+    <span data-popover-title="過擬合" data-popover-content="&lt;p&gt;模型過度學習了訓練資料的雜訊，失去泛化能力。&lt;br&gt;常見對策：Dropout、資料增強、提早停止。&lt;/p&gt;" data-popover-theme="warning">
+      過擬合
+    </span>
+    （Overfitting）。此時需要使用正則化技術來約束模型的複雜度。
+  </p>
+</div>
+
+<hr class="sec-hr">
+
+<!-- ══════════════════════════════════════
+     panel 模式
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-panel"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(255,145,215,0.1)">
+    <i class="bi bi-layout-sidebar-reverse" style="color:#FF91D7"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:#FF91D7">panel 模式</h2>
+    <p>annotate() 支援 panel 屬性，點擊後內容渲染到頁面固定區域而非浮動 popover</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title">規則設計 <span class="chip">panel</span></div>
+  <p class="dcard-desc">
+    「反向傳播」點擊後內容出現在右側固定面板 <code>#annot-panel</code> 而非浮動框，適合需要顯示較長說明的情境。點第二次同一詞可切換關閉。
+  </p>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div class="article-wrap" id="sec-ai-bp">
+    <h2>梯度下降與反向傳播</h2>
+    <p>反向傳播演算法是深度學習的基礎，它利用鏈式法則計算每個參數對損失的梯度，再由梯度下降更新權重。理解反向傳播是掌握神經網路訓練的關鍵。</p>
+  </div>
+  <div>
+    <div style="font-size:0.8rem;color:rgba(198,199,189,0.45);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase">
+      ◦ 面板輸出 #annot-panel
+    </div>
+    <div class="panel-target" id="annot-panel">點擊文章中「反向傳播」查看面板輸出</div>
+  </div>
+</div>
+
+<hr class="sec-hr">
+
+<!-- ══════════════════════════════════════
+     clearAnnotations
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-clear"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(230,55,75,0.1)">
+    <i class="bi bi-eraser-fill" style="color:var(--warning)"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:var(--warning)">clearAnnotations()</h2>
+    <p>移除所有或指定範圍的 mark.bpn-annotated，恢復原始 DOM</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title"><span class="chip">clearAnnotations()</span> <span class="chip">clearAnnotations(scope)</span></div>
+  <p class="dcard-desc">不帶參數清除全頁；帶 CSS selector 只清除該範圍。清除後 DOM 恢復為無標注狀態，再次呼叫 <code>annotate()</code> 可重新注入。</p>
+  <div class="ctrl-row">
+    <button class="cbtn danger" onclick="safeClear()">
+      <i class="bi bi-eraser-fill"></i> 清除全頁所有標注
+    </button>
+    <button class="cbtn danger" onclick="safeClear('#sec-ai-2')">
+      <i class="bi bi-eraser"></i> 只清除第二節 (#sec-ai-2)
+    </button>
+    <button class="cbtn" onclick="reinjectAll()">
+      <i class="bi bi-arrow-counterclockwise"></i> 重新注入全部
+    </button>
+  </div>
+  <div class="status-banner" id="clear-status"></div>
+</div>
+
+<hr class="sec-hr">
+
+<!-- ══════════════════════════════════════
+     完整 API 參考
+══════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-api"></span>
+<div class="sec-hdr">
+  <div class="sec-ico" style="background:rgba(179,222,115,0.1)">
+    <i class="bi bi-code-slash" style="color:var(--special)"></i>
+  </div>
+  <div class="sec-t">
+    <h2 style="color:var(--special)">完整 API 參考</h2>
+    <p>BpPopnote.annotate() 規則物件全屬性說明</p>
+  </div>
+</div>
+
+<div class="dcard">
+  <div class="dcard-title" style="margin-bottom:12px">規則物件屬性</div>
+  <table class="cfg-table">
+    <thead><tr><th>屬性</th><th>必填</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="ck">text</td><td class="cv">✓</td><td class="cd">要搜尋並標注的文字字串</td></tr>
+      <tr><td class="ck">within</td><td></td><td class="cd">CSS selector，限定搜尋範圍；強烈建議填寫</td></tr>
+      <tr><td class="ck">context.before</td><td></td><td class="cd">要求 text 前方（同區塊內）包含此字串才命中</td></tr>
+      <tr><td class="ck">context.after</td><td></td><td class="cd">要求 text 後方（同區塊內）包含此字串才命中</td></tr>
+      <tr><td class="ck">occurrence</td><td></td><td class="cd">第幾個符合的（1-based，預設 1）</td></tr>
+      <tr><td class="ck">title</td><td></td><td class="cd">popover 標題（支援 HTML）</td></tr>
+      <tr><td class="ck">content</td><td></td><td class="cd">popover 內文（支援 HTML）</td></tr>
+      <tr><td class="ck">target</td><td></td><td class="cd">指向 &lt;template&gt; 的 selector，content 的替代方案</td></tr>
+      <tr><td class="ck">theme</td><td></td><td class="cd">主題名稱（lavender / sky / ocean / teal / note / warning / special / salmon / pink / orange / indigo / info / focus / vanilla / success / safe）</td></tr>
+      <tr><td class="ck">placement</td><td></td><td class="cd">top（預設）/ bottom / left / right</td></tr>
+      <tr><td class="ck">panel</td><td></td><td class="cd">CSS selector，指定 panel 容器；點擊後渲染到該元素而非浮動</td></tr>
+      <tr><td class="ck">modal</td><td></td><td class="cd">true / 'dialog' / 'start' / 'end' / 'top' / 'bottom' — 以 modal 或 offcanvas 顯示</td></tr>
+      <tr><td class="ck">hint</td><td></td><td class="cd">false 隱藏底線虛線提示</td></tr>
+      <tr><td class="ck">label</td><td></td><td class="cd">panel 模式的來源標籤文字（預設取 text 本身）</td></tr>
+      <tr><td class="ck">maxwidth</td><td></td><td class="cd">覆蓋 popover 最大寬度</td></tr>
+      <tr><td class="ck">fontsize</td><td></td><td class="cd">覆蓋 popover 字體大小</td></tr>
+      <tr><td class="ck">arrow</td><td></td><td class="cd">false 隱藏箭頭</td></tr>
+      <tr><td class="ck">offset</td><td></td><td class="cd">觸發元素與 popover 的像素距離（預設 8）</td></tr>
+      <tr><td class="ck">interval</td><td></td><td class="cd">carousel 自動播放毫秒</td></tr>
+      <tr><td class="ck">carouselAnim</td><td></td><td class="cd">slide（預設）/ crossfade</td></tr>
+    </tbody>
+  </table>
+  <div class="code-blk"><span class="c-c">// 示範：同一篇文章的完整標注規則</span>
+BpPopnote.annotate([
+
+  <span class="c-c">// ── within 定位 ──────────────────────────────────────</span>
+  { <span class="c-k">text</span>: <span class="c-s">'模型'</span>,    <span class="c-k">within</span>: <span class="c-s">'#sec-ai-1'</span>,
+    <span class="c-k">title</span>: <span class="c-s">'機器學習模型'</span>, <span class="c-k">content</span>: <span class="c-s">'...'</span>, <span class="c-k">theme</span>: <span class="c-s">'lavender'</span> },
+
+  <span class="c-c">// ── context 前後文 ────────────────────────────────────</span>
+  { <span class="c-k">text</span>: <span class="c-s">'模型'</span>,    <span class="c-k">within</span>: <span class="c-s">'#sec-ai-2'</span>,
+    <span class="c-k">context</span>: { <span class="c-k">before</span>: <span class="c-s">'預訓練'</span> },
+    <span class="c-k">title</span>: <span class="c-s">'預訓練模型'</span>, <span class="c-k">content</span>: <span class="c-s">'...'</span>, <span class="c-k">theme</span>: <span class="c-s">'sky'</span>    },
+
+  { <span class="c-k">text</span>: <span class="c-s">'模型'</span>,    <span class="c-k">within</span>: <span class="c-s">'#sec-ai-2'</span>,
+    <span class="c-k">context</span>: { <span class="c-k">before</span>: <span class="c-s">'基礎'</span> },
+    <span class="c-k">title</span>: <span class="c-s">'基礎模型'</span>, <span class="c-k">content</span>: <span class="c-s">'...'</span>, <span class="c-k">theme</span>: <span class="c-s">'special'</span> },
+
+  <span class="c-c">// ── occurrence 第 N 個 ───────────────────────────────</span>
+  { <span class="c-k">text</span>: <span class="c-s">'訓練'</span>,    <span class="c-k">within</span>: <span class="c-s">'#sec-ai-3'</span>,
+    <span class="c-k">occurrence</span>: <span class="c-p">1</span>,
+    <span class="c-k">title</span>: <span class="c-s">'訓練資料'</span>, <span class="c-k">theme</span>: <span class="c-s">'note'</span>                  },
+
+  { <span class="c-k">text</span>: <span class="c-s">'訓練'</span>,    <span class="c-k">within</span>: <span class="c-s">'#sec-ai-3'</span>,
+    <span class="c-k">occurrence</span>: <span class="c-p">2</span>,
+    <span class="c-k">title</span>: <span class="c-s">'模型訓練'</span>, <span class="c-k">theme</span>: <span class="c-s">'indigo'</span>               },
+
+  <span class="c-c">// ── panel 模式 ────────────────────────────────────────</span>
+  { <span class="c-k">text</span>: <span class="c-s">'反向傳播'</span>, <span class="c-k">within</span>: <span class="c-s">'#sec-ai-bp'</span>,
+    <span class="c-k">panel</span>: <span class="c-s">'#annot-panel'</span>, <span class="c-k">theme</span>: <span class="c-s">'pink'</span>,
+    <span class="c-k">title</span>: <span class="c-s">'反向傳播'</span>, <span class="c-k">content</span>: <span class="c-s">'...'</span>                  },
+]);</div>
+</div>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="./bp-popnote.js"></script>
+<script>
+'use strict';
+
+/* ── 標注規則 ── */
+var RULES = [
+  /* ─ A: within only ─ */
+  {
+    text: '模型', within: '#sec-ai-1',
+    title: '機器學習模型',
+    content: '<p>模型是一個數學函數，將輸入資料映射到預測輸出。</p><p>常見形式包括線性迴歸、決策樹、神經網路等。</p>',
+    theme: 'lavender',
+  },
+  /* ─ B: within only ─ */
+  {
+    text: '訓練集', within: '#sec-ai-1',
+    title: '訓練集（Training Set）',
+    content: '<p>用來讓模型學習的有標記資料集合。</p><p>訓練集、驗證集、測試集三者應完全獨立，避免資料洩漏。</p>',
+    theme: 'teal',
+  },
+  /* ─ C: context.before ─ */
+  {
+    text: '模型', within: '#sec-ai-2',
+    context: { before: '預訓練' },
+    title: '預訓練模型（Pre-trained Model）',
+    content: '<p>已在大規模語料上完成第一階段訓練的模型，如 BERT、GPT 系列。</p><p>可直接使用或針對下游任務微調，大幅節省資源。</p>',
+    theme: 'sky',
+  },
+  /* ─ D: context.before ─ */
+  {
+    text: '模型', within: '#sec-ai-2',
+    context: { before: '基礎' },
+    title: '基礎模型（Foundation Model）',
+    content: '<p>以輕量化架構為基底，透過知識蒸餾或量化壓縮後便於邊緣部署的版本。</p>',
+    theme: 'special',
+  },
+  /* ─ E: context.after ─ */
+  {
+    text: '損失函數', within: '#sec-ai-2',
+    context: { after: '收斂' },
+    title: '損失函數（Loss Function）',
+    content: '<p>量化模型預測與真實標籤差距的函數，訓練目標是讓它最小化。</p><p>常見：MSE、Cross-Entropy、Focal Loss。</p>',
+    theme: 'orange',
+  },
+  /* ─ F: occurrence 1 ─ */
+  {
+    text: '訓練', within: '#sec-ai-3',
+    occurrence: 1,
+    title: '訓練資料品質',
+    content: '<p>資料品質 > 資料數量。標注錯誤率超過 5% 就會顯著影響最終模型表現。</p><p>常見問題：類別不平衡、標注歧義、資料洩漏。</p>',
+    theme: 'note',
+  },
+  /* ─ G: occurrence 2 ─ */
+  {
+    text: '訓練', within: '#sec-ai-3',
+    occurrence: 2,
+    title: '大型模型訓練成本',
+    content: '<p>訓練 GPT-4 級別的模型估計耗費超過 10,000 A100 GPU 天，電費與租用成本動輒數千萬美元。</p><p>效率改進方向：混合精度、梯度累積、模型並行。</p>',
+    theme: 'indigo',
+    placement: 'bottom',
+  },
+  /* ─ Mixed: 正則化（追加） ─ */
+  {
+    text: '正則化', within: '#sec-ai-mix',
+    title: '正則化（Regularization）',
+    content: '<p>透過在損失函數中加入懲罰項（L1 / L2 / Dropout）來限制模型複雜度，防止過擬合。</p>',
+    theme: 'success',
+  },
+  /* ─ Panel mode ─ */
+  {
+    text: '反向傳播', within: '#sec-ai-bp',
+    panel: '#annot-panel',
+    label: '反向傳播演算法',
+    theme: 'pink',
+    title: '反向傳播（Backpropagation）',
+    content: [
+      '<section>',
+      '<p><strong style="color:#FF91D7">定義</strong>：利用鏈式法則將輸出損失逐層反向傳遞，計算每個參數的梯度。</p>',
+      '<p>每次前向計算完成後，框架（PyTorch / TensorFlow）自動建構計算圖並執行反向傳播。</p>',
+      '</section>',
+      '<section>',
+      '<p><strong style="color:#FF91D7">公式核心</strong></p>',
+      '<p>對參數 θ 的梯度：∂L/∂θ = ∂L/∂ŷ · ∂ŷ/∂θ</p>',
+      '<p>每一層都藉由鏈式法則串接，從輸出層一路傳回輸入層。</p>',
+      '</section>',
+    ].join(''),
+  },
+];
+
+/* ── 守衛：確認 bp-popnote.js 已載入正確版本 ── */
+function guardCheck() {
+  if (typeof window.BpPopnote === 'undefined') {
+    var banner = document.createElement('div');
+    banner.style.cssText =
+      'position:fixed;top:0;left:0;right:0;z-index:9999;padding:14px 20px;' +
+      'background:#E6374B;color:#fff;font-size:1rem;font-weight:700;text-align:center';
+    banner.textContent =
+      '⚠ BpPopnote 未載入 — 請確認使用的是輸出版 bp-popnote.js（含 window.BpPopnote），而非原始上傳版本';
+    document.body.prepend(banner);
+    console.error('[Demo] BpPopnote is not defined — 請使用輸出版 bp-popnote.js');
+    return false;
+  }
+  return true;
+}
+
+/* ── 注入並追蹤 ── */
+function injectAll() {
+  if (!guardCheck()) return;
+  BpPopnote.annotate(RULES);
+  showStatus('已注入 ' + RULES.length + ' 條標注規則', 'show');
+}
+
+function reinjectAll() {
+  if (!guardCheck()) return;
+  BpPopnote.clearAnnotations();
+  setTimeout(function () {
+    BpPopnote.annotate(RULES);
+    showStatus('已重新注入 ' + RULES.length + ' 條標注規則', 'show');
+  }, 80);
+}
+
+function safeClear(scope) {
+  if (!guardCheck()) return;
+  BpPopnote.clearAnnotations(scope);
+}
+
+function showStatus(msg, cls) {
+  var el = document.getElementById('clear-status');
+  el.textContent = msg;
+  el.className = 'status-banner ' + cls;
+  setTimeout(function () { el.className = 'status-banner'; }, 3000);
+}
+
+/* ── 覆寫 clear 按鈕行為以顯示狀態 ── */
+document.querySelectorAll('.cbtn.danger').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    setTimeout(function () {
+      var remaining = document.querySelectorAll('mark.bpn-annotated').length;
+      showStatus('已清除，頁面剩餘標注：' + remaining + ' 個', 'show');
+    }, 50);
+  });
+});
+
+/* ── 側邊欄 active 連動 ── */
+(function () {
+  var links   = Array.from(document.querySelectorAll('.nav-a'));
+  var anchors = links.map(function (l) {
+    return document.getElementById((l.getAttribute('href') || '').replace('#', ''));
+  });
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var idx = anchors.indexOf(e.target);
+      if (idx < 0) return;
+      links.forEach(function (l) { l.classList.remove('act'); });
+      links[idx].classList.add('act');
+    });
+  }, { rootMargin: '-15% 0px -72% 0px', threshold: 0 });
+  anchors.forEach(function (a) { if (a) io.observe(a); });
+})();
+
+/* ── 頁面就緒後注入 ── */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectAll);
+} else {
+  injectAll(); // 頁面已就緒時直接執行
+}
+</script>
+</body>
+</html>

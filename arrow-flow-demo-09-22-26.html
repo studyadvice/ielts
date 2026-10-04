@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>arrow-flow 元件示範</title>
+  <script src="arrow-flow.js"></script>
+  <style>
+    /* ── Reset & base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0C0D0C;
+      --shell:    #C6C7BD;
+      --lavender: #C3A5E5;
+      --sky:      #82C8E5;
+      --warning:  #E6374B;
+      --salmon:   #E5C3B3;
+      --ocean:    #1CCAE8;
+      --safe:     #27AE60;
+      --teal:     #0DA591;
+      --vanilla:  #DBEDD8;
+      --yellow:   #E3D322;
+      --focus:    #D4FFFC;
+      --special:  #B3DE73;
+      --info:     #2351DB;
+      --indigo:   #7849C9;
+      --pink:     #FF91D7;
+      --orange:   #EDA109;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--shell);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 1.125rem;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 7px; background: #111312; }
+    ::-webkit-scrollbar-thumb { background: rgba(198,199,189,0.28); border-radius: 4px; }
+
+    /* ── Layout ─────────────────────────────────────────────────── */
+    .wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* ── Page header ─────────────────────────────────────────────── */
+    .page-hdr {
+      border-bottom: 1px solid rgba(130,200,229,0.15);
+      padding: 52px 0 44px;
+      margin-bottom: 64px;
+    }
+    .page-hdr .wrap { display: flex; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+    .hdr-left h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--sky);
+      line-height: 1.1;
+    }
+    .hdr-left p {
+      margin-top: 8px;
+      color: rgba(198,199,189,0.76);
+      font-size: 1rem;
+    }
+    .hdr-badge {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: rgba(130,200,229,0.12);
+      border: 1px solid rgba(130,200,229,0.3);
+      color: var(--sky);
+    }
+
+    /* ── Section wrapper ─────────────────────────────────────────── */
+    .demo-sec {
+      margin-bottom: 80px;
+    }
+    .sec-head {
+      margin-bottom: 20px;
+    }
+    .sec-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--lavender);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .sec-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(195,165,229,0.14);
+      border: 1.5px solid rgba(195,165,229,0.5);
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--lavender);
+      flex-shrink: 0;
+    }
+    .sec-desc {
+      color: rgba(198,199,189,0.72);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .sec-desc code {
+      background: rgba(195,165,229,0.12);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.9em;
+      color: var(--lavender);
+    }
+
+    /* ── Divider ─────────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(198,199,189,0.09);
+      margin: 72px 0;
+    }
+
+    /* ── Content helpers (inside flow-step bodies) ───────────────── */
+    .af-ct ul  { padding-left: 20px; }
+    .af-ct li  { margin-bottom: 4px; }
+    .af-ct b, .af-ct strong { color: var(--sky); font-weight: 700; }
+    .af-ct em  { color: var(--lavender); font-style: normal; font-weight: 600; }
+    .af-ct a   { color: var(--ocean); }
+    .af-ct code {
+      background: rgba(195,165,229,0.12);
+      padding: 2px 6px; border-radius: 3px;
+      font-family: monospace; font-size: 0.9em;
+      color: var(--lavender);
+    }
+    .af-ct p { margin-top: 8px; }
+    .af-ct p:first-child { margin-top: 0; }
+
+    /* ── Result panel (on-complete target) ──────────────────────── */
+    .result-panel {
+      margin-top: 24px;
+      padding: 22px 26px;
+      background: rgba(39,174,96,0.10);
+      border: 1.5px solid rgba(39,174,96,0.45);
+      border-radius: 8px;
+    }
+    .result-panel h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--safe);
+      margin-bottom: 8px;
+    }
+    .result-panel p {
+      color: rgba(179,222,115,0.86);
+      margin: 0;
+    }
+
+    /* ── Arrow-tip showcase ──────────────────────────────────────── */
+    .tip-rows { display: flex; flex-direction: column; gap: 16px; }
+    .tip-row  {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .tip-label {
+      width: 42px;
+      flex-shrink: 0;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--orange);
+      text-align: right;
+    }
+    .tip-row arrow-flow { flex: 1; }
+
+    /* ── Global config demo ──────────────────────────────────────── */
+    .config-demo-wrap {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .config-code {
+      background: #0f100f;
+      border: 1px solid rgba(195,165,229,0.22);
+      border-radius: 7px;
+      padding: 18px 20px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: var(--special);
+      flex: 0 0 auto;
+      max-width: 380px;
+      line-height: 1.5;
+    }
+    .config-code .c-key   { color: var(--lavender); }
+    .config-code .c-str   { color: var(--salmon); }
+    .config-code .c-num   { color: var(--yellow); }
+    .config-code .c-fn    { color: var(--sky); }
+    .config-code .c-cm    { color: rgba(198,199,189,0.4); }
+    .config-result        { flex: 1; min-width: 280px; }
+
+    /* ── Bootstrap-style alert for event log ────────────────────── */
+    .ev-log {
+      background: #0f100f;
+      border: 1px solid rgba(198,199,189,0.14);
+      border-radius: 7px;
+      padding: 14px;
+      min-height: 72px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .ev-placeholder { color: rgba(198,199,189,0.34); font-size: 0.95rem; }
+    .ev-entry {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      padding: 7px 12px;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    .ev-entry:last-child { margin-bottom: 0; }
+    .ev-step {
+      background: rgba(35,81,219,0.16);
+      border: 1px solid rgba(35,81,219,0.45);
+      color: var(--sky);
+    }
+    .ev-done {
+      background: rgba(39,174,96,0.14);
+      border: 1px solid rgba(39,174,96,0.45);
+      color: var(--special);
+    }
+    .ev-time {
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: rgba(198,199,189,0.4);
+      flex-shrink: 0;
+    }
+    .ev-msg { flex: 1; }
+    .ev-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: monospace;
+      opacity: 0.76;
+    }
+
+    /* ── API reference code block ────────────────────────────────── */
+    .api-block {
+      background: #0f100f;
+      border: 1px solid rgba(195,165,229,0.18);
+      border-radius: 7px;
+      padding: 20px 22px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      color: var(--shell);
+    }
+    .api-block pre { margin: 0; white-space: pre; color: inherit; background: transparent; }
+    .a-attr  { color: var(--sky); }
+    .a-val   { color: var(--salmon); }
+    .a-cm    { color: rgba(198,199,189,0.38); }
+    .a-tag   { color: var(--lavender); }
+    .a-js    { color: var(--special); }
+
+    /* ── Palette swatch row ──────────────────────────────────────── */
+    .swatch-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .swatch-chip {
+      width: 36px; height: 36px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .swatch-name {
+      font-size: 0.72rem;
+      font-family: monospace;
+      color: rgba(198,199,189,0.6);
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 36px 0 52px;
+      color: rgba(198,199,189,0.35);
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(198,199,189,0.09);
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Page Header ════════════════════════════════════════════════════ -->
+  <header class="page-hdr">
+    <div class="wrap">
+      <div class="hdr-left">
+        <h1>&lt;arrow-flow&gt;</h1>
+        <p>步驟式流程元件 · 品牌色系 · 無 Shadow DOM · 無外部依賴</p>
+      </div>
+      <div class="hdr-badge">
+        <span class="badge">v1.0</span>
+        <span class="badge">Custom Element</span>
+        <span class="badge">No dependencies</span>
+        <span class="badge">09/22/26</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- ══ DEMO 1: Basic ══════════════════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">1</span>基本用法
+        </h2>
+        <p class="sec-desc">
+          <code>theme="sky"</code> · <code>gap="72px"</code> · <code>animation="fade"</code>（預設）·
+          點擊箭頭展開下一步
+        </p>
+      </div>
+
+      <arrow-flow theme="sky" gap="72px">
+        <flow-step title="填寫申請表">
+          上傳所需文件並填寫基本資料。
+          <ul>
+            <li>身分證正反面掃描</li>
+            <li>戶口名簿影本</li>
+            <li>最近三個月薪資單</li>
+          </ul>
+        </flow-step>
+        <flow-step title="資料審核">
+          送交審核部門，通常需要 <strong>3 至 5 個工作天</strong>。
+          審核期間可透過會員中心查詢即時進度。
+        </flow-step>
+        <flow-step title="核准通知">
+          審核完成後，系統將以 <em>簡訊</em> 及 <em>電子郵件</em> 雙重通知。
+          核准後請於 30 天內完成後續手續。
+        </flow-step>
+      </arrow-flow>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 2: Color Override ══════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">2</span>顏色覆蓋
+        </h2>
+        <p class="sec-desc">
+          <code>theme="teal"</code> 設定全域色 · 第 2 步驟個別設定
+          <code>header-color="warning"</code> · <code>border-color="orange"</code> ·
+          <code>arrow-tip="lg"</code>
+        </p>
+      </div>
+
+      <arrow-flow theme="teal" arrow-tip="lg" gap="80px">
+        <flow-step title="輸入訂單資料">
+          填寫收件人資訊及訂購品項。支援多筆批次上傳（CSV 格式），
+          單次最多 500 筆。
+        </flow-step>
+        <flow-step title="⚠ 付款驗證" header-color="warning" border-color="orange">
+          <strong>請注意：</strong>此步驟將進行信用卡授權確認。
+          授權失敗時訂單將自動取消。
+          <p>請確認以下事項已完成：</p>
+          <ul>
+            <li>卡片有效期限未到期</li>
+            <li>帳戶餘額充足</li>
+            <li>已啟用網路交易功能</li>
+          </ul>
+        </flow-step>
+        <flow-step title="訂單確認完成">
+          付款成功後，訂單號碼將顯示於此頁面並同步寄送確認信。
+          標準配送時間為 <strong>2 至 3 個工作天</strong>。
+        </flow-step>
+      </arrow-flow>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 3: equal-height + on-complete ═════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">3</span>等高模式 + 完成後顯示
+        </h2>
+        <p class="sec-desc">
+          <code>equal-height</code> 強制所有框等高（取最大值）·
+          <code>on-complete="demo3-result"</code> 完成後顯示結果面板 ·
+          此示範同時連結事件監聽（見 Demo 6）
+        </p>
+      </div>
+
+      <arrow-flow id="demo3" theme="lavender" arrow-tip="md"
+                  equal-height on-complete="demo3-result">
+        <flow-step title="選擇方案">
+          請選擇最符合您需求的訂閱方案：
+          <ul>
+            <li><strong>基本版</strong> — 每月 $299，5 位成員</li>
+            <li><strong>專業版</strong> — 每月 $799，25 位成員</li>
+            <li><strong>企業版</strong> — 客製報價，無限成員</li>
+          </ul>
+        </flow-step>
+        <flow-step title="建立帳號">
+          輸入電子郵件與設定密碼，完成後系統將發送驗證信至您的信箱。
+          帳號驗證有效期限為 24 小時。
+        </flow-step>
+        <flow-step title="付款設定">
+          支援信用卡、銀行轉帳及第三方支付。
+          訂閱將於付款確認後 <strong>立即生效</strong>。
+          帳單週期為每月 1 日自動扣款，可隨時取消。
+        </flow-step>
+      </arrow-flow>
+
+      <!-- on-complete target — hidden on init, revealed on flow-complete -->
+      <div id="demo3-result" class="result-panel">
+        <h3>🎉 訂閱設定完成！</h3>
+        <p>您的帳號已啟用，歡迎開始使用服務。如有任何問題請聯絡客服支援。</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 4: Single Reveal + Slide ══════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">4</span>單框模式
+        </h2>
+        <p class="sec-desc">
+          <code>reveal="single"</code> 前框淡出保留版面 ·
+          <code>animation="slide"</code> · <code>theme="salmon"</code> · 四步驟行程規劃
+        </p>
+      </div>
+
+      <arrow-flow theme="salmon" reveal="single" animation="slide" gap="64px">
+        <flow-step title="Day 1 — 抵達">
+          入住飯店後整理行李，傍晚步行至鄰近夜市探索在地美食。
+          建議早點休息以備隔日滿檔行程。
+        </flow-step>
+        <flow-step title="Day 2 — 文化景點">
+          上午參觀博物館，下午前往知名廟宇與歷史街區拍照留念。
+          晚餐可選擇當地特色餐廳或精緻料理。
+        </flow-step>
+        <flow-step title="Day 3 — 戶外活動">
+          清晨健行至觀景台欣賞日出，下午安排水上活動或腳踏車租借。
+          傍晚可在濱海大道悠閒散步。
+        </flow-step>
+        <flow-step title="Day 4 — 返程">
+          退房後將行李寄存，輕鬆逛街度過最後幾小時再前往機場。
+          建議提前 <strong>3 小時</strong> 抵達辦理登機手續。
+        </flow-step>
+      </arrow-flow>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 5: Arrow Tip Comparison ═══════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">5</span>箭頭尖端大小比較
+        </h2>
+        <p class="sec-desc">
+          <code>arrow-tip</code> 控制頭部三角形比例，箭桿粗細固定不變 ·
+          <code>theme="indigo"</code> · 點擊各箭頭可展開第二框
+        </p>
+      </div>
+
+      <div class="tip-rows">
+        <div class="tip-row">
+          <span class="tip-label">sm</span>
+          <arrow-flow theme="indigo" arrow-tip="sm" gap="72px">
+            <flow-step title="起點">初始步驟內容。</flow-step>
+            <flow-step title="終點">下一步驟內容。</flow-step>
+          </arrow-flow>
+        </div>
+        <div class="tip-row">
+          <span class="tip-label">md</span>
+          <arrow-flow theme="indigo" arrow-tip="md" gap="72px">
+            <flow-step title="起點">初始步驟內容。</flow-step>
+            <flow-step title="終點">下一步驟內容。</flow-step>
+          </arrow-flow>
+        </div>
+        <div class="tip-row">
+          <span class="tip-label">lg</span>
+          <arrow-flow theme="indigo" arrow-tip="lg" gap="72px">
+            <flow-step title="起點">初始步驟內容。</flow-step>
+            <flow-step title="終點">下一步驟內容。</flow-step>
+          </arrow-flow>
+        </div>
+        <div class="tip-row">
+          <span class="tip-label">xl</span>
+          <arrow-flow theme="indigo" arrow-tip="xl" gap="72px">
+            <flow-step title="起點">初始步驟內容。</flow-step>
+            <flow-step title="終點">下一步驟內容。</flow-step>
+          </arrow-flow>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 6: Global Config ════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">6</span>全域設定 ArrowFlow.config()
+        </h2>
+        <p class="sec-desc">
+          在元素初始化前呼叫 <code>ArrowFlow.config()</code>
+          可設定全站預設值，接受 camelCase 或 kebab-case 鍵名
+        </p>
+      </div>
+
+      <div class="config-demo-wrap">
+        <div class="config-code">
+<span class="c-cm">// 頁面載入後、&lt;arrow-flow&gt; 初始化前呼叫</span>
+<span class="c-fn">ArrowFlow</span>.<span class="c-fn">config</span>({
+  <span class="c-key">theme</span>      : <span class="c-str">'ocean'</span>,
+  <span class="c-key">arrowTip</span>  : <span class="c-str">'xl'</span>,  <span class="c-cm">// or 'arrow-tip'</span>
+  <span class="c-key">gap</span>        : <span class="c-str">'88px'</span>,
+  <span class="c-key">animation</span> : <span class="c-str">'slide'</span>,
+  <span class="c-key">reveal</span>    : <span class="c-str">'cumulative'</span>,
+});
+<span class="c-cm">// 下方元素無需任何屬性即套用以上設定</span></div>
+
+        <div class="config-result">
+          <arrow-flow id="demo6">
+            <flow-step title="Config 預設值">
+              此元素未設定任何屬性，色彩與箭頭樣式全部來自
+              <code>ArrowFlow.config()</code>。
+            </flow-step>
+            <flow-step title="繼承生效">
+              config 中設定的 <code>theme</code>、<code>arrowTip</code>、
+              <code>animation</code> 全數套用。
+            </flow-step>
+            <flow-step title="屬性優先">
+              若在 HTML 上加了個別屬性，該屬性優先於全域 config。
+            </flow-step>
+          </arrow-flow>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 7: Event Log ═══════════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">7</span>事件監聽
+        </h2>
+        <p class="sec-desc">
+          操作上方「Demo 3 — 等高模式」，事件即時顯示於下方
+        </p>
+      </div>
+      <div class="ev-log" id="ev-log">
+        <div class="ev-placeholder">（操作 Demo 3 的箭頭後，事件訊息將出現於此…）</div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ Palette Reference ════════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">8</span>品牌色盤
+        </h2>
+        <p class="sec-desc">
+          所有色彩名稱均可直接用於 <code>theme</code>、
+          <code>header-color</code>、<code>border-color</code>、<code>arrow-color</code> 屬性
+        </p>
+      </div>
+      <div class="swatch-row" id="swatch-row"></div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 8a: dashed arrow ═══════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num" style="background:rgba(28,202,232,0.12);border-color:rgba(28,202,232,0.45);color:var(--ocean)">─</span>虛線箭頭
+        </h2>
+        <p class="sec-desc">
+          <code>arrow-style="dashed"</code> · 桿以圓頭虛線繪製，箭頭三角形保持實心 ·
+          省略或設 <code>"solid"</code> 為預設實線
+        </p>
+      </div>
+
+      <p class="sec-desc" style="margin-bottom:14px;">
+        ▸ <code>arrow-style="dashed"</code> + <code>theme="ocean"</code> + <code>arrow-tip="lg"</code>
+      </p>
+      <arrow-flow theme="ocean" arrow-style="dashed" arrow-tip="lg" gap="80px">
+        <flow-step title="需求分析">
+          與利害關係人訪談，整理功能需求清單並確認優先級。
+        </flow-step>
+        <flow-step title="原型設計">
+          使用低保真線框圖進行快速驗證，收集回饋後調整。
+        </flow-step>
+        <flow-step title="開發上線">
+          分批交付功能，持續整合並在每個 Sprint 結束時部署至測試環境。
+        </flow-step>
+      </arrow-flow>
+
+      <p class="sec-desc" style="margin:28px 0 14px;">
+        ▸ <code>arrow-style="dashed"</code> + <code>arrow-tip="sm"</code> + <code>theme="yellow"</code> · 對比風格
+      </p>
+      <arrow-flow theme="yellow" arrow-style="dashed" arrow-tip="sm" gap="64px">
+        <flow-step title="收集">蒐集原始資料並建立資料倉儲。</flow-step>
+        <flow-step title="清理">移除重複值與異常值，補全缺失欄位。</flow-step>
+        <flow-step title="分析">產出報表與視覺化圖表，供決策使用。</flow-step>
+      </arrow-flow>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DEMO 8b: step-width ════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num" style="background:rgba(237,161,9,0.14);border-color:rgba(237,161,9,0.5);color:var(--orange)">+</span>框寬度設定
+        </h2>
+        <p class="sec-desc">
+          <code>step-width</code> 屬性設定所有框的固定寬度 ·
+          個別 <code>&lt;flow-step width="…"&gt;</code> 可覆蓋全域值 ·
+          未設定時預設 <code>flex:1</code>（均分剩餘空間）
+        </p>
+      </div>
+
+      <p class="sec-desc" style="margin-bottom:14px;">
+        ▸ <code>step-width="220px"</code>：所有框固定 220px，超出容器可橫向捲動
+      </p>
+      <div style="overflow-x:auto; padding-bottom:4px;">
+        <arrow-flow theme="vanilla" step-width="220px" gap="56px">
+          <flow-step title="資料收集">收集原始數據並進行前處理。</flow-step>
+          <flow-step title="特徵工程">選取關鍵特徵，執行標準化。</flow-step>
+          <flow-step title="模型訓練">分割訓練集與驗證集，開始訓練。</flow-step>
+          <flow-step title="評估上線">計算指標後部署至生產環境。</flow-step>
+        </arrow-flow>
+      </div>
+
+      <p class="sec-desc" style="margin:24px 0 14px;">
+        ▸ 個別 <code>&lt;flow-step width="…"&gt;</code>：各框獨立寬度
+      </p>
+      <arrow-flow theme="focus" gap="48px">
+        <flow-step title="輸入（窄）" width="160px">
+          固定 160px。
+        </flow-step>
+        <flow-step title="處理（中）" width="280px">
+          固定 280px，較寬以容納較多內容說明。
+        </flow-step>
+        <flow-step title="輸出（窄）" width="160px">
+          固定 160px。
+        </flow-step>
+      </arrow-flow>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ API Reference ════════════════════════════════════════════ -->
+    <section class="demo-sec">
+      <div class="sec-head">
+        <h2 class="sec-title">
+          <span class="sec-num">9</span>API 速查
+        </h2>
+      </div>
+      <div class="api-block">
+        <pre>
+<span class="a-cm">&lt;!-- ─── &lt;arrow-flow&gt; 屬性 ──────────────────────────────────────────────── --&gt;</span>
+<span class="a-tag">&lt;arrow-flow</span>
+  <span class="a-attr">theme</span>=<span class="a-val">"sky"</span>             <span class="a-cm">&lt;!-- 全部框統一品牌色 (預設: shell)               --&gt;</span>
+  <span class="a-attr">header-color</span>=<span class="a-val">"sky"</span>    <span class="a-cm">&lt;!-- 覆蓋所有框 header 底色（優先於 theme）       --&gt;</span>
+  <span class="a-attr">border-color</span>=<span class="a-val">"sky"</span>    <span class="a-cm">&lt;!-- 覆蓋所有框線色                               --&gt;</span>
+  <span class="a-attr">arrow-color</span>=<span class="a-val">"shell"</span>  <span class="a-cm">&lt;!-- 箭頭填色（預設繼承 theme）                   --&gt;</span>
+  <span class="a-attr">arrow-tip</span>=<span class="a-val">"md"</span>       <span class="a-cm">&lt;!-- sm / md / lg / xl（只改頭部三角形）          --&gt;</span>
+  <span class="a-attr">arrow-style</span>=<span class="a-val">"solid"</span>  <span class="a-cm">&lt;!-- solid（預設實線）/ dashed（虛線桿＋實心頭）  --&gt;</span>
+  <span class="a-attr">gap</span>=<span class="a-val">"72px"</span>           <span class="a-cm">&lt;!-- 框間距（整個可點擊箭頭區域的寬度）           --&gt;</span>
+  <span class="a-attr">reveal</span>=<span class="a-val">"cumulative"</span> <span class="a-cm">&lt;!-- cumulative（前框保留）/ single（前框淡出）   --&gt;</span>
+  <span class="a-attr">animation</span>=<span class="a-val">"fade"</span>    <span class="a-cm">&lt;!-- fade / slide / none                         --&gt;</span>
+  <span class="a-attr">equal-height</span>          <span class="a-cm">&lt;!-- Boolean：強制所有框等高（取最大值）           --&gt;</span>
+  <span class="a-attr">current</span>=<span class="a-val">"0"</span>          <span class="a-cm">&lt;!-- 初始顯示至第幾框（0-based）                  --&gt;</span>
+  <span class="a-attr">on-complete</span>=<span class="a-val">"div-id"</span> <span class="a-cm">&lt;!-- 完成後顯示的 div id（初始自動隱藏）          --&gt;</span>
+  <span class="a-attr">step-width</span>=<span class="a-val">"240px"</span>   <span class="a-cm">&lt;!-- 所有框固定寬度（省略 = flex:1 均分）          --&gt;</span>
+<span class="a-tag">&gt;</span>
+  <span class="a-tag">&lt;flow-step</span>
+    <span class="a-attr">title</span>=<span class="a-val">"標題"</span>
+    <span class="a-attr">header-color</span>=<span class="a-val">"lavender"</span>  <span class="a-cm">&lt;!-- 覆蓋此框 header 底色 --&gt;</span>
+    <span class="a-attr">border-color</span>=<span class="a-val">"indigo"</span>    <span class="a-cm">&lt;!-- 覆蓋此框框線色       --&gt;</span>
+    <span class="a-attr">width</span>=<span class="a-val">"300px"</span>           <span class="a-cm">&lt;!-- 覆蓋此框寬度（優先於 step-width） --&gt;</span>
+  <span class="a-tag">&gt;</span>
+    支援 &lt;strong&gt;HTML&lt;/strong&gt; 標籤、&lt;ul&gt; 列表等
+  <span class="a-tag">&lt;/flow-step&gt;</span>
+<span class="a-tag">&lt;/arrow-flow&gt;</span>
+
+<span class="a-cm">/* ─── 全域設定 ───────────────────────────────────────────────────────── */</span>
+<span class="a-js">ArrowFlow</span>.config({
+  theme      : 'sky',
+  arrowTip   : 'lg',    <span class="a-cm">// 同 arrow-tip 屬性，接受 camelCase 或 kebab-case</span>
+  gap        : '80px',
+  animation  : 'slide',
+  reveal     : 'cumulative',
+  equalHeight: true,
+  stepWidth  : '260px', <span class="a-cm">// 同 step-width 屬性</span>
+  arrowStyle : 'dashed',<span class="a-cm">// 同 arrow-style 屬性</span>
+});
+
+<span class="a-cm">/* ─── 事件 ───────────────────────────────────────────────────────────── */</span>
+el.addEventListener(<span class="a-val">'step-change'</span>,   e =&gt; console.log(e.detail.index));
+el.addEventListener(<span class="a-val">'flow-complete'</span>, e =&gt; console.log(e.detail.totalSteps));
+
+<span class="a-cm">/* ─── 品牌色名 ── 17 色 ─────────────────────────────────────────────── */</span>
+bg  shell  lavender  sky  warning  salmon  ocean  safe  teal
+vanilla  yellow  focus  special  info  indigo  pink  orange</pre>
+      </div>
+    </section>
+
+  </div><!-- /wrap -->
+
+  <footer>
+    <div class="wrap">
+      arrow-flow.js · 示範頁 09/22/26 · 無 Shadow DOM · 無外部依賴
+    </div>
+  </footer>
+
+  <script>
+    /* ── Apply global config for Demo 6 ── */
+    ArrowFlow.config({
+      theme    : 'ocean',
+      arrowTip : 'xl',
+      gap      : '88px',
+      animation: 'slide',
+    });
+
+    /* ── Wait for DOM then reset config to defaults for other demos ──
+       (config was already read by all elements via deferred _init microtask,
+        but Demo 6 element uses the config set above because it was
+        set before _init runs. All demos 1-5 were already in DOM before
+        the config call — their _init microtasks read the updated DEF.
+        To avoid side effects in demos 1-5, set the demo6 config LAST.)
+       Actually all elements defer _init via Promise.resolve().then(),
+       so all microtasks read DEF AFTER the config call above.
+       We therefore wrap demos 1-5 in explicit attribute overrides to
+       ensure they win over the global config. This is intentional:
+       per-element attributes always override global config. ── */
+
+    /* ── Event log: attach to Demo 3 ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const demo3 = document.getElementById('demo3');
+      const log   = document.getElementById('ev-log');
+
+      function addEntry(msg, type) {
+        const ph = log.querySelector('.ev-placeholder');
+        if (ph) ph.remove();
+
+        const now  = new Date();
+        const ts   = [now.getHours(), now.getMinutes(), now.getSeconds()]
+                       .map(n => String(n).padStart(2, '0')).join(':');
+
+        const row  = document.createElement('div');
+        row.className = `ev-entry ev-${type}`;
+        row.innerHTML =
+          `<span class="ev-time">${ts}</span>` +
+          `<span class="ev-tag">${type === 'done' ? 'flow-complete' : 'step-change'}</span>` +
+          `<span class="ev-msg">${msg}</span>`;
+        log.appendChild(row);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      demo3.addEventListener('step-change', e => {
+        addEntry(`index: <strong>${e.detail.index}</strong>`, 'step');
+      });
+      demo3.addEventListener('flow-complete', e => {
+        addEntry(`totalSteps: <strong>${e.detail.totalSteps}</strong> · 完成！`, 'done');
+      });
+
+      /* ── Generate palette swatches ── */
+      const swatchRow = document.getElementById('swatch-row');
+      const palette   = ArrowFlow.PALETTE;
+      Object.keys(palette).forEach(name => {
+        const div = document.createElement('div');
+        div.className = 'swatch';
+        div.innerHTML =
+          `<div class="swatch-chip" style="background:${palette[name]}"></div>` +
+          `<span class="swatch-name">${name}</span>`;
+        swatchRow.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>

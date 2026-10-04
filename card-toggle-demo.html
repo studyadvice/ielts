@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>card-toggle.js — 元件完整說明文件</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style>
+:root {
+  --bg:      #0C0D0C;
+  --shell:   #C6C7BD;
+  --sky:     #95c9de;
+  --pink:    #FFB3D9;
+  --special: #b3de73;
+  --bg2:     #111211;
+  --bg3:     #161716;
+}
+html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--shell);
+  font-size: 1.125rem;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Layout ── */
+.doc-wrap { display: flex; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 252px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid rgba(198,199,189,0.09);
+  padding: 28px 14px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(198,199,189,0.15) transparent;
+}
+.sb-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--special);
+  letter-spacing: 0.03em;
+  margin-bottom: 30px;
+  padding-left: 6px;
+}
+.sb-brand i { font-size: 1.25rem; }
+.sb-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(198,199,189,0.35);
+  padding: 18px 6px 5px;
+  display: block;
+}
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: rgba(198,199,189,0.72);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+  margin-bottom: 1px;
+}
+.sidebar a i { font-size: 0.85rem; width: 15px; flex-shrink: 0; opacity: 0.8; }
+.sidebar a:hover, .sidebar a.is-active {
+  background: rgba(179,222,115,0.10);
+  color: var(--special);
+}
+.sidebar a.is-active i { opacity: 1; }
+
+/* ── Main ── */
+.main { flex: 1; min-width: 0; padding: 44px 52px 100px; }
+
+/* ── Hero ── */
+.hero {
+  border-bottom: 1px solid rgba(198,199,189,0.10);
+  padding-bottom: 38px;
+  margin-bottom: 52px;
+}
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--special);
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+.hero p {
+  font-size: 1.05rem;
+  color: rgba(198,199,189,0.82);
+  max-width: 700px;
+  margin: 0 0 18px;
+}
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-badge {
+  font-size: 0.75rem;
+  padding: 3px 11px;
+  border-radius: 99px;
+  border: 1px solid;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.hb-shell  { color: var(--shell);   border-color: var(--shell);   background: rgba(198,199,189,0.07); }
+.hb-sky    { color: var(--sky);     border-color: var(--sky);     background: rgba(149,201,222,0.07); }
+.hb-pink   { color: var(--pink);    border-color: var(--pink);    background: rgba(255,179,217,0.07); }
+.hb-special{ color: var(--special); border-color: var(--special); background: rgba(179,222,115,0.07); }
+
+/* ── Sections ── */
+.doc-section { margin-bottom: 64px; scroll-margin-top: 24px; }
+.doc-section h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--sky);
+  border-left: 4px solid var(--sky);
+  padding: 2px 0 2px 14px;
+  margin: 0 0 14px;
+  line-height: 1.3;
+}
+.doc-section h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: rgba(198,199,189,0.92);
+  margin: 30px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.doc-section h3::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background: var(--pink);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.doc-section > p, .doc-section .desc {
+  color: rgba(198,199,189,0.82);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  max-width: 780px;
+}
+
+/* ── Attribute Table ── */
+.attr-wrap { overflow-x: auto; margin-bottom: 20px; }
+.attr-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.attr-table th {
+  background: rgba(149,201,222,0.09);
+  color: var(--sky);
+  padding: 9px 14px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(149,201,222,0.22);
+  white-space: nowrap;
+}
+.attr-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(198,199,189,0.07);
+  vertical-align: top;
+  color: rgba(198,199,189,0.84);
+  line-height: 1.45;
+}
+.attr-table tr:last-child td { border-bottom: none; }
+.attr-table tr:hover td { background: rgba(198,199,189,0.025); }
+.attr-name { color: var(--special); font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.85em; }
+.attr-type { color: var(--sky); font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.82em; }
+
+.pill { display: inline-block; font-size: 0.7rem; padding: 1px 7px; border-radius: 99px; font-weight: 700; vertical-align: middle; margin-right: 4px; }
+.pill-opt  { color: var(--shell);   background: rgba(198,199,189,0.12); }
+.pill-req  { color: var(--pink);    background: rgba(255,179,217,0.13); }
+.pill-bool { color: var(--sky);     background: rgba(149,201,222,0.12); }
+.pill-grp  { color: var(--special); background: rgba(179,222,115,0.11); }
+.pill-new  { color: #b3de73;        background: rgba(179,222,115,0.18); border: 1px solid rgba(179,222,115,0.35); }
+
+/* ── Code Block ── */
+.cb-wrap { border-radius: 8px; overflow: hidden; border: 1px solid rgba(198,199,189,0.10); margin-bottom: 10px; }
+.cb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg3);
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(198,199,189,0.07);
+}
+.cb-lang { font-size: 0.72rem; color: rgba(198,199,189,0.38); font-family: monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border-radius: 4px;
+  border: 1px solid rgba(198,199,189,0.22);
+  background: transparent;
+  color: rgba(198,199,189,0.65);
+  font-size: 0.77rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.copy-btn:hover { border-color: var(--special); color: var(--special); }
+.copy-btn.done  { border-color: #299459; color: #299459; }
+.cb-wrap pre {
+  margin: 0;
+  padding: 18px 20px;
+  background: #141514;
+  overflow-x: auto;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(198,199,189,0.14) transparent;
+}
+.cb-wrap code { font-family: 'Cascadia Code','Fira Code','Consolas',monospace; }
+.hljs { background: transparent !important; }
+
+/* ── Preview Toggle ── */
+.prev-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--sky);
+  background: rgba(149,201,222,0.07);
+  color: var(--sky);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+.prev-btn:hover { background: rgba(149,201,222,0.14); }
+.prev-btn.open  { background: rgba(149,201,222,0.17); }
+.prev-btn .arrow { transition: transform 0.2s; }
+.prev-btn.open .arrow { transform: rotate(180deg); }
+
+/* ── Preview Panel ── */
+.prev-panel { display: none; background: var(--bg2); border: 1px solid rgba(149,201,222,0.18); border-radius: 8px; padding: 24px; margin-bottom: 28px; }
+.prev-panel.open { display: block; animation: panelIn 0.2s ease; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.prev-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: rgba(149,201,222,0.45);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+.prev-label::after { content: ''; flex: 1; height: 1px; background: rgba(149,201,222,0.10); }
+
+/* ── Grid helpers ── */
+.demo-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.demo-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.demo-stack  { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── Inline code ── */
+p code, li code, td code {
+  color: var(--special);
+  background: rgba(179,222,115,0.10);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: 'Cascadia Code','Fira Code',monospace;
+}
+/* ── Divider ── */
+.sec-div { border: none; border-top: 1px solid rgba(198,199,189,0.07); margin: 0 0 52px; }
+/* ── Info/Warn boxes ── */
+.info-box {
+  background: rgba(149,201,222,0.07);
+  border-left: 3px solid var(--sky);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: rgba(198,199,189,0.84);
+  line-height: 1.5;
+}
+.warn-box {
+  background: rgba(255,179,217,0.07);
+  border-left: 3px solid var(--pink);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: rgba(198,199,189,0.84);
+  line-height: 1.5;
+}
+/* Badge: NEW */
+.new-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(179,222,115,0.18);
+  color: var(--special);
+  border: 1px solid rgba(179,222,115,0.35);
+  vertical-align: middle;
+  margin-left: 6px;
+  letter-spacing: 0.04em;
+}
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(198,199,189,0.16); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(198,199,189,0.30); }
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<nav class="sidebar">
+  <div class="sb-brand"><i class="bi bi-layers-half"></i> card-toggle</div>
+
+  <span class="sb-label">入門</span>
+  <a href="#sec-import"><i class="bi bi-box-arrow-in-down"></i> 引入方式</a>
+
+  <span class="sb-label">基本屬性</span>
+  <a href="#sec-basic"><i class="bi bi-arrow-left-right"></i> 基本翻轉</a>
+  <a href="#sec-colors"><i class="bi bi-palette2"></i> 顏色主題</a>
+  <a href="#sec-sizes"><i class="bi bi-arrows-expand"></i> 尺寸規格</a>
+  <a href="#sec-anim"><i class="bi bi-stars"></i> 動畫效果</a>
+
+  <span class="sb-label">進階功能</span>
+  <a href="#sec-toggle"><i class="bi bi-arrow-repeat"></i> 雙向翻轉</a>
+  <a href="#sec-autoflip"><i class="bi bi-clock-history"></i> 自動翻回</a>
+  <a href="#sec-colorafter"><i class="bi bi-palette"></i> 翻後換色</a>
+  <a href="#sec-number"><i class="bi bi-list-ol"></i> 數字編號</a>
+
+  <span class="sb-label">問答模式</span>
+  <a href="#sec-quiz-basic"><i class="bi bi-question-circle"></i> 基本問答</a>
+  <a href="#sec-quiz-hint"><i class="bi bi-lightbulb"></i> 提示功能</a>
+  <a href="#sec-quiz-adv"><i class="bi bi-sliders"></i> 進階控制</a>
+
+  <span class="sb-label">群組模式</span>
+  <a href="#sec-stack"><i class="bi bi-stack"></i> Stack 堆疊</a>
+  <a href="#sec-grid"><i class="bi bi-grid"></i> Grid 網格 <span class="new-badge">NEW</span></a>
+  <a href="#sec-slide"><i class="bi bi-play-btn"></i> Slide 滑動</a>
+  <a href="#sec-result"><i class="bi bi-trophy"></i> 結果畫面 <span class="new-badge">NEW</span></a>
+
+  <span class="sb-label">API</span>
+  <a href="#sec-api"><i class="bi bi-terminal"></i> JavaScript API</a>
+</nav>
+
+
+<!-- ═══════ MAIN ═══════ -->
+<main class="main">
+
+<!-- Hero -->
+<div class="hero" id="top">
+  <h1><i class="bi bi-layers-half"></i> card-toggle.js</h1>
+  <p>輕量化原生 Web Component，零外部框架相依、無 Shadow DOM，一行 <code>&lt;script&gt;</code> 引入即可使用。支援翻轉展示、問答驗證、自動翻回、Grid 網格、群組滑動，以及全新的結果畫面系統。</p>
+  <div class="badge-row">
+    <span class="hero-badge hb-shell">Web Component</span>
+    <span class="hero-badge hb-sky">Zero Dependency</span>
+    <span class="hero-badge hb-pink">Quiz Mode</span>
+    <span class="hero-badge hb-special">Grid / Slide Group</span>
+    <span class="hero-badge hb-shell">Result Screen</span>
+  </div>
+</div>
+
+
+<!-- ══ §1 引入方式 ══ -->
+<section class="doc-section" id="sec-import">
+  <h2><i class="bi bi-box-arrow-in-down"></i> 引入方式</h2>
+  <p>將 <code>card-toggle.js</code> 放到專案目錄，並引入 Bootstrap Icons（圖示來源）。兩個自訂元素 <code>&lt;card-toggle&gt;</code> 與 <code>&lt;card-toggle-group&gt;</code> 自動註冊，無需手動初始化。元件內建重複初始化防護（<code>connectedCallback</code> 只執行一次）。</p>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;!-- 1. Bootstrap Icons --&gt;
+&lt;link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"&gt;
+
+&lt;!-- 2. card-toggle 元件（置於 &lt;/body&gt; 前） --&gt;
+&lt;script src="card-toggle.js"&gt;&lt;/script&gt;</code></pre>
+  </div>
+  <div class="info-box"><i class="bi bi-info-circle-fill" style="color:var(--sky);margin-right:6px;"></i>元件樣式在首次使用時自動注入 <code>&lt;head&gt;</code>（ID：<code>card-toggle-styles</code>），每頁只注入一次。</div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §2 基本翻轉 ══ -->
+<section class="doc-section" id="sec-basic">
+  <h2><i class="bi bi-arrow-left-right"></i> 基本翻轉</h2>
+  <p>點擊卡片，正面內容被替換為背面。背面來源有兩種：<code>content</code>（直接 HTML 字串）與 <code>source</code>（clone 頁面隱藏元素）。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">content</span></td><td><span class="attr-type">string</span></td><td><span class="pill pill-opt">可選</span>背面 HTML 字串，適合簡短內容。</td></tr>
+        <tr><td><span class="attr-name">source</span></td><td><span class="attr-type">string</span></td><td><span class="pill pill-opt">可選</span>頁面隱藏元素的 <code>id</code>，元件 clone 其內容。適合複雜 HTML 結構。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>content 屬性</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle content="&lt;strong&gt;背面！&lt;/strong&gt; 可放任意 HTML 字串。"&gt;
+  點擊查看背面 ▸
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle content="&lt;strong style='color:var(--ct-color-special)'&gt;✓ 背面已顯示！&lt;/strong&gt;&lt;br&gt;這裡可以放 &lt;em&gt;斜體&lt;/em&gt;、連結等任意 HTML。">點擊查看背面 ▸</card-toggle>
+  </div>
+
+  <h3>source 屬性</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;div id="back-1" style="display:none"&gt;
+  &lt;h4&gt;📘 補充說明&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;可放入完整 HTML 結構&lt;/li&gt;
+    &lt;li&gt;來源元素不顯示在頁面上&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;card-toggle source="back-1"&gt;點擊查看補充說明 ▸&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div id="back-src-1" style="display:none">
+      <h4 style="margin:0 0 8px; color:var(--ct-color-sky)">📘 補充說明</h4>
+      <ul style="margin:0; padding-left:20px; line-height:1.8"><li>可放入完整 HTML 結構</li><li>來源元素本身不顯示在頁面上</li></ul>
+    </div>
+    <card-toggle source="back-src-1">點擊查看補充說明 ▸</card-toggle>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §3 顏色主題 ══ -->
+<section class="doc-section" id="sec-colors">
+  <h2><i class="bi bi-palette2"></i> 顏色主題</h2>
+  <p><code>color</code> 控制左側色條與懸停光暈，<code>dashed</code> 切換為虛線邊框。此版本新增四個色彩：<code>ocean</code>、<code>teal</code>、<code>focus</code>、<code>indigo</code>。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>所有可用值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="attr-name">color</span></td>
+          <td><span class="attr-type">string</span></td>
+          <td style="font-size:0.8rem; font-family:monospace; line-height:1.8">
+            <code>shell</code> <code>sky</code> <code>pink</code> <code>special</code><br>
+            <code>safe</code> <code>warning</code> <code>info</code> <code>lavender</code><br>
+            <code>salmon</code> <code>attention</code> <code>orange</code> <code>stone</code><br>
+            <code>ocean</code> <span class="new-badge">NEW</span>
+            <code>teal</code> <span class="new-badge">NEW</span>
+            <code>focus</code> <span class="new-badge">NEW</span>
+            <code>indigo</code> <span class="new-badge">NEW</span>
+          </td>
+          <td><span class="pill pill-opt">可選</span>設定左側色條及懸停效果。</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">dashed</span></td>
+          <td><span class="attr-type">boolean</span></td>
+          <td>—</td>
+          <td><span class="pill pill-bool">布林</span>切換為虛線邊框，邊框顏色對應 <code>color</code>（支援所有新色彩）。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>四個主要展示色</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle color="shell"   content="Shell 背面"&gt;Shell — 主文字色調&lt;/card-toggle&gt;
+&lt;card-toggle color="sky"    content="Sky 背面"&gt;Sky — 資訊色調&lt;/card-toggle&gt;
+&lt;card-toggle color="pink"   content="Pink 背面"&gt;Pink — 粉色調&lt;/card-toggle&gt;
+&lt;card-toggle color="special" content="Special 背面"&gt;Special — 強調色調&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-grid-2">
+      <card-toggle color="shell"   content="Shell 背面已顯示">Shell — 主文字色調</card-toggle>
+      <card-toggle color="sky"    content="Sky 背面已顯示">Sky — 資訊色調</card-toggle>
+      <card-toggle color="pink"   content="Pink 背面已顯示">Pink — 粉色調</card-toggle>
+      <card-toggle color="special" content="Special 背面已顯示">Special — 強調色調</card-toggle>
+    </div>
+  </div>
+
+  <h3>新增色彩 ocean / teal / focus / indigo <span class="new-badge">NEW</span></h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle color="ocean"  content="Ocean 背面"&gt;ocean — #0ABDC6&lt;/card-toggle&gt;
+&lt;card-toggle color="teal"   content="Teal 背面"&gt;teal — #0DA591&lt;/card-toggle&gt;
+&lt;card-toggle color="focus"  content="Focus 背面"&gt;focus — #e0be79&lt;/card-toggle&gt;
+&lt;card-toggle color="indigo" content="Indigo 背面"&gt;indigo — #9B72CF&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-grid-2">
+      <card-toggle color="ocean"  content="Ocean 背面已顯示">ocean — #0ABDC6</card-toggle>
+      <card-toggle color="teal"   content="Teal 背面已顯示">teal — #0DA591</card-toggle>
+      <card-toggle color="focus"  content="Focus 背面已顯示">focus — #e0be79</card-toggle>
+      <card-toggle color="indigo" content="Indigo 背面已顯示">indigo — #9B72CF</card-toggle>
+    </div>
+  </div>
+
+  <h3>虛線邊框 dashed</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle dashed color="sky"     content="Sky 虛線背面"&gt;Sky 虛線邊框&lt;/card-toggle&gt;
+&lt;card-toggle dashed color="pink"    content="Pink 虛線背面"&gt;Pink 虛線邊框&lt;/card-toggle&gt;
+&lt;card-toggle dashed color="ocean"   content="Ocean 虛線背面"&gt;Ocean 虛線邊框&lt;/card-toggle&gt;
+&lt;card-toggle dashed color="indigo"  content="Indigo 虛線背面"&gt;Indigo 虛線邊框&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-grid-2">
+      <card-toggle dashed color="sky"    content="Sky 虛線背面">Sky 虛線邊框</card-toggle>
+      <card-toggle dashed color="pink"   content="Pink 虛線背面">Pink 虛線邊框</card-toggle>
+      <card-toggle dashed color="ocean"  content="Ocean 虛線背面">Ocean 虛線邊框</card-toggle>
+      <card-toggle dashed color="indigo" content="Indigo 虛線背面">Indigo 虛線邊框</card-toggle>
+    </div>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §4 尺寸規格 ══ -->
+<section class="doc-section" id="sec-sizes">
+  <h2><i class="bi bi-arrows-expand"></i> 尺寸規格</h2>
+  <p><code>size</code> 統一調整 padding 與字型大小，共五級，預設為標準（無需填寫）。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>size 值</th><th>Padding</th><th>Font Size</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">xsm</span></td><td><code>3px 8px 3px 7px</code></td><td><code>0.9rem</code></td><td>極小，適合標籤、提示</td></tr>
+        <tr><td><span class="attr-name">sm</span></td><td><code>6px 14px 6px 12px</code></td><td><code>0.95rem</code></td><td>小型，適合側欄或密集清單</td></tr>
+        <tr><td><span class="attr-name">（預設）</span></td><td><code>10px 16px 10px 14px</code></td><td><code>1rem</code></td><td>標準尺寸</td></tr>
+        <tr><td><span class="attr-name">lg</span></td><td><code>13px 20px 13px 18px</code></td><td><code>1.1rem</code></td><td>大型，適合重點卡片</td></tr>
+        <tr><td><span class="attr-name">xlg</span></td><td><code>16px 24px 16px 22px</code></td><td><code>1.2rem</code></td><td>超大，適合標題展示</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle size="xsm"  color="sky" content="極小背面"&gt;xsm — 極小尺寸&lt;/card-toggle&gt;
+&lt;card-toggle size="sm"   color="sky" content="小型背面"&gt;sm — 小型尺寸&lt;/card-toggle&gt;
+&lt;card-toggle             color="sky" content="標準背面"&gt;（預設）標準尺寸&lt;/card-toggle&gt;
+&lt;card-toggle size="lg"   color="sky" content="大型背面"&gt;lg — 大型尺寸&lt;/card-toggle&gt;
+&lt;card-toggle size="xlg"  color="sky" content="超大背面"&gt;xlg — 超大尺寸&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-stack">
+      <card-toggle size="xsm" color="sky" content="極小尺寸背面">xsm — 極小尺寸</card-toggle>
+      <card-toggle size="sm"  color="sky" content="小型尺寸背面">sm — 小型尺寸</card-toggle>
+      <card-toggle            color="sky" content="標準尺寸背面">（預設）標準尺寸</card-toggle>
+      <card-toggle size="lg"  color="sky" content="大型尺寸背面">lg — 大型尺寸</card-toggle>
+      <card-toggle size="xlg" color="sky" content="超大尺寸背面">xlg — 超大尺寸</card-toggle>
+    </div>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §5 動畫效果 ══ -->
+<section class="doc-section" id="sec-anim">
+  <h2><i class="bi bi-stars"></i> 動畫效果</h2>
+  <p><code>animation</code> 控制翻面與翻回的過渡，預設 <code>fade</code>。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>值</th><th>效果</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">fade</span>（預設）</td><td>淡入淡出（opacity 0 → 1）</td></tr>
+        <tr><td><span class="attr-name">slide</span></td><td>從右側滑入（translateX）+ 淡入</td></tr>
+        <tr><td><span class="attr-name">（省略）</span></td><td>無動畫，立即切換</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle animation="fade"  color="shell" toggle content="Fade 淡入效果背面"&gt;
+  animation="fade" — 點擊體驗淡入效果
+&lt;/card-toggle&gt;
+
+&lt;card-toggle animation="slide" color="pink" toggle content="Slide 滑動效果背面"&gt;
+  animation="slide" — 點擊體驗滑動效果
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-grid-2">
+      <card-toggle animation="fade"  color="shell" toggle content="Fade 淡入效果，點擊翻回。">animation="fade"（可翻回）</card-toggle>
+      <card-toggle animation="slide" color="pink"  toggle content="Slide 滑動效果，點擊翻回。">animation="slide"（可翻回）</card-toggle>
+    </div>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §6 雙向翻轉 ══ -->
+<section class="doc-section" id="sec-toggle">
+  <h2><i class="bi bi-arrow-repeat"></i> 雙向翻轉</h2>
+  <p>加上 <code>toggle</code> 後，在背面點擊卡片空白處可翻回正面，背面底部自動注入「點擊翻回」提示。</p>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle toggle color="special" animation="slide"
+             content="背面內容。點擊卡片空白處可翻回正面。"&gt;
+  加上 toggle — 可雙向翻轉
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle toggle color="special" animation="slide"
+                 content="&lt;strong style='color:var(--ct-color-special)'&gt;背面！&lt;/strong&gt; 點擊空白處翻回正面。">
+      加上 toggle — 可雙向翻轉，再點翻回
+    </card-toggle>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §7 自動翻回 ══ -->
+<section class="doc-section" id="sec-autoflip">
+  <h2><i class="bi bi-clock-history"></i> 自動翻回</h2>
+  <p>翻到背面後底部出現倒數進度條，倒數結束自動翻回正面。<code>flip-bar-color</code> 自訂進度條顏色，優先順序：<code>flip-bar-color</code> &gt; <code>color-after</code> &gt; <code>color</code> &gt; <code>sky</code>。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">auto-flip</span></td><td><span class="attr-type">number (ms)</span></td><td>—</td><td><span class="pill pill-opt">可選</span>翻面後自動翻回的毫秒數（例如 <code>3000</code>）。</td></tr>
+        <tr><td><span class="attr-name">flip-bar-color</span></td><td><span class="attr-type">string</span></td><td><code>sky</code></td><td><span class="pill pill-opt">可選</span>倒數進度條顏色名稱或 hex 值。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;!-- 3 秒後自動翻回，sky 進度條（預設） --&gt;
+&lt;card-toggle auto-flip="3000" color="sky"
+             content="3 秒後自動翻回，留意底部進度條。"&gt;
+  auto-flip="3000" — 點擊後 3 秒翻回
+&lt;/card-toggle&gt;
+
+&lt;!-- 5 秒後翻回，pink 進度條 --&gt;
+&lt;card-toggle auto-flip="5000" color="shell" flip-bar-color="pink"
+             content="5 秒後翻回，Pink 進度條。"&gt;
+  flip-bar-color="pink" — 自訂進度條顏色（5 秒）
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-grid-2">
+      <card-toggle auto-flip="3000" color="sky"   content="3 秒後自動翻回，留意底部 Sky 進度條。">auto-flip="3000"（3 秒倒數）</card-toggle>
+      <card-toggle auto-flip="5000" color="shell" flip-bar-color="pink" content="5 秒後翻回，Pink 進度條。">flip-bar-color="pink"（5 秒）</card-toggle>
+    </div>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §8 翻後換色 ══ -->
+<section class="doc-section" id="sec-colorafter">
+  <h2><i class="bi bi-palette"></i> 翻後換色</h2>
+  <p><code>color-after</code> 讓卡片翻面後自動切換色彩主題，搭配 <code>toggle</code> 可翻回後恢復原色。</p>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle color="sky" color-after="pink" toggle
+             content="已切換為 Pink 主題，點擊翻回恢復 Sky。"&gt;
+  sky → 翻後 pink（可翻回）
+&lt;/card-toggle&gt;
+
+&lt;card-toggle color="shell" color-after="ocean" toggle
+             content="已切換為 Ocean 主題，點擊翻回恢復 Shell。"&gt;
+  shell → 翻後 ocean（可翻回）
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-grid-2">
+      <card-toggle color="sky"   color-after="pink"  toggle content="已切換為 Pink，點擊翻回恢復 Sky。">sky → 翻後 pink（可翻回）</card-toggle>
+      <card-toggle color="shell" color-after="ocean" toggle content="已切換為 Ocean，點擊翻回恢復 Shell。">shell → 翻後 ocean（可翻回）</card-toggle>
+    </div>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §9 數字編號 ══ -->
+<section class="doc-section" id="sec-number">
+  <h2><i class="bi bi-list-ol"></i> 數字編號</h2>
+  <p><code>number</code> 在正面左側注入小型前綴編號，適合清單式問答或步驟說明。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">number</span></td><td><span class="attr-type">string</span></td><td>—</td><td><span class="pill pill-opt">可選</span>正面左側前綴文字（如 <code>1</code>、<code>Q1</code>）。</td></tr>
+        <tr><td><span class="attr-name">number-size</span></td><td><span class="attr-type">string</span></td><td><code>0.8rem</code></td><td><span class="pill pill-opt">可選</span>前綴字型大小，任何有效 CSS 尺寸值。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle number="1" color="shell" content="第一題的答案"&gt;
+  第一題：Web Component 是什麼？
+&lt;/card-toggle&gt;
+&lt;card-toggle number="2" color="sky"   content="第二題的答案"&gt;
+  第二題：Shadow DOM 的作用是什麼？
+&lt;/card-toggle&gt;
+&lt;card-toggle number="3" color="pink" number-size="1rem" content="第三題的答案"&gt;
+  第三題：Custom Elements 的定義方法？
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div class="demo-stack">
+      <card-toggle number="1" color="shell" content="Web Component 是一套瀏覽器原生技術，用於建立可重用的自訂 HTML 元素。">第一題：Web Component 是什麼？</card-toggle>
+      <card-toggle number="2" color="sky"   content="Shadow DOM 提供封裝的 DOM 子樹，讓樣式和結構隔離於頁面其他部分。">第二題：Shadow DOM 的作用是什麼？</card-toggle>
+      <card-toggle number="3" color="pink"  content="使用 customElements.define('tag-name', MyClass) 進行定義。">第三題：Custom Elements 的定義方法？</card-toggle>
+    </div>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §10 基本問答 ══ -->
+<section class="doc-section" id="sec-quiz-basic">
+  <h2><i class="bi bi-question-circle"></i> 問答模式 — 基本</h2>
+  <p>設定 <code>question</code> 與 <code>answer</code> 後，點擊卡片展開問答介面，預設不區分大小寫。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">question</span></td><td><span class="attr-type">string</span></td><td>—</td><td><span class="pill pill-req">必填</span>題目文字，設定此屬性即啟用問答模式。</td></tr>
+        <tr><td><span class="attr-name">answer</span></td><td><span class="attr-type">string</span></td><td>—</td><td><span class="pill pill-req">必填</span>正確答案字串。</td></tr>
+        <tr><td><span class="attr-name">placeholder</span></td><td><span class="attr-type">string</span></td><td><code>請輸入答案</code></td><td><span class="pill pill-opt">可選</span>輸入框提示文字。</td></tr>
+        <tr><td><span class="attr-name">case-sensitive</span></td><td><span class="attr-type">boolean</span></td><td>—</td><td><span class="pill pill-bool">布林</span>啟用後，答案比對區分大小寫。</td></tr>
+        <tr><td><span class="attr-name">success-message</span></td><td><span class="attr-type">string</span></td><td><code>答對了！</code></td><td><span class="pill pill-opt">可選</span>答對後顯示的訊息。</td></tr>
+        <tr><td><span class="attr-name">error-message</span></td><td><span class="attr-type">string</span></td><td><code>答錯了，請再試一次</code></td><td><span class="pill pill-opt">可選</span>答錯時訊息。</td></tr>
+        <tr><td><span class="attr-name">success-color</span></td><td><span class="attr-type">string</span></td><td><code>safe</code></td><td><span class="pill pill-opt">可選</span>答對後卡片切換的顏色主題。</td></tr>
+        <tr><td><span class="attr-name">success-source</span></td><td><span class="attr-type">string</span></td><td>—</td><td><span class="pill pill-opt">可選</span>答對後 clone 並展示的元素 ID（用於詳細解說）。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle
+  color="sky"
+  question="台灣的首都是哪個城市？"
+  answer="台北"
+  placeholder="請輸入城市名稱"
+  success-message="正確！台北是台灣的首都城市。"
+  error-message="不對喔，再想想看…"&gt;
+  點擊作答 — 台灣的首都？
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle color="sky" question="台灣的首都是哪個城市？" answer="台北" placeholder="請輸入城市名稱" success-message="正確！台北是台灣的首都城市。" error-message="不對喔，再想想看…">點擊作答 — 台灣的首都？</card-toggle>
+  </div>
+
+  <h3>搭配 success-source（詳細解說）</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;div id="explain-1" style="display:none"&gt;
+  &lt;p&gt;✅ 正確！答案是 &lt;strong&gt;JavaScript&lt;/strong&gt;。&lt;/p&gt;
+  &lt;p&gt;使用 class 語法定義，並透過 customElements.define() 向瀏覽器註冊。&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;card-toggle
+  color="shell"
+  question="card-toggle.js 使用哪種語言實作自訂元素？"
+  answer="javascript"
+  success-source="explain-1"
+  success-color="sky"&gt;
+  點擊作答 — 實作語言是？
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div id="explain-src-1" style="display:none">
+      <p style="margin:0 0 8px">✅ 正確！答案是 <strong style="color:var(--ct-color-sky)">JavaScript</strong>。</p>
+      <p style="margin:0; font-size:0.95em; opacity:0.85">使用 class 語法定義，並透過 <code>customElements.define()</code> 向瀏覽器註冊。</p>
+    </div>
+    <card-toggle color="shell" question="card-toggle.js 使用哪種語言實作自訂元素？" answer="javascript" success-source="explain-src-1" success-color="sky">點擊作答（答：javascript）</card-toggle>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §11 提示功能 ══ -->
+<section class="doc-section" id="sec-quiz-hint">
+  <h2><i class="bi bi-lightbulb"></i> 問答模式 — 提示功能</h2>
+  <p><code>hint</code> 設定提示文字，<code>hint-target</code> 指定外部顯示元素 ID，省略則 alert() 彈窗（建議務必設定）。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">hint</span></td><td><span class="attr-type">string</span></td><td><span class="pill pill-opt">可選</span>提示文字，設定後才顯示提示按鈕。</td></tr>
+        <tr><td><span class="attr-name">hint-target</span></td><td><span class="attr-type">string</span></td><td><span class="pill pill-opt">可選</span>接收提示的元素 ID，提示渲染到此元素內。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;div id="hint-zone"&gt;&lt;/div&gt;
+
+&lt;card-toggle
+  color="pink"
+  question="HTTP 狀態碼 404 代表什麼？"
+  answer="Not Found"
+  hint="此碼表示客戶端請求的資源不存在於伺服器上。"
+  hint-target="hint-zone"&gt;
+  點擊作答 — 404 是什麼意思？
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div id="demo-hint-zone" style="margin-bottom:8px"></div>
+    <card-toggle color="pink" question="HTTP 狀態碼 404 代表什麼？" answer="Not Found" placeholder="請輸入英文狀態說明" hint="此碼表示客戶端請求的資源不存在於伺服器上。" hint-target="demo-hint-zone">點擊作答（答：Not Found）</card-toggle>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §12 進階控制 ══ -->
+<section class="doc-section" id="sec-quiz-adv">
+  <h2><i class="bi bi-sliders"></i> 問答模式 — 進階控制</h2>
+  <p>限制嘗試次數、自訂按鈕文字、隱藏介面元素，靈活調整問答體驗。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">max-attempts</span></td><td><span class="attr-type">number</span></td><td><code>999</code></td><td><span class="pill pill-opt">可選</span>最多嘗試次數，超過後鎖定卡片。</td></tr>
+        <tr><td><span class="attr-name">submit-text</span></td><td><span class="attr-type">string</span></td><td><code>提交答案</code></td><td><span class="pill pill-opt">可選</span>提交按鈕文字。</td></tr>
+        <tr><td><span class="attr-name">hint-text</span></td><td><span class="attr-type">string</span></td><td><code>提示</code></td><td><span class="pill pill-opt">可選</span>提示按鈕文字。</td></tr>
+        <tr><td><span class="attr-name">reset-text</span></td><td><span class="attr-type">string</span></td><td><code>重置</code></td><td><span class="pill pill-opt">可選</span>重置按鈕文字。</td></tr>
+        <tr><td><span class="attr-name">hide-submit</span></td><td><span class="attr-type">boolean</span></td><td>—</td><td><span class="pill pill-bool">布林</span>隱藏提交按鈕。</td></tr>
+        <tr><td><span class="attr-name">hide-hint</span></td><td><span class="attr-type">boolean</span></td><td>—</td><td><span class="pill pill-bool">布林</span>隱藏提示按鈕。</td></tr>
+        <tr><td><span class="attr-name">hide-reset</span></td><td><span class="attr-type">boolean</span></td><td>—</td><td><span class="pill pill-bool">布林</span>隱藏重置按鈕。</td></tr>
+        <tr><td><span class="attr-name">auto-next</span></td><td><span class="attr-type">boolean</span></td><td>—</td><td><span class="pill pill-bool">布林</span>答對後 1.5 秒自動跳下一張（僅 slide group 內有效）。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle
+  color="special"
+  question="定義自訂元素的完整 API 名稱？"
+  answer="customElements.define"
+  placeholder="輸入完整 API 名稱"
+  max-attempts="3"
+  error-message="答錯了，還有機會！"
+  submit-text="Check"
+  hint-text="給我提示"
+  reset-text="重新開始"
+  hint="查看 MDN 的 customElements 條目"&gt;
+  點擊作答（最多 3 次機會）
+&lt;/card-toggle&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle color="special" question="定義自訂元素的完整 API 名稱？" answer="customElements.define" placeholder="輸入完整 API 名稱" max-attempts="3" error-message="答錯了，還有機會！" submit-text="Check" hint-text="給我提示" reset-text="重新開始" hint="查看 MDN 的 customElements 條目">點擊作答（最多 3 次，答案：customElements.define）</card-toggle>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §13 群組 Stack ══ -->
+<section class="doc-section" id="sec-stack">
+  <h2><i class="bi bi-stack"></i> 群組模式 — Stack 堆疊</h2>
+  <p><code>card-toggle-group</code> 預設模式，子卡片垂直排列，各自獨立翻轉。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性（group）</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">mode</span></td><td><span class="attr-type">string</span></td><td><code>stack</code></td><td><span class="pill pill-grp">群組</span><code>stack</code>（預設）、<code>slide</code>、<code>grid</code> 或 <code>grid:gap</code>。</td></tr>
+        <tr><td><span class="attr-name">theme</span></td><td><span class="attr-type">string</span></td><td><code>special</code></td><td><span class="pill pill-grp">群組</span>套用到導覽元素的色彩主題。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle-group mode="stack" theme="sky"&gt;
+  &lt;card-toggle number="1" color="shell" content="HTTP 是網路資料傳輸的基礎協定。"&gt;
+    Q1：什麼是 HTTP？
+  &lt;/card-toggle&gt;
+  &lt;card-toggle number="2" color="sky"   content="DNS 將網域名稱解析為 IP 位址。"&gt;
+    Q2：DNS 的作用是什麼？
+  &lt;/card-toggle&gt;
+  &lt;card-toggle number="3" color="pink"  content="REST 是使用 HTTP 方法操作資源的 API 設計風格。"&gt;
+    Q3：什麼是 REST API？
+  &lt;/card-toggle&gt;
+&lt;/card-toggle-group&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle-group mode="stack" theme="sky">
+      <card-toggle number="1" color="shell" content="HTTP（超文字傳輸協定）是網路資料傳輸的基礎協定。">Q1：什麼是 HTTP？</card-toggle>
+      <card-toggle number="2" color="sky"   content="DNS（域名系統）將人類可讀的網域名稱解析為 IP 位址。">Q2：DNS 的作用是什麼？</card-toggle>
+      <card-toggle number="3" color="pink"  content="REST 是使用 HTTP 標準方法（GET/POST/PUT/DELETE）操作資源的 API 設計風格。">Q3：什麼是 REST API？</card-toggle>
+    </card-toggle-group>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §14 群組 Grid（NEW） ══ -->
+<section class="doc-section" id="sec-grid">
+  <h2><i class="bi bi-grid"></i> 群組模式 — Grid 網格 <span class="new-badge">NEW</span></h2>
+  <p>設定 <code>mode="grid"</code> 後，子卡片以 CSS Grid 排列。<code>cols</code> 指定欄數（預設等於子卡片數量），<code>mode="grid:16px"</code> 可同時設定 gap 大小。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性（group）</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="attr-name">mode="grid"</span></td>
+          <td><span class="attr-type">string</span></td>
+          <td>—</td>
+          <td><span class="pill pill-grp">群組</span>啟用網格排列，子卡片等寬排列。</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">mode="grid:gap"</span></td>
+          <td><span class="attr-type">string</span></td>
+          <td><code>12px</code></td>
+          <td><span class="pill pill-grp">群組</span>同時指定 gap，例如 <code>mode="grid:16px"</code>。預設 gap 為 <code>12px</code>。</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">cols</span></td>
+          <td><span class="attr-type">number</span></td>
+          <td>子卡片數量</td>
+          <td><span class="pill pill-grp">群組</span>指定欄數，例如 <code>cols="2"</code> 即兩欄排列。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>三欄等寬（自動 cols）</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;!-- 3 張卡片 → 自動 3 欄 --&gt;
+&lt;card-toggle-group mode="grid"&gt;
+  &lt;card-toggle color="shell" content="Shell 背面"&gt;Shell 色調&lt;/card-toggle&gt;
+  &lt;card-toggle color="sky"   content="Sky 背面"&gt;Sky 色調&lt;/card-toggle&gt;
+  &lt;card-toggle color="pink"  content="Pink 背面"&gt;Pink 色調&lt;/card-toggle&gt;
+&lt;/card-toggle-group&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle-group mode="grid">
+      <card-toggle color="shell"   content="Shell 色調背面">Shell 色調</card-toggle>
+      <card-toggle color="sky"     content="Sky 色調背面">Sky 色調</card-toggle>
+      <card-toggle color="pink"    content="Pink 色調背面">Pink 色調</card-toggle>
+    </card-toggle-group>
+  </div>
+
+  <h3>指定 cols + 自訂 gap</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;!-- 6 張卡片分 2 欄，gap 16px --&gt;
+&lt;card-toggle-group mode="grid:16px" cols="2"&gt;
+  &lt;card-toggle color="shell"   content="Shell 背面"&gt;Shell&lt;/card-toggle&gt;
+  &lt;card-toggle color="sky"     content="Sky 背面"&gt;Sky&lt;/card-toggle&gt;
+  &lt;card-toggle color="pink"    content="Pink 背面"&gt;Pink&lt;/card-toggle&gt;
+  &lt;card-toggle color="special" content="Special 背面"&gt;Special&lt;/card-toggle&gt;
+  &lt;card-toggle color="ocean"   content="Ocean 背面"&gt;Ocean&lt;/card-toggle&gt;
+  &lt;card-toggle color="indigo"  content="Indigo 背面"&gt;Indigo&lt;/card-toggle&gt;
+&lt;/card-toggle-group&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle-group mode="grid:16px" cols="2">
+      <card-toggle color="shell"   content="Shell 背面">Shell</card-toggle>
+      <card-toggle color="sky"     content="Sky 背面">Sky</card-toggle>
+      <card-toggle color="pink"    content="Pink 背面">Pink</card-toggle>
+      <card-toggle color="special" content="Special 背面">Special</card-toggle>
+      <card-toggle color="ocean"   content="Ocean 背面">Ocean</card-toggle>
+      <card-toggle color="indigo"  content="Indigo 背面">Indigo</card-toggle>
+    </card-toggle-group>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §15 群組 Slide ══ -->
+<section class="doc-section" id="sec-slide">
+  <h2><i class="bi bi-play-btn"></i> 群組模式 — Slide 滑動</h2>
+  <p>設定 <code>mode="slide"</code> 後，卡片橫向滑動展示，一次只顯示一張。此版本新增頂部計數器、<code>lock-nav</code> 強制依序作答、頁碼按鈕答題狀態顏色。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性（group）</th><th>型別</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="attr-name">mode="slide"</span></td><td><span class="attr-type">string</span></td><td><span class="pill pill-grp">群組</span>啟用橫向滑動模式。</td></tr>
+        <tr><td><span class="attr-name">show-pages</span></td><td><span class="attr-type">boolean</span></td><td><span class="pill pill-bool">布林</span>顯示頁碼按鈕，可直接跳頁。答題後頁碼會變色（✓ 綠 / ✗ 橙）。</td></tr>
+        <tr><td><span class="attr-name">hide-nav-buttons</span></td><td><span class="attr-type">boolean</span></td><td><span class="pill pill-bool">布林</span>隱藏上一張／下一張按鈕。</td></tr>
+        <tr>
+          <td><span class="attr-name">hide-counter</span></td>
+          <td><span class="attr-type">boolean</span></td>
+          <td><span class="pill pill-bool">布林</span> <span class="new-badge">NEW</span>隱藏頂部「X / N」計數器。</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">lock-nav</span></td>
+          <td><span class="attr-type">boolean</span></td>
+          <td><span class="pill pill-bool">布林</span> <span class="new-badge">NEW</span>鎖定導覽：必須先答題（或翻牌），才能前往下一張。頁碼按鈕也受限制。
+          </td>
+        </tr>
+        <tr><td><span class="attr-name">auto-next</span>（子卡片）</td><td><span class="attr-type">boolean</span></td><td><span class="pill pill-bool">布林</span>問答答對後 1.5 秒自動進入下一張。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>基本 Slide + 頁碼 + 計數器</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle-group mode="slide" theme="pink" show-pages&gt;
+  &lt;card-toggle color="shell" number="1"
+               content="Vue.js 由尤雨溪開發，以低學習曲線著稱。"&gt;
+    第 1 張：Vue.js 是什麼框架？
+  &lt;/card-toggle&gt;
+  &lt;card-toggle color="sky" number="2"
+               content="React 由 Meta 開發，核心概念是元件化與虛擬 DOM。"&gt;
+    第 2 張：React 的開發者？
+  &lt;/card-toggle&gt;
+  &lt;card-toggle color="pink" number="3"
+               content="Angular 由 Google 維護，預設使用 TypeScript。"&gt;
+    第 3 張：Angular 使用哪種語言？
+  &lt;/card-toggle&gt;
+&lt;/card-toggle-group&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle-group mode="slide" theme="pink" show-pages>
+      <card-toggle color="shell" number="1" content="Vue.js 由尤雨溪（Evan You）開發，以低學習曲線著稱。">第 1 張：Vue.js 是什麼框架？</card-toggle>
+      <card-toggle color="sky"   number="2" content="React 由 Meta（Facebook）開發，核心概念是元件化與虛擬 DOM。">第 2 張：React 的開發者？</card-toggle>
+      <card-toggle color="pink"  number="3" content="Angular 由 Google 維護，預設使用 TypeScript 開發。">第 3 張：Angular 使用哪種語言？</card-toggle>
+    </card-toggle-group>
+  </div>
+
+  <h3>lock-nav + auto-next（強制依序作答）<span class="new-badge">NEW</span></h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;!-- lock-nav：未作答前，下一張按鈕禁用 --&gt;
+&lt;card-toggle-group mode="slide" theme="special" show-pages lock-nav&gt;
+
+  &lt;card-toggle color="sky" number="1"
+    question="HTTP 200 代表？（英文縮寫）"
+    answer="OK"
+    success-color="special"
+    success-message="正確！跳往下一題…"
+    auto-next&gt;
+    Q1（答對自動跳題，答錯可重試）
+  &lt;/card-toggle&gt;
+
+  &lt;card-toggle color="shell" number="2"
+    question="CSS 自訂屬性的前綴符號？"
+    answer="--"
+    success-color="special"
+    success-message="正確！跳往下一題…"
+    auto-next&gt;
+    Q2（必須先答 Q1 才能進入）
+  &lt;/card-toggle&gt;
+
+  &lt;card-toggle color="pink" number="3"
+    question="JavaScript 非同步關鍵字（以 / 連接）？"
+    answer="async/await"
+    success-color="special"&gt;
+    Q3（最後一題）
+  &lt;/card-toggle&gt;
+
+&lt;/card-toggle-group&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle-group mode="slide" theme="special" show-pages lock-nav>
+      <card-toggle color="sky" number="1" question="HTTP 200 代表？（英文縮寫）" answer="OK" success-color="special" success-message="正確！自動跳往下一題…" auto-next>Q1（答對後自動跳下一題）</card-toggle>
+      <card-toggle color="shell" number="2" question="CSS 自訂屬性的前綴符號？" answer="--" success-color="special" success-message="正確！自動跳往下一題…" auto-next>Q2（必須先答 Q1）</card-toggle>
+      <card-toggle color="pink" number="3" question="JavaScript 非同步關鍵字（以 / 連接）？" answer="async/await" success-color="special">Q3（最後一題）</card-toggle>
+    </card-toggle-group>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §16 結果畫面（NEW） ══ -->
+<section class="doc-section" id="sec-result">
+  <h2><i class="bi bi-trophy"></i> 群組模式 — 結果畫面 <span class="new-badge">NEW</span></h2>
+  <p>在 <code>card-toggle-group</code> 加上 <code>show-result</code>，全部題目作答完畢後（600ms 延遲），自動取代群組內容，顯示分數、答題明細及重新作答按鈕。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性（group）</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="attr-name">show-result</span></td>
+          <td><span class="attr-type">boolean</span></td>
+          <td>—</td>
+          <td><span class="pill pill-bool">布林</span> <span class="new-badge">NEW</span>全部答題後顯示結果畫面，包含百分比、答對／答錯／略過題數。</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">result-source</span></td>
+          <td><span class="attr-type">string</span></td>
+          <td>—</td>
+          <td><span class="pill pill-opt">可選</span> <span class="new-badge">NEW</span>結果畫面中附加顯示的自訂元素 ID（如鼓勵語句、後續資源連結）。</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">retry-label</span></td>
+          <td><span class="attr-type">string</span></td>
+          <td><code>↺ 重新作答</code></td>
+          <td><span class="pill pill-opt">可選</span> <span class="new-badge">NEW</span>重新作答按鈕的文字。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box"><i class="bi bi-info-circle-fill" style="color:var(--sky);margin-right:6px;"></i>答題狀態由 <code>_markAnswered(card, 'correct'|'wrong')</code> 收集。答對計 correct，達到嘗試上限計 wrong，翻牌但未作答計 skipped。<code>_retryAll()</code> 方法可完整重置群組。</div>
+
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;!-- 自訂結果區塊（隱藏） --&gt;
+&lt;div id="result-msg" style="display:none"&gt;
+  &lt;p style="margin-top:16px; font-size:0.9rem; opacity:0.7"&gt;
+    繼續練習，熟能生巧！複習後可點擊上方按鈕重新作答。
+  &lt;/p&gt;
+&lt;/div&gt;
+
+&lt;card-toggle-group
+  mode="slide"
+  theme="sky"
+  show-pages
+  lock-nav
+  show-result
+  result-source="result-msg"
+  retry-label="↺ 重新挑戰"&gt;
+
+  &lt;card-toggle color="shell" number="1"
+    question="CSS position 的預設值？"
+    answer="static"
+    max-attempts="2"
+    success-color="sky"
+    auto-next&gt;
+    Q1：CSS position 預設值
+  &lt;/card-toggle&gt;
+
+  &lt;card-toggle color="sky" number="2"
+    question="JavaScript typeof null 的結果？"
+    answer="object"
+    max-attempts="2"
+    success-color="sky"
+    auto-next&gt;
+    Q2：typeof null 的結果
+  &lt;/card-toggle&gt;
+
+  &lt;card-toggle color="pink" number="3"
+    question="HTML 語義元素 &lt;main&gt; 在頁面中應出現幾次？"
+    answer="1"
+    max-attempts="2"
+    success-color="sky"&gt;
+    Q3：&lt;main&gt; 應出現幾次？
+  &lt;/card-toggle&gt;
+
+&lt;/card-toggle-group&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <div id="result-msg-demo" style="display:none">
+      <p style="margin-top:16px; font-size:0.9rem; opacity:0.78; border-top:1px solid rgba(198,199,189,0.12); padding-top:14px;">繼續練習，熟能生巧！複習後可點擊上方按鈕重新作答。</p>
+    </div>
+    <card-toggle-group mode="slide" theme="sky" show-pages lock-nav show-result result-source="result-msg-demo" retry-label="↺ 重新挑戰">
+      <card-toggle color="shell" number="1" question="CSS position 的預設值？" answer="static" max-attempts="2" success-color="sky" auto-next>Q1：CSS position 預設值（答：static）</card-toggle>
+      <card-toggle color="sky"   number="2" question="JavaScript typeof null 的結果？" answer="object" max-attempts="2" success-color="sky" auto-next>Q2：typeof null 的結果（答：object）</card-toggle>
+      <card-toggle color="pink"  number="3" question="HTML &lt;main&gt; 在頁面中應出現幾次？" answer="1" max-attempts="2" success-color="sky">Q3：&lt;main&gt; 應出現幾次？（答：1）</card-toggle>
+    </card-toggle-group>
+  </div>
+</section>
+<hr class="sec-div">
+
+
+<!-- ══ §17 JavaScript API ══ -->
+<section class="doc-section" id="sec-api">
+  <h2><i class="bi bi-terminal"></i> JavaScript API</h2>
+  <p><code>card-toggle</code> 提供 <code>reset()</code> 方法；<code>card-toggle-group</code> 提供 <code>_retryAll()</code> 方法，可程式化重置整組。</p>
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>元素</th><th>方法</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>card-toggle</code></td>
+          <td><span class="attr-name">reset()</span></td>
+          <td>重置單張卡片：清除翻面狀態、錯誤訊息、嘗試次數、計時器、提示顯示區，恢復原始 color。</td>
+        </tr>
+        <tr>
+          <td><code>card-toggle-group</code></td>
+          <td><span class="attr-name">_retryAll()</span> <span class="new-badge">NEW</span></td>
+          <td>重置整組：清空答題狀態、計數器、頁碼按鈕，重新初始化 slide 模式，用於從結果畫面重新作答。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">JavaScript</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-javascript">// 重置單張卡片
+document.querySelector('card-toggle').reset();
+
+// 重置頁面所有卡片
+document.querySelectorAll('card-toggle').forEach(c => c.reset());
+
+// 程式化重新作答整組（等同結果畫面的「重新挑戰」按鈕）
+document.querySelector('card-toggle-group')._retryAll();</code></pre>
+  </div>
+
+  <h3>互動示範</h3>
+  <div class="cb-wrap">
+    <div class="cb-header"><span class="cb-lang">HTML</span><button class="copy-btn" onclick="copyCode(this)"><i class="bi bi-clipboard"></i> 複製</button></div>
+    <pre><code class="language-html">&lt;card-toggle id="api-demo" color="special" toggle
+             content="已翻到背面 — 按下方按鈕重置。"&gt;
+  點擊翻面，再使用 reset() 按鈕重置
+&lt;/card-toggle&gt;
+
+&lt;button onclick="document.getElementById('api-demo').reset()"&gt;
+  呼叫 reset()
+&lt;/button&gt;</code></pre>
+  </div>
+  <button class="prev-btn" onclick="togglePreview(this)"><i class="bi bi-eye"></i> 開啟預覽 <i class="bi bi-chevron-down arrow"></i></button>
+  <div class="prev-panel">
+    <div class="prev-label"><i class="bi bi-play-circle"></i> 即時預覽</div>
+    <card-toggle id="api-demo-card" color="special" toggle content="已翻到背面 — 按下方按鈕程式化重置。">點擊翻面，再按下方按鈕重置</card-toggle>
+    <button style="margin-top:14px; padding:8px 20px; border-radius:6px; border:1px solid var(--sky); background:rgba(149,201,222,0.10); color:var(--sky); font-size:0.95rem; cursor:pointer; font-family:inherit;" onclick="document.getElementById('api-demo-card').reset()">
+      <i class="bi bi-arrow-counterclockwise"></i> 呼叫 reset()
+    </button>
+  </div>
+</section>
+
+</main>
+</div>
+
+<div id="toast-area" style="position:fixed; top:20px; right:24px; z-index:9999; width:260px;"></div>
+
+<script src="card-toggle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+hljs.highlightAll();
+
+function togglePreview(btn) {
+  const panel = btn.nextElementSibling;
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  const icon = btn.querySelector('i:first-child');
+  if (!isOpen) {
+    icon.className = 'bi bi-eye-slash';
+    btn.childNodes[1].textContent = ' 收起預覽 ';
+  } else {
+    icon.className = 'bi bi-eye';
+    btn.childNodes[1].textContent = ' 開啟預覽 ';
+  }
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.cb-wrap').querySelector('pre code');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.classList.add('done');
+    btn.innerHTML = '<i class="bi bi-check-lg"></i> 已複製';
+    showToast('程式碼已複製到剪貼簿');
+    setTimeout(() => {
+      btn.classList.remove('done');
+      btn.innerHTML = '<i class="bi bi-clipboard"></i> 複製';
+    }, 2000);
+  }).catch(() => showToast('複製失敗，請手動選取', 'warn'));
+}
+
+function showToast(msg, type) {
+  const area  = document.getElementById('toast-area');
+  const color = type === 'warn' ? '#FFB3D9' : '#b3de73';
+  const div   = document.createElement('div');
+  div.style.cssText = 'background:#161716; border:1px solid ' + color + '; color:' + color + '; padding:10px 14px; border-radius:6px; font-size:0.875rem; margin-bottom:8px; animation:slideIn 0.2s ease; line-height:1.4; box-shadow:0 4px 16px rgba(0,0,0,0.5);';
+  div.textContent = msg;
+  area.prepend(div);
+  setTimeout(() => { div.style.opacity='0'; div.style.transition='opacity 0.3s'; setTimeout(() => div.remove(), 320); }, 2200);
+}
+
+const sections = document.querySelectorAll('.doc-section[id]');
+const links    = document.querySelectorAll('.sidebar a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('is-active'));
+      const a = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+      if (a) a.classList.add('is-active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+<style>
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(20px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+</style>
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>info-region 說明書</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0D0C;
+  --shell:#C6C7BD;
+  --lavender:#C3A5E5;
+  --sky:#95c9de;
+  --ocean:#0ABDC6;
+  --teal:#0DA591;
+  --safe:#299459;
+  --warning:#F08080;
+  --yellow:#DECA4B;
+  --focus:#e0be79;
+  --info:#1E65C7;
+  --indigo:#9B72CF;
+  --salmon:#E5C3B3;
+  --vanilla:#DBEDD8;
+  --orange:#EDA109;
+  --pink:#FFB3D9;
+  --stone:#95c9de;
+  --nav-w:240px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--shell);
+  font-family:'Segoe UI',system-ui,sans-serif;
+  font-size:1.125rem;
+  line-height:1.5;
+  display:flex;
+  min-height:100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar{
+  width:var(--nav-w);flex-shrink:0;
+  background:rgba(195,165,229,0.04);
+  border-right:1px solid rgba(195,165,229,0.12);
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  padding:24px 0 48px;
+  scrollbar-width:thin;scrollbar-color:rgba(195,165,229,0.2) transparent;
+}
+.brand{padding:0 20px 18px;font-size:1rem;font-weight:700;color:var(--lavender);
+  border-bottom:1px solid rgba(195,165,229,0.1);margin-bottom:10px}
+.brand small{display:block;font-size:0.72rem;font-weight:400;color:rgba(149,201,222,0.7);margin-top:2px}
+nav a{display:block;padding:6px 20px;font-size:0.88rem;color:rgba(198,199,189,0.72);
+  text-decoration:none;border-left:2px solid transparent;transition:color .15s,border-color .15s,background .15s}
+nav a:hover{color:var(--lavender);background:rgba(195,165,229,0.06);border-left-color:rgba(195,165,229,0.4)}
+.nav-g{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(149,201,222,0.55);padding:12px 20px 4px}
+
+/* ── Content ── */
+#content{flex:1;min-width:0;padding:48px 56px 120px;max-width:1140px}
+.page-title{font-size:2rem;font-weight:700;color:var(--lavender);letter-spacing:-0.02em;margin-bottom:6px}
+.page-sub{font-size:1rem;color:rgba(149,201,222,0.7);margin-bottom:48px}
+h2.sh{font-size:1.3rem;font-weight:700;color:var(--shell);margin:52px 0 8px;
+  padding-bottom:10px;border-bottom:1px solid rgba(149,201,222,0.14);scroll-margin-top:20px}
+h3.subh{font-size:1rem;font-weight:600;color:var(--lavender);margin:28px 0 10px;scroll-margin-top:20px}
+.desc{font-size:0.92rem;color:rgba(198,199,189,0.78);margin-bottom:18px;line-height:1.55}
+
+/* ── Example block ── */
+.ex{border:1px solid rgba(149,201,222,0.13);border-radius:8px;overflow:hidden;margin-bottom:28px}
+.ex-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;background:rgba(149,201,222,0.05);
+  border-bottom:1px solid rgba(149,201,222,0.1);
+}
+.ex-title{font-size:0.75rem;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;color:rgba(149,201,222,0.7)}
+.btn-preview{
+  background:rgba(224,190,121,0.12);color:var(--focus);
+  border:1px solid rgba(224,190,121,0.3);border-radius:5px;
+  padding:4px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;
+  letter-spacing:0.04em;transition:background .15s,border-color .15s;
+}
+.btn-preview:hover{background:rgba(224,190,121,0.22);border-color:rgba(224,190,121,0.55)}
+.btn-preview.active{background:rgba(41,148,89,0.1);color:var(--safe);border-color:rgba(41,148,89,0.35)}
+
+/* ── 程式碼 / 預覽 分欄 ── */
+.split{display:flex;gap:0;min-height:0}
+.code-side{flex:1;min-width:0;border-right:1px solid rgba(149,201,222,0.1)}
+.preview-side{
+  flex:1;min-width:0;display:none;
+  padding:20px;background:rgba(12,13,12,0.6);
+  animation:fadeIn .2s ease;
+}
+.preview-side.open{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── Code block ── */
+pre.cb{
+  background:#0e100e;padding:16px 18px;
+  font-size:0.8rem;line-height:1.65;overflow-x:auto;margin:0;
+  font-family:'Cascadia Code','Fira Code',monospace;color:#C6C7BD;white-space:pre;
+}
+.tk-tag{color:var(--lavender)}.tk-attr{color:var(--sky)}.tk-val{color:var(--yellow)}
+.tk-cmt{color:rgba(149,201,222,0.38);font-style:italic}
+.tk-str{color:var(--salmon)}.tk-prop{color:var(--stone)}
+
+/* ── Inline code ── */
+code{background:rgba(195,165,229,0.1);color:var(--lavender);padding:1px 6px;
+  border-radius:4px;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em}
+
+/* ── Attr table ── */
+.ref{width:100%;border-collapse:collapse;font-size:0.88rem;margin-bottom:24px}
+.ref th{background:rgba(149,201,222,0.08);color:rgba(149,201,222,0.8);
+  font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  padding:8px 12px;text-align:left}
+.ref td{padding:9px 12px;border-bottom:1px solid rgba(149,201,222,0.07);
+  color:var(--shell);vertical-align:top;line-height:1.5}
+.ref tr:last-child td{border-bottom:none}
+.ref tr:hover td{background:rgba(149,201,222,0.025)}
+.ref td:first-child code{color:var(--sky)}
+.ref td:nth-child(3){color:var(--yellow);font-family:monospace;font-size:0.82rem}
+
+/* ── 色票 ── */
+.palette{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 24px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:66px}
+.sw-dot{width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.08)}
+.sw-name{font-size:0.68rem;color:var(--stone);text-align:center}
+.sw-hex{font-size:0.62rem;color:rgba(198,199,189,0.45);font-family:monospace}
+.badge-new{display:inline-block;padding:1px 6px;border-radius:3px;font-size:0.62rem;
+  font-weight:700;letter-spacing:0.06em;text-transform:uppercase;vertical-align:middle;
+  margin-left:4px;background:rgba(10,189,198,0.15);color:var(--ocean)}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="brand">info-region<small>說明書 v2（色票更新版）</small></div>
+  <nav>
+    <div class="nav-g">入門</div>
+    <a href="#install">安裝</a>
+    <a href="#basic">基本展開</a>
+    <div class="nav-g">功能</div>
+    <a href="#countdown">Countdown 倒數</a>
+    <a href="#chain">鏈結 next</a>
+    <a href="#manual">手動按鈕</a>
+    <a href="#group">Group 群組</a>
+    <a href="#cascade">Cascade 依序展開</a>
+    <a href="#horizontal">水平佈局</a>
+    <a href="#progress">全體進度條</a>
+    <a href="#border">框線細設定</a>
+    <div class="nav-g">參考</div>
+    <a href="#colors">色票</a>
+    <a href="#ir-attrs">info-region 屬性</a>
+    <a href="#group-attrs">group 屬性</a>
+    <a href="#api">JS API</a>
+    <a href="#config">全域設定</a>
+  </nav>
+</aside>
+
+<main id="content">
+<h1 class="page-title">info-region</h1>
+<p class="page-sub">內容區塊的逐步展開元件——倒數、手動、鏈結、群組、進度條</p>
+
+<!-- ── 安裝 ── -->
+<h2 class="sh" id="install">安裝</h2>
+<p class="desc">無外部相依，在 <code>&lt;body&gt;</code> 末尾引入即可。</p>
+<pre class="cb"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-val">"info-region.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+<!-- ── 基本展開 ── -->
+<h2 class="sh" id="basic">基本展開</h2>
+<p class="desc">
+  <code>&lt;info-region&gt;</code> 初始隱藏，設定 <code>active="true"</code> 或呼叫
+  <code>InfoRegion.activate('id')</code> 來展開。<code>color</code> 接受所有品牌色名稱。
+</p>
+
+<div class="ex" id="ex-basic">
+  <div class="ex-header">
+    <span class="ex-title">直接設定 active="true"</span>
+    <button class="btn-preview" onclick="runPreview('basic')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region</span> <span class="tk-attr">active</span>=<span class="tk-val">"true"</span> <span class="tk-attr">color</span>=<span class="tk-val">"lavender"</span><span class="tk-tag">&gt;</span>
+  這段內容預設就是展開狀態。
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-cmt">&lt;!-- 或用 JS 觸發 --&gt;</span>
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"r1"</span> <span class="tk-attr">color</span>=<span class="tk-val">"sky"</span><span class="tk-tag">&gt;</span>
+  由按鈕觸發展開的內容。
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-val">"InfoRegion.activate('r1')"</span><span class="tk-tag">&gt;</span>
+  展開
+<span class="tk-tag">&lt;/button&gt;</span></pre></div>
+    <div class="preview-side" id="preview-basic"></div>
+  </div>
+</div>
+
+<!-- ── Countdown ── -->
+<h2 class="sh" id="countdown">Countdown 倒數自動跳下一個</h2>
+<p class="desc">
+  加上 <code>countdown="毫秒"</code>，展開後底部出現倒數進度條，時間到自動觸發
+  <code>next</code> 指定的下一個區塊。<code>countdown-color</code> 可覆寫進度條顏色。
+</p>
+
+<div class="ex" id="ex-cd">
+  <div class="ex-header">
+    <span class="ex-title">countdown + next 鏈結</span>
+    <button class="btn-preview" onclick="runPreview('countdown')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"cd1"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"ocean"</span>
+  <span class="tk-attr">countdown</span>=<span class="tk-val">"2500"</span>
+  <span class="tk-attr">next</span>=<span class="tk-val">"cd2"</span><span class="tk-tag">&gt;</span>
+  第一段：2.5 秒後自動展開下一段
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"cd2"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"teal"</span>
+  <span class="tk-attr">countdown</span>=<span class="tk-val">"2500"</span>
+  <span class="tk-attr">next</span>=<span class="tk-val">"cd3"</span><span class="tk-tag">&gt;</span>
+  第二段：再 2.5 秒後展開第三段
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"cd3"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"safe"</span><span class="tk-tag">&gt;</span>
+  第三段：終點，無倒數
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-val">"InfoRegion.activate('cd1')"</span><span class="tk-tag">&gt;</span>開始<span class="tk-tag">&lt;/button&gt;</span></pre></div>
+    <div class="preview-side" id="preview-countdown"></div>
+  </div>
+</div>
+
+<!-- ── chain ── -->
+<h2 class="sh" id="chain">鏈結 next（無倒數）</h2>
+<p class="desc">
+  不加 <code>countdown</code> 時，展開後等待 <code>next-interval</code>（預設 500ms）
+  再觸發下一個，適合純粹的順序展示。
+</p>
+
+<div class="ex" id="ex-chain">
+  <div class="ex-header">
+    <span class="ex-title">next 純鏈結</span>
+    <button class="btn-preview" onclick="runPreview('chain')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"n1"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"indigo"</span>
+  <span class="tk-attr">next</span>=<span class="tk-val">"n2"</span>
+  <span class="tk-attr">next-interval</span>=<span class="tk-val">"400"</span><span class="tk-tag">&gt;</span>
+  Step 1
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"n2"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"lavender"</span>
+  <span class="tk-attr">next</span>=<span class="tk-val">"n3"</span>
+  <span class="tk-attr">next-interval</span>=<span class="tk-val">"400"</span><span class="tk-tag">&gt;</span>
+  Step 2
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"n3"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"pink"</span><span class="tk-tag">&gt;</span>
+  Step 3：完成
+<span class="tk-tag">&lt;/info-region&gt;</span></pre></div>
+    <div class="preview-side" id="preview-chain"></div>
+  </div>
+</div>
+
+<!-- ── manual ── -->
+<h2 class="sh" id="manual">手動按鈕</h2>
+<p class="desc">
+  加上 <code>manual</code> 屬性，展開後顯示「下一步」按鈕，由使用者決定何時繼續。
+  <code>manual-label</code> 自訂按鈕文字，<code>manual-align</code> 控制對齊（left / center / right）。
+</p>
+
+<div class="ex" id="ex-manual">
+  <div class="ex-header">
+    <span class="ex-title">manual 手動推進</span>
+    <button class="btn-preview" onclick="runPreview('manual')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"m1"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"focus"</span>
+  <span class="tk-attr">manual</span>
+  <span class="tk-attr">manual-label</span>=<span class="tk-val">"我準備好了 →"</span>
+  <span class="tk-attr">manual-align</span>=<span class="tk-val">"right"</span>
+  <span class="tk-attr">next</span>=<span class="tk-val">"m2"</span><span class="tk-tag">&gt;</span>
+  閱讀這段內容，準備好再繼續。
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"m2"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"yellow"</span>
+  <span class="tk-attr">manual</span>
+  <span class="tk-attr">manual-label</span>=<span class="tk-val">"繼續 →"</span>
+  <span class="tk-attr">next</span>=<span class="tk-val">"m3"</span><span class="tk-tag">&gt;</span>
+  第二段內容。
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"m3"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"safe"</span><span class="tk-tag">&gt;</span>
+  ✅ 完成！
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-val">"InfoRegion.activate('m1')"</span><span class="tk-tag">&gt;</span>開始<span class="tk-tag">&lt;/button&gt;</span></pre></div>
+    <div class="preview-side" id="preview-manual"></div>
+  </div>
+</div>
+
+<!-- ── group ── -->
+<h2 class="sh" id="group">Group 群組</h2>
+<p class="desc">
+  用 <code>&lt;info-region-group&gt;</code> 包裹，自動產生「開始」和「重設」按鈕，
+  管理群組內所有區塊的展示流程。
+</p>
+
+<div class="ex" id="ex-group">
+  <div class="ex-header">
+    <span class="ex-title">info-region-group 基本用法</span>
+    <button class="btn-preview" onclick="runPreview('group')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region-group</span>
+  <span class="tk-attr">start-label</span>=<span class="tk-val">"▶ 開始閱讀"</span>
+  <span class="tk-attr">start-color</span>=<span class="tk-val">"ocean"</span>
+  <span class="tk-attr">reset-color</span>=<span class="tk-val">"warning"</span><span class="tk-tag">&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span>
+    <span class="tk-attr">color</span>=<span class="tk-val">"ocean"</span>
+    <span class="tk-attr">next</span>=<span class="tk-val">"g2"</span><span class="tk-tag">&gt;</span>
+    第一段：展開後自動觸發下一段
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"g2"</span>
+    <span class="tk-attr">color</span>=<span class="tk-val">"teal"</span>
+    <span class="tk-attr">manual</span>
+    <span class="tk-attr">next</span>=<span class="tk-val">"g3"</span><span class="tk-tag">&gt;</span>
+    第二段：手動按鈕
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">id</span>=<span class="tk-val">"g3"</span>
+    <span class="tk-attr">color</span>=<span class="tk-val">"safe"</span><span class="tk-tag">&gt;</span>
+    第三段：終點
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;/info-region-group&gt;</span></pre></div>
+    <div class="preview-side" id="preview-group"></div>
+  </div>
+</div>
+
+<!-- ── cascade ── -->
+<h2 class="sh" id="cascade">Cascade 依序展開</h2>
+<p class="desc">
+  在 <code>&lt;info-region-group&gt;</code> 設定 <code>cascade-interval="毫秒"</code>，
+  按下開始後所有區塊依序以固定間隔自動展開，不需要 <code>next</code> 屬性。
+</p>
+
+<div class="ex" id="ex-cascade">
+  <div class="ex-header">
+    <span class="ex-title">cascade-interval="600"</span>
+    <button class="btn-preview" onclick="runPreview('cascade')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region-group</span>
+  <span class="tk-attr">cascade-interval</span>=<span class="tk-val">"600"</span><span class="tk-tag">&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"lavender"</span><span class="tk-tag">&gt;</span>0.0s 展開<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"sky"</span><span class="tk-tag">&gt;</span>    0.6s 展開<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"ocean"</span><span class="tk-tag">&gt;</span>  1.2s 展開<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"teal"</span><span class="tk-tag">&gt;</span>   1.8s 展開<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"safe"</span><span class="tk-tag">&gt;</span>   2.4s 展開<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;/info-region-group&gt;</span></pre></div>
+    <div class="preview-side" id="preview-cascade"></div>
+  </div>
+</div>
+
+<!-- ── horizontal ── -->
+<h2 class="sh" id="horizontal">水平佈局</h2>
+<p class="desc">
+  在 <code>&lt;info-region-group&gt;</code> 設定 <code>layout="horizontal"</code>，
+  區塊由下往右展開。<code>cols-per-row</code> 控制每列幾欄（預設 4），
+  <code>row-gap</code> 控制間距。
+</p>
+
+<div class="ex" id="ex-horiz">
+  <div class="ex-header">
+    <span class="ex-title">layout="horizontal" cols-per-row="3"</span>
+    <button class="btn-preview" onclick="runPreview('horiz')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region-group</span>
+  <span class="tk-attr">layout</span>=<span class="tk-val">"horizontal"</span>
+  <span class="tk-attr">cols-per-row</span>=<span class="tk-val">"3"</span>
+  <span class="tk-attr">cascade-interval</span>=<span class="tk-val">"300"</span><span class="tk-tag">&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"lavender"</span><span class="tk-tag">&gt;</span>
+    Task Achievement<br>任務完成度
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"sky"</span><span class="tk-tag">&gt;</span>
+    Coherence &amp; Cohesion<br>連貫性
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"ocean"</span><span class="tk-tag">&gt;</span>
+    Lexical Resource<br>詞彙豐富度
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"teal"</span><span class="tk-tag">&gt;</span>
+    Grammatical Range<br>語法多樣性
+  <span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;/info-region-group&gt;</span></pre></div>
+    <div class="preview-side" id="preview-horiz"></div>
+  </div>
+</div>
+
+<!-- ── progress ── -->
+<h2 class="sh" id="progress">全體進度條</h2>
+<p class="desc">
+  在 <code>&lt;info-region-group&gt;</code> 加上 <code>global-progress</code>，
+  出現整體完成進度條。<code>show-percent</code> 加上百分比數字。
+  設定 <code>global-progress</code> 時，個別 <code>countdown</code> 不觸發 next，
+  由群組的 cascade 或 next 鏈結統一控制。
+</p>
+
+<div class="ex" id="ex-prog">
+  <div class="ex-header">
+    <span class="ex-title">global-progress + show-percent</span>
+    <button class="btn-preview" onclick="runPreview('progress')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-tag">&lt;info-region-group</span>
+  <span class="tk-attr">cascade-interval</span>=<span class="tk-val">"500"</span>
+  <span class="tk-attr">global-progress</span>
+  <span class="tk-attr">show-percent</span>
+  <span class="tk-attr">progress-color</span>=<span class="tk-val">"ocean"</span><span class="tk-tag">&gt;</span>
+
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"indigo"</span><span class="tk-tag">&gt;</span>評分維度 1<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"lavender"</span><span class="tk-tag">&gt;</span>評分維度 2<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"sky"</span><span class="tk-tag">&gt;</span>評分維度 3<span class="tk-tag">&lt;/info-region&gt;</span>
+  <span class="tk-tag">&lt;info-region</span> <span class="tk-attr">color</span>=<span class="tk-val">"ocean"</span><span class="tk-tag">&gt;</span>評分維度 4<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-tag">&lt;/info-region-group&gt;</span></pre></div>
+    <div class="preview-side" id="preview-progress"></div>
+  </div>
+</div>
+
+<!-- ── border ── -->
+<h2 class="sh" id="border">框線細設定</h2>
+<p class="desc">
+  預設只有左側框線。用 <code>border-width</code> 設定四邊同寬，
+  或用 <code>border-top-width</code> 等個別控制。<code>border-style</code> 支援所有 CSS border-style 值。
+</p>
+
+<div class="ex" id="ex-border">
+  <div class="ex-header">
+    <span class="ex-title">各種框線組合</span>
+    <button class="btn-preview" onclick="runPreview('border')">▶ 預覽</button>
+  </div>
+  <div class="split">
+    <div class="code-side"><pre class="cb"><span class="tk-cmt">&lt;!-- 預設：只有左側框線 --&gt;</span>
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">active</span>=<span class="tk-val">"true"</span> <span class="tk-attr">color</span>=<span class="tk-val">"lavender"</span><span class="tk-tag">&gt;</span>
+  預設左側 4px solid
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-cmt">&lt;!-- 四邊框線 --&gt;</span>
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">active</span>=<span class="tk-val">"true"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"ocean"</span>
+  <span class="tk-attr">border-width</span>=<span class="tk-val">"1"</span><span class="tk-tag">&gt;</span>
+  四邊 1px solid
+<span class="tk-tag">&lt;/info-region&gt;</span>
+
+<span class="tk-cmt">&lt;!-- 上框線 dashed + 左框線加粗 --&gt;</span>
+<span class="tk-tag">&lt;info-region</span> <span class="tk-attr">active</span>=<span class="tk-val">"true"</span>
+  <span class="tk-attr">color</span>=<span class="tk-val">"focus"</span>
+  <span class="tk-attr">border-top-width</span>=<span class="tk-val">"2"</span>
+  <span class="tk-attr">border-top-style</span>=<span class="tk-val">"dashed"</span>
+  <span class="tk-attr">border-left-width</span>=<span class="tk-val">"6"</span><span class="tk-tag">&gt;</span>
+  上框虛線 + 左框加粗
+<span class="tk-tag">&lt;/info-region&gt;</span></pre></div>
+    <div class="preview-side" id="preview-border"></div>
+  </div>
+</div>
+
+<!-- ── 色票 ── -->
+<h2 class="sh" id="colors">色票</h2>
+<p class="desc">所有接受 <code>color</code> 的屬性均可使用以下色名，或直接填 HEX。</p>
+<div class="palette">
+  <div class="sw"><div class="sw-dot" style="background:#C6C7BD"></div><div class="sw-name">shell</div><div class="sw-hex">#C6C7BD</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#C3A5E5"></div><div class="sw-name">lavender</div><div class="sw-hex">#C3A5E5</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#95c9de"></div><div class="sw-name">sky <span class="badge-new">更新</span></div><div class="sw-hex">#95c9de</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#F08080"></div><div class="sw-name">warning</div><div class="sw-hex">#F08080</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#E5C3B3"></div><div class="sw-name">salmon</div><div class="sw-hex">#E5C3B3</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#0ABDC6"></div><div class="sw-name">ocean <span class="badge-new">新增</span></div><div class="sw-hex">#0ABDC6</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#299459"></div><div class="sw-name">safe <span class="badge-new">更新</span></div><div class="sw-hex">#299459</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#0DA591"></div><div class="sw-name">teal <span class="badge-new">新增</span></div><div class="sw-hex">#0DA591</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#DBEDD8;border-color:rgba(255,255,255,0.2)"></div><div class="sw-name">vanilla</div><div class="sw-hex">#DBEDD8</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#DECA4B"></div><div class="sw-name">yellow</div><div class="sw-hex">#DECA4B</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#e0be79"></div><div class="sw-name">focus <span class="badge-new">更新</span></div><div class="sw-hex">#e0be79</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#1E65C7"></div><div class="sw-name">info <span class="badge-new">更新</span></div><div class="sw-hex">#1E65C7</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#9B72CF"></div><div class="sw-name">indigo <span class="badge-new">更新</span></div><div class="sw-hex">#9B72CF</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#FFB3D9"></div><div class="sw-name">pink</div><div class="sw-hex">#FFB3D9</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#EDA109"></div><div class="sw-name">orange</div><div class="sw-hex">#EDA109</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#b3de73"></div><div class="sw-name">special</div><div class="sw-hex">#b3de73</div></div>
+  <div class="sw"><div class="sw-dot" style="background:#95c9de"></div><div class="sw-name">stone</div><div class="sw-hex">#95c9de</div></div>
+</div>
+
+<!-- ── info-region 屬性 ── -->
+<h2 class="sh" id="ir-attrs">&lt;info-region&gt; 屬性</h2>
+<table class="ref">
+<thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+<tbody>
+<tr><td><code>active</code></td><td>設為 <code>"true"</code> 展開</td><td>—</td></tr>
+<tr><td><code>color</code></td><td>框線與主題色（色名或 HEX）</td><td><code>sky</code></td></tr>
+<tr><td><code>countdown</code></td><td>展開後倒數毫秒，結束觸發 next</td><td>—</td></tr>
+<tr><td><code>countdown-height</code></td><td>倒數條高度（px）</td><td><code>3</code></td></tr>
+<tr><td><code>countdown-position</code></td><td><code>top</code> 或 <code>bottom</code></td><td><code>bottom</code></td></tr>
+<tr><td><code>countdown-color</code></td><td>倒數條顏色（覆寫 color）</td><td>繼承 color</td></tr>
+<tr><td><code>next</code></td><td>結束後啟動的目標元素 id</td><td>—</td></tr>
+<tr><td><code>next-interval</code></td><td>無 countdown 時的延遲（ms）</td><td><code>500</code></td></tr>
+<tr><td><code>manual</code></td><td>展開後顯示手動按鈕</td><td>—</td></tr>
+<tr><td><code>manual-label</code></td><td>按鈕文字</td><td><code>▶ 下一步</code></td></tr>
+<tr><td><code>manual-align</code></td><td>按鈕對齊：left / center / right</td><td><code>right</code></td></tr>
+<tr><td><code>manual-color</code></td><td>按鈕顏色（覆寫 color）</td><td>繼承 color</td></tr>
+<tr><td><code>border-width</code></td><td>四邊框線粗細（px 數字）</td><td>—</td></tr>
+<tr><td><code>border-top-width</code></td><td>上框線粗細</td><td>—</td></tr>
+<tr><td><code>border-right-width</code></td><td>右框線粗細</td><td>—</td></tr>
+<tr><td><code>border-bottom-width</code></td><td>下框線粗細</td><td>—</td></tr>
+<tr><td><code>border-left-width</code></td><td>左框線粗細（覆寫預設 4px）</td><td>—</td></tr>
+<tr><td><code>border-style</code></td><td>全邊框樣式</td><td><code>solid</code></td></tr>
+<tr><td><code>border-{side}-style</code></td><td>個別邊框樣式</td><td>—</td></tr>
+</tbody>
+</table>
+
+<!-- ── group 屬性 ── -->
+<h2 class="sh" id="group-attrs">&lt;info-region-group&gt; 屬性</h2>
+<table class="ref">
+<thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+<tbody>
+<tr><td><code>cascade-interval</code></td><td>依序展開間隔（ms），0 = 停用</td><td><code>0</code></td></tr>
+<tr><td><code>auto-start</code></td><td>頁面載入後自動開始</td><td>—</td></tr>
+<tr><td><code>layout</code></td><td>設為 <code>horizontal</code> 啟用水平佈局</td><td>—</td></tr>
+<tr><td><code>cols-per-row</code></td><td>水平佈局每列欄數</td><td><code>4</code></td></tr>
+<tr><td><code>row-gap</code></td><td>水平佈局欄位間距</td><td><code>16px</code></td></tr>
+<tr><td><code>show-controls</code></td><td>設為 <code>"false"</code> 隱藏開始/重設按鈕</td><td>—</td></tr>
+<tr><td><code>start-label</code></td><td>開始按鈕文字</td><td><code>▶ 開始</code></td></tr>
+<tr><td><code>start-color</code></td><td>開始按鈕顏色</td><td><code>sky</code></td></tr>
+<tr><td><code>reset-label</code></td><td>重設按鈕文字</td><td><code>↺ 重設</code></td></tr>
+<tr><td><code>reset-color</code></td><td>重設按鈕顏色</td><td><code>warning</code></td></tr>
+<tr><td><code>global-progress</code></td><td>顯示全體進度條</td><td>—</td></tr>
+<tr><td><code>show-percent</code></td><td>進度條旁顯示百分比</td><td>—</td></tr>
+<tr><td><code>progress-color</code></td><td>進度條顏色</td><td>繼承 defaultColor</td></tr>
+<tr><td><code>progress-height</code></td><td>進度條高度（px）</td><td><code>4</code></td></tr>
+<tr><td><code>progress-position</code></td><td><code>top</code> 或 <code>bottom</code></td><td><code>bottom</code></td></tr>
+<tr><td><code>btn-width / btn-height</code></td><td>按鈕尺寸（開始+重設共用）</td><td>—</td></tr>
+<tr><td><code>start-width / start-height</code></td><td>開始按鈕個別尺寸</td><td>—</td></tr>
+<tr><td><code>reset-width / reset-height</code></td><td>重設按鈕個別尺寸</td><td>—</td></tr>
+</tbody>
+</table>
+
+<!-- ── JS API ── -->
+<h2 class="sh" id="api">JS API</h2>
+<table class="ref">
+<thead><tr><th>方法</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>InfoRegion.activate('id')</code></td><td>展開指定 id 的 info-region</td></tr>
+<tr><td><code>InfoRegion.resetAll()</code></td><td>重設頁面所有 info-region 回初始狀態</td></tr>
+<tr><td><code>InfoRegion.colors</code></td><td>取得所有可用色名陣列</td></tr>
+<tr><td><code>InfoRegion.config</code></td><td>取得當前全域設定的副本</td></tr>
+<tr><td><code>el.activate()</code></td><td>元素方法：展開（等同設定 active="true"）</td></tr>
+<tr><td><code>el.reset()</code></td><td>元素方法：收起並清除倒數/手動按鈕</td></tr>
+<tr><td><code>groupEl.start()</code></td><td>群組方法：開始</td></tr>
+<tr><td><code>groupEl.reset()</code></td><td>群組方法：重設所有子區塊</td></tr>
+</tbody>
+</table>
+
+<!-- ── 全域設定 ── -->
+<h2 class="sh" id="config">全域設定（引入前宣告）</h2>
+<pre class="cb"><span class="tk-tag">&lt;script&gt;</span>
+  window.InfoRegionConfig = {
+    defaultColor:      <span class="tk-str">'lavender'</span>,   <span class="tk-cmt">// 預設色</span>
+    animDuration:      <span class="tk-str">400</span>,          <span class="tk-cmt">// 垂直展開動畫 ms</span>
+    horizontalAnimDur: <span class="tk-str">300</span>,          <span class="tk-cmt">// 水平淡入動畫 ms</span>
+    defaultInterval:   <span class="tk-str">400</span>,          <span class="tk-cmt">// 無 countdown 的鏈結延遲 ms</span>
+    borderWidth:       <span class="tk-str">4</span>,            <span class="tk-cmt">// 預設左框線粗細</span>
+    borderRadius:      <span class="tk-str">'0 6px 6px 0'</span>,
+    bgColor:           <span class="tk-str">'#2a2b2a'</span>,    <span class="tk-cmt">// 展開區塊背景色</span>
+    fontSize:          <span class="tk-str">'1rem'</span>,
+    padding:           <span class="tk-str">'14px 18px 20px 20px'</span>,
+    manualLabel:       <span class="tk-str">'繼續 →'</span>,
+    cascadeInterval:   <span class="tk-str">0</span>,
+    colsPerRow:        <span class="tk-str">3</span>,
+  };
+<span class="tk-tag">&lt;/script&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-val">"info-region.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+</main>
+
+<script src="info-region.js"></script>
+<script>
+let _uid = 0;
+const uid = () => 'ir' + (++_uid) + '_' + Date.now();
+
+function runPreview(key) {
+  const panel = document.getElementById('preview-' + key);
+  const btn   = document.querySelector(`[onclick="runPreview('${key}')"]`);
+  panel.classList.add('open');
+  panel.innerHTML = '';
+  PREVIEWS[key] && PREVIEWS[key](panel);
+  btn.classList.add('active');
+  btn.textContent = '↺ 重新預覽';
+}
+
+const btnStyle = `
+  display:inline-flex;align-items:center;gap:6px;
+  background:#333;border:1px solid #95c9de;border-radius:6px;
+  padding:7px 18px;font-size:0.9rem;color:#95c9de;cursor:pointer;
+  margin-top:10px;transition:background .15s;
+`;
+
+const PREVIEWS = {
+
+  basic(el) {
+    const id = uid();
+    el.innerHTML = `
+      <info-region active="true" color="lavender" style="margin-bottom:10px">
+        這段內容預設就是展開狀態，<code>active="true"</code> 直接可見。
+      </info-region>
+      <info-region id="${id}" color="sky">
+        由按鈕觸發展開的內容。
+      </info-region>
+      <button style="${btnStyle}" onclick="InfoRegion.activate('${id}')">▶ 展開第二段</button>`;
+  },
+
+  countdown(el) {
+    const [a,b,c] = [uid(),uid(),uid()];
+    el.innerHTML = `
+      <info-region id="${a}" color="ocean" countdown="2500" next="${b}">
+        <b>第一段</b>：2.5 秒後自動展開下一段（底部有倒數條）
+      </info-region>
+      <info-region id="${b}" color="teal" countdown="2500" next="${c}">
+        <b>第二段</b>：再 2.5 秒後展開第三段
+      </info-region>
+      <info-region id="${c}" color="safe">
+        <b>第三段</b>：終點，無倒數
+      </info-region>
+      <button style="${btnStyle}" onclick="InfoRegion.activate('${a}')">▶ 開始</button>
+      <button style="${btnStyle};border-color:#F08080;color:#F08080;margin-left:8px"
+        onclick="InfoRegion.resetAll()">↺ 重設</button>`;
+  },
+
+  chain(el) {
+    const [a,b,c] = [uid(),uid(),uid()];
+    el.innerHTML = `
+      <info-region id="${a}" color="indigo" next="${b}" next-interval="400">Step 1</info-region>
+      <info-region id="${b}" color="lavender" next="${c}" next-interval="400">Step 2</info-region>
+      <info-region id="${c}" color="pink">Step 3：完成 ✅</info-region>
+      <button style="${btnStyle}" onclick="InfoRegion.activate('${a}')">▶ 開始</button>`;
+  },
+
+  manual(el) {
+    const [a,b,c] = [uid(),uid(),uid()];
+    el.innerHTML = `
+      <info-region id="${a}" color="focus" manual manual-label="我準備好了 →" manual-align="right" next="${b}">
+        閱讀這段內容，確認理解後繼續。
+      </info-region>
+      <info-region id="${b}" color="yellow" manual manual-label="繼續 →" next="${c}">
+        第二段內容，同樣需要手動推進。
+      </info-region>
+      <info-region id="${c}" color="safe">✅ 全部完成！</info-region>
+      <button style="${btnStyle}" onclick="InfoRegion.activate('${a}')">▶ 開始</button>`;
+  },
+
+  group(el) {
+    const [b,c] = [uid(),uid()];
+    el.innerHTML = `
+      <info-region-group
+        start-label="▶ 開始閱讀"
+        start-color="ocean"
+        reset-color="warning">
+        <info-region color="ocean" next="${b}">第一段：展開後 0.5s 觸發下一段</info-region>
+        <info-region id="${b}" color="teal" manual next="${c}">第二段：手動按鈕</info-region>
+        <info-region id="${c}" color="safe">第三段：終點 ✅</info-region>
+      </info-region-group>`;
+  },
+
+  cascade(el) {
+    el.innerHTML = `
+      <info-region-group cascade-interval="600">
+        <info-region color="lavender">0.0s — Task Achievement</info-region>
+        <info-region color="sky">0.6s — Coherence &amp; Cohesion</info-region>
+        <info-region color="ocean">1.2s — Lexical Resource</info-region>
+        <info-region color="teal">1.8s — Grammatical Range</info-region>
+        <info-region color="safe">2.4s — 全部完成 ✅</info-region>
+      </info-region-group>`;
+  },
+
+  horiz(el) {
+    el.innerHTML = `
+      <info-region-group layout="horizontal" cols-per-row="2" cascade-interval="300" row-gap="12px">
+        <info-region color="lavender">Task Achievement<br><small style="opacity:.7">任務完成度</small></info-region>
+        <info-region color="sky">Coherence &amp; Cohesion<br><small style="opacity:.7">連貫性</small></info-region>
+        <info-region color="ocean">Lexical Resource<br><small style="opacity:.7">詞彙豐富度</small></info-region>
+        <info-region color="teal">Grammatical Range<br><small style="opacity:.7">語法多樣性</small></info-region>
+      </info-region-group>`;
+  },
+
+  progress(el) {
+    el.innerHTML = `
+      <info-region-group
+        cascade-interval="500"
+        global-progress
+        show-percent
+        progress-color="ocean">
+        <info-region color="indigo">評分維度 1：Task Achievement</info-region>
+        <info-region color="lavender">評分維度 2：Coherence</info-region>
+        <info-region color="sky">評分維度 3：Lexical Resource</info-region>
+        <info-region color="ocean">評分維度 4：Grammar ✅</info-region>
+      </info-region-group>`;
+  },
+
+  border(el) {
+    el.innerHTML = `
+      <info-region active="true" color="lavender" style="margin-bottom:10px">
+        預設：左側 4px solid
+      </info-region>
+      <info-region active="true" color="ocean" border-width="1" style="margin-bottom:10px">
+        四邊 1px solid
+      </info-region>
+      <info-region active="true" color="focus"
+        border-top-width="2" border-top-style="dashed" border-left-width="6">
+        上框虛線 + 左框 6px 加粗
+      </info-region>`;
+  },
+};
+</script>
+</body>
+</html>

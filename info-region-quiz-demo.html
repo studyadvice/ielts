@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>info-region · 測驗模式說明文件</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0C0D0C;
+      --region:   #333333;
+      --shell:    #C6C7BD;
+      --lavender: #C3A5E5;
+      --special:  #b3de73;
+      --warning:  #F08080;
+      --sky:      #95c9de;
+      --safe:     #299459;
+      --vanilla:  #DBEDD8;
+      --yellow:   #DECA4B;
+      --focus:    #E0BE79;
+      --info:     #1E65C7;
+      --stone:    #95c9de;
+      --indigo:   #9B72CF;
+      --pink:     #FFB3D9;
+      --orange:   #EDA109;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--shell);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    /* ── 頁面標題 ── */
+    .page-header {
+      border-bottom: 1px solid #2a2b2a;
+      padding: 36px 0 28px;
+      margin-bottom: 40px;
+    }
+    .page-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--special);
+      margin-bottom: 6px;
+    }
+    .page-sub {
+      font-size: 0.95rem;
+      opacity: 0.65;
+    }
+    .version-badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--special);
+      color: var(--special);
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+
+    /* ── 章節 ── */
+    .section { margin-bottom: 56px; }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--sky);
+      border-left: 4px solid var(--sky);
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-desc {
+      font-size: 0.93rem;
+      opacity: 0.75;
+      margin-bottom: 18px;
+    }
+
+    /* ── 屬性表 ── */
+    .attr-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+    }
+    .attr-table th {
+      background: #1a1b1a;
+      color: var(--lavender);
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid #2e2f2e;
+    }
+    .attr-table td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #222322;
+      vertical-align: top;
+    }
+    .attr-table tr:last-child td { border-bottom: none; }
+    .attr-table tr:hover td { background: #181918; }
+    .attr-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+    .attr-val {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--safe);
+    }
+    .attr-desc { color: var(--shell); opacity: 0.8; }
+
+    /* ── 程式碼區塊 ── */
+    pre {
+      background: #141514;
+      border: 1px solid #2a2b2a;
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--vanilla);
+      overflow-x: auto;
+      margin-bottom: 20px;
+      line-height: 1.65;
+    }
+    .cm  { color: #666; }        /* 註解 */
+    .ck  { color: var(--sky); }  /* 屬性名稱 */
+    .cv  { color: var(--safe); } /* 屬性值 */
+    .ct  { color: var(--lavender); } /* 標籤名稱 */
+
+    /* ── 分隔線 ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #222322;
+      margin: 48px 0;
+    }
+
+    /* ── 說明標籤 ── */
+    .badge-attr {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--indigo);
+      color: var(--indigo);
+      margin: 2px 3px 2px 0;
+    }
+    .badge-new {
+      font-size: 0.68rem;
+      padding: 1px 7px;
+      border-radius: 10px;
+      background: var(--special);
+      color: #111;
+      font-weight: 700;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    /* ── 示範框 ── */
+    .demo-box {
+      background: #111211;
+      border: 1px solid #2a2b2a;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 10px;
+    }
+    .demo-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sky);
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+
+    /* ── info-region 題號提示 ── */
+    .q-hint {
+      font-size: 0.75rem;
+      color: var(--lavender);
+      opacity: 0.6;
+      margin-bottom: 4px;
+    }
+
+    /* ── 答案區塊基本樣式（data-ir-ans 內部） ── */
+    [data-ir-ans] strong { color: var(--special); }
+    [data-ir-ans] code {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85em;
+      background: #1e1f1e;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--focus);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container py-4" style="max-width:860px">
+
+  <!-- ── 頁首 ─────────────────────────────────── -->
+  <div class="page-header">
+    <div class="page-title">
+      info-region
+      <span class="version-badge">quiz mode</span>
+    </div>
+    <div class="page-sub">
+      測驗模式使用說明 ·
+      <code style="font-family:'Space Mono',monospace;font-size:0.8em;color:var(--lavender)">
+        data-ir-ans</code> 揭曉答案 · 自評式 flashcard 流程
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       § 0  核心概念
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">核心概念</div>
+    <p class="section-desc">
+      測驗模式在原有 info-region 架構上疊加一套互動流程，完全不改動現有屬性。
+      啟用方式有兩種：
+    </p>
+
+    <table class="attr-table">
+      <thead>
+        <tr>
+          <th>啟用方式</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="attr-name">quiz</span>（加在 <code>&lt;info-region&gt;</code>）</td>
+          <td class="attr-desc">單一 region 啟用測驗行為，可鏈接 <code>next</code> 形成獨立問答序列</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-mode</span>（加在 <code>&lt;info-region-group&gt;</code>）</td>
+          <td class="attr-desc">群組內所有 region 皆進入測驗模式，由 group 統一管理流程、計分與進度</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="section-desc">
+      答案寫在 region 內部的子元素，並加上 <code>data-ir-ans</code> 屬性。
+      元件自動將它收合，等使用者點「揭曉答案」才展開。
+    </p>
+
+    <pre><span class="cm">&lt;!-- 基本結構 --&gt;</span>
+<span class="ct">&lt;info-region</span> <span class="ck">quiz</span> <span class="ck">color</span>=<span class="cv">"lavender"</span><span class="ct">&gt;</span>
+
+  <span class="cm">&lt;!-- 題目：直接放在 region 裡面 --&gt;</span>
+  &lt;p&gt;CSS 的 <code>em</code> 和 <code>rem</code> 有何差異？&lt;/p&gt;
+
+  <span class="cm">&lt;!-- 答案：加上 data-ir-ans，預設收合 --&gt;</span>
+  &lt;div <span class="ck">data-ir-ans</span>&gt;
+    &lt;strong&gt;em&lt;/strong&gt; 相對於父元素字體大小；
+    &lt;strong&gt;rem&lt;/strong&gt; 相對於根元素（html）字體大小，不受巢狀影響。
+  &lt;/div&gt;
+
+<span class="ct">&lt;/info-region&gt;</span></pre>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       § 1  新增屬性一覽
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      新增屬性一覽 <span class="badge-new">NEW</span>
+    </div>
+
+    <p style="font-size:.88rem;opacity:.7;margin-bottom:14px">
+      加在 <code>&lt;info-region&gt;</code> 上：
+    </p>
+    <table class="attr-table" style="margin-bottom:28px">
+      <thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="attr-name">quiz</span></td>
+          <td><span class="attr-val">（旗標）</span></td>
+          <td class="attr-desc">啟用單一 region 測驗行為，覆蓋 countdown / manual</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-reveal-label</span></td>
+          <td><span class="attr-val">"👁 揭曉答案"</span></td>
+          <td class="attr-desc">揭曉按鈕的文字</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-reveal-color</span></td>
+          <td><span class="attr-val">繼承 color</span></td>
+          <td class="attr-desc">揭曉按鈕的品牌色名稱</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-ok-label</span></td>
+          <td><span class="attr-val">"✓ 記住了"</span></td>
+          <td class="attr-desc">答對按鈕文字</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-retry-label</span></td>
+          <td><span class="attr-val">"↺ 再看一次"</span></td>
+          <td class="attr-desc">答錯按鈕文字</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-ok-color</span></td>
+          <td><span class="attr-val">"safe"</span></td>
+          <td class="attr-desc">答對按鈕品牌色</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-retry-color</span></td>
+          <td><span class="attr-val">"warning"</span></td>
+          <td class="attr-desc">答錯按鈕品牌色</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-continue-label</span></td>
+          <td><span class="attr-val">"▶ 繼續"</span></td>
+          <td class="attr-desc">無答案元素時的推進按鈕文字（純說明頁）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:.88rem;opacity:.7;margin-bottom:14px">
+      加在 <code>&lt;info-region-group&gt;</code> 上：
+    </p>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="attr-name">quiz-mode</span></td>
+          <td><span class="attr-val">（旗標）</span></td>
+          <td class="attr-desc">群組測驗模式；group 接管流程，停用 cascade / manual</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-score</span></td>
+          <td><span class="attr-val">（旗標）</span></td>
+          <td class="attr-desc">顯示即時得分列（✓ n / m 題答對 k%）</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-shuffle</span></td>
+          <td><span class="attr-val">（旗標）</span></td>
+          <td class="attr-desc">每次開始時隨機打亂題目順序</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-retry-at-end</span></td>
+          <td><span class="attr-val">（旗標）</span></td>
+          <td class="attr-desc">完成後顯示「只複習 N 題」按鈕，針對標記錯誤的題目重練</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-keep-all</span></td>
+          <td><span class="attr-val">（旗標）</span></td>
+          <td class="attr-desc">答完不收起前一題，所有已答題目累積顯示（flashcard 堆疊效果）</td>
+        </tr>
+        <tr>
+          <td><span class="attr-name">quiz-complete-title</span></td>
+          <td><span class="attr-val">"🎉 測驗完成！"</span></td>
+          <td class="attr-desc">完成訊息框的標題文字</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:.88rem;opacity:.7;margin-bottom:10px">
+      <code>InfoRegionConfig</code> 全域預設值（可在載入 js 前覆蓋）：
+    </p>
+    <pre><span class="cm">// 在 &lt;script src="info-region.js"&gt; 之前設定</span>
+window.InfoRegionConfig = {
+  <span class="ck">quizRevealLabel</span>:   <span class="cv">'👁 揭曉答案'</span>,
+  <span class="ck">quizRevealColor</span>:   <span class="cv">null</span>,        <span class="cm">// null = 繼承 region color</span>
+  <span class="ck">quizOkLabel</span>:       <span class="cv">'✓ 記住了'</span>,
+  <span class="ck">quizRetryLabel</span>:    <span class="cv">'↺ 再看一次'</span>,
+  <span class="ck">quizOkColor</span>:       <span class="cv">'safe'</span>,
+  <span class="ck">quizRetryColor</span>:    <span class="cv">'warning'</span>,
+  <span class="ck">quizContinueLabel</span>: <span class="cv">'▶ 繼續'</span>,
+  <span class="ck">quizCompleteTitle</span>: <span class="cv">'🎉 測驗完成！'</span>,
+};</pre>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════
+       § 2  範例 A：獨立 quiz region（鏈接 next）
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">範例 A　獨立 quiz region</div>
+    <p class="section-desc">
+      不需要 group，直接在 region 上加 <code>quiz</code> 屬性，並用 <code>next</code> 鏈接下一題。
+      適合在文章中插入零散的隨堂問答。
+    </p>
+
+    <pre><span class="ct">&lt;info-region</span> <span class="ck">id</span>=<span class="cv">"qa1"</span> <span class="ck">quiz</span> <span class="ck">color</span>=<span class="cv">"lavender"</span> <span class="ck">next</span>=<span class="cv">"qa2"</span> <span class="ck">active</span>=<span class="cv">"true"</span><span class="ct">&gt;</span>
+  &lt;p&gt;&lt;strong&gt;Q1&lt;/strong&gt;  HTTP 的 GET 和 POST 最主要的差異是什麼？&lt;/p&gt;
+  &lt;div <span class="ck">data-ir-ans</span>&gt;
+    GET 把參數放在 URL；POST 放在 request body。
+    GET 適合讀取，POST 適合傳送敏感或大量資料。
+  &lt;/div&gt;
+<span class="ct">&lt;/info-region&gt;</span>
+
+<span class="ct">&lt;info-region</span> <span class="ck">id</span>=<span class="cv">"qa2"</span> <span class="ck">quiz</span> <span class="ck">color</span>=<span class="cv">"indigo"</span> <span class="ck">next</span>=<span class="cv">"qa3"</span><span class="ct">&gt;</span>
+  ...
+<span class="ct">&lt;/info-region&gt;</span></pre>
+
+    <div class="demo-box">
+      <div class="demo-label">🔴 LIVE DEMO</div>
+
+      <div class="q-hint">題 1 / 3</div>
+      <info-region id="qa1" quiz color="lavender" next="qa2" active="true">
+        <p><strong style="color:var(--lavender)">Q1</strong>&nbsp; HTTP 的 GET 和 POST 最主要的差異是什麼？</p>
+        <div data-ir-ans>
+          <strong>GET</strong> 把參數放在 URL 查詢字串；<strong>POST</strong> 放在 request body，較適合傳送敏感或大量資料。GET 是冪等（idempotent）操作，POST 不一定。
+        </div>
+      </info-region>
+
+      <div class="q-hint">題 2 / 3</div>
+      <info-region id="qa2" quiz color="indigo" next="qa3">
+        <p><strong style="color:var(--indigo)">Q2</strong>&nbsp; 什麼是 CSS 的 BEM 命名規則？</p>
+        <div data-ir-ans>
+          <strong>B</strong>lock、<strong>E</strong>lement、<strong>M</strong>odifier。<br>
+          例：<code>.card__title--highlighted</code>。<br>
+          用雙底線區隔區塊與元素，雙連字號區隔修飾語。
+        </div>
+      </info-region>
+
+      <div class="q-hint">題 3 / 3</div>
+      <info-region id="qa3" quiz color="focus">
+        <p><strong style="color:var(--focus)">Q3</strong>&nbsp; JavaScript 的 <code>==</code> 與 <code>===</code> 有何不同？</p>
+        <div data-ir-ans>
+          <code>==</code> 做型別強制轉換後比較（loose equality）；<code>===</code> 型別與值都必須相同（strict equality）。日常推薦使用 <code>===</code>。
+        </div>
+      </info-region>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════
+       § 3  範例 B：quiz-mode group（基本）
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">範例 B　群組測驗（基本）</div>
+    <p class="section-desc">
+      使用 <code>quiz-mode</code> + <code>quiz-score</code> + <code>global-progress</code>，
+      group 自動管理流程，不需要在每個 region 設 <code>next</code>。
+    </p>
+
+    <pre><span class="ct">&lt;info-region-group</span>
+  <span class="ck">quiz-mode</span>
+  <span class="ck">quiz-score</span>
+  <span class="ck">global-progress</span>
+  <span class="ck">show-percent</span>
+  <span class="ck">progress-color</span>=<span class="cv">"safe"</span>
+  <span class="ck">start-label</span>=<span class="cv">"▶ 開始測驗"</span>
+<span class="ct">&gt;</span>
+  <span class="ct">&lt;info-region</span> <span class="ck">color</span>=<span class="cv">"sky"</span><span class="ct">&gt;</span>
+    &lt;p&gt;...題目...&lt;/p&gt;
+    &lt;div <span class="ck">data-ir-ans</span>&gt;...答案...&lt;/div&gt;
+  <span class="ct">&lt;/info-region&gt;</span>
+  <span class="cm">&lt;!-- 更多 region... --&gt;</span>
+<span class="ct">&lt;/info-region-group&gt;</span></pre>
+
+    <div class="demo-box">
+      <div class="demo-label">🔴 LIVE DEMO</div>
+
+      <info-region-group
+        quiz-mode
+        quiz-score
+        global-progress
+        show-percent
+        progress-color="safe"
+        start-label="▶ 開始測驗"
+      >
+        <info-region color="sky">
+          <div class="q-hint">資料結構</div>
+          <p>Stack（堆疊）和 Queue（佇列）最主要的行為差異是什麼？</p>
+          <div data-ir-ans>
+            <strong>Stack</strong> 遵循 LIFO（後進先出）；<strong>Queue</strong> 遵循 FIFO（先進先出）。
+            Stack 常用於函式呼叫堆疊、undo 操作；Queue 常用於任務排程、BFS 演算法。
+          </div>
+        </info-region>
+
+        <info-region color="lavender">
+          <div class="q-hint">網路</div>
+          <p>DNS 的主要功能是什麼？</p>
+          <div data-ir-ans>
+            <strong>Domain Name System</strong>：將人類可讀的網域名稱（如 <code>google.com</code>）解析為 IP 位址，讓瀏覽器能找到目標伺服器。
+          </div>
+        </info-region>
+
+        <info-region color="orange">
+          <div class="q-hint">SQL</div>
+          <p><code>INNER JOIN</code> 和 <code>LEFT JOIN</code> 的結果有什麼不同？</p>
+          <div data-ir-ans>
+            <strong>INNER JOIN</strong> 只回傳兩表都有對應資料的列；
+            <strong>LEFT JOIN</strong> 保留左表所有列，右表無對應則以 NULL 填充。
+          </div>
+        </info-region>
+
+        <info-region color="focus">
+          <div class="q-hint">Python</div>
+          <p>Python 的 <code>list</code> 和 <code>tuple</code> 有何核心差異？</p>
+          <div data-ir-ans>
+            <strong>list</strong> 可變（mutable），支援新增、刪除、修改；
+            <strong>tuple</strong> 不可變（immutable），建立後無法修改，因此執行效率略優，常用於不應被改動的資料。
+          </div>
+        </info-region>
+      </info-region-group>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════
+       § 4  範例 C：洗牌 + 複習錯題
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">範例 C　洗牌 + 複習錯題</div>
+    <p class="section-desc">
+      加上 <code>quiz-shuffle</code> 每次隨機排序；加上 <code>quiz-retry-at-end</code> 完成後提供
+      「只複習錯題」按鈕。適合背單字、背公式等反覆練習場景。
+    </p>
+
+    <pre><span class="ct">&lt;info-region-group</span>
+  <span class="ck">quiz-mode</span>
+  <span class="ck">quiz-shuffle</span>
+  <span class="ck">quiz-retry-at-end</span>
+  <span class="ck">quiz-score</span>
+  <span class="ck">global-progress</span>
+  <span class="ck">show-percent</span>
+<span class="ct">&gt;</span>
+  ...
+<span class="ct">&lt;/info-region-group&gt;</span></pre>
+
+    <div class="demo-box">
+      <div class="demo-label">🔴 LIVE DEMO　每次開始題目順序都不同</div>
+
+      <info-region-group
+        quiz-mode
+        quiz-shuffle
+        quiz-retry-at-end
+        quiz-score
+        global-progress
+        show-percent
+        progress-color="lavender"
+        start-label="▶ 開始（隨機順序）"
+        reset-color="stone"
+      >
+        <info-region color="lavender">
+          <p>HTTP 狀態碼 <strong>404</strong> 代表什麼？</p>
+          <div data-ir-ans>
+            <strong>Not Found</strong>。伺服器無法找到請求的資源，通常是 URL 不正確或資源已被刪除。
+          </div>
+        </info-region>
+
+        <info-region color="pink">
+          <p>什麼是 <strong>SQL Injection</strong>？</p>
+          <div data-ir-ans>
+            攻擊者在輸入欄位插入惡意 SQL 語句，導致資料庫執行非預期的查詢或命令。
+            防禦方式：使用 <strong>Prepared Statements</strong>（參數化查詢）。
+          </div>
+        </info-region>
+
+        <info-region color="yellow">
+          <p>解釋 CSS <code>position: sticky</code> 的行為。</p>
+          <div data-ir-ans>
+            在正常文件流中定位，一旦滾動到達設定的臨界點（如 <code>top: 0</code>），就固定在該位置，直到其父容器滾出視口為止。
+          </div>
+        </info-region>
+
+        <info-region color="stone">
+          <p>Git 的 <code>rebase</code> 和 <code>merge</code> 各適合什麼情境？</p>
+          <div data-ir-ans>
+            <strong>merge</strong> 保留完整歷史與分支結構，適合協作主分支；
+            <strong>rebase</strong> 重寫提交歷史為線性，讓 log 更乾淨，適合個人功能分支整合前。
+          </div>
+        </info-region>
+
+        <info-region color="safe">
+          <p>什麼是 <strong>REST API</strong> 的 stateless 特性？</p>
+          <div data-ir-ans>
+            每個請求必須包含處理該請求所需的所有資訊，伺服器不儲存客戶端的 session 狀態。
+            好處：易於水平擴展、提高可靠性。
+          </div>
+        </info-region>
+      </info-region-group>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════
+       § 5  範例 D：純說明頁（無 data-ir-ans）
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">範例 D　混合模式（說明 + 測驗）</div>
+    <p class="section-desc">
+      <code>quiz-mode</code> group 裡，沒有 <code>[data-ir-ans]</code> 的 region 會顯示「▶ 繼續」按鈕，
+      作為純說明頁使用，不計入得分。適合在測驗前插入概念說明。
+    </p>
+
+    <div class="demo-box">
+      <div class="demo-label">🔴 LIVE DEMO　第一張為說明頁，後兩張為測驗題</div>
+
+      <info-region-group
+        quiz-mode
+        quiz-score
+        global-progress
+        show-percent
+        progress-color="orange"
+        start-label="▶ 開始"
+      >
+        <!-- 說明頁：無 data-ir-ans -->
+        <info-region color="orange">
+          <p><strong style="color:var(--orange)">📖 本節主題：非同步 JavaScript</strong></p>
+          <p>以下幾題將測試你對 Promise、async/await、事件循環的掌握程度。</p>
+          <p>答題時請先嘗試自行回答，再點擊「揭曉答案」。</p>
+        </info-region>
+
+        <!-- 測驗題 1 -->
+        <info-region color="sky">
+          <p>Promise 的三種狀態是什麼？</p>
+          <div data-ir-ans>
+            <strong>Pending</strong>（等待中）→ <strong>Fulfilled</strong>（已完成）或 <strong>Rejected</strong>（已拒絕）。
+            一旦從 pending 轉換，狀態就不可再變更。
+          </div>
+        </info-region>
+
+        <!-- 測驗題 2 -->
+        <info-region color="indigo">
+          <p><code>async/await</code> 是什麼的語法糖？</p>
+          <div data-ir-ans>
+            是 <strong>Promise</strong> 的語法糖，讓非同步程式碼看起來像同步寫法，
+            提升可讀性。<code>await</code> 只能在 <code>async</code> 函式內使用。
+          </div>
+        </info-region>
+      </info-region-group>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════
+       § 6  完整屬性速查
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">完整屬性速查</div>
+
+    <pre><span class="cm">&lt;!-- ① 最精簡：獨立問答，用 next 串接 --&gt;</span>
+<span class="ct">&lt;info-region</span> <span class="ck">quiz</span> <span class="ck">color</span>=<span class="cv">"lavender"</span> <span class="ck">next</span>=<span class="cv">"q2"</span> <span class="ck">active</span>=<span class="cv">"true"</span><span class="ct">&gt;</span>
+  &lt;p&gt;題目&lt;/p&gt;
+  &lt;div <span class="ck">data-ir-ans</span>&gt;答案&lt;/div&gt;
+<span class="ct">&lt;/info-region&gt;</span>
+
+<span class="cm">&lt;!-- ② 群組測驗（基本） --&gt;</span>
+<span class="ct">&lt;info-region-group</span>
+  <span class="ck">quiz-mode</span>                         <span class="cm">&lt;!-- 必要：啟用群組測驗 --&gt;</span>
+  <span class="ck">quiz-score</span>                        <span class="cm">&lt;!-- 選用：顯示得分 --&gt;</span>
+  <span class="ck">global-progress</span> <span class="ck">show-percent</span>      <span class="cm">&lt;!-- 選用：進度條 --&gt;</span>
+  <span class="ck">progress-color</span>=<span class="cv">"safe"</span>
+  <span class="ck">start-label</span>=<span class="cv">"▶ 開始測驗"</span>
+<span class="ct">&gt;</span>
+  <span class="ct">&lt;info-region</span> <span class="ck">color</span>=<span class="cv">"sky"</span><span class="ct">&gt;</span>
+    &lt;p&gt;題目&lt;/p&gt;
+    &lt;div <span class="ck">data-ir-ans</span>&gt;答案&lt;/div&gt;
+  <span class="ct">&lt;/info-region&gt;</span>
+<span class="ct">&lt;/info-region-group&gt;</span>
+
+<span class="cm">&lt;!-- ③ 洗牌 + 複習錯題 --&gt;</span>
+<span class="ct">&lt;info-region-group</span>
+  <span class="ck">quiz-mode</span>
+  <span class="ck">quiz-shuffle</span>                      <span class="cm">&lt;!-- 每次開始隨機排序 --&gt;</span>
+  <span class="ck">quiz-retry-at-end</span>                 <span class="cm">&lt;!-- 完成後提供「只複習錯題」 --&gt;</span>
+  <span class="ck">quiz-score</span> <span class="ck">global-progress</span> <span class="ck">show-percent</span>
+<span class="ct">&gt;</span>
+  ...
+<span class="ct">&lt;/info-region-group&gt;</span>
+
+<span class="cm">&lt;!-- ④ 堆疊模式：答完不收起前一題 --&gt;</span>
+<span class="ct">&lt;info-region-group</span>
+  <span class="ck">quiz-mode</span>
+  <span class="ck">quiz-keep-all</span>                     <span class="cm">&lt;!-- 所有已答題目保持展開 --&gt;</span>
+<span class="ct">&gt;</span>
+  ...
+<span class="ct">&lt;/info-region-group&gt;</span></pre>
+  </div>
+
+  <!-- ── 頁尾 ── -->
+  <div style="border-top:1px solid #222;padding-top:24px;padding-bottom:48px;opacity:.45;font-size:.8rem">
+    info-region.js · quiz mode · 答案容器屬性：<code>data-ir-ans</code>（ir = Info Region）
+  </div>
+
+</div><!-- /container -->
+
+<script src="info-region.js"></script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chunk-demo · 三模式對照 Demo</title>
+<script src="chunk-demo.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0C0D0C;
+    --shell:   #C6C7BD;
+    --sky:     #95c9de;
+    --safe:    #299459;
+    --teal:    #0DA591;
+    --yellow:  #DECA4B;
+    --lavender:#C3A5E5;
+    --salmon:  #E5C3B3;
+    --special: #b3de73;
+    --orange:  #EDA109;
+    --warning: #F08080;
+    --ocean:   #0ABDC6;
+    --info:    #1E65C7;
+    --indigo:  #9B72CF;
+    --pink:    #FFB3D9;
+    --focus:   #E0BE79;
+    --vanilla: #DBEDD8;
+    --dim:     rgba(198,199,189,.42);
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'Segoe UI', 'Noto Sans TC', sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 32px 100px;
+  }
+
+  h1 {
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--special);
+    margin-bottom: 4px;
+    letter-spacing: .04em;
+  }
+  .subtitle {
+    font-size: .95rem;
+    color: var(--dim);
+    margin-bottom: 52px;
+  }
+
+  .section { margin-bottom: 64px; }
+
+  .section-head {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .section-badge {
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 3px 11px; border-radius: 99px; border: 1px solid;
+  }
+  .badge-dropdown  { color: var(--sky);     border-color: var(--sky);     background: rgba(149,201,222,.08); }
+  .badge-dots      { color: var(--special); border-color: var(--special); background: rgba(179,222,115,.08); }
+  .badge-dots-ext  { color: var(--lavender);border-color: var(--lavender);background: rgba(195,165,229,.08); }
+  .badge-combo     { color: var(--orange);  border-color: var(--orange);  background: rgba(237,161,9,.08);   }
+
+  .section-title { font-size: 1.05rem; font-weight: 600; color: var(--shell); }
+  .section-desc {
+    font-size: .88rem; color: var(--dim);
+    margin-bottom: 18px; line-height: 1.55;
+  }
+  code {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: .82rem;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 4px; padding: 1px 6px;
+    color: var(--yellow);
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,.07);
+    margin: 52px 0;
+  }
+
+  .tip-box {
+    margin-top: 14px; padding: 11px 16px;
+    border-radius: 8px;
+    border-left: 3px solid var(--ocean);
+    background: rgba(10,189,198,.07);
+    font-size: .88rem; color: rgba(198,199,189,.80);
+    line-height: 1.55;
+  }
+  .tip-box b { color: var(--ocean); }
+
+  /* 即時切換按鈕 */
+  .switcher { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .sw-btn {
+    font-family: inherit; font-size: .88rem;
+    padding: 5px 14px; border-radius: 7px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.05); color: var(--shell);
+    cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+  }
+  .sw-btn:hover { background: rgba(255,255,255,.09); }
+  .sw-btn.is-active {
+    background: rgba(237,161,9,.14);
+    border-color: var(--orange); color: var(--orange);
+  }
+
+  /* dots-pos 切換 */
+  .pos-btn.is-active {
+    background: rgba(195,165,229,.14);
+    border-color: var(--lavender); color: var(--lavender);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>chunk-demo · v5 · 三模式對照</h1>
+  <p class="subtitle">
+    <code>mode="dropdown"</code> &nbsp;/&nbsp;
+    <code>mode="dots"</code> &nbsp;/&nbsp;
+    <code>mode="dots-ext"</code> 並排示範
+  </p>
+
+  <!-- ═══ SECTION 1：dropdown ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-dropdown">mode="dropdown"</span>
+      <span class="section-title">原有下拉選單模式</span>
+    </div>
+    <p class="section-desc">
+      點擊語塊按鈕展開下拉清單，選擇後清單收起。預設模式，屬性可省略。
+    </p>
+    <chunk-demo
+      mode="dropdown"
+      theme="sky"
+      show-preview="true"
+      sentence="She {0} to the store because she {1} some milk."
+      translation="她去商店，因為她需要一些牛奶。">
+      <cd-chunk id="0" label="動詞">
+        <cd-level level="1" trans="去了">went</cd-level>
+        <cd-level level="2" trans="跑去">ran</cd-level>
+        <cd-level level="3" trans="騎車去">cycled</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" label="動詞片語">
+        <cd-level level="1" trans="需要">needed</cd-level>
+        <cd-level level="2" trans="急需">desperately needed</cd-level>
+        <cd-level level="3" trans="用完了">had run out of</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ SECTION 2：dots ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-dots">mode="dots"</span>
+      <span class="section-title">圓點浮層模式</span>
+    </div>
+    <p class="section-desc">
+      點按鈕後浮出圓點 pill（幾個 level 幾顆點）。
+      點圓點以 <b>slide+fade</b> 動畫切換文字，pill 自動關閉。
+    </p>
+    <chunk-demo
+      mode="dots"
+      theme="special"
+      show-preview="true"
+      sentence="The report must be {0} by Friday, and all figures should be {1}."
+      translation="報告必須在星期五前提交，所有數字都應該被驗證。">
+      <cd-chunk id="0">
+        <cd-level level="1" trans="提交">submitted</cd-level>
+        <cd-level level="2" trans="完成">completed</cd-level>
+        <cd-level level="3" trans="批准">approved</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1">
+        <cd-level level="1" trans="驗證">verified</cd-level>
+        <cd-level level="2" trans="再次確認">double-checked</cd-level>
+        <cd-level level="3" trans="有可靠來源">sourced reliably</cd-level>
+        <cd-level level="4" trans="由審計師確認">auditor-confirmed</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ SECTION 3：dots-ext（下方）═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-dots-ext">mode="dots-ext"</span>
+      <span class="section-title">圓點面板模式 · 面板在下方（預設）</span>
+    </div>
+    <p class="section-desc">
+      所有 chunk 的圓點群集中顯示在句子框<b>下方</b>，最左方標示 <code>{N}</code> 對應。<br>
+      點圓點切換文字；點句子框內的語塊按鈕，對應列短暫 pulse 高亮。
+    </p>
+    <chunk-demo
+      mode="dots-ext"
+      dots-pos="bottom"
+      theme="lavender"
+      show-preview="true"
+      show-translation="true"
+      sentence="Despite {0} weather, the team {1} the summit before dawn."
+      translation="儘管天氣{0}，團隊還是在黎明前{1}了山頂。">
+      <cd-chunk id="0" label="形容詞">
+        <cd-level level="1" trans="惡劣">harsh</cd-level>
+        <cd-level level="2" trans="嚴酷">brutal</cd-level>
+        <cd-level level="3" trans="不可預測">unpredictable</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" label="動詞片語">
+        <cd-level level="1" trans="抵達">reached</cd-level>
+        <cd-level level="2" trans="征服">conquered</cd-level>
+        <cd-level level="3" trans="成功登上">successfully summited</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+    <div class="tip-box">
+      <b>互動提示：</b>面板左欄顯示 <code>label</code> 屬性（形容詞、動詞片語），取代 <code>{N}</code> 記號。
+      點圓點切換文字；點句子框內的語塊高亮對應列。
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ SECTION 4：dots-ext（上方）═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-dots-ext">mode="dots-ext"</span>
+      <span class="section-title">圓點面板模式 · 面板在上方（dots-pos="top"）</span>
+    </div>
+    <p class="section-desc">
+      加上 <code>dots-pos="top"</code>，面板顯示於句子框上方。
+    </p>
+    <chunk-demo
+      mode="dots-ext"
+      dots-pos="top"
+      theme="warning"
+      show-preview="true"
+      sentence="He spoke in a {0} tone that made everyone feel {1}.">
+      <cd-chunk id="0" label="Tone">
+        <cd-level level="1">calm</cd-level>
+        <cd-level level="2">cold</cd-level>
+        <cd-level level="3">sharp</cd-level>
+        <cd-level level="4">dismissive</cd-level>
+        <cd-level level="5">condescending</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" label="Reaction">
+        <cd-level level="1">slightly uneasy</cd-level>
+        <cd-level level="2">visibly uncomfortable</cd-level>
+        <cd-level level="3">deeply unsettled</cd-level>
+        <cd-level level="4">profoundly offended</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ SECTION 4b：label 有無對照 ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-dots-ext">mode="dots-ext"</span>
+      <span class="section-title">label 有無對照</span>
+    </div>
+    <p class="section-desc">
+      同一頁面，左邊省略 <code>label</code>（顯示 <code>{N}</code>），右邊設定 <code>label</code>（顯示自訂名稱）。
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">無 label → 顯示 {N}</p>
+        <chunk-demo
+          mode="dots-ext"
+          dots-pos="bottom"
+          theme="stone"
+          sentence="The data was {0} and the results were {1}.">
+          <cd-chunk id="0">
+            <cd-level level="1">collected</cd-level>
+            <cd-level level="2">analyzed</cd-level>
+            <cd-level level="3">verified</cd-level>
+          </cd-chunk>
+          <cd-chunk id="1">
+            <cd-level level="1">accurate</cd-level>
+            <cd-level level="2">inconclusive</cd-level>
+            <cd-level level="3">significant</cd-level>
+          </cd-chunk>
+        </chunk-demo>
+      </div>
+      <div>
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:10px;">有 label → 顯示自訂名稱</p>
+        <chunk-demo
+          mode="dots-ext"
+          dots-pos="bottom"
+          theme="stone"
+          sentence="The data was {0} and the results were {1}.">
+          <cd-chunk id="0" label="動詞（被動）">
+            <cd-level level="1">collected</cd-level>
+            <cd-level level="2">analyzed</cd-level>
+            <cd-level level="3">verified</cd-level>
+          </cd-chunk>
+          <cd-chunk id="1" label="形容詞">
+            <cd-level level="1">accurate</cd-level>
+            <cd-level level="2">inconclusive</cd-level>
+            <cd-level level="3">significant</cd-level>
+          </cd-chunk>
+        </chunk-demo>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ SECTION 5：dots-ext + mask ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-dots-ext">mode="dots-ext"</span>
+      <span class="section-title">圓點面板 + 遮罩模式</span>
+    </div>
+    <p class="section-desc">
+      <code>mask-mode="true"</code> 搭配 <code>dots-ext</code>。初始文字遮住，點圓點後解遮並切換。
+    </p>
+    <chunk-demo
+      mode="dots-ext"
+      mask-mode="true"
+      dots-pos="bottom"
+      theme="orange"
+      show-preview="true"
+      sentence="The government {0} a new policy that {1} the rights of migrant workers.">
+      <cd-chunk id="0">
+        <cd-level level="1">introduced</cd-level>
+        <cd-level level="2">proposed</cd-level>
+        <cd-level level="3">quietly implemented</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1">
+        <cd-level level="1">expanded</cd-level>
+        <cd-level level="2">restricted</cd-level>
+        <cd-level level="3">fundamentally redefined</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ SECTION 6：即時三模式切換 ═══ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-combo">動態切換</span>
+      <span class="section-title">同一元件即時切換三種模式</span>
+    </div>
+    <p class="section-desc">
+      模式與面板位置皆可隨時切換，元件保留 level 選擇狀態並立即重繪。
+    </p>
+
+    <div class="switcher" id="mode-switcher">
+      <button class="sw-btn is-active" data-mode="dropdown">mode="dropdown"</button>
+      <button class="sw-btn" data-mode="dots">mode="dots"</button>
+      <button class="sw-btn" data-mode="dots-ext">mode="dots-ext"</button>
+    </div>
+
+    <div class="switcher" id="pos-switcher" style="margin-top:-8px;">
+      <button class="sw-btn pos-btn is-active" data-pos="bottom">dots-pos="bottom"</button>
+      <button class="sw-btn pos-btn" data-pos="top">dots-pos="top"</button>
+      <span style="font-size:.8rem;color:var(--dim);align-self:center;">（僅 dots-ext 時有效）</span>
+    </div>
+
+    <chunk-demo
+      id="live-demo"
+      mode="dropdown"
+      dots-pos="bottom"
+      theme="yellow"
+      show-preview="true"
+      show-translation="true"
+      sentence="The committee {0} the proposal after {1} concerns about its feasibility."
+      translation="委員會在對可行性表達{1}後，{0}了該提案。">
+      <cd-chunk id="0">
+        <cd-level level="1" trans="接受">accepted</cd-level>
+        <cd-level level="2" trans="否決">rejected</cd-level>
+        <cd-level level="3" trans="推遲審議">deferred</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1">
+        <cd-level level="1" trans="提出">raising</cd-level>
+        <cd-level level="2" trans="嚴重聲明">voicing serious</cd-level>
+        <cd-level level="3" trans="詳細記錄">extensively documenting</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+  </div>
+
+</div>
+
+<script>
+  const liveDemo = document.getElementById('live-demo');
+
+  document.getElementById('mode-switcher').addEventListener('click', e => {
+    const btn = e.target.closest('.sw-btn');
+    if (!btn) return;
+    document.querySelectorAll('#mode-switcher .sw-btn').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    liveDemo.setAttribute('mode', btn.dataset.mode);
+  });
+
+  document.getElementById('pos-switcher').addEventListener('click', e => {
+    const btn = e.target.closest('.pos-btn');
+    if (!btn) return;
+    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    liveDemo.setAttribute('dots-pos', btn.dataset.pos);
+  });
+</script>
+</body>
+</html>

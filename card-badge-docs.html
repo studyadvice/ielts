@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>card-badge · 使用手冊與視覺編輯器</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="card-badge.js"></script>
+<style>
+/* ── 品牌色彩變數 ─────────────────────────────────────── */
+:root {
+  --bg:      #0C0D0C;
+  --fill:    #161716;
+  --fill2:   #1e1f1e;
+  --fill3:   #242524;
+  --bd:      rgba(198,199,189,.12);
+  --bd2:     rgba(198,199,189,.22);
+  --shell:   #C6C7BD;
+  --lavender:#C3A5E5;
+  --special: #b3de73;
+  --warning: #F08080;
+  --salmon:  #E5C3B3;
+  --sky:     #95c9de;
+  --safe:    #299459;
+  --vanilla: #DBEDD8;
+  --yellow:  #DECA4B;
+  --info:    #1E65C7;
+  --stone:   #95c9de;
+  --indigo:  #9B72CF;
+  --pink:    #FFB3D9;
+  --orange:  #EDA109;
+  --mono: 'Cascadia Code','JetBrains Mono','Consolas',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--shell);font-family:'Segoe UI','PingFang TC','Noto Sans TC',system-ui,sans-serif;font-size:1rem;line-height:1.65;min-height:100vh}
+
+/* ── Header ──────────────────────────────────────────── */
+header{background:var(--fill);border-bottom:1px solid var(--bd);padding:18px 40px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+header h1{font-size:1.5rem;font-weight:700;color:var(--special);letter-spacing:.03em;display:flex;align-items:center;gap:10px}
+header h1 span{font-size:.75rem;font-weight:500;color:var(--stone);background:var(--fill2);border:1px solid var(--bd);border-radius:6px;padding:2px 8px;letter-spacing:.04em}
+header p{color:var(--stone);font-size:.85rem;margin-left:auto}
+
+/* ── Tab Nav ─────────────────────────────────────────── */
+.tab-nav{background:var(--fill);border-bottom:1px solid var(--bd);padding:0 40px;display:flex;gap:0;position:sticky;top:0;z-index:200}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--stone);cursor:pointer;font-size:.83rem;font-weight:500;padding:11px 20px;transition:color .18s,border-color .18s;letter-spacing:.04em;font-family:inherit}
+.tab-btn:hover{color:var(--shell)}
+.tab-btn.active{color:var(--special);border-bottom-color:var(--special)}
+
+/* ── Panels ──────────────────────────────────────────── */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Section ─────────────────────────────────────────── */
+.section{padding:32px 40px;border-bottom:1px solid var(--bd)}
+.section-h{font-size:1.05rem;font-weight:600;color:var(--lavender);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-h::before{content:'';display:inline-block;width:3px;height:1em;background:var(--lavender);border-radius:2px;flex-shrink:0}
+.sub-h{font-size:.78rem;font-weight:600;color:var(--vanilla);text-transform:uppercase;letter-spacing:.07em;margin:18px 0 10px}
+
+/* ── Code blocks ─────────────────────────────────────── */
+.code-block{background:var(--fill2);border:1px solid var(--bd);border-left:3px solid var(--indigo);border-radius:0 10px 10px 0;padding:14px 18px;font-family:var(--mono);font-size:.8rem;line-height:1.85;color:var(--shell);overflow-x:auto;margin:10px 0}
+.code-block .t{color:var(--sky)}
+.code-block .a{color:var(--lavender)}
+.code-block .v{color:var(--special)}
+.code-block .c{color:rgba(198,199,189,.38)}
+
+/* ── Badge row ───────────────────────────────────────── */
+.badge-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:10px 0}
+.badge-row.baseline{align-items:baseline}
+
+/* ── Info/Warn boxes ─────────────────────────────────── */
+.info-box{background:rgba(30,101,199,.07);border:1px solid rgba(30,101,199,.2);border-left:3px solid var(--info);border-radius:0 8px 8px 0;padding:11px 16px;font-size:.85rem;color:var(--vanilla);margin:10px 0;line-height:1.6}
+.warn-box{background:rgba(240,128,128,.07);border:1px solid rgba(240,128,128,.2);border-left:3px solid var(--warning);border-radius:0 8px 8px 0;padding:11px 16px;font-size:.85rem;color:var(--vanilla);margin:10px 0;line-height:1.6}
+
+/* ── Theme swatch grid (guide tab) ──────────────────── */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(106px,1fr));gap:8px;margin-top:12px}
+.swatch{border-radius:9px;padding:9px 12px;font-size:.75rem;font-weight:700;display:flex;flex-direction:column;gap:2px;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .2s}
+.swatch:hover{transform:translateY(-2px)}
+.swatch .sw-name{font-size:.8rem}
+.swatch .sw-hex{opacity:.65;font-size:.67rem;font-family:var(--mono)}
+.swatch.new::after{content:'✦';color:inherit;margin-left:4px;font-size:.7rem}
+
+/* ══ EDITOR ══════════════════════════════════════════ */
+.editor-top{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--bd)}
+
+/* Preview pane */
+.preview-pane{padding:28px 36px;border-right:1px solid var(--bd)}
+.preview-stage{background:var(--fill2);border:1px solid var(--bd);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:110px;padding:20px;margin-bottom:14px}
+.preview-label{font-size:.72rem;color:var(--stone);text-align:center;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
+
+/* Code pane */
+.code-pane{padding:28px 36px}
+.code-box{background:var(--fill2);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.code-box-hd{background:rgba(195,165,229,.06);border-bottom:1px solid var(--bd);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--stone);letter-spacing:.04em}
+.code-box-body{padding:14px 18px;font-family:var(--mono);font-size:.8rem;line-height:2;color:var(--shell);min-height:80px;white-space:pre-wrap;word-break:break-all}
+.code-box-body .sy-tag{color:var(--sky)}
+.code-box-body .sy-aname{color:var(--lavender)}
+.code-box-body .sy-eq{color:var(--stone)}
+.code-box-body .sy-aval{color:var(--special)}
+
+/* Controls grid */
+.ctrl-grid{padding:24px 36px;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;border-bottom:1px solid var(--bd)}
+.ctrl-card{background:var(--fill2);border:1px solid var(--bd);border-radius:10px;padding:15px 18px}
+.ctrl-card-h{font-size:.72rem;font-weight:600;color:var(--lavender);text-transform:uppercase;letter-spacing:.08em;margin-bottom:13px;display:flex;align-items:center;gap:6px}
+.ctrl-row{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.ctrl-lbl{font-size:.77rem;color:var(--stone);min-width:64px;flex-shrink:0}
+.ctrl-input,.ctrl-select{background:var(--fill);border:1px solid var(--bd);border-radius:6px;color:var(--shell);font-size:.78rem;padding:5px 9px;flex:1;min-width:0;outline:none;transition:border-color .15s;font-family:inherit}
+.ctrl-input:focus,.ctrl-select:focus{border-color:var(--lavender)}
+input[type=number].ctrl-input{flex:none;width:72px}
+
+/* Toggle */
+.tog-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.78rem;color:var(--stone);user-select:none}
+.tog{position:relative;width:34px;height:19px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0;position:absolute}
+.tog-sl{position:absolute;inset:0;background:rgba(198,199,189,.13);border-radius:10px;transition:background .2s;cursor:pointer}
+.tog-sl::after{content:'';position:absolute;left:3px;top:3px;width:13px;height:13px;background:var(--stone);border-radius:50%;transition:transform .2s,background .2s}
+.tog input:checked+.tog-sl{background:var(--lavender)}
+.tog input:checked+.tog-sl::after{transform:translateX(15px);background:#0C0D0C}
+
+/* Size buttons */
+.size-btns{display:flex;gap:4px;flex-wrap:wrap}
+.sz-btn{background:var(--fill);border:1px solid var(--bd);border-radius:5px;color:var(--stone);cursor:pointer;font-size:.72rem;padding:3px 9px;transition:all .15s;font-family:inherit}
+.sz-btn:hover{color:var(--shell);border-color:var(--bd2)}
+.sz-btn.active{background:var(--lavender);color:#0C0D0C;border-color:var(--lavender);font-weight:700}
+
+/* Mode buttons */
+.mode-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.mode-btn{background:var(--fill);border:1px solid var(--bd);border-radius:6px;color:var(--stone);cursor:pointer;font-size:.78rem;padding:4px 13px;transition:all .15s;font-family:inherit}
+.mode-btn.active{background:var(--indigo);color:#fff;border-color:var(--indigo);font-weight:600}
+
+/* Color dots */
+.color-dots{display:flex;flex-wrap:wrap;gap:6px}
+.cdot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .2s;position:relative;flex-shrink:0}
+.cdot:hover{transform:scale(1.2);z-index:1}
+.cdot.active{border-color:#fff;box-shadow:0 0 0 1px rgba(198,199,189,.4)}
+/* Tooltip */
+.cdot::after{content:attr(data-name);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--fill3);border:1px solid var(--bd2);border-radius:4px;padding:2px 6px;font-size:.67rem;white-space:nowrap;color:var(--shell);opacity:0;pointer-events:none;transition:opacity .15s;z-index:10}
+.cdot:hover::after{opacity:1}
+
+/* Icon presets */
+.icon-presets{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.ip-btn{background:var(--fill);border:1px solid var(--bd);border-radius:5px;color:var(--stone);cursor:pointer;font-size:.9rem;padding:3px 7px;transition:all .15s;line-height:1}
+.ip-btn:hover{background:rgba(195,165,229,.12);color:var(--lavender);border-color:rgba(195,165,229,.3)}
+
+/* Copy button */
+.copy-btn{background:rgba(195,165,229,.1);border:1px solid rgba(195,165,229,.25);border-radius:5px;color:var(--lavender);cursor:pointer;font-size:.72rem;padding:3px 10px;transition:all .15s;display:flex;align-items:center;gap:4px;font-family:inherit}
+.copy-btn:hover{background:rgba(195,165,229,.2)}
+.copy-btn.ok{color:var(--safe);border-color:rgba(41,148,89,.3);background:rgba(41,148,89,.08)}
+
+/* Mode-specific ctrl sections */
+.mode-type,.mode-count{display:none}
+.mode-type.on,.mode-count.on{display:block}
+
+/* ══ ATTR TABLE ══════════════════════════════════════ */
+.attr-bar{padding:20px 40px;border-bottom:1px solid var(--bd);position:sticky;top:42px;background:var(--bg);z-index:50;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.attr-search{background:var(--fill2);border:1px solid var(--bd);border-radius:7px;color:var(--shell);font-size:.85rem;padding:7px 14px;outline:none;transition:border-color .15s;width:280px;font-family:inherit}
+.attr-search:focus{border-color:var(--lavender)}
+.attr-count{font-size:.78rem;color:var(--stone)}
+
+.attr-section{padding:28px 40px 0}
+.attr-section-h{font-size:.85rem;font-weight:600;color:var(--lavender);margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:.04em}
+.attr-section-h i{opacity:.7}
+table.at{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:32px}
+table.at th{background:var(--fill2);color:var(--vanilla);font-weight:600;padding:9px 14px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd)}
+table.at td{padding:9px 14px;border-bottom:1px solid rgba(198,199,189,.055);vertical-align:top}
+table.at tr:hover td{background:rgba(198,199,189,.025)}
+table.at tr.hide{display:none}
+.an{font-family:var(--mono);color:var(--lavender);font-size:.8rem;white-space:nowrap}
+.at2{font-family:var(--mono);color:var(--sky);font-size:.75rem}
+.ad{font-family:var(--mono);color:var(--special);font-size:.75rem}
+.adesc{color:var(--vanilla);font-size:.8rem;line-height:1.55}
+.adesc small{color:var(--stone);display:block;margin-top:2px;font-size:.73rem}
+
+/* ══ DEMOS ═══════════════════════════════════════════ */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;padding:28px 40px}
+.demo-card{background:var(--fill2);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.demo-card-hd{padding:10px 16px;border-bottom:1px solid var(--bd);font-size:.78rem;font-weight:600;color:var(--vanilla);display:flex;align-items:center;gap:7px}
+.demo-card-hd i{color:var(--lavender);font-size:.9rem}
+.demo-card-body{padding:18px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:5px;min-height:68px}
+.demo-card-body.col{flex-direction:column;align-items:flex-start}
+.demo-card-code{padding:8px 16px;border-top:1px solid var(--bd);font-family:var(--mono);font-size:.7rem;color:var(--stone);overflow-x:auto;white-space:nowrap;background:rgba(0,0,0,.18)}
+
+/* Action target area */
+.action-area{background:var(--fill);border:1px dashed rgba(198,199,189,.18);border-radius:7px;padding:10px 14px;font-size:.8rem;color:var(--stone);margin-top:8px;min-height:38px;word-break:break-all;width:100%}
+
+/* Filter items */
+.filter-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;width:100%}
+.filter-item{background:var(--fill);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;font-size:.75rem;color:var(--stone)}
+[data-filter-group="design"]{border-color:rgba(195,165,229,.35);color:var(--lavender)}
+[data-filter-group="dev"]{border-color:rgba(149,201,222,.35);color:var(--sky)}
+[data-filter-group="data"]{border-color:rgba(179,222,115,.35);color:var(--special)}
+
+/* Count demo */
+.count-controls{display:flex;align-items:center;gap:10px;margin-top:6px}
+.cnt-btn{background:var(--fill);border:1px solid var(--bd2);border-radius:6px;color:var(--shell);cursor:pointer;font-size:.95rem;padding:2px 12px;transition:background .15s;font-family:inherit}
+.cnt-btn:hover{background:rgba(198,199,189,.1)}
+
+/* Collapsible target */
+.collapse-target{background:var(--fill);border:1px solid rgba(195,165,229,.2);border-radius:8px;padding:14px 16px;margin-top:8px;color:var(--vanilla);font-size:.83rem;line-height:1.6;overflow:hidden;width:100%}
+
+/* Events table */
+.evt-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.evt-table th{background:var(--fill2);color:var(--vanilla);font-weight:600;padding:8px 14px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bd)}
+.evt-table td{padding:8px 14px;border-bottom:1px solid rgba(198,199,189,.06);vertical-align:top}
+.evt-name{font-family:var(--mono);color:var(--orange);font-size:.8rem}
+
+/* Responsive */
+@media(max-width:860px){
+  header{padding:14px 20px}
+  .tab-nav{padding:0 16px}
+  .section,.demo-grid,.attr-section{padding-left:20px;padding-right:20px}
+  .editor-top{grid-template-columns:1fr}
+  .preview-pane{border-right:none;border-bottom:1px solid var(--bd)}
+  .preview-pane,.code-pane{padding:20px}
+  .ctrl-grid{padding:18px 20px}
+  .attr-bar{padding:14px 20px;top:38px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────── -->
+<header>
+  <h1><i class="bi bi-tag-fill" style="color:var(--lavender)"></i> card-badge <span>v2 · 品牌主題</span></h1>
+  <p>需在同目錄放置 <code style="color:var(--special);font-family:var(--mono)">card-badge.js</code></p>
+</header>
+
+<!-- ── Nav ───────────────────────────────────────────── -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="guide">快速入門</button>
+  <button class="tab-btn" data-tab="editor">視覺編輯器</button>
+  <button class="tab-btn" data-tab="attrs">屬性總表</button>
+  <button class="tab-btn" data-tab="demos">互動展示</button>
+</nav>
+
+
+<!-- ════════════════════════════════════════════════════
+     TAB 1 · 快速入門
+════════════════════════════════════════════════════ -->
+<div id="tab-guide" class="tab-panel active">
+
+  <!-- 安裝 -->
+  <div class="section">
+    <p class="section-h">安裝</p>
+    <div class="code-block"><span class="c">&lt;!-- 1. 載入 Bootstrap Icons（icon 功能用到時需要）--&gt;</span>
+<span class="t">&lt;link</span> <span class="a">rel</span><span class="v">="stylesheet"</span> <span class="a">href</span><span class="v">="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- 2. 載入元件（放在 &lt;/body&gt; 前，或 head 加 defer）--&gt;</span>
+<span class="t">&lt;script</span> <span class="a">src</span><span class="v">="card-badge.js"</span><span class="t">&gt;&lt;/script&gt;</span></div>
+    <div class="info-box">元件採用 <strong>Light DOM</strong>，不使用 Shadow DOM，外部 CSS 可直接作用於 <code style="color:var(--special);font-family:var(--mono)">.badge</code> 元素。每個實例透過 <code style="color:var(--special);font-family:var(--mono)">data-badge-id</code> 屬性作 CSS 作用域隔離。</div>
+  </div>
+
+  <!-- 基本語法 -->
+  <div class="section">
+    <p class="section-h">基本語法</p>
+    <div class="code-block"><span class="c">&lt;!-- 最簡單用法：文字 + 主題色 --&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"lavender"</span> <span class="a">text</span>=<span class="v">"標籤"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
+
+<span class="c">&lt;!-- 加圖示 --&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"sky"</span> <span class="a">icon</span>=<span class="v">"bi-bell"</span> <span class="a">text</span>=<span class="v">"通知"</span> <span class="a">size</span>=<span class="v">"re"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
+
+<span class="c">&lt;!-- 外框樣式：theme 加 -outline，或加 outline="true" --&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"safe-outline"</span> <span class="a">text</span>=<span class="v">"完成"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"safe"</span> <span class="a">outline</span>=<span class="v">"true"</span> <span class="a">text</span>=<span class="v">"完成"</span><span class="t">&gt;&lt;/card-badge&gt;</span></div>
+    <div class="badge-row">
+      <card-badge theme="lavender" text="標籤"></card-badge>
+      <card-badge theme="sky" icon="bi-bell" text="通知" size="re"></card-badge>
+      <card-badge theme="safe-outline" text="完成"></card-badge>
+      <card-badge theme="indigo" icon="bi-stars" text="精選"></card-badge>
+      <card-badge theme="orange" icon="bi-lightning-charge" text="快速"></card-badge>
+    </div>
+  </div>
+
+  <!-- 主題色 -->
+  <div class="section">
+    <p class="section-h">品牌配色系統</p>
+    <div class="sub-h">Solid — 實色</div>
+    <div class="swatch-grid">
+      <div class="swatch" style="background:#C6C7BD;color:#0C0D0C"><span class="sw-name">shell</span><span class="sw-hex">#C6C7BD</span></div>
+      <div class="swatch" style="background:#C3A5E5;color:#0C0D0C"><span class="sw-name">lavender</span><span class="sw-hex">#C3A5E5</span></div>
+      <div class="swatch" style="background:#b3de73;color:#0C0D0C"><span class="sw-name">special</span><span class="sw-hex">#b3de73</span></div>
+      <div class="swatch" style="background:#F08080;color:#0C0D0C"><span class="sw-name">warning</span><span class="sw-hex">#F08080</span></div>
+      <div class="swatch" style="background:#E5C3B3;color:#0C0D0C"><span class="sw-name">salmon</span><span class="sw-hex">#E5C3B3</span></div>
+      <div class="swatch" style="background:#95c9de;color:#0C0D0C"><span class="sw-name">sky</span><span class="sw-hex">#95c9de</span></div>
+      <div class="swatch" style="background:#299459;color:#0C0D0C"><span class="sw-name">safe</span><span class="sw-hex">#299459</span></div>
+      <div class="swatch" style="background:#DBEDD8;color:#0C0D0C"><span class="sw-name">vanilla</span><span class="sw-hex">#DBEDD8</span></div>
+      <div class="swatch" style="background:#DECA4B;color:#0C0D0C"><span class="sw-name">yellow</span><span class="sw-hex">#DECA4B</span></div>
+      <div class="swatch" style="background:#1E65C7;color:#fff"><span class="sw-name">info</span><span class="sw-hex">#1E65C7</span></div>
+      <div class="swatch" style="background:#95c9de;color:#0C0D0C"><span class="sw-name">stone</span><span class="sw-hex">#95c9de</span></div>
+      <div class="swatch new" style="background:#9B72CF;color:#fff"><span class="sw-name">indigo</span><span class="sw-hex">#9B72CF</span></div>
+      <div class="swatch" style="background:#FFB3D9;color:#0C0D0C"><span class="sw-name">pink</span><span class="sw-hex">#FFB3D9</span></div>
+      <div class="swatch" style="background:#EDA109;color:#0C0D0C"><span class="sw-name">orange</span><span class="sw-hex">#EDA109</span></div>
+    </div>
+    <div class="badge-row" style="margin-top:16px">
+      <card-badge theme="shell" text="shell"></card-badge>
+      <card-badge theme="lavender" text="lavender"></card-badge>
+      <card-badge theme="special" text="special"></card-badge>
+      <card-badge theme="warning" text="warning"></card-badge>
+      <card-badge theme="sky" text="sky"></card-badge>
+      <card-badge theme="safe" text="safe"></card-badge>
+      <card-badge theme="vanilla" text="vanilla"></card-badge>
+      <card-badge theme="info" text="info"></card-badge>
+      <card-badge theme="indigo" text="indigo ✦"></card-badge>
+      <card-badge theme="pink" text="pink"></card-badge>
+      <card-badge theme="orange" text="orange"></card-badge>
+    </div>
+
+    <div class="sub-h">Outline — 外框</div>
+    <div class="badge-row">
+      <card-badge theme="lavender-outline" text="lavender"></card-badge>
+      <card-badge theme="sky-outline" text="sky"></card-badge>
+      <card-badge theme="safe-outline" text="safe"></card-badge>
+      <card-badge theme="warning-outline" text="warning"></card-badge>
+      <card-badge theme="indigo-outline" text="indigo"></card-badge>
+      <card-badge theme="info-outline" text="info"></card-badge>
+      <card-badge theme="orange-outline" text="orange"></card-badge>
+      <card-badge theme="pink-outline" text="pink"></card-badge>
+    </div>
+  </div>
+
+  <!-- 尺寸 -->
+  <div class="section">
+    <p class="section-h">尺寸系統</p>
+    <div class="badge-row baseline">
+      <card-badge theme="indigo" text="xs" size="xs"></card-badge>
+      <card-badge theme="indigo" text="sm" size="sm"></card-badge>
+      <card-badge theme="indigo" text="md" size="md"></card-badge>
+      <card-badge theme="indigo" text="re (預設)" size="re"></card-badge>
+      <card-badge theme="indigo" text="lg" size="lg"></card-badge>
+      <card-badge theme="indigo" text="xl" size="xl"></card-badge>
+    </div>
+    <div class="info-box"><strong>re</strong> 是目前的預設標準尺寸（1.01rem）。<strong>md</strong> 保留向後相容。可用 <code style="font-family:var(--mono)">font-size</code> 和 <code style="font-family:var(--mono)">padding</code> 屬性完全自訂大小。</div>
+  </div>
+
+</div><!-- /tab-guide -->
+
+
+<!-- ════════════════════════════════════════════════════
+     TAB 2 · 視覺編輯器
+════════════════════════════════════════════════════ -->
+<div id="tab-editor" class="tab-panel">
+
+  <!-- 上方：預覽 + 程式碼 -->
+  <div class="editor-top">
+    <div class="preview-pane">
+      <p class="preview-label">即時預覽</p>
+      <div class="preview-stage" id="preview-stage">
+        <card-badge theme="lavender" text="預覽" size="re"></card-badge>
+      </div>
+    </div>
+    <div class="code-pane">
+      <div class="code-box">
+        <div class="code-box-hd">
+          <span>生成程式碼</span>
+          <button class="copy-btn" id="copy-btn" onclick="copyCode()"><i class="bi bi-copy"></i> 複製</button>
+        </div>
+        <div class="code-box-body" id="code-display"></div>
+      </div>
+      <div class="info-box" style="margin-top:12px;font-size:.78rem">只顯示與預設值不同的屬性。預設尺寸 <code style="font-family:var(--mono)">re</code> 省略不輸出。</div>
+    </div>
+  </div>
+
+  <!-- 下方：控制區 -->
+  <div class="ctrl-grid">
+
+    <!-- 外觀 -->
+    <div class="ctrl-card">
+      <div class="ctrl-card-h"><i class="bi bi-palette"></i> 外觀</div>
+
+      <div class="sub-h" style="margin-top:0">主題色</div>
+      <div class="color-dots" id="color-dots"></div>
+      <div class="ctrl-row" style="margin-top:10px">
+        <label class="ctrl-lbl">外框</label>
+        <label class="tog-wrap">
+          <span class="tog"><input type="checkbox" id="ctrl-outline"><span class="tog-sl"></span></span>
+          outline 模式
+        </label>
+      </div>
+
+      <div class="sub-h">尺寸</div>
+      <div class="size-btns" id="size-btns">
+        <button class="sz-btn" data-size="xs">xs</button>
+        <button class="sz-btn" data-size="sm">sm</button>
+        <button class="sz-btn" data-size="md">md</button>
+        <button class="sz-btn active" data-size="re">re</button>
+        <button class="sz-btn" data-size="lg">lg</button>
+        <button class="sz-btn" data-size="xl">xl</button>
+      </div>
+
+      <div class="sub-h">內容</div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-text">文字</label>
+        <input class="ctrl-input" id="ctrl-text" type="text" value="標籤" placeholder="顯示文字">
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-icon">圖示</label>
+        <input class="ctrl-input" id="ctrl-icon" type="text" placeholder="bi-xxx 或 emoji">
+      </div>
+      <div class="icon-presets" id="icon-presets"></div>
+
+      <div class="ctrl-row" style="margin-top:10px">
+        <label class="ctrl-lbl">停用</label>
+        <label class="tog-wrap">
+          <span class="tog"><input type="checkbox" id="ctrl-disabled"><span class="tog-sl"></span></span>
+          disabled
+        </label>
+      </div>
+    </div>
+
+    <!-- 模式 -->
+    <div class="ctrl-card">
+      <div class="ctrl-card-h"><i class="bi bi-sliders"></i> 模式</div>
+      <div class="mode-btns">
+        <button class="mode-btn active" data-mode="basic">基本</button>
+        <button class="mode-btn" data-mode="type">格式化</button>
+        <button class="mode-btn" data-mode="count">計數</button>
+      </div>
+
+      <!-- type mode -->
+      <div class="mode-type" id="ctrl-type-panel">
+        <div class="ctrl-row">
+          <label class="ctrl-lbl" for="ctrl-type">類型</label>
+          <select class="ctrl-select" id="ctrl-type">
+            <option value="date">date（日期）</option>
+            <option value="time">time（時間）</option>
+            <option value="datetime">datetime（日期時間）</option>
+            <option value="deadline">deadline（截止日）</option>
+          </select>
+        </div>
+        <div class="ctrl-row">
+          <label class="ctrl-lbl" for="ctrl-value">value</label>
+          <input class="ctrl-input" id="ctrl-value" type="text" placeholder="2026-07-25">
+        </div>
+        <div class="ctrl-row">
+          <label class="ctrl-lbl" for="ctrl-format">format</label>
+          <select class="ctrl-select" id="ctrl-format">
+            <option value="">預設</option>
+            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            <option value="MM/DD">MM/DD</option>
+            <option value="MM-DD">MM-DD</option>
+          </select>
+        </div>
+        <div class="ctrl-row" id="ctrl-warning-row" style="display:none">
+          <label class="ctrl-lbl" for="ctrl-wd">warning-days</label>
+          <input class="ctrl-input" id="ctrl-wd" type="number" value="3" min="0" max="30">
+        </div>
+      </div>
+
+      <!-- count mode -->
+      <div class="mode-count" id="ctrl-count-panel">
+        <div class="ctrl-row">
+          <label class="ctrl-lbl" for="ctrl-count">count</label>
+          <input class="ctrl-input" id="ctrl-count" type="number" value="5" min="0">
+        </div>
+        <div class="ctrl-row">
+          <label class="ctrl-lbl" for="ctrl-maxcount">max-count</label>
+          <input class="ctrl-input" id="ctrl-maxcount" type="number" value="99" min="1">
+        </div>
+        <div class="ctrl-row">
+          <label class="ctrl-lbl">show-zero</label>
+          <label class="tog-wrap">
+            <span class="tog"><input type="checkbox" id="ctrl-showzero"><span class="tog-sl"></span></span>
+            顯示 0
+          </label>
+        </div>
+        <div class="ctrl-row">
+          <label class="ctrl-lbl">dot-mode</label>
+          <label class="tog-wrap">
+            <span class="tog"><input type="checkbox" id="ctrl-dotmode"><span class="tog-sl"></span></span>
+            小圓點
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 互動 -->
+    <div class="ctrl-card">
+      <div class="ctrl-card-h"><i class="bi bi-cursor"></i> 互動</div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl">clickable</label>
+        <label class="tog-wrap">
+          <span class="tog"><input type="checkbox" id="ctrl-clickable"><span class="tog-sl"></span></span>
+          啟用點擊
+        </label>
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-hover">hover</label>
+        <select class="ctrl-select" id="ctrl-hover">
+          <option value="lift">lift（上浮）</option>
+          <option value="scale">scale（放大）</option>
+          <option value="glow">glow（光暈）</option>
+          <option value="pulse">pulse（脈搏）</option>
+          <option value="rotate">rotate（旋轉）</option>
+          <option value="none">none（無）</option>
+        </select>
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-href">href</label>
+        <input class="ctrl-input" id="ctrl-href" type="text" placeholder="https://...">
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-hreftgt">開啟方式</label>
+        <select class="ctrl-select" id="ctrl-hreftgt">
+          <option value="_self">_self</option>
+          <option value="_blank" selected>_blank</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 提示訊息 -->
+    <div class="ctrl-card">
+      <div class="ctrl-card-h"><i class="bi bi-chat-square-text"></i> 提示訊息</div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-alertmsg">訊息</label>
+        <input class="ctrl-input" id="ctrl-alertmsg" type="text" placeholder="點擊後顯示的訊息">
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-alerttype">類型</label>
+        <select class="ctrl-select" id="ctrl-alerttype">
+          <option value="info">info</option>
+          <option value="success">success</option>
+          <option value="warning">warning</option>
+          <option value="danger">danger</option>
+        </select>
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-alertpos">位置</label>
+        <select class="ctrl-select" id="ctrl-alertpos">
+          <option value="top">top（上中）</option>
+          <option value="top-left">top-left</option>
+          <option value="top-right">top-right</option>
+          <option value="bottom">bottom</option>
+          <option value="bottom-left">bottom-left</option>
+          <option value="bottom-right">bottom-right</option>
+        </select>
+      </div>
+      <div class="ctrl-row">
+        <label class="ctrl-lbl" for="ctrl-alertdur">時長(ms)</label>
+        <input class="ctrl-input" id="ctrl-alertdur" type="number" value="4000" min="500" step="500">
+      </div>
+    </div>
+
+  </div><!-- /ctrl-grid -->
+</div><!-- /tab-editor -->
+
+
+<!-- ════════════════════════════════════════════════════
+     TAB 3 · 屬性總表
+════════════════════════════════════════════════════ -->
+<div id="tab-attrs" class="tab-panel">
+  <div class="attr-bar">
+    <input class="attr-search" id="attr-search" placeholder="搜尋屬性名稱或說明…" type="text">
+    <span class="attr-count" id="attr-count"></span>
+  </div>
+
+  <!-- 外觀 -->
+  <div class="attr-section">
+    <p class="attr-section-h"><i class="bi bi-palette"></i> 外觀（Appearance）</p>
+    <table class="at">
+      <thead><tr><th style="width:140px">屬性</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="attr-row"><td class="an">theme</td><td class="at2">string</td><td class="ad">shell</td><td class="adesc">主題色。可用品牌色名稱（lavender、sky、safe…）或任意 hex。<br>加 <code style="font-family:var(--mono)">-outline</code> 後綴切換外框模式（如 <code style="font-family:var(--mono)">sky-outline</code>）。</td></tr>
+        <tr class="attr-row"><td class="an">outline</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">外框樣式，與 <code style="font-family:var(--mono)">theme="xxx-outline"</code> 效果相同。</td></tr>
+        <tr class="attr-row"><td class="an">size</td><td class="at2">xs|sm|md|re|lg|xl</td><td class="ad">re</td><td class="adesc">預設尺寸。re = 1.01rem / lg = 1.363rem / xl = 1.758rem。<small>md 保留向後相容（0.838rem）。</small></td></tr>
+        <tr class="attr-row"><td class="an">font-size</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">自訂字體大小，覆蓋 size 的字體設定。例如 <code style="font-family:var(--mono)">"0.9rem"</code>。</td></tr>
+        <tr class="attr-row"><td class="an">padding</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">自訂內距，覆蓋 size 的間距設定。例如 <code style="font-family:var(--mono)">"4px 14px"</code>。</td></tr>
+        <tr class="attr-row"><td class="an">text</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">顯示文字內容。</td></tr>
+        <tr class="attr-row"><td class="an">icon</td><td class="at2">string</td><td class="ad">—</td><td class="adesc"><code style="font-family:var(--mono)">bi-xxx</code> 顯示 Bootstrap Icon；其他字串（含 emoji）以 span 包裝顯示。</td></tr>
+        <tr class="attr-row"><td class="an">disabled</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">停用狀態：禁止點擊，顯示半透明灰色。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="attr-section-h"><i class="bi bi-calendar3"></i> 格式化類型（Type）</p>
+    <table class="at">
+      <thead><tr><th style="width:140px">屬性</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="attr-row"><td class="an">type</td><td class="at2">date|time|datetime|deadline</td><td class="ad">—</td><td class="adesc">格式化模式，需搭配 <code style="font-family:var(--mono)">value</code> 使用。</td></tr>
+        <tr class="attr-row"><td class="an">value</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">格式化來源值。date → YYYY-MM-DD；time → HH:mm:ss；deadline → 日期字串。</td></tr>
+        <tr class="attr-row"><td class="an">format</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">date 可選 YYYY-MM-DD / MM/DD / MM-DD；datetime 目前為 MM/DD HH:mm。</td></tr>
+        <tr class="attr-row"><td class="an">warning-days</td><td class="at2">number</td><td class="ad">3</td><td class="adesc">deadline 類型：距截止日幾天內顯示黃色警告。逾期自動切換為紅色。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="attr-section-h"><i class="bi bi-123"></i> 計數（Count）</p>
+    <table class="at">
+      <thead><tr><th style="width:140px">屬性</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="attr-row"><td class="an">count</td><td class="at2">number</td><td class="ad">—</td><td class="adesc">設定此屬性進入計數模式。count=0 且 show-zero=false 時自動隱藏整個元件。</td></tr>
+        <tr class="attr-row"><td class="an">max-count</td><td class="at2">number</td><td class="ad">99</td><td class="adesc">超出此值顯示 N+（如 99+）。</td></tr>
+        <tr class="attr-row"><td class="an">show-zero</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">count=0 時是否仍顯示 badge。</td></tr>
+        <tr class="attr-row"><td class="an">dot-mode</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">小圓點模式：只顯示有色圓點，不顯示數字。</td></tr>
+        <tr class="attr-row"><td class="an">count-animate</td><td class="at2">boolean</td><td class="ad">true</td><td class="adesc">count 改變時的彈跳動畫。設 false 停用。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="attr-section-h"><i class="bi bi-cursor-fill"></i> 互動行為（Interactive）</p>
+    <table class="at">
+      <thead><tr><th style="width:140px">屬性</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="attr-row"><td class="an">clickable</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">啟用點擊互動，hover 效果和 focus 光暈才會生效。</td></tr>
+        <tr class="attr-row"><td class="an">action</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">點擊動作類型：<code style="font-family:var(--mono)">filter</code> / <code style="font-family:var(--mono)">copy</code> / <code style="font-family:var(--mono)">rotate-content</code> / <code style="font-family:var(--mono)">rotate-self</code> / <code style="font-family:var(--mono)">rotate-self-auto</code> / <code style="font-family:var(--mono)">font-increase</code> / <code style="font-family:var(--mono)">font-decrease</code> / <code style="font-family:var(--mono)">font-reset</code></td></tr>
+        <tr class="attr-row"><td class="an">hover-effect</td><td class="at2">lift|scale|glow|pulse|rotate|none</td><td class="ad">lift</td><td class="adesc">hover 動畫效果，需 clickable=true 或 toggle-target 才會啟用。</td></tr>
+        <tr class="attr-row"><td class="an">focus-color</td><td class="at2">string</td><td class="ad">同 theme</td><td class="adesc">鍵盤 focus 時光暈顏色，可用品牌色名稱或 hex。</td></tr>
+        <tr class="attr-row"><td class="an">href</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">點擊跳轉 URL。</td></tr>
+        <tr class="attr-row"><td class="an">href-target</td><td class="at2">string</td><td class="ad">_self</td><td class="adesc">連結開啟方式（_blank / _self 等）。</td></tr>
+        <tr class="attr-row"><td class="an">toggle-target</td><td class="at2">string (id)</td><td class="ad">—</td><td class="adesc">折疊目標元素的 id，點擊展開/收合。icon 自動旋轉 180°。</td></tr>
+        <tr class="attr-row"><td class="an">data-filter</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">搭配 <code style="font-family:var(--mono)">action="filter"</code>，過濾 <code style="font-family:var(--mono)">data-filter-group</code> 相符的元素。</td></tr>
+        <tr class="attr-row"><td class="an">removeself</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">點擊後從 DOM 移除自身（淡出動畫）。</td></tr>
+        <tr class="attr-row"><td class="an">source</td><td class="at2">string (id)</td><td class="ad">—</td><td class="adesc">copy 動作的來源元素 id。</td></tr>
+        <tr class="attr-row"><td class="an">target</td><td class="at2">string (id)</td><td class="ad">—</td><td class="adesc">copy / rotate-content 的目標元素 id。</td></tr>
+        <tr class="attr-row"><td class="an">copy-html</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">copy 時複製 innerHTML 而非純文字。</td></tr>
+        <tr class="attr-row"><td class="an">font-control</td><td class="at2">string (id)</td><td class="ad">—</td><td class="adesc">字體大小控制目標 id，配合 action=font-increase/decrease/reset。</td></tr>
+        <tr class="attr-row"><td class="an">font-step</td><td class="at2">number</td><td class="ad">2</td><td class="adesc">每次調整字體大小的步長（px），上限 32、下限 12。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="attr-section-h"><i class="bi bi-chat-square-dots"></i> 提示訊息（Alert）</p>
+    <table class="at">
+      <thead><tr><th style="width:140px">屬性</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="attr-row"><td class="an">alert-message</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">點擊後在頁面顯示的浮動提示訊息。</td></tr>
+        <tr class="attr-row"><td class="an">alert-type</td><td class="at2">info|success|warning|danger</td><td class="ad">info</td><td class="adesc">提示樣式（顏色）。</td></tr>
+        <tr class="attr-row"><td class="an">alert-duration</td><td class="at2">number</td><td class="ad">4000</td><td class="adesc">提示顯示時長（毫秒）。</td></tr>
+        <tr class="attr-row"><td class="an">alert-position</td><td class="at2">string</td><td class="ad">top</td><td class="adesc">顯示位置：top / top-left / top-right / bottom / bottom-left / bottom-right。</td></tr>
+        <tr class="attr-row"><td class="an">alert-source</td><td class="at2">string (id)</td><td class="ad">—</td><td class="adesc">從指定元素讀取訊息文字（優先級低於 alert-message）。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="attr-section-h"><i class="bi bi-arrow-repeat"></i> 輪播（Rotate）</p>
+    <table class="at">
+      <thead><tr><th style="width:140px">屬性/元素</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="attr-row"><td class="an">action="rotate-self"</td><td class="at2">—</td><td class="ad">—</td><td class="adesc">點擊時輪替自身的顯示（text/icon/theme 來自 &lt;badge-item&gt; 子元素）。</td></tr>
+        <tr class="attr-row"><td class="an">action="rotate-content"</td><td class="at2">—</td><td class="ad">—</td><td class="adesc">點擊時把當前 badge-item 的 innerHTML 注入 target 元素。</td></tr>
+        <tr class="attr-row"><td class="an">action="rotate-self-auto"</td><td class="at2">—</td><td class="ad">—</td><td class="adesc">自動輪播，點擊時展開當前項目到 target 元素。</td></tr>
+        <tr class="attr-row"><td class="an">interval</td><td class="at2">string</td><td class="ad">3s</td><td class="adesc">自動輪播間隔，支援 <code style="font-family:var(--mono)">3s</code> / <code style="font-family:var(--mono)">1.5s</code> / <code style="font-family:var(--mono)">0.5m</code> 格式。</td></tr>
+        <tr class="attr-row"><td class="an">&lt;badge-item&gt;</td><td class="at2">—</td><td class="ad">—</td><td class="adesc">輪播子元素（隱藏）。屬性：<code style="font-family:var(--mono)">text</code> / <code style="font-family:var(--mono)">icon</code> / <code style="font-family:var(--mono)">theme</code>（可覆蓋父元件主題）。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="attr-section-h"><i class="bi bi-broadcast"></i> 自訂事件（Events）</p>
+    <table class="evt-table" style="margin-bottom:32px">
+      <thead><tr><th style="width:160px">事件名稱</th><th>detail 物件欄位</th></tr></thead>
+      <tbody>
+        <tr><td class="evt-name">badge-click</td><td class="adesc">action, filter, source, target, toggleTarget, fontControl, isCollapsed, type, value, text, count, href, alertMessage</td></tr>
+        <tr><td class="evt-name">badge-rotate</td><td class="adesc">mode（'self'|'content'）, currentIndex, totalItems, isAuto?（self 模式）, targetId?（content 模式）</td></tr>
+        <tr><td class="evt-name">badge-expand</td><td class="adesc">currentIndex, totalItems, targetId</td></tr>
+      </tbody>
+    </table>
+
+  </div><!-- /attr-section -->
+</div><!-- /tab-attrs -->
+
+
+<!-- ════════════════════════════════════════════════════
+     TAB 4 · 互動展示
+════════════════════════════════════════════════════ -->
+<div id="tab-demos" class="tab-panel">
+<div class="demo-grid">
+
+  <!-- 格式化日期 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-calendar3"></i> 格式化類型（type）</div>
+    <div class="demo-card-body col">
+      <div class="badge-row">
+        <span style="font-size:.75rem;color:var(--stone);min-width:68px">date</span>
+        <card-badge type="date" value="2026-07-25" theme="stone" size="re" icon="bi-calendar"></card-badge>
+        <card-badge type="date" value="2026-07-25" theme="stone" size="re" icon="bi-calendar" format="MM/DD"></card-badge>
+      </div>
+      <div class="badge-row">
+        <span style="font-size:.75rem;color:var(--stone);min-width:68px">time</span>
+        <card-badge type="time" value="14:30:00" theme="sky" size="re" icon="bi-clock"></card-badge>
+      </div>
+      <div class="badge-row">
+        <span style="font-size:.75rem;color:var(--stone);min-width:68px">datetime</span>
+        <card-badge type="datetime" value="2026-07-25T14:30:00" theme="lavender" size="re"></card-badge>
+      </div>
+      <div class="badge-row">
+        <span style="font-size:.75rem;color:var(--stone);min-width:68px">deadline</span>
+        <card-badge type="deadline" value="2026-07-26" theme="safe" size="re" warning-days="3"></card-badge>
+        <card-badge type="deadline" value="2026-07-24" theme="safe" size="re" warning-days="3"></card-badge>
+      </div>
+    </div>
+    <div class="demo-card-code">type="date" value="2026-07-25"  |  type="deadline" value="..."</div>
+  </div>
+
+  <!-- 計數 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-123"></i> 計數 badge（count）</div>
+    <div class="demo-card-body col">
+      <div class="count-controls">
+        <card-badge id="demo-cnt" theme="warning" count="5" size="re" icon="bi-bell" count-animate="true"></card-badge>
+        <button class="cnt-btn" onclick="document.getElementById('demo-cnt').setAttribute('count',Math.max(0,(+document.getElementById('demo-cnt').getAttribute('count')||0)-1))">－</button>
+        <button class="cnt-btn" onclick="document.getElementById('demo-cnt').setAttribute('count',(+document.getElementById('demo-cnt').getAttribute('count')||0)+1))">＋</button>
+      </div>
+      <div class="badge-row" style="margin-top:8px">
+        <card-badge theme="sky" count="0" show-zero="false" size="re"></card-badge>
+        <span style="font-size:.72rem;color:var(--stone)">count=0 隱藏</span>
+        <card-badge theme="pink" count="0" show-zero="true" size="re"></card-badge>
+        <span style="font-size:.72rem;color:var(--stone)">show-zero</span>
+      </div>
+      <div class="badge-row">
+        <card-badge theme="orange" count="150" max-count="99" size="re" icon="bi-chat"></card-badge>
+        <span style="font-size:.72rem;color:var(--stone)">max-count=99 → 99+</span>
+      </div>
+      <div class="badge-row">
+        <card-badge theme="indigo" dot-mode="true" count="1" size="re"></card-badge>
+        <span style="font-size:.72rem;color:var(--stone)">dot-mode 小圓點</span>
+      </div>
+    </div>
+    <div class="demo-card-code">count="5" icon="bi-bell"  |  dot-mode="true" count="1"</div>
+  </div>
+
+  <!-- Hover 效果 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-hand-index"></i> Hover 效果（hover-effect）</div>
+    <div class="demo-card-body">
+      <card-badge theme="lavender" text="lift" clickable="true" hover-effect="lift" size="re"></card-badge>
+      <card-badge theme="sky" text="scale" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="special" text="glow" clickable="true" hover-effect="glow" size="re"></card-badge>
+      <card-badge theme="pink" text="pulse" clickable="true" hover-effect="pulse" size="re"></card-badge>
+      <card-badge theme="indigo" text="rotate" clickable="true" hover-effect="rotate" size="re"></card-badge>
+    </div>
+    <div class="demo-card-code">clickable="true" hover-effect="scale"</div>
+  </div>
+
+  <!-- 折疊 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-chevron-contract"></i> 折疊（toggle-target）</div>
+    <div class="demo-card-body col">
+      <card-badge theme="lavender" icon="bi-chevron-down" text="展開 / 折疊" toggle-target="demo-collapse" hover-effect="scale" size="re"></card-badge>
+      <div class="collapse-target" id="demo-collapse">
+        這是可折疊的內容區塊。<br>帶有 0.3s 高度動畫，icon 自動旋轉 180°。
+      </div>
+    </div>
+    <div class="demo-card-code">icon="bi-chevron-down" toggle-target="demo-collapse"</div>
+  </div>
+
+  <!-- 提示訊息 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-chat-square-text"></i> 提示訊息（alert-message）</div>
+    <div class="demo-card-body">
+      <card-badge theme="info"    text="info"    clickable="true" alert-message="這是 Info 訊息"    alert-type="info"    size="re"></card-badge>
+      <card-badge theme="safe"    text="success" clickable="true" alert-message="操作成功！"          alert-type="success" size="re"></card-badge>
+      <card-badge theme="yellow"  text="warning" clickable="true" alert-message="請注意！"            alert-type="warning" size="re"></card-badge>
+      <card-badge theme="warning" text="danger"  clickable="true" alert-message="發生錯誤，請重試。"  alert-type="danger"  size="re"></card-badge>
+    </div>
+    <div class="demo-card-code">alert-message="..." alert-type="success"</div>
+  </div>
+
+  <!-- 複製 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-copy"></i> 複製（action="copy"）</div>
+    <div class="demo-card-body col">
+      <div style="display:flex;align-items:center;gap:8px;width:100%">
+        <span id="demo-copy-src" style="background:var(--fill);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;font-size:.82rem;color:var(--shell);flex:1">這段文字可以被複製</span>
+        <card-badge theme="sky" icon="bi-copy" text="複製" action="copy" source="demo-copy-src" target="demo-copy-tgt" alert-message="已複製！" alert-type="success" alert-duration="1500" clickable="true" size="re"></card-badge>
+      </div>
+      <div class="action-area" id="demo-copy-tgt">複製後的內容會出現在這裡</div>
+    </div>
+    <div class="demo-card-code">action="copy" source="src-id" target="tgt-id"</div>
+  </div>
+
+  <!-- 過濾 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-funnel"></i> 過濾（action="filter"）</div>
+    <div class="demo-card-body col">
+      <div class="badge-row">
+        <card-badge theme="shell" text="全部" action="filter" data-filter="all" clickable="true" size="re"></card-badge>
+        <card-badge theme="lavender" text="設計" action="filter" data-filter="design" clickable="true" size="re"></card-badge>
+        <card-badge theme="sky" text="開發" action="filter" data-filter="dev" clickable="true" size="re"></card-badge>
+        <card-badge theme="special" text="資料" action="filter" data-filter="data" clickable="true" size="re"></card-badge>
+      </div>
+      <div class="filter-items">
+        <div class="filter-item" data-filter-group="design">UI 設計</div>
+        <div class="filter-item" data-filter-group="dev">前端開發</div>
+        <div class="filter-item" data-filter-group="design">品牌規劃</div>
+        <div class="filter-item" data-filter-group="data">資料分析</div>
+        <div class="filter-item" data-filter-group="dev">API 整合</div>
+        <div class="filter-item" data-filter-group="data">視覺化</div>
+      </div>
+    </div>
+    <div class="demo-card-code">action="filter" data-filter="design"</div>
+  </div>
+
+  <!-- removeself -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-trash3"></i> 點擊移除（removeself）</div>
+    <div class="demo-card-body" id="demo-remove-body">
+      <card-badge theme="warning" text="點擊移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="salmon" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="indigo" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="orange" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+    </div>
+    <div class="demo-card-code">removeself="true" clickable="true"</div>
+  </div>
+
+  <!-- 字體控制 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-fonts"></i> 字體控制（font-control）</div>
+    <div class="demo-card-body col">
+      <div class="badge-row">
+        <card-badge theme="safe"   icon="bi-zoom-in"    action="font-increase" font-control="demo-font-target" font-step="2" clickable="true" size="re"></card-badge>
+        <card-badge theme="warning" icon="bi-zoom-out"  action="font-decrease" font-control="demo-font-target" font-step="2" clickable="true" size="re"></card-badge>
+        <card-badge theme="stone"  icon="bi-arrow-counterclockwise" action="font-reset" font-control="demo-font-target" clickable="true" size="re"></card-badge>
+      </div>
+      <div class="action-area" id="demo-font-target">這段文字的大小可以被調整</div>
+    </div>
+    <div class="demo-card-code">action="font-increase" font-control="target-id"</div>
+  </div>
+
+  <!-- 輪播 rotate-self -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-arrow-repeat"></i> 點擊輪替（rotate-self）</div>
+    <div class="demo-card-body">
+      <card-badge action="rotate-self" clickable="true" hover-effect="scale" size="re">
+        <badge-item text="設計" theme="lavender" icon="bi-palette"></badge-item>
+        <badge-item text="開發" theme="sky"      icon="bi-code-slash"></badge-item>
+        <badge-item text="分析" theme="special"  icon="bi-bar-chart"></badge-item>
+        <badge-item text="企劃" theme="indigo"   icon="bi-lightbulb"></badge-item>
+      </card-badge>
+      <span style="font-size:.78rem;color:var(--stone)">點擊輪替</span>
+    </div>
+    <div class="demo-card-code">action="rotate-self"  +  &lt;badge-item text="..." theme="..."&gt;</div>
+  </div>
+
+  <!-- 自動輪播 rotate-self-auto -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-play-circle"></i> 自動輪播（rotate-self-auto）</div>
+    <div class="demo-card-body col">
+      <div class="badge-row">
+        <card-badge action="rotate-self-auto" interval="1.8s" size="re">
+          <badge-item text="lavender" theme="lavender"></badge-item>
+          <badge-item text="sky"      theme="sky"></badge-item>
+          <badge-item text="safe"     theme="safe"></badge-item>
+          <badge-item text="indigo"   theme="indigo"></badge-item>
+          <badge-item text="orange"   theme="orange"></badge-item>
+        </card-badge>
+        <span style="font-size:.78rem;color:var(--stone)">每 1.8s 自動切換</span>
+      </div>
+    </div>
+    <div class="demo-card-code">action="rotate-self-auto" interval="1.8s"</div>
+  </div>
+
+  <!-- 連結 -->
+  <div class="demo-card">
+    <div class="demo-card-hd"><i class="bi bi-box-arrow-up-right"></i> 連結（href）</div>
+    <div class="demo-card-body">
+      <card-badge theme="sky" icon="bi-github" text="GitHub" href="https://github.com" href-target="_blank" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="indigo" icon="bi-box-arrow-up-right" text="外部連結" href="https://example.com" href-target="_blank" hover-effect="lift" size="re"></card-badge>
+      <card-badge theme="lavender-outline" icon="bi-arrow-right" text="頁內跳轉" href="#tab-guide" hover-effect="scale" size="re"></card-badge>
+    </div>
+    <div class="demo-card-code">href="https://..." href-target="_blank"</div>
+  </div>
+
+</div><!-- /demo-grid -->
+</div><!-- /tab-demos -->
+
+
+<script>
+/* ── Tab Switching ──────────────────────────────── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ── Brand Colors ───────────────────────────────── */
+const COLORS = [
+  {name:'shell',   hex:'#C6C7BD'},
+  {name:'lavender',hex:'#C3A5E5'},
+  {name:'special', hex:'#b3de73'},
+  {name:'warning', hex:'#F08080'},
+  {name:'salmon',  hex:'#E5C3B3'},
+  {name:'sky',     hex:'#95c9de'},
+  {name:'safe',    hex:'#299459'},
+  {name:'vanilla', hex:'#DBEDD8'},
+  {name:'yellow',  hex:'#DECA4B'},
+  {name:'info',    hex:'#1E65C7'},
+  {name:'stone',   hex:'#95c9de'},
+  {name:'indigo',  hex:'#9B72CF'},
+  {name:'pink',    hex:'#FFB3D9'},
+  {name:'orange',  hex:'#EDA109'},
+];
+
+const ICONS = [
+  'bi-check-circle','bi-x-circle','bi-exclamation-triangle','bi-info-circle',
+  'bi-star','bi-heart','bi-bell','bi-chat','bi-lock','bi-shield-check',
+  'bi-gear','bi-lightning-charge','bi-fire','bi-tag','bi-bookmark',
+  'bi-clock','bi-calendar','bi-person','bi-house','bi-box-arrow-up-right',
+  'bi-copy','bi-trash3','bi-pencil','bi-eye','bi-cloud-upload',
+  'bi-bar-chart','bi-pie-chart','bi-graph-up','bi-palette','bi-code-slash',
+];
+
+let currentTheme = 'lavender';
+
+/* ── Build color dots ─────────────────────────── */
+const dotsEl = document.getElementById('color-dots');
+COLORS.forEach(c => {
+  const d = document.createElement('span');
+  d.className = 'cdot' + (c.name === currentTheme ? ' active' : '');
+  d.style.background = c.hex;
+  d.dataset.name = c.name;
+  d.setAttribute('data-name', c.name);
+  d.addEventListener('click', () => {
+    currentTheme = c.name;
+    document.querySelectorAll('.cdot').forEach(x => x.classList.remove('active'));
+    d.classList.add('active');
+    updatePreview();
+  });
+  dotsEl.appendChild(d);
+});
+
+/* ── Build icon presets ──────────────────────── */
+const iconsEl = document.getElementById('icon-presets');
+ICONS.forEach(ic => {
+  const btn = document.createElement('button');
+  btn.className = 'ip-btn';
+  btn.innerHTML = `<i class="bi ${ic}"></i>`;
+  btn.title = ic;
+  btn.addEventListener('click', () => {
+    document.getElementById('ctrl-icon').value = ic;
+    updatePreview();
+  });
+  iconsEl.appendChild(btn);
+});
+
+/* ── Size buttons ────────────────────────────── */
+document.querySelectorAll('.sz-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sz-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updatePreview();
+  });
+});
+
+/* ── Mode buttons ────────────────────────────── */
+let currentMode = 'basic';
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentMode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('ctrl-type-panel').classList.toggle('on', currentMode === 'type');
+    document.getElementById('ctrl-count-panel').classList.toggle('on', currentMode === 'count');
+    updatePreview();
+  });
+});
+
+/* type select → show warning-days row only for deadline */
+document.getElementById('ctrl-type').addEventListener('change', function() {
+  document.getElementById('ctrl-warning-row').style.display = this.value === 'deadline' ? 'flex' : 'none';
+  updatePreview();
+});
+
+/* ── Attach listeners to all controls ────────── */
+document.querySelectorAll('.ctrl-input,.ctrl-select').forEach(el => {
+  el.addEventListener('input', updatePreview);
+  el.addEventListener('change', updatePreview);
+});
+document.querySelectorAll('.tog input').forEach(el => {
+  el.addEventListener('change', updatePreview);
+});
+
+/* ── Generate badge HTML ─────────────────────── */
+function generateBadgeHTML() {
+  const attrs = {};
+
+  /* theme */
+  const outline = document.getElementById('ctrl-outline').checked;
+  attrs.theme = outline ? currentTheme + '-outline' : currentTheme;
+
+  /* text / icon */
+  const text = document.getElementById('ctrl-text').value.trim();
+  const icon = document.getElementById('ctrl-icon').value.trim();
+  if (text) attrs.text = text;
+  if (icon) attrs.icon = icon;
+
+  /* size */
+  const size = document.querySelector('.sz-btn.active')?.dataset.size || 're';
+  if (size !== 're') attrs.size = size;
+
+  /* disabled */
+  if (document.getElementById('ctrl-disabled').checked) attrs.disabled = 'true';
+
+  /* mode-specific */
+  if (currentMode === 'type') {
+    const type = document.getElementById('ctrl-type').value;
+    const val  = document.getElementById('ctrl-value').value.trim();
+    const fmt  = document.getElementById('ctrl-format').value;
+    const wd   = document.getElementById('ctrl-wd').value;
+    if (type) attrs.type = type;
+    if (val)  attrs.value = val;
+    if (fmt)  attrs.format = fmt;
+    if (type === 'deadline' && wd !== '3') attrs['warning-days'] = wd;
+  }
+
+  if (currentMode === 'count') {
+    const count    = document.getElementById('ctrl-count').value;
+    const maxCount = document.getElementById('ctrl-maxcount').value;
+    const showZero = document.getElementById('ctrl-showzero').checked;
+    const dotMode  = document.getElementById('ctrl-dotmode').checked;
+    attrs.count = count || '0';
+    if (maxCount && maxCount !== '99') attrs['max-count'] = maxCount;
+    if (showZero) attrs['show-zero'] = 'true';
+    if (dotMode)  attrs['dot-mode']  = 'true';
+  }
+
+  /* interactive */
+  const clickable = document.getElementById('ctrl-clickable').checked;
+  const hover     = document.getElementById('ctrl-hover').value;
+  const href      = document.getElementById('ctrl-href').value.trim();
+  const hrefTgt   = document.getElementById('ctrl-hreftgt').value;
+  if (clickable) attrs.clickable = 'true';
+  if (hover !== 'lift') attrs['hover-effect'] = hover;
+  if (href)  attrs.href = href;
+  if (href && hrefTgt !== '_self') attrs['href-target'] = hrefTgt;
+
+  /* alert */
+  const alertMsg  = document.getElementById('ctrl-alertmsg').value.trim();
+  const alertType = document.getElementById('ctrl-alerttype').value;
+  const alertPos  = document.getElementById('ctrl-alertpos').value;
+  const alertDur  = document.getElementById('ctrl-alertdur').value;
+  if (alertMsg) attrs['alert-message'] = alertMsg;
+  if (alertMsg && alertType !== 'info') attrs['alert-type'] = alertType;
+  if (alertMsg && alertPos  !== 'top')  attrs['alert-position'] = alertPos;
+  if (alertMsg && alertDur  !== '4000') attrs['alert-duration'] = alertDur;
+
+  /* build string */
+  const entries = Object.entries(attrs);
+  if (entries.length <= 3) {
+    return `<card-badge ${entries.map(([k,v])=>`${k}="${v}"`).join(' ')}></card-badge>`;
+  }
+  return `<card-badge\n${entries.map(([k,v])=>`  ${k}="${v}"`).join('\n')}\n></card-badge>`;
+}
+
+/* ── Syntax highlight ─────────────────────────── */
+function highlight(html) {
+  return html
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(&lt;\/?[\w-]+)/g,'<span class="sy-tag">$1</span>')
+    .replace(/&gt;/g,'<span class="sy-tag">&gt;</span>')
+    .replace(/([\w-]+=)(&quot;|")(.*?)(\2)/g,
+      '<span class="sy-aname">$1</span><span class="sy-eq">"</span><span class="sy-aval">$3</span><span class="sy-eq">"</span>');
+}
+
+/* ── Update preview ───────────────────────────── */
+function updatePreview() {
+  const html = generateBadgeHTML();
+  document.getElementById('preview-stage').innerHTML = html;
+  document.getElementById('code-display').innerHTML = highlight(html);
+}
+
+/* ── Copy ─────────────────────────────────────── */
+function copyCode() {
+  const html = generateBadgeHTML();
+  navigator.clipboard.writeText(html).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.classList.add('ok');
+    btn.innerHTML = '<i class="bi bi-check2"></i> 已複製';
+    setTimeout(() => {
+      btn.classList.remove('ok');
+      btn.innerHTML = '<i class="bi bi-copy"></i> 複製';
+    }, 1600);
+  });
+}
+
+/* ── Attr search ──────────────────────────────── */
+const attrSearchEl = document.getElementById('attr-search');
+const attrCountEl  = document.getElementById('attr-count');
+const attrRows     = () => document.querySelectorAll('.attr-row');
+
+function updateAttrCount() {
+  const visible = [...attrRows()].filter(r => r.style.display !== 'none').length;
+  const total   = attrRows().length;
+  attrCountEl.textContent = visible === total ? `共 ${total} 個屬性` : `${visible} / ${total}`;
+}
+
+attrSearchEl.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  attrRows().forEach(row => {
+    row.style.display = q === '' || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+  updateAttrCount();
+});
+
+/* ── Init ─────────────────────────────────────── */
+updatePreview();
+updateAttrCount();
+</script>
+</body>
+</html>

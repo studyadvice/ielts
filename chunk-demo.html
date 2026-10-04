@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>chunk-demo · v2.2 Demo</title>
+
+  <script>
+    window.ChunkDemoConfig = {
+      defaultTheme:     'special',
+      chunkBorderWidth: '1.5px',
+      chunkBorderStyle: 'solid',
+      previewBorderColor: null,   /* null = 自動跟隨 theme 色 */
+    };
+  </script>
+  <script src="chunk-demo.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 52px 48px 100px;
+      background: #0C0D0C; color: #C6C7BD;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 1rem; line-height: 1.65; min-height: 100vh;
+    }
+    .pg-title {
+      font-size: 1.4rem; font-weight: 700; color: #b3de73;
+      margin: 0 0 4px; letter-spacing: -0.01em;
+    }
+    .pg-title .sub { color: #9B72CF; font-weight: 400; }
+    .pg-desc { font-size: .88rem; color: #95c9de; margin: 0 0 52px; }
+
+    .section  { margin-bottom: 52px; }
+    .sec-tag  {
+      font-size: .67rem; font-weight: 700;
+      letter-spacing: .13em; text-transform: uppercase;
+      color: #9B72CF; margin-bottom: 12px;
+    }
+    .examples { display: flex; flex-direction: column; gap: 20px; }
+
+    hr { border: none; border-top: 1px solid #1a1c1a; margin: 52px 0; }
+
+    /* Theme grid */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+    .theme-card {
+      background: #111311; border: 1px solid #1e201e;
+      border-radius: 10px; padding: 12px 14px 14px;
+    }
+    .theme-label {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+    }
+    .t-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .t-name { font-size: .67rem; font-weight: 700; }
+    .t-hex  { font-size: .63rem; color: #333633; font-family: monospace; }
+
+    /* Syntax reference block */
+    .code-box {
+      background: #111311; border: 1px solid #1e201e;
+      border-radius: 10px; overflow: hidden;
+    }
+    .code-title {
+      display: flex; align-items: center; gap: 7px;
+      padding: 9px 16px; background: #161816;
+      border-bottom: 1px solid #1e201e;
+      font-size: .7rem; color: #5a5e5a; letter-spacing: .04em;
+    }
+    .code-title .dot { width: 10px; height: 10px; border-radius: 50%; }
+    pre {
+      margin: 0; padding: 18px 20px;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: .78rem; line-height: 1.85;
+      overflow-x: auto; white-space: pre;
+    }
+    .ck { color: #C3A5E5; }
+    .cv { color: #299459; }
+    .ct { color: #b3de73; }
+    .cc { color: #3a3e3a; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<h1 class="pg-title">chunk-demo <span class="sub">· v2.2 Demo</span></h1>
+<p class="pg-desc">子元素語法：以 <code>&lt;cd-chunk&gt;</code> / <code>&lt;cd-level&gt;</code> 宣告語塊，長文字可自由換行，不需 JSON 跳脫。</p>
+
+<!-- ══ Example Sentences ══ -->
+<div class="section">
+  <div class="sec-tag">Child Element Syntax · 子元素語法</div>
+  <div class="examples">
+
+    <!-- Example 1 · 兩個語塊，有 label -->
+    <chunk-demo theme="sky" sentence="The cafe {0} is really {1}." show-preview="true">
+      <cd-chunk id="0" icon="📍" label="Location">
+        <cd-level>near my condo</cd-level>
+        <cd-level>around the corner of my place</cd-level>
+        <cd-level>just a five-minute walk from my rented apartment</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" icon="✨" label="Quality">
+        <cd-level>nice</cd-level>
+        <cd-level>quite pleasant</cd-level>
+        <cd-level>an absolute gem of a spot</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+
+    <!-- Example 2 · 無 label（不顯示下拉標頭）、週末習慣 -->
+    <chunk-demo theme="lavender" sentence="I {0} on weekends to {1}." show-preview="true">
+      <cd-chunk id="0" icon="🏃">
+        <cd-level>go running</cd-level>
+        <cd-level>hit the jogging track</cd-level>
+        <cd-level>lace up my shoes and head out for a run</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" icon="🧠">
+        <cd-level>clear my head</cd-level>
+        <cd-level>decompress and recharge</cd-level>
+        <cd-level>reset my mind and boost my mental clarity</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+
+    <!-- Example 3 · dashed border、IELTS -->
+    <chunk-demo theme="indigo" border-style="dashed"
+                sentence="The IELTS speaking test was {0}, but I {1}."
+                show-preview="true">
+      <cd-chunk id="0" icon="😅" label="Difficulty">
+        <cd-level>hard</cd-level>
+        <cd-level>quite challenging</cd-level>
+        <cd-level>a genuinely gruelling test of my composure</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" icon="💪" label="Response">
+        <cd-level>did okay</cd-level>
+        <cd-level>held my own</cd-level>
+        <cd-level>managed to stay composed and give it my best shot</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+
+    <!-- Example 4 · 省略 id，自動對應 {0} {1}、家鄉描述 -->
+    <chunk-demo theme="safe"
+                sentence="My hometown is {0} and the people there are {1}."
+                show-preview="true">
+      <cd-chunk icon="🏙️">
+        <cd-level>a small city</cd-level>
+        <cd-level>a fairly modest-sized city</cd-level>
+        <cd-level>a mid-sized industrial city nestled in the south of the country</cd-level>
+      </cd-chunk>
+      <cd-chunk icon="😊">
+        <cd-level>friendly</cd-level>
+        <cd-level>warm and welcoming</cd-level>
+        <cd-level>remarkably hospitable and refreshingly down-to-earth</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+
+    <!-- Example 5 · cd-level 內含 HTML 標籤 -->
+    <chunk-demo theme="orange" sentence="She has a {0} personality." show-preview="true"
+      data-config='{"previewTextColor":"#EDA109","previewBg":"rgba(237,161,9,.07)"}'>
+      <cd-chunk id="0" icon="🌟" label="Character">
+        <cd-level><strong>bright</strong></cd-level>
+        <cd-level>truly <em>radiant</em> and uplifting</cd-level>
+        <cd-level>wonderfully <strong>vivid</strong> and <em>infectiously</em> positive outlook on life</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+
+    <!-- Example 6 · preview 自訂顏色（lavender 主題搭自訂 preview 色） -->
+    <chunk-demo theme="pink"
+                sentence="The weekend trip to {0} was {1}."
+                show-preview="true"
+                data-config='{"previewTextColor":"#FFB3D9","previewBg":"rgba(255,179,217,.07)"}'>
+      <cd-chunk id="0" icon="🗺️">
+        <cd-level>Taipei</cd-level>
+        <cd-level>the northern coast</cd-level>
+        <cd-level>the scenic mountain villages up north</cd-level>
+      </cd-chunk>
+      <cd-chunk id="1" icon="💬">
+        <cd-level>fun</cd-level>
+        <cd-level>a real breath of fresh air</cd-level>
+        <cd-level>exactly the kind of escape I had been craving</cd-level>
+      </cd-chunk>
+    </chunk-demo>
+
+  </div>
+</div>
+
+<hr>
+
+<!-- ══ Theme Grid ══ -->
+<div class="section">
+  <div class="sec-tag">All Brand Themes · theme="..." attribute</div>
+  <div class="theme-grid" id="themeGrid"></div>
+</div>
+
+<hr>
+
+<!-- ══ Syntax Reference ══ -->
+<div class="section">
+  <div class="sec-tag">Syntax Reference</div>
+
+  <div class="code-box" style="margin-bottom:16px">
+    <div class="code-title">
+      <span class="dot" style="background:#F08080"></span>
+      <span class="dot" style="background:#DECA4B"></span>
+      <span class="dot" style="background:#299459"></span>
+      子元素語法（推薦）
+    </div>
+    <pre><span class="cc">&lt;!-- sentence 中 {n} 對應 cd-chunk 的 id 或出現順序 --&gt;</span>
+&lt;<span class="ck">chunk-demo</span>
+  <span class="ck">theme</span>=<span class="cv">"sky"</span>
+  <span class="ck">sentence</span>=<span class="cv">"She {0} every morning to {1}."</span>
+  <span class="ck">show-preview</span>=<span class="cv">"true"</span>&gt;
+
+  &lt;<span class="ct">cd-chunk</span> <span class="ck">id</span>=<span class="cv">"0"</span> <span class="ck">icon</span>=<span class="cv">"☀️"</span> <span class="ck">label</span>=<span class="cv">"Activity"</span>&gt;
+    &lt;<span class="ct">cd-level</span>&gt;goes for a walk&lt;/<span class="ct">cd-level</span>&gt;
+    &lt;<span class="ct">cd-level</span>&gt;hits the jogging track&lt;/<span class="ct">cd-level</span>&gt;
+    &lt;<span class="ct">cd-level</span>&gt;heads out for a brisk morning run
+               along the riverbank trail&lt;/<span class="ct">cd-level</span>&gt;
+  &lt;/<span class="ct">cd-chunk</span>&gt;
+
+  &lt;<span class="ct">cd-chunk</span> <span class="ck">id</span>=<span class="cv">"1"</span> <span class="ck">icon</span>=<span class="cv">"🎯"</span>&gt;
+    <span class="cc">&lt;!-- label 省略 → 下拉標頭不顯示 --&gt;</span>
+    &lt;<span class="ct">cd-level</span>&gt;stay fit&lt;/<span class="ct">cd-level</span>&gt;
+    &lt;<span class="ct">cd-level</span>&gt;keep herself in shape&lt;/<span class="ct">cd-level</span>&gt;
+    &lt;<span class="ct">cd-level</span>&gt;maintain a healthy and active lifestyle&lt;/<span class="ct">cd-level</span>&gt;
+  &lt;/<span class="ct">cd-chunk</span>&gt;
+
+&lt;/<span class="ck">chunk-demo</span>&gt;</pre>
+  </div>
+
+  <div class="code-box" style="margin-bottom:16px">
+    <div class="code-title">
+      <span class="dot" style="background:#F08080"></span>
+      <span class="dot" style="background:#DECA4B"></span>
+      <span class="dot" style="background:#299459"></span>
+      Preview 顏色自訂（data-config 或全域 ChunkDemoConfig）
+    </div>
+    <pre><span class="cc">&lt;!-- per-element：透過 data-config 覆蓋 --&gt;</span>
+&lt;<span class="ck">chunk-demo</span> <span class="ck">theme</span>=<span class="cv">"orange"</span> <span class="ck">show-preview</span>=<span class="cv">"true"</span>
+  <span class="ck">data-config</span>=<span class="cv">'{"previewTextColor":"#EDA109","previewBg":"rgba(237,161,9,.07)"}'</span>
+  <span class="ck">sentence</span>=<span class="cv">"..."</span> <span class="ck">chunks</span>=<span class="cv">'[...]'</span>&gt;&lt;/<span class="ck">chunk-demo</span>&gt;
+
+<span class="cc">// 全域設定</span>
+window.<span class="ck">ChunkDemoConfig</span> = {
+  <span class="ck">previewBorderColor</span>: <span class="cv">null</span>,              <span class="cc">// null = 自動跟隨 theme 色</span>
+  <span class="ck">previewTextColor</span>:   <span class="cv">null</span>,              <span class="cc">// null = 預設 #7a8078</span>
+  <span class="ck">previewBg</span>:          <span class="cv">null</span>,              <span class="cc">// null = 預設 rgba(255,255,255,.035)</span>
+};</pre>
+  </div>
+
+  <div class="code-box" style="margin-bottom:16px">
+    <div class="code-title">
+      <span class="dot" style="background:#F08080"></span>
+      <span class="dot" style="background:#DECA4B"></span>
+      <span class="dot" style="background:#299459"></span>
+      cd-level 內含 HTML 標籤
+    </div>
+    <pre><span class="cc">&lt;!-- cd-level 的文字內容以 innerHTML 解析，可使用任意 HTML --&gt;</span>
+&lt;<span class="ct">cd-chunk</span> <span class="ck">id</span>=<span class="cv">"0"</span> <span class="ck">icon</span>=<span class="cv">"🌟"</span>&gt;
+  &lt;<span class="ct">cd-level</span>&gt;&lt;<span class="ck">strong</span>&gt;bright&lt;/<span class="ck">strong</span>&gt;&lt;/<span class="ct">cd-level</span>&gt;
+  &lt;<span class="ct">cd-level</span>&gt;truly &lt;<span class="ck">em</span>&gt;radiant&lt;/<span class="ck">em</span>&gt; and uplifting&lt;/<span class="ct">cd-level</span>&gt;
+  &lt;<span class="ct">cd-level</span>&gt;wonderfully &lt;<span class="ck">strong</span>&gt;vivid&lt;/<span class="ck">strong</span>&gt; and
+             &lt;<span class="ck">em</span>&gt;infectiously&lt;/<span class="ck">em</span>&gt; positive outlook on life&lt;/<span class="ct">cd-level</span>&gt;
+&lt;/<span class="ct">cd-chunk</span>&gt;
+
+<span class="cc">&lt;!-- HTML 同時顯示於：按鈕文字、下拉選單、整句 preview --&gt;
+&lt;!-- ⚠️ 勿將使用者輸入直接插入 cd-level，需自行做 sanitize --&gt;</span></pre>
+  </div>
+
+  <div class="code-box">
+    <div class="code-title">
+      <span class="dot" style="background:#F08080"></span>
+      <span class="dot" style="background:#DECA4B"></span>
+      <span class="dot" style="background:#299459"></span>
+      JSON Attribute 語法（向下相容）
+    </div>
+    <pre>&lt;<span class="ck">chunk-demo</span> <span class="ck">theme</span>=<span class="cv">"sky"</span> <span class="ck">sentence</span>=<span class="cv">"She {0} every morning."</span>
+  <span class="ck">chunks</span>=<span class="cv">'[{"id":0,"icon":"☀️","label":"Activity","levels":[
+    {"level":1,"text":"goes for a walk"},
+    {"level":2,"text":"hits the jogging track"},
+    {"level":3,"text":"heads out for a brisk morning run"}
+  ]}]'</span>&gt;&lt;/<span class="ck">chunk-demo</span>&gt;
+
+<span class="cc">// 優先序：cd-chunk 子元素 &gt; chunks JSON 屬性</span></pre>
+  </div>
+</div>
+
+<!-- ══ Theme Grid Script ══ -->
+<script>
+  const THEMES = [
+    { name: 'shell',    hex: '#C6C7BD' },
+    { name: 'lavender', hex: '#C3A5E5' },
+    { name: 'special',  hex: '#b3de73' },
+    { name: 'warning',  hex: '#F08080' },
+    { name: 'salmon',   hex: '#E5C3B3' },
+    { name: 'sky',      hex: '#95c9de' },
+    { name: 'safe',     hex: '#299459' },
+    { name: 'vanilla',  hex: '#DBEDD8' },
+    { name: 'yellow',   hex: '#DECA4B' },
+    { name: 'info',     hex: '#1E65C7' },
+    { name: 'stone',    hex: '#95c9de' },
+    { name: 'indigo',   hex: '#9B72CF' },
+    { name: 'pink',     hex: '#FFB3D9' },
+    { name: 'orange',   hex: '#EDA109' },
+  ];
+
+  const grid = document.getElementById('themeGrid');
+  THEMES.forEach(({ name, hex }) => {
+    const card = document.createElement('div');
+    card.className = 'theme-card';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'theme-label';
+    lbl.innerHTML =
+      `<span class="t-dot" style="background:${hex}"></span>` +
+      `<span class="t-name" style="color:${hex}">${name}</span>` +
+      `<span class="t-hex">${hex}</span>`;
+    card.appendChild(lbl);
+
+    /* Use child element syntax even in dynamic creation */
+    const el = document.createElement('chunk-demo');
+    el.setAttribute('theme', name);
+    el.setAttribute('sentence', 'She runs {0}.');
+
+    const chk = document.createElement('cd-chunk');
+    chk.setAttribute('id', '0');
+    chk.setAttribute('icon', '☀️');
+    ['every morning', 'without fail each day', 'religiously, rain or shine']
+      .forEach(txt => {
+        const lv = document.createElement('cd-level');
+        lv.textContent = txt;
+        chk.appendChild(lv);
+      });
+    el.appendChild(chk);
+
+    card.appendChild(el);
+    grid.appendChild(card);
+  });
+</script>
+
+</body>
+</html>

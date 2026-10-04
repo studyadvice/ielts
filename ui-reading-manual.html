@@ -1,0 +1,3046 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ui-reading 元件說明書</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0D0C; --shell:#C6C7BD; --dim:rgba(198,199,189,0.42);
+  --lavender:#C3A5E5; --sky:#95c9de; --warning:#F08080;
+  --salmon:#E5C3B3; --ocean:#0ABDC6; --safe:#299459;
+  --teal:#0DA591; --vanilla:#DBEDD8; --yellow:#DECA4B;
+  --focus:#e0be79; --info:#1E65C7; --indigo:#9B72CF;
+  --pink:#FFB3D9; --orange:#EDA109;
+  --surface:rgba(198,199,189,0.055);
+  --border:rgba(198,199,189,0.13);
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans TC',sans-serif;
+  --sidebar:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:18px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--shell);font-family:var(--sans);
+  display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh;
+  line-height:1.6}
+
+/* ── Sidebar ── */
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  padding:28px 0 40px;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:0}
+.sidebar-title{
+  font-size:.72rem;font-weight:600;letter-spacing:.1em;
+  color:var(--dim);padding:0 22px 16px;text-transform:uppercase}
+.nav-group{margin-bottom:8px}
+.nav-group-label{
+  font-size:.68rem;font-weight:600;letter-spacing:.08em;
+  color:var(--dim);padding:10px 22px 4px;text-transform:uppercase}
+.nav-link{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 22px;font-size:.82rem;font-weight:400;
+  color:rgba(198,199,189,0.65);text-decoration:none;
+  transition:color .15s,background .15s;border-radius:0;
+  white-space:nowrap}
+.nav-link:hover{color:var(--shell);background:var(--surface)}
+.nav-link.active{color:var(--ocean);background:rgba(10,189,198,0.08)}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  background:currentColor;opacity:.6}
+
+/* ── Main content ── */
+.main{padding:48px 56px 100px;max-width:960px}
+
+/* ── Section heading ── */
+.comp-section{margin-bottom:80px;scroll-margin-top:32px}
+.comp-section+.comp-section{padding-top:56px;
+  border-top:1px solid var(--border)}
+.comp-head{display:flex;align-items:baseline;flex-wrap:wrap;
+  gap:12px;margin-bottom:8px}
+.comp-name{font-size:1.45rem;font-weight:700;color:var(--shell)}
+.comp-tag{font-family:var(--mono);font-size:.88rem;
+  color:var(--ocean);opacity:.85;font-weight:400}
+.comp-file{font-size:.72rem;font-weight:600;letter-spacing:.06em;
+  padding:2px 9px;border-radius:4px;border:1px solid var(--border);
+  color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.comp-desc{font-size:.95rem;line-height:1.65;
+  color:rgba(198,199,189,0.80);margin-bottom:28px;
+  max-width:72ch}
+
+/* ── Attributes table ── */
+.attr-wrap{margin-bottom:36px;overflow-x:auto}
+.attr-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.attr-table thead tr{border-bottom:1px solid rgba(198,199,189,0.18)}
+.attr-table th{text-align:left;padding:8px 14px;
+  color:var(--dim);font-weight:600;white-space:nowrap}
+.attr-table td{padding:8px 14px;border-bottom:1px solid var(--border);
+  vertical-align:top;line-height:1.5}
+.attr-table td:first-child{font-family:var(--mono);font-size:.78rem;
+  color:var(--sky);white-space:nowrap}
+.attr-table td:nth-child(2){font-family:var(--mono);font-size:.75rem;
+  color:var(--lavender)}
+.attr-table td:nth-child(3){font-family:var(--mono);font-size:.75rem;
+  color:var(--focus)}
+.attr-sub{font-size:.7rem;font-weight:600;letter-spacing:.05em;
+  color:var(--ocean);text-transform:uppercase;
+  padding:12px 14px 4px;display:block}
+
+/* ── Example block ── */
+.example-block{margin-bottom:28px}
+.example-head{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;gap:12px}
+.example-label{font-size:.82rem;font-weight:600;color:rgba(198,199,189,0.65)}
+
+/* ── Code block ── */
+.code-wrap{position:relative}
+.code-block{
+  background:rgba(0,0,0,0.45);border:1px solid var(--border);
+  border-radius:10px;padding:18px 20px;
+  font-family:var(--mono);font-size:.76rem;line-height:1.85;
+  overflow-x:auto;white-space:pre;color:rgba(198,199,189,0.82);
+  margin:0}
+.copy-btn{
+  position:absolute;top:10px;right:10px;
+  background:rgba(198,199,189,0.08);border:1px solid var(--border);
+  color:var(--dim);font-size:.68rem;font-family:var(--mono);
+  padding:3px 10px;border-radius:5px;cursor:pointer;
+  transition:background .15s,color .15s}
+.copy-btn:hover{background:rgba(10,189,198,0.12);color:var(--ocean)}
+
+/* syntax tokens */
+.ck-tag{color:var(--salmon)}
+.ck-attr{color:var(--sky)}
+.ck-val{color:var(--yellow)}
+.ck-cmt{color:rgba(198,199,189,0.36);font-style:italic}
+.ck-txt{color:rgba(198,199,189,0.72)}
+
+/* ── Preview button ── */
+.btn-preview{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 16px;border-radius:20px;
+  font-size:.78rem;font-weight:600;font-family:var(--sans);
+  border:1.5px solid rgba(10,189,198,0.45);color:var(--ocean);
+  background:transparent;cursor:pointer;white-space:nowrap;
+  transition:background .15s,border-color .15s,color .15s}
+.btn-preview:hover{background:rgba(10,189,198,0.1);border-color:var(--ocean)}
+.btn-preview.open{background:rgba(10,189,198,0.12)}
+.btn-arrow{display:inline-block;transition:transform .22s ease;font-style:normal}
+.btn-preview.open .btn-arrow{transform:rotate(90deg)}
+
+/* ── Preview panel ── */
+.preview-panel{
+  margin-top:14px;padding:28px 32px;
+  background:rgba(198,199,189,0.04);
+  border:1px solid rgba(10,189,198,0.18);
+  border-radius:12px;
+  font-size:.95rem;line-height:1.7;
+  display:none}
+.preview-panel.open{display:block}
+
+/* ── Info panel used inside layer-switch demos ── */
+.info-panel{
+  margin-top:16px;padding:16px 20px;
+  min-height:60px;border-radius:9px;
+  border:1px solid var(--border);
+  font-size:.88rem;line-height:1.6;
+  color:var(--shell);transition:background .2s}
+.info-panel:empty::before{content:'點擊上方按鈕後，說明會顯示在此';
+  color:var(--dim);font-size:.82rem}
+.info-panel strong,.info-panel b{color:var(--yellow)}
+.info-panel em,.info-panel i{color:var(--sky);font-style:italic}
+.info-panel p{margin-bottom:6px}
+.info-panel p:last-child{margin-bottom:0}
+.info-panel table{border-collapse:collapse;width:100%;margin-top:8px}
+.info-panel th,.info-panel td{padding:5px 10px;font-size:.8rem;
+  border:1px solid var(--border)}
+.info-panel th{color:var(--yellow);background:rgba(198,199,189,0.06);font-weight:600}
+.info-panel code{font-family:var(--mono);font-size:.85em;
+  background:rgba(198,199,189,0.1);padding:1px 5px;border-radius:3px}
+
+/* fix spacing inside previews for read-pulse */
+.preview-panel .urm-pulse{padding-left:14px}
+
+/* note about demo behaviour */
+.demo-note{font-size:.75rem;color:var(--dim);
+  margin-top:10px;font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sidebar-title">元件說明書</div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">ui-reading.js</div>
+    <a class="nav-link" href="#text-morph"><span class="nav-dot" style="color:var(--sky)"></span>text-morph</a>
+    <a class="nav-link" href="#margin-pin"><span class="nav-dot" style="color:var(--yellow)"></span>margin-pin</a>
+    <a class="nav-link" href="#read-pulse"><span class="nav-dot" style="color:var(--teal)"></span>read-pulse</a>
+    <a class="nav-link" href="#chalk-mark"><span class="nav-dot" style="color:var(--focus)"></span>chalk-mark</a>
+    <a class="nav-link" href="#col-pair"><span class="nav-dot" style="color:var(--lavender)"></span>col-pair</a>
+    <a class="nav-link" href="#chunk-spot"><span class="nav-dot" style="color:var(--ocean)"></span>chunk-spot</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">ui-reading2.js</div>
+    <a class="nav-link" href="#text-diff"><span class="nav-dot" style="color:var(--warning)"></span>text-diff</a>
+    <a class="nav-link" href="#layer-switch"><span class="nav-dot" style="color:var(--orange)"></span>layer-switch</a>
+    <a class="nav-link" href="#spotlight"><span class="nav-dot" style="color:var(--focus)"></span>spotlight</a>
+  </div>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<main class="main">
+
+<!-- ══════════════════════════════════════════
+     text-morph
+══════════════════════════════════════════ -->
+<section class="comp-section" id="text-morph">
+  <div class="comp-head">
+    <span class="comp-name">text-morph</span>
+    <span class="comp-tag">&lt;text-morph&gt; &lt;morph-from&gt; &lt;morph-to&gt;</span>
+    <span class="comp-file">ui-reading.js</span>
+  </div>
+  <p class="comp-desc">
+    段落原地切換兩個版本，以淡出淡入動畫銜接。適合對比改寫前後的文字，
+    按鈕顏色隨目前狀態動態變化；<code style="font-family:var(--mono);font-size:.88em">morph-from</code> 和 <code style="font-family:var(--mono);font-size:.88em">morph-to</code>
+    內部可巢狀 <code style="font-family:var(--mono);font-size:.88em">chalk-mark</code>、<code style="font-family:var(--mono);font-size:.88em">margin-pin</code>、<code style="font-family:var(--mono);font-size:.88em">read-pulse</code>。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>theme</td><td>色票名稱 | hex</td><td>sky</td><td>切換按鈕的主色</td></tr>
+        <tr><td>duration</td><td>ms</td><td>380</td><td>淡出淡入動畫時長</td></tr>
+        <tr><td>label-from</td><td>string</td><td>← 還原</td><td>已切換至 to 版本時的按鈕文字</td></tr>
+        <tr><td>label-to</td><td>string</td><td>看升級版 →</td><td>目前顯示 from 版本時的按鈕文字</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">基本用法：改寫對比</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;text-morph theme="sky" label-to="看升級版 →" label-from="← 還原"&gt;
+  &lt;morph-from&gt;
+    The government should spend more money on education.
+    This is because education is very important for society.
+    Many countries have good education and they do well.
+  &lt;/morph-from&gt;
+  &lt;morph-to&gt;
+    Greater public investment in education is essential,
+    as it underpins long-term economic productivity
+    and fosters social cohesion across diverse communities.
+  &lt;/morph-to&gt;
+&lt;/text-morph&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <text-morph theme="sky" label-to="看升級版 →" label-from="← 還原">
+        <morph-from>
+          The government should spend more money on education.
+          This is because education is very important for society.
+          Many countries have good education and they do well.
+        </morph-from>
+        <morph-to>
+          Greater public investment in education is essential,
+          as it underpins long-term economic productivity
+          and fosters social cohesion across diverse communities.
+        </morph-to>
+      </text-morph>
+    </div>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">巢狀 chalk-mark：升級版含手繪標記</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;text-morph theme="lavender" duration="450"&gt;
+  &lt;morph-from&gt;
+    Social media is bad because it makes people compare themselves to others.
+  &lt;/morph-from&gt;
+  &lt;morph-to&gt;
+    Social media has been criticised for fostering
+    &lt;chalk-mark theme="focus"&gt;unrealistic social comparisons&lt;/chalk-mark&gt;,
+    which can undermine users'
+    &lt;chalk-mark theme="warning"&gt;psychological well-being&lt;/chalk-mark&gt;.
+  &lt;/morph-to&gt;
+&lt;/text-morph&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <text-morph theme="lavender" duration="450">
+        <morph-from>
+          Social media is bad because it makes people compare themselves to others.
+        </morph-from>
+        <morph-to>
+          Social media has been criticised for fostering
+          <chalk-mark theme="focus">unrealistic social comparisons</chalk-mark>,
+          which can undermine users'
+          <chalk-mark theme="warning">psychological well-being</chalk-mark>.
+        </morph-to>
+      </text-morph>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     margin-pin
+══════════════════════════════════════════ -->
+<section class="comp-section" id="margin-pin">
+  <div class="comp-head">
+    <span class="comp-name">margin-pin</span>
+    <span class="comp-tag">&lt;margin-pin&gt;</span>
+    <span class="comp-file">ui-reading.js</span>
+  </div>
+  <p class="comp-desc">
+    標記詞彙，hover 後說明框浮現於視窗右側，並以虛線連回標記點。
+    支援填色（fill）與外框（outline）兩種樣式。
+    <code style="font-family:var(--mono);font-size:.88em">note</code> 屬性支援 HTML 標籤（如 <code style="font-family:var(--mono);font-size:.88em">&lt;br&gt;</code>）。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>note</td><td>HTML string</td><td>—</td><td>浮動說明文字，支援 &lt;br&gt; 等標籤</td></tr>
+        <tr><td>theme</td><td>色票名稱 | 色票名稱-outline</td><td>yellow</td><td>
+          標記顏色；加 <code style="font-family:var(--mono)">-outline</code> 後綴切換為外框樣式
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">fill 與 outline 混用</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;p&gt;
+  The study employed a
+  &lt;margin-pin note="隨機控制試驗：黃金標準研究設計&lt;br&gt;隨機分組以排除干擾變因"
+              theme="yellow"&gt;
+    randomised controlled trial
+  &lt;/margin-pin&gt;
+  to investigate the
+  &lt;margin-pin note="認知負荷：工作記憶處理資訊時的腦力負擔"
+              theme="teal-outline"&gt;
+    cognitive load
+  &lt;/margin-pin&gt;
+  imposed by different instructional methods.
+  Participants were
+  &lt;margin-pin note="分層抽樣：依屬性分組後各組獨立隨機抽取"
+              theme="lavender"&gt;
+    stratified
+  &lt;/margin-pin&gt;
+  by prior academic performance.
+&lt;/p&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel" style="padding-right:200px">
+      <p>
+        The study employed a
+        <margin-pin note="隨機控制試驗：黃金標準研究設計<br>隨機分組以排除干擾變因" theme="yellow">randomised controlled trial</margin-pin>
+        to investigate the
+        <margin-pin note="認知負荷：工作記憶處理資訊時的腦力負擔" theme="teal-outline">cognitive load</margin-pin>
+        imposed by different instructional methods. Participants were
+        <margin-pin note="分層抽樣：依屬性分組後各組獨立隨機抽取" theme="lavender">stratified</margin-pin>
+        by prior academic performance.
+      </p>
+      <p class="demo-note">滑入標記詞可見右側浮動說明框</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     read-pulse
+══════════════════════════════════════════ -->
+<section class="comp-section" id="read-pulse">
+  <div class="comp-head">
+    <span class="comp-name">read-pulse</span>
+    <span class="comp-tag">&lt;read-pulse&gt;</span>
+    <span class="comp-file">ui-reading.js</span>
+  </div>
+  <p class="comp-desc">
+    段落左側出現由上往下的掃描線，引導閱讀節奏。
+    支援三種觸發模式：進入視窗（visible）、點擊（click）、滑入（hover）。
+    加上 <code style="font-family:var(--mono);font-size:.88em">repeat</code> 屬性可重複播放。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>color</td><td>色票名稱 | hex</td><td>teal</td><td>掃描線顏色</td></tr>
+        <tr><td>speed</td><td>ms</td><td>2800</td><td>掃描線從頂到底的動畫時長</td></tr>
+        <tr><td>pulse-width</td><td>CSS length</td><td>3px</td><td>掃描線粗細</td></tr>
+        <tr><td>gap</td><td>px</td><td>14</td><td>左側留白寬度（容納掃描線）</td></tr>
+        <tr><td>trigger</td><td>visible | click | hover</td><td>visible</td><td>觸發模式</td></tr>
+        <tr><td>repeat</td><td>boolean（無值屬性）</td><td>false</td><td>允許重複觸發</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">trigger="click"（點擊段落觸發）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;read-pulse color="teal" speed="3200" trigger="click" repeat&gt;
+  Adults who regularly help an aging spouse with household tasks
+  report that this caregiving role has had a predominantly positive
+  impact on their relationship, according to a nationwide survey
+  conducted over a five-year period.
+&lt;/read-pulse&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <read-pulse color="teal" speed="3200" trigger="click" repeat>
+        Adults who regularly help an aging spouse with household tasks
+        report that this caregiving role has had a predominantly positive
+        impact on their relationship, according to a nationwide survey
+        conducted over a five-year period.
+      </read-pulse>
+      <p class="demo-note">點擊段落觸發掃描線；可重複點擊</p>
+    </div>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">trigger="hover"（滑入觸發）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;read-pulse color="lavender" speed="2000"
+           trigger="hover" pulse-width="4px" repeat&gt;
+  The correlation between daily reading habits and academic performance
+  has been well-documented across multiple longitudinal studies.
+&lt;/read-pulse&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <read-pulse color="lavender" speed="2000" trigger="hover" pulse-width="4px" repeat>
+        The correlation between daily reading habits and academic performance
+        has been well-documented across multiple longitudinal studies.
+      </read-pulse>
+      <p class="demo-note">滑入段落觸發掃描線</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     chalk-mark
+══════════════════════════════════════════ -->
+<section class="comp-section" id="chalk-mark">
+  <div class="comp-head">
+    <span class="comp-name">chalk-mark</span>
+    <span class="comp-tag">&lt;chalk-mark&gt;</span>
+    <span class="comp-file">ui-reading.js</span>
+  </div>
+  <p class="comp-desc">
+    點擊詞彙，手繪弧線動態畫出於文字上方（SVG quadratic bezier 配合 stroke-dashoffset 動畫）；再點消除。
+    加上 <code style="font-family:var(--mono);font-size:.88em">active</code> 屬性可在頁面載入後自動畫出弧線。
+    適用於單行短詞，跨行不保證正確。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>theme</td><td>色票名稱 | hex</td><td>focus</td><td>弧線顏色</td></tr>
+        <tr><td>thickness</td><td>px</td><td>2.5</td><td>弧線粗細</td></tr>
+        <tr><td>duration</td><td>ms</td><td>420</td><td>畫出 / 消除動畫時長</td></tr>
+        <tr><td>active</td><td>boolean（無值屬性）</td><td>false</td><td>頁面載入後自動啟動</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">點擊詞彙加圈（含預設啟動）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;p style="line-height:2.4"&gt;
+  The most effective strategy is to
+  &lt;chalk-mark theme="focus" active&gt;build strong habits&lt;/chalk-mark&gt;
+  early on, practise
+  &lt;chalk-mark theme="sky"&gt;active recall&lt;/chalk-mark&gt;,
+  and review material through
+  &lt;chalk-mark theme="lavender"&gt;spaced repetition&lt;/chalk-mark&gt;.
+  Avoid passive re-reading — it creates an
+  &lt;chalk-mark theme="warning"&gt;illusion of competence&lt;/chalk-mark&gt;.
+&lt;/p&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <p style="line-height:2.4">
+        The most effective strategy is to
+        <chalk-mark theme="focus" active>build strong habits</chalk-mark>
+        early on, practise
+        <chalk-mark theme="sky">active recall</chalk-mark>,
+        and review material through
+        <chalk-mark theme="lavender">spaced repetition</chalk-mark>.
+        Avoid passive re-reading — it creates an
+        <chalk-mark theme="warning">illusion of competence</chalk-mark>.
+      </p>
+      <p class="demo-note">點擊詞彙切換弧線；第一個詞預設啟動</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     col-pair
+══════════════════════════════════════════ -->
+<section class="comp-section" id="col-pair">
+  <div class="comp-head">
+    <span class="comp-name">col-pair</span>
+    <span class="comp-tag">&lt;col-pair&gt;</span>
+    <span class="comp-file">ui-reading.js</span>
+  </div>
+  <p class="comp-desc">
+    同 group 的詞彙共享一個彩色小圓點，hover 時整組成員同時亮起染色。
+    適合標示搭配詞（collocations）、語法配對等需要跨句關聯的詞彙。
+    同一頁面可同時存在多組，顏色自動從色盤循環分配。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>group</td><td>string（必填）</td><td>—</td><td>同組識別碼；相同值的元素會連動亮起</td></tr>
+        <tr><td>theme</td><td>色票名稱 | hex</td><td>自動分配</td><td>同組第一個 theme 屬性生效，後續忽略</td></tr>
+        <tr><td>label</td><td>string</td><td>—</td><td>hover 時的 title 提示文字，同組共用</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">動詞搭配詞辨識</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;p style="line-height:2.4"&gt;
+  Companies need to
+  &lt;col-pair group="g1" label="make + decision"&gt;make&lt;/col-pair&gt;
+  difficult &lt;col-pair group="g1"&gt;decisions&lt;/col-pair&gt;
+  quickly. Leaders must
+  &lt;col-pair group="g2" label="take + responsibility"&gt;take&lt;/col-pair&gt;
+  full &lt;col-pair group="g2"&gt;responsibility&lt;/col-pair&gt;
+  for outcomes. Failure to
+  &lt;col-pair group="g3" label="build + trust"&gt;build&lt;/col-pair&gt;
+  &lt;col-pair group="g3"&gt;trust&lt;/col-pair&gt; will
+  &lt;col-pair group="g4" label="have + impact"&gt;have&lt;/col-pair&gt;
+  a lasting &lt;col-pair group="g4"&gt;impact&lt;/col-pair&gt;.
+&lt;/p&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <p style="line-height:2.4">
+        Companies need to
+        <col-pair group="g1" label="make + decision">make</col-pair>
+        difficult <col-pair group="g1">decisions</col-pair>
+        quickly. Leaders must
+        <col-pair group="g2" label="take + responsibility">take</col-pair>
+        full <col-pair group="g2">responsibility</col-pair>
+        for outcomes. Failure to
+        <col-pair group="g3" label="build + trust">build</col-pair>
+        <col-pair group="g3">trust</col-pair> will
+        <col-pair group="g4" label="have + impact">have</col-pair>
+        a lasting <col-pair group="g4">impact</col-pair>.
+      </p>
+      <p class="demo-note">hover 任一詞可見整組連動亮起</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     chunk-spot
+══════════════════════════════════════════ -->
+<section class="comp-section" id="chunk-spot">
+  <div class="comp-head">
+    <span class="comp-name">chunk-spot</span>
+    <span class="comp-tag">&lt;chunk-spot&gt; &lt;chunk&gt;</span>
+    <span class="comp-file">ui-reading.js</span>
+  </div>
+  <p class="comp-desc">
+    段落上方一排彩色圓點，每點對應一個 <code style="font-family:var(--mono);font-size:.88em">&lt;chunk&gt;</code>。
+    點擊圓點 → 對應語塊亮起染色，其餘文字淡出；再點同一圓點 → 全部恢復。
+    <code style="font-family:var(--mono);font-size:.88em">label</code> 屬性支援純文字（tooltip）或 <code style="font-family:var(--mono);font-size:.88em">#id</code>（hover 顯示 HTML 彈出框）兩種格式。
+  </p>
+
+  <div class="attr-wrap">
+    <span class="attr-sub">chunk-spot 屬性</span>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>dot-size</td><td>px</td><td>11</td><td>圓點直徑</td></tr>
+        <tr><td>dim</td><td>0–1</td><td>0.22</td><td>非聚焦區段的 opacity</td></tr>
+        <tr><td>duration</td><td>ms</td><td>300</td><td>淡入淡出動畫時長</td></tr>
+      </tbody>
+    </table>
+    <span class="attr-sub" style="margin-top:12px">chunk 屬性</span>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>theme</td><td>色票名稱 | hex</td><td>自動分配</td><td>覆蓋個別語塊顏色</td></tr>
+        <tr><td>label</td><td>"純文字" 或 "#id"</td><td>—</td>
+          <td>
+            純文字 → 瀏覽器 title tooltip<br>
+            #id → hover 圓點時以浮動框顯示 div#id 的 innerHTML；來源 div 自動隱藏
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">純文字 label（tooltip）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;chunk-spot&gt;
+  &lt;chunk label="介系詞片語" theme="ocean"&gt;Like their peers with aging parents,&lt;/chunk&gt;
+  &lt;chunk label="主詞" theme="yellow"&gt;adults&lt;/chunk&gt;
+  &lt;chunk label="現在分詞片語" theme="lavender"&gt;caring for an aging spouse&lt;/chunk&gt;
+  &lt;chunk label="動詞" theme="salmon"&gt;report&lt;/chunk&gt;
+  that this has had a positive impact.
+&lt;/chunk-spot&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <chunk-spot>
+        <chunk label="介系詞片語" theme="ocean">Like their peers with aging parents,</chunk>
+        <chunk label="主詞" theme="yellow">adults</chunk>
+        <chunk label="現在分詞片語" theme="lavender">caring for an aging spouse</chunk>
+        <chunk label="動詞" theme="salmon">report</chunk>
+        that this has had a positive impact.
+      </chunk-spot>
+      <p class="demo-note">點擊圓點聚焦語塊；hover 圓點顯示 tooltip</p>
+    </div>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">label="#id"（HTML 彈出框）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;!-- 說明來源 div（自動隱藏，放頁面任何位置） --&gt;
+&lt;div id="cs-tip1"&gt;
+  &lt;strong&gt;介系詞片語&lt;/strong&gt;
+  &lt;p&gt;置於句首當副詞，修飾後面整句，常有讓步或比較語氣。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="cs-tip2"&gt;
+  &lt;strong&gt;主詞&lt;/strong&gt;
+  &lt;p&gt;「adults」是整句話的執行者，後接分詞片語做後位修飾。&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;chunk-spot dot-size="13"&gt;
+  &lt;chunk label="#cs-tip1" theme="ocean"&gt;Like their peers with aging parents,&lt;/chunk&gt;
+  &lt;chunk label="#cs-tip2" theme="yellow"&gt;adults&lt;/chunk&gt;
+  &lt;chunk theme="lavender"&gt;caring for an aging spouse&lt;/chunk&gt;
+  report that this has had a positive impact.
+&lt;/chunk-spot&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <div id="cs-tip1"><strong>介系詞片語</strong><p>置於句首當副詞，修飾後面整句，常有讓步或比較語氣。</p></div>
+      <div id="cs-tip2"><strong>主詞</strong><p>「adults」是整句話的執行者，後接分詞片語做後位修飾。</p></div>
+      <chunk-spot dot-size="13">
+        <chunk label="#cs-tip1" theme="ocean">Like their peers with aging parents,</chunk>
+        <chunk label="#cs-tip2" theme="yellow">adults</chunk>
+        <chunk theme="lavender">caring for an aging spouse</chunk>
+        report that this has had a positive impact.
+      </chunk-spot>
+      <p class="demo-note">hover 前兩個圓點可見 HTML 彈出框；點擊圓點聚焦語塊</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     text-diff
+══════════════════════════════════════════ -->
+<section class="comp-section" id="text-diff">
+  <div class="comp-head">
+    <span class="comp-name">text-diff</span>
+    <span class="comp-tag">&lt;text-diff&gt; &lt;diff-from&gt; &lt;diff-to&gt;</span>
+    <span class="comp-file">ui-reading2.js</span>
+  </div>
+  <p class="comp-desc">
+    對兩段文字執行 word-level LCS diff，以刪除線 + 插入底色即時呈現差異。
+    支援 inline（合併顯示）和 side（左右並列）兩種版面模式。
+    <code style="font-family:var(--mono);font-size:.88em">diff-from</code> / <code style="font-family:var(--mono);font-size:.88em">diff-to</code> 的內容以 textContent 進行差分，建議放純文字。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>theme-del</td><td>色票名稱 | hex</td><td>warning</td><td>刪除文字顏色</td></tr>
+        <tr><td>theme-ins</td><td>色票名稱 | hex</td><td>safe</td><td>插入文字顏色</td></tr>
+        <tr><td>mode</td><td>inline | side</td><td>inline</td><td>版面模式</td></tr>
+        <tr><td>del-style</td><td>strikethrough | fade | hide</td><td>strikethrough</td><td>刪除文字的呈現方式</td></tr>
+        <tr><td>granularity</td><td>word | char</td><td>word</td><td>差分精細度</td></tr>
+        <tr><td>mark-del</td><td>true | false</td><td>true</td><td>是否標示刪除</td></tr>
+        <tr><td>highlight-ins</td><td>true | false</td><td>true</td><td>是否標示插入</td></tr>
+        <tr><td>ins-bg</td><td>0–1</td><td>0.22</td><td>插入底色透明度</td></tr>
+        <tr><td>show-label</td><td>true | false</td><td>false</td><td>顯示 FROM / TO 標籤（side 模式有效）</td></tr>
+        <tr><td>label-from</td><td>string</td><td>FROM</td><td>FROM 面板標題</td></tr>
+        <tr><td>label-to</td><td>string</td><td>TO</td><td>TO 面板標題</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">mode="inline"（預設）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;text-diff&gt;
+  &lt;diff-from&gt;
+    The problem is very big and hard to solve quickly.
+    We need more people to help us with this issue.
+  &lt;/diff-from&gt;
+  &lt;diff-to&gt;
+    The challenge is significant and demands systematic solutions.
+    Collaborative efforts among stakeholders are therefore essential.
+  &lt;/diff-to&gt;
+&lt;/text-diff&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <text-diff>
+        <diff-from>The problem is very big and hard to solve quickly. We need more people to help us with this issue.</diff-from>
+        <diff-to>The challenge is significant and demands systematic solutions. Collaborative efforts among stakeholders are therefore essential.</diff-to>
+      </text-diff>
+    </div>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">mode="side"（左右並列 + 標籤）</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;text-diff mode="side" show-label="true"
+          label-from="改前" label-to="改後"
+          del-style="fade"&gt;
+  &lt;diff-from&gt;
+    Many people think that social media is bad for young people.
+  &lt;/diff-from&gt;
+  &lt;diff-to&gt;
+    Research suggests that excessive social media use is detrimental
+    to adolescents' mental health and academic performance.
+  &lt;/diff-to&gt;
+&lt;/text-diff&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <text-diff mode="side" show-label="true" label-from="改前" label-to="改後" del-style="fade">
+        <diff-from>Many people think that social media is bad for young people.</diff-from>
+        <diff-to>Research suggests that excessive social media use is detrimental to adolescents' mental health and academic performance.</diff-to>
+      </text-diff>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     layer-switch
+══════════════════════════════════════════ -->
+
+<!-- ─── 說明來源 div（自動隱藏）─── -->
+<div id="ls-c1-src">
+  <strong>介系詞片語（Prepositional Phrase）</strong>
+  <p>置於句首當副詞，修飾後面整句，帶有讓步或比較語氣。</p>
+  <table><tr><th>常見句型</th><th>例子</th></tr>
+    <tr><td>Like / Unlike + NP</td><td>Like their peers, adults…</td></tr>
+    <tr><td>Despite / In spite of</td><td>Despite challenges, they…</td></tr>
+  </table>
+</div>
+<div id="ls-c2-src">
+  <strong>主詞（Subject）</strong>
+  <p>「adults」是整句動作的執行者，後接現在分詞片語作後位修飾，再接主要動詞 report。</p>
+</div>
+<div id="ls-c3-src">
+  <strong>現在分詞片語（Participial Phrase）</strong>
+  <p>做後位修飾，限定 adults 的範圍。等同關係子句：<em>who care for an aging spouse</em>。</p>
+</div>
+<div id="ls-c4-src">
+  <strong>主要動詞（Main Verb）</strong>
+  <p>「report」是整句話的核心動詞，後接 that 名詞子句作受詞。</p>
+</div>
+<div id="ls-c5-src">
+  <strong>名詞子句當受詞（Noun Clause as Object）</strong>
+  <p>由 that 引導，充當 report 的直接受詞。此為間接引述句型。</p>
+</div>
+<div id="ls-note-c3">補充：此分詞片語若移至句首，需注意懸垂修飾（dangling modifier）問題。</div>
+
+<section class="comp-section" id="layer-switch">
+  <div class="comp-head">
+    <span class="comp-name">layer-switch</span>
+    <span class="comp-tag">&lt;layer-switch&gt; &lt;ls-text&gt; &lt;ls-layer&gt; &lt;ls-mark&gt;</span>
+    <span class="comp-file">ui-reading2.js</span>
+  </div>
+  <p class="comp-desc">
+    多層次文本分析切換器。按鈕列對應不同分析維度（語法層、詞彙層等），
+    點擊按鈕高亮對應標記並將說明注入指定 <code style="font-family:var(--mono);font-size:.88em">target</code> div；
+    <code style="font-family:var(--mono);font-size:.88em">ls-mark</code> 的 <code style="font-family:var(--mono);font-size:.88em">note="#id"</code> 可在 hover 時顯示詞彙級別說明。
+  </p>
+
+  <div class="attr-wrap">
+    <span class="attr-sub">layer-switch 屬性</span>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>default</td><td>string</td><td>—</td><td>預設啟動的層名稱（高亮生效；target panel 不自動注入）</td></tr>
+        <tr><td>target</td><td>#id</td><td>—</td><td>說明注入的 div，可被 ls-layer 個別覆蓋</td></tr>
+        <tr><td>palette</td><td>逗號分隔色票名稱</td><td>CFG.lsPalette</td><td>按鈕自動配色；個別 theme 可覆蓋</td></tr>
+        <tr><td>multi</td><td>true | false</td><td>false</td><td>允許多層同時啟動</td></tr>
+        <tr><td>toggle-style</td><td>pill | dot</td><td>pill</td><td>按鈕外形</td></tr>
+        <tr><td>toggle-position</td><td>top | bottom</td><td>top</td><td>按鈕列位置</td></tr>
+        <tr><td>mark-style</td><td>highlight | underline | box</td><td>highlight</td><td>標記樣式</td></tr>
+        <tr><td>dim</td><td>0–1</td><td>0.30</td><td>非匹配標記的透明度</td></tr>
+        <tr><td>body-dim</td><td>true | false</td><td>false</td><td>啟動時整體文字略微降透明</td></tr>
+        <tr><td>animate</td><td>true | false</td><td>true</td><td>過渡動畫</td></tr>
+      </tbody>
+    </table>
+    <span class="attr-sub" style="margin-top:12px">ls-layer 屬性</span>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>name</td><td>string（必填）</td><td>—</td><td>層識別碼，需與 ls-mark 的 layer 值對應</td></tr>
+        <tr><td>label</td><td>string</td><td>name</td><td>toggle 按鈕文字</td></tr>
+        <tr><td>source</td><td>#id 或 id</td><td>—</td><td>點擊後注入 target 的 div；來源 div 自動隱藏</td></tr>
+        <tr><td>target</td><td>#id 或 id</td><td>全域 target</td><td>覆蓋全域 target，指定此層的注入目標</td></tr>
+        <tr><td>theme</td><td>色票名稱 | hex</td><td>palette 自動</td><td>覆蓋自動配色</td></tr>
+        <tr><td>icon</td><td>Bootstrap Icon class</td><td>—</td><td>按鈕圖示</td></tr>
+        <tr><td>info</td><td>string</td><td>—</td><td>按鈕 title tooltip</td></tr>
+      </tbody>
+    </table>
+    <span class="attr-sub" style="margin-top:12px">ls-mark 屬性</span>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>layer</td><td>空格分隔層名稱（必填）</td><td>—</td><td>可同時屬於多個層</td></tr>
+        <tr><td>note</td><td>"純文字" 或 "#id"</td><td>—</td>
+          <td>純文字 → title tooltip；#id → hover 時注入 target div，離開後還原層說明</td></tr>
+        <tr><td>weight</td><td>normal | bold</td><td>normal</td><td>字重</td></tr>
+        <tr><td>size</td><td>CSS font-size</td><td>—</td><td>覆蓋字級</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">source / target 注入 + note="#id" hover 補充</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;!-- 說明來源 div（放頁面任何位置，自動隱藏） --&gt;
+&lt;div id="ls-c1-src"&gt;
+  &lt;strong&gt;介系詞片語&lt;/strong&gt;
+  &lt;p&gt;置於句首當副詞，帶有讓步或比較語氣。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="ls-c3-src"&gt;
+  &lt;strong&gt;現在分詞片語&lt;/strong&gt;
+  &lt;p&gt;限定 adults 的範圍，等同 who care for an aging spouse。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="ls-note-c3"&gt;補充：此片語移至句首需注意懸垂修飾問題。&lt;/div&gt;
+
+&lt;!-- 說明目標 div（樣式自定） --&gt;
+&lt;div id="ls-demo-panel" class="info-panel"&gt;&lt;/div&gt;
+
+&lt;layer-switch target="#ls-demo-panel" palette="ocean,yellow,lavender,salmon,teal"&gt;
+  &lt;ls-text&gt;
+    &lt;ls-mark layer="c1"&gt;Like their peers with aging parents,&lt;/ls-mark&gt;
+    &lt;ls-mark layer="c2"&gt;adults&lt;/ls-mark&gt;
+    &lt;ls-mark layer="c3" note="#ls-note-c3"&gt;
+      caring for an aging spouse and regularly helping them
+    &lt;/ls-mark&gt;
+    &lt;ls-mark layer="c4"&gt;report&lt;/ls-mark&gt;
+    &lt;ls-mark layer="c5"&gt;that this has had a more positive than
+      negative impact on their relationship.&lt;/ls-mark&gt;
+  &lt;/ls-text&gt;
+  &lt;ls-layer name="c1" label="介系詞片語" source="#ls-c1-src"&gt;&lt;/ls-layer&gt;
+  &lt;ls-layer name="c2" label="整句主詞"   source="#ls-c2-src"&gt;&lt;/ls-layer&gt;
+  &lt;ls-layer name="c3" label="現在分詞片語" source="#ls-c3-src"&gt;&lt;/ls-layer&gt;
+  &lt;ls-layer name="c4" label="主要動詞"   source="#ls-c4-src"&gt;&lt;/ls-layer&gt;
+  &lt;ls-layer name="c5" label="名詞子句受詞" source="#ls-c5-src"&gt;&lt;/ls-layer&gt;
+&lt;/layer-switch&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <div id="ls-demo-panel" class="info-panel"></div>
+      <div style="margin-top:20px">
+        <layer-switch target="#ls-demo-panel" palette="ocean,yellow,lavender,salmon,teal">
+          <ls-text>
+            <ls-mark layer="c1">Like their peers with aging parents,</ls-mark>
+            <ls-mark layer="c2">adults</ls-mark>
+            <ls-mark layer="c3" note="#ls-note-c3">caring for an aging spouse and regularly helping them</ls-mark>
+            <ls-mark layer="c4">report</ls-mark>
+            <ls-mark layer="c5">that this has had a more positive than negative impact on their relationship.</ls-mark>
+          </ls-text>
+          <ls-layer name="c1" label="介系詞片語"   source="#ls-c1-src"></ls-layer>
+          <ls-layer name="c2" label="整句主詞"     source="#ls-c2-src"></ls-layer>
+          <ls-layer name="c3" label="現在分詞片語" source="#ls-c3-src"></ls-layer>
+          <ls-layer name="c4" label="主要動詞"     source="#ls-c4-src"></ls-layer>
+          <ls-layer name="c5" label="名詞子句受詞" source="#ls-c5-src"></ls-layer>
+        </layer-switch>
+      </div>
+      <p class="demo-note">點擊按鈕高亮標記並注入說明；hover「現在分詞片語」標記可見補充說明</p>
+    </div>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">multi="true" + mark-style="underline"</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;layer-switch multi="true" mark-style="underline"
+             palette="sky,yellow,pink"&gt;
+  &lt;ls-text&gt;
+    &lt;ls-mark layer="collocation"&gt;Keeping fit&lt;/ls-mark&gt; has become a
+    &lt;ls-mark layer="collocation"&gt;natural part&lt;/ls-mark&gt; of my life.
+    I jog &lt;ls-mark layer="coherence grammar"&gt;every day&lt;/ls-mark&gt;,
+    &lt;ls-mark layer="coherence"&gt;rain or shine&lt;/ls-mark&gt;.
+    This habit has &lt;ls-mark layer="collocation"&gt;had a positive impact&lt;/ls-mark&gt;
+    on my &lt;ls-mark layer="grammar"&gt;overall&lt;/ls-mark&gt; well-being.
+  &lt;/ls-text&gt;
+  &lt;ls-layer name="collocation" label="搭配詞"&gt;&lt;/ls-layer&gt;
+  &lt;ls-layer name="coherence"   label="連貫詞"&gt;&lt;/ls-layer&gt;
+  &lt;ls-layer name="grammar"     label="語法焦點"&gt;&lt;/ls-layer&gt;
+&lt;/layer-switch&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel">
+      <layer-switch multi="true" mark-style="underline" palette="sky,yellow,pink">
+        <ls-text>
+          <ls-mark layer="collocation">Keeping fit</ls-mark> has become a
+          <ls-mark layer="collocation">natural part</ls-mark> of my life.
+          I jog <ls-mark layer="coherence grammar">every day</ls-mark>,
+          <ls-mark layer="coherence">rain or shine</ls-mark>.
+          This habit has <ls-mark layer="collocation">had a positive impact</ls-mark>
+          on my <ls-mark layer="grammar">overall</ls-mark> well-being.
+        </ls-text>
+        <ls-layer name="collocation" label="搭配詞"></ls-layer>
+        <ls-layer name="coherence"   label="連貫詞"></ls-layer>
+        <ls-layer name="grammar"     label="語法焦點"></ls-layer>
+      </layer-switch>
+      <p class="demo-note">可同時啟動多個層；「every day」同時屬於連貫詞與語法焦點</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     spotlight
+══════════════════════════════════════════ -->
+<section class="comp-section" id="spotlight">
+  <div class="comp-head">
+    <span class="comp-name">spotlight</span>
+    <span class="comp-tag">&lt;spotlight&gt;</span>
+    <span class="comp-file">ui-reading2.js</span>
+  </div>
+  <p class="comp-desc">
+    點擊區塊後以黑色 overlay 遮罩頁面，被點擊的區塊浮起並以彩色邊框聚光。
+    同頁面所有 spotlight 共享一個 overlay；點擊 overlay 或按 Escape 可關閉。
+    注意：父容器設有 <code style="font-family:var(--mono);font-size:.88em">transform</code> / <code style="font-family:var(--mono);font-size:.88em">filter</code> 等屬性時 z-index 可能失效。
+  </p>
+
+  <div class="attr-wrap">
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>型別 / 值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>theme</td><td>色票名稱 | hex</td><td>focus</td><td>聚光圈邊框顏色</td></tr>
+        <tr><td>ring</td><td>true | false</td><td>true</td><td>顯示聚光圈邊框</td></tr>
+        <tr><td>ring-width</td><td>CSS length</td><td>2px</td><td>邊框粗細</td></tr>
+        <tr><td>ring-style</td><td>solid | dashed | dotted</td><td>solid</td><td>邊框樣式</td></tr>
+        <tr><td>ring-radius</td><td>CSS length</td><td>10px</td><td>邊框圓角</td></tr>
+        <tr><td>ring-inset</td><td>CSS length</td><td>6px</td><td>邊框距元素邊緣的距離</td></tr>
+        <tr><td>dim</td><td>0–1</td><td>0.15</td><td>非啟動 spotlight 的透明度</td></tr>
+        <tr><td>dim-bg</td><td>0–1</td><td>0.82</td><td>overlay 遮罩不透明度</td></tr>
+        <tr><td>transition</td><td>ms</td><td>300</td><td>動畫時長</td></tr>
+        <tr><td>trigger</td><td>click | hover</td><td>click</td><td>觸發模式</td></tr>
+        <tr><td>escape</td><td>true | false</td><td>true</td><td>Escape 鍵關閉</td></tr>
+        <tr><td>hint</td><td>true | false</td><td>true</td><td>顯示右上角提示圖示</td></tr>
+        <tr><td>hint-icon</td><td>Bootstrap Icon class</td><td>bi-fullscreen</td><td>提示圖示（需引入 Bootstrap Icons）</td></tr>
+        <tr><td>hint-size</td><td>px</td><td>18</td><td>提示圖示容器尺寸</td></tr>
+        <tr><td>padding</td><td>CSS padding</td><td>—</td><td>啟動時套用的額外內距</td></tr>
+        <tr><td>active</td><td>boolean（無值屬性）</td><td>false</td><td>頁面載入後自動啟動</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="example-block">
+    <div class="example-head">
+      <span class="example-label">三段落聚焦閱讀</span>
+      <button class="btn-preview" onclick="togglePreview(this)"><i class="btn-arrow">▶</i> 預覽</button>
+    </div>
+    <div class="code-wrap">
+      <pre class="code-block">&lt;spotlight theme="ocean" ring-style="dashed"&gt;
+  &lt;p&gt;&lt;strong&gt;Para 1&lt;/strong&gt; — Like their peers with aging parents,
+  adults caring for an aging spouse report that this experience has
+  had a predominantly positive impact on their relationship.&lt;/p&gt;
+&lt;/spotlight&gt;
+
+&lt;spotlight theme="yellow"&gt;
+  &lt;p&gt;&lt;strong&gt;Para 2&lt;/strong&gt; — The data reveal that approximately
+  60% of spousal caregivers describe their caregiving role as
+  a source of personal meaning and relational closeness.&lt;/p&gt;
+&lt;/spotlight&gt;
+
+&lt;spotlight theme="lavender" ring-style="dotted" dim="0.08"&gt;
+  &lt;p&gt;&lt;strong&gt;Para 3&lt;/strong&gt; — These findings challenge the
+  prevailing narrative that caregiving is uniformly burdensome,
+  suggesting instead that context and relationship quality matter.&lt;/p&gt;
+&lt;/spotlight&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this)">複製</button>
+    </div>
+    <div class="preview-panel" style="display:none" id="sp-preview">
+      <spotlight theme="ocean" ring-style="dashed">
+        <p><strong>Para 1</strong> — Like their peers with aging parents, adults caring for an aging spouse report that this experience has had a predominantly positive impact on their relationship.</p>
+      </spotlight>
+      <spotlight theme="yellow">
+        <p style="margin-top:14px"><strong>Para 2</strong> — The data reveal that approximately 60% of spousal caregivers describe their caregiving role as a source of personal meaning and relational closeness.</p>
+      </spotlight>
+      <spotlight theme="lavender" ring-style="dotted" dim="0.08">
+        <p style="margin-top:14px"><strong>Para 3</strong> — These findings challenge the prevailing narrative that caregiving is uniformly burdensome, suggesting instead that context and relationship quality matter.</p>
+      </spotlight>
+      <p class="demo-note">點擊任一段落聚焦；點擊遮罩或按 Escape 關閉</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ── Inline ui-reading.js ──
+/**
+ * ui-reading2.js  v1.1.1
+ * ─────────────────────────────────────────────────────────────────────
+ * 五合一閱讀互動元件（不打斷閱讀流暢度）
+ *
+ *  <text-morph>   段落文字原地變形，低分 ↔ 高分對比切換
+ *  <margin-pin>   標記字詞，hover 後說明浮現於右邊界，虛線連回標記點
+ *  <read-pulse>   段落進入視窗時左側出現節奏掃描線
+ *  <chalk-mark>   點擊詞彙，手繪弧線動態畫出於文字上方；再點消除
+ *  <col-pair>     搭配詞同色小印記，hover 同組成員同時亮起
+ *  <chunk-spot>   語塊聚焦導覽：段落上方一排圓點，點擊高亮對應 <chunk>，其餘淡出
+ *
+ * 全域配置（在引入此檔前設定）：
+ *   window.UiReadingConfig = { morphTheme: 'ocean', ... }
+ *
+ * API：
+ *   UiReading.init()   — 重新掃描並初始化新節點（適合動態插入）
+ *   UiReading.config   — 目前的全域配置物件（可即時修改）
+ *   UiReading.colors   — 色票物件
+ */
+(function (global) {
+  'use strict';
+
+  /* ════════════════════════════════════════════════════════════════
+   * 色票
+   * ════════════════════════════════════════════════════════════════ */
+  var BRAND = {
+    shell:    '#C6C7BD', lavender: '#C3A5E5', sky:     '#95c9de',
+    warning:  '#F08080', salmon:   '#E5C3B3', ocean:   '#0ABDC6',
+    safe:     '#299459', teal:     '#0DA591', vanilla: '#DBEDD8',
+    yellow:   '#DECA4B', focus:    '#e0be79', info:    '#1E65C7',
+    indigo:   '#9B72CF', pink:     '#FFB3D9', orange:  '#EDA109',
+    special:  '#b3de73'
+  };
+  var BG = '#0C0D0C';
+
+  function clr(v) {
+    if (!v) return BRAND.shell;
+    v = String(v).trim();
+    return BRAND[v] || (/^#|^rgb/.test(v) ? v : BRAND.shell);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * 全域配置
+   * ════════════════════════════════════════════════════════════════ */
+  var CFG = global.UiReadingConfig = Object.assign({
+    /* text-morph */
+    morphTheme:     'sky',
+    morphDuration:  380,        /* ms，淡出淡入時長 */
+    morphLabelFrom: '← 還原',
+    morphLabelTo:   '看升級版 →',
+
+    /* margin-pin */
+    pinTheme:  'yellow',
+    pinMargin: 20,              /* px，標注框距視窗右邊 */
+    pinWidth:  210,             /* px，標注框最大寬度 */
+
+    /* read-pulse */
+    pulseColor:   'teal',
+    pulseSpeed:   2800,         /* ms，掃描線從頂到底的時間 */
+    pulseWidth:   '3px',        /* 掃描線粗細 */
+    pulseGap:     14,           /* px，左側留白（容納掃描線） */
+    pulseTrigger: 'visible',    /* visible | click | hover */
+
+    /* chalk-mark */
+    chalkTheme:     'focus',
+    chalkThickness: 2.5,           /* px，弧線粗細 */
+    chalkDuration:  420,           /* ms，畫出 / 消除動畫時長 */
+
+    /* chunk-spot */
+    chunkDotSize:   11,            /* px，導覽圓點直徑 */
+    chunkDim:       0.22,          /* 非聚焦區段的 opacity */
+    chunkTransition: 300,          /* ms，淡入淡出時長 */
+    chunkTheme:     ''             /* 統一色票名稱；空字串 = 自動從色盤循環 */
+  }, global.UiReadingConfig || {});
+
+  /* ════════════════════════════════════════════════════════════════
+   * CSS
+   * ════════════════════════════════════════════════════════════════ */
+  var CSS = [
+    /* 避免初始化前閃現自訂元素 */
+    'text-morph,morph-from,morph-to{display:none}',
+    'margin-pin,read-pulse,chalk-mark,col-pair{display:none}',
+    'chunk-spot,chunk{display:none}',
+
+    /* ── text-morph ─────────────────────────────────────────────── */
+    '.urm-morph{display:block}',
+
+    '.urm-morph-body{' +
+      'transition:opacity var(--urm-md,.38s) ease,' +
+                 'transform var(--urm-md,.38s) ease}',
+
+    '.urm-morph-body.urm-mo{opacity:0;transform:translateY(6px)}',
+
+    '.urm-morph-ctrl{' +
+      'display:flex;align-items:center;margin-top:10px;gap:8px}',
+
+    '.urm-morph-badge{' +
+      'display:inline-flex;align-items:center;gap:6px;' +
+      'padding:4px 14px;border-radius:20px;font-size:.8rem;' +
+      'font-weight:700;border:1.5px solid;cursor:pointer;' +
+      'user-select:none;background:transparent;' +
+      'transition:filter .2s ease,transform .12s ease}',
+    '.urm-morph-badge:hover{filter:brightness(1.25)}',
+    '.urm-morph-badge:active{transform:scale(.93)}',
+
+    '.urm-morph-dot{' +
+      'width:7px;height:7px;border-radius:50%;' +
+      'background:currentColor;flex-shrink:0;' +
+      'transition:background .3s ease}',
+
+    /* ── margin-pin ─────────────────────────────────────────────── */
+    '.urm-pin{' +
+      'border-bottom:1.5px dashed;cursor:help;' +
+      'display:inline;transition:opacity .15s ease}',
+    '.urm-pin:hover{opacity:.8}',
+
+    /* 標注框（全域唯一，fixed 定位） */
+    '.urm-pannot{' +
+      'position:fixed;z-index:9100;' +
+      'padding:8px 14px;border-radius:9px;' +
+      'font-size:.82rem;line-height:1.48;font-weight:500;' +
+      'pointer-events:none;' +
+      'opacity:0;transition:opacity .2s ease;' +
+      'box-shadow:0 4px 16px rgba(0,0,0,.55)}',
+    '.urm-pannot.urm-pv{opacity:1}',
+
+    /* 連接虛線（全域唯一，fixed 定位） */
+    '.urm-pline{' +
+      'position:fixed;z-index:9099;height:0;' +
+      'border-top:1px dashed;pointer-events:none;' +
+      'opacity:0;transition:opacity .2s ease}',
+    '.urm-pline.urm-pv{opacity:.5}',
+
+    /* ── read-pulse ─────────────────────────────────────────────── */
+    '.urm-pulse{' +
+      'position:relative;display:block;' +
+      'padding-left:var(--urm-pg,14px)}',
+
+    /* 掃描線 bar：position absolute，left 0（在 padding 區內） */
+    '.urm-pbar{' +
+      'position:absolute;left:0;top:0;' +
+      'width:var(--urm-pw,3px);height:0;' +
+      'border-radius:3px;pointer-events:none;' +
+      'opacity:0;transition:opacity .3s ease}',
+
+    /* 播放中：高度展開 */
+    '.urm-pbar.urm-pa{' +
+      'opacity:1;height:100%;' +
+      'transition:height var(--urm-ps,2.8s) linear,opacity .3s ease}',
+
+    /* 播放結束：淡出 */
+    '.urm-pbar.urm-pd{' +
+      'opacity:0;transition:opacity .9s ease .4s}',
+
+    /* ── chalk-mark ─────────────────────────────────────────────── */
+    /* inline-block + relative 確保 SVG absolute 定位可靠 */
+    '.urm-chalk{' +
+      'display:inline-block;position:relative;' +
+      'vertical-align:baseline;cursor:crosshair;' +
+      'transition:color .25s ease}',
+
+    /* 弧線 SVG 容器（absolute，超出文字上方） */
+    '.urm-chalk-svg{' +
+      'position:absolute;overflow:visible;pointer-events:none}',
+
+    /* 弧線路徑：transition 由 JS inline style 設定 */
+    '.urm-chalk-path{fill:none;stroke-linecap:round}',
+
+    /* ── col-pair ───────────────────────────────────────────────── */
+    '.urm-cp{' +
+      'display:inline;position:relative;cursor:default;' +
+      'transition:color .2s ease}',
+
+    /* 小圓點：absolute，浮在文字正上方，不影響行高 */
+    '.urm-cp-dot{' +
+      'position:absolute;top:-8px;left:50%;' +
+      'transform:translateX(-50%) scale(1);' +
+      'width:5px;height:5px;border-radius:50%;' +
+      'background:var(--urm-cp-c,#DECA4B);' +
+      'opacity:.65;pointer-events:none;' +
+      'transition:transform .22s ease,opacity .22s ease}',
+
+    /* 亮起狀態：文字變色，圓點放大發光 */
+    '.urm-cp.urm-cp-lit{color:var(--urm-cp-c)}',
+    '.urm-cp.urm-cp-lit .urm-cp-dot{' +
+      'transform:translateX(-50%) scale(2.2);opacity:1}',
+
+    /* ── chunk-spot ─────────────────────────────────────────────── */
+    '.urm-cs{display:block}',
+
+    /* 圓點導覽列 */
+    '.urm-cs-nav{' +
+      'display:flex;align-items:center;gap:10px;' +
+      'margin-bottom:10px;flex-wrap:wrap}',
+
+    /* 單顆圓點 */
+    '.urm-cs-dot{' +
+      'display:inline-block;border-radius:50%;flex-shrink:0;' +
+      'background:var(--urm-cs-c,#DECA4B);cursor:pointer;' +
+      'opacity:.48;' +
+      'outline:2px solid transparent;outline-offset:3px;' +
+      'transition:transform .22s ease,opacity .22s ease,outline-color .22s ease}',
+    '.urm-cs-dot:hover{opacity:.88;transform:scale(1.32)}',
+
+    /* 作用中圓點 */
+    '.urm-cs-dot.urm-cs-active{' +
+      'opacity:1;transform:scale(1.55);' +
+      'outline-color:var(--urm-cs-c)}',
+
+    /* 文字區段（一般文字 & 語塊）共用 transition */
+    '.urm-cs-text,.urm-cs-chunk{' +
+      'transition:opacity var(--urm-cs-dur,.3s) ease,' +
+                 'color    var(--urm-cs-dur,.3s) ease}',
+
+    /* 聚焦模式：一般文字 & 非亮語塊 淡出 */
+    '.urm-cs-body.urm-cs-dimmed .urm-cs-text,' +
+    '.urm-cs-body.urm-cs-dimmed .urm-cs-chunk:not(.urm-cs-lit){' +
+      'opacity:var(--urm-cs-dim,.22)}',
+
+    /* 聚焦語塊：恢復顯眼並染色 */
+    '.urm-cs-body.urm-cs-dimmed .urm-cs-chunk.urm-cs-lit{' +
+      'opacity:1;color:var(--urm-cs-c)}',
+
+    /* chunk label="#id" → 來源 div 自動隱藏 */
+    '[data-urm-cs-src]{display:none!important}',
+
+    /* rich-label 彈出框（fixed，全域唯一） */
+    '.urm-cs-annot{' +
+      'position:fixed;z-index:9200;max-width:380px;min-width:120px;' +
+      'padding:14px 18px;border-radius:11px;' +
+      'background:#141514;' +
+      'border:1px solid rgba(198,199,189,0.18);' +
+      'box-shadow:0 8px 32px rgba(0,0,0,0.88);' +
+      'font-size:.86rem;line-height:1.58;' +
+      'pointer-events:none;' +
+      'opacity:0;transform:translateY(6px);' +
+      'transition:opacity .2s ease,transform .2s ease}',
+    '.urm-cs-annot.urm-cs-av{opacity:1;transform:translateY(0)}',
+
+    /* 彈出框內 HTML 元素基本排版 */
+    '.urm-cs-annot p{margin-bottom:8px}',
+    '.urm-cs-annot p:last-child{margin-bottom:0}',
+    '.urm-cs-annot ul,.urm-cs-annot ol{padding-left:18px;margin-bottom:8px}',
+    '.urm-cs-annot li{margin-bottom:3px}',
+    '.urm-cs-annot strong,.urm-cs-annot b{color:#DECA4B;font-weight:700}',
+    '.urm-cs-annot em,.urm-cs-annot i{color:#95c9de;font-style:italic}',
+    '.urm-cs-annot code{' +
+      'font-family:monospace;font-size:.88em;' +
+      'background:rgba(198,199,189,0.12);' +
+      'padding:1px 5px;border-radius:4px}',
+    '.urm-cs-annot pre{' +
+      'font-family:monospace;font-size:.82em;' +
+      'background:rgba(198,199,189,0.08);' +
+      'padding:10px 12px;border-radius:7px;' +
+      'overflow-x:auto;margin-bottom:8px;white-space:pre}',
+    '.urm-cs-annot table{border-collapse:collapse;width:100%;margin-bottom:8px}',
+    '.urm-cs-annot th,.urm-cs-annot td{' +
+      'padding:5px 10px;font-size:.83em;' +
+      'border:1px solid rgba(198,199,189,0.18)}',
+    '.urm-cs-annot th{color:#DECA4B;background:rgba(198,199,189,0.07);font-weight:700}',
+    '.urm-cs-annot hr{border:none;border-top:1px solid rgba(198,199,189,0.16);margin:8px 0}'
+
+  ].join('\n');
+
+  (function () {
+    if (document.getElementById('urm-css')) return;
+    var s = document.createElement('style');
+    s.id = 'urm-css';
+    s.textContent = CSS;
+    (document.head || document.documentElement).appendChild(s);
+  })();
+
+  /* ════════════════════════════════════════════════════════════════
+   * text-morph
+   *
+   * 用法：
+   *   <text-morph theme="sky" label-from="← 還原" label-to="看升級版 →">
+   *     <morph-from>原版文字（可含任何 HTML）</morph-from>
+   *     <morph-to>升級版文字（可含任何 HTML）</morph-to>
+   *   </text-morph>
+   *
+   * 屬性：
+   *   theme        按鈕色票名稱或 hex（預設 morphTheme）
+   *   duration     過渡毫秒（預設 morphDuration）
+   *   label-from   顯示「還原」按鈕的文字
+   *   label-to     顯示「切換」按鈕的文字
+   *
+   * ★ morph 內容中的 chalk-mark / margin-pin / read-pulse
+   *   在每次切換後會自動重新初始化。col-pair 不支援巢狀於 morph 內。
+   * ════════════════════════════════════════════════════════════════ */
+  function initMorph(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var fromEl = el.querySelector('morph-from');
+    var toEl   = el.querySelector('morph-to');
+    if (!fromEl || !toEl) {
+      console.warn('[ui-reading] <text-morph> 缺少 <morph-from> 或 <morph-to>，已略過。');
+      return;
+    }
+
+    var fromHTML = fromEl.innerHTML;
+    var toHTML   = toEl.innerHTML;
+    var theme    = el.getAttribute('theme')       || CFG.morphTheme;
+    var dur      = +(el.getAttribute('duration')  || CFG.morphDuration);
+    var lblFrom  = el.getAttribute('label-from')  || CFG.morphLabelFrom;
+    var lblTo    = el.getAttribute('label-to')    || CFG.morphLabelTo;
+    var c        = clr(theme);
+    var cSafe    = clr('safe');
+    var shown    = false; /* false = from, true = to */
+
+    /* ── DOM ── */
+    var wrap = document.createElement('div');
+    wrap.className = 'urm-morph';
+    wrap.style.setProperty('--urm-md', dur + 'ms');
+
+    var body = document.createElement('div');
+    body.className = 'urm-morph-body';
+    body.innerHTML = fromHTML;
+
+    var ctrl  = document.createElement('div');
+    ctrl.className = 'urm-morph-ctrl';
+
+    var badge = document.createElement('span');
+    badge.className = 'urm-morph-badge';
+
+    var dot = document.createElement('span');
+    dot.className = 'urm-morph-dot';
+
+    var lbl = document.createElement('span');
+
+    badge.appendChild(dot);
+    badge.appendChild(lbl);
+    ctrl.appendChild(badge);
+    wrap.appendChild(body);
+    wrap.appendChild(ctrl);
+    el.replaceWith(wrap);
+
+    function syncBadge() {
+      var c2 = shown ? cSafe : c;
+      badge.style.color       = c2;
+      badge.style.borderColor = c2;
+      dot.style.background    = c2;
+      lbl.textContent = shown ? lblFrom : lblTo;
+    }
+    syncBadge();
+
+    /* 重新初始化巢狀元件（chalk-mark / margin-pin / read-pulse） */
+    function reinitNested() {
+      body.querySelectorAll('chalk-mark:not([data-urm])').forEach(initChalk);
+      body.querySelectorAll('margin-pin:not([data-urm])').forEach(initPin);
+      body.querySelectorAll('read-pulse:not([data-urm])').forEach(initPulse);
+    }
+
+    var busy = false;
+    badge.addEventListener('click', function () {
+      if (busy) return;
+      busy = true;
+      body.classList.add('urm-mo');
+      setTimeout(function () {
+        shown = !shown;
+        body.innerHTML = shown ? toHTML : fromHTML;
+        reinitNested();
+        syncBadge();
+        body.classList.remove('urm-mo');
+        setTimeout(function () { busy = false; }, dur + 50);
+      }, dur);
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * margin-pin
+   *
+   * 用法：
+   *   <margin-pin note="說明文字" theme="yellow">標記詞</margin-pin>
+   *
+   * 屬性：
+   *   note    浮動說明文字
+   *   theme   標記色票名稱或 hex（預設 pinTheme）
+   *
+   * ★ 共用一對全域 DOM（標注框 + 連接線），不依賴容器寬度。
+   *   建議在寬螢幕使用（視窗右側需有足夠空間顯示標注框）。
+   * ════════════════════════════════════════════════════════════════ */
+  var _pa = null, _pl = null, _pt = null;
+
+  function ensurePinDom() {
+    if (_pa) return;
+    _pa = document.createElement('div');
+    _pa.className = 'urm-pannot';
+    _pl = document.createElement('div');
+    _pl.className = 'urm-pline';
+    document.body.appendChild(_pa);
+    document.body.appendChild(_pl);
+  }
+
+  function initPin(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var note     = el.getAttribute('note') || '';
+    var themeRaw = el.getAttribute('theme') || CFG.pinTheme;
+
+    /* 解析 outline 變體：theme="yellow-outline" → isOutline=true, themeName="yellow" */
+    var isOutline = themeRaw.slice(-8) === '-outline';
+    var themeName = isOutline ? themeRaw.slice(0, -8) : themeRaw;
+    var c = clr(themeName);
+
+    var mark = document.createElement('span');
+    mark.className = 'urm-pin';
+    mark.style.borderBottomColor = c;
+    mark.style.color = c;
+    mark.innerHTML = el.innerHTML;
+    el.replaceWith(mark);
+    ensurePinDom();
+
+    mark.addEventListener('mouseenter', function () {
+      clearTimeout(_pt);
+      var mr = mark.getBoundingClientRect();
+
+      /* 標注框：fill（預設）或 outline */
+      if (isOutline) {
+        _pa.style.background = BG;
+        _pa.style.color      = c;
+        _pa.style.border     = '1.5px solid ' + c;
+        _pa.style.boxShadow  = '0 4px 16px rgba(0,0,0,.45)';
+      } else {
+        _pa.style.background = c;
+        _pa.style.color      = BG;
+        _pa.style.border     = 'none';
+        _pa.style.boxShadow  = '0 4px 16px rgba(0,0,0,.55)';
+      }
+
+      _pa.style.right    = CFG.pinMargin + 'px';
+      _pa.style.left     = '';
+      _pa.style.maxWidth = CFG.pinWidth + 'px';
+      _pa.style.top      = Math.max(8, mr.top + mr.height / 2 - 20) + 'px';
+      _pa.innerHTML      = note;   /* innerHTML 支援 <br> 等標籤 */
+      _pa.classList.add('urm-pv');
+
+      /* 等標注框渲染後再計算連接線位置 */
+      requestAnimationFrame(function () {
+        var ar  = _pa.getBoundingClientRect();
+        var ly  = mr.top + mr.height / 2;
+        var lx1 = mr.right + 5;
+        var lx2 = ar.left  - 5;
+        _pl.style.top         = ly + 'px';
+        _pl.style.left        = lx1 + 'px';
+        _pl.style.width       = Math.max(0, lx2 - lx1) + 'px';
+        _pl.style.borderColor = c;
+        if (lx2 > lx1) _pl.classList.add('urm-pv');
+      });
+    });
+
+    mark.addEventListener('mouseleave', function () {
+      _pt = setTimeout(function () {
+        _pa.classList.remove('urm-pv');
+        _pl.classList.remove('urm-pv');
+      }, 90);
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * read-pulse
+   *
+   * 用法：
+   *   <read-pulse color="teal" speed="2800" trigger="visible">
+   *     段落文字…
+   *   </read-pulse>
+   *
+   * 屬性：
+   *   color        掃描線色票名稱或 hex（預設 pulseColor）
+   *   speed        掃描毫秒（預設 pulseSpeed）
+   *   pulse-width  掃描線粗細（預設 pulseWidth）
+   *   gap          左側留白 px（預設 pulseGap）
+   *   trigger      visible（預設）| click | hover
+   *   repeat       有此屬性時可重複觸發（預設只播一次）
+   * ════════════════════════════════════════════════════════════════ */
+  function initPulse(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var c       = clr(el.getAttribute('color')       || CFG.pulseColor);
+    var speed   = +(el.getAttribute('speed')          || CFG.pulseSpeed);
+    var pw      = el.getAttribute('pulse-width')      || CFG.pulseWidth;
+    var gap     = +(el.getAttribute('gap')            || CFG.pulseGap);
+    var trigger = el.getAttribute('trigger')          || CFG.pulseTrigger;
+    var repeat  = el.hasAttribute('repeat');
+
+    var wrap = document.createElement('div');
+    wrap.className = 'urm-pulse';
+    wrap.style.setProperty('--urm-ps', speed + 'ms');
+    wrap.style.setProperty('--urm-pw', pw);
+    wrap.style.setProperty('--urm-pg', gap + 'px');
+
+    var bar = document.createElement('div');
+    bar.className = 'urm-pbar';
+    bar.style.background = c;
+    wrap.appendChild(bar);
+
+    /* 搬移子節點到 wrap（bar 已是第一個 absolute 子節點） */
+    Array.from(el.childNodes).forEach(function (n) { wrap.appendChild(n); });
+    el.replaceWith(wrap);
+
+    var played = false, running = false;
+
+    function pulse() {
+      if (running) return;
+      if (played && !repeat) return;
+      played = running = true;
+
+      bar.classList.remove('urm-pa', 'urm-pd');
+      void bar.offsetHeight; /* force reflow，確保動畫重頭播放 */
+      bar.classList.add('urm-pa');
+
+      /* 掃完後淡出，再重置狀態 */
+      setTimeout(function () {
+        bar.classList.add('urm-pd');
+        setTimeout(function () {
+          bar.classList.remove('urm-pa', 'urm-pd');
+          running = false;
+        }, 1400);
+      }, speed + 300);
+    }
+
+    if (trigger === 'visible') {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          setTimeout(pulse, 180); /* 短延遲讓視覺安頓後再出現 */
+          if (!repeat) io.disconnect();
+        });
+      }, { threshold: 0.25 });
+      io.observe(wrap);
+
+    } else if (trigger === 'click') {
+      wrap.style.cursor = 'pointer';
+      wrap.addEventListener('click', pulse);
+
+    } else if (trigger === 'hover') {
+      wrap.addEventListener('mouseenter', pulse);
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * chalk-mark
+   *
+   * 用法：
+   *   <chalk-mark theme="focus">詞彙</chalk-mark>
+   *   <chalk-mark theme="sky" active>預設已啟動</chalk-mark>
+   *
+   * 屬性：
+   *   theme      弧線色票名稱或 hex（預設 chalkTheme）
+   *   thickness  弧線粗細 px（預設 chalkThickness）
+   *   duration   畫出 / 消除動畫毫秒（預設 chalkDuration）
+   *   active     有此屬性時頁面載入後自動畫出弧線
+   *
+   * ★ 弧線以 SVG quadratic bezier 實作，
+   *   用 stroke-dashoffset 動畫模擬手繪效果。
+   *   chalk-mark 限用於單行短詞，跨行不保證正確。
+   * ════════════════════════════════════════════════════════════════ */
+  function initChalk(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var c         = clr(el.getAttribute('theme')     || CFG.chalkTheme);
+    var thick     = +(el.getAttribute('thickness')   || CFG.chalkThickness);
+    var dur       = +(el.getAttribute('duration')    || CFG.chalkDuration);
+    var preActive = el.hasAttribute('active');
+
+    /* ── wrap ── */
+    var wrap = document.createElement('span');
+    wrap.className = 'urm-chalk';
+    wrap.innerHTML = el.innerHTML;
+    el.replaceWith(wrap);
+
+    var svgEl = null, chalkPath = null, isActive = false;
+    var _animId = null; /* 目前進行中的 rAF id */
+
+    /* ── rAF 動畫：直接操作 SVG attribute，不依賴 CSS transition ── */
+    function animateDash(path, fromOffset, toOffset, onDone) {
+      if (_animId) { cancelAnimationFrame(_animId); _animId = null; }
+      var start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var t     = Math.min((ts - start) / dur, 1);
+        var ease  = 1 - Math.pow(1 - t, 3); /* cubic ease-out */
+        var val   = fromOffset + (toOffset - fromOffset) * ease;
+        if (path.isConnected) path.setAttribute('stroke-dashoffset', val);
+        if (t < 1 && path.isConnected) {
+          _animId = requestAnimationFrame(step);
+        } else {
+          _animId = null;
+          if (onDone) onDone();
+        }
+      }
+      _animId = requestAnimationFrame(step);
+    }
+
+    /* ── 建立弧線 SVG，回傳路徑長度（=0 表示在隱藏容器內） ── */
+    function buildArc() {
+      if (svgEl) { svgEl.remove(); svgEl = null; chalkPath = null; }
+      if (_animId) { cancelAnimationFrame(_animId); _animId = null; }
+
+      var rect  = wrap.getBoundingClientRect();
+      var w     = rect.width;
+      var h     = rect.height;
+      var lift  = Math.round(h * 0.6);
+      var pad   = 3;
+      var svgW  = w + pad * 2;
+      var svgH  = lift + 6;
+
+      svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svgEl.setAttribute('class', 'urm-chalk-svg');
+      svgEl.style.cssText =
+        'position:absolute;overflow:visible;pointer-events:none;' +
+        'left:' + (-pad) + 'px;' +
+        'top:'  + (-svgH) + 'px;' +
+        'width:'  + svgW + 'px;' +
+        'height:' + svgH + 'px';
+
+      var x1 = pad,        y1 = svgH - 2;
+      var cx = svgW / 2,   cy = 3;
+      var x2 = svgW - pad, y2 = svgH - 2;
+      var d  = 'M ' + x1 + ' ' + y1 +
+               ' Q ' + cx + ' ' + cy +
+               ' ' + x2 + ' ' + y2;
+
+      chalkPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      chalkPath.setAttribute('fill',            'none');
+      chalkPath.setAttribute('stroke',          c);
+      chalkPath.setAttribute('stroke-width',    thick);
+      chalkPath.setAttribute('stroke-linecap',  'round');
+      chalkPath.setAttribute('d',               d);
+
+      svgEl.appendChild(chalkPath);
+      wrap.appendChild(svgEl);
+
+      /* getTotalLength() 需要元素已在 DOM 中 */
+      var len = chalkPath.getTotalLength();
+      /* 初始：路徑完全隱藏（用 SVG attribute，不依賴 CSS） */
+      chalkPath.setAttribute('stroke-dasharray',  len);
+      chalkPath.setAttribute('stroke-dashoffset', len);
+
+      return len;
+    }
+
+    /* ── 啟動：畫弧 ── */
+    function activate() {
+      isActive = true;
+      wrap.style.color = c;
+      var len = buildArc();
+      /* 在隱藏容器（len≈0）時不動畫，等使用者點擊後重建 */
+      if (len < 1) return;
+      animateDash(chalkPath, len, 0, null);
+    }
+
+    /* ── 停用：消弧 ── */
+    function deactivate() {
+      isActive = false;
+      wrap.style.color = '';
+      if (!chalkPath) return;
+      var len     = parseFloat(chalkPath.getAttribute('stroke-dasharray')) || 0;
+      var current = parseFloat(chalkPath.getAttribute('stroke-dashoffset')) || 0;
+      var _path   = chalkPath;
+      var _svg    = svgEl;
+      svgEl = null; chalkPath = null;
+      animateDash(_path, current, len, function () {
+        if (_svg && _svg.parentNode) _svg.remove();
+      });
+    }
+
+    wrap.addEventListener('click', function () {
+      if (isActive) {
+        /* 偵測縮退弧線（在隱藏容器初始化的殘留）：直接重建 */
+        var arcLen = chalkPath
+          ? parseFloat(chalkPath.getAttribute('stroke-dasharray')) || 0
+          : 0;
+        if (arcLen < 1) {
+          if (svgEl) { svgEl.remove(); svgEl = null; chalkPath = null; }
+          isActive = false;
+          activate();
+          return;
+        }
+        deactivate();
+      } else {
+        activate();
+      }
+    });
+
+    /* active 屬性：先確認元素可見，否則用 IO 等待 */
+    if (preActive) {
+      setTimeout(function () {
+        var r = wrap.getBoundingClientRect();
+        if (r.width > 0) {
+          activate();
+        } else {
+          var io = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting) {
+              io.disconnect();
+              activate();
+            }
+          }, { threshold: 0.01 });
+          io.observe(wrap);
+        }
+      }, 80);
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * col-pair — 搭配詞同色小印記
+   *
+   * 用法：
+   *   I need to <col-pair group="g1">make</col-pair> a
+   *   <col-pair group="g1">decision</col-pair> soon.
+   *   This will <col-pair group="g2">have</col-pair> a significant
+   *   <col-pair group="g2">impact</col-pair>.
+   *
+   * 屬性：
+   *   group    同組識別碼（字串，必填）；同組自動共享顏色
+   *   theme    覆蓋該組自動分配的色票名稱或 hex
+   *            （同組第一個 theme 屬性生效，後續忽略）
+   *   label    hover 時 title 提示文字，同組共用
+   *
+   * ★ 所有 col-pair 需一起初始化，UiReading.init() 可安全重複呼叫。
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* 自動色盤（排除太淺或對比不足的色票） */
+  var _cpPalette = [
+    BRAND.yellow, BRAND.sky, BRAND.lavender, BRAND.ocean,
+    BRAND.salmon, BRAND.teal, BRAND.focus,   BRAND.info,
+    BRAND.pink,   BRAND.orange, BRAND.indigo, BRAND.vanilla
+  ];
+  var _cpPaletteIdx = 0;
+  /* 群組登錄表：gid → { color, members[], label, _hasTheme } */
+  var _cpGroups = {};
+
+  function initColPairs() {
+    var els = Array.from(
+      document.querySelectorAll('col-pair:not([data-urm])')
+    );
+    if (!els.length) return;
+
+    /* ── 第一遍：建群組，分配顏色 ── */
+    els.forEach(function (el) {
+      var gid   = el.getAttribute('group') || '_nogroup';
+      var theme = el.getAttribute('theme');
+      var label = el.getAttribute('label') || '';
+      if (!_cpGroups[gid]) {
+        var c = theme
+          ? clr(theme)
+          : _cpPalette[_cpPaletteIdx++ % _cpPalette.length];
+        _cpGroups[gid] = { color: c, members: [], label: label, _hasTheme: !!theme };
+      }
+      /* 同組第一個 theme 優先，後續忽略 */
+      if (theme && !_cpGroups[gid]._hasTheme) {
+        _cpGroups[gid].color = clr(theme);
+        _cpGroups[gid]._hasTheme = true;
+      }
+      if (label && !_cpGroups[gid].label) _cpGroups[gid].label = label;
+    });
+
+    /* ── 第二遍：替換 DOM ── */
+    var registry = [];
+    els.forEach(function (el) {
+      el.dataset.urm = '1';
+      var gid = el.getAttribute('group') || '_nogroup';
+      var grp = _cpGroups[gid];
+      var c   = grp.color;
+
+      var wrap = document.createElement('span');
+      wrap.className   = 'urm-cp';
+      wrap.dataset.cpg = gid;
+      wrap.style.setProperty('--urm-cp-c', c);
+      if (grp.label) wrap.title = grp.label;
+      wrap.innerHTML = el.innerHTML;
+
+      /* 小印記圓點，insertBefore 確保在文字節點最前 */
+      var dot = document.createElement('span');
+      dot.className = 'urm-cp-dot';
+      wrap.insertBefore(dot, wrap.firstChild);
+
+      el.replaceWith(wrap);
+      grp.members.push(wrap);
+      registry.push({ wrap: wrap, gid: gid });
+    });
+
+    /* ── 第三遍：掛 hover 事件（此時 wrap 已全數入 DOM） ── */
+    registry.forEach(function (item) {
+      var grp = _cpGroups[item.gid];
+      item.wrap.addEventListener('mouseenter', function () {
+        grp.members.forEach(function (m) { m.classList.add('urm-cp-lit'); });
+      });
+      item.wrap.addEventListener('mouseleave', function () {
+        grp.members.forEach(function (m) { m.classList.remove('urm-cp-lit'); });
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * chunk-spot — 語塊聚焦導覽
+   *
+   * 用法：
+   *   <chunk-spot>
+   *     I need to <chunk>make a decision</chunk> before the deadline.
+   *     It will <chunk theme="pink">have significant impact</chunk>
+   *     on our <chunk label="能力描述">overall performance</chunk>.
+   *   </chunk-spot>
+   *
+   * chunk-spot 屬性：
+   *   dot-size    圓點直徑 px（預設 chunkDotSize）
+   *   dim         非聚焦區段 opacity（預設 chunkDim）
+   *   duration    淡入淡出毫秒（預設 chunkTransition）
+   *
+   * chunk 屬性：
+   *   theme       覆蓋個別語塊色票名稱或 hex
+   *   label       圓點提示文字；兩種格式：
+   *               "純文字"    → 瀏覽器原生 title tooltip
+   *               "#some-id"  → 讀取 id="some-id" 的 div 的 innerHTML
+   *                             並以浮動框顯示（自動隱藏原始 div）
+   *
+   * ★ 段落中的一般文字與其他元素（strong、em 等）均自動包入
+   *   <span class="urm-cs-text"> 並隨聚焦一起淡出。
+   *   chunk-spot 可安全巢狀於 text-morph 的 morph-from / morph-to 內。
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* rich-label 彈出框：全頁唯一，lazy 建立 */
+  var _csAnnotEl = null, _csAnnotTm = null;
+
+  function ensureCsAnnot() {
+    if (_csAnnotEl) return;
+    _csAnnotEl = document.createElement('div');
+    _csAnnotEl.className = 'urm-cs-annot';
+    document.body.appendChild(_csAnnotEl);
+  }
+
+  /* 語塊自動色盤（刻意與 col-pair 使用不同排列順序，避免撞色） */
+  var _csPalette = [
+    BRAND.sky, BRAND.yellow, BRAND.lavender, BRAND.salmon,
+    BRAND.teal, BRAND.focus,  BRAND.pink,    BRAND.ocean,
+    BRAND.info, BRAND.indigo, BRAND.orange,  BRAND.vanilla
+  ];
+
+  function initChunkSpot(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var dotSize = +(el.getAttribute('dot-size') || CFG.chunkDotSize);
+    var dimVal  =  +(el.getAttribute('dim')     || CFG.chunkDim);
+    var dur     = +(el.getAttribute('duration') || CFG.chunkTransition);
+
+    /* ── 掃描子節點，分類為 chunk / 一般文字 / 其他元素 ── */
+    var segments   = [];
+    var chunkMetas = [];   /* { html, color, label } */
+    var palIdx     = 0;
+
+    Array.from(el.childNodes).forEach(function (node) {
+      if (node.nodeType === 1 && node.tagName.toLowerCase() === 'chunk') {
+        /* 語塊元素 */
+        var rawTheme = node.getAttribute('theme') || CFG.chunkTheme;
+        var color    = rawTheme
+          ? clr(rawTheme)
+          : _csPalette[palIdx++ % _csPalette.length];
+        var meta = {
+          html:  node.innerHTML,
+          color: color,
+          label: node.getAttribute('label') || ''
+        };
+        segments.push({ type: 'chunk', idx: chunkMetas.length });
+        chunkMetas.push(meta);
+
+      } else if (node.nodeType === 3) {
+        /* 純文字節點（保留空白以維持間距） */
+        if (node.textContent !== '') {
+          segments.push({ type: 'text', text: node.textContent });
+        }
+
+      } else if (node.nodeType === 1) {
+        /* 其他元素（strong / em / br …） */
+        segments.push({ type: 'elem', outer: node.outerHTML });
+      }
+    });
+
+    if (!chunkMetas.length) {
+      console.warn('[ui-reading] <chunk-spot> 內找不到 <chunk>，已略過。');
+      return;
+    }
+
+    /* ── 建立 DOM 結構 ── */
+    var wrap = document.createElement('div');
+    wrap.className = 'urm-cs';
+    wrap.style.setProperty('--urm-cs-dim', dimVal);
+    wrap.style.setProperty('--urm-cs-dur', dur + 'ms');
+
+    /* 導覽圓點列 */
+    var nav  = document.createElement('div');
+    nav.className = 'urm-cs-nav';
+
+    var dots = [];
+    chunkMetas.forEach(function (meta) {
+      var dot = document.createElement('span');
+      dot.className = 'urm-cs-dot';
+      dot.style.setProperty('--urm-cs-c', meta.color);
+      dot.style.width  = dotSize + 'px';
+      dot.style.height = dotSize + 'px';
+
+      if (meta.label) {
+        if (meta.label.charAt(0) === '#') {
+          /* ── rich-label：label="#some-id" ── */
+          var targetId = meta.label.slice(1);
+
+          /* 標記來源 div，CSS 將自動隱藏它 */
+          var srcEl = document.getElementById(targetId);
+          if (srcEl) srcEl.dataset.urmCsSrc = '1';
+
+          dot.addEventListener('mouseenter', function () {
+            var el = document.getElementById(targetId);
+            if (!el) return;
+            ensureCsAnnot();
+            clearTimeout(_csAnnotTm);
+
+            /* 填入內容 */
+            _csAnnotEl.innerHTML = el.innerHTML;
+
+            /* 先定位（避免閃爍），再顯示 */
+            var r    = dot.getBoundingClientRect();
+            var left = Math.min(r.left, window.innerWidth - 396);
+            var top  = r.bottom + 9;
+            /* 超出底部時改顯示於圓點上方 */
+            _csAnnotEl.style.visibility = 'hidden';
+            _csAnnotEl.style.top  = top  + 'px';
+            _csAnnotEl.style.left = Math.max(8, left) + 'px';
+            _csAnnotEl.classList.add('urm-cs-av');
+
+            requestAnimationFrame(function () {
+              var ar = _csAnnotEl.getBoundingClientRect();
+              if (ar.bottom > window.innerHeight - 8) {
+                _csAnnotEl.style.top = Math.max(8, r.top - ar.height - 9) + 'px';
+              }
+              _csAnnotEl.style.visibility = '';
+            });
+          });
+
+          dot.addEventListener('mouseleave', function () {
+            _csAnnotTm = setTimeout(function () {
+              if (_csAnnotEl) _csAnnotEl.classList.remove('urm-cs-av');
+            }, 120);
+          });
+
+        } else {
+          /* ── 純文字 label：維持原有 title 行為 ── */
+          dot.title = meta.label;
+        }
+      }
+
+      dots.push(dot);
+      nav.appendChild(dot);
+    });
+
+    /* 文字主體 */
+    var body = document.createElement('div');
+    body.className = 'urm-cs-body';
+
+    var chunkSpans = [];
+    segments.forEach(function (seg) {
+      var s = document.createElement('span');
+      if (seg.type === 'chunk') {
+        var meta = chunkMetas[seg.idx];
+        s.className = 'urm-cs-chunk';
+        s.style.setProperty('--urm-cs-c', meta.color);
+        s.dataset.idx = seg.idx;
+        s.innerHTML   = meta.html;
+        chunkSpans.push(s);
+      } else if (seg.type === 'text') {
+        s.className   = 'urm-cs-text';
+        s.textContent = seg.text;
+      } else {
+        s.className = 'urm-cs-text';
+        s.innerHTML = seg.outer;
+      }
+      body.appendChild(s);
+    });
+
+    wrap.appendChild(nav);
+    wrap.appendChild(body);
+    el.replaceWith(wrap);
+
+    /* ── 互動邏輯 ── */
+    var activeIdx = -1;
+
+    function activate(idx) {
+      if (activeIdx === idx) {
+        /* 再次點擊同一圓點 → 解除聚焦 */
+        activeIdx = -1;
+        body.classList.remove('urm-cs-dimmed');
+        dots.forEach(function (d) { d.classList.remove('urm-cs-active'); });
+        chunkSpans.forEach(function (s) { s.classList.remove('urm-cs-lit'); });
+      } else {
+        activeIdx = idx;
+        body.classList.add('urm-cs-dimmed');
+        dots.forEach(function (d, i) {
+          d.classList.toggle('urm-cs-active', i === idx);
+        });
+        chunkSpans.forEach(function (s, i) {
+          s.classList.toggle('urm-cs-lit', i === idx);
+        });
+      }
+    }
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener('click', function () { activate(i); });
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * boot
+   * ════════════════════════════════════════════════════════════════ */
+  function boot() {
+    document.querySelectorAll('text-morph:not([data-urm])').forEach(initMorph);
+    document.querySelectorAll('margin-pin:not([data-urm])').forEach(initPin);
+    document.querySelectorAll('read-pulse:not([data-urm])').forEach(initPulse);
+    document.querySelectorAll('chalk-mark:not([data-urm])').forEach(initChalk);
+    document.querySelectorAll('chunk-spot:not([data-urm])').forEach(initChunkSpot);
+    initColPairs();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  global.UiReading = { init: boot, config: CFG, colors: BRAND };
+
+})(window);
+
+</script>
+<script>
+// ── Inline ui-reading2.js ──
+/**
+ * ui-reading2.js  v1.3.0
+ * ─────────────────────────────────────────────────────────────────────
+ * 三合一進階閱讀互動元件
+ *
+ *  <text-diff>      同時顯示兩版本差異（刪除線＋插入底色），word-level LCS diff
+ *  <layer-switch>   多層次分析切換，不同維度的標記分層顯示
+ *  <spotlight>      點擊段落聚焦，其他內容降低透明度退至背景
+ *
+ * 全域配置（在引入此檔前設定）：
+ *   window.UiReading2Config = { diffThemeDel: 'warning', ... }
+ *
+ * API：
+ *   UiReading2.init()   — 重新掃描並初始化新節點
+ *   UiReading2.config   — 目前的全域配置物件
+ *   UiReading2.colors   — 色票物件
+ */
+(function (global) {
+  'use strict';
+
+  /* ════════════════════════════════════════════════════════════════
+   * 色票
+   * ════════════════════════════════════════════════════════════════ */
+  var BRAND = {
+    shell:    '#C6C7BD', lavender: '#C3A5E5', sky:     '#95c9de',
+    warning:  '#F08080', salmon:   '#E5C3B3', ocean:   '#0ABDC6',
+    safe:     '#299459', teal:     '#0DA591', vanilla: '#DBEDD8',
+    yellow:   '#DECA4B', focus:    '#e0be79', info:    '#1E65C7',
+    indigo:   '#9B72CF', pink:     '#FFB3D9', orange:  '#EDA109',
+    special:  '#b3de73'
+  };
+  var BG = '#0C0D0C';
+
+  function clr(v) {
+    if (!v) return BRAND.shell;
+    v = String(v).trim();
+    return BRAND[v] || (/^#|^rgb/.test(v) ? v : BRAND.shell);
+  }
+
+  /* hex → rgba（品牌色均為六碼 hex） */
+  function rgba(hexOrName, a) {
+    var h = clr(hexOrName);
+    var r = parseInt(h.slice(1, 3), 16);
+    var g = parseInt(h.slice(3, 5), 16);
+    var b = parseInt(h.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * 全域配置
+   * ════════════════════════════════════════════════════════════════ */
+  var CFG = global.UiReading2Config = Object.assign({
+
+    /* ── text-diff ── */
+    diffThemeDel:     'warning',     /* 刪除文字色票 */
+    diffThemeIns:     'safe',        /* 插入文字色票 */
+    diffMode:         'inline',      /* inline | side */
+    diffDelStyle:     'strikethrough', /* strikethrough | fade | hide */
+    diffGranularity:  'word',        /* word | char */
+    diffMarkDel:      true,          /* 是否標示刪除 */
+    diffHighlightIns: true,          /* 是否標示插入 */
+    diffInsBg:        0.22,          /* 插入底色透明度 0–1 */
+    diffShowLabel:    false,         /* 顯示 FROM/TO 標籤 */
+    diffLabelFrom:    'FROM',
+    diffLabelTo:      'TO',
+
+    /* ── layer-switch ── */
+    lsDim:            0.30,          /* 非匹配標記的透明度 */
+    lsToggleStyle:    'pill',        /* pill | dot */
+    lsTogglePosition: 'top',         /* top | bottom */
+    lsMarkStyle:      'highlight',   /* highlight | underline | box */
+    lsAnimate:        true,          /* 過渡動畫 */
+    lsBodyDim:        false,         /* 啟動層時整體文字是否降透明 */
+    lsBodyDimVal:     0.55,          /* body-dim 的透明度 */
+    lsPalette: [                     /* 按鈕自動配色盤（未設 theme 時依序取用） */
+      'ocean','yellow','lavender','salmon',
+      'teal','focus','info','indigo','pink','sky'
+    ],
+
+    /* ── spotlight ── */
+    spTheme:          'focus',       /* 聚光圈顏色色票 */
+    spRing:           true,          /* 顯示聚光圈邊框 */
+    spRingWidth:      '2px',
+    spRingStyle:      'solid',       /* solid | dashed | dotted */
+    spDim:            0.15,          /* 其他 spotlight 的透明度 */
+    spTransition:     300,           /* 動畫毫秒 */
+    spEscape:         true,          /* Escape 關閉 */
+    spHint:           true,          /* 顯示提示圖示 */
+    spHintIcon:       'bi-fullscreen'/* Bootstrap Icon class */
+
+  }, global.UiReading2Config || {});
+
+  /* ════════════════════════════════════════════════════════════════
+   * CSS
+   * ════════════════════════════════════════════════════════════════ */
+  var CSS = [
+    /* 升級前隱藏 */
+    'text-diff,diff-from,diff-to{display:none}',
+    'layer-switch,ls-text,ls-layer,ls-mark{display:none}',
+    'spotlight{display:none}',
+
+    /* ── text-diff ─────────────────────────────────────────────── */
+    '.urm-td{display:block;line-height:1.75}',
+
+    /* 刪除：刪除線版 */
+    '.urm-td-del{' +
+      'text-decoration:line-through;text-decoration-thickness:1.5px;' +
+      'opacity:.5;transition:opacity .2s}',
+
+    /* 刪除：淡出版 */
+    '.urm-td-del.urm-td-fade{opacity:.22}',
+
+    /* 插入 */
+    '.urm-td-ins{border-radius:3px;padding:0 2px;transition:all .2s}',
+
+    /* side 模式：雙欄 */
+    '.urm-td-side{display:grid;grid-template-columns:1fr 1fr;gap:20px}',
+
+    '.urm-td-panel{padding:16px 20px;border-radius:10px;line-height:1.75}',
+
+    '.urm-td-plabel{' +
+      'font-size:.7rem;font-weight:700;letter-spacing:.1em;' +
+      'text-transform:uppercase;margin-bottom:10px;' +
+      'display:flex;align-items:center;gap:6px}',
+
+    '.urm-td-plabel-dot{' +
+      'width:6px;height:6px;border-radius:50%;' +
+      'background:currentColor;flex-shrink:0}',
+
+    /* ── layer-switch ───────────────────────────────────────────── */
+    '.urm-ls{display:block}',
+
+    '.urm-ls-ctrl{' +
+      'display:flex;flex-wrap:wrap;gap:8px;' +
+      'margin-bottom:14px;align-items:center}',
+
+    '.urm-ls-btn{' +
+      'display:inline-flex;align-items:center;gap:5px;' +
+      'padding:4px 14px;border-radius:20px;' +
+      'font-size:.78rem;font-weight:700;border:1.5px solid;' +
+      'cursor:pointer;user-select:none;background:transparent;' +
+      'transition:background .2s ease,color .2s ease}',
+    '.urm-ls-btn:hover{filter:brightness(1.15)}',
+    '.urm-ls-btn:active{transform:scale(.95)}',
+
+    /* dot 樣式的 toggle 按鈕 */
+    '.urm-ls-dot{' +
+      'padding:0;width:14px;height:14px;border-radius:50%;' +
+      'flex-shrink:0;border-width:2px}',
+
+    '.urm-ls-body{display:block;line-height:1.8;' +
+      'transition:opacity .22s ease}',
+
+    '.urm-ls-mark{' +
+      'display:inline;border-radius:3px;padding:1px 3px;cursor:default;' +
+      'transition:' +
+        'background .22s ease,' +
+        'color .22s ease,' +
+        'opacity .22s ease,' +
+        'outline-color .22s ease,' +
+        'text-decoration-color .22s ease}',
+
+    /* mark-style: underline */
+    '.urm-ls-mark-ul{' +
+      'text-decoration:underline;text-underline-offset:3px;' +
+      'text-decoration-thickness:2px;padding:0}',
+
+    /* mark-style: box */
+    '.urm-ls-mark-box{' +
+      'outline:1.5px solid transparent;border-radius:3px;padding:1px 3px}',
+
+    /* ── spotlight ──────────────────────────────────────────────── */
+    '.urm-sp{' +
+      'display:block;position:relative;cursor:pointer;' +
+      'transition:opacity var(--urm-spt,.3s) ease}',
+
+    /* 聚光圈邊框 */
+    '.urm-sp-ring{' +
+      'position:absolute;inset:-6px;border-radius:10px;' +
+      'pointer-events:none;opacity:0;' +
+      'transition:opacity .25s ease}',
+    '.urm-sp.urm-sp-active>.urm-sp-ring{opacity:1}',
+
+    /* 提示圖示（右上角） */
+    '.urm-sp-hint{' +
+      'position:absolute;top:6px;right:6px;' +
+      'width:18px;height:18px;border-radius:50%;' +
+      'display:flex;align-items:center;justify-content:center;' +
+      'font-size:.65rem;opacity:.28;pointer-events:none;' +
+      'transition:opacity .2s ease}',
+    '.urm-sp:hover>.urm-sp-hint{opacity:.75}',
+
+    /* 遮罩 overlay */
+    '.urm-sp-overlay{' +
+      'position:fixed;inset:0;z-index:8999;' +
+      'background:rgba(0,0,0,0);pointer-events:none;' +
+      'transition:background var(--urm-spt,.3s) ease}',
+    '.urm-sp-overlay.urm-sp-ov{' +
+      'background:rgba(0,0,0,.82);pointer-events:all}',
+
+    /* 所有 spotlight 在 mode 啟動時浮到 overlay 上方 */
+    'body.urm-sp-mode .urm-sp{z-index:9000}',
+
+    /* 非啟動的 spotlight 降透明度（繼承 body 的 --urm-sp-dim） */
+    'body.urm-sp-mode .urm-sp:not(.urm-sp-active){' +
+      'opacity:var(--urm-sp-dim,.15)}',
+
+    /* source / note="#id" 來源 div 自動隱藏 */
+    '[data-urm-ls-src]{display:none!important}'
+
+  ].join('\n');
+
+  (function () {
+    if (document.getElementById('urm2-css')) return;
+    var s = document.createElement('style');
+    s.id = 'urm2-css';
+    s.textContent = CSS;
+    (document.head || document.documentElement).appendChild(s);
+  })();
+
+  /* ════════════════════════════════════════════════════════════════
+   * 工具
+   * ════════════════════════════════════════════════════════════════ */
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  /* 斷詞：保留空白 token，讓 diff 重組後格式不變 */
+  function tokenize(text, gran) {
+    if (gran === 'char') return text.split('');
+    return text.match(/\S+|\s+/g) || [];
+  }
+
+  /* LCS 差分演算法（O(m*n)，適合句子級別的文字量） */
+  function computeDiff(fromText, toText, gran) {
+    var a = tokenize(fromText, gran);
+    var b = tokenize(toText,   gran);
+    var m = a.length, n = b.length;
+
+    /* DP 表 */
+    var dp = [];
+    for (var i = 0; i <= m; i++) {
+      dp[i] = new Array(n + 1).fill(0);
+    }
+    for (var i = 1; i <= m; i++) {
+      for (var j = 1; j <= n; j++) {
+        dp[i][j] = (a[i - 1] === b[j - 1])
+          ? dp[i - 1][j - 1] + 1
+          : Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+
+    /* 回溯 */
+    var ops = [], i = m, j = n;
+    while (i > 0 || j > 0) {
+      if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
+        ops.unshift({ t: 'eq',  v: a[i - 1] }); i--; j--;
+      } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+        ops.unshift({ t: 'ins', v: b[j - 1] }); j--;
+      } else {
+        ops.unshift({ t: 'del', v: a[i - 1] }); i--;
+      }
+    }
+    return ops;
+  }
+
+  /* ops → HTML（inline：del + ins 同時呈現） */
+  function renderInline(ops, cDel, cIns, delStyle, markDel, highIns, insBg) {
+    return ops.map(function (op) {
+      if (op.t === 'eq') return escHtml(op.v);
+
+      if (op.t === 'del') {
+        if (!markDel || delStyle === 'hide') return '';
+        var cls = 'urm-td-del' + (delStyle === 'fade' ? ' urm-td-fade' : '');
+        return '<span class="' + cls + '" style="color:' + cDel + '">' +
+               escHtml(op.v) + '</span>';
+      }
+
+      if (op.t === 'ins') {
+        if (!highIns) return escHtml(op.v);
+        return '<span class="urm-td-ins" style="' +
+               'background:' + rgba(cIns, insBg) + ';color:' + cIns + '">' +
+               escHtml(op.v) + '</span>';
+      }
+      return '';
+    }).join('');
+  }
+
+  /* ops → HTML（FROM 面板：eq + del，隱藏 ins） */
+  function renderFrom(ops, cDel, delStyle) {
+    return ops.map(function (op) {
+      if (op.t === 'eq')  return escHtml(op.v);
+      if (op.t === 'ins') return '';
+      if (delStyle === 'hide') return '';
+      var cls = 'urm-td-del' + (delStyle === 'fade' ? ' urm-td-fade' : '');
+      return '<span class="' + cls + '" style="color:' + cDel + '">' +
+             escHtml(op.v) + '</span>';
+    }).join('');
+  }
+
+  /* ops → HTML（TO 面板：eq + ins，隱藏 del） */
+  function renderTo(ops, cIns, insBg) {
+    return ops.map(function (op) {
+      if (op.t === 'eq')  return escHtml(op.v);
+      if (op.t === 'del') return '';
+      return '<span class="urm-td-ins" style="' +
+             'background:' + rgba(cIns, insBg) + ';color:' + cIns + '">' +
+             escHtml(op.v) + '</span>';
+    }).join('');
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * text-diff
+   *
+   * <text-diff theme-del="warning" theme-ins="safe" mode="inline">
+   *   <diff-from>原版句子</diff-from>
+   *   <diff-to>升級版句子</diff-to>
+   * </text-diff>
+   *
+   * 屬性：
+   *   theme-del       刪除文字色票或 hex（預設 diffThemeDel）
+   *   theme-ins       插入文字色票或 hex（預設 diffThemeIns）
+   *   mode            inline（預設）| side
+   *   del-style       strikethrough（預設）| fade | hide
+   *   granularity     word（預設）| char
+   *   mark-del        是否標示刪除 true（預設）| false
+   *   highlight-ins   是否標示插入 true（預設）| false
+   *   ins-bg          插入底色透明度 0–1（預設 0.22）
+   *   show-label      顯示 FROM / TO 標籤 true | false（預設 false）
+   *   label-from      FROM 標籤文字（預設 FROM）
+   *   label-to        TO 標籤文字（預設 TO）
+   *
+   * ★ diff-from / diff-to 的內容以 textContent 進行差分，
+   *   建議放純文字；HTML 標籤會被視為純文字處理。
+   * ════════════════════════════════════════════════════════════════ */
+  function initDiff(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var fromEl = el.querySelector('diff-from');
+    var toEl   = el.querySelector('diff-to');
+    if (!fromEl || !toEl) {
+      console.warn('[ui-reading2] <text-diff> 缺少 <diff-from> 或 <diff-to>，已略過。');
+      return;
+    }
+
+    var fromText = fromEl.textContent.trim();
+    var toText   = toEl.textContent.trim();
+
+    var cDel      = clr(el.getAttribute('theme-del')       || CFG.diffThemeDel);
+    var cIns      = clr(el.getAttribute('theme-ins')       || CFG.diffThemeIns);
+    var mode      = el.getAttribute('mode')                 || CFG.diffMode;
+    var delStyle  = el.getAttribute('del-style')            || CFG.diffDelStyle;
+    var gran      = el.getAttribute('granularity')          || CFG.diffGranularity;
+    var markDel   = el.getAttribute('mark-del')             !== 'false';
+    var highIns   = el.getAttribute('highlight-ins')        !== 'false';
+    var insBg     = +(el.getAttribute('ins-bg')             || CFG.diffInsBg);
+    var showLabel = el.getAttribute('show-label')           === 'true' || CFG.diffShowLabel;
+    var lblFrom   = el.getAttribute('label-from')           || CFG.diffLabelFrom;
+    var lblTo     = el.getAttribute('label-to')             || CFG.diffLabelTo;
+
+    var ops  = computeDiff(fromText, toText, gran);
+    var wrap = document.createElement('div');
+    wrap.className = 'urm-td';
+
+    if (mode === 'side') {
+      wrap.classList.add('urm-td-side');
+
+      function makePanel(html, c, label) {
+        var panel = document.createElement('div');
+        panel.className = 'urm-td-panel';
+        panel.style.cssText =
+          'background:' + rgba(c, 0.07) + ';' +
+          'border:1px solid ' + rgba(c, 0.28);
+        if (showLabel) {
+          var lbl = document.createElement('div');
+          lbl.className = 'urm-td-plabel';
+          lbl.style.color = c;
+          lbl.innerHTML =
+            '<span class="urm-td-plabel-dot"></span>' + escHtml(label);
+          panel.appendChild(lbl);
+        }
+        var body = document.createElement('div');
+        body.innerHTML = html;
+        panel.appendChild(body);
+        return panel;
+      }
+
+      wrap.appendChild(makePanel(renderFrom(ops, cDel, delStyle), cDel, lblFrom));
+      wrap.appendChild(makePanel(renderTo(ops, cIns, insBg),      cIns, lblTo));
+
+    } else {
+      /* inline mode */
+      wrap.innerHTML = renderInline(ops, cDel, cIns, delStyle, markDel, highIns, insBg);
+    }
+
+    el.replaceWith(wrap);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * layer-switch
+   *
+   * <layer-switch default="c1" multi="false" target="#info-panel"
+   *               mark-style="highlight" toggle-style="pill">
+   *   <ls-text>
+   *     <ls-mark layer="c1" note="#note-c1">Like their peers,</ls-mark>
+   *     <ls-mark layer="c2">adults</ls-mark>
+   *     <ls-mark layer="c3">caring for an aging spouse</ls-mark>
+   *   </ls-text>
+   *   <ls-layer name="c1" label="介系詞片語" source="#tip-c1" theme="ocean"></ls-layer>
+   *   <ls-layer name="c2" label="主詞"       source="#tip-c2" theme="yellow"></ls-layer>
+   *   <ls-layer name="c3" label="分詞片語"   source="#tip-c3" theme="lavender"></ls-layer>
+   * </layer-switch>
+   *
+   * <!-- 說明來源 div（放頁面任何位置，JS 自動隱藏） -->
+   * <div id="tip-c1"><strong>介系詞片語</strong><p>當副詞修飾主句…</p></div>
+   * <div id="note-c1">這個介系詞片語的具體補充說明</div>
+   *
+   * <!-- 顯示目標 div（使用者自行設計樣式） -->
+   * <div id="info-panel"></div>
+   *
+   * ────────────────────────────────────────────────────────────────
+   * layer-switch 屬性：
+   *   default           預設啟動的層名稱（高亮生效，但 target panel 不自動注入）
+   *   target            全域說明面板 div id（可被 ls-layer 個別覆蓋）
+   *   palette           按鈕自動配色，逗號分隔色票名稱（如 "ocean,yellow,teal"）
+   *                     ls-layer 個別 theme 屬性可覆蓋對應位置的顏色
+   *                     未設定時使用 CFG.lsPalette 的預設色盤
+   *   multi             允許多層同時啟動 true | false（預設 false）
+   *   toggle-style      pill（預設）| dot
+   *   toggle-position   top（預設）| bottom
+   *   mark-style        highlight（預設）| underline | box
+   *   dim               非匹配標記的透明度 0–1（預設 0.30）
+   *   body-dim          啟動時整體文字是否略微降透明 true | false（預設 false）
+   *   body-dim-val      body-dim 的透明度（預設 0.55）
+   *   animate           過渡動畫 true（預設）| false
+   *
+   * ls-layer 屬性：
+   *   name              層識別碼（必填）
+   *   label             toggle 按鈕文字
+   *   source            點擊按鈕時注入說明面板的 div id（支援 "#id" 或 "id"）
+   *                     來源 div 自動隱藏
+   *   target            覆蓋全域 target，指定此層要注入的 div id
+   *   theme             色票名稱或 hex
+   *   icon              Bootstrap Icon class（選填）
+   *   info              按鈕 title tooltip（選填）
+   *
+   * ls-mark 屬性：
+   *   layer             空格分隔的層名稱（必填；可同時屬於多層）
+   *   note              兩種格式：
+   *                     "純文字"   → hover 時顯示 title tooltip（原有行為）
+   *                     "#some-id" → hover 時將 div#some-id 的 innerHTML 注入
+   *                                  該 mark 所屬層的 target；離開時還原層說明
+   *                                  來源 div 自動隱藏
+   *   weight            normal（預設）| bold
+   *   size              覆蓋字級，任何 CSS font-size 值
+   * ════════════════════════════════════════════════════════════════ */
+  function initLayerSwitch(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var textEl   = el.querySelector('ls-text');
+    var layerEls = Array.from(el.querySelectorAll('ls-layer'));
+    if (!textEl || !layerEls.length) {
+      console.warn('[ui-reading2] <layer-switch> 缺少 <ls-text> 或 <ls-layer>，已略過。');
+      return;
+    }
+
+    var defaultL   = el.getAttribute('default')           || '';
+    var globalTgt  = (el.getAttribute('target') || '').replace(/^#/, '');
+    var multi      = el.getAttribute('multi')             === 'true';
+    var tStyle     = el.getAttribute('toggle-style')      || CFG.lsToggleStyle;
+    var tPos       = el.getAttribute('toggle-position')   || CFG.lsTogglePosition;
+    var markStyle  = el.getAttribute('mark-style')        || CFG.lsMarkStyle;
+    var dimVal     = +(el.getAttribute('dim')             || CFG.lsDim);
+    var bodyDim    = el.getAttribute('body-dim')          === 'true' || CFG.lsBodyDim;
+    var bodyDimV   = +(el.getAttribute('body-dim-val')    || CFG.lsBodyDimVal);
+    var animate    = el.getAttribute('animate')           !== 'false';
+
+    /* palette：element 屬性 > CFG.lsPalette */
+    var rawPalette = (el.getAttribute('palette') || '').split(',')
+                       .map(function (s) { return s.trim(); })
+                       .filter(Boolean);
+    var palette  = rawPalette.length ? rawPalette : CFG.lsPalette;
+    var palIdx   = 0;
+
+    /* ── 建立層定義表 ── */
+    var layers = {};
+    layerEls.forEach(function (le) {
+      var name = le.getAttribute('name');
+      if (!name) return;
+
+      var sourceId = (le.getAttribute('source') || '').replace(/^#/, '');
+      var targetId = (le.getAttribute('target') || '').replace(/^#/, '') || globalTgt;
+
+      /* theme 未設定時從 palette 依序取色 */
+      var rawTheme = le.getAttribute('theme') || '';
+      var color    = rawTheme
+        ? clr(rawTheme)
+        : clr(palette[palIdx++ % palette.length]);
+
+      /* 標記來源 div → CSS 自動隱藏 */
+      if (sourceId) {
+        var srcEl = document.getElementById(sourceId);
+        if (srcEl) srcEl.dataset.urmLsSrc = '1';
+      }
+
+      layers[name] = {
+        label:    le.getAttribute('label') || name,
+        sourceId: sourceId,
+        targetId: targetId,
+        color:    color,
+        icon:     le.getAttribute('icon')  || '',
+        info:     le.getAttribute('info')  || ''
+      };
+    });
+
+    /* ── 將所有 target div 的初始內容清空（避免殘留舊 HTML） ── */
+    var knownTargets = {};
+    Object.keys(layers).forEach(function (n) {
+      var tid = layers[n].targetId;
+      if (tid) knownTargets[tid] = true;
+    });
+    Object.keys(knownTargets).forEach(function (tid) {
+      var tgtEl = document.getElementById(tid);
+      if (tgtEl && !defaultL) tgtEl.innerHTML = '';
+    });
+
+    /* ── 將 ls-mark 換成 span ── */
+    var tempDiv = document.createElement('div');
+    tempDiv.innerHTML = textEl.innerHTML;
+    tempDiv.querySelectorAll('ls-mark').forEach(function (markEl) {
+      var layerAttr = markEl.getAttribute('layer') || '';
+      var rawNote   = markEl.getAttribute('note')  || '';
+      var weight    = markEl.getAttribute('weight')|| 'normal';
+      var size      = markEl.getAttribute('size')  || '';
+      var noteIsId  = rawNote.charAt(0) === '#';
+
+      var span = document.createElement('span');
+      span.className      = 'urm-ls-mark';
+      if (markStyle === 'underline') span.classList.add('urm-ls-mark-ul');
+      if (markStyle === 'box')       span.classList.add('urm-ls-mark-box');
+      span.dataset.layers = layerAttr.trim();
+
+      if (noteIsId) {
+        /* note="#id"：注入 target，存 id，自動隱藏來源 div */
+        span.dataset.urmLsNote = rawNote.slice(1);
+        var noteSrc = document.getElementById(rawNote.slice(1));
+        if (noteSrc) noteSrc.dataset.urmLsSrc = '1';
+      } else if (rawNote) {
+        /* note="純文字"：維持原有 title tooltip */
+        span.title = rawNote;
+      }
+
+      if (weight === 'bold') span.style.fontWeight = '700';
+      if (size)              span.style.fontSize   = size;
+      span.innerHTML = markEl.innerHTML;
+      markEl.replaceWith(span);
+    });
+
+    /* ── 組裝 DOM ── */
+    var wrap = document.createElement('div');
+    wrap.className = 'urm-ls';
+    if (!animate) wrap.style.cssText += 'transition:none';
+
+    var ctrl = document.createElement('div');
+    ctrl.className = 'urm-ls-ctrl';
+
+    var body = document.createElement('div');
+    body.className = 'urm-ls-body';
+    body.innerHTML = tempDiv.innerHTML;
+
+    var markSpans = Array.from(body.querySelectorAll('.urm-ls-mark'));
+
+    /* ── 啟動層狀態 ── */
+    var active = new Set();
+    if (defaultL && layers[defaultL]) active.add(defaultL);
+
+    /* ── 將 active 層的 source 注入對應 target ── */
+    function injectTargets() {
+      /* 先記錄哪些 target 要被寫入什麼（後啟動的層覆蓋先啟動的） */
+      var toWrite = {};
+      active.forEach(function (n) {
+        var l = layers[n];
+        if (l.sourceId && l.targetId) {
+          var srcEl = document.getElementById(l.sourceId);
+          if (srcEl) toWrite[l.targetId] = srcEl.innerHTML;
+        }
+      });
+
+      /* 已知所有 target：有寫入就注入，沒有就清空 */
+      Object.keys(knownTargets).forEach(function (tid) {
+        var tgtEl = document.getElementById(tid);
+        if (tgtEl) tgtEl.innerHTML = (tid in toWrite) ? toWrite[tid] : '';
+      });
+    }
+
+    /* ── 更新標記高亮樣式；doInject=true 時才同步 target panel ── */
+    function applyLayers(doInject) {
+      var anyActive = active.size > 0;
+      body.style.opacity = (bodyDim && anyActive) ? String(bodyDimV) : '';
+
+      markSpans.forEach(function (span) {
+        var spanLayers   = span.dataset.layers.split(/\s+/).filter(Boolean);
+        var matchedLayer = spanLayers.find(function (l) { return active.has(l); });
+
+        if (!anyActive) {
+          span.style.opacity              = '';
+          span.style.background           = '';
+          span.style.color                = '';
+          span.style.outlineColor         = 'transparent';
+          if (markStyle === 'underline')
+            span.style.textDecorationColor = 'currentColor';
+          return;
+        }
+
+        if (matchedLayer) {
+          var c = layers[matchedLayer].color;
+          span.style.opacity = '1';
+          if (markStyle === 'underline') {
+            span.style.background           = '';
+            span.style.color                = c;
+            span.style.textDecorationColor  = c;
+          } else if (markStyle === 'box') {
+            span.style.background  = '';
+            span.style.color       = c;
+            span.style.outlineColor = c;
+          } else {
+            span.style.background = rgba(c, 0.26);
+            span.style.color      = c;
+          }
+        } else {
+          span.style.opacity              = dimVal;
+          span.style.background           = '';
+          span.style.color                = '';
+          span.style.outlineColor         = 'transparent';
+          if (markStyle === 'underline')
+            span.style.textDecorationColor = 'transparent';
+        }
+      });
+
+      if (doInject) injectTargets();
+    }
+    applyLayers(false);  /* 初始：只套高亮樣式，不注入 target panel */
+
+    /* ── ls-mark note="#id"：hover 時暫時注入 note，離開時還原 ── */
+    markSpans.forEach(function (span) {
+      var noteId = span.dataset.urmLsNote;
+      if (!noteId) return;
+
+      /* 找出此 mark 所屬層的 target（取第一個有設定 target 的層） */
+      function getTargetId() {
+        var spanLayers = span.dataset.layers.split(/\s+/).filter(Boolean);
+        for (var i = 0; i < spanLayers.length; i++) {
+          var l = layers[spanLayers[i]];
+          if (l && l.targetId) return l.targetId;
+        }
+        return globalTgt;
+      }
+
+      span.addEventListener('mouseenter', function () {
+        var tid   = getTargetId();
+        var noteSrc = document.getElementById(noteId);
+        var tgtEl   = tid ? document.getElementById(tid) : null;
+        if (noteSrc && tgtEl) tgtEl.innerHTML = noteSrc.innerHTML;
+      });
+
+      span.addEventListener('mouseleave', function () {
+        /* 離開後還原此 target 目前 active 層的說明；若無 active 則清空 */
+        var tid   = getTargetId();
+        var tgtEl = tid ? document.getElementById(tid) : null;
+        if (!tgtEl) return;
+        var restored = false;
+        active.forEach(function (n) {
+          if (restored) return;
+          var l = layers[n];
+          if (l.targetId === tid && l.sourceId) {
+            var srcEl = document.getElementById(l.sourceId);
+            if (srcEl) { tgtEl.innerHTML = srcEl.innerHTML; restored = true; }
+          }
+        });
+        if (!restored) tgtEl.innerHTML = '';
+      });
+    });
+
+    /* ── Toggle 按鈕 ── */
+    Object.keys(layers).forEach(function (name) {
+      var layer = layers[name];
+      var isDot = tStyle === 'dot';
+      var btn   = document.createElement('span');
+      btn.className   = 'urm-ls-btn' + (isDot ? ' urm-ls-dot' : '');
+      btn.dataset.lsn = name;
+      btn.style.color       = layer.color;
+      btn.style.borderColor = layer.color;
+      if (layer.info) btn.title = layer.info;
+
+      if (!isDot) {
+        if (layer.icon) {
+          var ic = document.createElement('i');
+          ic.className = layer.icon;
+          ic.setAttribute('aria-hidden', 'true');
+          btn.appendChild(ic);
+        }
+        btn.appendChild(document.createTextNode(layer.label));
+      }
+
+      function syncBtn(n, b) {
+        if (active.has(n)) {
+          b.style.background = layers[n].color;
+          b.style.color      = BG;
+        } else {
+          b.style.background = 'transparent';
+          b.style.color      = layers[n].color;
+        }
+      }
+      syncBtn(name, btn);
+
+      btn.addEventListener('click', function () {
+        if (multi) {
+          active.has(name) ? active.delete(name) : active.add(name);
+        } else {
+          if (active.has(name)) { active.clear(); }
+          else                  { active.clear(); active.add(name); }
+        }
+        /* 同步所有按鈕 */
+        ctrl.querySelectorAll('.urm-ls-btn').forEach(function (b) {
+          var n = b.dataset.lsn;
+          if (n && layers[n]) syncBtn(n, b);
+        });
+        applyLayers(true);  /* 使用者點擊後才注入 target panel */
+      });
+
+      ctrl.appendChild(btn);
+    });
+
+    if (tPos === 'bottom') {
+      wrap.appendChild(body);
+      wrap.appendChild(ctrl);
+    } else {
+      wrap.appendChild(ctrl);
+      wrap.appendChild(body);
+    }
+
+    el.replaceWith(wrap);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * spotlight
+   *
+   * <spotlight theme="focus" ring="true" dim="0.15">
+   *   <p>任何內容…</p>
+   * </spotlight>
+   *
+   * 屬性：
+   *   theme           聚光圈顏色色票或 hex（預設 spTheme）
+   *   ring            顯示聚光圈邊框 true（預設）| false
+   *   ring-width      邊框粗細（預設 2px）
+   *   ring-style      solid（預設）| dashed | dotted
+   *   ring-radius     邊框圓角（預設 10px）
+   *   ring-inset      邊框距元素邊緣的距離（預設 6px）
+   *   dim             其他 spotlight 的透明度 0–1（預設 0.15）
+   *   dim-bg          overlay 遮罩不透明度 0–1（預設 0.82）
+   *   transition      動畫毫秒（預設 300）
+   *   trigger         click（預設）| hover
+   *   escape          Escape 鍵關閉 true（預設）| false
+   *   hint            顯示提示圖示 true（預設）| false
+   *   hint-icon       Bootstrap Icon class（預設 bi-fullscreen）
+   *   hint-size       提示圖示尺寸 px（預設 18）
+   *   padding         啟動時的內距（選填，覆蓋原本的 padding）
+   *   active          有此屬性時頁面載入後自動啟動
+   *
+   * ★ spotlight 依賴 z-index 堆疊效果。
+   *   若父容器有 transform / filter / will-change 等屬性建立新的
+   *   stacking context，z-index 可能失效，視覺效果不如預期。
+   * ════════════════════════════════════════════════════════════════ */
+  var _spOverlay  = null;
+  var _spAll      = [];
+  var _spActive   = null;
+  var _spEscBound = false;
+
+  function ensureSpOverlay() {
+    if (_spOverlay) return;
+    _spOverlay = document.createElement('div');
+    _spOverlay.className = 'urm-sp-overlay';
+    document.body.appendChild(_spOverlay);
+    _spOverlay.addEventListener('click', deactivateSp);
+  }
+
+  function activateSp(wrap) {
+    if (_spActive === wrap) { deactivateSp(); return; }
+    _spActive = wrap;
+    /* 以啟動元素的 dim 設定控制所有未啟動元素的透明度 */
+    var dim = parseFloat(wrap.dataset.spDim);
+    document.body.style.setProperty('--urm-sp-dim', isNaN(dim) ? CFG.spDim : dim);
+    document.body.classList.add('urm-sp-mode');
+    _spAll.forEach(function (el) { el.classList.remove('urm-sp-active'); });
+    wrap.classList.add('urm-sp-active');
+    _spOverlay.classList.add('urm-sp-ov');
+  }
+
+  function deactivateSp() {
+    if (!_spActive) return;
+    _spActive = null;
+    document.body.classList.remove('urm-sp-mode');
+    document.body.style.removeProperty('--urm-sp-dim');
+    _spAll.forEach(function (el) { el.classList.remove('urm-sp-active'); });
+    _spOverlay.classList.remove('urm-sp-ov');
+  }
+
+  function initSpotlight(el) {
+    if (el.dataset.urm) return;
+    el.dataset.urm = '1';
+
+    var theme      = el.getAttribute('theme')       || CFG.spTheme;
+    var ring       = el.getAttribute('ring')        !== 'false';
+    var ringW      = el.getAttribute('ring-width')  || CFG.spRingWidth;
+    var rStyle     = el.getAttribute('ring-style')  || CFG.spRingStyle;
+    var ringR      = el.getAttribute('ring-radius') || '10px';
+    var ringInset  = el.getAttribute('ring-inset')  || '6px';
+    var dim        = el.getAttribute('dim')         || String(CFG.spDim);
+    var dimBg      = +(el.getAttribute('dim-bg')    || 0.82);
+    var dur        = +(el.getAttribute('transition') || CFG.spTransition);
+    var trigger    = el.getAttribute('trigger')     || 'click';
+    var esc        = el.getAttribute('escape')      !== 'false';
+    var hint       = el.getAttribute('hint')        !== 'false' && CFG.spHint;
+    var hintIcon   = el.getAttribute('hint-icon')   || CFG.spHintIcon;
+    var hintSize   = el.getAttribute('hint-size')   || '18';
+    var padding    = el.getAttribute('padding')     || '';
+    var preActive  = el.hasAttribute('active');
+    var c          = clr(theme);
+
+    var wrap = document.createElement('div');
+    wrap.className   = 'urm-sp';
+    wrap.dataset.spDim = dim;
+    wrap.style.setProperty('--urm-spt', dur + 'ms');
+    if (padding) wrap.style.padding = padding;
+    wrap.innerHTML = el.innerHTML;
+
+    /* 聚光圈邊框 */
+    if (ring) {
+      var ringEl = document.createElement('div');
+      ringEl.className = 'urm-sp-ring';
+      ringEl.style.cssText =
+        'border:' + ringW + ' ' + rStyle + ' ' + c + ';' +
+        'border-radius:' + ringR + ';' +
+        'inset:-' + ringInset;
+      wrap.appendChild(ringEl);
+    }
+
+    /* 提示圖示 */
+    if (hint) {
+      var hintEl = document.createElement('div');
+      hintEl.className = 'urm-sp-hint';
+      hintEl.style.cssText =
+        'background:' + c + ';color:' + BG + ';' +
+        'width:' + hintSize + 'px;height:' + hintSize + 'px';
+      hintEl.innerHTML = '<i class="' + hintIcon + '" aria-hidden="true" ' +
+                         'style="font-size:' + Math.round(+hintSize * 0.65) + 'px"></i>';
+      wrap.appendChild(hintEl);
+    }
+
+    /* overlay 遮罩透明度 */
+    if (_spOverlay) {
+      _spOverlay.style.setProperty('--urm-sp-ovbg', 'rgba(0,0,0,' + dimBg + ')');
+    }
+
+    el.replaceWith(wrap);
+    _spAll.push(wrap);
+    ensureSpOverlay();
+
+    /* overlay 背景色（每次初始化最後設定的會生效，建議全站統一） */
+    _spOverlay.style.setProperty('--urm-sp-ovbg', 'rgba(0,0,0,' + dimBg + ')');
+
+    /* Escape 鍵全域只綁一次 */
+    if (esc && !_spEscBound) {
+      _spEscBound = true;
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && _spActive) deactivateSp();
+      });
+    }
+
+    if (trigger === 'click') {
+      wrap.addEventListener('click', function (e) {
+        e.stopPropagation();
+        activateSp(wrap);
+      });
+    } else if (trigger === 'hover') {
+      wrap.addEventListener('mouseenter', function () { activateSp(wrap); });
+      wrap.addEventListener('mouseleave', deactivateSp);
+    }
+
+    if (preActive) setTimeout(function () { activateSp(wrap); }, 120);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * boot
+   * ════════════════════════════════════════════════════════════════ */
+  function boot() {
+    document.querySelectorAll('text-diff:not([data-urm])').forEach(initDiff);
+    document.querySelectorAll('layer-switch:not([data-urm])').forEach(initLayerSwitch);
+    document.querySelectorAll('spotlight:not([data-urm])').forEach(initSpotlight);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  global.UiReading2 = { init: boot, config: CFG, colors: BRAND };
+
+})(window);
+
+</script>
+
+<script>
+/* ── Preview toggle ── */
+function togglePreview(btn) {
+  var block = btn.closest('.example-block');
+  var panel = block.querySelector('.preview-panel');
+  var isOpen = panel.classList.contains('open') || panel.style.display === 'block';
+  if (isOpen) {
+    panel.classList.remove('open');
+    panel.style.display = 'none';
+    btn.classList.remove('open');
+  } else {
+    panel.classList.add('open');
+    panel.style.display = 'block';
+    btn.classList.add('open');
+    /* 新節點加入 DOM 後重新掃描 */
+    if (window.UiReading)  UiReading.init();
+    if (window.UiReading2) UiReading2.init();
+  }
+}
+
+/* ── Copy code ── */
+function copyCode(btn) {
+  var pre  = btn.previousElementSibling;
+  var text = pre.textContent;
+  navigator.clipboard.writeText(text).then(function () {
+    var orig = btn.textContent;
+    btn.textContent = '已複製 ✓';
+    btn.style.color = 'var(--safe)';
+    setTimeout(function () {
+      btn.textContent = orig;
+      btn.style.color = '';
+    }, 1800);
+  });
+}
+
+/* ── Scrollspy ── */
+(function () {
+  var links = Array.from(document.querySelectorAll('.nav-link'));
+  var sections = links.map(function (l) {
+    return document.querySelector(l.getAttribute('href'));
+  }).filter(Boolean);
+
+  function update() {
+    var scrollY = window.scrollY + 80;
+    var active = sections[0];
+    sections.forEach(function (s) {
+      if (s.offsetTop <= scrollY) active = s;
+    });
+    links.forEach(function (l) {
+      l.classList.toggle('active',
+        l.getAttribute('href') === '#' + active.id);
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+</script>
+</body>
+</html>

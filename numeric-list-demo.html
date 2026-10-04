@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NumericList v2.1 示範</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+  <style>
+    :root {
+      --bg:       #0C0D0C;
+      --surface:  #131413;
+      --surface2: #1b1c1b;
+      --border:   #2a2b2a;
+      --shell:    #C6C7BD;
+      --lavender: #C3A5E5;
+      --sky:      #95c9de;
+      --ocean:    #0ABDC6;
+      --teal:     #0DA591;
+      --special:  #b3de73;
+      --yellow:   #DECA4B;
+      --salmon:   #E5C3B3;
+      --warning:  #F08080;
+      --indigo:   #9B72CF;
+      --orange:   #EDA109;
+      --pink:     #FFB3D9;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--shell); font-size: 1.125rem; line-height: 1.5; margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    .page-wrap { max-width: 1400px; margin: 0 auto; padding: 56px 48px 96px; }
+
+    h1 { font-size: 2.25rem; font-weight: 700; color: var(--lavender); margin: 0 0 8px; letter-spacing: -0.02em; }
+    .page-sub { font-size: 1.125rem; color: var(--shell); margin: 0 0 56px; }
+    h2 { font-size: 1.375rem; font-weight: 600; color: var(--sky); margin: 0 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.125rem; font-weight: 600; color: var(--ocean); margin: 28px 0 12px; }
+
+    .section { margin-bottom: 64px; }
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+    .demo-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px 28px 24px; }
+    .demo-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow); margin-bottom: 20px; }
+
+    .split { display: grid; gap: 32px; align-items: start; }
+    .split-2 { grid-template-columns: 1fr 1fr; }
+    .split-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .split-code { grid-template-columns: auto 1fr; }
+
+    .content-panel { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 24px 28px; min-height: 160px; font-size: 1.125rem; line-height: 1.5; }
+    .content-panel h3 { color: var(--lavender); font-size: 1.25rem; margin: 0 0 12px; }
+    .content-panel p  { color: var(--shell); margin: 0 0 8px; }
+    .content-panel ul { color: var(--shell); padding-left: 20px; margin: 0; }
+    .content-panel li { margin-bottom: 6px; }
+    .panel-hint { color: #595a57; font-style: italic; }
+
+    code { background: var(--surface2); color: var(--special); padding: 2px 7px; border-radius: 4px; font-size: 0.9em; font-family: 'Cascadia Code','Fira Code','Consolas',monospace; }
+    pre  { background: var(--surface2); color: var(--shell); padding: 20px 24px; border-radius: 8px; font-size: 0.875rem; line-height: 1.5; overflow-x: auto; border: 1px solid var(--border); margin: 0; }
+    pre code { background: none; padding: 0; color: var(--shell); }
+    .hl-tag  { color: var(--ocean); }
+    .hl-attr { color: var(--sky); }
+    .hl-str  { color: var(--yellow); }
+    .hl-cmt  { color: #595a57; }
+    .hl-key  { color: var(--lavender); }
+    .hl-val  { color: var(--special); }
+
+    .ref-table { width: 100%; border-collapse: collapse; font-size: 1rem; line-height: 1.5; }
+    .ref-table th { background: var(--surface2); color: var(--lavender); padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--border); }
+    .ref-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .ref-table tr:last-child td { border-bottom: none; }
+    .td-attr { color: var(--special); font-family: monospace; font-size: 0.95rem; white-space: nowrap; }
+    .td-type { color: var(--sky); font-size: 0.875rem; }
+    .badge-new { display: inline-block; background: var(--teal); color: #0C0D0C; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; vertical-align: middle; margin-left: 6px; }
+    .badge-opt { display: inline-block; background: var(--surface2); color: var(--shell); border: 1px solid var(--border); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; vertical-align: middle; margin-left: 6px; }
+
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+    .btn-nl { padding: 9px 22px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity .18s; line-height: 1.4; }
+    .btn-nl:hover { opacity: 0.84; }
+    .btn-sky  { background: var(--sky);    color: #0C0D0C; }
+    .btn-teal { background: var(--teal);   color: #0C0D0C; }
+    .btn-rst  { background: var(--surface2); color: var(--shell); border: 1px solid var(--border); }
+
+    .alert-zone { min-height: 50px; margin-top: 16px; }
+    .alert-success { background: #102a18; color: var(--special);  border-color: #1a3d24; }
+    .alert-warning { background: #2a1a0e; color: var(--yellow);   border-color: #3d2a12; }
+    .alert-info    { background: #0d1e2a; color: var(--sky);      border-color: #162e40; }
+    .btn-close { filter: invert(0.6); }
+
+    .chip { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; font-size: 0.875rem; margin-right: 6px; margin-bottom: 4px; }
+    .chip-color { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+
+    .text-primary { color: var(--sky) !important; }
+    .text-muted   { color: #595a57 !important; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <h1>NumericList v2.1</h1>
+  <p class="page-sub">
+    三項新增：<strong style="color:var(--teal)">主題色同步數字欄</strong>、
+    <strong style="color:var(--teal)">hover 配色屬性</strong>、
+    <strong style="color:var(--teal)">gap 屬性</strong>。
+  </p>
+
+  <hr class="divider">
+
+  <!-- ══ DEMO 01：預設循環色 ════════════════════════════════════════════════ -->
+  <section class="section">
+    <h2>示範 01 — 預設：<code>accentColors</code> 循環</h2>
+    <p style="margin-bottom:20px;">未設定 <code>themeColor</code> 時，數字欄依序循環 10 個強調色。</p>
+    <div class="demo-box">
+      <div class="demo-label">accentColors 循環 + 自訂 accent 屬性</div>
+      <ui-list width="100%" gap="6px">
+        <list-item>
+          <p class="fw-bold">sky <span style="color:#95c9de">████</span></p>
+          <p class="text-muted">accentColors[0]，自動索引</p>
+        </list-item>
+        <list-item>
+          <p class="fw-bold">lavender <span style="color:#C3A5E5">████</span></p>
+          <p class="text-muted">accentColors[1]</p>
+        </list-item>
+        <list-item>
+          <p class="fw-bold">ocean <span style="color:#0ABDC6">████</span></p>
+          <p class="text-muted">accentColors[2]</p>
+        </list-item>
+        <list-item accent="#DECA4B">
+          <p class="fw-bold">yellow <span style="color:#DECA4B">████</span></p>
+          <p class="text-muted"><code>accent="#DECA4B"</code> 個別覆蓋，不受 themeColor 影響</p>
+        </list-item>
+      </ui-list>
+    </div>
+  </section>
+
+  <!-- ══ DEMO 02：theme 統一數字色 ════════════════════════════════════════════ -->
+  <section class="section">
+    <h2>示範 02 — <code>setup()</code> 主題色同步數字欄</h2>
+    <p style="margin-bottom:20px;">
+      <code>setup({ numberColor })</code> 時，<code>themeColor</code> 與 <code>borderHoverColor</code>
+      自動同步為同一色。數字欄統一，<code>accent</code> 屬性仍可個別覆蓋。
+    </p>
+
+    <div class="split split-2">
+      <!-- Salmon theme -->
+      <div class="demo-box">
+        <div class="demo-label">Salmon 主題 — 數字統一 #E5C3B3</div>
+        <ui-list id="list-salmon" width="100%" gap="4px">
+          <list-item>
+            <p class="fw-bold">主題統一色</p>
+            <p class="text-muted">themeColor = numberColor = #E5C3B3</p>
+          </list-item>
+          <list-item>
+            <p class="fw-bold">hover 邊框自動跟 theme 走</p>
+            <p class="text-muted">滑入試試看</p>
+          </list-item>
+          <list-item accent="#DECA4B">
+            <p class="fw-bold">accent 屬性優先</p>
+            <p class="text-muted">此項 accent="#DECA4B" 不被 themeColor 覆蓋</p>
+          </list-item>
+        </ui-list>
+      </div>
+
+      <!-- Teal theme -->
+      <div class="demo-box">
+        <div class="demo-label">Teal 主題 — 數字統一 #0DA591</div>
+        <ui-list id="list-teal" width="100%" gap="4px">
+          <list-item>
+            <p class="fw-bold">主題統一色</p>
+            <p class="text-muted">themeColor = numberColor = #0DA591</p>
+          </list-item>
+          <list-item>
+            <p class="fw-bold">hover 邊框自動跟 theme 走</p>
+            <p class="text-muted">滑入試試看</p>
+          </list-item>
+          <list-item accent="#C3A5E5">
+            <p class="fw-bold">accent 屬性優先</p>
+            <p class="text-muted">此項 accent="#C3A5E5"</p>
+          </list-item>
+        </ui-list>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <pre><code><span class="hl-cmt">// Salmon 主題：numberColor → 自動同步 themeColor + borderHoverColor</span>
+NumericList.setup({
+  <span class="hl-key">numberColor</span>:      <span class="hl-str">'#E5C3B3'</span>,   <span class="hl-cmt">// ← 觸發自動同步</span>
+  <span class="hl-key">numberBg</span>:         <span class="hl-str">'#200f0a'</span>,
+  <span class="hl-key">borderColor</span>:      <span class="hl-str">'#3d1e14'</span>,
+  <span class="hl-key">numberDivider</span>:    <span class="hl-str">'#3a1a10'</span>,
+  <span class="hl-key">activeBackground</span>: <span class="hl-str">'#1a0e0a'</span>,
+});
+<span class="hl-cmt">// 結果：themeColor = '#E5C3B3'，borderHoverColor = '#E5C3B3'</span>
+
+<span class="hl-cmt">// 手動覆蓋 hover 色（不跟 theme 走）：</span>
+NumericList.setup({
+  <span class="hl-key">numberColor</span>:      <span class="hl-str">'#E5C3B3'</span>,
+  <span class="hl-key">borderHoverColor</span>: <span class="hl-str">'#DECA4B'</span>,   <span class="hl-cmt">// ← 明確傳入，不自動同步</span>
+});
+
+<span class="hl-cmt">// 恢復 accentColors 循環：</span>
+NumericList.setup({ <span class="hl-key">themeColor</span>: <span class="hl-val">null</span> });</code></pre>
+    </div>
+  </section>
+
+  <!-- ══ DEMO 03：hover 與 gap 屬性 ═════════════════════════════════════════ -->
+  <section class="section">
+    <h2>示範 03 — <code>hover</code> 與 <code>gap</code> 屬性（per-list）</h2>
+    <p style="margin-bottom:20px;">
+      每個 <code>&lt;ui-list&gt;</code> 可獨立設定 hover 色與項目間距，不影響其他清單或全局設定。
+      實作為 CSS 自訂屬性 <code>--nl-hover-color</code> / <code>--nl-gap</code>。
+    </p>
+
+    <div class="split split-3">
+      <div class="demo-box">
+        <div class="demo-label">gap="2px" hover="#b3de73"</div>
+        <ui-list width="100%" gap="2px" hover="#b3de73">
+          <list-item number="A">
+            <p>gap 極窄</p>
+            <p class="text-muted">hover → special 綠</p>
+          </list-item>
+          <list-item number="B">
+            <p>滑入看顏色</p>
+          </list-item>
+          <list-item number="C">
+            <p>gap = 2px</p>
+          </list-item>
+        </ui-list>
+      </div>
+
+      <div class="demo-box">
+        <div class="demo-label">gap="12px" hover="#DECA4B"</div>
+        <ui-list width="100%" gap="12px" hover="#DECA4B">
+          <list-item number="A">
+            <p>gap 較寬</p>
+            <p class="text-muted">hover → yellow</p>
+          </list-item>
+          <list-item number="B">
+            <p>滑入看顏色</p>
+          </list-item>
+          <list-item number="C">
+            <p>gap = 12px</p>
+          </list-item>
+        </ui-list>
+      </div>
+
+      <div class="demo-box">
+        <div class="demo-label">gap="24px" hover="#FFB3D9"</div>
+        <ui-list width="100%" gap="24px" hover="#FFB3D9">
+          <list-item number="A">
+            <p>gap 很寬</p>
+            <p class="text-muted">hover → pink</p>
+          </list-item>
+          <list-item number="B">
+            <p>滑入看顏色</p>
+          </list-item>
+          <list-item number="C">
+            <p>gap = 24px</p>
+          </list-item>
+        </ui-list>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <pre><code><span class="hl-tag">&lt;ui-list</span>
+  <span class="hl-attr">width</span>=<span class="hl-str">"100%"</span>
+  <span class="hl-attr">gap</span>=<span class="hl-str">"12px"</span>      <span class="hl-cmt">&lt;!-- 項目間距，覆蓋 Config.rowGap --&gt;</span>
+  <span class="hl-attr">hover</span>=<span class="hl-str">"#DECA4B"</span>  <span class="hl-cmt">&lt;!-- hover 邊框色，覆蓋 Config.borderHoverColor --&gt;</span>
+<span class="hl-tag">&gt;</span>
+  <span class="hl-tag">&lt;list-item&gt;</span>...<span class="hl-tag">&lt;/list-item&gt;</span>
+<span class="hl-tag">&lt;/ui-list&gt;</span></code></pre>
+    </div>
+  </section>
+
+  <!-- ══ DEMO 04：source / target 點擊行為 ═══════════════════════════════════ -->
+  <section class="section">
+    <h2>示範 04 — <code>source</code> / <code>target</code> 點擊載入</h2>
+    <div class="demo-box">
+      <div class="demo-label">active 色跟隨 hover 屬性</div>
+      <div class="split" style="grid-template-columns: 340px 1fr;">
+
+        <ui-list width="340px" gap="6px" hover="#C3A5E5">
+          <list-item source="src-ux"     target="detail-panel">
+            <p class="fw-bold">使用者體驗設計</p>
+            <p class="text-muted">UX 原則、可用性規範</p>
+          </list-item>
+          <list-item source="src-dev"    target="detail-panel">
+            <p class="fw-bold">開發流程規範</p>
+            <p class="text-muted">Sprint、站立會議、DoD</p>
+          </list-item>
+          <list-item source="src-test"   target="detail-panel">
+            <p class="fw-bold">測試策略</p>
+            <p class="text-muted">三層測試、覆蓋率目標</p>
+          </list-item>
+          <list-item source="src-deploy" target="detail-panel">
+            <p class="fw-bold">部署流程</p>
+            <p class="text-muted">CI/CD、藍綠部署</p>
+          </list-item>
+        </ui-list>
+
+        <div id="detail-panel" class="content-panel">
+          <p class="panel-hint">← 點擊左側項目以查看詳細內容。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DEMO 05：執行期 setup() ════════════════════════════════════════════ -->
+  <section class="section">
+    <h2>示範 05 — 執行期 <code>setup()</code> 切換主題</h2>
+    <div class="demo-box">
+      <div class="demo-label">themeColor 自動同步，accentColors 循環可恢復</div>
+      <ui-list id="demo-rt" width="100%" gap="6px">
+        <list-item>
+          <p class="fw-bold">numberColor 設定後，themeColor + borderHoverColor 自動同步</p>
+          <p class="text-muted">數字欄顏色、hover 邊框一起變化</p>
+        </list-item>
+        <list-item>
+          <p class="fw-bold">還原時 themeColor 回到 null</p>
+          <p class="text-muted">accentColors 循環重新生效</p>
+        </list-item>
+        <list-item accent="#DECA4B">
+          <p class="fw-bold">accent="#DECA4B"——無論主題如何，此項不受影響</p>
+        </list-item>
+      </ui-list>
+      <div class="btn-row">
+        <button class="btn-nl btn-sky"  onclick="applyOcean()">Ocean</button>
+        <button class="btn-nl btn-teal" onclick="applySalmon()">Salmon</button>
+        <button class="btn-nl btn-rst"  onclick="resetDefault()">還原預設</button>
+      </div>
+      <div class="alert-zone" id="alert-rt"></div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══ 屬性速覽 ═══════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <h2>屬性速覽</h2>
+
+    <h3><code>&lt;ui-list&gt;</code></h3>
+    <table class="ref-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="td-attr">width<span class="badge-opt">選用</span></td>
+          <td class="td-type">string</td>
+          <td><code>100%</code></td>
+          <td>CSS 寬度值。<code>"80%/360px"</code> → <code>width:80%; min-width:360px</code>。</td>
+        </tr>
+        <tr>
+          <td class="td-attr">gap<span class="badge-new">v2.1</span></td>
+          <td class="td-type">CSS length</td>
+          <td><code>Config.rowGap</code></td>
+          <td>項目之間的間距。寫入 CSS 自訂屬性 <code>--nl-gap</code>，僅影響此清單。</td>
+        </tr>
+        <tr>
+          <td class="td-attr">hover<span class="badge-new">v2.1</span></td>
+          <td class="td-type">color</td>
+          <td><code>Config.borderHoverColor</code></td>
+          <td>
+            hover 時邊框色。寫入 <code>--nl-hover-color</code>，僅影響此清單。<br>
+            未設定 <code>active</code> 時，active 邊框色也跟隨此值。
+          </td>
+        </tr>
+        <tr>
+          <td class="td-attr">active<span class="badge-opt">選用</span></td>
+          <td class="td-type">color</td>
+          <td>同 <code>hover</code></td>
+          <td>active（點擊後）邊框色。寫入 <code>--nl-active-color</code>，需與 <code>source/target</code> 搭配使用。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3><code>&lt;list-item&gt;</code></h3>
+    <table class="ref-table">
+      <thead><tr><th>屬性</th><th>型別</th><th>預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="td-attr">number<span class="badge-opt">選用</span></td>
+          <td class="td-type">string</td>
+          <td>自動遞增</td>
+          <td>左側數字欄文字，支援數字、字母或短文字。</td>
+        </tr>
+        <tr>
+          <td class="td-attr">accent<span class="badge-opt">選用</span></td>
+          <td class="td-type">color</td>
+          <td>themeColor 或循環</td>
+          <td>
+            優先序最高，覆蓋 <code>themeColor</code> 與 <code>accentColors</code> 循環。
+          </td>
+        </tr>
+        <tr>
+          <td class="td-attr">source<span class="badge-opt">選用</span></td>
+          <td class="td-type">id</td>
+          <td>—</td>
+          <td>指定 div ID，初始化時自動隱藏該 div。需與 <code>target</code> 同時設定。</td>
+        </tr>
+        <tr>
+          <td class="td-attr">target<span class="badge-opt">選用</span></td>
+          <td class="td-type">id</td>
+          <td>—</td>
+          <td>點擊時，將 source div 的 innerHTML 注入此 ID 的容器。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3><code>setup()</code> 自動同步規則</h3>
+    <table class="ref-table">
+      <thead><tr><th>傳入 opts</th><th>自動同步結果</th><th>覆蓋方式</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="td-attr">numberColor: "#xxx"<br><small>（未傳 themeColor）</small></td>
+          <td>themeColor = "#xxx"<br>所有數字欄統一此色</td>
+          <td>同時傳入 <code>themeColor</code> 可覆蓋</td>
+        </tr>
+        <tr>
+          <td class="td-attr">numberColor 或 themeColor<br><small>（未傳 borderHoverColor）</small></td>
+          <td>borderHoverColor = theme 色<br>borderActiveColor = theme 色</td>
+          <td>同時傳入 <code>borderHoverColor</code> 可覆蓋</td>
+        </tr>
+        <tr>
+          <td class="td-attr">themeColor: null</td>
+          <td>accentColors 循環恢復</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<!-- Source divs（DEMO 04 用，init 後自動隱藏） -->
+<div id="src-ux">
+  <h3>使用者體驗設計</h3>
+  <p>好的 UX 設計讓複雜的事情看起來簡單。三個核心原則：</p>
+  <ul>
+    <li>一致性——同樣的操作在任何地方都有相同結果</li>
+    <li>可預測性——使用者能預期下一步會發生什麼</li>
+    <li>即時回饋——每個動作在 100ms 內要有反應</li>
+  </ul>
+</div>
+<div id="src-dev">
+  <h3>開發流程規範</h3>
+  <p>採用迭代式開發，每個 Sprint 以可交付的功能增量為目標。</p>
+  <ul>
+    <li>Sprint 長度：兩週</li>
+    <li>每日站立會議：15 分鐘上限</li>
+    <li>Definition of Done：PR 獲兩位 reviewer 核准</li>
+  </ul>
+</div>
+<div id="src-test">
+  <h3>測試策略</h3>
+  <ul>
+    <li><strong style="color:#b3de73;">單元測試</strong>——覆蓋率目標 80%，jest + vitest</li>
+    <li><strong style="color:#95c9de;">整合測試</strong>——API 合約驗證</li>
+    <li><strong style="color:#C3A5E5;">端對端測試</strong>——Playwright，主要流程全覆蓋</li>
+  </ul>
+</div>
+<div id="src-deploy">
+  <h3>部署流程</h3>
+  <ul>
+    <li>Dev → 每次 PR merge 自動部署</li>
+    <li>Staging → 每週五 16:00 手動觸發</li>
+    <li>Production → Tech Lead 核准，藍綠部署</li>
+  </ul>
+</div>
+
+<script src="numeric-list.js"></script>
+<script>
+  /* ── DEMO 02：靜態雙主題 ─────────────────────────────── */
+  (function () {
+    /* Salmon 清單 */
+    NumericList.setup({
+      numberColor:      '#E5C3B3',
+      numberBg:         '#200f0a',
+      borderColor:      '#3d1e14',
+      numberDivider:    '#3a1a10',
+      activeBackground: '#1a0e0a',
+      backgroundColor:  '#0C0D0C',
+      textColor:        '#C6C7BD',
+    });
+    NumericList.render(document.getElementById('list-salmon'));
+
+    /* Teal 清單 */
+    NumericList.setup({
+      numberColor:      '#0DA591',
+      numberBg:         '#071d18',
+      borderColor:      '#0e3028',
+      numberDivider:    '#0e2822',
+      activeBackground: '#061612',
+      backgroundColor:  '#0C0D0C',
+      textColor:        '#C6C7BD',
+    });
+    NumericList.render(document.getElementById('list-teal'));
+
+    /* 還原全局預設（其他清單用循環色） */
+    NumericList.setup({
+      numberColor:      '#95c9de',
+      themeColor:       null,
+      borderHoverColor: '#95c9de',
+      borderActiveColor:'#C3A5E5',
+      numberBg:         '#0d1b24',
+      borderColor:      '#31332f',
+      numberDivider:    '#1c2d38',
+      activeBackground: '#10192a',
+      backgroundColor:  '#0C0D0C',
+      textColor:        '#C6C7BD',
+    });
+  }());
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+  var defaultSnap = {
+    numberColor:      '#95c9de',
+    themeColor:       null,
+    borderHoverColor: '#95c9de',
+    borderActiveColor:'#C3A5E5',
+    numberBg:         '#0d1b24',
+    borderColor:      '#31332f',
+    numberDivider:    '#1c2d38',
+    activeBackground: '#10192a',
+    backgroundColor:  '#0C0D0C',
+    textColor:        '#C6C7BD',
+  };
+
+  function showAlert(id, html, type) {
+    document.getElementById(id).innerHTML =
+      '<div class="alert alert-' + type + ' alert-dismissible fade show mb-0" role="alert">' +
+      html + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+  }
+
+  function applyOcean() {
+    NumericList.setup({
+      numberColor:      '#0ABDC6',
+      numberBg:         '#071a1d',
+      borderColor:      '#0e2e33',
+      numberDivider:    '#0e2830',
+      activeBackground: '#071d20',
+      backgroundColor:  '#0C0D0C',
+      textColor:        '#C6C7BD',
+    });
+    NumericList.render(document.getElementById('demo-rt'));
+    showAlert('alert-rt',
+      '已套用 <strong>Ocean</strong> 主題。themeColor = borderHoverColor = <code>#0ABDC6</code>。',
+      'info');
+  }
+
+  function applySalmon() {
+    NumericList.setup({
+      numberColor:      '#E5C3B3',
+      numberBg:         '#200f0a',
+      borderColor:      '#3d1e14',
+      numberDivider:    '#3a1a10',
+      activeBackground: '#1a0e0a',
+      backgroundColor:  '#0C0D0C',
+      textColor:        '#C6C7BD',
+    });
+    NumericList.render(document.getElementById('demo-rt'));
+    showAlert('alert-rt',
+      '已套用 <strong>Salmon</strong> 主題。themeColor = borderHoverColor = <code>#E5C3B3</code>。',
+      'warning');
+  }
+
+  function resetDefault() {
+    NumericList.setup(defaultSnap);
+    NumericList.render(document.getElementById('demo-rt'));
+    showAlert('alert-rt',
+      '已還原預設。<code>themeColor = null</code>，accentColors 循環重新生效。',
+      'success');
+  }
+</script>
+</body>
+</html>

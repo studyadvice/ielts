@@ -1,0 +1,228 @@
+.bp-text-base     { color: #0C0D0C; }
+.bp-text-fill     { color: #333333; }
+.bp-text-fill-hover { color: #3a3a3a; }
+.bp-text-shell    { color: #C6C7BD; }
+.bp-text-lavender { color: #C3A5E5; }
+.bp-text-special  { color: #B3DE73; }
+.bp-text-warning  { color: #E6374B; }
+.bp-text-salmon   { color: #E5C3B3; }
+.bp-text-sky      { color: #95C9DE; }
+.bp-text-safe     { color: #27AE60; }
+.bp-text-vanilla  { color: #DBEDD8; }
+.bp-text-yellow   { color: #E3D322; }
+.bp-text-focus    { color: #3C7BCF; }
+.bp-text-info     { color: #2351DB; }
+.bp-text-stone    { color: #95C9DE; }
+.bp-text-indigo   { color: #7849C9; }
+.bp-text-pink     { color: #FF91D7; }
+.bp-text-orange   { color: #EDA109; }
+.bp-text-teal     { color: #0DA591; }
+.bp-text-ocean    { color: #1CCAE8; }
+
+.bp-bg-background { background-color: #0C0D0C; }
+.bp-bg-base       { background-color: #0C0D0C; }
+.bp-bg-fill       { background-color: #333333; }
+.bp-bg-fill-hover { background-color: #3a3a3a; }
+.bp-bg-shell      { background-color: #C6C7BD; }
+.bp-bg-lavender   { background-color: #C3A5E5; }
+.bp-bg-special    { background-color: #B3DE73; }
+.bp-bg-warning    { background-color: #E6374B; }
+.bp-bg-salmon     { background-color: #E5C3B3; }
+.bp-bg-sky        { background-color: #95C9DE; }
+.bp-bg-safe       { background-color: #27AE60; }
+.bp-bg-vanilla    { background-color: #DBEDD8; }
+.bp-bg-yellow     { background-color: #E3D322; }
+.bp-bg-focus      { background-color: #3C7BCF; }
+.bp-bg-info       { background-color: #2351DB; }
+.bp-bg-stone      { background-color: #95C9DE; }
+.bp-bg-indigo     { background-color: #7849C9; }
+.bp-bg-pink       { background-color: #FF91D7; }
+.bp-bg-orange     { background-color: #EDA109; }
+.bp-bg-teal       { background-color: #0DA591; }
+.bp-bg-ocean      { background-color: #1CCAE8; }
+
+.bp-border-base       { border: 1px solid #0C0D0C; }
+.bp-border-fill       { border: 1px solid #333333; }
+.bp-border-fill-hover { border: 1px solid #3a3a3a; }
+.bp-border-shell      { border: 1px solid #C6C7BD; }
+.bp-border-lavender   { border: 1px solid #C3A5E5; }
+.bp-border-special    { border: 1px solid #B3DE73; }
+.bp-border-warning    { border: 1px solid #E6374B; }
+.bp-border-salmon     { border: 1px solid #E5C3B3; }
+.bp-border-sky        { border: 1px solid #95C9DE; }
+.bp-border-safe       { border: 1px solid #27AE60; }
+.bp-border-vanilla    { border: 1px solid #DBEDD8; }
+.bp-border-yellow     { border: 1px solid #E3D322; }
+.bp-border-focus      { border: 1px solid #3C7BCF; }
+.bp-border-info       { border: 1px solid #2351DB; }
+.bp-border-stone      { border: 1px solid #95C9DE; }
+.bp-border-indigo     { border: 1px solid #7849C9; }
+.bp-border-pink       { border: 1px solid #FF91D7; }
+.bp-border-orange     { border: 1px solid #EDA109; }
+.bp-border-teal       { border: 1px solid #0DA591; }
+.bp-border-ocean      { border: 1px solid #1CCAE8; }
+/* ── Font sizes ──────────────────────────── */
+.fs-superlarge        { font-size: 3.75rem; }
+.fs-extralarge        { font-size: 3rem; }
+.fs-xlarge            { font-size: 2.5rem; }
+.fs-larger            { font-size: 2rem; }
+.fs-large             { font-size: 1.5rem; }
+.fs-regular           { font-size: 1rem; }
+.fs-small,  .fs-7     { font-size: 0.8rem; }
+.fs-smaller,.fs-8     { font-size: 0.7rem; }
+.fs-xsmall, .fs-9     { font-size: 0.55rem; }
+.fs-extrasmall,.fs-10  { font-size: 0.4rem; }
+
+/* ── Widths ──────────────────────────────── */
+.w-90 { width: 90%; }
+.w-80 { width: 80%; }
+.w-70 { width: 70%; }
+.w-60 { width: 60%; }
+.w-40 { width: 40%; }
+.w-30 { width: 33%; }
+.w-20 { width: 20%; }
+
+/* ── Margin utilities (level 6–8) ────────── */
+.m-6                { margin: 4rem !important; }
+.mt-6, .my-6        { margin-top: 4rem !important; }
+.mb-6, .my-6        { margin-bottom: 4rem !important; }
+.ms-6, .mx-6        { margin-left: 4rem !important; }
+.me-6, .mx-6        { margin-right: 4rem !important; }
+
+.m-7                { margin: 5.5rem !important; }
+.mt-7, .my-7        { margin-top: 5.5rem !important; }
+.mb-7, .my-7        { margin-bottom: 5.5rem !important; }
+.ms-7, .mx-7        { margin-left: 5.5rem !important; }
+.me-7, .mx-7        { margin-right: 5.5rem !important; }
+
+.m-8                { margin: 8rem !important; }
+.mt-8, .my-8        { margin-top: 8rem !important; }
+.mb-8, .my-8        { margin-bottom: 8rem !important; }
+.ms-8, .mx-8        { margin-left: 8rem !important; }
+.me-8, .mx-8        { margin-right: 8rem !important; }
+
+/* ── Padding utilities (level 6–8) ──────── */
+.p-6                { padding: 4.5rem !important; }
+.pt-6, .py-6        { padding-top: 4.5rem !important; }
+.pb-6, .py-6        { padding-bottom: 4.5rem !important; }
+.ps-6, .px-6        { padding-left: 4.5rem !important; }
+.pe-6, .px-6        { padding-right: 4.5rem !important; }
+
+.p-7                { padding: 5.75rem !important; }
+.pt-7, .py-7        { padding-top: 5.75rem !important; }
+.pb-7, .py-7        { padding-bottom: 5.75rem !important; }
+.ps-7, .px-7        { padding-left: 5.75rem !important; }
+.pe-7, .px-7        { padding-right: 5.75rem !important; }
+
+.p-8                { padding: 8rem !important; }
+.pt-8, .py-8        { padding-top: 8rem !important; }
+.pb-8, .py-8        { padding-bottom: 8rem !important; }
+.ps-8, .px-8        { padding-left: 8rem !important; }
+.pe-8, .px-8        { padding-right: 8rem !important; }
+
+.bp-ind-1 { padding-left: 0.5em; }
+.bp-ind-2 { padding-left: 1.0em; }
+.bp-ind-3 { padding-left: 1.5em; }
+.bp-ind-4 { padding-left: 2.0em; }
+.bp-ind-5 { padding-left: 2.5em; }
+.bp-ind-6 { padding-left: 3.0em; }
+.bp-ind-7 { padding-left: 3.5em; }
+.bp-ind-8 { padding-left: 4.0em; }
+
+.bp-lnh-1 { line-height: 4em; }
+.bp-lnh-2 { line-height: 3.5em; }
+.bp-lnh-3 { line-height: 3em; }
+.bp-lnh-4 { line-height: 2.5em; }
+.bp-lnh-5 { line-height: 2em; }
+.bp-lnh-6 { line-height: 1.75em; }
+.bp-lnh-7 { line-height: 1.55em; }
+.bp-lnh-8 { line-height: 1.2em; }
+.bp-lnh-9 { line-height: 1em; }
+.bp-lnh-10 { line-height: 0.75em; }
+.bp-lnh-11 { line-height: 0.6em; }
+
+blockquote {
+    margin: 16px 0;
+    font-size: 1.25rem;
+    padding: 16px 24px 16px 60px;
+    background: #333333;
+    color: #C6C7BD;
+    line-height: 1.5;
+    position: relative;
+    overflow: hidden;
+}
+
+blockquote::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background-image: radial-gradient(#FFF 30%, transparent 30%);
+    background-size: 10px 10px;
+    opacity: 0.5;
+}
+
+/* ── Utilities ───────────────────────────── */
+.bp-hidden { display: none; }
+
+.bp-annotation {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dashed var(--note-color, #95C9DE);
+    padding-bottom: 1px;
+    margin-bottom: 24px;
+}
+
+.bp-annotation::after {
+    content: attr(data-note);
+    position: absolute;
+    left: 50%;
+    bottom: -1.25rem;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    color: var(--note-color, #C6C7BD);
+}
+
+/* ── bp-hatch：45° 斜線框（不支援 border-radius） ────────── */
+.bp-hatch {
+  --hatch-color: #E3D322;
+  --hatch-line:  3px;
+  --hatch-gap:   7px;
+  border: 14px solid transparent;
+  border-image: repeating-linear-gradient(
+    45deg,
+    var(--hatch-color) 0px,
+    var(--hatch-color) var(--hatch-line),
+    transparent        var(--hatch-line),
+    transparent        calc(var(--hatch-line) + var(--hatch-gap))
+  ) 14;
+}
+
+/* 粗細（border-width 和 slice 要一起改，且 slice 必須無單位） */
+.bp-hatch-sm { border-width: 8px;  border-image-slice: 8;  }
+.bp-hatch-lg { border-width: 20px; border-image-slice: 20; }
+
+/* 密度 */
+.bp-hatch-tight { --hatch-line: 2px; --hatch-gap:  4px; }
+.bp-hatch-loose { --hatch-line: 4px; --hatch-gap: 12px; }
+
+/* 色票（全部品牌色） */
+.bp-hatch-shell    { --hatch-color: #C6C7BD; }
+.bp-hatch-lavender { --hatch-color: #C3A5E5; }
+.bp-hatch-sky      { --hatch-color: #95C9DE; }
+.bp-hatch-warning  { --hatch-color: #E6374B; }
+.bp-hatch-salmon   { --hatch-color: #E5C3B3; }
+.bp-hatch-ocean    { --hatch-color: #1CCAE8; }
+.bp-hatch-safe     { --hatch-color: #27AE60; }
+.bp-hatch-teal     { --hatch-color: #0DA591; }
+.bp-hatch-vanilla  { --hatch-color: #DBEDD8; }
+.bp-hatch-yellow   { --hatch-color: #E3D322; }
+.bp-hatch-focus    { --hatch-color: #3C7BCF; }
+.bp-hatch-info     { --hatch-color: #2351DB; }
+.bp-hatch-indigo   { --hatch-color: #7849C9; }
+.bp-hatch-pink     { --hatch-color: #FF91D7; }
+.bp-hatch-orange   { --hatch-color: #EDA109; }
+.bp-hatch-special  { --hatch-color: #B3DE73; }

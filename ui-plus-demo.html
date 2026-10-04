@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-plus.js 完整功能示範</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root {
+  --bg: #0C0D0C;
+  --shell: #C6C7BD;
+  --lavender: #C3A5E5;
+  --sky: #82C8E5;
+  --warning: #E6374B;
+  --salmon: #E5C3B3;
+  --ocean: #1CCAE8;
+  --safe: #184B48;
+  --teal: #0DA591;
+  --vanilla: #DBEDD8;
+  --yellow: #E3D322;
+  --focus: #D4FFFC;
+  --special: #B3DE73;
+  --info: #2351DB;
+  --indigo: #7849C9;
+  --pink: #FF91D7;
+  --orange: #EDA109;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--shell);
+  font-size:1.125rem;
+  line-height:1.45;
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  min-height:100vh;
+}
+h1,h2,h3,h4{line-height:1.2}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(198,199,189,0.18);border-radius:3px}
+
+/* ── Layout ── */
+.demo-layout{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  grid-template-rows:auto 1fr;
+  min-height:100vh;
+}
+
+/* ── Header ── */
+.demo-header{
+  grid-column:1/-1;
+  background:linear-gradient(120deg,rgba(28,202,232,0.1) 0%,rgba(12,13,12,0) 65%);
+  border-bottom:1px solid rgba(198,199,189,0.11);
+  padding:26px 40px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.demo-header-icon{
+  font-size:2.2rem;
+  color:var(--ocean);
+  flex-shrink:0;
+  line-height:1;
+}
+.demo-header h1{
+  font-size:1.65rem;
+  font-weight:800;
+  color:var(--ocean);
+}
+.demo-header p{
+  font-size:0.9rem;
+  color:rgba(198,199,189,0.55);
+  margin-top:3px;
+}
+
+/* ── Sidebar ── */
+.demo-sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  background:rgba(198,199,189,0.025);
+  border-right:1px solid rgba(198,199,189,0.09);
+  padding:16px 0 40px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(198,199,189,0.12) transparent;
+}
+.nav-group-label{
+  font-size:0.7rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:rgba(198,199,189,0.32);
+  padding:16px 18px 5px;
+}
+.nav-link-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 18px;
+  color:rgba(198,199,189,0.58);
+  text-decoration:none;
+  font-size:0.88rem;
+  border-left:2px solid transparent;
+  transition:color .18s,border-color .18s,background .18s;
+}
+.nav-link-item:hover{
+  color:var(--shell);
+  background:rgba(198,199,189,0.05);
+  text-decoration:none;
+}
+.nav-link-item.is-active{
+  color:var(--ocean);
+  border-left-color:var(--ocean);
+  background:rgba(28,202,232,0.07);
+}
+.nav-link-item i{font-size:0.85rem;flex-shrink:0}
+
+/* ── Main ── */
+.demo-main{
+  padding:36px 52px 80px;
+  overflow-x:hidden;
+}
+
+/* ── Section anchors + headers ── */
+.sec-anchor{
+  display:block;
+  visibility:hidden;
+  height:0;
+  padding-top:80px;
+  margin-top:-80px;
+}
+.sec-header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:22px;
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(198,199,189,0.08);
+}
+.sec-icon{
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.25rem;
+  flex-shrink:0;
+}
+.sec-title{flex:1}
+.sec-title h2{
+  font-size:1.3rem;
+  font-weight:700;
+}
+.sec-title p{
+  font-size:0.86rem;
+  color:rgba(198,199,189,0.52);
+  margin-top:3px;
+}
+.comp-tag{
+  font-family:monospace;
+  font-size:0.8rem;
+  padding:3px 10px;
+  border-radius:20px;
+  border:1px solid;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.sec-rule{
+  border:none;
+  border-top:1px solid rgba(198,199,189,0.07);
+  margin:52px 0;
+}
+
+/* ── Demo cards ── */
+.demo-card{
+  background:rgba(198,199,189,0.033);
+  border:1px solid rgba(198,199,189,0.08);
+  border-radius:12px;
+  padding:22px 24px;
+  margin-bottom:14px;
+}
+.card-title{
+  font-size:0.98rem;
+  font-weight:700;
+  color:var(--yellow);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:6px;
+}
+.attr-chip{
+  font-family:monospace;
+  font-size:0.76rem;
+  background:rgba(227,211,34,0.09);
+  border:1px solid rgba(227,211,34,0.19);
+  color:var(--yellow);
+  padding:2px 7px;
+  border-radius:5px;
+}
+.card-desc{
+  font-size:0.86rem;
+  color:rgba(198,199,189,0.52);
+  margin-bottom:14px;
+  line-height:1.45;
+}
+.demo-box{
+  background:rgba(0,0,0,0.2);
+  border-radius:8px;
+  padding:18px 20px;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.demo-box.col{flex-direction:column}
+.demo-box.center{align-items:center;justify-content:center}
+
+/* ── Target content boxes ── */
+.rbox{
+  border-radius:8px;
+  padding:14px 18px;
+  font-size:0.95rem;
+  line-height:1.45;
+  width:100%;
+}
+.rbox-ocean{background:rgba(28,202,232,0.09);border:1px solid rgba(28,202,232,0.22);color:var(--ocean)}
+.rbox-lavender{background:rgba(195,165,229,0.09);border:1px solid rgba(195,165,229,0.22);color:var(--lavender)}
+.rbox-special{background:rgba(179,222,115,0.09);border:1px solid rgba(179,222,115,0.22);color:var(--special)}
+.rbox-salmon{background:rgba(229,195,179,0.09);border:1px solid rgba(229,195,179,0.22);color:var(--salmon)}
+.rbox-yellow{background:rgba(227,211,34,0.09);border:1px solid rgba(227,211,34,0.22);color:var(--yellow)}
+.rbox-teal{background:rgba(13,165,145,0.09);border:1px solid rgba(13,165,145,0.22);color:var(--teal)}
+.rbox-indigo{background:rgba(120,73,201,0.09);border:1px solid rgba(120,73,201,0.22);color:var(--lavender)}
+.rbox-sky{background:rgba(130,200,229,0.09);border:1px solid rgba(130,200,229,0.22);color:var(--sky)}
+
+/* ── Alert trigger buttons ── */
+.abtn{
+  background:rgba(198,199,189,0.08);
+  border:1px solid rgba(198,199,189,0.16);
+  color:var(--shell);
+  border-radius:8px;
+  padding:8px 15px;
+  font-size:1rem;
+  cursor:pointer;
+  transition:background .18s;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  line-height:1.3;
+}
+.abtn:hover{background:rgba(198,199,189,0.14)}
+.abtn i{font-size:1rem}
+
+/* ── Reading area ── */
+.reading-area{
+  background:rgba(0,0,0,0.2);
+  border:1px solid rgba(198,199,189,0.08);
+  border-radius:8px;
+  padding:22px 26px;
+  font-size:1.05rem;
+  line-height:1.5;
+  color:var(--shell);
+}
+.reading-area p{margin-bottom:12px}
+.reading-area p:last-child{margin-bottom:0}
+
+/* ── Cluster stage ── */
+.cluster-stage{
+  display:flex;
+  gap:72px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  padding:32px 24px;
+  background:rgba(0,0,0,0.2);
+  border-radius:8px;
+  min-height:120px;
+}
+
+/* ── Row util ── */
+.flex-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sub-label{
+  font-size:0.82rem;
+  color:rgba(198,199,189,0.5);
+  min-width:148px;
+  flex-shrink:0;
+}
+
+/* ── code block ── */
+.code-blk{
+  background:rgba(0,0,0,0.32);
+  border:1px solid rgba(198,199,189,0.09);
+  border-radius:6px;
+  padding:14px 18px;
+  font-family:'Consolas','Monaco',monospace;
+  font-size:0.84rem;
+  color:var(--vanilla);
+  white-space:pre;
+  overflow-x:auto;
+  line-height:1.6;
+  margin-top:12px;
+}
+.c-attr{color:var(--sky)}
+.c-val{color:var(--salmon)}
+.c-comment{color:rgba(198,199,189,0.38)}
+
+/* ── Config table ── */
+.cfg-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.88rem;
+}
+.cfg-table th{
+  text-align:left;
+  padding:9px 14px;
+  font-size:0.72rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:rgba(198,199,189,0.38);
+  border-bottom:1px solid rgba(198,199,189,0.09);
+}
+.cfg-table td{
+  padding:9px 14px;
+  border-bottom:1px solid rgba(198,199,189,0.05);
+  vertical-align:top;
+}
+.cfg-table tr:last-child td{border-bottom:none}
+.cfg-key{font-family:monospace;color:var(--sky)}
+.cfg-val{font-family:monospace;color:var(--salmon)}
+.cfg-desc{color:rgba(198,199,189,0.52);font-size:0.84rem}
+
+/* ── unlock-chunk custom demo ── */
+.chunk-unlock-area{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.chunk-slot-item{
+  flex:1;
+  min-width:110px;
+  padding:16px 14px;
+  border-radius:8px;
+  text-align:center;
+  font-size:0.88rem;
+  line-height:1.4;
+  border:1px dashed rgba(195,165,229,0.28);
+  background:rgba(195,165,229,0.04);
+  color:rgba(195,165,229,0.38);
+  opacity:.35;
+  transition:opacity .35s,background .35s,border-color .35s,color .35s;
+  pointer-events:none;
+}
+.chunk-slot-item.unlocked{
+  opacity:1;
+  background:rgba(195,165,229,0.1);
+  border:1px solid rgba(195,165,229,0.45);
+  color:var(--lavender);
+  pointer-events:auto;
+}
+
+/* ── scroll-gate sim ── */
+.gate-sim-wrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.gate-sim-target{
+  flex:1;
+  min-width:200px;
+  padding:18px 20px;
+  border-radius:8px;
+  font-size:0.95rem;
+  border:1px dashed rgba(120,73,201,0.35);
+  background:rgba(120,73,201,0.08);
+  color:var(--lavender);
+  transition:opacity .4s;
+}
+.gate-sim-target.gate-locked{
+  opacity:.45;
+  pointer-events:none;
+  user-select:none;
+}
+
+/* ── simulated gate button ── */
+#sim-gate-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#7849C9;
+  color:#0C0D0C;
+  border:none;
+  border-radius:24px;
+  padding:9px 18px;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  transition:filter .2s,transform .12s;
+  flex-shrink:0;
+}
+#sim-gate-btn:hover{filter:brightness(1.1)}
+#sim-gate-btn:active{transform:scale(.93)}
+#sim-gate-btn.gate-cue{animation:gpulse 2.2s ease-in-out infinite}
+@keyframes gpulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(120,73,201,.55)}
+  60%{box-shadow:0 0 0 12px rgba(0,0,0,0)}
+}
+</style>
+</head>
+<body>
+<div class="demo-layout">
+
+<!-- ═══ HEADER ═══ -->
+<header class="demo-header">
+  <div class="demo-header-icon"><i class="bi bi-layers-half"></i></div>
+  <div>
+    <h1>ui-plus.js 完整功能示範</h1>
+    <p>涵蓋所有元件、所有屬性、全域 Config 及 API 呼叫 — 2025-09-17</p>
+  </div>
+</header>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="demo-sidebar">
+  <div class="nav-group-label">按鈕 UiBtn</div>
+  <a class="nav-link-item is-active" href="#sec-btn-basic"><i class="bi bi-toggles"></i>基本功能</a>
+  <a class="nav-link-item" href="#sec-btn-adv"><i class="bi bi-gear-fill"></i>進階功能</a>
+  <a class="nav-link-item" href="#sec-alert"><i class="bi bi-bell-fill"></i>alert() API</a>
+
+  <div class="nav-group-label">叢集 UiCluster</div>
+  <a class="nav-link-item" href="#sec-cluster-s"><i class="bi bi-circle-fill"></i>單層模式</a>
+  <a class="nav-link-item" href="#sec-cluster-d"><i class="bi bi-diagram-3-fill"></i>雙層模式</a>
+
+  <div class="nav-group-label">閱讀 UiReading</div>
+  <a class="nav-link-item" href="#sec-morph"><i class="bi bi-arrow-left-right"></i>text-morph</a>
+  <a class="nav-link-item" href="#sec-pin"><i class="bi bi-pin-fill"></i>margin-pin</a>
+  <a class="nav-link-item" href="#sec-pulse"><i class="bi bi-bar-chart-fill"></i>read-pulse</a>
+  <a class="nav-link-item" href="#sec-chalk"><i class="bi bi-pen-fill"></i>chalk-mark</a>
+  <a class="nav-link-item" href="#sec-colpair"><i class="bi bi-link-45deg"></i>col-pair</a>
+  <a class="nav-link-item" href="#sec-chunk"><i class="bi bi-grid-3x3-gap-fill"></i>chunk-spot</a>
+
+  <div class="nav-group-label">設定</div>
+  <a class="nav-link-item" href="#sec-config"><i class="bi bi-sliders"></i>全域 Config</a>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="demo-main">
+
+<!-- ══════════════════════════════════════════
+     UiBtn 基本功能
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-btn-basic"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(28,202,232,0.11)">
+    <i class="bi bi-toggles" style="color:var(--ocean)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--ocean)">ui-btn 基本功能</h2>
+    <p>展開/收合目標元素的控制按鈕，支援三種外觀、三種尺寸與群組行為</p>
+  </div>
+  <span class="comp-tag" style="color:var(--ocean);border-color:rgba(28,202,232,0.28)">&lt;ui-btn&gt;</span>
+</div>
+
+<!-- 1. 外觀變體 -->
+<div class="demo-card">
+  <div class="card-title">
+    外觀變體
+    <span class="attr-chip">variant="fill"</span>
+    <span class="attr-chip">variant="outline"</span>
+    <span class="attr-chip">variant="ghost"</span>
+  </div>
+  <p class="card-desc">三種視覺樣式：fill（填色，預設）、outline（外框）、ghost（透明），點按後展開緊鄰的下方元素。</p>
+  <div class="demo-box col" style="gap:12px">
+    <div>
+      <ui-btn variant="fill" theme="ocean">fill — 展開內容</ui-btn>
+      <div class="rbox rbox-ocean" style="display:none;margin-top:8px"><strong>fill</strong>：主色填滿背景，文字用深色。視覺最強烈，適合主要 CTA。</div>
+    </div>
+    <div>
+      <ui-btn variant="outline" theme="lavender">outline — 展開內容</ui-btn>
+      <div class="rbox rbox-lavender" style="display:none;margin-top:8px"><strong>outline</strong>：透明背景＋主色外框，懸停時填入淡色背景。適合次要操作。</div>
+    </div>
+    <div>
+      <ui-btn variant="ghost" theme="special">ghost — 展開內容</ui-btn>
+      <div class="rbox rbox-special" style="display:none;margin-top:8px"><strong>ghost</strong>：完全透明，只顯示主色文字，懸停填入極淡背景。最低調。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 尺寸 -->
+<div class="demo-card">
+  <div class="card-title">
+    尺寸
+    <span class="attr-chip">size="sm"</span>
+    <span class="attr-chip">size="md"</span>
+    <span class="attr-chip">size="lg"</span>
+  </div>
+  <p class="card-desc">三種預設尺寸：sm（0.85rem）、md（1rem，預設）、lg（1.1rem），同時調整內距與圓角。</p>
+  <div class="demo-box" style="align-items:center;gap:14px">
+    <ui-btn size="sm" theme="teal">小 sm</ui-btn>
+    <div class="rbox rbox-teal" style="display:none">size="sm"：字 0.85rem / padding 5px 12px / border-radius 20px。適合工具列。</div>
+    <ui-btn size="md" theme="teal">中 md（預設）</ui-btn>
+    <div class="rbox rbox-teal" style="display:none">size="md"：字 1rem / padding 8px 16px / border-radius 24px。一般行內使用。</div>
+    <ui-btn size="lg" theme="teal">大 lg</ui-btn>
+    <div class="rbox rbox-teal" style="display:none">size="lg"：字 1.1rem / padding 10px 20px / border-radius 28px。頁面主要 CTA。</div>
+  </div>
+</div>
+
+<!-- 3. icon / icon-active / chevron -->
+<div class="demo-card">
+  <div class="card-title">
+    圖示與箭頭
+    <span class="attr-chip">icon="bi-*"</span>
+    <span class="attr-chip">icon-active="bi-*"</span>
+    <span class="attr-chip">chevron</span>
+  </div>
+  <p class="card-desc"><code>icon</code> 接受 Bootstrap Icons 類別名；<code>icon-active</code> 在展開時切換圖示；<code>chevron</code> 加入可旋轉箭頭。無文字 label 時按鈕呈圓形，右下角出現狀態小點。</p>
+  <div class="demo-box col" style="gap:14px">
+    <div class="flex-row">
+      <span class="sub-label">純圖示（icon only）</span>
+      <ui-btn icon="bi-plus-circle-fill" theme="ocean" size="md"></ui-btn>
+      <div class="rbox rbox-ocean" style="display:none">icon only：沒有文字 label，按鈕呈圓形，展開後右下角顯示狀態點。</div>
+    </div>
+    <div class="flex-row">
+      <span class="sub-label">圖示 + 文字</span>
+      <ui-btn icon="bi-folder2-open" theme="yellow">開啟資料夾</ui-btn>
+      <div class="rbox rbox-yellow" style="display:none">圖示在文字左側，尺寸與文字相稱。</div>
+    </div>
+    <div class="flex-row">
+      <span class="sub-label">icon-active 切換</span>
+      <ui-btn icon="bi-play-fill" icon-active="bi-stop-fill" theme="salmon" variant="outline">播放</ui-btn>
+      <div class="rbox rbox-salmon" style="display:none">展開時圖示換為 bi-stop-fill；再次點擊收合，圖示恢復 bi-play-fill。</div>
+    </div>
+    <div class="flex-row">
+      <span class="sub-label">chevron 箭頭</span>
+      <ui-btn chevron theme="lavender" variant="outline">展開詳情</ui-btn>
+      <div class="rbox rbox-lavender" style="display:none">chevron 布林屬性：標籤右側加入 SVG 箭頭，展開時自動旋轉 180°。</div>
+    </div>
+    <div class="flex-row">
+      <span class="sub-label">全組合示例</span>
+      <ui-btn icon="bi-eye" icon-active="bi-eye-slash" label-open="隱藏說明" chevron theme="special">顯示說明</ui-btn>
+      <div class="rbox rbox-special" style="display:none">icon-active + label-open + chevron 同用：圖示切換、標籤切換、箭頭翻轉，三者同步。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. label-open / tooltip / disabled / open -->
+<div class="demo-card">
+  <div class="card-title">
+    標籤、提示與停用
+    <span class="attr-chip">label-open="..."</span>
+    <span class="attr-chip">tooltip="..."</span>
+    <span class="attr-chip">disabled</span>
+    <span class="attr-chip">open</span>
+  </div>
+  <p class="card-desc">
+    <code>label-open</code> 展開時顯示替代文字；<code>tooltip</code> 設置原生 title；<code>disabled</code> 停用；<code>open</code> 初始展開。
+  </p>
+  <div class="demo-box col" style="gap:12px">
+    <div>
+      <ui-btn label-open="收起所有項目 ▲" theme="ocean">展開所有項目 ▼</ui-btn>
+      <div class="rbox rbox-ocean" style="display:none;margin-top:8px">label-open：展開後標籤切換為「收起所有項目 ▲」，再點恢復原始文字。</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn tooltip="滑鼠懸停即顯示此 tooltip 文字，無需點擊" theme="yellow" variant="outline">懸停查看 tooltip</ui-btn>
+      <div class="rbox rbox-yellow" style="display:none">tooltip 屬性設置 button 的 title，於懸停時顯示原生提示。</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn disabled theme="shell" variant="outline">停用按鈕（disabled）</ui-btn>
+      <span style="font-size:0.85rem;color:rgba(198,199,189,0.5)">disabled：50% 透明度，pointer-events:none，無法點擊。</span>
+    </div>
+    <div>
+      <ui-btn open chevron label-open="收起說明" theme="special">展開說明</ui-btn>
+      <div class="rbox rbox-special" style="margin-top:8px">open 屬性：頁面載入後此區塊已展開，按鈕初始呈「已開啟」狀態（chevron 已翻轉、label 顯示 label-open 文字）。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. group 手風琴 -->
+<div class="demo-card">
+  <div class="card-title">
+    群組手風琴
+    <span class="attr-chip">group="name"</span>
+  </div>
+  <p class="card-desc">同一 <code>group</code> 值的按鈕形成互斥群組：展開任一個時，其餘自動收合。group 值為任意字串。</p>
+  <div class="demo-box col" style="gap:10px">
+    <div>
+      <ui-btn group="demo-acc" theme="ocean" chevron>第一節：海洋藍</ui-btn>
+      <div class="rbox rbox-ocean" style="display:none;margin-top:6px">group="demo-acc" — 展開此節時，其他三節自動收合。每個按鈕可指定不同 theme。</div>
+    </div>
+    <div>
+      <ui-btn group="demo-acc" theme="lavender" chevron>第二節：薰衣草</ui-btn>
+      <div class="rbox rbox-lavender" style="display:none;margin-top:6px">group="demo-acc" — 第二節內容。互斥邏輯確保同時只有一節展開。</div>
+    </div>
+    <div>
+      <ui-btn group="demo-acc" theme="special" chevron>第三節：特別色</ui-btn>
+      <div class="rbox rbox-special" style="display:none;margin-top:6px">group="demo-acc" — 第三節內容。展開後，其餘節以 animClose 收合。</div>
+    </div>
+    <div>
+      <ui-btn group="demo-acc" theme="salmon" chevron>第四節：鮭魚色</ui-btn>
+      <div class="rbox rbox-salmon" style="display:none;margin-top:6px">group="demo-acc" — 第四節內容。可任意加入更多群組成員。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 6. animation / anim-duration -->
+<div class="demo-card">
+  <div class="card-title">
+    動畫類型與時長
+    <span class="attr-chip">animation="slide"</span>
+    <span class="attr-chip">animation="fade"</span>
+    <span class="attr-chip">animation="none"</span>
+    <span class="attr-chip">anim-duration="ms"</span>
+  </div>
+  <p class="card-desc">slide（預設）：高度＋透明度同時動畫；fade：只做透明度；none：即時顯示/隱藏。<code>anim-duration</code> 控制毫秒數（預設 320）。</p>
+  <div class="demo-box col" style="gap:12px">
+    <div class="flex-row">
+      <ui-btn animation="slide" theme="ocean">Slide（預設）</ui-btn>
+      <div class="rbox rbox-ocean" style="display:none">animation="slide"：max-height + opacity 雙動畫，最自然的展開效果。</div>
+      <ui-btn animation="slide" anim-duration="800" theme="teal" variant="outline">Slide 800ms</ui-btn>
+      <div class="rbox rbox-teal" style="display:none">anim-duration="800"：展開動畫延長為 800ms，可明顯感受速差。</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn animation="fade" theme="lavender">Fade</ui-btn>
+      <div class="rbox rbox-lavender" style="display:none">animation="fade"：只做 opacity 淡入淡出，元素高度無動畫。</div>
+      <ui-btn animation="fade" anim-duration="600" theme="pink" variant="outline">Fade 600ms</ui-btn>
+      <div class="rbox rbox-lavender" style="display:none">anim-duration 同樣適用於 fade 模式。</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn animation="none" theme="yellow">None（無動畫）</ui-btn>
+      <div class="rbox rbox-yellow" style="display:none">animation="none"：立即 display:block / display:none，無任何 transition。</div>
+    </div>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     UiBtn 進階功能
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-btn-adv"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(120,73,201,0.11)">
+    <i class="bi bi-gear-fill" style="color:var(--lavender)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--lavender)">ui-btn 進階功能</h2>
+    <p>遠端目標指定、捲動閘門視覺展示、解鎖 Chunk 連動</p>
+  </div>
+</div>
+
+<!-- 7. target by ID -->
+<div class="demo-card">
+  <div class="card-title">
+    遠端目標
+    <span class="attr-chip">target="#elementId"</span>
+  </div>
+  <p class="card-desc">預設按鈕控制緊鄰的下一個兄弟元素。設定 <code>target="#id"</code> 可控制頁面任意位置的元素（兩個按鈕可指向同一目標）。</p>
+  <div class="demo-box col" style="gap:14px">
+    <div class="flex-row">
+      <ui-btn target="#rmt-a" theme="ocean" icon="bi-arrow-up-right-circle-fill">控制 #rmt-a</ui-btn>
+      <ui-btn target="#rmt-b" theme="lavender" variant="outline" icon="bi-arrow-up-right-circle-fill">控制 #rmt-b</ui-btn>
+      <ui-btn target="#rmt-a" theme="teal" variant="ghost" icon="bi-arrow-repeat">再控制 #rmt-a</ui-btn>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div id="rmt-a" class="rbox rbox-ocean" style="display:none;flex:1">這是 <strong>#rmt-a</strong>，被第一個與第三個按鈕（不同 variant）共同控制，兩者狀態獨立。</div>
+      <div id="rmt-b" class="rbox rbox-lavender" style="display:none;flex:1">這是 <strong>#rmt-b</strong>，由第二個按鈕透過 target 屬性控制。可與 #rmt-a 同時展開。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 8. scroll-gate（視覺模擬） -->
+<div class="demo-card">
+  <div class="card-title">
+    捲動閘門（視覺模擬）
+    <span class="attr-chip">scroll-gate</span>
+  </div>
+  <p class="card-desc">
+    <code>scroll-gate</code> 讓按鈕扮演「解鎖繼續閱讀」的角色：<strong>目標元素半透明鎖定</strong>，按鈕帶脈衝光暈（<code>.ubtn-gate-cue</code>），按下後 <code>.ubtn-gate-locked</code> 移除，頁面恢復可捲動。以下為視覺模擬，展示鎖定→解鎖全流程。
+  </p>
+  <div class="demo-box" style="gap:14px;align-items:flex-start">
+    <div class="gate-sim-wrap" style="width:100%">
+      <button id="sim-gate-btn" class="gate-cue" onclick="simGateToggle()">
+        <i class="bi bi-lock-fill" id="sim-gate-ico"></i>
+        <span id="sim-gate-lbl">解鎖繼續閱讀</span>
+      </button>
+      <div id="sim-gate-content" class="gate-sim-target gate-locked">
+        目標內容（<code>.ubtn-gate-target</code>）：鎖定時 opacity 0.45，pointer-events:none。<br>
+        點擊按鈕後移除 <code>.ubtn-gate-locked</code>，內容完整可見，捲動恢復。<br>
+        再次點擊可重新鎖定，示範雙向切換。
+      </div>
+    </div>
+    <div style="font-size:0.84rem;color:rgba(198,199,189,0.48);width:100%">
+      真實使用：<code>&lt;ui-btn scroll-gate theme="indigo"&gt;解鎖&lt;/ui-btn&gt;</code> — 
+      組件會在 window 層級綁定 wheel / touchmove / keydown 事件，防止使用者捲過按鈕位置。
+    </div>
+  </div>
+</div>
+
+<!-- 9. unlock-chunk -->
+<div class="demo-card">
+  <div class="card-title">
+    解鎖 Chunk
+    <span class="attr-chip">unlock-chunk="demoId:chunkIdx, ..."</span>
+  </div>
+  <p class="card-desc">
+    按鈕展開時呼叫目標元素的 <code>.unlockChunk(idx)</code>；收合時呼叫 <code>.lockChunk(idx)</code>。多組以逗號分隔。目標元素需自行實作這兩個方法（通常由 chunk-demo.js 提供，此演示在頁面中自訂實作）。
+  </p>
+  <div class="demo-box col" style="gap:10px">
+    <div class="flex-row">
+      <ui-btn unlock-chunk="uc-box:0" theme="ocean" icon="bi-unlock-fill">解鎖 Chunk 0</ui-btn>
+      <div class="rbox rbox-ocean" style="display:none">unlock-chunk="uc-box:0"：展開時呼叫 document.getElementById("uc-box").unlockChunk(0)</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn unlock-chunk="uc-box:1" theme="lavender" icon="bi-unlock-fill">解鎖 Chunk 1</ui-btn>
+      <div class="rbox rbox-lavender" style="display:none">unlock-chunk="uc-box:1"：同樣方式解鎖第二個 slot。</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn unlock-chunk="uc-box:2" theme="special" icon="bi-unlock-fill">解鎖 Chunk 2</ui-btn>
+      <div class="rbox rbox-special" style="display:none">unlock-chunk="uc-box:2"：解鎖第三個 slot。</div>
+    </div>
+    <div class="flex-row">
+      <ui-btn unlock-chunk="uc-box:0,uc-box:1,uc-box:2" theme="yellow" icon="bi-unlock">一次解鎖全部</ui-btn>
+      <div class="rbox rbox-yellow" style="display:none">unlock-chunk="uc-box:0,uc-box:1,uc-box:2"：逗號分隔，一次解鎖多個 chunk。</div>
+    </div>
+    <div id="uc-box" class="chunk-unlock-area">
+      <div class="chunk-slot-item" data-slot="0"><i class="bi bi-lock"></i><br>Chunk 0<br><small>（鎖定中）</small></div>
+      <div class="chunk-slot-item" data-slot="1"><i class="bi bi-lock"></i><br>Chunk 1<br><small>（鎖定中）</small></div>
+      <div class="chunk-slot-item" data-slot="2"><i class="bi bi-lock"></i><br>Chunk 2<br><small>（鎖定中）</small></div>
+    </div>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     UiBtn.alert() API
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-alert"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(227,211,34,0.1)">
+    <i class="bi bi-bell-fill" style="color:var(--yellow)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--yellow)">UiBtn.alert() API</h2>
+    <p>程式化呼叫的浮動提示訊息，支援位置、主題、圖示、寬度、計時與手動關閉</p>
+  </div>
+  <span class="comp-tag" style="color:var(--yellow);border-color:rgba(227,211,34,0.28)">UiBtn.alert()</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    位置 <span class="attr-chip">position:'top'</span> <span class="attr-chip">position:'bottom'</span>
+  </div>
+  <div class="demo-box" style="gap:10px">
+    <button class="abtn" onclick="UiBtn.alert('這是頂部 alert 訊息', {position:'top',theme:'ocean',duration:3000})">
+      <i class="bi bi-arrow-up-circle"></i> position: 'top'
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('這是底部 alert 訊息', {position:'bottom',theme:'teal',duration:3000})">
+      <i class="bi bi-arrow-down-circle"></i> position: 'bottom'
+    </button>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">主題色 <span class="attr-chip">theme: '色票名'</span></div>
+  <div class="demo-box" style="gap:9px;flex-wrap:wrap">
+    <button class="abtn" onclick="UiBtn.alert('ocean 主題',{theme:'ocean',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1CCAE8"></span>ocean
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('lavender 主題',{theme:'lavender',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#C3A5E5"></span>lavender
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('special 主題',{theme:'special',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#B3DE73"></span>special
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('warning 主題',{theme:'warning',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E6374B"></span>warning
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('salmon 主題',{theme:'salmon',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E5C3B3"></span>salmon
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('yellow 主題',{theme:'yellow',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E3D322"></span>yellow
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('teal 主題',{theme:'teal',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0DA591"></span>teal
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('indigo 主題',{theme:'indigo',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7849C9"></span>indigo
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('pink 主題',{theme:'pink',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF91D7"></span>pink
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('orange 主題',{theme:'orange',duration:2500})">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#EDA109"></span>orange
+    </button>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">圖示 <span class="attr-chip">icon:'bi-*'</span></div>
+  <div class="demo-box" style="gap:10px;flex-wrap:wrap">
+    <button class="abtn" onclick="UiBtn.alert('檔案已儲存成功',{theme:'special',icon:'bi-check-circle-fill',duration:3000})">
+      <i class="bi bi-check-circle-fill"></i> 成功
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('網路連線中斷',{theme:'warning',icon:'bi-wifi-off',duration:3000})">
+      <i class="bi bi-wifi-off"></i> 警告
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('3 則新訊息',{theme:'ocean',icon:'bi-envelope-fill',duration:3000})">
+      <i class="bi bi-envelope-fill"></i> 通知
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('系統正在更新中',{theme:'indigo',icon:'bi-arrow-repeat',duration:3000})">
+      <i class="bi bi-arrow-repeat"></i> 資訊
+    </button>
+    <button class="abtn" onclick="UiBtn.alert('操作已復原',{theme:'salmon',icon:'bi-arrow-counterclockwise',duration:3000})">
+      <i class="bi bi-arrow-counterclockwise"></i> 復原
+    </button>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    持續時間與寬度
+    <span class="attr-chip">duration: ms</span>
+    <span class="attr-chip">width:'400px'</span>
+  </div>
+  <div class="demo-box" style="gap:10px;flex-wrap:wrap">
+    <button class="abtn" onclick="UiBtn.alert('1.5 秒後自動消失',{theme:'teal',duration:1500})">1.5s 自動關閉</button>
+    <button class="abtn" onclick="UiBtn.alert('duration:0，不自動關閉，請手動點 × 關閉',{theme:'lavender',duration:0})">不自動關閉（duration:0）</button>
+    <button class="abtn" onclick="UiBtn.alert('此條 alert 使用 width:\"520px\" 固定寬度，長文字自動換行顯示而不截斷。',{theme:'yellow',width:'520px',duration:5000})">固定寬度 520px</button>
+    <button class="abtn" onclick="UiBtn.alert('底部 + 寬度 + icon',{position:'bottom',theme:'orange',icon:'bi-star-fill',width:'380px',duration:4000})">底部＋寬度組合</button>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    程式關閉與全清除
+    <span class="attr-chip">handle.dismiss()</span>
+    <span class="attr-chip">UiBtn.alert.clear()</span>
+  </div>
+  <p class="card-desc"><code>UiBtn.alert()</code> 回傳含 <code>dismiss()</code> 的物件，可程式化關閉。<code>UiBtn.alert.clear()</code> 清除所有現存 alert。</p>
+  <div class="demo-box" style="gap:10px;flex-wrap:wrap">
+    <button class="abtn" onclick="startDismissDemo()">
+      <i class="bi bi-clock-history"></i> 2s 後程式關閉
+    </button>
+    <button class="abtn" onclick="spawnMultiAlert()">
+      <i class="bi bi-layers"></i> 同時顯示多條
+    </button>
+    <button class="abtn" onclick="UiBtn.alert.clear()" style="border-color:rgba(230,55,75,0.35);color:var(--warning)">
+      <i class="bi bi-eraser-fill"></i> 全部清除 clear()
+    </button>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     UiCluster 單層
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-cluster-s"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(13,165,145,0.11)">
+    <i class="bi bi-circle-fill" style="color:var(--teal)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--teal)">ui-cluster 單層模式</h2>
+    <p>主圓圈爆裂後展開平鋪項目清單（直接包含 cluster-item）</p>
+  </div>
+  <span class="comp-tag" style="color:var(--teal);border-color:rgba(13,165,145,0.28)">&lt;ui-cluster&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    基本 + label + reset
+    <span class="attr-chip">label="..."</span>
+    <span class="attr-chip">reset</span>
+  </div>
+  <p class="card-desc">點擊主圓圈觸發爆裂動畫後展開項目列表；<code>label</code> 顯示圓圈下方說明文字；<code>reset</code> 加入右上角重設按鈕。</p>
+  <div class="cluster-stage">
+    <ui-cluster theme="teal" label="技能樹" reset>
+      <cluster-item>設計系統規劃</cluster-item>
+      <cluster-item>前端元件開發</cluster-item>
+      <cluster-item>效能優化策略</cluster-item>
+      <cluster-item>資料視覺化</cluster-item>
+    </ui-cluster>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    尺寸、字體與標籤寬度
+    <span class="attr-chip">size="56px"</span>
+    <span class="attr-chip">size="90px"</span>
+    <span class="attr-chip">font-size="..."</span>
+    <span class="attr-chip">label-gap="..."</span>
+    <span class="attr-chip">label-width="..."</span>
+  </div>
+  <p class="card-desc">
+    <code>size</code> 控制主圓圈直徑；<code>font-size</code> 影響圓圈數字與標籤；<code>label-gap</code> 圓圈到標籤間距；<code>label-width</code> 標籤最大寬度。
+  </p>
+  <div class="cluster-stage">
+    <ui-cluster theme="ocean" size="52px" font-size="0.8rem" label="小型" label-gap="3px" label-width="60px" reset>
+      <cluster-item>Alpha</cluster-item>
+      <cluster-item>Beta</cluster-item>
+      <cluster-item>Gamma</cluster-item>
+    </ui-cluster>
+    <ui-cluster theme="lavender" label="大型叢集" size="90px" font-size="1.15rem" label-gap="6px" label-width="108px" reset>
+      <cluster-item>月亮 Moon</cluster-item>
+      <cluster-item>太陽 Sun</cluster-item>
+      <cluster-item>星星 Star</cluster-item>
+      <cluster-item>海浪 Wave</cluster-item>
+      <cluster-item>森林 Forest</cluster-item>
+    </ui-cluster>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     UiCluster 雙層
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-cluster-d"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(237,161,9,0.11)">
+    <i class="bi bi-diagram-3-fill" style="color:var(--orange)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--orange)">ui-cluster 雙層模式</h2>
+    <p>主圓圈爆裂後顯示多個子節點圓圈，再點各子節點展開其項目列表</p>
+  </div>
+  <span class="comp-tag" style="color:var(--orange);border-color:rgba(237,161,9,0.28)">&lt;cluster-node&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    雙層：子節點各自設色
+    <span class="attr-chip">cluster-node theme="..."</span>
+    <span class="attr-chip">cluster-node label="..."</span>
+  </div>
+  <p class="card-desc">每個 <code>&lt;cluster-node&gt;</code> 可獨立設定 <code>theme/color</code> 與 <code>label</code>；其 <code>label-gap</code> / <code>label-width</code> 優先於父層設定。</p>
+  <div class="cluster-stage">
+    <ui-cluster theme="orange" label="部門" gap="36px" reset>
+      <cluster-node theme="ocean" label="業務部">
+        <cluster-item>客戶開發</cluster-item>
+        <cluster-item>合約管理</cluster-item>
+        <cluster-item>業績追蹤</cluster-item>
+      </cluster-node>
+      <cluster-node theme="lavender" label="設計部">
+        <cluster-item>品牌視覺</cluster-item>
+        <cluster-item>UX 研究</cluster-item>
+        <cluster-item>原型製作</cluster-item>
+      </cluster-node>
+      <cluster-node theme="special" label="技術部">
+        <cluster-item>前端開發</cluster-item>
+        <cluster-item>後端架構</cluster-item>
+        <cluster-item>DevOps</cluster-item>
+        <cluster-item>QA 測試</cluster-item>
+      </cluster-node>
+    </ui-cluster>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    進階：node-size / gap / node-label-gap / node-label-width
+    <span class="attr-chip">node-size="52px"</span>
+    <span class="attr-chip">gap="52px"</span>
+    <span class="attr-chip">node-label-gap="8px"</span>
+    <span class="attr-chip">node-label-width="90px"</span>
+  </div>
+  <div class="cluster-stage">
+    <ui-cluster
+      theme="salmon"
+      size="80px"
+      node-size="54px"
+      gap="52px"
+      font-size="0.9rem"
+      label="產品線"
+      label-width="90px"
+      node-label-gap="8px"
+      node-label-width="90px"
+      reset>
+      <cluster-node theme="teal" label="核心產品 A" label-width="90px">
+        <cluster-item>功能模組 1</cluster-item>
+        <cluster-item>功能模組 2</cluster-item>
+      </cluster-node>
+      <cluster-node theme="indigo" label="進階產品 B" label-width="90px">
+        <cluster-item>附加插件</cluster-item>
+        <cluster-item>API 整合</cluster-item>
+        <cluster-item>報表工具</cluster-item>
+      </cluster-node>
+      <cluster-node theme="yellow" label="企業版 C" label-width="90px">
+        <cluster-item>白標方案</cluster-item>
+        <cluster-item>專屬客服</cluster-item>
+        <cluster-item>SLA 保障</cluster-item>
+      </cluster-node>
+    </ui-cluster>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     text-morph
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-morph"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(130,200,229,0.11)">
+    <i class="bi bi-arrow-left-right" style="color:var(--sky)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--sky)">text-morph 文字切換</h2>
+    <p>在原始版本與升級版本之間淡入淡出，帶主題色狀態標章</p>
+  </div>
+  <span class="comp-tag" style="color:var(--sky);border-color:rgba(130,200,229,0.28)">&lt;text-morph&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    基本切換
+    <span class="attr-chip">theme="sky"</span>
+    <span class="attr-chip">duration="400"</span>
+    <span class="attr-chip">label-from="..."</span>
+    <span class="attr-chip">label-to="..."</span>
+  </div>
+  <p class="card-desc">點擊標章在兩個版本間切換。已升級顯示綠色（safe），可再切換顯示原始主題色。morph-from / morph-to 內可包含任意 HTML。</p>
+  <div class="reading-area">
+    <text-morph theme="sky" duration="400" label-from="← 還原原版" label-to="看強化版 →">
+      <morph-from>
+        <p>一般說法：這個功能很好用，可以幫助使用者完成任務。系統回應速度尚可，整體體驗不錯。</p>
+      </morph-from>
+      <morph-to>
+        <p>強化說法：此功能以<strong>直覺化操作流程</strong>降低學習曲線，讓使用者在 <em>30 秒內</em>完成核心任務。系統以毫秒級回應維持流暢體驗，用戶滿意度較前版提升 <strong style="color:#82C8E5">47%</strong>。</p>
+      </morph-to>
+    </text-morph>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    自訂主題色與更慢速度
+    <span class="attr-chip">theme="lavender"</span>
+    <span class="attr-chip">duration="700"</span>
+  </div>
+  <div class="reading-area">
+    <text-morph theme="lavender" duration="700" label-from="← 回到草稿" label-to="看正式版 →">
+      <morph-from>
+        <p>草稿：這份報告整理了本季的銷售數字，整體來說還不錯，有些地方可以再改進。</p>
+      </morph-from>
+      <morph-to>
+        <p>正式版：本季銷售報告顯示總業績成長 <strong>23%</strong>，超越年度目標 8 個百分點。三大核心市場均達標，其中北部區域表現尤為突出，較去年同期成長 <strong style="color:#C3A5E5">38%</strong>。建議下季加大北部投入以鞏固優勢。</p>
+      </morph-to>
+    </text-morph>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     margin-pin
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-pin"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(227,211,34,0.1)">
+    <i class="bi bi-pin-fill" style="color:var(--yellow)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--yellow)">margin-pin 邊注解</h2>
+    <p>滑鼠懸停關鍵詞時在右側顯示浮動注釋，帶虛線連接線</p>
+  </div>
+  <span class="comp-tag" style="color:var(--yellow);border-color:rgba(227,211,34,0.28)">&lt;margin-pin&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    填色 vs 外框樣式
+    <span class="attr-chip">theme="yellow"</span>
+    <span class="attr-chip">theme="ocean-outline"</span>
+    <span class="attr-chip">note="..."</span>
+  </div>
+  <p class="card-desc">主題名稱加 <code>-outline</code> 後綴即切換為外框風格（深色背景＋彩色文字邊框）。note 屬性支援 HTML 富文字。</p>
+  <div class="reading-area">
+    <p>
+      在這段文字中，
+      <margin-pin theme="yellow" note="填色風格：背景使用主題色，文字用深色（#0C0D0C）。懸停後右側顯示此注釋，並帶虛線連接線。">這個術語</margin-pin>
+      需要額外說明。而
+      <margin-pin theme="ocean-outline" note="外框風格（theme-outline）：深色背景 + 主題色邊框與文字。適合已有強調色彩的段落。">這個概念</margin-pin>
+      也值得關注。
+    </p>
+    <p style="margin-top:14px">
+      多個 pin 並存示例：
+      <margin-pin theme="lavender" note="薰衣草色填色注釋，note 支援多行說明文字。">薰衣草注釋</margin-pin>、
+      <margin-pin theme="teal-outline" note="青色外框注釋。多個 pin 各自獨立觸發，彼此不衝突。">青色外框</margin-pin>、
+      <margin-pin theme="salmon" note="鮭魚色填色。三個 pin 同時懸停只顯示最後觸發的那個。">鮭魚色</margin-pin>。
+    </p>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     read-pulse
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-pulse"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(13,165,145,0.11)">
+    <i class="bi bi-bar-chart-fill" style="color:var(--teal)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--teal)">read-pulse 閱讀進度條</h2>
+    <p>段落左側彩色條動畫，可由進入可視區、點擊或懸停觸發</p>
+  </div>
+  <span class="comp-tag" style="color:var(--teal);border-color:rgba(13,165,145,0.28)">&lt;read-pulse&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    觸發模式
+    <span class="attr-chip">trigger="visible"</span>
+    <span class="attr-chip">trigger="click"</span>
+    <span class="attr-chip">trigger="hover"</span>
+    <span class="attr-chip">repeat</span>
+  </div>
+  <p class="card-desc">visible：進入可視區自動觸發（預設）。click：點擊觸發。hover：移入觸發。加 <code>repeat</code> 屬性可重複播放。</p>
+  <div class="reading-area" style="display:flex;flex-direction:column;gap:20px">
+    <read-pulse color="teal" trigger="visible">
+      <strong style="color:var(--teal)">trigger="visible"（預設）</strong>：此段落進入可視區域後自動播放一次進度條。速度 2800ms，預設不可重複。
+    </read-pulse>
+
+    <read-pulse color="ocean" trigger="click" repeat>
+      <strong style="color:#1CCAE8">trigger="click" + repeat</strong>：點擊此段落觸發動畫。加 <code>repeat</code> 屬性，每次點擊均可重新播放。
+    </read-pulse>
+
+    <read-pulse color="lavender" trigger="hover">
+      <strong style="color:#C3A5E5">trigger="hover"</strong>：滑鼠移入此段落即觸發動畫（無 repeat，離開後再移入不會再次觸發）。
+    </read-pulse>
+
+    <read-pulse color="salmon" trigger="click" repeat speed="4500">
+      <strong style="color:#E5C3B3">trigger="click" + repeat + speed="4500"</strong>：點擊觸發，速度 4.5 秒，適合配合長段落閱讀節奏。
+    </read-pulse>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    進度條寬度與間距
+    <span class="attr-chip">pulse-width="5px"</span>
+    <span class="attr-chip">gap="22px"</span>
+    <span class="attr-chip">speed="1200"</span>
+  </div>
+  <div class="reading-area" style="display:flex;flex-direction:column;gap:20px">
+    <read-pulse color="yellow" trigger="click" speed="1200" repeat pulse-width="5px" gap="20px">
+      <strong style="color:#E3D322">pulse-width="5px" / speed="1200" / gap="20px"</strong>：點擊觸發。1.2 秒快速掃過，進度條粗（5px），文字與條之間距 20px。
+    </read-pulse>
+
+    <read-pulse color="special" trigger="click" repeat pulse-width="2px" gap="10px">
+      <strong style="color:#B3DE73">pulse-width="2px" / gap="10px"</strong>：細條（2px），緊湊間距，視覺更低調。
+    </read-pulse>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     chalk-mark
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-chalk"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(211,255,252,0.08)">
+    <i class="bi bi-pen-fill" style="color:var(--focus)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--focus)">chalk-mark 粉筆弧線</h2>
+    <p>點擊文字後以 SVG 動畫繪製拋物線下劃線，再次點擊消除</p>
+  </div>
+  <span class="comp-tag" style="color:var(--focus);border-color:rgba(211,255,252,0.22)">&lt;chalk-mark&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    點擊切換 + 預設啟動
+    <span class="attr-chip">theme="..."</span>
+    <span class="attr-chip">thickness="..."</span>
+    <span class="attr-chip">duration="..."</span>
+    <span class="attr-chip">active</span>
+  </div>
+  <p class="card-desc">點擊標記文字顯示粉筆弧線，再次點擊消除。<code>active</code> 屬性讓標記在頁面載入後即顯示。</p>
+  <div class="reading-area" style="font-size:1.1rem;line-height:1.6">
+    <p>請點擊以下關鍵詞進行標記：
+      <chalk-mark theme="yellow" duration="450">關鍵成果指標</chalk-mark>、
+      <chalk-mark theme="ocean" thickness="3" duration="350">用戶留存率</chalk-mark>、
+      <chalk-mark theme="lavender" thickness="1.5" duration="650">季度達成率</chalk-mark>、
+      <chalk-mark theme="special" thickness="2.5">技術護城河</chalk-mark>。
+    </p>
+    <p style="margin-top:16px">
+      以下為 <code>active</code> 預設標記：
+      <chalk-mark theme="salmon" active>預設已標記 A</chalk-mark>，
+      以及
+      <chalk-mark theme="teal" active thickness="3.5">預設已標記 B（粗線）</chalk-mark>。
+      點擊任一個可清除，再次點擊重新繪製。
+    </p>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     col-pair
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-colpair"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(255,145,215,0.09)">
+    <i class="bi bi-link-45deg" style="color:var(--pink)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--pink)">col-pair 對應高亮</h2>
+    <p>相同 group 的元素互相連動：懸停任一個，全組同時亮起</p>
+  </div>
+  <span class="comp-tag" style="color:var(--pink);border-color:rgba(255,145,215,0.28)">&lt;col-pair&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    跨段落對應
+    <span class="attr-chip">group="..."</span>
+    <span class="attr-chip">theme="..."</span>
+    <span class="attr-chip">label="..."</span>
+  </div>
+  <p class="card-desc">懸停任一彩色詞彙，同組所有詞彙同時亮起（改色＋頂部小點放大）。<code>label</code> 設置 title tooltip。不同 group 彼此獨立。</p>
+  <div class="reading-area">
+    <p>
+      在這份分析報告中，
+      <col-pair group="g-a" theme="ocean" label="組 A：海洋藍指標（懸停全組亮起）">海洋藍指標</col-pair>
+      代表一季成長，而
+      <col-pair group="g-b" theme="lavender" label="組 B：薰衣草指標">薰衣草指標</col-pair>
+      對應年度累計。
+      另，<col-pair group="g-c" theme="special" label="組 C：特殊色異常值">特殊色系</col-pair>
+      標示超出兩倍標準差的異常值。
+    </p>
+    <p style="margin-top:14px">
+      對照表顯示：<col-pair group="g-a" theme="ocean">海洋藍指標</col-pair>年增 23%；
+      <col-pair group="g-b" theme="lavender">薰衣草指標</col-pair>較基準高 15 個百分點；
+      <col-pair group="g-c" theme="special">特殊色系</col-pair>共 3 個資料點超出範圍。
+    </p>
+    <p style="margin-top:14px">
+      結論：<col-pair group="g-a" theme="ocean">海洋藍</col-pair> /
+      <col-pair group="g-b" theme="lavender">薰衣草</col-pair> /
+      <col-pair group="g-c" theme="special">特殊色</col-pair>
+      三組指標共同驗證假說成立，建議下季延續投入策略。
+    </p>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     chunk-spot
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-chunk"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(237,161,9,0.1)">
+    <i class="bi bi-grid-3x3-gap-fill" style="color:var(--orange)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--orange)">chunk-spot 文字聚焦</h2>
+    <p>點擊導覽色點高亮對應 chunk，其餘內容依 dim 值變暗；再次點擊取消</p>
+  </div>
+  <span class="comp-tag" style="color:var(--orange);border-color:rgba(237,161,9,0.28)">&lt;chunk-spot&gt;</span>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    基本高亮
+    <span class="attr-chip">theme="..."</span>
+    <span class="attr-chip">dot-size="13"</span>
+    <span class="attr-chip">dim="0.15"</span>
+    <span class="attr-chip">duration="250"</span>
+  </div>
+  <p class="card-desc">點擊上方導覽色點，對應 chunk 亮起，其餘段落降至 dim 值透明度。再次點擊同一點取消聚焦。</p>
+  <div class="reading-area">
+    <chunk-spot dot-size="13" dim="0.15" duration="250">
+      在這段分析裡，
+      <chunk theme="ocean">收入結構的多元化</chunk>
+      是首要課題。接著，
+      <chunk theme="lavender">成本管控的精細化</chunk>
+      有助提升毛利率。同時，
+      <chunk theme="special">研發投入的集中化</chunk>
+      確保技術護城河持續鞏固。最後，
+      <chunk theme="salmon">市場份額的穩定擴張</chunk>
+      是長期競爭力的根本所在。
+    </chunk-spot>
+  </div>
+</div>
+
+<div class="demo-card">
+  <div class="card-title">
+    chunk label 文字 + label="#id" 注釋彈窗
+    <span class="attr-chip">label="文字"</span>
+    <span class="attr-chip">label="#elementId"</span>
+  </div>
+  <p class="card-desc">
+    <code>label</code> 為純文字時作為色點的 title tooltip；設為 <code>#id</code> 時，懸停色點會從對應隱藏元素讀取 innerHTML，彈出富文字注釋浮層。
+  </p>
+
+  <!-- 隱藏的注釋元素 -->
+  <div id="annot-q1" style="display:none">
+    <strong>Q1 說明</strong>
+    <p>第一季涵蓋 1–3 月，受春節假期影響，客戶決策週期較長。</p>
+    <ul><li>節日行銷機會</li><li>庫存調度重點期</li></ul>
+  </div>
+  <div id="annot-q2" style="display:none">
+    <strong>Q2 說明</strong>
+    <p>第二季 4–6 月市場進入活躍期，是衝刺業績的黃金視窗。</p>
+    <ul><li>新品發布首選時機</li><li>半年度目標衝刺</li></ul>
+  </div>
+  <div id="annot-q3" style="display:none">
+    <strong>Q3 說明</strong>
+    <p>第三季 7–9 月暑期旺季，消費性電子尤其爆發，庫存備貨量應提前 45 天規劃。</p>
+    <ul><li>暑期促銷策略</li><li>學生開學採購潮</li></ul>
+  </div>
+
+  <div class="reading-area">
+    <chunk-spot dot-size="14" dim="0.2">
+      今年業績分布：<chunk theme="teal" label="#annot-q1">Q1 佔 22%</chunk>，
+      屬淡季正常表現；<chunk theme="yellow" label="#annot-q2">Q2 佔 31%</chunk>，
+      超越預期目標；<chunk theme="orange" label="#annot-q3">Q3 佔 28%</chunk>，
+      暑期旺季帶動顯著成長；第四季數字尚待彙整。
+      <br><br>
+      <span style="font-size:0.85rem;color:rgba(198,199,189,0.48)">懸停色點查看各季注釋（富文字彈窗），點擊色點高亮對應段落。</span>
+    </chunk-spot>
+  </div>
+</div>
+
+<hr class="sec-rule">
+
+<!-- ══════════════════════════════════════════
+     全域 Config
+══════════════════════════════════════════ -->
+<span class="sec-anchor" id="sec-config"></span>
+<div class="sec-header">
+  <div class="sec-icon" style="background:rgba(179,222,115,0.1)">
+    <i class="bi bi-sliders" style="color:var(--special)"></i>
+  </div>
+  <div class="sec-title">
+    <h2 style="color:var(--special)">全域 Config 設定</h2>
+    <p>三個命名空間允許在載入 ui-plus.js 前預設所有元件的初始屬性</p>
+  </div>
+</div>
+
+<!-- UiBtnConfig -->
+<div class="demo-card">
+  <div class="card-title" style="margin-bottom:12px">UiBtnConfig</div>
+  <table class="cfg-table">
+    <thead>
+      <tr><th>屬性鍵</th><th>預設值</th><th>說明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="cfg-key">theme</td><td class="cfg-val">'shell'</td><td class="cfg-desc">預設主題色（BRAND 色票或 hex）</td></tr>
+      <tr><td class="cfg-key">size</td><td class="cfg-val">'md'</td><td class="cfg-desc">'sm' / 'md' / 'lg'</td></tr>
+      <tr><td class="cfg-key">variant</td><td class="cfg-val">'fill'</td><td class="cfg-desc">'fill' / 'outline' / 'ghost'</td></tr>
+      <tr><td class="cfg-key">animation</td><td class="cfg-val">'slide'</td><td class="cfg-desc">'slide' / 'fade' / 'none'</td></tr>
+      <tr><td class="cfg-key">animDuration</td><td class="cfg-val">320</td><td class="cfg-desc">動畫毫秒數</td></tr>
+      <tr><td class="cfg-key">chevron</td><td class="cfg-val">false</td><td class="cfg-desc">全域啟用 chevron 箭頭</td></tr>
+    </tbody>
+  </table>
+  <div class="code-blk"><span class="c-comment">// 在 &lt;script src="ui-plus.js"&gt; 之前設定：</span>
+window.UiBtnConfig = {
+  <span class="c-attr">theme</span>:        <span class="c-val">'ocean'</span>,
+  <span class="c-attr">variant</span>:      <span class="c-val">'outline'</span>,
+  <span class="c-attr">animation</span>:    <span class="c-val">'fade'</span>,
+  <span class="c-attr">animDuration</span>: <span class="c-val">400</span>,
+  <span class="c-attr">chevron</span>:      <span class="c-val">true</span>
+};</div>
+</div>
+
+<!-- UiClusterConfig -->
+<div class="demo-card">
+  <div class="card-title" style="margin-bottom:12px">UiClusterConfig</div>
+  <table class="cfg-table">
+    <thead>
+      <tr><th>屬性鍵</th><th>預設值</th><th>說明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="cfg-key">theme</td><td class="cfg-val">'shell'</td><td class="cfg-desc">主圓圈預設主題色</td></tr>
+      <tr><td class="cfg-key">size</td><td class="cfg-val">'72px'</td><td class="cfg-desc">主圓圈直徑</td></tr>
+      <tr><td class="cfg-key">nodeSize</td><td class="cfg-val">'56px'</td><td class="cfg-desc">子節點圓圈直徑</td></tr>
+      <tr><td class="cfg-key">gap</td><td class="cfg-val">'24px'</td><td class="cfg-desc">子節點排列間距</td></tr>
+      <tr><td class="cfg-key">fontSize</td><td class="cfg-val">'1rem'</td><td class="cfg-desc">圓圈數字與標籤字體</td></tr>
+      <tr><td class="cfg-key">labelGap</td><td class="cfg-val">'4px'</td><td class="cfg-desc">主圓圈到標籤的距離</td></tr>
+      <tr><td class="cfg-key">labelWidth</td><td class="cfg-val">'90px'</td><td class="cfg-desc">主圓圈標籤最大寬度</td></tr>
+      <tr><td class="cfg-key">nodeLabelGap</td><td class="cfg-val">'6px'</td><td class="cfg-desc">子節點標籤間距</td></tr>
+      <tr><td class="cfg-key">nodeLabelWidth</td><td class="cfg-val">'76px'</td><td class="cfg-desc">子節點標籤最大寬度</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- UiReadingConfig -->
+<div class="demo-card">
+  <div class="card-title" style="margin-bottom:12px">UiReadingConfig</div>
+  <table class="cfg-table">
+    <thead>
+      <tr><th>屬性鍵</th><th>預設值</th><th>說明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="cfg-key">morphTheme</td><td class="cfg-val">'sky'</td><td class="cfg-desc">text-morph 標章預設色</td></tr>
+      <tr><td class="cfg-key">morphDuration</td><td class="cfg-val">380</td><td class="cfg-desc">text-morph 切換動畫毫秒</td></tr>
+      <tr><td class="cfg-key">morphLabelFrom</td><td class="cfg-val">'← 還原'</td><td class="cfg-desc">標章「還原」文字</td></tr>
+      <tr><td class="cfg-key">morphLabelTo</td><td class="cfg-val">'看升級版 →'</td><td class="cfg-desc">標章「升級版」文字</td></tr>
+      <tr><td class="cfg-key">pinTheme</td><td class="cfg-val">'yellow'</td><td class="cfg-desc">margin-pin 預設色</td></tr>
+      <tr><td class="cfg-key">pinMargin</td><td class="cfg-val">20</td><td class="cfg-desc">注釋距右側邊距（px）</td></tr>
+      <tr><td class="cfg-key">pinWidth</td><td class="cfg-val">210</td><td class="cfg-desc">注釋最大寬度（px）</td></tr>
+      <tr><td class="cfg-key">pulseColor</td><td class="cfg-val">'teal'</td><td class="cfg-desc">read-pulse 預設顏色</td></tr>
+      <tr><td class="cfg-key">pulseSpeed</td><td class="cfg-val">2800</td><td class="cfg-desc">read-pulse 動畫毫秒</td></tr>
+      <tr><td class="cfg-key">pulseWidth</td><td class="cfg-val">'3px'</td><td class="cfg-desc">進度條寬度</td></tr>
+      <tr><td class="cfg-key">pulseGap</td><td class="cfg-val">14</td><td class="cfg-desc">進度條到文字的間距（px）</td></tr>
+      <tr><td class="cfg-key">pulseTrigger</td><td class="cfg-val">'visible'</td><td class="cfg-desc">'visible' / 'click' / 'hover'</td></tr>
+      <tr><td class="cfg-key">chalkTheme</td><td class="cfg-val">'focus'</td><td class="cfg-desc">chalk-mark 預設色</td></tr>
+      <tr><td class="cfg-key">chalkThickness</td><td class="cfg-val">2.5</td><td class="cfg-desc">粉筆線條粗細（px）</td></tr>
+      <tr><td class="cfg-key">chalkDuration</td><td class="cfg-val">420</td><td class="cfg-desc">繪製動畫毫秒</td></tr>
+      <tr><td class="cfg-key">chunkDotSize</td><td class="cfg-val">11</td><td class="cfg-desc">chunk-spot 色點大小（px）</td></tr>
+      <tr><td class="cfg-key">chunkDim</td><td class="cfg-val">0.22</td><td class="cfg-desc">非選中段落透明度（0–1）</td></tr>
+      <tr><td class="cfg-key">chunkTransition</td><td class="cfg-val">300</td><td class="cfg-desc">過渡動畫毫秒</td></tr>
+      <tr><td class="cfg-key">chunkTheme</td><td class="cfg-val">''</td><td class="cfg-desc">chunk 預設色（空值循環調色盤）</td></tr>
+    </tbody>
+  </table>
+  <div class="code-blk"><span class="c-comment">// 範例：統一改為薰衣草風格</span>
+window.UiReadingConfig = {
+  <span class="c-attr">morphTheme</span>:    <span class="c-val">'lavender'</span>,
+  <span class="c-attr">pinTheme</span>:      <span class="c-val">'ocean'</span>,
+  <span class="c-attr">pulseColor</span>:    <span class="c-val">'special'</span>,
+  <span class="c-attr">chalkTheme</span>:    <span class="c-val">'yellow'</span>,
+  <span class="c-attr">chunkDim</span>:      <span class="c-val">0.15</span>,
+  <span class="c-attr">chunkDotSize</span>:  <span class="c-val">13</span>
+};</div>
+</div>
+
+<!-- API 快查 -->
+<div class="demo-card">
+  <div class="card-title" style="margin-bottom:12px">公開 API 快查</div>
+  <table class="cfg-table">
+    <thead>
+      <tr><th>呼叫方式</th><th>說明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="cfg-key">UiCluster.init()</td><td class="cfg-desc">重新掃描並初始化頁面上所有 &lt;ui-cluster&gt;</td></tr>
+      <tr><td class="cfg-key">UiCluster.config</td><td class="cfg-desc">存取當前 UiClusterConfig 物件</td></tr>
+      <tr><td class="cfg-key">UiReading.init()</td><td class="cfg-desc">重新掃描並初始化所有閱讀元件</td></tr>
+      <tr><td class="cfg-key">UiReading.config</td><td class="cfg-desc">存取當前 UiReadingConfig 物件</td></tr>
+      <tr><td class="cfg-key">UiBtn.init()</td><td class="cfg-desc">重新掃描並初始化所有 &lt;ui-btn&gt;</td></tr>
+      <tr><td class="cfg-key">UiBtn.config</td><td class="cfg-desc">存取當前 UiBtnConfig 物件</td></tr>
+      <tr><td class="cfg-key">UiBtn.alert(msg, opts)</td><td class="cfg-desc">顯示浮動 alert，opts: { position, theme, duration, icon, width }；回傳 { dismiss }</td></tr>
+      <tr><td class="cfg-key">UiBtn.alert.clear()</td><td class="cfg-desc">立即清除所有現存 alert</td></tr>
+      <tr><td class="cfg-key">UiCluster.colors</td><td class="cfg-desc">存取 BRAND 色票物件（與 UiReading.colors / UiBtn.colors 相同）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+</div><!-- .demo-layout -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="./ui-plus.js"></script>
+<script>
+'use strict';
+
+/* ── unlock-chunk 自訂實作 ── */
+(function () {
+  var box = document.getElementById('uc-box');
+  if (!box) return;
+  var slots = Array.from(box.querySelectorAll('.chunk-slot-item'));
+
+  box.unlockChunk = function (idx) {
+    var s = slots[idx];
+    if (!s) return;
+    s.classList.add('unlocked');
+    s.innerHTML = '<i class="bi bi-unlock-fill"></i><br>Chunk ' + idx + '<br><small>（已解鎖）</small>';
+  };
+  box.lockChunk = function (idx) {
+    var s = slots[idx];
+    if (!s) return;
+    s.classList.remove('unlocked');
+    s.innerHTML = '<i class="bi bi-lock"></i><br>Chunk ' + idx + '<br><small>（鎖定中）</small>';
+  };
+})();
+
+/* ── scroll-gate 視覺模擬 ── */
+var _gateSimOpen = false;
+function simGateToggle() {
+  _gateSimOpen = !_gateSimOpen;
+  var btn     = document.getElementById('sim-gate-btn');
+  var content = document.getElementById('sim-gate-content');
+  var ico     = document.getElementById('sim-gate-ico');
+  var lbl     = document.getElementById('sim-gate-lbl');
+  if (_gateSimOpen) {
+    btn.classList.remove('gate-cue');
+    btn.classList.add('is-open');
+    btn.style.background = '#0DA591';
+    content.classList.remove('gate-locked');
+    ico.className = 'bi bi-unlock-fill';
+    lbl.textContent = '重新鎖定';
+  } else {
+    btn.classList.add('gate-cue');
+    btn.classList.remove('is-open');
+    btn.style.background = '#7849C9';
+    content.classList.add('gate-locked');
+    ico.className = 'bi bi-lock-fill';
+    lbl.textContent = '解鎖繼續閱讀';
+  }
+}
+
+/* ── alert 演示 ── */
+function startDismissDemo() {
+  var handle = UiBtn.alert('此訊息將在 2 秒後由程式自動關閉 dismiss()', {
+    theme: 'indigo',
+    icon:  'bi-clock-history',
+    duration: 0
+  });
+  setTimeout(function () { handle.dismiss(); }, 2000);
+}
+
+function spawnMultiAlert() {
+  UiBtn.alert('頂部 A — ocean', { theme: 'ocean',   duration: 0 });
+  UiBtn.alert('頂部 B — lavender', { theme: 'lavender', duration: 0 });
+  UiBtn.alert('底部 C — special', { position: 'bottom', theme: 'special', duration: 0 });
+}
+
+/* ── 側邊欄 active 連動 ── */
+(function () {
+  var links   = Array.from(document.querySelectorAll('.nav-link-item'));
+  var anchors = links.map(function (l) {
+    return document.getElementById((l.getAttribute('href') || '').replace('#', ''));
+  });
+
+  if (!('IntersectionObserver' in window)) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var idx = anchors.indexOf(e.target);
+      if (idx < 0) return;
+      links.forEach(function (l) { l.classList.remove('is-active'); });
+      links[idx].classList.add('is-active');
+    });
+  }, { rootMargin: '-15% 0px -72% 0px', threshold: 0 });
+
+  anchors.forEach(function (a) { if (a) io.observe(a); });
+})();
+</script>
+</body>
+</html>

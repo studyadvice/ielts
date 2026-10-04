@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeekCal v2.0 · 自訂元素 Demo</title>
+<style>
+:root{
+  --bg:#0C0D0C; --shell:#C6C7BD; --lavender:#C3A5E5; --sky:#82C8E5;
+  --warning:#E6374B; --salmon:#E5C3B3; --ocean:#1CCAE8; --safe:#27AE60;
+  --teal:#0DA591; --vanilla:#DBEDD8; --yellow:#E3D322; --special:#B3DE73;
+  --info:#2351DB; --indigo:#7849C9; --pink:#FF91D7; --orange:#EDA109;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:18px;line-height:1.5;background:var(--bg);color:var(--shell);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif}
+body{min-height:100vh;padding:0 0 80px}
+
+.site-header{
+  background:rgba(12,13,12,0.96);border-bottom:1px solid rgba(198,199,189,0.12);
+  padding:20px 40px;display:flex;align-items:center;gap:16px;
+  position:sticky;top:0;z-index:100}
+.site-header h1{font-size:1.2rem;font-weight:700;color:var(--lavender);letter-spacing:.02em}
+.badge{display:inline-block;background:rgba(195,165,229,0.15);color:var(--lavender);
+  border:1px solid rgba(195,165,229,0.35);border-radius:6px;padding:2px 10px;
+  font-size:.68rem;font-weight:700;letter-spacing:.06em;margin-left:4px;vertical-align:middle}
+.hdr-sub{color:rgba(198,199,189,0.40);font-size:.78rem}
+
+.main{max-width:1400px;margin:0 auto;padding:40px 40px 0}
+.sec{font-size:.68rem;font-weight:700;color:rgba(198,199,189,0.45);
+  letter-spacing:.14em;text-transform:uppercase;
+  margin:0 0 20px;padding-bottom:8px;border-bottom:1px solid rgba(198,199,189,0.09)}
+.mb48{margin-bottom:48px}
+.mt16{margin-top:16px}
+.mt12{margin-top:12px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;margin-bottom:48px}
+
+.code{background:rgba(198,199,189,0.05);border:1px solid rgba(198,199,189,0.11);
+  border-radius:12px;padding:20px 24px;font-size:.72rem;line-height:1.75;
+  color:rgba(198,199,189,0.82);font-family:"SF Mono","Fira Code",Consolas,monospace;
+  overflow-x:auto;white-space:pre}
+.ct{color:var(--sky)}.ca{color:var(--lavender)}.cv{color:var(--salmon)}
+.cc{color:rgba(198,199,189,0.35)}
+
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:48px}
+.tbl th{text-align:left;padding:10px 16px;color:rgba(198,199,189,0.45);
+  font-size:.67rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  border-bottom:1px solid rgba(198,199,189,0.11)}
+.tbl td{padding:10px 16px;border-bottom:1px solid rgba(198,199,189,0.07);
+  color:var(--shell);vertical-align:top;line-height:1.5}
+.tbl td:first-child,.tbl td:nth-child(2){font-family:"SF Mono","Fira Code",Consolas,monospace;font-size:.72rem}
+.tbl td:first-child{color:var(--sky)}
+.tbl td:nth-child(2){color:var(--salmon)}
+.tbl td:nth-child(3){color:rgba(198,199,189,0.65)}
+.tbl tr:hover td{background:rgba(198,199,189,0.03)}
+
+/* 主題畫廊 */
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:24px}
+.chip{border-radius:10px;overflow:hidden;cursor:pointer;
+  border:2px solid transparent;transition:border-color .18s,transform .13s}
+.chip:hover{transform:translateY(-2px)}
+.chip.active{border-color:rgba(198,199,189,0.85)}
+.chip-swatch{height:52px;display:flex;align-items:center;justify-content:space-around;padding:0 10px}
+.chip-dot{width:16px;height:16px;border-radius:50%}
+.chip-name{text-align:center;padding:6px;font-size:.66rem;font-weight:700;
+  letter-spacing:.07em;color:#fff}
+
+/* aurora 漸層 chip 特殊樣式 */
+.chip[data-t="aurora"] .chip-name{
+  background:linear-gradient(90deg,rgba(12,13,30,0.9),rgba(9,20,32,0.9))}
+.chip[data-t="aurora"] .chip-swatch{
+  background:linear-gradient(160deg,#0C0D1E 0%,#0D1525 60%,#091420 100%)}
+
+.board{background:rgba(198,199,189,0.05);border:1px solid rgba(198,199,189,0.09);
+  border-radius:14px;padding:26px 30px;min-height:100px}
+.ph{color:rgba(198,199,189,0.28);font-style:italic;font-size:.85rem;text-align:center;padding:20px 0}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:6px}
+.card p{color:rgba(198,199,189,0.76);font-size:.85rem;line-height:1.6}
+.tag{display:inline-block;border-radius:6px;padding:2px 10px;font-size:.67rem;font-weight:700;margin:6px 6px 0 0}
+
+/* icon 模式說明卡 */
+.icon-note{background:rgba(195,165,229,0.08);border:1px solid rgba(195,165,229,0.20);
+  border-radius:12px;padding:16px 20px;font-size:.8rem;color:rgba(198,199,189,0.80);
+  margin-bottom:12px;line-height:1.7}
+.icon-note strong{color:var(--lavender)}
+.icon-note code{background:rgba(130,200,229,0.12);color:var(--sky);
+  border-radius:4px;padding:1px 6px;font-family:"SF Mono","Fira Code",Consolas,monospace;
+  font-size:.75rem}
+
+/* 漸層主題說明 */
+.grad-note{background:linear-gradient(135deg,rgba(12,13,30,0.6) 0%,rgba(9,20,32,0.6) 100%);
+  border:1px solid rgba(195,165,229,0.25);border-radius:14px;
+  padding:20px 24px;margin-bottom:20px;font-size:.8rem;line-height:1.8;
+  color:rgba(212,240,255,0.85)}
+.grad-note strong{color:var(--lavender)}
+.grad-note code{background:rgba(28,202,232,0.12);color:var(--sky);
+  border-radius:4px;padding:1px 6px;font-family:"SF Mono","Fira Code",Consolas,monospace;font-size:.73rem}
+
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.btn{border:none;border-radius:8px;padding:7px 16px;font-size:.76rem;font-weight:700;
+  cursor:pointer;transition:opacity .13s,transform .11s;letter-spacing:.02em}
+.btn:hover{opacity:.82;transform:translateY(-1px)}
+.btn:active{transform:none}
+.b-lav{background:var(--lavender);color:#0C0D0C}
+.b-sky{background:var(--sky);color:#0C0D0C}
+.b-teal{background:var(--teal);color:#0C0D0C}
+.b-warn{background:var(--warning);color:#fff}
+.b-safe{background:var(--safe);color:#fff}
+.b-ocean{background:var(--ocean);color:#0C0D0C}
+.b-shell{background:rgba(198,199,189,0.13);color:var(--shell);border:1px solid rgba(198,199,189,0.22)}
+.b-yellow{background:var(--yellow);color:#0C0D0C}
+.b-pink{background:var(--pink);color:#0C0D0C}
+.b-aurora{background:linear-gradient(135deg,#C3A5E5,#1CCAE8);color:#0C0D0C}
+
+.alert{border-radius:10px;padding:11px 16px;font-size:.78rem;margin-top:10px;display:none}
+.alert.show{display:block}
+.a-info{background:rgba(35,81,219,0.16);color:#82A4F5;border:1px solid rgba(35,81,219,0.32)}
+.a-safe{background:rgba(39,174,96,0.16);color:#6FCF97;border:1px solid rgba(39,174,96,0.30)}
+
+.src{display:none}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>WeekCal <span class="badge">v2.0</span></h1>
+  <span class="hdr-sub">自訂元素 &lt;week-cal&gt; · Custom Elements v1 · 無 Shadow DOM · 無外部依賴</span>
+</header>
+
+<main class="main">
+
+<!-- ① 最基本用法 -->
+<div class="sec">① 最基本用法 — 純 HTML，零 JavaScript</div>
+<div class="grid2">
+  <div>
+    <week-cal theme="safe" locale="zh-TW" start-date="today"
+      target="#board-a" animation="fade" show-header highlight-today default-first>
+      <wc-day date="today"     source-id="da1" label="今天"></wc-day>
+      <wc-day date="tomorrow"  source-id="da2"></wc-day>
+      <wc-day date="yesterday" source-id="da3"></wc-day>
+    </week-cal>
+    <div id="board-a" class="board mt16"><div class="ph">← 點擊上方日期</div></div>
+  </div>
+  <pre class="code"><span class="cc">&lt;!-- 這就是全部，連一行 JS 都不需要 --&gt;</span>
+<span class="ct">&lt;week-cal</span>
+  <span class="ca">theme</span>=<span class="cv">"safe"</span>
+  <span class="ca">locale</span>=<span class="cv">"zh-TW"</span>
+  <span class="ca">start-date</span>=<span class="cv">"today"</span>
+  <span class="ca">target</span>=<span class="cv">"#board-a"</span>
+  <span class="ca">animation</span>=<span class="cv">"fade"</span>
+  <span class="ca">show-header</span>
+  <span class="ca">highlight-today</span>
+  <span class="ca">default-first</span>
+<span class="ct">&gt;</span>
+  <span class="ct">&lt;wc-day</span>
+    <span class="ca">date</span>=<span class="cv">"today"</span>
+    <span class="ca">source-id</span>=<span class="cv">"da1"</span>
+    <span class="ca">label</span>=<span class="cv">"今天"</span>
+  <span class="ct">&gt;&lt;/wc-day&gt;</span>
+  <span class="ct">&lt;wc-day</span>
+    <span class="ca">date</span>=<span class="cv">"tomorrow"</span>
+    <span class="ca">source-id</span>=<span class="cv">"da2"</span>
+  <span class="ct">&gt;&lt;/wc-day&gt;</span>
+<span class="ct">&lt;/week-cal&gt;</span></pre>
+</div>
+
+<!-- ② wc-select 事件 -->
+<div class="sec">② 監聽 wc-select 事件（bubbles: true，可在父元素捕捉）</div>
+<div class="grid2">
+  <div>
+    <week-cal id="cal-b" theme="ocean" locale="en"
+      start-date="today" animation="slide" show-header highlight-today>
+      <wc-day date="today"    source-id="db1"></wc-day>
+      <wc-day date="tomorrow" source-id="db2"></wc-day>
+    </week-cal>
+    <div id="alert-b" class="alert a-info"></div>
+  </div>
+  <pre class="code"><span class="ct">&lt;week-cal</span>
+  <span class="ca">id</span>=<span class="cv">"cal-b"</span>
+  <span class="ca">theme</span>=<span class="cv">"ocean"</span>
+  <span class="ca">locale</span>=<span class="cv">"en"</span>
+<span class="ct">&gt;</span>…<span class="ct">&lt;/week-cal&gt;</span>
+
+<span class="cc">// 監聽自訂元素發出的事件</span>
+document
+  .querySelector(<span class="cv">'#cal-b'</span>)
+  .addEventListener(<span class="cv">'wc-select'</span>, e =&gt; {
+    console.log(e.detail.date);
+    console.log(e.detail.sourceId);
+  });</pre>
+</div>
+
+<!-- ③ 元素方法 -->
+<div class="sec">③ 元素方法 .select() / .getConfig() / .refresh()</div>
+<div class="grid2">
+  <div>
+    <week-cal id="cal-c" theme="indigo" locale="zh-TW"
+      start-date="today" target="#board-c" show-header highlight-today>
+      <wc-day date="today"     source-id="dc1" label="今天"></wc-day>
+      <wc-day date="tomorrow"  source-id="dc2" label="明天"></wc-day>
+      <wc-day date="yesterday" source-id="dc3" label="昨天"></wc-day>
+    </week-cal>
+    <div class="btns mt12">
+      <button class="btn b-lav"   onclick="calC().select(iso(0))">選今天</button>
+      <button class="btn b-sky"   onclick="calC().select(iso(1))">選明天</button>
+      <button class="btn b-shell" onclick="showCfg()">getConfig()</button>
+    </div>
+    <div id="alert-c" class="alert a-info"></div>
+    <div id="board-c" class="board mt12"><div class="ph">← 點擊日期或按鈕</div></div>
+  </div>
+  <pre class="code"><span class="cc">// 程式化選取</span>
+document
+  .querySelector(<span class="cv">'#cal-c'</span>)
+  .select(<span class="cv">'2025-09-20'</span>);
+
+<span class="cc">// 取得目前設定</span>
+const cfg = document
+  .querySelector(<span class="cv">'#cal-c'</span>)
+  .getConfig();
+console.log(cfg.theme); <span class="cc">// 'indigo'</span>
+
+<span class="cc">// 動態新增子元素後呼叫</span>
+document
+  .querySelector(<span class="cv">'#cal-c'</span>)
+  .refresh();</pre>
+</div>
+
+<!-- ④ 動態改變屬性 -->
+<div class="sec">④ 動態改變屬性 → attributeChangedCallback 自動重新掛載</div>
+<div class="grid2">
+  <div>
+    <week-cal id="cal-d" theme="dark" locale="zh-TW"
+      start-date="today" show-header highlight-today>
+    </week-cal>
+    <div class="btns mt12">
+      <button class="btn b-shell"  onclick="th('dark')">dark</button>
+      <button class="btn b-lav"    onclick="th('lavender')">lavender</button>
+      <button class="btn b-teal"   onclick="th('teal')">teal</button>
+      <button class="btn b-safe"   onclick="th('safe')">safe</button>
+      <button class="btn b-warn"   onclick="th('pink')">pink</button>
+      <button class="btn b-sky"    onclick="th('sky')">sky</button>
+      <button class="btn b-yellow" onclick="th('yellow')">yellow</button>
+      <button class="btn b-pink"   onclick="th('salmon')">salmon</button>
+      <button class="btn b-aurora" onclick="th('aurora')">aurora ✦</button>
+    </div>
+    <div id="alert-d" class="alert a-safe"></div>
+  </div>
+  <pre class="code"><span class="cc">// 屬性一改，自動重新掛載</span>
+document
+  .querySelector(<span class="cv">'#cal-d'</span>)
+  .setAttribute(<span class="cv">'theme'</span>, <span class="cv">'aurora'</span>);
+
+<span class="cc">// 切換語系</span>
+document
+  .querySelector(<span class="cv">'#cal-d'</span>)
+  .setAttribute(<span class="cv">'locale'</span>, <span class="cv">'en'</span>);
+
+<span class="cc">// attributeChangedCallback 內部流程：
+// 1. WeekCal.destroy(this)  — 清除舊實例
+// 2. WeekCal.init(newOpts)  — 以新屬性重新掛載</span></pre>
+</div>
+
+<!-- ⑤ 全主題一覽 -->
+<div class="sec">⑤ 全主題一覽（v1 保留 6 個 + v2.0 新增 8 個，含漸層主題 aurora）</div>
+<div class="theme-grid" id="gallery"></div>
+<week-cal id="cal-show" theme="dark" locale="zh-TW"
+  start-date="today" show-header highlight-today
+  style="max-width:500px;margin-bottom:20px">
+</week-cal>
+
+<!-- aurora 說明 -->
+<div class="grad-note mb48">
+  <strong>aurora 漸層主題說明：</strong>CSS 自訂屬性（Custom Properties）的值可以是任意合法 CSS 片段，因此
+  <code>calBg</code>、<code>todayBg</code>、<code>selectedBg</code> 三個欄位直接填入
+  <code>linear-gradient(…)</code> 字串即可。這些變數對應的 CSS 規則皆為
+  <code>background: var(--wc-*)</code>，瀏覽器會正確套用漸層。文字色（<code>shell</code>、
+  <code>todayText</code> 等）因為對應 <code>color</code> 屬性，仍須使用純色值。
+  要自訂漸層主題，只需：<br>
+  <code>WeekCal.themes.myGrad = { calBg: 'linear-gradient(…)', todayBg: 'linear-gradient(…)', … }</code>
+</div>
+
+<!-- ⑥ icon 模式 -->
+<div class="sec">⑥ icon 模式 — Bootstrap Icons + 自訂標籤文字（需網路連線載入 CDN）</div>
+<div class="icon-note mb48" style="margin-bottom:16px">
+  設定 <code>mode="icon"</code> 後，元件會自動從 cdnjs 注入 Bootstrap Icons CSS（每頁只注入一次）。
+  <code>&lt;wc-day&gt;</code> 的 <strong>icon</strong> 屬性接受 Bootstrap Icons 名稱，
+  寫 <code>calendar-check</code> 或 <code>bi-calendar-check</code> 均可；
+  <strong>label</strong> 屬性取代日期數字，顯示在圖示下方。
+  <code>disabled</code> 布林屬性讓格子呈現半透明、不可點擊。
+</div>
+<div class="grid2">
+  <div>
+    <week-cal mode="icon" theme="aurora" locale="zh-TW"
+      target="#board-icon" show-header highlight-today default-first>
+      <wc-day date="today"     source-id="di1" icon="calendar-check" label="今天"></wc-day>
+      <wc-day date="tomorrow"  source-id="di2" icon="rocket-takeoff"  label="明天"></wc-day>
+      <wc-day date="yesterday" source-id="di3" icon="clock-history"   label="昨天"></wc-day>
+      <wc-day date="next Mon"  source-id="di4" icon="star"            label="下週一"></wc-day>
+      <wc-day date="next Tue"                  icon="slash-circle"    label="封鎖" disabled></wc-day>
+    </week-cal>
+    <div id="board-icon" class="board mt16"><div class="ph">← 點擊圖示格</div></div>
+  </div>
+  <pre class="code"><span class="cc">&lt;!-- mode="icon" 觸發 Bootstrap Icons 自動注入 --&gt;</span>
+<span class="ct">&lt;week-cal</span>
+  <span class="ca">mode</span>=<span class="cv">"icon"</span>
+  <span class="ca">theme</span>=<span class="cv">"aurora"</span>
+  <span class="ca">locale</span>=<span class="cv">"zh-TW"</span>
+  <span class="ca">target</span>=<span class="cv">"#board-icon"</span>
+  <span class="ca">show-header</span>
+  <span class="ca">highlight-today</span>
+  <span class="ca">default-first</span>
+<span class="ct">&gt;</span>
+  <span class="ct">&lt;wc-day</span> <span class="ca">date</span>=<span class="cv">"today"</span>
+    <span class="ca">source-id</span>=<span class="cv">"di1"</span>
+    <span class="ca">icon</span>=<span class="cv">"calendar-check"</span>
+    <span class="ca">label</span>=<span class="cv">"今天"</span><span class="ct">&gt;&lt;/wc-day&gt;</span>
+  <span class="ct">&lt;wc-day</span> <span class="ca">date</span>=<span class="cv">"tomorrow"</span>
+    <span class="ca">source-id</span>=<span class="cv">"di2"</span>
+    <span class="ca">icon</span>=<span class="cv">"rocket-takeoff"</span>
+    <span class="ca">label</span>=<span class="cv">"明天"</span><span class="ct">&gt;&lt;/wc-day&gt;</span>
+  <span class="ct">&lt;wc-day</span> <span class="ca">date</span>=<span class="cv">"next Mon"</span>
+    <span class="ca">source-id</span>=<span class="cv">"di4"</span>
+    <span class="ca">icon</span>=<span class="cv">"star"</span>
+    <span class="ca">label</span>=<span class="cv">"下週一"</span><span class="ct">&gt;&lt;/wc-day&gt;</span>
+  <span class="ct">&lt;wc-day</span> <span class="ca">date</span>=<span class="cv">"next Tue"</span>
+    <span class="ca">icon</span>=<span class="cv">"slash-circle"</span>
+    <span class="ca">label</span>=<span class="cv">"封鎖"</span>
+    <span class="ca">disabled</span><span class="ct">&gt;&lt;/wc-day&gt;</span>
+<span class="ct">&lt;/week-cal&gt;</span>
+
+<span class="cc">// 命令式等效寫法（v1 API 完全保留）</span>
+WeekCal.init({
+  container: <span class="cv">'#cal'</span>,
+  mode:      <span class="cv">'icon'</span>,
+  theme:     <span class="cv">'aurora'</span>,
+  days: [
+    { date: <span class="cv">'today'</span>,    sourceId: <span class="cv">'di1'</span>,
+      icon: <span class="cv">'calendar-check'</span>, label: <span class="cv">'今天'</span> },
+    { date: <span class="cv">'next Mon'</span>, sourceId: <span class="cv">'di4'</span>,
+      icon: <span class="cv">'star'</span>,           label: <span class="cv">'下週一'</span> },
+    { date: <span class="cv">'next Tue'</span>,
+      icon: <span class="cv">'slash-circle'</span>,   label: <span class="cv">'封鎖'</span>,
+      disabled: <span class="cv">true</span> },
+  ],
+});</pre>
+</div>
+
+<!-- ⑦ days 屬性（JSON 替代 <wc-day>）-->
+<div class="sec">⑦ days 屬性 — JSON 字串替代 &lt;wc-day&gt; 子元素</div>
+<div class="grid2">
+  <div>
+    <week-cal id="cal-json" theme="warm" locale="zh-TW"
+      start-date="today" target="#board-j" show-header highlight-today default-first
+      days='[{"date":"today","sourceId":"dj1","label":"今"},{"date":"tomorrow","sourceId":"dj2","label":"明"},{"date":"yesterday","sourceId":"dj3","label":"昨"}]'>
+    </week-cal>
+    <div id="board-j" class="board mt16"><div class="ph">← 點擊上方日期</div></div>
+  </div>
+  <pre class="code"><span class="ct">&lt;week-cal</span>
+  <span class="ca">theme</span>=<span class="cv">"warm"</span>
+  <span class="ca">days</span>=<span class="cv">'[
+    {"date":"today",
+     "sourceId":"dj1","label":"今"},
+    {"date":"tomorrow",
+     "sourceId":"dj2"},
+    {"date":"yesterday",
+     "sourceId":"dj3","disabled":true}
+  ]'</span>
+<span class="ct">&gt;&lt;/week-cal&gt;</span>
+
+<span class="cc">// 動態更新（attributeChangedCallback 自動觸發）</span>
+el.setAttribute(
+  <span class="cv">'days'</span>,
+  JSON.stringify(newDays)
+);</pre>
+</div>
+
+<!-- ⑧ 屬性對照表 -->
+<div class="sec">⑧ &lt;week-cal&gt; 屬性對照表</div>
+<table class="tbl">
+  <thead><tr><th>HTML 屬性</th><th>v1 config 欄位</th><th>型別</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td>theme</td><td>theme</td><td>string</td><td>主題名稱，對應 WeekCal.themes 中的 key（支援漸層主題 aurora）</td></tr>
+    <tr><td>locale</td><td>locale</td><td>string</td><td>zh-TW / zh-CN / en</td></tr>
+    <tr><td>start-date</td><td>startDate</td><td>string</td><td>任何接受的日期格式</td></tr>
+    <tr><td>end-date</td><td>endDate</td><td>string</td><td>任何接受的日期格式</td></tr>
+    <tr><td>width</td><td>width</td><td>string</td><td>任何 CSS 寬度值，預設 100%</td></tr>
+    <tr><td>show-header</td><td>showHeader</td><td>布林屬性</td><td>省略 = 套用預設值 true；show-header="false" = false</td></tr>
+    <tr><td>highlight-today</td><td>highlightToday</td><td>布林屬性</td><td>省略 = 套用預設值 true</td></tr>
+    <tr><td>default-first</td><td>defaultFirst</td><td>布林屬性</td><td>省略 = 套用預設值 true</td></tr>
+    <tr><td>animation</td><td>animation</td><td>string</td><td>fade / slide / none</td></tr>
+    <tr><td>mode</td><td>mode</td><td>string</td><td>default / icon（icon 模式自動注入 Bootstrap Icons CDN）</td></tr>
+    <tr><td>target</td><td>target</td><td>string</td><td>CSS 選擇器，指向內容注入目標</td></tr>
+    <tr><td>days</td><td>days</td><td>JSON string</td><td>&lt;wc-day&gt; 子元素的替代方案，支援 icon / label / disabled</td></tr>
+  </tbody>
+</table>
+
+<div class="sec">&lt;wc-day&gt; 子元素屬性</div>
+<table class="tbl">
+  <thead><tr><th>屬性</th><th>days[] 欄位</th><th>型別</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td>date</td><td>date</td><td>string（必填）</td><td>日期，任何接受的格式</td></tr>
+    <tr><td>source-id</td><td>sourceId</td><td>string</td><td>要注入內容的來源 div id（省略時格子僅顯示，不可點擊）</td></tr>
+    <tr><td>label</td><td>label</td><td>string</td><td>default 模式：覆蓋星期名稱；icon 模式：圖示下方文字</td></tr>
+    <tr><td>icon</td><td>icon</td><td>string</td><td>Bootstrap Icons 名稱，如 calendar-check、rocket-takeoff（icon 模式）</td></tr>
+    <tr><td>disabled</td><td>disabled</td><td>布林屬性</td><td>半透明顯示，pointer-events: none</td></tr>
+  </tbody>
+</table>
+
+</main>
+
+<!-- 來源 div -->
+<div class="src">
+  <div id="da1"><div class="card"><h3 style="color:var(--safe)">今天的活動</h3><p>每週例行會議，討論本週進度與待辦事項。記得帶上你的筆記！</p></div></div>
+  <div id="da2"><div class="card"><h3 style="color:var(--sky)">明天的行程</h3><p>下午 2 點與設計團隊進行 UI Review，請提前準備好最新版的設計稿。</p></div></div>
+  <div id="da3"><div class="card"><h3 style="color:var(--salmon)">昨天的紀錄</h3><p>完成了登入流程重構，所有測試通過，已合併到主線。</p></div></div>
+  <div id="db1"><div class="card"><h3 style="color:var(--ocean)">Today's Plan</h3><p>Sprint planning at 10 AM. Have your story points ready.</p></div></div>
+  <div id="db2"><div class="card"><h3 style="color:var(--lavender)">Tomorrow's Plan</h3><p>Product demo for stakeholders at 3 PM. Run a dry-run the night before.</p></div></div>
+  <div id="dc1"><div class="card"><h3 style="color:var(--lavender)">今天</h3><p>Indigo 主題示例，今天的任務已全部完成。</p><span class="tag" style="background:rgba(120,73,201,0.22);color:var(--indigo)">完成</span></div></div>
+  <div id="dc2"><div class="card"><h3 style="color:var(--sky)">明天</h3><p>明天早上有重要的客戶電話，請提前確認議題清單。</p><span class="tag" style="background:rgba(130,200,229,0.18);color:var(--sky)">待辦</span></div></div>
+  <div id="dc3"><div class="card"><h3 style="color:var(--salmon)">昨天</h3><p>完成了 API 整合測試，發現兩個邊界錯誤，已記錄為 bug。</p><span class="tag" style="background:rgba(229,195,179,0.18);color:var(--salmon)">回顧</span></div></div>
+  <div id="di1"><div class="card"><h3 style="color:var(--lavender)">今天 · icon 模式</h3><p>aurora 漸層主題 + icon 模式。Bootstrap Icons CSS 由元件自動注入，不需手動引入。</p><span class="tag" style="background:rgba(195,165,229,0.18);color:var(--lavender)">calendar-check</span></div></div>
+  <div id="di2"><div class="card"><h3 style="color:var(--sky)">明天</h3><p>icon 名稱寫 <code>rocket-takeoff</code> 或 <code>bi-rocket-takeoff</code> 都接受，元件內部自動標準化。</p><span class="tag" style="background:rgba(130,200,229,0.18);color:var(--sky)">rocket-takeoff</span></div></div>
+  <div id="di3"><div class="card"><h3 style="color:var(--salmon)">昨天</h3><p>clock-history 圖示，昨天的紀錄已歸檔。</p></div></div>
+  <div id="di4"><div class="card"><h3 style="color:var(--yellow)">下週一</h3><p>star 圖示，標記重要事項。source-id 有設定，所以可以點擊。</p><span class="tag" style="background:rgba(227,211,34,0.18);color:var(--yellow)">重要</span></div></div>
+  <div id="dj1"><div class="card"><h3 style="color:var(--orange)">今天 (JSON 模式)</h3><p>days 屬性使用 JSON 字串傳遞，不需要 &lt;wc-day&gt; 子元素。</p></div></div>
+  <div id="dj2"><div class="card"><h3 style="color:var(--yellow)">明天</h3><p>適合 days 資料由 JS 動態生成，stringify 後設入屬性即可。</p></div></div>
+  <div id="dj3"><div class="card"><h3 style="color:var(--salmon)">昨天</h3><p>透過 el.setAttribute('days', JSON.stringify(arr)) 更新。</p></div></div>
+</div>
+
+<script>
+/*!
+ * WeekCal v2.0.0
+ * Week-strip calendar · click-to-inject content from source divs into a target div
+ * No dependencies · CSS embedded · No shadow DOM · Global config system
+ *
+ * ── v2.0 新增：自訂元素 <week-cal> ─────────────────────────────────────────
+ *
+ *  宣告式用法：
+ *    <week-cal theme="safe" locale="zh-TW" start-date="today" target="#board">
+ *      <wc-day date="today"      source-id="d1" label="今天"></wc-day>
+ *      <wc-day date="tomorrow"   source-id="d2"></wc-day>
+ *      <wc-day date="2025-09-20" source-id="d3" disabled></wc-day>
+ *    </week-cal>
+ *
+ *  <week-cal> 屬性（均可省略，省略時套用全域預設值）：
+ *    theme           — dark|light|teal|ocean|indigo|warm|safe|sky|lavender|
+ *                      salmon|special|pink|yellow（或自訂主題名）
+ *    locale          — zh-TW | zh-CN | en
+ *    start-date      — 任何接受的日期格式
+ *    end-date        — 任何接受的日期格式
+ *    width           — CSS 寬度（預設 100%）
+ *    show-header     — 布林屬性，省略時套用預設值 true
+ *    highlight-today — 布林屬性
+ *    default-first   — 布林屬性
+ *    animation       — fade | slide | none
+ *    mode            — default | icon
+ *    target          — 內容注入目標的 CSS 選擇器
+ *    days            — JSON 陣列，替代 <wc-day> 子元素
+ *
+ *  <wc-day> 屬性：
+ *    date      — 日期（必填），任何接受的格式
+ *    source-id — 要注入的來源 div id
+ *    label     — 覆蓋星期名稱（default 模式）或標籤文字（icon 模式）
+ *    icon      — Bootstrap Icons 名稱（icon 模式）
+ *    disabled  — 布林屬性，使儲存格不可互動
+ *
+ *  <week-cal> 事件：
+ *    wc-select — CustomEvent，會冒泡，detail: { date, sourceId }
+ *
+ *  元素方法：
+ *    el.select('YYYY-MM-DD') — 程式化選取日期
+ *    el.getConfig()          — 檢視目前設定
+ *    el.refresh()            — 重新掃描 <wc-day> 子元素並重新掛載
+ *    el.destroy()            — 移除元件（元素本身留在 DOM 中）
+ *
+ * ── 接受的日期格式（startDate / endDate / days[].date）───────────────────────
+ *   'YYYY-MM-DD' · 'today' · 'tomorrow' · 'yesterday'
+ *   'next Monday' / 'last Sunday'（支援 3 字母縮寫，不區分大小寫）
+ *
+ * ── 顯示模式 ─────────────────────────────────────────────────────────────────
+ *   mode: 'default'  星期名稱 + 日期數字圓圈（預設）
+ *   mode: 'icon'     Bootstrap Icon + 標籤文字（首次使用時自動注入 CDN）
+ *
+ * ── 命令式 API（v1 完整保留）────────────────────────────────────────────────
+ *   WeekCal.themes             讀取 / 擴充主題調色盤登錄
+ *   WeekCal.configure(opts)    覆蓋全域預設值
+ *   WeekCal.init(opts)         掛載實例
+ *   WeekCal.select(sel, date)  程式化選取
+ *   WeekCal.destroy(sel)       移除並還原來源 div
+ *   WeekCal.getConfig(sel)     檢視目前設定
+ */
+((G, D) => {
+  'use strict';
+
+  const STYLE_ID = '__weekcal_v2__';
+
+  // ── 地區語系資料 ────────────────────────────────────────────────────────────
+  const LOCALE = {
+    'zh-TW': {
+      dow: ['周日','周一','周二','周三','周四','周五','周六'],
+      ym:  (y, m) => `${y}年${m + 1}月`,
+    },
+    'zh-CN': {
+      dow: ['周日','周一','周二','周三','周四','周五','周六'],
+      ym:  (y, m) => `${y}年${m + 1}月`,
+    },
+    'en': {
+      dow: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      ym:  (y, m) => ['January','February','March','April','May','June',
+        'July','August','September','October','November','December'][m] + ' ' + y,
+    },
+  };
+
+  // ── 星期名稱對照表（用於 next / last 解析）─────────────────────────────────
+  const DOW_MAP = {
+    sun: 0, sunday: 0,
+    mon: 1, monday: 1,
+    tue: 2, tuesday: 2,
+    wed: 3, wednesday: 3,
+    thu: 4, thursday: 4,
+    fri: 5, friday: 5,
+    sat: 6, saturday: 6,
+  };
+
+  // ── 主題調色盤登錄 ──────────────────────────────────────────────────────────
+  // 內建主題（品牌色盤）：
+  //   dark    — 預設，warning / lavender / ocean 強調色，底色 #0C0D0C
+  //   light   — 淺色背景，深紫選取色
+  //   teal    — teal 今日，indigo 選取，sky 指示點
+  //   ocean   — ocean 今日，lavender 選取，teal 指示點
+  //   indigo  — indigo 今日，sky 選取，lavender 指示點
+  //   warm    — orange 今日，salmon 選取，yellow 指示點
+  //   safe    — safe 今日，vanilla 選取，special 指示點（v2.0 新增）
+  //   sky     — sky 今日，lavender 選取，ocean 指示點（v2.0 新增）
+  //   lavender— lavender 今日，indigo 選取，pink 指示點（v2.0 新增）
+  //   salmon  — salmon 今日，orange 選取，yellow 指示點（v2.0 新增）
+  //   special — special 今日，safe 選取，vanilla 指示點（v2.0 新增）
+  //   pink    — pink 今日，lavender 選取，warning 指示點（v2.0 新增）
+  //   yellow  — yellow 今日，orange 選取，special 指示點（v2.0 新增）
+  // 使用方式：WeekCal.themes.myBrand = { calBg:'…', … }
+  const THEMES = {
+    // ── dark（預設）──────────────────────────────────────────────────────
+    dark: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#E6374B',
+      todayBg:      '#E6374B',
+      todayText:    '#ffffff',
+      selectedBg:   '#C3A5E5',
+      selectedText: '#0C0D0C',
+      indicator:    '#1CCAE8',
+      cellHover:    'rgba(198,199,189,0.09)',
+      headerText:   '#C6C7BD',
+    },
+    // ── light ─────────────────────────────────────────────────────────────
+    light: {
+      calBg:        '#F4F4F1',
+      shell:        '#1A1B1A',
+      dayNameColor: 'rgba(26,27,26,0.76)',
+      todayDayName: '#E6374B',
+      todayBg:      '#E6374B',
+      todayText:    '#ffffff',
+      selectedBg:   '#9B6FD4',
+      selectedText: '#ffffff',
+      indicator:    '#0DA591',
+      cellHover:    'rgba(26,27,26,0.07)',
+      headerText:   '#1A1B1A',
+    },
+    // ── teal ──────────────────────────────────────────────────────────────
+    teal: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#0DA591',
+      todayBg:      '#0DA591',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#7849C9',
+      selectedText: '#ffffff',
+      indicator:    '#82C8E5',
+      cellHover:    'rgba(13,165,145,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── ocean ─────────────────────────────────────────────────────────────
+    ocean: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#1CCAE8',
+      todayBg:      '#1CCAE8',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#C3A5E5',
+      selectedText: '#0C0D0C',
+      indicator:    '#0DA591',
+      cellHover:    'rgba(28,202,232,0.10)',
+      headerText:   '#C6C7BD',
+    },
+    // ── indigo ────────────────────────────────────────────────────────────
+    indigo: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#C3A5E5',
+      todayBg:      '#7849C9',
+      todayText:    '#ffffff',
+      selectedBg:   '#82C8E5',
+      selectedText: '#0C0D0C',
+      indicator:    '#C3A5E5',
+      cellHover:    'rgba(120,73,201,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── warm ──────────────────────────────────────────────────────────────
+    warm: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#EDA109',
+      todayBg:      '#EDA109',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#E5C3B3',
+      selectedText: '#0C0D0C',
+      indicator:    '#E3D322',
+      cellHover:    'rgba(237,161,9,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── safe（v2.0 新增）─────────────────────────────────────────────────
+    safe: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#27AE60',
+      todayBg:      '#27AE60',
+      todayText:    '#ffffff',
+      selectedBg:   '#DBEDD8',
+      selectedText: '#0C0D0C',
+      indicator:    '#B3DE73',
+      cellHover:    'rgba(39,174,96,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── sky（v2.0 新增）──────────────────────────────────────────────────
+    sky: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#82C8E5',
+      todayBg:      '#82C8E5',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#C3A5E5',
+      selectedText: '#0C0D0C',
+      indicator:    '#1CCAE8',
+      cellHover:    'rgba(130,200,229,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── lavender（v2.0 新增）─────────────────────────────────────────────
+    lavender: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#C3A5E5',
+      todayBg:      '#C3A5E5',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#7849C9',
+      selectedText: '#ffffff',
+      indicator:    '#FF91D7',
+      cellHover:    'rgba(195,165,229,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── salmon（v2.0 新增）───────────────────────────────────────────────
+    salmon: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#E5C3B3',
+      todayBg:      '#E5C3B3',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#EDA109',
+      selectedText: '#0C0D0C',
+      indicator:    '#E3D322',
+      cellHover:    'rgba(229,195,179,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── special（v2.0 新增）──────────────────────────────────────────────
+    special: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#B3DE73',
+      todayBg:      '#B3DE73',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#27AE60',
+      selectedText: '#ffffff',
+      indicator:    '#DBEDD8',
+      cellHover:    'rgba(179,222,115,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── pink（v2.0 新增）─────────────────────────────────────────────────
+    pink: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#FF91D7',
+      todayBg:      '#FF91D7',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#C3A5E5',
+      selectedText: '#0C0D0C',
+      indicator:    '#E6374B',
+      cellHover:    'rgba(255,145,215,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── yellow（v2.0 新增）───────────────────────────────────────────────
+    yellow: {
+      calBg:        '#0C0D0C',
+      shell:        '#C6C7BD',
+      dayNameColor: 'rgba(198,199,189,0.76)',
+      todayDayName: '#E3D322',
+      todayBg:      '#E3D322',
+      todayText:    '#0C0D0C',
+      selectedBg:   '#EDA109',
+      selectedText: '#0C0D0C',
+      indicator:    '#B3DE73',
+      cellHover:    'rgba(227,211,34,0.12)',
+      headerText:   '#C6C7BD',
+    },
+    // ── aurora（漸層主題，v2.0 新增）────────────────────────────────────
+    // CSS 自訂屬性可直接接受 gradient 字串，以下欄位皆對應 background: var(--wc-*)
+    // 規則：
+    //   calBg      → .wc-shell { background }      殼層底色，用漸層打底
+    //   todayBg    → .wc-cell.wc-today .wc-nw      今日圓圈，lavender→indigo 漸層
+    //   selectedBg → .wc-cell.wc-sel .wc-nw        選取圓圈，teal→ocean 漸層
+    //   cellHover  → .wc-cell.wc-go:hover          游標懸停，半透明 lavender
+    //   icon mode  → .wc-cell.wc-im.wc-today /
+    //                .wc-cell.wc-im.wc-sel         整格背景，同樣吃漸層
+    aurora: {
+      calBg:        'linear-gradient(160deg, #0C0D1E 0%, #0D1525 60%, #091420 100%)',
+      shell:        '#D4F0FF',
+      dayNameColor: 'rgba(212,240,255,0.76)',
+      todayDayName: '#FF91D7',
+      todayBg:      'linear-gradient(135deg, #C3A5E5 0%, #7849C9 100%)',
+      todayText:    '#ffffff',
+      selectedBg:   'linear-gradient(135deg, #0DA591 0%, #1CCAE8 100%)',
+      selectedText: '#0C0D0C',
+      indicator:    '#FF91D7',
+      cellHover:    'rgba(195,165,229,0.14)',
+      headerText:   '#D4F0FF',
+    },
+  };
+
+  // ── 全域預設值 ──────────────────────────────────────────────────────────────
+  const DEF = {
+    container:      null,
+    target:         null,
+    startDate:      'today',
+    endDate:        null,
+    locale:         'zh-TW',
+    width:          '100%',
+    showHeader:     true,
+    highlightToday: true,
+    defaultFirst:   true,
+    animation:      'fade',
+    theme:          'dark',
+    mode:           'default',
+    days:           [],
+    colors:         {},
+    onSelect:       null,
+  };
+
+  // ── 工具函式 ────────────────────────────────────────────────────────────────
+  const pad    = n => String(n).padStart(2, '0');
+  const toISO  = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const nowISO = () => toISO(new Date());
+
+  function addDays(d, n) {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  /**
+   * 將彈性日期字串解析為本地 Date 物件。
+   * 不區分大小寫。無法辨識時回傳 null（並輸出 console.warn）。
+   */
+  function parseSmartDate(s) {
+    if (!s) return new Date();
+    const str = String(s).trim().toLowerCase();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const [y, m, dd] = str.split('-').map(Number);
+      return new Date(y, m - 1, dd);
+    }
+
+    if (str === 'today')     return new Date();
+    if (str === 'tomorrow')  return addDays(new Date(), 1);
+    if (str === 'yesterday') return addDays(new Date(), -1);
+
+    const nextM = str.match(/^next\s+(\w+)$/);
+    if (nextM) {
+      const target = DOW_MAP[nextM[1]];
+      if (target !== undefined) {
+        let d = addDays(new Date(), 1);
+        while (d.getDay() !== target) d = addDays(d, 1);
+        return d;
+      }
+    }
+
+    const lastM = str.match(/^last\s+(\w+)$/);
+    if (lastM) {
+      const target = DOW_MAP[lastM[1]];
+      if (target !== undefined) {
+        let d = addDays(new Date(), -1);
+        while (d.getDay() !== target) d = addDays(d, -1);
+        return d;
+      }
+    }
+
+    console.warn('[WeekCal] 無法辨識的日期字串:', s);
+    return null;
+  }
+
+  const mk = (tag, cls) => {
+    const e = D.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  };
+
+  const resolve = s => typeof s === 'string' ? D.querySelector(s) : s;
+
+  // 判斷一個值是否應「直接賦值」而非遞迴展開：
+  //   - 陣列
+  //   - DOM 節點（HTMLElement、Element 等）— 核心修正：
+  //     傳入 container: this（WeekCalElement）時，若遞迴展開會把 HTMLElement
+  //     攤平為普通 {}，導致 cEl.appendChild is not a function。
+  //   - 函式
+  const _isLeaf = v =>
+    v === null ||
+    typeof v !== 'object' ||
+    Array.isArray(v) ||
+    typeof v.nodeType === 'number' ||   // DOM Node（Element、Text 等）
+    typeof v === 'function';
+
+  function merge(target, ...srcs) {
+    srcs.forEach(src => {
+      if (!src || typeof src !== 'object') return;
+      Object.keys(src).forEach(k => {
+        const v = src[k];
+        if (v != null && !_isLeaf(v)) {
+          if (!target[k] || typeof target[k] !== 'object') target[k] = {};
+          merge(target[k], v);
+        } else {
+          target[k] = v;
+        }
+      });
+    });
+    return target;
+  }
+
+  // ── CSS（每頁只注入一次；顏色透過各實例的 CSS 變數傳入）────────────────────
+  function ensureCSS() {
+    if (D.getElementById(STYLE_ID)) return;
+    const s = D.createElement('style');
+    s.id = STYLE_ID;
+    s.textContent = `
+week-cal{display:block}
+.wc-wrap{display:block;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;box-sizing:border-box}
+.wc-wrap *,.wc-wrap *::before,.wc-wrap *::after{box-sizing:inherit}
+.wc-shell{background:var(--wc-bg);border-radius:16px;padding:14px 16px}
+.wc-header{display:flex;align-items:center;margin-bottom:16px;min-height:22px}
+.wc-mlabel{font-size:15px;font-weight:500;color:var(--wc-ht);line-height:1.4;letter-spacing:.01em}
+.wc-grid{display:grid;gap:4px}
+.wc-cell{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:default;
+  padding:6px 2px 11px;border-radius:10px;transition:background .15s;position:relative;
+  min-width:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.wc-cell.wc-go{cursor:pointer}
+.wc-cell.wc-go:hover{background:var(--wc-ch)}
+.wc-dn{font-size:11px;color:var(--wc-dn);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;width:100%;text-align:center;line-height:1.4}
+.wc-cell.wc-today .wc-dn{color:var(--wc-tdn);font-weight:600}
+.wc-nw{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;transition:background .15s;flex-shrink:0}
+.wc-n{font-size:14px;font-weight:500;color:var(--wc-sh);line-height:1;transition:color .15s}
+.wc-cell.wc-today .wc-nw{background:var(--wc-tb)}
+.wc-cell.wc-today .wc-n{color:var(--wc-tt);font-weight:700}
+.wc-cell.wc-sel:not(.wc-today) .wc-nw{background:var(--wc-sb)}
+.wc-cell.wc-sel:not(.wc-today) .wc-n{color:var(--wc-st);font-weight:700}
+.wc-dot{width:5px;height:5px;border-radius:50%;background:var(--wc-ind);position:absolute;
+  bottom:3px;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .15s}
+.wc-cell.wc-has .wc-dot{opacity:1}
+.wc-cell.wc-dis{opacity:.35;pointer-events:none}
+.wc-cell.wc-im{padding:8px 2px 12px;gap:6px}
+.wc-ic{font-size:20px;line-height:1;color:var(--wc-sh);transition:color .15s;display:block;text-align:center}
+.wc-cell.wc-im.wc-today{background:var(--wc-tb)}
+.wc-cell.wc-im.wc-today .wc-ic,.wc-cell.wc-im.wc-today .wc-dn{color:var(--wc-tt)}
+.wc-cell.wc-im.wc-sel:not(.wc-today){background:var(--wc-sb)}
+.wc-cell.wc-im.wc-sel:not(.wc-today) .wc-ic,.wc-cell.wc-im.wc-sel:not(.wc-today) .wc-dn{color:var(--wc-st)}
+.wc-cell.wc-im.wc-go:hover:not(.wc-today):not(.wc-sel){background:var(--wc-ch)}`.trim();
+    D.head.appendChild(s);
+  }
+
+  // ── Bootstrap Icons CDN（只在 mode='icon' 時注入一次）──────────────────────
+  const BI_LINK_ID = '__wc_bi__';
+  const BI_CDN     = 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css';
+
+  function ensureBootstrapIcons() {
+    if (D.getElementById(BI_LINK_ID)) return;
+    const link  = D.createElement('link');
+    link.id     = BI_LINK_ID;
+    link.rel    = 'stylesheet';
+    link.href   = BI_CDN;
+    D.head.appendChild(link);
+  }
+
+  function bsIconClass(icon) {
+    if (!icon) return 'bi';
+    const raw  = String(icon).trim().replace(/^bi\s+/, '');
+    const name = raw.startsWith('bi-') ? raw : 'bi-' + raw;
+    return 'bi ' + name;
+  }
+
+  function applyVars(el, c) {
+    [
+      ['--wc-bg',  c.calBg       ],
+      ['--wc-sh',  c.shell       ],
+      ['--wc-dn',  c.dayNameColor],
+      ['--wc-tdn', c.todayDayName],
+      ['--wc-tb',  c.todayBg    ],
+      ['--wc-tt',  c.todayText  ],
+      ['--wc-sb',  c.selectedBg ],
+      ['--wc-st',  c.selectedText],
+      ['--wc-ind', c.indicator  ],
+      ['--wc-ch',  c.cellHover  ],
+      ['--wc-ht',  c.headerText ],
+    ].forEach(([k, v]) => el.style.setProperty(k, v));
+  }
+
+  // ── DOM 建構 ─────────────────────────────────────────────────────────────────
+  function buildDOM(cfg, days, today) {
+    const loc  = LOCALE[cfg.locale] || LOCALE['zh-TW'];
+    const wrap = mk('div', 'wc-wrap');
+    wrap.style.width = cfg.width;
+    applyVars(wrap, cfg.colors);
+
+    const shell = mk('div', 'wc-shell');
+    wrap.appendChild(shell);
+
+    if (cfg.showHeader && days.length) {
+      const d0  = parseSmartDate(days[0].date);
+      const hdr = mk('div', 'wc-header');
+      const lbl = mk('span', 'wc-mlabel');
+      lbl.textContent = d0 ? loc.ym(d0.getFullYear(), d0.getMonth()) : '';
+      hdr.appendChild(lbl);
+      shell.appendChild(hdr);
+    }
+
+    const grid = mk('div', 'wc-grid');
+    grid.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
+    shell.appendChild(grid);
+
+    const iconMode = cfg.mode === 'icon';
+
+    days.forEach(dc => {
+      const d = parseSmartDate(dc.date);
+      if (!d) return;
+
+      const isToday = cfg.highlightToday && dc.date === today;
+      const hasSrc  = !!dc.sourceId;
+      const dis     = !!dc.disabled;
+
+      const cell = mk('div', 'wc-cell');
+      if (isToday)        cell.classList.add('wc-today');
+      if (hasSrc && !dis) cell.classList.add('wc-go', 'wc-has');
+      if (dis)            cell.classList.add('wc-dis');
+      cell.dataset.date = dc.date;
+      cell.dataset.src  = dc.sourceId || '';
+
+      if (iconMode) {
+        cell.classList.add('wc-im');
+        const ic = mk('i', bsIconClass(dc.icon) + ' wc-ic');
+        const dn = mk('div', 'wc-dn');
+        dn.textContent = dc.label || '';
+        cell.append(ic, dn, mk('div', 'wc-dot'));
+      } else {
+        const dn = mk('div', 'wc-dn');
+        dn.textContent = dc.label || loc.dow[d.getDay()];
+        const nw = mk('div', 'wc-nw');
+        const n  = mk('span', 'wc-n');
+        n.textContent = d.getDate();
+        nw.appendChild(n);
+        cell.append(dn, nw, mk('div', 'wc-dot'));
+      }
+
+      grid.appendChild(cell);
+    });
+
+    return { wrap, grid };
+  }
+
+  // ── 內容注入 ─────────────────────────────────────────────────────────────────
+  function inject(tEl, srcId, anim) {
+    if (!tEl || !srcId) return;
+    const src = D.getElementById(srcId);
+    if (!src) { console.warn('[WeekCal] sourceId 找不到:', srcId); return; }
+
+    const clone = src.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.style.removeProperty('display');
+
+    const put = () => { tEl.innerHTML = ''; tEl.appendChild(clone); };
+
+    if (anim === 'fade') {
+      tEl.style.transition = 'opacity .15s ease';
+      tEl.style.opacity    = '0';
+      setTimeout(() => { put(); tEl.style.opacity = '1'; }, 160);
+    } else if (anim === 'slide') {
+      tEl.style.transition = 'opacity .2s ease, transform .2s ease';
+      tEl.style.opacity    = '0';
+      tEl.style.transform  = 'translateY(10px)';
+      setTimeout(() => {
+        put();
+        tEl.style.opacity   = '1';
+        tEl.style.transform = 'translateY(0)';
+      }, 210);
+    } else {
+      put();
+    }
+  }
+
+  // ── 選取邏輯 ─────────────────────────────────────────────────────────────────
+  function doSelect(inst, date) {
+    inst.wrap.querySelectorAll('.wc-cell').forEach(c => c.classList.remove('wc-sel'));
+    const cell = inst.wrap.querySelector(`.wc-cell[data-date="${date}"]`);
+    if (!cell) return;
+    cell.classList.add('wc-sel');
+
+    const srcId = cell.dataset.src;
+    if (srcId) inject(inst.targetEl, srcId, inst.cfg.animation);
+    if (typeof inst.cfg.onSelect === 'function') inst.cfg.onSelect(date, srcId || null);
+  }
+
+  // ── 實例登錄 ─────────────────────────────────────────────────────────────────
+  const _store = new Map();
+
+  // ── 公開 API ─────────────────────────────────────────────────────────────────
+  const WeekCal = {
+
+    /**
+     * 主題調色盤登錄。
+     * 新增自訂主題：WeekCal.themes.myBrand = { calBg: '…', … }
+     * 讀取色值：WeekCal.themes.safe.todayBg
+     */
+    themes: THEMES,
+
+    /**
+     * 在任何 init() 之前覆蓋全域預設值。
+     * @param {object} overrides
+     */
+    configure(overrides) {
+      merge(DEF, overrides);
+      return this;
+    },
+
+    /**
+     * 掛載 WeekCal 實例。
+     *
+     * 格線日期解析優先順序：
+     *   1. startDate + endDate → 範圍（最多 7 格）
+     *   2. 只有 days[]（無 startDate/endDate）→ 依日期排序，最多 7 格
+     *   3. 都沒有 → 從今天起 7 天
+     *
+     * 顏色解析：THEMES[theme] ← colors{} 局部覆蓋
+     *
+     * @param {object} options
+     */
+    init(options = {}) {
+      const cfg = merge({}, DEF, options);
+
+      const base = THEMES[cfg.theme] || THEMES.dark;
+      cfg.colors = Object.assign({}, base, options.colors || {});
+
+      const cEl = resolve(cfg.container);
+      if (!cEl) {
+        console.error('[WeekCal] container 找不到:', cfg.container);
+        return this;
+      }
+      const tEl = cfg.target ? resolve(cfg.target) : null;
+
+      const lookup = {};
+      (cfg.days || []).forEach(d => {
+        const parsed = parseSmartDate(d.date);
+        if (!parsed) return;
+        const dt = toISO(parsed);
+        lookup[dt] = { ...d, date: dt };
+      });
+
+      let gridDates = [];
+
+      if (cfg.startDate || cfg.endDate) {
+        const start = parseSmartDate(cfg.startDate || 'today');
+        if (!start) { console.error('[WeekCal] startDate 無效:', cfg.startDate); return this; }
+        const end = cfg.endDate ? parseSmartDate(cfg.endDate) : addDays(start, 6);
+        if (!end)   { console.error('[WeekCal] endDate 無效:', cfg.endDate);   return this; }
+        for (let cur = new Date(start); cur <= end && gridDates.length < 7; cur = addDays(cur, 1))
+          gridDates.push(toISO(cur));
+      } else if (cfg.days && cfg.days.length) {
+        gridDates = Object.keys(lookup).sort().slice(0, 7);
+      } else {
+        for (let i = 0; i < 7; i++) gridDates.push(toISO(addDays(new Date(), i)));
+      }
+
+      const days = gridDates.map(date => ({
+        date, sourceId: null, disabled: false, ...(lookup[date] || {}),
+      }));
+
+      days.forEach(dc => {
+        if (dc.sourceId) {
+          const s = D.getElementById(dc.sourceId);
+          if (s) s.style.display = 'none';
+        }
+      });
+
+      ensureCSS();
+      if (cfg.mode === 'icon') ensureBootstrapIcons();
+
+      const { wrap, grid } = buildDOM(cfg, days, nowISO());
+      cEl.innerHTML = '';
+      cEl.appendChild(wrap);
+
+      let inst;
+      grid.addEventListener('click', e => {
+        const cell = e.target.closest('.wc-cell.wc-go');
+        if (cell && inst) doSelect(inst, cell.dataset.date);
+      });
+      inst = { cfg, days, wrap, targetEl: tEl, cEl };
+      _store.set(cEl, inst);
+
+      if (cfg.defaultFirst) {
+        const first = days.find(d => d.sourceId);
+        if (first) setTimeout(() => doSelect(inst, first.date), 50);
+      }
+
+      return this;
+    },
+
+    /**
+     * 程式化選取日期。
+     * @param {string|Element} containerSel
+     * @param {string} date  ISO 字串 'YYYY-MM-DD'
+     */
+    select(containerSel, date) {
+      const inst = _store.get(resolve(containerSel));
+      if (inst) doSelect(inst, date);
+      return this;
+    },
+
+    /**
+     * 移除實例並還原隱藏的來源 div。
+     * @param {string|Element} containerSel
+     */
+    destroy(containerSel) {
+      const cEl  = resolve(containerSel);
+      const inst = _store.get(cEl);
+      if (!inst) return this;
+      inst.days.forEach(dc => {
+        if (dc.sourceId) {
+          const s = D.getElementById(dc.sourceId);
+          if (s) s.style.display = '';
+        }
+      });
+      cEl.innerHTML = '';
+      _store.delete(cEl);
+      return this;
+    },
+
+    /**
+     * 回傳已掛載實例的目前設定物件。
+     * @param {string|Element} containerSel
+     */
+    getConfig(containerSel) {
+      const inst = _store.get(resolve(containerSel));
+      return inst ? inst.cfg : null;
+    },
+  };
+
+  G.WeekCal = WeekCal;
+
+  // ── 自訂元素 <week-cal> ──────────────────────────────────────────────────────
+  // 需要 Custom Elements v1（所有現代瀏覽器均支援）
+  // 建議在 <script defer> 或 </body> 前載入，確保 <wc-day> 子元素已解析完畢。
+  if (!G.customElements) return;
+
+  class WeekCalElement extends HTMLElement {
+
+    // 宣告哪些 HTML 屬性的變更會觸發 attributeChangedCallback
+    static get observedAttributes() {
+      return [
+        'theme', 'locale', 'start-date', 'end-date',
+        'width', 'show-header', 'highlight-today', 'default-first',
+        'animation', 'mode', 'target', 'days',
+      ];
+    }
+
+    // ── 生命週期回呼 ─────────────────────────────────────────────────────────
+
+    connectedCallback() {
+      // setTimeout(0) 確保 <wc-day> 子元素（在 head 載入時可能尚未解析）已就緒
+      this._mountTimer = setTimeout(() => {
+        this._cachedDays = this._parseChildDays();
+        this._wcMount();
+      }, 0);
+    }
+
+    disconnectedCallback() {
+      clearTimeout(this._mountTimer);
+      this._wcUnmount();
+    }
+
+    attributeChangedCallback(name, oldVal, newVal) {
+      if (oldVal === newVal) return;
+      // 屬性變更時重新掛載（初次連接尚未完成時略過）
+      if (this._wcMounted) {
+        this._wcUnmount();
+        this._wcMount();
+      }
+    }
+
+    // ── 內部輔助方法 ─────────────────────────────────────────────────────────
+
+    /** 解析 <wc-day> 子元素，轉換為 days[] 設定陣列 */
+    _parseChildDays() {
+      const days = [];
+      this.querySelectorAll('wc-day').forEach(el => {
+        const day = {};
+        if (el.hasAttribute('date'))      day.date     = el.getAttribute('date');
+        if (el.hasAttribute('source-id')) day.sourceId = el.getAttribute('source-id');
+        if (el.hasAttribute('label'))     day.label    = el.getAttribute('label');
+        if (el.hasAttribute('icon'))      day.icon     = el.getAttribute('icon');
+        if (el.hasAttribute('disabled'))  day.disabled = true;
+        if (day.date) days.push(day);
+      });
+      return days;
+    }
+
+    /**
+     * 讀取布林屬性。
+     * - 屬性不存在 → undefined（使用全域預設值）
+     * - 屬性存在且值為 'false' 或 '0' → false
+     * - 其他情況 → true
+     */
+    _boolAttr(name) {
+      if (!this.hasAttribute(name)) return undefined;
+      const v = this.getAttribute(name);
+      return v !== 'false' && v !== '0';
+    }
+
+    /** 讀取字串屬性；不存在時回傳 undefined（使用全域預設值）*/
+    _strAttr(name) {
+      return this.hasAttribute(name) ? this.getAttribute(name) : undefined;
+    }
+
+    /**
+     * 取得 days 設定陣列。
+     * 優先順序：days 屬性（JSON）> _cachedDays（來自 <wc-day> 子元素）> []
+     */
+    _getDays() {
+      const attr = this.getAttribute('days');
+      if (attr) {
+        try { return JSON.parse(attr); }
+        catch (e) { console.warn('[WeekCal] <week-cal days="..."> JSON 格式錯誤', e); }
+      }
+      return this._cachedDays || [];
+    }
+
+    /** 將 HTML 屬性組合成 WeekCal.init() 的 options 物件 */
+    _buildOptions() {
+      const days = this._getDays();
+      const opts = {
+        container:      this,
+        theme:          this._strAttr('theme'),
+        locale:         this._strAttr('locale'),
+        startDate:      this._strAttr('start-date'),
+        endDate:        this._strAttr('end-date'),
+        width:          this._strAttr('width'),
+        showHeader:     this._boolAttr('show-header'),
+        highlightToday: this._boolAttr('highlight-today'),
+        defaultFirst:   this._boolAttr('default-first'),
+        animation:      this._strAttr('animation'),
+        mode:           this._strAttr('mode'),
+        target:         this._strAttr('target'),
+        days:           days.length ? days : undefined,
+        // 選取事件轉為 CustomEvent 發派
+        onSelect: (date, srcId) => {
+          this.dispatchEvent(new CustomEvent('wc-select', {
+            bubbles:    true,
+            cancelable: false,
+            detail:     { date, sourceId: srcId },
+          }));
+        },
+      };
+      // 移除 undefined 值，讓 WeekCal.init 的 DEF merge 正確生效
+      Object.keys(opts).forEach(k => opts[k] === undefined && delete opts[k]);
+      return opts;
+    }
+
+    _wcMount() {
+      WeekCal.init(this._buildOptions());
+      this._wcMounted = true;
+    }
+
+    _wcUnmount() {
+      WeekCal.destroy(this);
+      this._wcMounted = false;
+    }
+
+    // ── 公開元素方法（鏡射 WeekCal API）─────────────────────────────────────
+
+    /**
+     * 程式化選取日期。
+     * @param {string} date  ISO 字串 'YYYY-MM-DD'
+     * @returns {this}
+     */
+    select(date) {
+      WeekCal.select(this, date);
+      return this;
+    }
+
+    /**
+     * 回傳目前實例的設定物件。
+     * @returns {object|null}
+     */
+    getConfig() {
+      return WeekCal.getConfig(this);
+    }
+
+    /**
+     * 重新掃描 <wc-day> 子元素並重新掛載。
+     * 動態新增 / 移除 <wc-day> 後呼叫。
+     * @returns {this}
+     */
+    refresh() {
+      this._cachedDays = this._parseChildDays();
+      if (this._wcMounted) {
+        this._wcUnmount();
+        this._wcMount();
+      }
+      return this;
+    }
+
+    /**
+     * 移除元件（<week-cal> 標籤本身留在 DOM 中）。
+     * @returns {this}
+     */
+    destroy() {
+      clearTimeout(this._mountTimer);
+      this._wcUnmount();
+      return this;
+    }
+  }
+
+  G.customElements.define('week-cal', WeekCalElement);
+
+})(window, document);
+
+</script>
+
+<script>
+function iso(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+function alert2(id, msg, cls) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'alert show ' + cls;
+  el.textContent = msg;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3500);
+}
+const calC = () => document.querySelector('#cal-c');
+
+document.querySelector('#cal-b').addEventListener('wc-select', e => {
+  alert2('alert-b',
+    `wc-select → date: ${e.detail.date} | sourceId: ${e.detail.sourceId || '(無)'}`,
+    'a-info');
+});
+
+function showCfg() {
+  const cfg = calC().getConfig();
+  alert2('alert-c',
+    `getConfig() → theme: "${cfg.theme}" | locale: "${cfg.locale}" | animation: "${cfg.animation}"`,
+    'a-info');
+}
+
+function th(name) {
+  document.querySelector('#cal-d').setAttribute('theme', name);
+  document.querySelector('#cal-show').setAttribute('theme', name);
+  alert2('alert-d', `theme 已切換為 "${name}"`, 'a-safe');
+  document.querySelectorAll('.chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.t === name));
+}
+
+// ── 主題畫廊（含 aurora）────────────────────────────────────────────────────
+const TDEFS = {
+  dark:    { bg:'#0C0D0C', c:['#E6374B','#C3A5E5','#1CCAE8'], lbl:'v1' },
+  light:   { bg:'#F4F4F1', c:['#E6374B','#9B6FD4','#0DA591'], lbl:'v1' },
+  teal:    { bg:'#0C0D0C', c:['#0DA591','#7849C9','#82C8E5'], lbl:'v1' },
+  ocean:   { bg:'#0C0D0C', c:['#1CCAE8','#C3A5E5','#0DA591'], lbl:'v1' },
+  indigo:  { bg:'#0C0D0C', c:['#7849C9','#82C8E5','#C3A5E5'], lbl:'v1' },
+  warm:    { bg:'#0C0D0C', c:['#EDA109','#E5C3B3','#E3D322'], lbl:'v1' },
+  safe:    { bg:'#0C0D0C', c:['#27AE60','#DBEDD8','#B3DE73'], lbl:'v2' },
+  sky:     { bg:'#0C0D0C', c:['#82C8E5','#C3A5E5','#1CCAE8'], lbl:'v2' },
+  lavender:{ bg:'#0C0D0C', c:['#C3A5E5','#7849C9','#FF91D7'], lbl:'v2' },
+  salmon:  { bg:'#0C0D0C', c:['#E5C3B3','#EDA109','#E3D322'], lbl:'v2' },
+  special: { bg:'#0C0D0C', c:['#B3DE73','#27AE60','#DBEDD8'], lbl:'v2' },
+  pink:    { bg:'#0C0D0C', c:['#FF91D7','#C3A5E5','#E6374B'], lbl:'v2' },
+  yellow:  { bg:'#0C0D0C', c:['#E3D322','#EDA109','#B3DE73'], lbl:'v2' },
+  aurora:  { bg:null,      c:['#C3A5E5','#1CCAE8','#FF91D7'], lbl:'v2 ✦', grad:true },
+};
+const g = document.getElementById('gallery');
+Object.entries(TDEFS).forEach(([name, t]) => {
+  const ch = document.createElement('div');
+  ch.className = 'chip' + (name === 'dark' ? ' active' : '');
+  ch.dataset.t = name;
+  const swatchBg = t.grad
+    ? 'linear-gradient(160deg,#0C0D1E 0%,#0D1525 60%,#091420 100%)'
+    : t.bg;
+  const nameBg = t.grad
+    ? 'linear-gradient(90deg,rgba(12,13,30,0.92),rgba(9,20,32,0.92))'
+    : t.bg;
+  ch.innerHTML = `<div class="chip-swatch" style="background:${swatchBg}">
+    ${t.c.map(c=>`<div class="chip-dot" style="background:${c}"></div>`).join('')}
+  </div>
+  <div class="chip-name" style="background:${nameBg}">
+    ${name} <span style="opacity:.55;font-size:.58rem">${t.lbl}</span>
+  </div>`;
+  ch.addEventListener('click', () => th(name));
+  g.appendChild(ch);
+});
+</script>
+</body>
+</html>

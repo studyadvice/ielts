@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rolling-number.js 元件示範</title>
+<style>
+  :root {
+    --bg:      #0c0d0c;
+    --shell:   #c6c7bd;
+    --lavender:#C3A5E5;
+    --special: #b3de73;
+    --sky:     #95c9de;
+    --safe:    #299459;
+    --vanilla: #DBEDD8;
+    --yellow:  #DECA4B;
+    --orange:  #eda109;
+    --warning: #F08080;
+    --stone:   #95c9de;
+    --indigo:  #9B72CF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── 版面 ── */
+  .page { max-width: 860px; margin: 0 auto; }
+
+  h1 {
+    font-size: 1.6rem;
+    color: var(--special);
+    letter-spacing: .06em;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--shell);
+    opacity: .6;
+    font-size: .9rem;
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    font-size: 1rem;
+    color: var(--lavender);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2b2a;
+  }
+
+  /* ── 示範卡 ── */
+  .card {
+    background: #131413;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 28px 28px 24px;
+    margin-bottom: 16px;
+  }
+  .card-label {
+    font-size: .75rem;
+    color: var(--shell);
+    opacity: .45;
+    margin-bottom: 16px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .card-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+  }
+  .card-code {
+    margin-top: 18px;
+    background: #0a0b0a;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: .78rem;
+    color: var(--lavender);
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* ── 屬性表 ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .88rem;
+    margin-top: 8px;
+  }
+  thead tr { border-bottom: 1px solid #2a2b2a; }
+  th {
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--lavender);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #1a1b1a;
+    vertical-align: top;
+  }
+  td:first-child { color: var(--special); font-family: 'Courier New', monospace; white-space: nowrap; }
+  td:nth-child(2){ color: var(--sky);     font-family: 'Courier New', monospace; }
+  td:nth-child(3){ color: var(--safe);    font-family: 'Courier New', monospace; }
+  td:last-child  { color: var(--shell);   font-size: .82rem; }
+
+  .tag {
+    display: inline-block;
+    background: #1e1f1e;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: .75rem;
+    font-family: 'Courier New', monospace;
+    color: var(--yellow);
+    margin: 2px 2px 0 0;
+  }
+
+  /* ── 互動區 ── */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    align-items: center;
+  }
+  .controls input[type=number],
+  .controls select {
+    background: #1a1b1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: var(--shell);
+    font-size: .9rem;
+    padding: 7px 12px;
+    outline: none;
+    width: 160px;
+  }
+  .controls input:focus,
+  .controls select:focus { border-color: var(--special); }
+  .btn {
+    background: var(--special);
+    border: none;
+    border-radius: 6px;
+    color: #0c0d0c;
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 700;
+    padding: 8px 20px;
+  }
+  .btn:hover { opacity: .8; }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--lavender);
+    color: var(--lavender);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>⟳ rolling-number.js</h1>
+  <p class="subtitle">無 Shadow DOM 的跳動數字 Web Component&emsp;·&emsp;v1.1</p>
+
+  <!-- ══ 示範一：最簡用法 ══ -->
+  <h2>最簡用法</h2>
+  <div class="card">
+    <div class="card-label">只需 value 屬性</div>
+    <div class="card-center">
+      <rolling-number value="9527"></rolling-number>
+    </div>
+    <div class="card-code">&lt;rolling-number value="9527"&gt;&lt;/rolling-number&gt;</div>
+  </div>
+
+  <!-- ══ 示範二：字型控制 ══ -->
+  <h2>字型控制</h2>
+  <div class="card">
+    <div class="card-label">font-family + font-size + font-weight</div>
+    <div class="card-center" style="gap:32px; flex-wrap:wrap;">
+      <rolling-number value="3721"
+        font-family="'Georgia', serif"
+        font-size="2.5rem"
+        color="#C3A5E5">
+      </rolling-number>
+      <rolling-number value="88888"
+        font-family="'Courier New', monospace"
+        font-size="2rem"
+        color="#95c9de">
+      </rolling-number>
+      <rolling-number value="1000"
+        font-family="Impact, sans-serif"
+        font-size="3rem"
+        color="#299459">
+      </rolling-number>
+    </div>
+    <div class="card-code">&lt;rolling-number value="3721"
+  font-family="'Georgia', serif"
+  font-size="2.5rem"
+  color="#C3A5E5"&gt;
+&lt;/rolling-number&gt;</div>
+  </div>
+
+  <!-- ══ 示範三：金融數字 ══ -->
+  <h2>金融數字（前後綴 + 小數）</h2>
+  <div class="card">
+    <div class="card-label">prefix / suffix / separator / decimals</div>
+    <div class="card-center" style="gap:40px; flex-wrap:wrap; flex-direction:column;">
+      <rolling-number value="1234567.89"
+        prefix="NT$" suffix=" 元"
+        decimals="2"
+        font-size="2.2rem"
+        easing="expo">
+      </rolling-number>
+      <rolling-number value="98.6"
+        prefix="" suffix="%"
+        decimals="1"
+        color-scheme="mono" mono-color="#299459"
+        font-size="2.8rem">
+      </rolling-number>
+      <rolling-number value="1000000"
+        prefix="$"
+        separator="."
+        font-size="2rem"
+        color="#eda109">
+      </rolling-number>
+    </div>
+    <div class="card-code">&lt;rolling-number value="1234567.89"
+  prefix="NT$" suffix=" 元"
+  decimals="2"
+  font-size="2.2rem"
+  easing="expo"&gt;
+&lt;/rolling-number&gt;</div>
+  </div>
+
+  <!-- ══ 示範四：緩動比較 ══ -->
+  <h2>緩動預設值比較（easing）</h2>
+  <div class="card">
+    <div class="card-label">6 種內建緩動</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; padding:8px 0;">
+      <div style="text-align:center;">
+        <div style="font-size:.75rem;color:var(--special);margin-bottom:10px;">smooth（預設）</div>
+        <rolling-number value="8899" easing="smooth" font-size="2rem" color="#b3de73" separator=""></rolling-number>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:.75rem;color:var(--sky);margin-bottom:10px;">expo</div>
+        <rolling-number value="8899" easing="expo" font-size="2rem" color="#95c9de" separator=""></rolling-number>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:.75rem;color:var(--safe);margin-bottom:10px;">decel</div>
+        <rolling-number value="8899" easing="decel" font-size="2rem" color="#299459" separator=""></rolling-number>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:.75rem;color:var(--lavender);margin-bottom:10px;">bounce</div>
+        <rolling-number value="8899" easing="bounce" font-size="2rem" color="#C3A5E5" separator=""></rolling-number>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:.75rem;color:var(--orange);margin-bottom:10px;">elastic</div>
+        <rolling-number value="8899" easing="elastic" font-size="2rem" color="#eda109" separator=""></rolling-number>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:.75rem;color:var(--shell);margin-bottom:10px;">linear</div>
+        <rolling-number value="8899" easing="linear" font-size="2rem" color="#c6c7bd" separator=""></rolling-number>
+      </div>
+    </div>
+    <div class="card-code">&lt;rolling-number value="8899" easing="bounce"&gt;&lt;/rolling-number&gt;
+&lt;!-- smooth | expo | decel | bounce | elastic | linear --&gt;
+&lt;!-- 或自訂：easing="cubic-bezier(0.34,1.56,0.64,1)" --&gt;</div>
+  </div>
+
+  <!-- ══ 示範五：色彩模式 ══ -->
+  <h2>色彩模式（color-scheme）</h2>
+  <div class="card">
+    <div style="display:flex; flex-direction:column; gap:24px; padding:8px 0;">
+      <div>
+        <div class="card-label">rainbow（預設）—— 每位數字不同色</div>
+        <rolling-number value="9876543" font-size="2.5rem" color-scheme="rainbow"></rolling-number>
+      </div>
+      <div>
+        <div class="card-label">mono —— 全部同色（mono-color 指定色票）</div>
+        <rolling-number value="9876543" font-size="2.5rem" color-scheme="mono" mono-color="#95c9de"></rolling-number>
+      </div>
+      <div>
+        <div class="card-label">color —— 直接指定單一顏色（覆蓋 color-scheme）</div>
+        <rolling-number value="9876543" font-size="2.5rem" color="#C3A5E5"></rolling-number>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 示範六：全域預設覆蓋 ══ -->
+  <h2>全域預設覆蓋（RollingNumber.defaults）</h2>
+  <div class="card">
+    <div class="card-label">統一設定所有元件的預設值，不必每個都寫屬性</div>
+    <div id="globalDemo" style="display:flex;gap:32px;flex-wrap:wrap;padding:8px 0;align-items:center;"></div>
+    <div class="card-code">// 在載入 rolling-number.js 後執行
+RollingNumber.defaults.fontSize     = '2rem';
+RollingNumber.defaults.easing       = 'expo';
+RollingNumber.defaults.colorScheme  = 'mono';
+RollingNumber.defaults.monoColor    = '#299459';
+RollingNumber.defaults.duration     = 2.0;
+
+// 之後建立的元件都會套用上面的預設
+const el = document.createElement('rolling-number');
+el.setAttribute('value', '12345');
+container.appendChild(el);</div>
+  </div>
+
+  <!-- ══ 示範七：互動控制 ══ -->
+  <h2>互動：動態更新</h2>
+  <div class="card">
+    <div class="card-label">修改數值後點「播放」，元件重新執行動畫</div>
+    <div class="card-center">
+      <rolling-number id="live"
+        value="88888"
+        font-size="3rem"
+        duration="1.8"
+        easing="expo"
+        prefix="🏆 ">
+      </rolling-number>
+    </div>
+    <div class="controls">
+      <input type="number" id="liveVal" placeholder="輸入數字" value="88888" min="0">
+      <select id="liveEasing">
+        <option value="smooth">smooth</option>
+        <option value="expo" selected>expo</option>
+        <option value="bounce">bounce</option>
+        <option value="elastic">elastic</option>
+        <option value="decel">decel</option>
+        <option value="linear">linear</option>
+      </select>
+      <button class="btn" onclick="updateLive()">▶ 播放</button>
+      <button class="btn btn-ghost" onclick="randomLive()">🎲 隨機</button>
+    </div>
+    <div class="card-code">// JS 方式更新
+const el = document.getElementById('live');
+el.setAttribute('value', '12345');       // → 自動重新播放
+el.setAttribute('easing', 'bounce');
+
+// 或使用封裝的快捷方法
+el.countTo(99999);</div>
+  </div>
+
+  <!-- ══ 示範八：autoplay / 滾動觸發 ══ -->
+  <h2>滾動觸發（autoplay / threshold）</h2>
+  <div class="card">
+    <div class="card-label">autoplay="true"（預設）：進入視窗才播放；autoplay="false"：立即播放</div>
+    <div style="padding:12px 0; display:flex; gap:32px; flex-wrap:wrap; align-items:center;">
+      <div>
+        <div style="font-size:.75rem;color:var(--shell);opacity:.5;margin-bottom:8px;">autoplay（進視窗觸發）</div>
+        <rolling-number value="777777" font-size="2rem" autoplay="true" easing="expo"></rolling-number>
+      </div>
+      <div>
+        <div style="font-size:.75rem;color:var(--shell);opacity:.5;margin-bottom:8px;">autoplay="false"（立即播）</div>
+        <rolling-number value="123456" font-size="2rem" autoplay="false" easing="smooth"></rolling-number>
+      </div>
+    </div>
+    <div class="card-code">&lt;!-- 進入視窗才播，20% 可見面積觸發 --&gt;
+&lt;rolling-number value="777777" autoplay="true" threshold="0.2"&gt;&lt;/rolling-number&gt;
+
+&lt;!-- 頁面載入立即播 --&gt;
+&lt;rolling-number value="123456" autoplay="false"&gt;&lt;/rolling-number&gt;</div>
+  </div>
+
+  <!-- ══ 屬性速查表 ══ -->
+  <h2>屬性速查表</h2>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>屬性</th>
+          <th>型別</th>
+          <th>預設</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>value</td>          <td>number</td>  <td>0</td>          <td>目標數值（必填，支援小數）</td></tr>
+        <tr><td>font-family</td>    <td>string</td>  <td>inherit</td>    <td>字型名稱</td></tr>
+        <tr><td>font-size</td>      <td>string</td>  <td>3rem</td>       <td>字型大小（rem / px）</td></tr>
+        <tr><td>font-weight</td>    <td>string</td>  <td>800</td>        <td>字重</td></tr>
+        <tr><td>color</td>          <td>string</td>  <td>''</td>         <td>指定單色，覆蓋 color-scheme</td></tr>
+        <tr><td>color-scheme</td>   <td>string</td>  <td>rainbow</td>    <td><span class="tag">rainbow</span><span class="tag">mono</span></td></tr>
+        <tr><td>mono-color</td>     <td>string</td>  <td>#b3de73</td>    <td>color-scheme=mono 時的顏色</td></tr>
+        <tr><td>separator-color</td><td>string</td>  <td>#c6c7bd</td>    <td>逗號、小數點、前後綴的顏色</td></tr>
+        <tr><td>duration</td>       <td>number</td>  <td>1.6</td>        <td>動畫時長（秒）</td></tr>
+        <tr><td>delay-step</td>     <td>number</td>  <td>0.08</td>       <td>每欄錯開延遲（秒）</td></tr>
+        <tr><td>easing</td>         <td>string</td>  <td>smooth</td>     <td><span class="tag">smooth</span><span class="tag">expo</span><span class="tag">decel</span><span class="tag">bounce</span><span class="tag">elastic</span><span class="tag">linear</span> 或 cubic-bezier(…)</td></tr>
+        <tr><td>separator</td>      <td>string</td>  <td>,</td>          <td>千位分隔符，空字串=不顯示</td></tr>
+        <tr><td>decimals</td>       <td>number</td>  <td>0</td>          <td>顯示小數位數</td></tr>
+        <tr><td>prefix</td>         <td>string</td>  <td>''</td>         <td>前綴文字，如 NT$</td></tr>
+        <tr><td>suffix</td>         <td>string</td>  <td>''</td>         <td>後綴文字，如 元、%</td></tr>
+        <tr><td>autoplay</td>       <td>boolean</td> <td>true</td>       <td>進入視窗才播（IntersectionObserver）</td></tr>
+        <tr><td>threshold</td>      <td>number</td>  <td>0.2</td>        <td>觸發閾值（0–1），越高越晚觸發</td></tr>
+        <tr><td>line-height</td>    <td>number</td>  <td>1.35</td>       <td>每格高度係數（相對於 font-size）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ JS API ══ -->
+  <h2>JavaScript API</h2>
+  <div class="card">
+    <div class="card-code">const el = document.querySelector('rolling-number');
+
+// 播放動畫
+el.play();
+
+// 更新數值並重播
+el.countTo(99999);
+el.setAttribute('value', 99999);   // 同效果
+
+// 全域預設（影響之後建立的所有元件）
+RollingNumber.defaults.easing    = 'expo';
+RollingNumber.defaults.fontSize  = '2.5rem';
+RollingNumber.defaults.duration  = 2.0;
+
+// 查看內建緩動與色彩
+console.log(RollingNumber.EASINGS);
+console.log(RollingNumber.RAINBOW);</div>
+  </div>
+
+</div><!-- /page -->
+
+<script src="rolling-number.js"></script>
+<script>
+  /* ── 全域預設示範 ── */
+  RollingNumber.defaults.fontSize    = '2rem';
+  RollingNumber.defaults.easing      = 'expo';
+  RollingNumber.defaults.colorScheme = 'mono';
+  RollingNumber.defaults.monoColor   = '#299459';
+  RollingNumber.defaults.duration    = 2.0;
+
+  const container = document.getElementById('globalDemo');
+  [12345, 67890, 111].forEach(v => {
+    const el = document.createElement('rolling-number');
+    el.setAttribute('value', v);
+    container.appendChild(el);
+  });
+
+  // 重設，避免影響後續其他示範
+  RollingNumber.defaults = {};
+
+  /* ── 互動區 ── */
+  function updateLive() {
+    const el  = document.getElementById('live');
+    const val = document.getElementById('liveVal').value || 0;
+    const eas = document.getElementById('liveEasing').value;
+    el.setAttribute('easing', eas);
+    el.countTo(Number(val));
+  }
+
+  function randomLive() {
+    const v = Math.floor(Math.random() * 999999) + 1;
+    document.getElementById('liveVal').value = v;
+    updateLive();
+  }
+</script>
+</body>
+</html>

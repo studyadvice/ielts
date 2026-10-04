@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>side-menu 元件展示</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg     : #0C0D0C;
+    --surface: #141514;
+    --border : #242524;
+    --shell  : #C6C7BD;
+    --stone  : #95c9de;
+    --special: #b3de73;
+    --sky    : #95c9de;
+    --safe   : #299459;
+    --warning: #F08080;
+    --lavender:#C3A5E5;
+    --orange : #EDA109;
+  }
+
+  html, body {
+    height    : 100%;
+    background: var(--bg);
+    color     : var(--shell);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size : 1rem;
+    overflow  : hidden;
+  }
+
+  /* ── 頁面分割 ─────────────────────────────── */
+  .layout {
+    display: flex;
+    height : 100vh;
+  }
+
+  /* ── 右側面板 ─────────────────────────────── */
+  .panel {
+    flex      : 1;
+    display   : flex;
+    flex-direction: column;
+    overflow  : hidden;
+    background: var(--bg);
+  }
+
+  /* 頂列 */
+  .topbar {
+    display    : flex;
+    align-items: center;
+    gap        : 16px;
+    padding    : 16px 32px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap  : wrap;
+  }
+  .topbar h1 {
+    font-size  : 1rem;
+    font-weight: 600;
+    color      : var(--special);
+    margin-right: auto;
+    letter-spacing: .03em;
+  }
+
+  /* 控制群組 */
+  .ctrl-group {
+    display    : flex;
+    align-items: center;
+    gap        : 8px;
+    background : var(--surface);
+    border     : 1px solid var(--border);
+    border-radius: 6px;
+    padding    : 7px 12px;
+  }
+  .ctrl-group label {
+    font-size  : 0.72rem;
+    color      : var(--stone);
+    font-weight: 600;
+    letter-spacing: .05em;
+    white-space: nowrap;
+  }
+  .ctrl-group select,
+  .ctrl-group input[type=number],
+  .ctrl-group input[type=text] {
+    background   : var(--bg);
+    color        : var(--shell);
+    border       : 1px solid var(--border);
+    border-radius: 4px;
+    padding      : 4px 8px;
+    font-size    : 0.82rem;
+    outline      : none;
+  }
+  .ctrl-group input[type=color] {
+    width: 36px; height: 26px; padding: 1px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--bg); cursor: pointer;
+  }
+  .ctrl-group select:focus,
+  .ctrl-group input:focus { border-color: var(--sky); }
+
+  /* 切換按鈕 */
+  .toggle-btn {
+    display    : flex;
+    align-items: center;
+    gap        : 6px;
+    padding    : 6px 14px;
+    border-radius: 5px;
+    font-size  : 0.82rem;
+    font-weight: 600;
+    cursor     : pointer;
+    border     : none;
+    transition : opacity .15s, background .2s;
+  }
+  .toggle-btn:hover { opacity: .85; }
+  .toggle-btn.dark  { background: #2a2b2a; color: var(--shell); }
+  .toggle-btn.light { background: #d8dbd4; color: #252624; }
+
+  /* ── 內容區 ───────────────────────────────── */
+  .content-area {
+    flex    : 1;
+    overflow: auto;
+    padding : 32px;
+    display : flex;
+    gap     : 28px;
+    align-items: flex-start;
+  }
+
+  /* 說明卡片 */
+  .info-card {
+    background   : var(--surface);
+    border       : 1px solid var(--border);
+    border-radius: 8px;
+    padding      : 22px 24px;
+    flex         : 1;
+    min-width    : 0;
+  }
+  .info-card h2 {
+    font-size  : 0.78rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color      : var(--stone);
+    margin-bottom: 14px;
+  }
+
+  /* 目前選取項目 */
+  .active-display {
+    display   : flex;
+    gap       : 10px;
+    flex-wrap : wrap;
+  }
+  .active-item {
+    background   : var(--bg);
+    border       : 1px solid var(--border);
+    border-radius: 6px;
+    padding      : 8px 14px;
+    font-size    : 0.82rem;
+  }
+  .active-item .k { color: var(--stone);   margin-right: 4px; font-size: .72rem; }
+  .active-item .v { color: var(--special); font-weight: 600; }
+  .active-item.col2 .v { color: var(--sky); }
+
+  /* 程式碼區 */
+  pre {
+    background   : var(--bg);
+    border       : 1px solid var(--border);
+    border-radius: 6px;
+    padding      : 16px 18px;
+    font-size    : 0.78rem;
+    overflow-x   : auto;
+    color        : #DBEDD8;
+    line-height  : 1.7;
+    margin-top   : 14px;
+  }
+  pre .c { color: #95c9de; font-style: italic; }
+  pre .k { color: #C3A5E5; }
+  pre .s { color: #299459; }
+  pre .a { color: #DECA4B; }
+  pre .v { color: #b3de73; }
+
+  /* 事件 log */
+  .log-box {
+    background   : var(--bg);
+    border       : 1px solid var(--border);
+    border-radius: 6px;
+    padding      : 12px 14px;
+    font-size    : .76rem;
+    font-family  : monospace;
+    min-height   : 52px;
+    max-height   : 160px;
+    overflow-y   : auto;
+    margin-top   : 12px;
+    color        : var(--safe);
+  }
+  .log-line .t  { color: var(--stone); margin-right: 8px; }
+  .log-col1     { color: var(--special); }
+  .log-col2     { color: var(--sky); }
+
+  /* ── 屬性表 ───────────────────────────────── */
+  .attr-table { width: 100%; border-collapse: collapse; font-size: .8rem; margin-top: 12px; }
+  .attr-table th {
+    text-align: left; padding: 6px 12px;
+    color: var(--special); border-bottom: 1px solid var(--border);
+    font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .attr-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .attr-table tr:last-child td { border-bottom: none; }
+  .attr-table td:first-child  { color: var(--lavender); font-family: monospace; }
+  .attr-table td:nth-child(2) { color: #DECA4B;         font-family: monospace; }
+  .attr-table td:nth-child(3) { color: var(--stone); }
+
+  /* ── brand 內部元素（示範用）─────────────── */
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 7px;
+    background: rgba(179,222,115,0.1); border: 1px solid rgba(179,222,115,0.22);
+    display: flex; align-items: center; justify-content: center;
+    color: #b3de73; font-size: 1rem; flex-shrink: 0;
+    margin-right: 10px;
+  }
+  .brand-text-wrap .brand-name {
+    font-size: .9rem; font-weight: 600; line-height: 1.2;
+  }
+  .brand-text-wrap .brand-sub {
+    font-size: .65rem; opacity: .4; letter-spacing: .04em;
+  }
+
+  /* ── footer 內部元素 ──────────────────────── */
+  .user-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 8px; cursor: pointer;
+    transition: background .18s ease;
+  }
+  .user-row:hover { background: rgba(198,199,189,0.05); }
+  .user-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(195,165,229,0.15); border: 1px solid rgba(195,165,229,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--lavender); font-size: .85rem;
+  }
+  .user-name { font-size: .84rem; opacity: .72; font-weight: 500; }
+  .user-plan { font-size: .66rem; opacity: .38; margin-top: 1px; }
+  .user-row i { margin-left: auto; opacity: .25; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ════════════════ SIDE MENU ════════════════ -->
+  <side-menu id="menu" theme="dark" font-size="1rem"
+             bar-show="true" bar-width="3" bar-style="solid">
+
+    <menu-brand>
+      <div class="brand-mark"><i class="bi bi-layers-half"></i></div>
+      <div class="brand-text-wrap">
+        <div class="brand-name">IELTS Network</div>
+        <div class="brand-sub">學習管理平台</div>
+      </div>
+    </menu-brand>
+
+    <!-- 單欄 section -->
+    <menu-section label="學習資源" col="1">
+      <menu-item icon="bi-journal-text"  title="課程講義"  subtitle="本週新增 3 份"></menu-item>
+      <menu-item icon="bi-pencil-square" title="練習題庫"  subtitle="已完成 24 題"></menu-item>
+      <menu-item icon="bi-headphones"    title="聽力訓練"  subtitle="Unit 5 進行中"></menu-item>
+      <menu-item icon="bi-mic"           title="口說練習"  subtitle="AI 批改模式"></menu-item>
+    </menu-section>
+
+    <!-- 雙欄 section -->
+    <menu-section label="快速入口" col="2">
+      <menu-item icon="bi-lightning"      title="免費練習題庫"></menu-item>
+      <menu-item icon="bi-chat-text"      title="口說第一部分"></menu-item>
+      <menu-item icon="bi-volume-up"      title="跟讀練習"></menu-item>
+      <menu-item                          title="詞彙速記"></menu-item>
+    </menu-section>
+
+    <!-- 單欄 section（無副標題）-->
+    <menu-section label="我的進度" col="1">
+      <menu-item icon="bi-calendar3"      title="學習日曆"></menu-item>
+      <menu-item icon="bi-bar-chart-line" title="成績紀錄"></menu-item>
+      <menu-item icon="bi-bookmark"       title="儲存的筆記"></menu-item>
+    </menu-section>
+
+    <!-- 帳號 -->
+    <menu-section label="帳號" col="1">
+      <menu-item icon="bi-bell"           title="通知"></menu-item>
+      <menu-item icon="bi-gear"           title="設定"></menu-item>
+    </menu-section>
+
+    <!-- Toggle 展示 section -->
+    <menu-section label="展開面板" col="1">
+      <menu-item icon="bi-info-circle"    title="使用說明"
+                 target="#panel-help"     animate="fade"></menu-item>
+      <menu-item icon="bi-palette"        title="佈景設定"
+                 target="#panel-theme-x"></menu-item>
+      <menu-item icon="bi-card-checklist" title="快捷清單"
+                 target="#panel-quick, #panel-quick-b"></menu-item>
+    </menu-section>
+
+    <menu-footer>
+      <div class="user-row">
+        <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+        <div>
+          <div class="user-name">林同學</div>
+          <div class="user-plan">Premium 方案</div>
+        </div>
+        <i class="bi bi-three-dots-vertical"></i>
+      </div>
+    </menu-footer>
+
+  </side-menu>
+
+  <!-- ════════════════ 右側面板 ════════════════ -->
+  <div class="panel">
+
+    <!-- 頂列控制 -->
+    <div class="topbar">
+      <h1>side-menu 元件展示</h1>
+
+      <!-- 主題切換 -->
+      <button class="toggle-btn dark" id="theme-btn" onclick="toggleTheme()">
+        <i class="bi bi-moon-stars-fill"></i> 切換亮色
+      </button>
+
+      <!-- 指示條顯示 -->
+      <div class="ctrl-group">
+        <label>指示條</label>
+        <select onchange="setBar('show', this.value)">
+          <option value="true">顯示</option>
+          <option value="false">隱藏</option>
+        </select>
+      </div>
+
+      <!-- 指示條樣式 -->
+      <div class="ctrl-group">
+        <label>線型</label>
+        <select onchange="setBar('style', this.value)">
+          <option value="solid">solid</option>
+          <option value="dashed">dashed</option>
+          <option value="dotted">dotted</option>
+        </select>
+      </div>
+
+      <!-- 指示條粗細 -->
+      <div class="ctrl-group">
+        <label>粗細</label>
+        <input type="number" value="3" min="1" max="8" style="width:56px"
+               oninput="setBar('width', this.value)">
+        <span style="font-size:.75rem;color:var(--stone)">px</span>
+      </div>
+
+      <!-- 指示條色彩 -->
+      <div class="ctrl-group">
+        <label>顏色</label>
+        <input type="color" value="#b3de73" oninput="setBar('color', this.value)">
+        <button onclick="resetBarColor()"
+          style="font-size:.72rem;padding:4px 8px;background:var(--bg);
+                 color:var(--stone);border:1px solid var(--border);
+                 border-radius:4px;cursor:pointer;">重設</button>
+      </div>
+
+      <!-- 字級 -->
+      <div class="ctrl-group">
+        <label>字級</label>
+        <select onchange="setFontSize(this.value)">
+          <option value="0.9rem">0.9rem</option>
+          <option value="1rem" selected>1rem</option>
+          <option value="1.1rem">1.1rem</option>
+          <option value="1.2rem">1.2rem</option>
+        </select>
+      </div>
+
+      <!-- 寬度 -->
+      <div class="ctrl-group">
+        <label>寬度</label>
+        <input type="number" value="320" min="240" max="480" step="10" style="width:68px"
+               oninput="setWidth(this.value)">
+        <span style="font-size:.75rem;color:var(--stone)">px</span>
+      </div>
+    </div>
+
+    <!-- 主內容 -->
+    <div class="content-area">
+
+      <!-- Toggle 目標面板（初始隱藏）-->
+      <div id="panel-help" style="display:none;margin-bottom:20px">
+        <div style="background:#141514;border:1px solid #242524;border-left:3px solid #b3de73;
+                    border-radius:8px;padding:18px 22px;">
+          <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                      color:#b3de73;margin-bottom:10px">使用說明</div>
+          <p style="font-size:.88rem;color:rgba(198,199,189,0.82);line-height:1.7">
+            點擊左側「展開面板」區域的項目，可切換此內容區域的顯示狀態。<br>
+            使用 <code style="background:#0e0f0e;padding:1px 5px;border-radius:3px;color:#b3de73">target="#id"</code>
+            屬性設定目標；<code style="background:#0e0f0e;padding:1px 5px;border-radius:3px;color:#b3de73">animate="fade"</code>
+            加入淡入淡出效果。
+          </p>
+        </div>
+      </div>
+
+      <div id="panel-theme-x" style="display:none;margin-bottom:20px">
+        <div style="background:#141514;border:1px solid #242524;border-left:3px solid #C3A5E5;
+                    border-radius:8px;padding:18px 22px;">
+          <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                      color:#C3A5E5;margin-bottom:10px">佈景設定</div>
+          <p style="font-size:.88rem;color:rgba(198,199,189,0.82);line-height:1.7">
+            這個面板由左側「佈景設定」控制。再點一次即可收起。<br>
+            item 的 active 狀態與目標面板的顯示同步：開啟 = active，收起 = 非 active。
+          </p>
+        </div>
+      </div>
+
+      <div id="panel-quick"   style="display:none;margin-bottom:8px">
+        <div style="background:#141514;border:1px solid #242524;border-left:3px solid #95c9de;
+                    border-radius:8px;padding:14px 20px;font-size:.88rem;color:rgba(198,199,189,0.82)">
+          快捷清單 A：同一個 target 屬性可以控制多個元素（逗號分隔 CSS 選擇器）。
+        </div>
+      </div>
+      <div id="panel-quick-b" style="display:none;margin-bottom:20px">
+        <div style="background:#141514;border:1px solid #242524;border-left:3px solid #299459;
+                    border-radius:8px;padding:14px 20px;font-size:.88rem;color:rgba(198,199,189,0.82)">
+          快捷清單 B：這兩個面板同時被「快捷清單」這個 menu-item 控制。
+        </div>
+      </div>
+
+      <!-- 左欄：目前選取 + log -->
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:20px">
+
+        <div class="info-card">
+          <h2>目前選取項目</h2>
+          <div class="active-display" id="active-display">
+            <div class="active-item" style="color:var(--stone);font-size:.82rem">
+              尚未選取任何項目
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h2>menu-select 事件 log</h2>
+          <div class="log-box" id="event-log">
+            <div style="color:rgba(149,201,222,0.35)">等待點擊事件...</div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h2>JS API</h2>
+          <pre><span class="c">// 取得 side-menu 元素</span>
+<span class="k">const</span> menu = document.querySelector(<span class="s">'side-menu'</span>);
+
+<span class="c">// 切換主題</span>
+menu.setTheme(<span class="s">'light'</span>);
+
+<span class="c">// 監聽選取事件</span>
+menu.addEventListener(<span class="s">'menu-select'</span>, e => {
+  <span class="k">const</span> { title, section, col, icon } = e.detail;
+});
+
+<span class="c">// 監聽主題切換</span>
+menu.addEventListener(<span class="s">'theme-change'</span>, e => {
+  console.log(e.detail.theme);
+});
+
+<span class="c">// 全域預設值</span>
+SideMenu.config({
+  theme   : <span class="s">'dark'</span>,
+  width   : <span class="v">320</span>,
+  fontSize: <span class="s">'1rem'</span>,
+  barShow : <span class="k">true</span>,
+  barWidth: <span class="v">3</span>,
+  barStyle: <span class="s">'solid'</span>,
+  barColor: <span class="k">null</span>,  <span class="c">// null = 跟隨主題</span>
+});</pre>
+        </div>
+
+      </div>
+
+      <!-- 右欄：屬性速查 -->
+      <div style="width:340px;flex-shrink:0">
+        <div class="info-card">
+          <h2>&lt;side-menu&gt; 屬性</h2>
+          <table class="attr-table">
+            <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+            <tbody>
+              <tr><td>theme</td>    <td>dark</td>  <td>dark / light</td></tr>
+              <tr><td>width</td>    <td>320</td>   <td>寬度 px</td></tr>
+              <tr><td>font-size</td><td>1rem</td>  <td>基礎字級</td></tr>
+              <tr><td>bar-show</td> <td>true</td>  <td>指示條顯示</td></tr>
+              <tr><td>bar-color</td><td>—</td>     <td>指示條色彩</td></tr>
+              <tr><td>bar-width</td><td>3</td>     <td>指示條粗細 px</td></tr>
+              <tr><td>bar-style</td><td>solid</td> <td>solid/dashed/dotted</td></tr>
+            </tbody>
+          </table>
+
+          <h2 style="margin-top:20px">&lt;menu-section&gt; 屬性</h2>
+          <table class="attr-table">
+            <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+            <tbody>
+              <tr><td>label</td><td>—</td><td>分組標題</td></tr>
+              <tr><td>col</td>  <td>1</td><td>1（單欄）/ 2（雙欄）</td></tr>
+            </tbody>
+          </table>
+
+          <h2 style="margin-top:20px">&lt;menu-item&gt; 屬性</h2>
+          <table class="attr-table">
+            <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+            <tbody>
+              <tr><td>title</td>       <td>必填</td><td>主標題</td></tr>
+              <tr><td>icon</td>        <td>—</td>   <td>Bootstrap Icon class</td></tr>
+              <tr><td>subtitle</td>    <td>—</td>   <td>副標題（單欄推薦）</td></tr>
+              <tr><td>target</td>      <td>—</td>   <td>切換目標的 CSS 選擇器，逗號分隔可多個</td></tr>
+              <tr><td>toggle-mode</td> <td>display</td><td>display / class</td></tr>
+              <tr><td>toggle-class</td><td>is-hidden</td><td>class 模式使用的 class 名稱</td></tr>
+              <tr><td>animate</td>     <td>—</td>   <td>fade：淡入淡出（display 模式）</td></tr>
+            </tbody>
+          </table>
+
+          <h2 style="margin-top:20px">active 狀態差異</h2>
+          <table class="attr-table">
+            <thead><tr><th>col</th><th>active 效果</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td style="color:var(--stone)">左側指示條 + 背景微亮 + 文字黃綠色</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td style="color:var(--stone)">整格邊框天藍色亮起 + 背景微亮</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="side-menu.js"></script>
+<script>
+  const menu   = document.getElementById('menu');
+  const logEl  = document.getElementById('event-log');
+  const dispEl = document.getElementById('active-display');
+  let isDark   = true;
+
+  /* ── Toggle 事件 ────────────────────────── */
+  menu.addEventListener('menu-toggle', e => {
+    const { open, title, targets } = e.detail;
+    const t    = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+    const tag  = open
+      ? `<span style="color:#299459;font-weight:700">▶ 開啟</span>`
+      : `<span style="color:#F08080;font-weight:700">▼ 收起</span>`;
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = `<span class="t">${t}</span>${tag} <strong>${title}</strong>　`
+                   + `${targets.length} 個目標`;
+    if (logEl.firstChild?.style?.color) logEl.innerHTML = '';
+    logEl.prepend(line);
+  });
+
+  /* ── 選取事件 ───────────────────────────── */
+  menu.addEventListener('menu-select', e => {
+    const { title, section, col, icon } = e.detail;
+    const isCol2 = col === '2';
+    const accentClass = isCol2 ? 'col2' : '';
+
+    // 更新顯示
+    dispEl.innerHTML = `
+      <div class="active-item ${accentClass}">
+        <span class="k">標題</span><span class="v">${title}</span>
+      </div>
+      <div class="active-item ${accentClass}">
+        <span class="k">分組</span><span class="v">${section || '—'}</span>
+      </div>
+      <div class="active-item ${accentClass}">
+        <span class="k">欄數</span><span class="v">col=${col}</span>
+      </div>
+      <div class="active-item ${accentClass}">
+        <span class="k">icon</span><span class="v">${icon || '無'}</span>
+      </div>
+    `;
+
+    // Log
+    const t    = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+    const cTag = isCol2
+      ? `<span class="log-col2">[col=2]</span>`
+      : `<span class="log-col1">[col=1]</span>`;
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML =
+      `<span class="t">${t}</span>${cTag} ` +
+      `<strong>${title}</strong>` +
+      (section ? `　＄{section}` : '') +
+      (icon ? `　<i class="bi ${icon}" style="font-size:.8em"></i>` : '');
+    // fix template literal
+    line.innerHTML =
+      `<span class="t">${t}</span>${cTag} ` +
+      `<strong>${title}</strong>` +
+      (section ? `　${section}` : '') +
+      (icon ? `　<i class="bi ${icon}" style="font-size:.8em"></i>` : '');
+    if (logEl.firstChild?.style?.color) logEl.innerHTML = '';
+    logEl.prepend(line);
+  });
+
+  /* ── 主題切換 ───────────────────────────── */
+  function toggleTheme() {
+    isDark = !isDark;
+    const theme = isDark ? 'dark' : 'light';
+    menu.setTheme(theme);
+
+    const btn = document.getElementById('theme-btn');
+    btn.className = `toggle-btn ${theme}`;
+    btn.innerHTML = isDark
+      ? '<i class="bi bi-moon-stars-fill"></i> 切換亮色'
+      : '<i class="bi bi-sun-fill"></i> 切換暗色';
+
+    // 右側面板背景也跟著變
+    document.body.style.background = isDark ? '#0C0D0C' : '#e8ebe5';
+    document.body.style.color      = isDark ? '#C6C7BD' : '#252624';
+  }
+
+  /* ── 指示條控制 ─────────────────────────── */
+  function setBar(prop, val) {
+    const map = { show: 'bar-show', style: 'bar-style', width: 'bar-width', color: 'bar-color' };
+    menu.setAttribute(map[prop], val);
+  }
+  function resetBarColor() {
+    menu.removeAttribute('bar-color');
+    document.querySelector('input[type=color]').value = '#b3de73';
+  }
+
+  /* ── 字級 / 寬度 ────────────────────────── */
+  function setFontSize(v) { menu.setAttribute('font-size', v); }
+  function setWidth(v)    { menu.setAttribute('width', v); }
+</script>
+
+</body>
+</html>

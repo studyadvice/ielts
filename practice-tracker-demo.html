@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice Tracker · 元件示範</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0C0D0C;
+      --shell:   #C6C7BD;
+      --lavender:#C3A5E5;
+      --sky:     #82C8E5;
+      --warning: #E6374B;
+      --salmon:  #E5C3B3;
+      --ocean:   #1CCAE8;
+      --safe:    #27AE60;
+      --teal:    #0DA591;
+      --vanilla: #DBEDD8;
+      --yellow:  #E3D322;
+      --focus:   #D4FFFC;
+      --special: #B3DE73;
+      --info:    #2351DB;
+      --indigo:  #7849C9;
+      --pink:    #FF91D7;
+      --orange:  #EDA109;
+      --surface: #141514;
+      --surface2:#1c1e1c;
+      --border:  rgba(198,199,189,0.11);
+    }
+
+    html { font-size: 18px; }
+
+    body {
+      background: var(--bg);
+      color: var(--shell);
+      font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── Page Header ───────────────────────────────────── */
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(12,13,12,0.93);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .page-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--special);
+      letter-spacing: 0.04em;
+    }
+    .ver-badge {
+      font-size: 0.72rem;
+      background: rgba(179,222,115,0.10);
+      color: var(--special);
+      border: 1px solid rgba(179,222,115,0.28);
+      border-radius: 4px;
+      padding: 2px 9px;
+    }
+    .new-badge {
+      font-size: 0.68rem;
+      background: rgba(28,202,232,0.10);
+      color: var(--ocean);
+      border: 1px solid rgba(28,202,232,0.28);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-weight: 700;
+    }
+
+    /* ── Two-column layout ─────────────────────────────── */
+    .layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      min-height: calc(100vh - 55px);
+    }
+
+    /* ── Sidebar ──────────────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 55px;
+      height: calc(100vh - 55px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-right: 1px solid var(--border);
+      padding: 24px 18px;
+      background: rgba(20,21,20,0.6);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(198,199,189,0.15) transparent;
+    }
+
+    .sb-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--lavender);
+      opacity: 0.65;
+      margin-bottom: 12px;
+    }
+    .sb-group { margin-bottom: 28px; }
+
+    /* inline tracker fills sidebar */
+    .sidebar practice-tracker[data-inline] {
+      width: 100% !important;
+    }
+
+    /* mode toggle buttons */
+    .mode-btns {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .mode-btn {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: rgba(198,199,189,0.55);
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .mode-btn.active {
+      background: rgba(179,222,115,0.12);
+      color: var(--special);
+      border-color: rgba(179,222,115,0.3);
+    }
+    .mode-btn:hover:not(.active) {
+      background: rgba(198,199,189,0.06);
+      color: var(--shell);
+    }
+
+    /* attr quick-ref table */
+    .attr-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.67rem;
+    }
+    .attr-table th {
+      text-align: left;
+      padding: 4px 6px;
+      color: var(--lavender);
+      opacity: 0.6;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .attr-table td {
+      padding: 5px 6px;
+      border-bottom: 1px solid rgba(198,199,189,0.05);
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    .attr-table td:first-child {
+      color: var(--sky);
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      white-space: nowrap;
+    }
+    .attr-table td:last-child {
+      color: rgba(198,199,189,0.50);
+    }
+    .attr-table .new-row td { color: rgba(179,222,115,0.85); }
+    .attr-table .new-row td:first-child { color: var(--special); }
+
+    /* ── Main content ──────────────────────────────────── */
+    .content {
+      padding: 36px 52px 80px;
+    }
+
+    /* Section headings */
+    .section-head {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ocean);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Method cards ──────────────────────────────────── */
+    .methods { margin-bottom: 52px; }
+    .method-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .mc-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mc-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: 0.04em;
+    }
+    .mc-badge.a { background: rgba(179,222,115,0.13); color: var(--special); border: 1px solid rgba(179,222,115,0.25); }
+    .mc-badge.b { background: rgba(28,202,232,0.10);  color: var(--ocean);   border: 1px solid rgba(28,202,232,0.22);  }
+    .mc-badge.c { background: rgba(227,211,34,0.10);  color: var(--yellow);  border: 1px solid rgba(227,211,34,0.22);  }
+    .mc-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--shell);
+    }
+    .mc-note {
+      font-size: 0.72rem;
+      color: rgba(198,199,189,0.45);
+      margin-left: auto;
+    }
+    .method-card pre {
+      font-size: 0.76rem;
+      line-height: 1.45;
+      padding: 16px 18px;
+      overflow-x: auto;
+      background: rgba(0,0,0,0.28);
+      color: var(--vanilla);
+      font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+    }
+    .cm  { color: rgba(198,199,189,0.35); }
+    .kw  { color: var(--lavender); }
+    .at  { color: var(--sky); }
+    .vl  { color: var(--salmon); }
+    .sp  { color: var(--special); }
+    .oc  { color: var(--ocean); }
+
+    /* ── Exercise sections ─────────────────────────────── */
+    .exercises-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .batch-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .batch-btn {
+      font-size: 0.72rem;
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: rgba(198,199,189,0.55);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+    }
+    .batch-btn:hover { background: rgba(198,199,189,0.08); color: var(--shell); }
+    .batch-btn.danger { border-color: rgba(230,55,75,0.3); color: rgba(230,55,75,0.6); }
+    .batch-btn.danger:hover { background: rgba(230,55,75,0.08); color: var(--warning); }
+
+    .ex-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 26px;
+      margin-bottom: 16px;
+      position: relative;
+      transition: border-color 0.35s ease;
+    }
+    .ex-section.is-done {
+      border-color: rgba(39,174,96,0.32);
+      background: rgba(39,174,96,0.03);
+    }
+
+    .ex-row-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .ex-tag {
+      display: inline-block;
+      font-size: 0.67rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--teal);
+      background: rgba(13,165,145,0.10);
+      border: 1px solid rgba(13,165,145,0.22);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .done-badge {
+      display: none;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--safe);
+      background: rgba(39,174,96,0.10);
+      border: 1px solid rgba(39,174,96,0.25);
+      border-radius: 4px;
+      padding: 2px 9px;
+    }
+    .ex-section.is-done .done-badge { display: inline-block; }
+
+    .ex-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--shell);
+      margin-bottom: 8px;
+    }
+    .ex-section p {
+      font-size: 0.875rem;
+      color: rgba(198,199,189,0.65);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .btn-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(39,174,96,0.08);
+      color: var(--safe);
+      border: 1px solid rgba(39,174,96,0.25);
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+      font-family: inherit;
+    }
+    .btn-done:hover:not(:disabled) {
+      background: rgba(39,174,96,0.18);
+      border-color: rgba(39,174,96,0.45);
+    }
+    .btn-done:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    /* ── Notify toast ──────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(179,222,115,0.12);
+      border: 1px solid rgba(179,222,115,0.30);
+      border-radius: 8px;
+      color: var(--special);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 10px 22px;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Priority diagram ─────────────────────────────── */
+    .priority-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 0.76rem;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      padding: 14px 18px;
+    }
+    .pr-box {
+      flex: 1;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 6px;
+      line-height: 1.35;
+    }
+    .pr-box small {
+      display: block;
+      font-size: 0.6rem;
+      opacity: 0.5;
+      margin-top: 2px;
+      font-family: inherit;
+    }
+    .pr-arrow {
+      color: rgba(198,199,189,0.3);
+      padding: 0 8px;
+      font-size: 0.9rem;
+    }
+    .pr-box.low  { background: rgba(198,199,189,0.07); color: rgba(198,199,189,0.55); }
+    .pr-box.mid  { background: rgba(28,202,232,0.08);  color: var(--ocean); }
+    .pr-box.high { background: rgba(179,222,115,0.12); color: var(--special); border: 1px solid rgba(179,222,115,0.22); }
+  </style>
+</head>
+<body>
+
+<!-- ── Page Header ──────────────────────────────────────── -->
+<header class="page-header">
+  <h1>Practice Tracker</h1>
+  <span class="ver-badge">v1.1</span>
+  <span class="new-badge">HTML 標籤支援</span>
+</header>
+
+<!-- ── Layout ───────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- 行內追蹤器展示 -->
+    <div class="sb-group">
+      <div class="sb-label">行內模式示範（data-inline）</div>
+
+      <!-- ★ 直接寫在 HTML 中的 <practice-tracker> ★ -->
+      <practice-tracker
+        data-inline
+        data-prefix="ex-"
+        data-title="練習進度"
+        data-cells-per-row="3"
+        data-panel-width="100%"
+        data-complete-text="全部完成！"
+        data-complete-sub="繼續保持 ✓"
+      ></practice-tracker>
+    </div>
+
+    <!-- data-* 屬性速查 -->
+    <div class="sb-group">
+      <div class="sb-label">data-* 屬性速查</div>
+      <table class="attr-table">
+        <thead>
+          <tr><th>屬性</th><th>用途</th></tr>
+        </thead>
+        <tbody>
+          <tr class="new-row"><td>data-inline</td><td>行內嵌入（無值屬性）★</td></tr>
+          <tr><td>data-prefix</td><td>Section ID 前綴</td></tr>
+          <tr><td>data-title</td><td>標題文字</td></tr>
+          <tr><td>data-position</td><td>浮動位置（非 inline）</td></tr>
+          <tr><td>data-offset-x/y</td><td>浮動偏移量</td></tr>
+          <tr><td>data-panel-width</td><td>面板寬度</td></tr>
+          <tr><td>data-cells-per-row</td><td>每列格數</td></tr>
+          <tr><td>data-cell-size</td><td>格子尺寸</td></tr>
+          <tr><td>data-cell-gap</td><td>格子間距</td></tr>
+          <tr><td>data-cell-radius</td><td>格子圓角</td></tr>
+          <tr><td>data-collapsed</td><td>預設收合</td></tr>
+          <tr><td>data-complete-text</td><td>完成標語</td></tr>
+          <tr><td>data-complete-sub</td><td>完成副標語</td></tr>
+          <tr><td>data-color-done</td><td>完成格顏色</td></tr>
+          <tr><td>data-color-pending</td><td>待辦格顏色</td></tr>
+          <tr><td>data-color-panel</td><td>面板背景</td></tr>
+          <tr><td>data-color-complete</td><td>完成文字色</td></tr>
+          <tr><td>data-z-index</td><td>z-index（浮動）</td></tr>
+          <tr><td>data-animate-cell</td><td>動畫開關</td></tr>
+          <tr><td>data-animate-duration</td><td>動畫時長</td></tr>
+          <tr><td>data-event-name</td><td>自訂事件名稱</td></tr>
+          <tr><td>data-watch-stepper</td><td>監聽 bps:complete</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </aside>
+
+  <!-- ── Main content ─────────────────────────────────────── -->
+  <main class="content">
+
+    <!-- ── 使用方式 ─────────────────────────────────────── -->
+    <section class="methods">
+      <div class="section-head">使用方式</div>
+
+      <!-- 方法 A：HTML 標籤 -->
+      <div class="method-card">
+        <div class="mc-head">
+          <span class="mc-badge a">方法 A</span>
+          <span class="mc-title">HTML 標籤（v1.1 新功能）</span>
+          <span class="mc-note">data-inline → 行內嵌入</span>
+        </div>
+        <pre><span class="cm">&lt;!-- 行內嵌入：元素保留在文件流，不蓋住頁面內容 --&gt;</span>
+&lt;<span class="at">practice-tracker</span>
+  <span class="sp">data-inline</span>
+  <span class="at">data-prefix</span>=<span class="vl">"ex-"</span>
+  <span class="at">data-title</span>=<span class="vl">"練習進度"</span>
+  <span class="at">data-cells-per-row</span>=<span class="vl">"3"</span>
+  <span class="at">data-panel-width</span>=<span class="vl">"100%"</span>
+  <span class="at">data-complete-text</span>=<span class="vl">"全部完成！"</span>
+  <span class="at">data-complete-sub</span>=<span class="vl">"繼續保持 ✓"</span>
+&gt;&lt;/<span class="at">practice-tracker</span>&gt;
+&lt;<span class="kw">script</span> <span class="at">src</span>=<span class="vl">"practice-tracker.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+
+<span class="cm">&lt;!-- 浮動模式：移除 data-inline，套用 data-position --&gt;</span>
+&lt;<span class="at">practice-tracker</span>
+  <span class="at">data-position</span>=<span class="vl">"bottom-right"</span>
+  <span class="at">data-prefix</span>=<span class="vl">"ex-"</span>
+  <span class="at">data-title</span>=<span class="vl">"進度"</span>
+&gt;&lt;/<span class="at">practice-tracker</span>&gt;</pre>
+      </div>
+
+      <!-- 方法 B：純 JS -->
+      <div class="method-card">
+        <div class="mc-head">
+          <span class="mc-badge b">方法 B</span>
+          <span class="mc-title">純 JS 全域配置（原有方式）</span>
+          <span class="mc-note">不放 HTML 標籤，自動建立浮動面板</span>
+        </div>
+        <pre><span class="cm">// 在 practice-tracker.js 載入前設定（選用）</span>
+<span class="kw">window</span>.<span class="oc">PracticeTrackerConfig</span> = {
+  <span class="at">prefix</span>:       <span class="vl">"ex-"</span>,
+  <span class="at">position</span>:     <span class="vl">"bottom-right"</span>,
+  <span class="at">title</span>:        <span class="vl">"進度"</span>,
+  <span class="at">cellsPerRow</span>:  <span class="vl">5</span>,
+  <span class="at">completeText</span>: <span class="vl">"全部完成"</span>,
+};
+<span class="cm">// 未放 &lt;practice-tracker&gt; → 元件自動建立浮動面板</span>
+&lt;<span class="kw">script</span> <span class="at">src</span>=<span class="vl">"practice-tracker.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;</pre>
+      </div>
+
+      <!-- 優先序 -->
+      <div class="method-card">
+        <div class="mc-head">
+          <span class="mc-badge c">配置優先序</span>
+          <span class="mc-title">三層覆蓋規則</span>
+        </div>
+        <div class="priority-row">
+          <div class="pr-box low">DEFAULTS<small>元件內建預設</small></div>
+          <div class="pr-arrow">→</div>
+          <div class="pr-box mid">PracticeTrackerConfig<small>全域 JS 物件</small></div>
+          <div class="pr-arrow">→</div>
+          <div class="pr-box high">data-* 屬性<small>元素屬性（最高）</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 練習 sections ────────────────────────────────── -->
+    <section>
+      <div class="exercises-head">
+        <div class="section-head" style="margin-bottom:0;border:none;padding:0">互動示範 · 練習清單</div>
+        <div class="batch-btns">
+          <button class="batch-btn" onclick="markAll()">全部完成</button>
+          <button class="batch-btn danger" onclick="resetAll()">重設</button>
+        </div>
+      </div>
+
+      <section id="ex-01" class="ex-section">
+        <div class="ex-row-top">
+          <span class="ex-tag">ex-01</span>
+          <span class="done-badge">✓ 完成</span>
+        </div>
+        <h3>變數宣告與基礎型別</h3>
+        <p>認識 let、const、var 的差異，理解 JavaScript 的基本資料型別：string、number、boolean、undefined、null。</p>
+        <button class="btn-done" onclick="handleDone('ex-01', this)">標記完成</button>
+      </section>
+
+      <section id="ex-02" class="ex-section">
+        <div class="ex-row-top">
+          <span class="ex-tag">ex-02</span>
+          <span class="done-badge">✓ 完成</span>
+        </div>
+        <h3>函式與箭頭函式</h3>
+        <p>掌握 function declaration 與 arrow function 的語法差異，理解 this 在不同情境下的綁定行為。</p>
+        <button class="btn-done" onclick="handleDone('ex-02', this)">標記完成</button>
+      </section>
+
+      <section id="ex-03" class="ex-section">
+        <div class="ex-row-top">
+          <span class="ex-tag">ex-03</span>
+          <span class="done-badge">✓ 完成</span>
+        </div>
+        <h3>陣列方法：map、filter、reduce</h3>
+        <p>熟練函式式陣列操作，避免直接修改原始陣列，培養不可變資料的處理思維。</p>
+        <button class="btn-done" onclick="handleDone('ex-03', this)">標記完成</button>
+      </section>
+
+      <section id="ex-04" class="ex-section">
+        <div class="ex-row-top">
+          <span class="ex-tag">ex-04</span>
+          <span class="done-badge">✓ 完成</span>
+        </div>
+        <h3>Promise 與 async/await</h3>
+        <p>理解非同步流程，以 async/await 語法提升可讀性，正確處理 reject 與例外情況。</p>
+        <button class="btn-done" onclick="handleDone('ex-04', this)">標記完成</button>
+      </section>
+
+      <section id="ex-05" class="ex-section">
+        <div class="ex-row-top">
+          <span class="ex-tag">ex-05</span>
+          <span class="done-badge">✓ 完成</span>
+        </div>
+        <h3>DOM 操作與事件監聽</h3>
+        <p>使用 querySelector 選取元素，掌握 addEventListener 的使用方式，理解事件冒泡與捕獲機制。</p>
+        <button class="btn-done" onclick="handleDone('ex-05', this)">標記完成</button>
+      </section>
+
+      <section id="ex-06" class="ex-section">
+        <div class="ex-row-top">
+          <span class="ex-tag">ex-06</span>
+          <span class="done-badge">✓ 完成</span>
+        </div>
+        <h3>模組化與 import/export</h3>
+        <p>學習 ES Module 語法，分辨 named export 與 default export 的使用情境，規劃合理的模組邊界。</p>
+        <button class="btn-done" onclick="handleDone('ex-06', this)">標記完成</button>
+      </section>
+
+    </section>
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- ★ 載入元件 ★ -->
+<script src="practice-tracker.js"></script>
+<script>
+  /* 記錄所有按鈕以便 resetAll 使用 */
+  const allIds = ['ex-01','ex-02','ex-03','ex-04','ex-05','ex-06'];
+
+  function handleDone(sectionId, btn) {
+    if (win_PT()) win_PT().markDone(sectionId);
+    const sec = document.getElementById(sectionId);
+    if (sec) sec.classList.add('is-done');
+    btn.disabled = true;
+    btn.textContent = '✓ 已完成';
+    showToast(sectionId + '  已標記完成');
+  }
+
+  function markAll() {
+    allIds.forEach(id => {
+      const btn = document.querySelector(`#${id} .btn-done`);
+      if (btn && !btn.disabled) handleDone(id, btn);
+    });
+  }
+
+  function resetAll() {
+    location.reload();
+  }
+
+  function win_PT() { return window.PracticeTracker || null; }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._tid);
+    t._tid = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+</script>
+</body>
+</html>

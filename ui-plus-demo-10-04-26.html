@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-plus 展示：ui-btn 屬性式 alert</title>
+<style>
+  :root { box-sizing: border-box; }
+  html { font-size: 18px; }
+  body { margin: 0; padding: 32px 48px; background: #0C0D0C; color: #C6C7BD; font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 1rem; line-height: 1.5; }
+  h1 { font-size: 1.8rem; margin: 0 0 16px; color: #D4FFFC; }
+  h2 { font-size: 1.3rem; margin: 32px 0 12px; color: #C3A5E5; }
+  p { margin: 0 0 12px; }
+  code { color: #E3D322; }
+  pre { margin: 12px 0; padding: 16px; background: #161716; border: 1px solid #353633; border-radius: 8px; overflow-x: auto; font-size: 1rem; line-height: 1.5; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+</style>
+</head>
+<body>
+<h1>ui-btn 屬性式 alert</h1>
+<p>在 <code>ui-btn</code> 上加入 <code>alert</code> 屬性，點擊時即顯示提示，不需要撰寫 JavaScript。</p>
+
+<h2>基本用法</h2>
+<div class="row">
+  <ui-btn theme="safe" alert="儲存成功" alert-theme="safe">儲存</ui-btn>
+  <ui-btn theme="warning" alert="刪除失敗，請稍後再試。" alert-theme="warning" alert-duration="5000">刪除</ui-btn>
+  <ui-btn theme="info" alert="已複製到剪貼簿" alert-theme="info" alert-position="bottom">複製</ui-btn>
+  <ui-btn theme="orange" alert="這則提示不會自動消失，請手動關閉。" alert-theme="orange" alert-duration="0" alert-width="420px">常駐提示</ui-btn>
+</div>
+<pre>&lt;ui-btn theme="safe" alert="儲存成功" alert-theme="safe"&gt;儲存&lt;/ui-btn&gt;</pre>
+
+<h2>屬性一覽</h2>
+<pre>alert           提示文字（有設定才會觸發）
+alert-theme     品牌色名稱或 # 色碼，預設 safe
+alert-position  top 或 bottom，預設 top
+alert-duration  毫秒，0 代表不自動消失，預設 3000
+alert-width     px 或 %，例如 400px
+alert-icon      bi- 開頭的 Bootstrap Icons 類別</pre>
+
+<script src="ui-plus.js"></script>
+</body>
+</html>

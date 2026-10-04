@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chunk-demo v3 — 新屬性範例</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0C0D0C; --surface: #141514; --border: #242524;
+    --shell: #C6C7BD; --stone: #95c9de; --special: #b3de73;
+    --lavender: #C3A5E5; --sky: #95c9de; --safe: #299459;
+  }
+  body {
+    background: var(--bg); color: var(--shell);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 1rem; line-height: 1.7; padding: 0 0 80px;
+  }
+
+  .page-header {
+    background: var(--surface); border-bottom: 2px solid var(--special);
+    padding: 32px 48px 28px; margin-bottom: 48px;
+  }
+  .page-header h1 { font-size: 1.8rem; font-weight: 700; color: var(--special); }
+  .page-header p  { color: var(--stone); margin-top: 6px; font-size: .92rem; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 48px; }
+
+  .section       { margin-bottom: 52px; }
+  .section-label {
+    display: inline-block; font-size: .7rem; font-weight: 700;
+    letter-spacing: .13em; text-transform: uppercase;
+    background: var(--lavender); color: var(--bg);
+    padding: 2px 9px; border-radius: 3px; margin-bottom: 10px;
+  }
+  .section h2  { font-size: 1.1rem; color: var(--lavender); margin-bottom: 6px; }
+  .section .desc { font-size: .88rem; color: var(--stone); margin-bottom: 18px; line-height: 1.6; }
+  .section .desc code {
+    background: var(--border); color: var(--special);
+    padding: 1px 5px; border-radius: 3px; font-size: .85em;
+  }
+
+  hr.div { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  pre {
+    background: #111; border: 1px solid var(--border); border-radius: 6px;
+    padding: 16px 18px; font-size: .8rem; overflow-x: auto;
+    color: #DBEDD8; line-height: 1.7; margin-top: 14px;
+  }
+  pre .c { color: var(--stone); font-style: italic; }
+  pre .k { color: var(--lavender); }
+  pre .s { color: var(--safe); }
+  pre .a { color: #DECA4B; }
+  pre .v { color: var(--special); }
+
+  .demo-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 24px; margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>chunk-demo v3 — 新屬性範例</h1>
+  <p>show-dots · width / dropdown-width / button-width · level-colors · mask-mode</p>
+</header>
+
+<main class="wrap">
+
+  <!-- ════════════════ §1 show-dots ════════════════ -->
+  <section class="section">
+    <span class="section-label">新屬性 1</span>
+    <h2>show-dots — 圓點顯示開關</h2>
+    <p class="desc">
+      預設 <code>show-dots="true"</code>（顯示圓點）。
+      設為 <code>false</code> 時，下拉選單內的彩色圓點元素直接不渲染，版面更簡潔。
+    </p>
+
+    <div class="demo-wrap">
+      <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">show-dots="true"（預設）</p>
+      <chunk-demo
+        sentence="She {0} to the market {1}."
+        show-dots="true"
+        theme="sky"
+      >
+        <cd-chunk id="0" label="動詞">
+          <cd-level level="1">went</cd-level>
+          <cd-level level="2">hurried</cd-level>
+          <cd-level level="3">rushed excitedly</cd-level>
+        </cd-chunk>
+        <cd-chunk id="1" label="時間">
+          <cd-level level="1">yesterday</cd-level>
+          <cd-level level="2">early in the morning</cd-level>
+        </cd-chunk>
+      </chunk-demo>
+
+      <p style="font-size:.8rem;color:var(--stone);margin:18px 0 12px">show-dots="false"</p>
+      <chunk-demo
+        sentence="She {0} to the market {1}."
+        show-dots="false"
+        theme="sky"
+      >
+        <cd-chunk id="0" label="動詞">
+          <cd-level level="1">went</cd-level>
+          <cd-level level="2">hurried</cd-level>
+          <cd-level level="3">rushed excitedly</cd-level>
+        </cd-chunk>
+        <cd-chunk id="1" label="時間">
+          <cd-level level="1">yesterday</cd-level>
+          <cd-level level="2">early in the morning</cd-level>
+        </cd-chunk>
+      </chunk-demo>
+    </div>
+
+    <pre>&lt;<span class="k">chunk-demo</span>
+  <span class="a">sentence</span>=<span class="s">"She {0} to the market {1}."</span>
+  <span class="a">show-dots</span>=<span class="v">"false"</span>
+  <span class="a">theme</span>=<span class="s">"sky"</span>
+&gt;
+  &lt;<span class="k">cd-chunk</span> <span class="a">id</span>=<span class="v">"0"</span> <span class="a">label</span>=<span class="s">"動詞"</span>&gt;
+    &lt;<span class="k">cd-level</span> <span class="a">level</span>=<span class="v">"1"</span>&gt;went&lt;/<span class="k">cd-level</span>&gt;
+    &lt;<span class="k">cd-level</span> <span class="a">level</span>=<span class="v">"2"</span>&gt;hurried&lt;/<span class="k">cd-level</span>&gt;
+  &lt;/<span class="k">cd-chunk</span>&gt;
+  ...
+&lt;/<span class="k">chunk-demo</span>&gt;
+
+<span class="c">// 或用 data-config：</span>
+<span class="a">data-config</span>=<span class="s">'{"showDots": false}'</span></pre>
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════ §2 寬度屬性 ════════════════ -->
+  <section class="section">
+    <span class="section-label">新屬性 2</span>
+    <h2>width / dropdown-width / button-width</h2>
+    <p class="desc">
+      <code>width</code> 控制整個元件寬度；
+      <code>dropdown-width</code> 固定下拉選單寬度（同時覆蓋 min/max-width）；
+      <code>button-width</code> 設定語塊按鈕的最小寬度，讓多個按鈕對齊。
+      三者均接受任意 CSS 寬度字串（px / % / rem 皆可）。
+    </p>
+
+    <div class="demo-wrap">
+      <chunk-demo
+        sentence="{0} is a key skill for {1} learners."
+        width="100%"
+        dropdown-width="300px"
+        button-width="160px"
+        theme="focus"
+      >
+        <cd-chunk id="0" label="主題">
+          <cd-level level="1">Listening</cd-level>
+          <cd-level level="2">Active listening with note-taking</cd-level>
+          <cd-level level="3">Comprehensive input processing</cd-level>
+        </cd-chunk>
+        <cd-chunk id="1" label="學習者">
+          <cd-level level="1">adult</cd-level>
+          <cd-level level="2">intermediate-level adult</cd-level>
+          <cd-level level="3">highly motivated adult</cd-level>
+        </cd-chunk>
+      </chunk-demo>
+    </div>
+
+    <pre>&lt;<span class="k">chunk-demo</span>
+  <span class="a">sentence</span>=<span class="s">"{0} is a key skill for {1} learners."</span>
+  <span class="a">width</span>=<span class="v">"100%"</span>
+  <span class="a">dropdown-width</span>=<span class="v">"300px"</span>
+  <span class="a">button-width</span>=<span class="v">"160px"</span>
+  <span class="a">theme</span>=<span class="s">"focus"</span>
+&gt;...&lt;/<span class="k">chunk-demo</span>&gt;
+
+<span class="c">// 或用 data-config：</span>
+<span class="a">data-config</span>=<span class="s">'{"width":"100%","dropdownWidth":"300px","buttonWidth":"160px"}'</span></pre>
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════ §3 level-colors ════════════════ -->
+  <section class="section">
+    <span class="section-label">新屬性 3</span>
+    <h2>level-colors — 簡化色彩設定</h2>
+    <p class="desc">
+      逗號分隔，依序對應 Level 1, 2, 3（及更多）的圓點與選取左側線條顏色。
+      比 <code>data-config</code> 的 JSON 更簡潔，且可被 <code>data-config.levelDotColors</code> 覆蓋用於精細調整。
+    </p>
+
+    <div class="demo-wrap">
+      <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">
+        level-colors="#F08080, #b3de73, #95c9de"（紅 / 黃綠 / 天藍）
+      </p>
+      <chunk-demo
+        sentence="I {0} my homework {1} every day."
+        level-colors="#F08080, #b3de73, #95c9de"
+        theme="lavender"
+        show-preview="true"
+      >
+        <cd-chunk id="0" label="動詞片語">
+          <cd-level level="1">do</cd-level>
+          <cd-level level="2">carefully complete</cd-level>
+          <cd-level level="3">diligently and thoroughly complete</cd-level>
+        </cd-chunk>
+        <cd-chunk id="1" label="頻率副詞">
+          <cd-level level="1">almost</cd-level>
+          <cd-level level="2">without fail</cd-level>
+          <cd-level level="3">with great consistency</cd-level>
+        </cd-chunk>
+      </chunk-demo>
+    </div>
+
+    <pre>&lt;<span class="k">chunk-demo</span>
+  <span class="a">sentence</span>=<span class="s">"I {0} my homework {1} every day."</span>
+  <span class="a">level-colors</span>=<span class="v">"#F08080, #b3de73, #95c9de"</span>
+  <span class="a">theme</span>=<span class="s">"lavender"</span>
+  <span class="a">show-preview</span>=<span class="v">"true"</span>
+&gt;...&lt;/<span class="k">chunk-demo</span>&gt;
+
+<span class="c">// 等效的 data-config 寫法（可混用，屬性優先）：</span>
+<span class="a">data-config</span>=<span class="s">'{"levelDotColors":{"1":"#F08080","2":"#b3de73","3":"#95c9de"}}'</span></pre>
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════ §4 mask-mode ════════════════ -->
+  <section class="section">
+    <span class="section-label">新屬性 4</span>
+    <h2>mask-mode — 遮罩填空模式</h2>
+    <p class="desc">
+      開啟後，所有語塊按鈕初始顯示深色遮罩（文字存在於 DOM 但視覺隱藏）。
+      使用者點擊展開下拉選單並<strong>選取任一 Level</strong> 後，該語塊即揭露真實內容。
+      適合做成「先思考再確認」的互動填空練習。
+      遮罩色可透過 <code>data-config</code> 的 <code>maskColor</code> 自訂。
+    </p>
+
+    <div class="demo-wrap">
+      <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">
+        mask-mode="true"　　點擊各語塊，選取 Level 後揭露內容 ↓
+      </p>
+      <chunk-demo
+        sentence="The {0} of a language {1} on {2} practice."
+        mask-mode="true"
+        theme="safe"
+        show-preview="true"
+        button-width="130px"
+      >
+        <cd-chunk id="0" label="主語">
+          <cd-level level="1">acquisition</cd-level>
+          <cd-level level="2">natural acquisition</cd-level>
+          <cd-level level="3">subconscious natural acquisition</cd-level>
+        </cd-chunk>
+        <cd-chunk id="1" label="動詞">
+          <cd-level level="1">depends</cd-level>
+          <cd-level level="2">heavily depends</cd-level>
+          <cd-level level="3">critically and heavily relies</cd-level>
+        </cd-chunk>
+        <cd-chunk id="2" label="受詞">
+          <cd-level level="1">consistent</cd-level>
+          <cd-level level="2">consistent daily</cd-level>
+          <cd-level level="3">focused and consistent daily</cd-level>
+        </cd-chunk>
+      </chunk-demo>
+    </div>
+
+    <pre>&lt;<span class="k">chunk-demo</span>
+  <span class="a">sentence</span>=<span class="s">"The {0} of a language {1} on {2} practice."</span>
+  <span class="a">mask-mode</span>=<span class="v">"true"</span>
+  <span class="a">theme</span>=<span class="s">"safe"</span>
+  <span class="a">show-preview</span>=<span class="v">"true"</span>
+  <span class="a">button-width</span>=<span class="v">"130px"</span>
+&gt;
+  &lt;<span class="k">cd-chunk</span> <span class="a">id</span>=<span class="v">"0"</span> <span class="a">label</span>=<span class="s">"主語"</span>&gt;
+    &lt;<span class="k">cd-level</span> <span class="a">level</span>=<span class="v">"1"</span>&gt;acquisition&lt;/<span class="k">cd-level</span>&gt;
+    &lt;<span class="k">cd-level</span> <span class="a">level</span>=<span class="v">"2"</span>&gt;natural acquisition&lt;/<span class="k">cd-level</span>&gt;
+    &lt;<span class="k">cd-level</span> <span class="a">level</span>=<span class="v">"3"</span>&gt;subconscious natural acquisition&lt;/<span class="k">cd-level</span>&gt;
+  &lt;/<span class="k">cd-chunk</span>&gt;
+  <span class="c">&lt;!-- 其餘 cd-chunk... --&gt;</span>
+&lt;/<span class="k">chunk-demo</span>&gt;
+
+<span class="c">// 自訂遮罩顏色（透過 data-config）：</span>
+<span class="a">data-config</span>=<span class="s">'{"maskMode":true,"maskColor":"#1a1b1a"}'</span></pre>
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════ §5 組合使用 ════════════════ -->
+  <section class="section">
+    <span class="section-label">組合範例</span>
+    <h2>全部屬性組合使用</h2>
+    <p class="desc">
+      <code>mask-mode</code> + <code>show-dots="false"</code> + <code>level-colors</code> +
+      <code>button-width</code> + <code>dropdown-width</code> 同時套用。
+    </p>
+
+    <div class="demo-wrap">
+      <chunk-demo
+        sentence="Students should {0} their essays {1} submitting them."
+        mask-mode="true"
+        show-dots="false"
+        level-colors="#EDA109, #299459, #C3A5E5"
+        button-width="180px"
+        dropdown-width="280px"
+        width="100%"
+        theme="orange"
+        show-preview="true"
+        data-config='{"maskColor":"#1e1f1e"}'
+      >
+        <cd-chunk id="0" label="動詞">
+          <cd-level level="1">revise</cd-level>
+          <cd-level level="2">carefully revise and edit</cd-level>
+          <cd-level level="3">meticulously revise, edit, and proofread</cd-level>
+        </cd-chunk>
+        <cd-chunk id="1" label="時間副詞">
+          <cd-level level="1">before</cd-level>
+          <cd-level level="2">well before</cd-level>
+          <cd-level level="3">at least one day before</cd-level>
+        </cd-chunk>
+      </chunk-demo>
+    </div>
+
+    <pre>&lt;<span class="k">chunk-demo</span>
+  <span class="a">sentence</span>=<span class="s">"Students should {0} their essays {1} submitting them."</span>
+  <span class="a">mask-mode</span>=<span class="v">"true"</span>
+  <span class="a">show-dots</span>=<span class="v">"false"</span>
+  <span class="a">level-colors</span>=<span class="v">"#EDA109, #299459, #C3A5E5"</span>
+  <span class="a">button-width</span>=<span class="v">"180px"</span>
+  <span class="a">dropdown-width</span>=<span class="v">"280px"</span>
+  <span class="a">width</span>=<span class="v">"100%"</span>
+  <span class="a">theme</span>=<span class="s">"orange"</span>
+  <span class="a">show-preview</span>=<span class="v">"true"</span>
+  <span class="a">data-config</span>=<span class="s">'{"maskColor":"#1e1f1e"}'</span>
+&gt;...&lt;/<span class="k">chunk-demo</span>&gt;</pre>
+  </section>
+
+</main>
+
+<script src="chunk-demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ui-table 元件展示</title>
+  <style>
+    /* 防止 FOUC */
+    ui-table, ui-group, ui-row, ui-col, cell-item { display: none; }
+
+    html { font-size: 18px; }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background: #0C0D0C;
+      color: #C6C7BD;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      margin: 0;
+      padding: 32px 40px 64px;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* ── 頁面標題 ── */
+    h1 { color: #C3A5E5; font-size: 1.8rem; margin: 0 0 4px; font-weight: 700; letter-spacing:.04em; }
+    .subtitle { color: #95c9de; font-size:.9rem; margin-bottom:52px; }
+
+    /* ── 段落標題 ── */
+    .section { margin-bottom: 56px; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size:.8rem; font-weight:700; letter-spacing:.12em;
+      text-transform: uppercase; color: #DECA4B;
+      border-left: 3px solid #DECA4B; padding: 2px 0 2px 10px;
+      margin-bottom: 10px;
+    }
+    .section-num {
+      background: rgba(222,202,75,.18);
+      color: #DECA4B;
+      border-radius: 3px;
+      padding: 1px 7px;
+      font-size: .78rem;
+    }
+    .section-desc { color: #95c9de; font-size:.88rem; margin: 0 0 14px; line-height:1.6; }
+
+    code {
+      background: rgba(198,199,189,.12);
+      padding: 2px 7px; border-radius: 4px;
+      font-size:.88em; color: #b3de73;
+      font-family: 'Cascadia Code', monospace;
+    }
+
+    hr { border:none; border-top:1px solid rgba(198,199,189,.1); margin:48px 0; }
+
+    /* 屬性說明小表 */
+    .attr-tag {
+      display: inline-block;
+      background: rgba(195,165,229,.13);
+      color: #C3A5E5;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: .82rem;
+      margin: 2px 3px 2px 0;
+      font-family: 'Cascadia Code', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<h1>ui-table 元件展示</h1>
+<p class="subtitle">v1.0.0 ── 語意標籤 + 互動格子顯示元件 ── 全屬性示範</p>
+
+<!-- ============================================================
+  1. show-next  展開下一列
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">01</span>show-next 展開下一列</div>
+  <p class="section-desc">
+    <span class="attr-tag">icon="i-arrow-down"</span>
+    <span class="attr-tag">show-next="true"</span>
+    點擊欄位 toggle 緊鄰下一列，不連鎖。
+    搭配 <span class="attr-tag">col-border="1px solid"</span> 顯示欄間分隔線。
+  </p>
+
+  <ui-table theme="sky">
+    <ui-group title-left="訂單明細" title-right="點擊品項展開">
+      <ui-row cell-padding="12px 16px" border="2px solid" col-border="1px solid">
+        <ui-col icon="i-arrow-down" show-next="true">MacBook Pro 16"</ui-col>
+        <ui-col>NT$112,000</ui-col>
+        <ui-col>×1</ui-col>
+      </ui-row>
+      <ui-row hidden cell-padding="10px 16px" border="1px dashed">
+        <ui-col></ui-col>
+        <ui-col>規格：M3 Max / 48GB / 1TB</ui-col>
+        <ui-col>出貨日：2025-06-10</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px 16px" border="2px solid" col-border="1px solid">
+        <ui-col icon="i-arrow-down" show-next="true">AirPods Pro</ui-col>
+        <ui-col>NT$8,490</ui-col>
+        <ui-col>×2</ui-col>
+      </ui-row>
+      <ui-row hidden cell-padding="10px 16px" border="1px dashed">
+        <ui-col></ui-col>
+        <ui-col>色彩：白色 USB-C 版本</ui-col>
+        <ui-col>出貨日：2025-06-08</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px 16px" border="2px solid" col-border="1px solid">
+        <ui-col icon="i-arrow-down" show-next="true">Magic Mouse</ui-col>
+        <ui-col>NT$3,290</ui-col>
+        <ui-col>×1</ui-col>
+      </ui-row>
+      <ui-row hidden cell-padding="10px 16px" border="1px dashed">
+        <ui-col></ui-col>
+        <ui-col>色彩：太空灰</ui-col>
+        <ui-col>出貨日：2025-06-08</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  2. expandable 展開欄
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">02</span>expandable 展開欄</div>
+  <p class="section-desc">
+    <span class="attr-tag">expandable</span> 預設截斷兩行，點擊全文展開，再點收合。
+    <span class="attr-tag">col-widths="1:3"</span> 控制本列欄寬比例（與欄數必須相符）。
+    <span class="attr-tag">text-indent="1.5em"</span>
+    <span class="attr-tag">line-height="1.8"</span> 套用至文字欄（.uit-ct）。
+  </p>
+
+  <ui-table theme="lavender">
+    <ui-group title-left="使用條款" title-right="點文字展開全文">
+      <ui-row col-widths="1:3" cell-padding="14px" border="1px solid" col-border="1px solid"
+              text-indent="1.5em" line-height="1.8">
+        <ui-col>使用者條款</ui-col>
+        <ui-col expandable>
+          本服務條款（以下簡稱「條款」）規範您對本平台所有功能的使用方式。
+          請在使用前仔細閱讀，一旦開始使用即視為同意所有條款內容。
+          本平台保留隨時修改條款的權利，修改後將於本頁公告，
+          若您繼續使用本服務則視為接受修改後的條款。
+          如有疑問請聯繫客服，我們將盡快回覆。感謝您的使用！
+        </ui-col>
+      </ui-row>
+      <ui-row col-widths="1:3" cell-padding="14px" border="1px solid" col-border="1px solid"
+              text-indent="1.5em" line-height="1.8">
+        <ui-col>隱私政策</ui-col>
+        <ui-col expandable>
+          我們重視您的個人隱私，所有收集的資料僅用於改善服務品質。
+          我們不會將您的個人資料出售或分享給第三方，除非依法令要求。
+          資料保存期限為服務使用期間，刪除帳號後 30 天內完整清除。
+          您可隨時要求匯出或刪除自己的資料，只需聯繫客服即可。
+          如對隱私有任何疑慮，歡迎隨時與我們聯繫。
+        </ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  3. font-size 字體大小三個層級
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">03</span>font-size 三層設定</div>
+  <p class="section-desc">
+    優先序：<span class="attr-tag">&lt;ui-row font-size&gt;</span> →
+    <span class="attr-tag">&lt;ui-table font-size&gt;</span> →
+    <span class="attr-tag">UiTableConfig.fontSize</span>（全域 1rem）。
+    本表格設定 <span class="attr-tag">font-size="0.9rem"</span>；
+    第三列再用 <span class="attr-tag">font-size="1.15rem"</span> 覆寫。
+  </p>
+
+  <ui-table theme="focus" font-size="0.9rem">
+    <ui-group title-left="字體大小示範" title-right="三種層級">
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>表格層級 0.9rem</ui-col>
+        <ui-col>繼承 ui-table font-size="0.9rem"</ui-col>
+        <ui-col>正常文字</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>表格層級 0.9rem</ui-col>
+        <ui-col>同樣繼承表格設定</ui-col>
+        <ui-col>正常文字</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid"
+              font-size="1.15rem">
+        <ui-col>列層級覆寫 1.15rem</ui-col>
+        <ui-col>ui-row font-size="1.15rem" 覆蓋表格設定</ui-col>
+        <ui-col>較大文字</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>回到表格層級 0.9rem</ui-col>
+        <ui-col>未設定的列回歸表格設定</ui-col>
+        <ui-col>正常文字</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  4. col-border + cell-padding + border 樣式組合
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">04</span>col-border / border / cell-padding 樣式組合</div>
+  <p class="section-desc">
+    各列可獨立設定：<span class="attr-tag">border</span> 外框、
+    <span class="attr-tag">col-border</span> 欄間垂直線（最後一欄自動排除）、
+    <span class="attr-tag">cell-padding</span> 內距。
+    色彩均繼承 <code>theme</code>。
+  </p>
+
+  <ui-table theme="orange">
+    <ui-group title-left="樣式組合示範" title-right="每列不同設定">
+      <!-- 粗外框，實線欄間，較大內距 -->
+      <ui-row cell-padding="16px 20px" border="2px solid" col-border="2px solid">
+        <ui-col>外框 2px solid / 欄線 2px solid / padding 16px 20px</ui-col>
+        <ui-col>欄二</ui-col>
+        <ui-col>欄三</ui-col>
+      </ui-row>
+      <!-- 虛線外框，虛線欄間 -->
+      <ui-row cell-padding="10px" border="1px dashed" col-border="1px dashed">
+        <ui-col>外框 1px dashed / 欄線 1px dashed / padding 10px</ui-col>
+        <ui-col>欄二</ui-col>
+        <ui-col>欄三</ui-col>
+      </ui-row>
+      <!-- 點線外框，無欄間線 -->
+      <ui-row cell-padding="14px 8px" border="2px dotted">
+        <ui-col>外框 2px dotted / 無欄間線 / padding 14px 8px</ui-col>
+        <ui-col>欄二</ui-col>
+        <ui-col>欄三</ui-col>
+      </ui-row>
+      <!-- 無外框，有欄間線，text-indent -->
+      <ui-row cell-padding="12px" col-border="1px solid" text-indent="1em">
+        <ui-col>無外框 / 欄線 1px solid / text-indent 1em</ui-col>
+        <ui-col>縮排文字</ui-col>
+        <ui-col>縮排文字</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  5. 遮罩 mask-text（無順序 + 順序鏈）
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">05</span>遮罩 mask-text / mask-order</div>
+  <p class="section-desc">
+    上列：<span class="attr-tag">mask-order="1/2/3"</span> 必須依序解鎖，鎖定狀態顯示鎖頭圖示。<br>
+    下列：無 <code>mask-order</code>，各格獨立單向揭開。<br>
+    <span class="attr-tag">mask-color</span> 支援品牌色名稱或 <code>#rrggbb</code>。
+  </p>
+
+  <ui-table theme="warning">
+    <ui-group title-left="互動測驗" title-right="依序揭開答案">
+      <!-- 順序鏈 -->
+      <ui-row col-widths="1:1:1:1" cell-padding="16px" border="2px solid" col-border="1px solid">
+        <ui-col>提示：必須依序解鎖 →</ui-col>
+        <ui-col mask-text="第一步" mask-color="indigo" mask-order="1">
+          答案 A：光合作用
+        </ui-col>
+        <ui-col mask-text="第二步" mask-color="sky" mask-order="2">
+          答案 B：CO₂ + H₂O → 糖 + O₂
+        </ui-col>
+        <ui-col mask-text="第三步" mask-color="safe" mask-order="3">
+          答案 C：發生在葉綠體
+        </ui-col>
+      </ui-row>
+      <!-- 獨立遮罩 -->
+      <ui-row col-widths="1:1:1" cell-padding="16px" border="1px dashed" col-border="1px dashed">
+        <ui-col mask-text="點我看答案" mask-color="orange">水的化學式 H₂O</ui-col>
+        <ui-col mask-text="點我看答案" mask-color="pink">地球公轉 365.25 天</ui-col>
+        <ui-col mask-text="點我看答案" mask-color="#7B4F8A">光速 299,792,458 m/s</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  6. 輪播 carousel-interval + progress-bar
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">06</span>carousel-interval + progress-bar</div>
+  <p class="section-desc">
+    <span class="attr-tag">carousel-interval="2500"</span> 垂直由下往上捲入，
+    <span class="attr-tag">progress-bar</span> 欄底部倒數線條，
+    <span class="attr-tag">progress-bar-color</span> 指定線條色彩。
+    <code>&lt;cell-item&gt;</code> 支援 <code>&lt;b&gt;</code>、<code>&lt;span&gt;</code>、<code>&lt;u&gt;</code> 等行內標籤。
+  </p>
+
+  <ui-table theme="special">
+    <ui-group title-left="即時資訊牌" title-right="自動輪播">
+      <ui-row col-widths="1:2:2" cell-padding="14px" border="1px solid" col-border="1px solid">
+        <ui-col>台股精選</ui-col>
+        <ui-col carousel-interval="2500" progress-bar progress-bar-color="special">
+          <cell-item>台積電（2330）：<b>$950</b></cell-item>
+          <cell-item>聯發科（2454）：<b>$1,280</b></cell-item>
+          <cell-item>鴻海（2317）：<b>$182</b></cell-item>
+          <cell-item>台達電（2308）：<b>$368</b></cell-item>
+        </ui-col>
+        <ui-col carousel-interval="2500" progress-bar progress-bar-color="safe">
+          <cell-item>成交量：<b>45,280 張</b> <u>↑ 12%</u></cell-item>
+          <cell-item>成交量：<b>8,640 張</b> <u>↑ 5%</u></cell-item>
+          <cell-item>成交量：<b>92,100 張</b> <u>↓ 3%</u></cell-item>
+          <cell-item>成交量：<b>12,450 張</b> <u>↑ 8%</u></cell-item>
+        </ui-col>
+      </ui-row>
+      <ui-row col-widths="1:2:2" cell-padding="14px" border="1px solid" col-border="1px solid">
+        <ui-col>國際指數</ui-col>
+        <ui-col carousel-interval="3500" progress-bar progress-bar-color="sky">
+          <cell-item>道瓊工業：<b>38,520</b> <span style="color:#299459">+0.4%</span></cell-item>
+          <cell-item>標普 500：<b>5,130</b> <span style="color:#299459">+0.6%</span></cell-item>
+          <cell-item>那斯達克：<b>16,240</b> <span style="color:#F08080">-0.2%</span></cell-item>
+        </ui-col>
+        <ui-col carousel-interval="3500" progress-bar progress-bar-color="lavender">
+          <cell-item>USD/TWD：<b>31.85</b></cell-item>
+          <cell-item>黃金 /oz：<b>$2,340</b></cell-item>
+          <cell-item>布蘭特原油：<b>$82.5</b></cell-item>
+        </ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  7. Alert 三種位置 + ID 引用內容
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">07</span>alert-msg 三種位置 + ID 引用</div>
+  <p class="section-desc">
+    <span class="attr-tag">alert-pos="A"</span> 欄內覆蓋 &nbsp;|&nbsp;
+    <span class="attr-tag">alert-pos="B"</span> 欄上方 &nbsp;|&nbsp;
+    <span class="attr-tag">alert-pos="C"</span> 欄右側。<br>
+    每 5 秒觸發，顯示 2.5 秒後淡出。
+    B 欄示範 <code>alert-msg="id"</code> 引用 <code>&lt;ui-col id="..." hidden&gt;</code> 的 HTML 內容。
+  </p>
+
+  <ui-table theme="shell">
+    <ui-group title-left="Alert 示範" title-right="5 秒週期">
+      <ui-row col-widths="1:1:1" cell-padding="18px" border="1px solid" col-border="1px solid">
+        <!-- A：欄內覆蓋 -->
+        <ui-col
+          alert-msg="沒有未讀郵件"
+          alert-color="warning"
+          alert-interval="5000"
+          alert-pos="A">
+          收件匣（A 位置）
+        </ui-col>
+        <!-- B：欄上方，引用 ID 內容 -->
+        <ui-col
+          alert-msg="sys-status-msg"
+          alert-color="sky"
+          alert-interval="5000"
+          alert-pos="B">
+          系統狀態（B 位置）
+        </ui-col>
+        <!-- C：欄右側 -->
+        <ui-col
+          alert-msg="有 3 則待確認審核"
+          alert-color="safe"
+          alert-interval="5000"
+          alert-pos="C">
+          審核佇列（C 位置）
+        </ui-col>
+      </ui-row>
+    </ui-group>
+
+    <!-- B 的內容來源欄（id + hidden，不參與渲染） -->
+    <ui-group>
+      <ui-row hidden>
+        <ui-col id="sys-status-msg" hidden>
+          系統正常 ✓ &nbsp;<b>延遲 12ms</b>
+        </ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  8. ini-collapse + 多 group
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">08</span>ini-collapse 初始收合 + 多 group</div>
+  <p class="section-desc">
+    <span class="attr-tag">ini-collapse</span> 群組初始收合，點標題列切換展開／收合。
+    多個 <code>&lt;ui-group&gt;</code> 可獨立控制。
+    搭配 <span class="attr-tag">col-widths="2:1:1"</span> 非均等欄寬。
+  </p>
+
+  <ui-table theme="salmon">
+    <ui-group title-left="▶ 財務摘要（初始收合）" title-right="點擊展開" ini-collapse>
+      <ui-row col-widths="2:1:1" cell-padding="12px" border="2px solid" col-border="2px solid">
+        <ui-col>科目</ui-col>
+        <ui-col>本期</ui-col>
+        <ui-col>同期比</ui-col>
+      </ui-row>
+      <ui-row col-widths="2:1:1" cell-padding="12px" border="1px solid" col-border="1px solid"
+              text-indent="0.8em">
+        <ui-col expandable>營業收入：涵蓋所有本期確認的銷售金額，包含國內外訂單及電商渠道所有來源。</ui-col>
+        <ui-col>$4,820 萬</ui-col>
+        <ui-col>↑ 18.4%</ui-col>
+      </ui-row>
+      <ui-row col-widths="2:1:1" cell-padding="12px" border="1px solid" col-border="1px solid"
+              text-indent="0.8em">
+        <ui-col>營業費用</ui-col>
+        <ui-col>$1,240 萬</ui-col>
+        <ui-col>↑ 7.2%</ui-col>
+      </ui-row>
+      <ui-row col-widths="2:1:1" cell-padding="12px" border="1px solid" col-border="1px solid"
+              text-indent="0.8em">
+        <ui-col>淨利</ui-col>
+        <ui-col>$3,580 萬</ui-col>
+        <ui-col>↑ 24.1%</ui-col>
+      </ui-row>
+    </ui-group>
+
+    <ui-group title-left="▶ 人力資源（初始收合）" title-right="點擊展開" ini-collapse>
+      <ui-row cell-padding="12px" border="2px solid" col-border="2px solid">
+        <ui-col>部門</ui-col><ui-col>人數</ui-col><ui-col>備注</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>工程</ui-col><ui-col>48 人</ui-col><ui-col>含實習 6 名</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>行銷</ui-col><ui-col>22 人</ui-col><ui-col>今季新增 3 名</ui-col>
+      </ui-row>
+    </ui-group>
+
+    <ui-group title-left="▼ 技術棧（預設展開）" title-right="無 ini-collapse">
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>前端</ui-col><ui-col>Vue 3 / Vite</ui-col><ui-col>TypeScript</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col>後端</ui-col><ui-col>Laravel 11</ui-col><ui-col>PHP 8.3</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  9. fixed 固定欄 + 橫向捲動
+     ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">09</span>fixed 固定欄 + 橫向捲動</div>
+  <p class="section-desc">
+    <span class="attr-tag">fixed="left"</span> 橫向捲動時欄位固定，背景自動填色避免透視。
+    <span class="attr-tag">width="140px"</span> 搭配固定欄使用。
+  </p>
+
+  <ui-table theme="stone">
+    <ui-group title-left="月度報表" title-right="← 向右滑動 →">
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col width="140px" fixed="left">品項</ui-col>
+        <ui-col width="140px">一月</ui-col>
+        <ui-col width="140px">二月</ui-col>
+        <ui-col width="140px">三月</ui-col>
+        <ui-col width="140px">四月</ui-col>
+        <ui-col width="140px">五月</ui-col>
+        <ui-col width="140px">六月</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col width="140px" fixed="left">產品 A</ui-col>
+        <ui-col width="140px">$12,400</ui-col>
+        <ui-col width="140px">$10,800</ui-col>
+        <ui-col width="140px">$15,200</ui-col>
+        <ui-col width="140px">$13,600</ui-col>
+        <ui-col width="140px">$14,900</ui-col>
+        <ui-col width="140px">$18,300</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col width="140px" fixed="left">產品 B</ui-col>
+        <ui-col width="140px">$8,200</ui-col>
+        <ui-col width="140px">$9,100</ui-col>
+        <ui-col width="140px">$7,600</ui-col>
+        <ui-col width="140px">$11,200</ui-col>
+        <ui-col width="140px">$9,800</ui-col>
+        <ui-col width="140px">$12,400</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" border="1px solid" col-border="1px solid">
+        <ui-col width="140px" fixed="left">產品 C</ui-col>
+        <ui-col width="140px">$5,600</ui-col>
+        <ui-col width="140px">$6,200</ui-col>
+        <ui-col width="140px">$5,900</ui-col>
+        <ui-col width="140px">$7,400</ui-col>
+        <ui-col width="140px">$8,100</ui-col>
+        <ui-col width="140px">$9,200</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  10. data-id JS 物件來源
+      ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">10</span>data-id 外部 JS 物件來源</div>
+  <p class="section-desc">
+    <span class="attr-tag">data-id="staffData"</span> 讀取頁面上的 JS 變數（JSON 格式）動態建立表格。
+    JSON 支援 <code>fontSize</code>（表格層級）、<code>colBorder</code>、<code>lineHeight</code> 等新屬性。
+  </p>
+
+  <ui-table theme="focus" data-id="staffData"></ui-table>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  11. 綜合示範（多屬性混用）
+      ============================================================ -->
+<div class="section">
+  <div class="section-label"><span class="section-num">11</span>綜合混用示範</div>
+  <p class="section-desc">
+    同時使用 show-next、mask-order、carousel、col-border、text-indent、line-height、font-size。
+  </p>
+
+  <ui-table theme="indigo" font-size="0.95rem">
+    <ui-group title-left="學習進度追蹤" title-right="展開查看詳情">
+      <!-- 標題列 -->
+      <ui-row cell-padding="10px 14px" border="2px solid" col-border="2px solid"
+              font-size="1rem" line-height="1.4">
+        <ui-col>單元</ui-col>
+        <ui-col>狀態</ui-col>
+        <ui-col>本週新題（輪播）</ui-col>
+        <ui-col>解答（依序解鎖）</ui-col>
+      </ui-row>
+      <!-- 第一單元 -->
+      <ui-row cell-padding="10px 14px" border="1px solid" col-border="1px solid"
+              text-indent="0.5em" line-height="1.6">
+        <ui-col icon="i-arrow-down" show-next="true">Unit 1 基礎語法</ui-col>
+        <ui-col>已完成 ✓</ui-col>
+        <ui-col carousel-interval="3000" progress-bar progress-bar-color="indigo">
+          <cell-item>Q1：變數宣告的三種方式？</cell-item>
+          <cell-item>Q2：<code>==</code> 與 <code>===</code> 的差異？</cell-item>
+          <cell-item>Q3：箭頭函式的 <code>this</code> 綁定？</cell-item>
+        </ui-col>
+        <ui-col mask-text="解鎖順序①" mask-color="indigo" mask-order="1">
+          var / let / const
+        </ui-col>
+      </ui-row>
+      <ui-row hidden cell-padding="10px 14px" border="1px dashed"
+              text-indent="1em" font-size="0.88rem">
+        <ui-col>補充說明</ui-col>
+        <ui-col>完成時間：2025-05-20</ui-col>
+        <ui-col>正確率：92%</ui-col>
+        <ui-col>建議複習：閉包概念</ui-col>
+      </ui-row>
+      <!-- 第二單元 -->
+      <ui-row cell-padding="10px 14px" border="1px solid" col-border="1px solid"
+              text-indent="0.5em" line-height="1.6">
+        <ui-col icon="i-arrow-down" show-next="true">Unit 2 非同步處理</ui-col>
+        <ui-col>進行中…</ui-col>
+        <ui-col carousel-interval="3000" progress-bar progress-bar-color="sky">
+          <cell-item>Q1：Promise 狀態有哪三種？</cell-item>
+          <cell-item>Q2：async/await 如何處理錯誤？</cell-item>
+          <cell-item>Q3：microtask 與 macrotask 差異？</cell-item>
+        </ui-col>
+        <ui-col mask-text="解鎖順序②" mask-color="sky" mask-order="2">
+          pending / fulfilled / rejected
+        </ui-col>
+      </ui-row>
+      <ui-row hidden cell-padding="10px 14px" border="1px dashed"
+              text-indent="1em" font-size="0.88rem">
+        <ui-col>補充說明</ui-col>
+        <ui-col>預計完成：2025-06-15</ui-col>
+        <ui-col>正確率：74%</ui-col>
+        <ui-col>建議複習：Event Loop</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+</div>
+
+<script>
+  /* data-id 示範資料（支援新屬性） */
+  window.staffData = {
+    fontSize: '0.92rem',
+    groups: [{
+      titleLeft:  '員工名冊（data-id 動態建立）',
+      titleRight: 'JSON 格式',
+      rows: [
+        {
+          cellPadding: '12px 16px', border: '2px solid',
+          colBorder: '2px solid', fontSize: '1rem', lineHeight: '1.4',
+          cols: [
+            { content: '員工編號' },
+            { content: '姓名' },
+            { content: '部門' },
+            { content: '到職日' }
+          ]
+        },
+        {
+          cellPadding: '12px 16px', border: '1px solid',
+          colBorder: '1px solid', textIndent: '0.5em',
+          cols: [
+            { content: 'EMP-001', icon: 'i-check' },
+            { content: '王小明' },
+            { content: '工程部' },
+            { content: '2022-03-01' }
+          ]
+        },
+        {
+          cellPadding: '12px 16px', border: '1px solid',
+          colBorder: '1px solid', textIndent: '0.5em',
+          cols: [
+            { content: 'EMP-002', icon: 'i-check' },
+            { content: '李小華' },
+            { content: '行銷部' },
+            { content: '2023-07-15' }
+          ]
+        },
+        {
+          cellPadding: '12px 16px', border: '1px solid',
+          colBorder: '1px solid', textIndent: '0.5em',
+          cols: [
+            { content: 'EMP-003', icon: 'i-check' },
+            { content: '張小芳' },
+            { content: '財務部' },
+            { content: '2021-11-28' }
+          ]
+        },
+        {
+          cellPadding: '12px 16px', border: '1px solid',
+          colBorder: '1px solid', textIndent: '0.5em',
+          cols: [
+            { content: 'EMP-004', icon: 'i-check' },
+            { content: '陳大衛' },
+            { content: '產品部' },
+            { content: '2024-01-08' }
+          ]
+        }
+      ]
+    }]
+  };
+</script>
+
+<script src="ui-table.js"></script>
+</body>
+</html>

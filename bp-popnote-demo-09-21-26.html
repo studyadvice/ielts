@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote v2.0 — 合併版 Demo</title>
+
+<!-- Bootstrap 5 -->
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+  /* ── 全域底色與字體 ── */
+  :root {
+    --bg         : #0C0D0C;
+    --area       : #1a1b1a;
+    --card-bg    : #1f201f;
+    --card-border: #2e2f2e;
+    --shell      : #C6C7BD;
+    --lavender   : #C3A5E5;
+    --sky        : #82C8E5;
+    --ocean      : #1CCAE8;
+    --wrong      : #E6374B;
+    --safe       : #27AE60;
+    --special    : #B3DE73;
+    --yellow     : #E3D322;
+    --salmon     : #E5C3B3;
+    --pink       : #FF91D7;
+    --orange     : #EDA109;
+    --vanilla    : #DBEDD8;
+    --teal       : #0DA591;
+    --focus      : #D4FFFC;
+    --indigo     : #7849C9;
+    --info       : #2351DB;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-size: 18px; }
+
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── 版面 ── */
+  .demo-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 120px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--lavender);
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: .85rem;
+    color: rgba(198,199,189,0.76);
+    margin-bottom: 48px;
+    letter-spacing: .05em;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--sky);
+    margin: 40px 0 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  h3 {
+    font-size: .9rem;
+    font-weight: 700;
+    color: rgba(198,199,189,0.76);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin: 28px 0 12px;
+  }
+
+  /* ── Card ── */
+  .demo-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 28px 28px 24px;
+    margin-bottom: 28px;
+  }
+
+  /* ── 色票格子 ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .color-chip {
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .color-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── bp-notice 間距 ── */
+  bp-notice + bp-notice { display: block; margin-top: 10px; }
+
+  /* ── Popnote 觸發詞 ── */
+  [data-popover-content],
+  [data-popover-title],
+  [data-popover-target] {
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ── 側邊 Panel 容器 ── */
+  #demo-panel {
+    min-height: 60px;
+    border: 1px dashed var(--card-border);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--bg);
+  }
+  #demo-panel:empty::before {
+    content: '點擊上方觸發詞以顯示 Panel 內容';
+    display: block;
+    padding: 12px;
+    color: rgba(198,199,189,0.4);
+    font-size: .85rem;
+  }
+
+  /* ── Code 標籤 ── */
+  code {
+    background: rgba(195,165,229,0.12);
+    color: var(--lavender);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: .82rem;
+  }
+
+  /* ── Alias 表格 ── */
+  .alias-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .82rem;
+  }
+  .alias-table th, .alias-table td {
+    padding: 7px 12px;
+    border: 1px solid var(--card-border);
+    text-align: left;
+  }
+  .alias-table th {
+    background: rgba(195,165,229,0.08);
+    color: var(--lavender);
+    font-weight: 700;
+  }
+  .alias-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* ── 自動 re-init 按鈕 ── */
+  .btn-demo {
+    background: rgba(195,165,229,0.12);
+    border: 1px solid rgba(195,165,229,0.36);
+    color: var(--lavender);
+    border-radius: 6px;
+    padding: 6px 18px;
+    font-size: .85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-demo:hover { background: rgba(195,165,229,0.22); }
+
+  .badge-new {
+    display: inline-block;
+    background: var(--teal);
+    color: #0C0D0C;
+    font-size: .65rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    padding: 1px 6px;
+    border-radius: 20px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  /* ── Popnote demo 段落 ── */
+  .demo-text { font-size: .92rem; line-height: 1.7; }
+  .demo-text p { margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<div class="demo-wrap">
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  Header                                                    -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <h1><i class="bi bi-layers-half me-2"></i>bp-popnote v2.0 — 合併版 Demo</h1>
+  <p class="subtitle">bp-notice + bp-popnote 整合示範 &nbsp;·&nbsp; 09/21/2026</p>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 1 — 共用調色盤                                    -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <h2><i class="bi bi-palette2 me-2"></i>共用調色盤</h2>
+  <div class="demo-card">
+    <div class="color-grid" id="palette-grid">
+      <!-- JS 動態產生 -->
+    </div>
+    <p style="font-size:.8rem;color:rgba(198,199,189,0.76);margin-top:12px;margin-bottom:0">
+      <code>BpNotice.palette</code> 提供完整色碼，可用於自訂 <code>BpNotice.config.theme</code>
+      或 <code>PopoverConfig.addTheme()</code>。
+    </p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 2 — bp-notice 色彩一覽                           -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <h2><i class="bi bi-megaphone me-2"></i>bp-notice 色彩一覽<span class="badge-new">擴充</span></h2>
+
+  <h3>公告（announcement）— 16 色 + gold</h3>
+  <div class="demo-card" id="notice-announcement-demo">
+    <!-- JS 動態產生 -->
+  </div>
+
+  <h3>促銷（promo）+ CTA 按鈕</h3>
+  <div class="demo-card">
+    <bp-notice type="promo" color="ocean" dismissible
+               cta-text="立即報名" cta-href="#" cta-target="_self">
+      <strong>雅思衝刺班</strong> 4 月開課，限額 12 人！搶先卡位享早鳥優惠。
+    </bp-notice>
+    <bp-notice type="promo" color="gold" dismissible
+               cta-text="領取優惠" cta-href="#" notice-id="promo-gold-demo">
+      <strong>限時優惠</strong> — 購課即贈 30 天 VIP 複習包，活動至 10/31 止。
+    </bp-notice>
+    <bp-notice type="promo" color="pink" dismissible
+               cta-text="查看詳情" cta-href="#">
+      新課上架：<strong>TOEFL 聽力精攻班</strong>，每週三堂直播課。
+    </bp-notice>
+    <bp-notice type="promo" color="salmon" dismissible auto-dismiss="8"
+               cta-text="不再提醒" cta-href="#">
+      <i class="bi bi-clock me-1"></i>此通知將在 <strong>8 秒</strong>後自動消失。
+    </bp-notice>
+  </div>
+
+  <h3>系統通知（announcement）— 實用場景</h3>
+  <div class="demo-card">
+    <bp-notice type="announcement" color="wrong" icon="bi-exclamation-triangle-fill"
+               notice-id="maint-0921-demo" dismissible>
+      <strong>系統維護公告：</strong>本系統將於 9/28（六）02:00–06:00 進行例行維護，期間服務暫停。
+    </bp-notice>
+    <bp-notice type="announcement" color="safe" icon="bi-check-circle-fill">
+      <strong>更新完成：</strong>bp-popnote 已更新至 v2.0，現支援 16 色 + gold 預設配色。
+    </bp-notice>
+    <bp-notice type="announcement" color="yellow" icon="bi-info-circle-fill" no-anim>
+      <strong>提示：</strong><code>no-anim</code> 屬性可停用入場動畫（適合伺服器端渲染）。
+    </bp-notice>
+  </div>
+
+  <h3>Sticky Bar（固定列）</h3>
+  <div class="demo-card">
+    <p style="font-size:.9rem;margin-bottom:16px;">
+      下方按鈕可展示頂部與底部 Sticky Bar。Sticky Bar 使用 <code>z-index: 1040</code>，
+      可透過 <code>BpNotice.config.stickyOffset</code> 設定與 Navbar 的安全距離。
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <button class="btn-demo" onclick="showSticky('top','teal')">
+        <i class="bi bi-arrow-up-circle me-1"></i>頂部 Sticky（teal）
+      </button>
+      <button class="btn-demo" onclick="showSticky('bottom','lavender')">
+        <i class="bi bi-arrow-down-circle me-1"></i>底部 Sticky（lavender）
+      </button>
+      <button class="btn-demo" onclick="showSticky('bottom','gold')">
+        <i class="bi bi-star-fill me-1"></i>底部 Sticky（gold）
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 3 — v1 別名相容                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <h2><i class="bi bi-arrow-repeat me-2"></i>v1 別名向下相容</h2>
+  <div class="demo-card">
+    <table class="alias-table">
+      <thead>
+        <tr>
+          <th>v1 color 值</th>
+          <th>v2 實際對應</th>
+          <th>顏色</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>accent</code></td>
+          <td><code>lavender</code></td>
+          <td><span style="color:#C3A5E5">●</span> #C3A5E5</td>
+          <td>原始預設強調色</td>
+        </tr>
+        <tr>
+          <td><code>correct</code></td>
+          <td><code>safe</code></td>
+          <td><span style="color:#27AE60">●</span> #27AE60</td>
+          <td>正確答案綠</td>
+        </tr>
+        <tr>
+          <td><code>wrong</code></td>
+          <td><code>wrong</code>（直接對應）</td>
+          <td><span style="color:#E6374B">●</span> #E6374B</td>
+          <td>錯誤/警告紅</td>
+        </tr>
+        <tr>
+          <td><code>warning</code></td>
+          <td><code>yellow</code>（黃色，bp-notice 原行為保留）</td>
+          <td><span style="color:#E3D322">●</span> #E3D322</td>
+          <td>注意黃（bp-notice 專屬語意）</td>
+        </tr>
+        <tr>
+          <td><code>special</code></td>
+          <td><code>special</code>（直接對應）</td>
+          <td><span style="color:#B3DE73">●</span> #B3DE73</td>
+          <td>特殊/強調綠</td>
+        </tr>
+        <tr>
+          <td><code>note</code></td>
+          <td><code>yellow</code></td>
+          <td><span style="color:#E3D322">●</span> #E3D322</td>
+          <td>注記黃（別名）</td>
+        </tr>
+        <tr>
+          <td><code>success</code></td>
+          <td><code>safe</code></td>
+          <td><span style="color:#27AE60">●</span> #27AE60</td>
+          <td>成功綠（別名）</td>
+        </tr>
+        <tr>
+          <td><code>highlight</code></td>
+          <td><code>special</code></td>
+          <td><span style="color:#B3DE73">●</span> #B3DE73</td>
+          <td>螢光綠（別名）</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;font-size:.82rem;color:rgba(198,199,189,0.76);">
+      所有 v1 別名都可直接繼續使用，行為與 v1 完全相同。<br>
+      <strong style="color:var(--yellow);">注意：</strong>bp-popnote THEMES 的 <code>warning</code> 代表紅色（獨立命名空間），與 bp-notice 的 <code>color="warning"</code>（黃色）不同，兩者互不影響。
+    </p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 4 — bp-popnote 氣泡 Demo                        -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <h2><i class="bi bi-chat-square-dots me-2"></i>bp-popnote 浮動氣泡 Demo</h2>
+  <div class="demo-card demo-text">
+    <p>
+      點擊以下詞語可呼叫不同主題的說明氣泡。目前支援
+      <span data-popover-title="共 18 個主題" data-popover-content="dark · lavender · sky · ocean · warning · safe · special · yellow · salmon · pink · orange · vanilla · teal · focus · indigo · info · wrong · correct（+ 可用 PopoverConfig.addTheme 自訂）" data-popover-theme="sky">18 種預設主題</span>，
+      全部與 bp-notice 調色盤對齊。
+    </p>
+    <p>
+      <span data-popover-title="Carousel 多頁模式" data-popover-theme="teal"
+            data-popover-target="#carousel-demo-tpl">
+        Carousel 三頁氣泡
+      </span>
+      <template id="carousel-demo-tpl">
+        <section><strong>第 1 頁</strong><br>在 <code>data-popover-content</code>（或 <code>&lt;template&gt;</code>）中以多個 <code>&lt;section&gt;</code> 包裹各頁內容，即可啟用 Carousel。</section>
+        <section><strong>第 2 頁</strong><br>支援 <code>slide</code>（預設）和 <code>crossfade</code> 兩種動畫模式，可透過 <code>data-popover-carousel-anim</code> 切換。</section>
+        <section><strong>第 3 頁</strong><br>透過 <code>data-popover-interval</code> 設定自動換頁秒數，設為 <code>0</code> 可停用自動播放。</section>
+      </template>
+      &nbsp;·&nbsp;
+      <span data-popover-title="Ocean 主題" data-popover-theme="ocean"
+            data-popover-content="<code>data-popover-theme=&quot;ocean&quot;</code><br>深色背景，青藍邊框與標題。">
+        Ocean 主題
+      </span>
+      &nbsp;·&nbsp;
+      <span data-popover-title="Salmon 主題" data-popover-theme="salmon"
+            data-popover-content="<code>data-popover-theme=&quot;salmon&quot;</code><br>v2 新增的暖橘粉調。">
+        Salmon 主題
+      </span>
+      &nbsp;·&nbsp;
+      <span data-popover-title="Indigo 主題" data-popover-theme="indigo"
+            data-popover-content="<code>data-popover-theme=&quot;indigo&quot;</code><br>深紫靛主題，適合高端說明文字。">
+        Indigo 主題
+      </span>
+      &nbsp;·&nbsp;
+      <span data-popover-title="Info 主題" data-popover-theme="info"
+            data-popover-content="<code>data-popover-theme=&quot;info&quot;</code><br>資訊藍，深夜讀書利器。">
+        Info 主題
+      </span>
+    </p>
+    <p>
+      <span data-popover-title="Modal 對話框" data-popover-theme="lavender"
+            data-popover-modal="dialog"
+            data-popover-content="這是一個 Bootstrap Modal，可放大量說明內容。<br><br>支援 <code>data-popover-modal-size</code>（sm/lg/xl 或 CSS 值）和 <code>data-popover-modal-static</code>。">
+        Modal 對話框（點我）
+      </span>
+      &nbsp;·&nbsp;
+      <span data-popover-title="右側 Offcanvas" data-popover-theme="sky"
+            data-popover-modal="end"
+            data-popover-content="這是一個從右側滑入的 Offcanvas 面板。<br>適合顯示大量輔助資料或二層選單。">
+        Offcanvas 右側（點我）
+      </span>
+    </p>
+  </div>
+
+  <!-- Panel mode -->
+  <h3>Panel 模式（渲染至指定容器）</h3>
+  <div class="demo-card">
+    <p style="font-size:.88rem;margin-bottom:14px;">點擊詞語，說明會渲染到下方 Panel 容器（第二次點擊同一詞語可收起）：</p>
+    <p class="demo-text">
+      <span data-popover-title="Vanilla 主題說明" data-popover-theme="vanilla"
+            data-popover-panel="#demo-panel"
+            data-popover-content="Vanilla 是柔和的米白綠，適合閱讀說明型介面。<br>bg: #171815，titleColor: #DBEDD8。">
+        Vanilla 主題
+      </span>
+      &nbsp;·&nbsp;
+      <span data-popover-title="Focus 主題說明" data-popover-theme="focus"
+            data-popover-panel="#demo-panel"
+            data-popover-content="Focus 是近白的冷青色，強調當前聚焦項目。<br>bg: #070d16，titleColor: #D4FFFC。">
+        Focus 主題
+      </span>
+      &nbsp;·&nbsp;
+      <span data-popover-title="Orange 主題說明" data-popover-theme="orange"
+            data-popover-panel="#demo-panel"
+            data-popover-content="Orange 是深金橙，適合行動呼叫或限時通知。<br>bg: #181005，titleColor: #EDA109。">
+        Orange 主題
+      </span>
+    </p>
+    <div id="demo-panel" class="mt-3"></div>
+  </div>
+
+  <!-- 事後標注 -->
+  <h3>事後標注 API（BpPopnote.annotate）</h3>
+  <div class="demo-card">
+    <div id="annotate-target" class="demo-text">
+      <p>
+        PDO（PHP Data Objects）是 PHP 內建的資料庫抽象層，支援多種資料庫驅動。
+        使用 prepared statement 可有效防止 SQL 注入攻擊。
+        設定時區可確保所有 SQL 時間操作以台北時間（UTC+8）為基準。
+      </p>
+    </div>
+    <button class="btn-demo mt-3" onclick="runAnnotate()">
+      <i class="bi bi-highlighter me-1"></i>執行事後標注
+    </button>
+    <button class="btn-demo mt-3 ms-2" onclick="BpPopnote.clearAnnotations('#annotate-target')">
+      <i class="bi bi-eraser me-1"></i>清除標注
+    </button>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 5 — 全域設定範例                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <h2><i class="bi bi-gear me-2"></i>全域設定範例</h2>
+  <div class="demo-card">
+    <pre style="background:#111;border-radius:8px;padding:20px;font-size:.8rem;color:#C6C7BD;overflow-x:auto;line-height:1.5;"><code><span style="color:#82C8E5">// ── bp-notice 設定 ──────────────────────────────</span>
+BpNotice.config.stickyOffset = <span style="color:#B3DE73">'64px'</span>;     <span style="color:#888">// 避開 navbar</span>
+BpNotice.config.theme.accent  = <span style="color:#B3DE73">'#FF91D7'</span>;  <span style="color:#888">// 覆寫預設邊框色</span>
+BpNotice.config.theme.ctaBg   = <span style="color:#B3DE73">'#0DA591'</span>;
+BpNotice._reCSS();                            <span style="color:#888">// 重新注入 CSS</span>
+
+<span style="color:#82C8E5">// ── bp-notice 程式操作 ──────────────────────────</span>
+BpNotice.show(<span style="color:#B3DE73">'notice-id'</span>);              <span style="color:#888">// 重新顯示（清除記憶）</span>
+BpNotice.close(<span style="color:#B3DE73">'notice-id'</span>);             <span style="color:#888">// 關閉</span>
+BpNotice.setContent(<span style="color:#B3DE73">'notice-id'</span>, html);  <span style="color:#888">// 動態更新內容</span>
+BpNotice.init();                             <span style="color:#888">// 掃描新增的 &lt;bp-notice&gt;</span>
+
+<span style="color:#82C8E5">// ── bp-popnote 設定 ─────────────────────────────</span>
+PopoverConfig.set({
+  theme      : <span style="color:#B3DE73">'sky'</span>,
+  placement  : <span style="color:#B3DE73">'bottom'</span>,
+  maxWidth   : <span style="color:#B3DE73">'400px'</span>,
+  borderStyle: <span style="color:#B3DE73">'dashed'</span>,
+  carousel   : { animation: <span style="color:#B3DE73">'crossfade'</span>, interval: <span style="color:#E3D322">5000</span> },
+  modal      : <span style="color:#B3DE73">'dialog'</span>,
+  modalSize  : <span style="color:#B3DE73">'lg'</span>,
+});
+
+PopoverConfig.addTheme(<span style="color:#B3DE73">'brand'</span>, {
+  bg         : <span style="color:#B3DE73">'#100820'</span>,
+  titleColor : <span style="color:#B3DE73">'#A080FF'</span>,
+  borderColor: <span style="color:#B3DE73">'#A080FF'</span>,
+});
+
+<span style="color:#82C8E5">// ── 共用調色盤 ──────────────────────────────────</span>
+console.log(BpNotice.palette);  <span style="color:#888">// { lavender, sky, ocean, ... }</span></code></pre>
+  </div>
+
+</div><!-- /demo-wrap -->
+
+
+<!-- ── Sticky Bar 動態建立用 ── -->
+<div id="sticky-container"></div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 合併元件 -->
+<script src="bp-popnote.js"></script>
+
+<script>
+// ── 色票格子動態產生 ─────────────────────────────────────────
+(function () {
+  var palette = BpNotice.palette;
+  var tokenLabels = {
+    lavender: 'lavender', sky: 'sky', ocean: 'ocean',
+    safe: 'safe', special: 'special', yellow: 'yellow',
+    salmon: 'salmon', pink: 'pink', orange: 'orange',
+    vanilla: 'vanilla', teal: 'teal', focus: 'focus',
+    indigo: 'indigo', info: 'info', wrong: 'wrong',
+    gold: 'gold (特殊漸層)',
+  };
+  var grid = document.getElementById('palette-grid');
+  Object.keys(tokenLabels).forEach(function (key) {
+    var chip = document.createElement('div');
+    chip.className = 'color-chip';
+    var hex = key === 'gold' ? '#C9973F' : palette[key];
+    chip.innerHTML =
+      '<span class="color-dot" style="background:' + hex + '"></span>' +
+      '<span>' +
+        '<strong style="color:' + hex + '">' + key + '</strong><br>' +
+        '<span style="opacity:.76">' + (key === 'gold' ? '漸層' : hex) + '</span>' +
+      '</span>';
+    grid.appendChild(chip);
+  });
+})();
+
+// ── announcement 色彩一覽動態產生 ────────────────────────────
+(function () {
+  var tokens = [
+    'lavender','sky','ocean','safe','special','yellow',
+    'salmon','pink','orange','vanilla','teal','focus',
+    'indigo','info','wrong','gold'
+  ];
+  var messages = {
+    lavender : '預設配色：<strong>lavender</strong> — 清雅紫羅蘭，適合一般公告。',
+    sky      : '配色：<strong>sky</strong> — 天空藍，適合資訊通知。',
+    ocean    : '配色：<strong>ocean</strong> — 深海青，適合學習提示。',
+    safe     : '配色：<strong>safe</strong> — 安全綠，適合成功訊息。',
+    special  : '配色：<strong>special</strong> — 螢光綠，適合特別強調。',
+    yellow   : '配色：<strong>yellow</strong>（即舊版 warning）— 黃色，適合注意事項。',
+    salmon   : '配色：<strong>salmon</strong> — 暖橘粉，適合溫馨提醒。',
+    pink     : '配色：<strong>pink</strong> — 桃粉紫，適合活動公告。',
+    orange   : '配色：<strong>orange</strong> — 深金橙，適合限時通知。',
+    vanilla  : '配色：<strong>vanilla</strong> — 米白綠，適合柔和公告。',
+    teal     : '配色：<strong>teal</strong> — 青碧色，適合進度提示。',
+    focus    : '配色：<strong>focus</strong> — 冷青白，適合聚焦重點。',
+    indigo   : '配色：<strong>indigo</strong> — 深紫靛，適合正式公告。',
+    info     : '配色：<strong>info</strong> — 資訊藍，適合說明文字。',
+    wrong    : '配色：<strong>wrong</strong>（即舊版 accent=correct 的反向）— 警示紅，適合錯誤或維護通知。',
+    gold     : '配色：<strong>gold</strong> — 金箔特殊效果，限時促銷或置頂公告首選！',
+  };
+  var container = document.getElementById('notice-announcement-demo');
+  tokens.forEach(function (token) {
+    var el = document.createElement('bp-notice');
+    el.setAttribute('type', 'announcement');
+    el.setAttribute('color', token);
+    el.setAttribute('dismissible', '');
+    el.style.display = 'block';
+    el.style.marginBottom = '10px';
+    el.innerHTML = messages[token] || ('color="' + token + '"');
+    container.appendChild(el);
+    el.setAttribute('data-bp-init', '');
+    el._bpNotice = new (function(e){ BpNotice.init(); })(el);
+  });
+  // Re-init to pick up dynamically added notices
+  BpNotice.init();
+})();
+
+// ── Sticky 動態展示 ──────────────────────────────────────────
+var _stickyEl = null;
+function showSticky(position, color) {
+  if (_stickyEl) {
+    BpNotice.close(_stickyEl);
+    _stickyEl.remove();
+    _stickyEl = null;
+  }
+  var el = document.createElement('bp-notice');
+  el.setAttribute('type', 'sticky');
+  el.setAttribute('position', position);
+  el.setAttribute('color', color);
+  el.setAttribute('dismissible', '');
+  el.setAttribute('auto-dismiss', '6');
+  el.innerHTML =
+    '<i class="bi bi-pin-angle-fill me-2"></i>' +
+    '<strong>' + color.toUpperCase() + ' Sticky ' + position.toUpperCase() + '</strong>' +
+    '&nbsp; — 6 秒後自動消失，或點 ✕ 關閉。';
+  document.getElementById('sticky-container').appendChild(el);
+  _stickyEl = el;
+  BpNotice.init();
+  el.addEventListener('bp:notice-close', function () { _stickyEl = null; });
+}
+
+// ── 事後標注 ─────────────────────────────────────────────────
+function runAnnotate() {
+  BpPopnote.clearAnnotations('#annotate-target');
+  BpPopnote.annotate([
+    {
+      text   : 'PDO',
+      within : '#annotate-target',
+      title  : 'PHP Data Objects',
+      content: 'PDO 提供統一的資料庫存取介面，支援 MySQL、PostgreSQL、SQLite 等。<br>推薦配合 <code>setAttribute</code> 使用 prepared statement。',
+      theme  : 'sky',
+    },
+    {
+      text   : 'prepared statement',
+      within : '#annotate-target',
+      title  : 'Prepared Statement',
+      content: '先以佔位符（<code>?</code> 或 <code>:name</code>）定義 SQL 結構，再綁定實際值，可防止 SQL 注入。',
+      theme  : 'safe',
+    },
+    {
+      text   : '台北時間（UTC+8）',
+      within : '#annotate-target',
+      title  : '時區設定',
+      content: '在 PDO 連線後執行：<br><code>$pdo->exec("SET time_zone = \'+08:00\'");</code><br>確保資料庫時間與伺服器一致。',
+      theme  : 'teal',
+    },
+  ]);
+}
+</script>
+
+</body>
+</html>

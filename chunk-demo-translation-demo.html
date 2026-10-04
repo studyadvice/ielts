@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chunk-demo v4 — 翻譯行示範</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0C0D0C;
+    color: #C6C7BD;
+    font-family: 'Segoe UI', 'Noto Sans TC', sans-serif;
+    padding: 48px 32px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 1.4rem; color: #b3de73; margin-bottom: 6px; }
+  .sub { font-size: .9rem; color: #7a8078; margin-bottom: 40px; }
+
+  section { margin-bottom: 48px; }
+  h2 { font-size: 1rem; color: #95c9de; margin-bottom: 16px;
+       border-left: 3px solid #95c9de; padding-left: 10px; }
+
+  /* 語法區塊 */
+  .code-block {
+    background: #161816;
+    border: 1px solid #2c2e2c;
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: .82rem;
+    color: #E0BE79;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .hl-attr  { color: #b3de73; }
+  .hl-val   { color: #FFB3D9; }
+  .hl-tag   { color: #95c9de; }
+  .hl-note  { color: #4d504b; font-style: italic; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(179,222,115,.12);
+    color: #b3de73;
+    border: 1px solid rgba(179,222,115,.3);
+    border-radius: 5px;
+    font-size: .75rem;
+    padding: 1px 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge.v3 { background: rgba(149,201,222,.1); color: #95c9de; border-color: rgba(149,201,222,.3); }
+
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; margin-top: 12px; }
+  th { background: #161816; color: #95c9de; text-align: left;
+       padding: 8px 14px; border-bottom: 1px solid #2c2e2c; }
+  td { padding: 8px 14px; border-bottom: 1px solid #1d1f1d; color: #C6C7BD; }
+  td:first-child { color: #b3de73; font-family: monospace; font-size: .83rem; }
+  tr:last-child td { border-bottom: none; }
+  td code { background: #1d1f1d; padding: 1px 6px; border-radius: 4px; font-size: .82rem; }
+</style>
+</head>
+<body>
+
+<h1>chunk-demo <span class="badge">v4</span> — 翻譯行功能</h1>
+<p class="sub">選取不同等級，句子與翻譯同步更新。</p>
+
+<!-- ── 示範 1：翻譯行搭配整句預覽 ── -->
+<section>
+  <h2>範例一：日常行程句</h2>
+
+  <chunk-demo
+    sentence="I {1} to {2} {3}."
+    translation="我{3}{1}去{2}。"
+    show-translation="true"
+    show-preview="true"
+    theme="safe"
+    dropdown-width="260px">
+
+    <cd-chunk id="1" icon="🚶" label="交通方式">
+      <cd-level level="1" trans="走路">walk</cd-level>
+      <cd-level level="2" trans="騎腳踏車">ride my bike</cd-level>
+      <cd-level level="3" trans="搭公車">take the bus</cd-level>
+    </cd-chunk>
+
+    <cd-chunk id="2" icon="📍" label="目的地">
+      <cd-level level="1" trans="學校">school</cd-level>
+      <cd-level level="2" trans="公園">the park</cd-level>
+      <cd-level level="3" trans="超市">the supermarket</cd-level>
+    </cd-chunk>
+
+    <cd-chunk id="3" icon="🕐" label="頻率">
+      <cd-level level="1" trans="每天">every day</cd-level>
+      <cd-level level="2" trans="每週">every week</cd-level>
+      <cd-level level="3" trans="偶爾">sometimes</cd-level>
+    </cd-chunk>
+
+  </chunk-demo>
+</section>
+
+<!-- ── 示範 2：只顯示翻譯（不顯示整句預覽）── -->
+<section>
+  <h2>範例二：只顯示翻譯行（不搭配整句預覽）</h2>
+
+  <chunk-demo
+    sentence="She {1} because she {2}."
+    translation="她{1}，因為她{2}。"
+    show-translation="true"
+    theme="lavender">
+
+    <cd-chunk id="1" label="行為">
+      <cd-level level="1" trans="哭了">cried</cd-level>
+      <cd-level level="2" trans="笑了">laughed</cd-level>
+      <cd-level level="3" trans="沉默了">stayed silent</cd-level>
+    </cd-chunk>
+
+    <cd-chunk id="2" label="原因">
+      <cd-level level="1" trans="很傷心">was sad</cd-level>
+      <cd-level level="2" trans="很開心">was happy</cd-level>
+      <cd-level level="3" trans="感到困惑">felt confused</cd-level>
+    </cd-chunk>
+
+  </chunk-demo>
+</section>
+
+<!-- ── 示範 3：翻譯行 + 遮罩模式 ── -->
+<section>
+  <h2>範例三：遮罩模式 <span class="badge v3">mask-mode</span> 搭配翻譯</h2>
+
+  <chunk-demo
+    sentence="The {1} is {2} and {3}."
+    translation="這個{1}{2}而且{3}。"
+    show-translation="true"
+    mask-mode="true"
+    theme="orange">
+
+    <cd-chunk id="1" label="名詞">
+      <cd-level level="1" trans="城市">city</cd-level>
+      <cd-level level="2" trans="海灘">beach</cd-level>
+      <cd-level level="3" trans="森林">forest</cd-level>
+    </cd-chunk>
+
+    <cd-chunk id="2" label="形容詞A">
+      <cd-level level="1" trans="繁忙">busy</cd-level>
+      <cd-level level="2" trans="寧靜">peaceful</cd-level>
+      <cd-level level="3" trans="廣闊">vast</cd-level>
+    </cd-chunk>
+
+    <cd-chunk id="3" label="形容詞B">
+      <cd-level level="1" trans="充滿活力">vibrant</cd-level>
+      <cd-level level="2" trans="令人放鬆">relaxing</cd-level>
+      <cd-level level="3" trans="神秘">mysterious</cd-level>
+    </cd-chunk>
+
+  </chunk-demo>
+</section>
+
+<!-- ── API 說明 ── -->
+<section>
+  <h2>v4 新增 API 一覽</h2>
+
+  <table>
+    <tr>
+      <th>屬性／位置</th>
+      <th>值</th>
+      <th>說明</th>
+    </tr>
+    <tr>
+      <td>&lt;chunk-demo&gt;<br>translation</td>
+      <td>字串，含 <code>{id}</code> 佔位</td>
+      <td>翻譯句模板，佔位符與 <code>sentence</code> 相同</td>
+    </tr>
+    <tr>
+      <td>&lt;chunk-demo&gt;<br>show-translation</td>
+      <td><code>true</code> | <code>false</code></td>
+      <td>是否顯示翻譯行，預設 <code>false</code></td>
+    </tr>
+    <tr>
+      <td>&lt;cd-level&gt;<br>trans</td>
+      <td>字串</td>
+      <td>該等級對應的翻譯詞；未設定時退回顯示英文 text</td>
+    </tr>
+    <tr>
+      <td>ChunkDemoConfig<br>.translationColor</td>
+      <td>CSS 色彩字串</td>
+      <td>翻譯文字顏色，預設 <code>#8C9088</code></td>
+    </tr>
+    <tr>
+      <td>ChunkDemoConfig<br>.translationBorderColor</td>
+      <td>CSS 色彩字串</td>
+      <td>翻譯行左側線顏色，預設跟隨主題 border 色</td>
+    </tr>
+  </table>
+
+  <div class="code-block"><span class="hl-note">&lt;!-- 最小寫法 --&gt;</span>
+<span class="hl-tag">&lt;chunk-demo</span>
+  <span class="hl-attr">sentence</span>=<span class="hl-val">"I {1} every day."</span>
+  <span class="hl-attr">translation</span>=<span class="hl-val">"我每天{1}。"</span>
+  <span class="hl-attr">show-translation</span>=<span class="hl-val">"true"</span><span class="hl-tag">&gt;</span>
+
+  <span class="hl-tag">&lt;cd-chunk</span> <span class="hl-attr">id</span>=<span class="hl-val">"1"</span> <span class="hl-attr">label</span>=<span class="hl-val">"動詞"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;cd-level</span> <span class="hl-attr">level</span>=<span class="hl-val">"1"</span> <span class="hl-attr">trans</span>=<span class="hl-val">"走路"</span><span class="hl-tag">&gt;</span>walk<span class="hl-tag">&lt;/cd-level&gt;</span>
+    <span class="hl-tag">&lt;cd-level</span> <span class="hl-attr">level</span>=<span class="hl-val">"2"</span> <span class="hl-attr">trans</span>=<span class="hl-val">"騎腳踏車"</span><span class="hl-tag">&gt;</span>ride my bike<span class="hl-tag">&lt;/cd-level&gt;</span>
+  <span class="hl-tag">&lt;/cd-chunk&gt;</span>
+
+<span class="hl-tag">&lt;/chunk-demo&gt;</span></div>
+</section>
+
+<script src="chunk-demo.js"></script>
+</body>
+</html>

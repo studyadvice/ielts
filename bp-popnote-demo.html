@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bp-popnote — 功能展示</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0c0d0c;
+      --shell:   #c6c7bd;
+      --lavender:#C3A5E5;
+      --special: #b3de73;
+      --warning: #F08080;
+      --salmon:  #E5C3B3;
+      --sky:     #95c9de;
+      --safe:    #299459;
+      --vanilla: #DBEDD8;
+      --yellow:  #DECA4B;
+      --info:    #1E65C7;
+      --stone:   #95c9de;
+      --pink:    #FFB3D9;
+      --orange:  #eda109;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--shell);
+      font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      padding: 40px 24px 80px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 1.6rem; color: var(--lavender); margin-bottom: 6px; letter-spacing: 0.03em; }
+    h2 { font-size: 1.1rem; color: var(--sky); margin: 40px 0 14px; letter-spacing: 0.02em;
+         border-bottom: 1px solid rgba(149,201,222,0.25); padding-bottom: 6px; }
+    p  { margin-bottom: 14px; }
+
+    .subtitle { color: var(--stone); font-size: 0.92rem; margin-bottom: 36px; }
+
+    /* ── Demo sections ── */
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    /* ── Themed trigger pills ── */
+    .pill {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: 1px dashed currentColor;
+      opacity: 0.85;
+      transition: opacity 0.18s;
+    }
+    .pill:hover { opacity: 1; }
+
+    /* ── Panel target box ── */
+    .panel-target {
+      min-height: 90px;
+      border: 1px dashed rgba(197,189,189,0.18);
+      border-radius: 8px;
+      padding: 16px;
+      background: rgba(255,255,255,0.025);
+      color: rgba(198,199,189,0.3);
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .panel-target:has(.xpop-panel-wrap) { color: transparent; padding: 0; }
+
+    /* ── Two-column layout for panel demo ── */
+    .panel-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .trigger-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .trigger-card {
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: 1px dashed rgba(255,255,255,0.12);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .trigger-card:hover { background: rgba(255,255,255,0.04); }
+    .trigger-card.xpop-panel-active {
+      background: rgba(255,255,255,0.07);
+    }
+    .trigger-card .card-title {
+      font-size: 0.82rem;
+      opacity: 0.5;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .trigger-card .card-body {
+      font-size: 0.95rem;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.84rem;
+      background: rgba(255,255,255,0.07);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--special);
+    }
+    pre {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      color: var(--vanilla);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+
+    .note-box {
+      background: rgba(149,201,222,0.08);
+      border-left: 3px solid var(--info);
+      border-radius: 0 6px 6px 0;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: var(--shell);
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+    .theme-chip {
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid currentColor;
+      transition: opacity 0.18s;
+      opacity: 0.8;
+    }
+    .theme-chip:hover { opacity: 1; }
+
+    /* global panel strip */
+    .global-panel-strip {
+      position: sticky;
+      bottom: 0;
+      left: 0; right: 0;
+      background: #0c0d0c;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 0 24px 0;
+      z-index: 100;
+    }
+    .strip-label {
+      font-size: 0.72rem;
+      color: var(--stone);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 8px 0 4px;
+      opacity: 0.6;
+    }
+
+    table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    th { color: var(--lavender); font-weight: 600; }
+    td code { font-size: 0.8rem; }
+
+    hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 40px 0; }
+  </style>
+</head>
+<body>
+
+<h1>bp-popnote.js</h1>
+<p class="subtitle">浮動彈窗 + Panel 面板模式 · 品牌配色更新 v2</p>
+
+<!-- ════════════════════════════════════════════════ -->
+<h2>① 浮動彈窗模式（原有功能）</h2>
+
+<p>點擊任何帶底線的詞彙，會在附近彈出浮動說明框。</p>
+
+<div class="demo-row">
+  <span data-popover-title="Lavender · 紫藤" data-popover-content="預設主題色，用於說明、補充、標注等中性情境。色票：<code>#C3A5E5</code>" style="color:#C3A5E5;cursor:pointer;border-bottom:1px dashed #C3A5E5">
+    dark（預設）
+  </span>
+
+  <span data-popover-title="Sky · 天藍" data-popover-content="資訊類提示，強調說明性內容。色票：<code>#95c9de</code>" data-popover-theme="sky" style="color:#95c9de;cursor:pointer;border-bottom:1px dashed #95c9de">
+    sky / info
+  </span>
+
+  <span data-popover-title="Warning · 珊瑚" data-popover-content="警告、注意事項使用此色。色票：<code>#F08080</code>" data-popover-theme="warning" style="color:#F08080;cursor:pointer;border-bottom:1px dashed #F08080">
+    warning
+  </span>
+
+  <span data-popover-title="Safe · 翠綠" data-popover-content="操作成功、正常狀態。色票：<code>#299459</code>" data-popover-theme="safe" style="color:#299459;cursor:pointer;border-bottom:1px dashed #299459">
+    safe / success
+  </span>
+
+  <span data-popover-title="Special · 萊姆" data-popover-content="特別強調、精選內容。色票：<code>#b3de73</code>" data-popover-theme="special" style="color:#b3de73;cursor:pointer;border-bottom:1px dashed #b3de73">
+    special / highlight
+  </span>
+
+  <span data-popover-title="Note · 黃色" data-popover-content="筆記、側注類內容。色票：<code>#DECA4B</code>" data-popover-theme="note" style="color:#DECA4B;cursor:pointer;border-bottom:1px dashed #DECA4B">
+    note / yellow
+  </span>
+
+  <span data-popover-title="Pink · 粉紅" data-popover-content="輕鬆、親切的情境。色票：<code>#FFB3D9</code>" data-popover-theme="pink" style="color:#FFB3D9;cursor:pointer;border-bottom:1px dashed #FFB3D9">
+    pink
+  </span>
+
+  <span data-popover-title="Salmon · 奶茶" data-popover-content="溫暖柔和的補充說明。色票：<code>#E5C3B3</code>" data-popover-theme="salmon" style="color:#E5C3B3;cursor:pointer;border-bottom:1px dashed #E5C3B3">
+    salmon
+  </span>
+
+  <span data-popover-title="Stone · 石藍" data-popover-content="沉穩的技術說明類。色票：<code>#95c9de</code>（新增）" data-popover-theme="stone" style="color:#95c9de;cursor:pointer;border-bottom:1px dashed #95c9de">
+    stone ✦
+  </span>
+
+  <span data-popover-title="Orange · 橙色" data-popover-content="醒目提示、重要標記。色票：<code>#eda109</code>（新增）" data-popover-theme="orange" style="color:#eda109;cursor:pointer;border-bottom:1px dashed #eda109">
+    orange ✦
+  </span>
+
+  <span data-popover-title="Vanilla · 香草白" data-popover-content="需要與深色背景高對比的內容。色票：<code>#DBEDD8</code>（新增）" data-popover-theme="vanilla" style="color:#DBEDD8;cursor:pointer;border-bottom:1px dashed #DBEDD8">
+    vanilla ✦
+  </span>
+
+  <span data-popover-title="Info · 鋼藍" data-popover-content="次要資訊、中性補充說明。色票：<code>#1E65C7</code>（新增）" data-popover-theme="info" style="color:#1E65C7;cursor:pointer;border-bottom:1px dashed #1E65C7">
+    info ✦
+  </span>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════ -->
+<h2>② Panel 模式 — 觸發器綁定指定 &lt;div&gt;</h2>
+
+<p>
+  每個觸發器加上 <code>data-popover-panel="#panel-a"</code>，
+  點擊後內容顯示在右側欄位而非彈窗。再次點擊同一觸發器會收起內容。
+</p>
+
+<div class="panel-layout">
+  <div class="trigger-list">
+    <div class="trigger-card"
+         data-popover-title="何謂 AOP 日誌"
+         data-popover-content="<b>面向切面程式設計（AOP）</b> 將橫切關注點（如日誌、權限）從業務邏輯中分離，透過攔截器統一記錄操作者、時間、IP、請求參數等資訊，不污染核心程式碼。"
+         data-popover-theme="sky"
+         data-popover-panel="#panel-a"
+         data-popover-label="AOP 日誌說明">
+      <div class="card-title">概念</div>
+      <div class="card-body">何謂 AOP 日誌？</div>
+    </div>
+
+    <div class="trigger-card"
+         data-popover-title="PDO 連線最佳實踐"
+         data-popover-content="使用單一 PDO 實例（Singleton）貫穿整個請求生命週期，連線資訊透過 <code>.htaccess</code> 環境變數注入，避免硬編碼在程式中。記得設置時區：<code>SET time_zone = '+08:00'</code>"
+         data-popover-theme="special"
+         data-popover-panel="#panel-a"
+         data-popover-label="PDO 最佳實踐">
+      <div class="card-title">資料庫</div>
+      <div class="card-body">PDO 連線最佳實踐</div>
+    </div>
+
+    <div class="trigger-card"
+         data-popover-title="資料表命名規範"
+         data-popover-content="自訂資料表必須使用前綴（prefix）加上資料表名稱，例如 <code>myapp_users</code>、<code>myapp_orders</code>，避免同一資料庫中不同應用造成名稱衝突。"
+         data-popover-theme="warning"
+         data-popover-panel="#panel-a"
+         data-popover-label="資料表命名">
+      <div class="card-title">規範</div>
+      <div class="card-body">資料表命名規範</div>
+    </div>
+
+    <div class="trigger-card"
+         data-popover-title="Bootstrap Alert 取代 alert()"
+         data-popover-content="原生 <code>alert()</code> 會阻塞執行緒且樣式無法客製。改以動態插入 Bootstrap Alert DOM 元素，並在 3 秒後自動淡出，提供更好的使用者體驗。"
+         data-popover-theme="safe"
+         data-popover-panel="#panel-a"
+         data-popover-label="UI 提示訊息">
+      <div class="card-title">前端</div>
+      <div class="card-body">Bootstrap Alert 取代 alert()</div>
+    </div>
+  </div>
+
+  <div>
+    <div id="panel-a" class="panel-target">← 點擊左側任一項目</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════ -->
+<h2>③ Global Panel 模式 — 全域設定一個共用欄位</h2>
+
+<p>
+  透過 <code>PopoverConfig.set({ panelTarget: '#global-panel' })</code>，
+  頁面上所有觸發器都會顯示在同一處，無須逐一加上屬性。
+  使用 <code>data-popover-panel="false"</code> 可讓特定觸發器退回彈窗模式。
+</p>
+
+<div class="note-box">
+  下方的觸發器未設置 <code>data-popover-panel</code>，但透過全域設定，仍使用面板模式。
+  「彈窗（退出全域）」那個例外地使用了 <code>data-popover-panel="false"</code>。
+</div>
+
+<div class="demo-row" id="global-triggers">
+  <span class="pill" style="color:var(--lavender)"
+        data-popover-title="Lavender 說明"
+        data-popover-content="這個觸發器透過<b>全域設定</b>顯示在下方面板。不需要個別設置 data-popover-panel。">
+    全域 · lavender
+  </span>
+  <span class="pill" style="color:var(--sky)"
+        data-popover-title="Sky 說明"
+        data-popover-content="Sky 系列適合用於<b>提示、說明、引導</b>等資訊性內容，對比度高、易識別。"
+        data-popover-theme="sky">
+    全域 · sky
+  </span>
+  <span class="pill" style="color:var(--orange)"
+        data-popover-title="Orange 重點"
+        data-popover-content="橙色是強烈的<b>視覺焦點</b>色，適合用在需要立刻引起注意的關鍵訊息。"
+        data-popover-theme="orange">
+    全域 · orange
+  </span>
+  <span class="pill" style="color:var(--stone)"
+        data-popover-title="Stone 說明"
+        data-popover-content="石藍（Stone）是低飽和度的藍灰色，適合<b>技術文件、次要說明</b>等較沉穩的情境。"
+        data-popover-theme="stone">
+    全域 · stone
+  </span>
+  <span class="pill" style="color:var(--shell);border-style:solid"
+        data-popover-title="強制彈窗模式"
+        data-popover-content="這個觸發器使用了 <code>data-popover-panel=\"false\"</code>，即使全域設定了 panelTarget，仍以浮動彈窗方式顯示。"
+        data-popover-panel="false">
+    彈窗（退出全域）
+  </span>
+</div>
+
+<div id="global-panel" class="panel-target" style="min-height:110px">← 點擊上方任一觸發器</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════ -->
+<h2>④ 輪播（Carousel）在 Panel 模式中的運作</h2>
+
+<template id="tpl-carousel">
+  <section>
+    <b>第一頁：建立 PDO</b><br>
+    透過 .htaccess 環境變數讀取連線資訊，建立唯一 PDO 實例。
+  </section>
+  <section>
+    <b>第二頁：設定時區</b><br>
+    <code>$pdo->exec("SET time_zone = '+08:00'")</code><br>
+    確保所有時間操作以台北時區為準。
+  </section>
+  <section>
+    <b>第三頁：錯誤模式</b><br>
+    <code>$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION)</code><br>
+    讓 PDO 拋出例外，便於統一例外處理。
+  </section>
+</template>
+
+<div class="panel-layout">
+  <div>
+    <span data-popover-title="PDO 三步驟"
+          data-popover-target="#tpl-carousel"
+          data-popover-theme="special"
+          data-popover-panel="#panel-carousel"
+          data-popover-interval="0"
+          style="color:var(--special);cursor:pointer;border-bottom:1px dashed var(--special)">
+      點擊查看 PDO 設定輪播
+    </span>
+    <p style="margin-top:14px;font-size:0.88rem;opacity:0.55">
+      輪播在 Panel 模式中同樣有效，支援手動切換與自動播放。
+    </p>
+  </div>
+  <div id="panel-carousel" class="panel-target">← 點擊左側觸發器</div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════ -->
+<h2>⑤ 屬性與 API 參考</h2>
+
+<h3 style="color:var(--lavender);font-size:0.95rem;margin:16px 0 10px">觸發器屬性</h3>
+<table>
+  <tr><th>屬性</th><th>說明</th></tr>
+  <tr><td><code>data-popover-content</code></td><td>行內 HTML 內容</td></tr>
+  <tr><td><code>data-popover-title</code></td><td>標題（可同時出現）</td></tr>
+  <tr><td><code>data-popover-target</code></td><td>內容來源的 CSS 選擇器（支援 <code>&lt;template&gt;</code>）</td></tr>
+  <tr><td><code>data-popover-panel</code></td><td>Panel 目標 div 的 CSS 選擇器；設為 <code>"false"</code> 強制彈窗</td></tr>
+  <tr><td><code>data-popover-label</code></td><td>Panel 頂部來源標籤（省略則取觸發器文字）</td></tr>
+  <tr><td><code>data-popover-theme</code></td><td>主題名稱（見下方色票）</td></tr>
+  <tr><td><code>data-popover-placement</code></td><td><code>top / bottom / left / right</code></td></tr>
+  <tr><td><code>data-popover-arrow</code></td><td>設為 <code>"false"</code> 隱藏箭頭</td></tr>
+  <tr><td><code>data-popover-fontsize</code></td><td>字體大小（如 <code>0.9rem</code>）</td></tr>
+  <tr><td><code>data-popover-maxwidth</code></td><td>彈窗最大寬度（如 <code>400px</code>）</td></tr>
+  <tr><td><code>data-popover-offset</code></td><td>觸發器與彈窗的間距（px）</td></tr>
+  <tr><td><code>data-popover-interval</code></td><td>輪播間隔（ms），0 = 手動</td></tr>
+  <tr><td><code>data-popover-carousel-anim</code></td><td><code>slide</code> / <code>crossfade</code></td></tr>
+  <tr><td><code>data-popover-hint</code></td><td>設為 <code>"false"</code> 隱藏底線提示</td></tr>
+</table>
+
+<h3 style="color:var(--lavender);font-size:0.95rem;margin:24px 0 10px">全域 API</h3>
+<pre><code>// 全域設定
+PopoverConfig.set({
+  theme:       'dark',          // 預設主題
+  panelTarget: '#my-notes',     // 全域 panel 目標 div
+  maxWidth:    '560px',
+  offset:      8,
+  fontSize:    '1rem',
+  placement:   'top',
+  carousel: {
+    animation: 'slide',         // 'slide' | 'crossfade'
+    interval:  3000             // ms，0 = 手動
+  }
+});
+
+// 自訂主題
+PopoverConfig.addTheme('brand', {
+  bg:          '#0d0d18',
+  titleColor:  '#95c9de',
+  borderColor: '#95c9de'
+});</code></pre>
+
+<h3 style="color:var(--lavender);font-size:0.95rem;margin:24px 0 10px">可用主題</h3>
+<div class="theme-grid">
+  <div class="theme-chip" style="color:#C3A5E5" data-popover-content="<code>#C3A5E5</code> — 紫藤，預設主題" data-popover-theme="dark">dark / lavender</div>
+  <div class="theme-chip" style="color:#95c9de" data-popover-content="<code>#95c9de</code> — 天藍" data-popover-theme="sky">sky / info</div>
+  <div class="theme-chip" style="color:#F08080" data-popover-content="<code>#F08080</code> — 珊瑚警告" data-popover-theme="warning">warning</div>
+  <div class="theme-chip" style="color:#299459" data-popover-content="<code>#299459</code> — 翠綠成功" data-popover-theme="safe">safe / success</div>
+  <div class="theme-chip" style="color:#b3de73" data-popover-content="<code>#b3de73</code> — 萊姆特殊" data-popover-theme="special">special / highlight</div>
+  <div class="theme-chip" style="color:#DECA4B" data-popover-content="<code>#DECA4B</code> — 琥珀筆記" data-popover-theme="note">note / yellow</div>
+  <div class="theme-chip" style="color:#E5C3B3" data-popover-content="<code>#E5C3B3</code> — 暖膚鮭魚" data-popover-theme="salmon">salmon</div>
+  <div class="theme-chip" style="color:#FFB3D9" data-popover-content="<code>#FFB3D9</code> — 粉紅" data-popover-theme="pink">pink</div>
+  <div class="theme-chip" style="color:#95c9de" data-popover-content="<code>#95c9de</code> — 石藍（新增）" data-popover-theme="stone">stone ✦</div>
+  <div class="theme-chip" style="color:#eda109" data-popover-content="<code>#eda109</code> — 橙（新增）" data-popover-theme="orange">orange ✦</div>
+  <div class="theme-chip" style="color:#DBEDD8" data-popover-content="<code>#DBEDD8</code> — 香草白（新增）" data-popover-theme="vanilla">vanilla ✦</div>
+  <div class="theme-chip" style="color:#1E65C7" data-popover-content="<code>#1E65C7</code> — 鋼藍資訊（新增）" data-popover-theme="info">info ✦</div>
+</div>
+
+<script src="bp-popnote.js"></script>
+<script>
+  // 為 ③ 的全域 panel 設定目標
+  // 注意：只對 #global-triggers 內的觸發器生效，
+  // 其他觸發器使用 data-popover-panel 個別指定。
+  // 這裡示範如何在程式碼中設定全域 panelTarget：
+
+  // 為了讓全域觸發器（#global-triggers 內的 .pill）獨立套用，
+  // 我們在 span 上加屬性（而不是真正設全域），避免干擾其他 demo。
+  document.querySelectorAll('#global-triggers .pill:not([data-popover-panel])').forEach(el => {
+    el.setAttribute('data-popover-panel', '#global-panel');
+  });
+</script>
+
+</body>
+</html>

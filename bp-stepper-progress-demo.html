@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bp-stepper demo — progress mode & brand v2</title>
+<script src="bp-stepper.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0C0D0C;
+    color: #C6C7BD;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 40px 32px 80px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    color: #C3A5E5;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 1rem;
+    color: rgba(198,199,189,0.76);
+    margin-bottom: 56px;
+  }
+
+  /* ── 區段標題 ─────────────────────────────────────────────────────────── */
+  .section {
+    margin-bottom: 60px;
+  }
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(198,199,189,0.76);
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(198,199,189,0.15);
+  }
+  .section-desc {
+    font-size: 0.92rem;
+    color: rgba(198,199,189,0.76);
+    margin-bottom: 20px;
+    font-family: monospace;
+  }
+
+  /* ── 狀態回饋列 ───────────────────────────────────────────────────────── */
+  .log {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    font-family: monospace;
+    color: #DECA4B;
+    min-height: 1.4em;
+  }
+
+  /* ── 控制列（reset 按鈕）──────────────────────────────────────────────── */
+  .ctrl {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 6px 18px;
+    border: 1.5px solid rgba(198,199,189,0.4);
+    border-radius: 20px;
+    background: transparent;
+    color: #C6C7BD;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: border-color .2s, color .2s;
+  }
+  .btn:hover { border-color: #C3A5E5; color: #C3A5E5; }
+
+  /* ── 品牌色票展示 ─────────────────────────────────────────────────────── */
+  .palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: rgba(198,199,189,0.76);
+  }
+  .swatch-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .badge-new {
+    font-size: 0.62rem;
+    background: rgba(41,148,89,0.2);
+    color: #299459;
+    border-radius: 4px;
+    padding: 1px 4px;
+  }
+  .badge-upd {
+    font-size: 0.62rem;
+    background: rgba(224,190,121,0.2);
+    color: #E0BE79;
+    border-radius: 4px;
+    padding: 1px 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1>bp-stepper · demo</h1>
+<p class="subtitle">v2 brand colors ＋ progress mode 推進按鈕</p>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §1  progress 模式 — 圖示模式（預設，icon-only）
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§1 progress mode — 圖示模式（預設）</div>
+  <div class="section-desc">data-mode="progress"　　按鈕：icon-only（圓形 ›）</div>
+
+  <bp-stepper
+    id="demo1"
+    data-mode="progress"
+    data-theme="lavender"
+    data-card-width="200px"
+    data-gap="40px">
+    <bp-step>
+      <bp-step-title>建立帳戶</bp-step-title>
+      <bp-step-content>填寫基本資料與電子信箱。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>驗證信箱</bp-step-title>
+      <bp-step-content>點擊寄出的驗證連結。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>完成設定</bp-step-title>
+      <bp-step-content>個人化偏好設定。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>開始使用</bp-step-title>
+      <bp-step-content>歡迎加入！</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log1">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo1')); document.getElementById('log1').textContent='已重設'">重設</button>
+    <button class="btn" onclick="BPStepper.setActive(document.getElementById('demo1'),0)">回第 1 步</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §2  progress 模式 — 文字模式（text-only）
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§2 progress mode — 文字模式</div>
+  <div class="section-desc">data-progress-icon=""　data-progress-text="繼續"　data-progress-done-text="完成"</div>
+
+  <bp-stepper
+    id="demo2"
+    data-mode="progress"
+    data-theme="sky"
+    data-progress-icon=""
+    data-progress-text="繼續"
+    data-progress-done-text="完成"
+    data-card-width="200px"
+    data-gap="40px">
+    <bp-step>
+      <bp-step-title>選擇方案</bp-step-title>
+      <bp-step-content>依需求選擇訂閱方案。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>填寫資料</bp-step-title>
+      <bp-step-content>輸入付款與聯絡資訊。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>確認訂單</bp-step-title>
+      <bp-step-content>核對所有細節。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log2">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo2')); document.getElementById('log2').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §3  progress 模式 — 圖示＋文字模式（both）
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§3 progress mode — 圖示＋文字模式</div>
+  <div class="section-desc">data-progress-icon="▶"　data-progress-text="下一步"　data-progress-done-icon="✓"　data-progress-done-text="送出"</div>
+
+  <bp-stepper
+    id="demo3"
+    data-mode="progress"
+    data-theme="teal"
+    data-progress-icon="▶"
+    data-progress-text="下一步"
+    data-progress-done-icon="✓"
+    data-progress-done-text="送出"
+    data-card-width="210px"
+    data-gap="44px">
+    <bp-step>
+      <bp-step-title>上傳檔案</bp-step-title>
+      <bp-step-content>支援 PDF、DOCX、圖片格式。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>設定參數</bp-step-title>
+      <bp-step-content>語言、輸出格式與品質。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>預覽結果</bp-step-title>
+      <bp-step-content>確認無誤後送出。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log3">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo3')); document.getElementById('log3').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §4  progress 模式 — 逐步覆寫 + 大尺寸按鈕
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§4 progress mode — 逐步覆寫 ＋ 自訂按鈕尺寸</div>
+  <div class="section-desc">data-prog-btn-size="36px"　各步驟可用 data-progress-icon / data-progress-text 個別覆寫</div>
+
+  <bp-stepper
+    id="demo4"
+    data-mode="progress"
+    data-theme="orange"
+    data-prog-btn-size="36px"
+    data-progress-icon="→"
+    data-progress-text=""
+    data-card-width="210px"
+    data-gap="44px">
+    <bp-step>
+      <bp-step-title>說明介紹</bp-step-title>
+      <bp-step-content>閱讀完整操作手冊。</bp-step-content>
+    </bp-step>
+    <!-- 第 2 步：文字+圖示混合（逐步覆寫） -->
+    <bp-step data-progress-icon="🚀" data-progress-text="啟動">
+      <bp-step-title>環境準備</bp-step-title>
+      <bp-step-content>安裝相依套件與工具。</bp-step-content>
+    </bp-step>
+    <!-- 第 3 步：只顯示 emoji -->
+    <bp-step data-progress-icon="🎉" data-progress-text="">
+      <bp-step-title>部署上線</bp-step-title>
+      <bp-step-content>一鍵部署至正式環境。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log4">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo4')); document.getElementById('log4').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §5  progress 模式 — 垂直版型相容性
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§5 progress mode — 垂直版型</div>
+  <div class="section-desc">data-layout="vertical"　data-mode="progress"　按鈕定位在卡片右下角</div>
+
+  <bp-stepper
+    id="demo5"
+    data-mode="progress"
+    data-layout="vertical"
+    data-theme="indigo"
+    data-progress-icon="&#8595;"
+    data-progress-text="往下"
+    data-progress-done-icon="✓"
+    data-progress-done-text="完成"
+    data-card-width="280px"
+    data-gap="24px">
+    <bp-step>
+      <bp-step-title>資料收集</bp-step-title>
+      <bp-step-content>自動抓取所需欄位資料。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>清洗整理</bp-step-title>
+      <bp-step-content>去除重複與異常值。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>產出報告</bp-step-title>
+      <bp-step-content>匯出 PDF 摘要報告。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log5">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo5')); document.getElementById('log5').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §6  progress-show — 水平（逐步揭示，後續步驟隱藏）
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§6 progress-show — 水平揭示</div>
+  <div class="section-desc">data-mode="progress-show"　後續步驟完全隱藏，按鈕 click 才顯示下一步（帶進場動畫）</div>
+
+  <bp-stepper
+    id="demo6"
+    data-mode="progress-show"
+    data-theme="ocean"
+    data-progress-icon="&#8250;"
+    data-progress-done-icon="&#10003;"
+    data-card-width="210px"
+    data-gap="44px">
+    <bp-step>
+      <bp-step-title>填寫基本資料</bp-step-title>
+      <bp-step-content>姓名、電子信箱與聯絡電話。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>選擇服務方案</bp-step-title>
+      <bp-step-content>依需求選擇適合的訂閱方案。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>付款資訊</bp-step-title>
+      <bp-step-content>輸入信用卡或其他付款方式。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>確認送出</bp-step-title>
+      <bp-step-content>核對所有資料後完成申請。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log6">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo6')); BPStepper.setActive(document.getElementById('demo6'),0); document.getElementById('log6').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §7  progress-show — 圖示＋文字按鈕
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§7 progress-show — 圖示＋文字按鈕</div>
+  <div class="section-desc">data-progress-icon="▶"  data-progress-text="展開"  data-progress-done-icon="✓"  data-progress-done-text="完成"</div>
+
+  <bp-stepper
+    id="demo7"
+    data-mode="progress-show"
+    data-theme="focus"
+    data-progress-icon="&#9654;"
+    data-progress-text="展開"
+    data-progress-done-icon="&#10003;"
+    data-progress-done-text="完成"
+    data-prog-btn-size="30px"
+    data-card-width="220px"
+    data-gap="44px">
+    <bp-step>
+      <bp-step-title>上傳文件</bp-step-title>
+      <bp-step-content>支援 PDF、DOCX 與圖片格式，最大 50 MB。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>AI 分析</bp-step-title>
+      <bp-step-content>自動擷取關鍵資訊與摘要。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>人工審核</bp-step-title>
+      <bp-step-content>確認 AI 分析結果後核准。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>發布報告</bp-step-title>
+      <bp-step-content>下載或分享最終分析報告。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log7">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo7')); BPStepper.setActive(document.getElementById('demo7'),0); document.getElementById('log7').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §8  progress-show — 垂直版型
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§8 progress-show — 垂直版型</div>
+  <div class="section-desc">data-layout="vertical"  data-mode="progress-show"  進場方向改為由下往上滑入</div>
+
+  <bp-stepper
+    id="demo8"
+    data-mode="progress-show"
+    data-layout="vertical"
+    data-theme="salmon"
+    data-progress-icon="&#8250;"
+    data-progress-text="下一步"
+    data-progress-done-icon="&#10003;"
+    data-progress-done-text="送出"
+    data-card-width="300px"
+    data-gap="20px">
+    <bp-step>
+      <bp-step-title>環境檢查</bp-step-title>
+      <bp-step-content>確認系統需求與相依套件版本。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>資料備份</bp-step-title>
+      <bp-step-content>備份現有資料庫與設定檔。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>執行升級</bp-step-title>
+      <bp-step-content>套用更新程式並重新啟動服務。</bp-step-content>
+    </bp-step>
+    <bp-step>
+      <bp-step-title>驗證結果</bp-step-title>
+      <bp-step-content>執行測試確認升級成功。</bp-step-content>
+    </bp-step>
+  </bp-stepper>
+  <div class="log" id="log8">等待操作…</div>
+  <div class="ctrl">
+    <button class="btn" onclick="BPStepper.resetStates(document.getElementById('demo8')); BPStepper.setActive(document.getElementById('demo8'),0); document.getElementById('log8').textContent='已重設'">重設</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  §9  品牌色票 v2
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">§9 品牌色票 v2</div>
+  <div class="palette" id="palette"></div>
+</div>
+
+<script>
+// ── 事件監聽 ─────────────────────────────────────────────────────────────────
+const logMap = { demo1:'log1', demo2:'log2', demo3:'log3', demo4:'log4', demo5:'log5', demo6:'log6', demo7:'log7', demo8:'log8' };
+document.querySelectorAll('bp-stepper').forEach(el => {
+  const logId = logMap[el.id];
+  if (!logId) return;
+  el.addEventListener('bps:change', e => {
+    document.getElementById(logId).textContent =
+      '步驟切換 → index ' + e.detail.index + '（上一步：' + e.detail.prevIndex + '）';
+  });
+  el.addEventListener('bps:complete', () => {
+    document.getElementById(logId).textContent = '🎉 所有步驟完成！';
+  });
+});
+
+// ── 色票展示 ──────────────────────────────────────────────────────────────────
+const B = window.BPStepper.BRAND;
+const palette = document.getElementById('palette');
+const meta = {
+  sky:   'upd', ocean: 'new', safe: 'upd',
+  teal:  'new', focus: 'upd', info: 'upd',
+};
+Object.entries(B).forEach(([name, hex]) => {
+  const wrap = document.createElement('div');
+  wrap.className = 'swatch';
+  const dot = document.createElement('div');
+  dot.className = 'swatch-dot';
+  dot.style.background = hex;
+  const label = document.createElement('div');
+  label.textContent = name;
+  const hex2 = document.createElement('div');
+  hex2.textContent = hex.toLowerCase();
+  wrap.appendChild(dot);
+  wrap.appendChild(label);
+  wrap.appendChild(hex2);
+  if (meta[name]) {
+    const badge = document.createElement('span');
+    badge.className = meta[name] === 'new' ? 'badge-new' : 'badge-upd';
+    badge.textContent = meta[name] === 'new' ? '新增' : '更新';
+    wrap.appendChild(badge);
+  }
+  palette.appendChild(wrap);
+});
+
+// ── 初始化第一個步驟為 active ─────────────────────────────────────────────────
+['demo1','demo2','demo3','demo4','demo5','demo6','demo7','demo8'].forEach(id => {
+  BPStepper.setActive(document.getElementById(id), 0);
+});
+</script>
+</body>
+</html>

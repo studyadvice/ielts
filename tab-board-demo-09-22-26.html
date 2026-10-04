@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TabBoard v1.1.0 — Orders Demo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+/*!
+ * TabBoard v1.1.0
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * 宣告式用法：
+ *   <tab-board theme="teal" tab-style="side" tab-width="140px">
+ *     <tb-tab icon="house" label="首頁">
+ *       <p>任意 HTML 內容，支援巢狀結構。</p>
+ *     </tb-tab>
+ *     <tb-tab icon="calendar" label="行程">
+ *       <div class="p-3"><p>Bootstrap 工具類別也可直接使用。</p></div>
+ *     </tb-tab>
+ *     <tb-tab icon="bell" label="通知" disabled>
+ *       <p>此頁籤不可點擊。</p>
+ *     </tb-tab>
+ *   </tab-board>
+ *
+ * ── <tab-board> 屬性 ──────────────────────────────────────────────────────────
+ *   theme           — dark|light|teal|ocean|indigo|warm|safe|sky|lavender|
+ *                     salmon|special|pink|yellow|aurora（預設 dark）
+ *   tab-style       — side|filled|dot（預設 side）
+ *   layout          — vertical|horizontal（預設 vertical；side 固定水平）
+ *   animation       — fade|slide|none（預設 fade）
+ *   width           — 元件總寬度（預設 100%）
+ *   min-height      — content area 最小高度（預設 120px）
+ *   margin          — 元件外距（預設 0）
+ *   content-padding — content area 內距（預設 10px）
+ *   tab-width       — side 模式頁籤列寬（預設 140px；filled/dot 無效）
+ *   default-first   — 布林，自動選取第一個可用頁籤（預設 false）
+ *   orders          — 布林，開啟循序解鎖模式（預設 false）
+ *   orders-key      — 字串，localStorage 鍵名，省略時不持久化
+ *
+ * ── <tb-tab> 屬性 ─────────────────────────────────────────────────────────────
+ *   icon     — Bootstrap Icons 名稱（如 house），orders 模式必填（否則顯示預設圓點）
+ *   label    — 頁籤文字
+ *   disabled — 布林，永遠不可點擊，orders 模式中會被跳過
+ *
+ * ── 事件 ─────────────────────────────────────────────────────────────────────
+ *   tb-select   — CustomEvent（冒泡），detail: { index, label }
+ *   tb-complete — CustomEvent（冒泡，orders 模式專用），detail: { total }
+ *                 在最後一個可用頁籤被進入時觸發
+ *
+ * ── 元素方法 ──────────────────────────────────────────────────────────────────
+ *   el.select(index)  — 程式化選取（跳過 orders 驗證，可直接跳至任意頁籤）
+ *   el.reset()        — orders 模式：清除 localStorage，重置至第一個頁籤
+ *   el.refresh()      — 重新掃描 <tb-tab> 子元素並重新掛載
+ *   el.getConfig()    — 取得目前有效設定
+ *
+ * ── 注意 ──────────────────────────────────────────────────────────────────────
+ *   Bootstrap Icons CSS 請在專案層級自行引用，元件本身不發出任何外部請求。
+ *   頁籤超出寬度時不捲動，請調整 tab-width 或頁籤數量。
+ *   orders 模式下，el.select() 會前進 ordersActive 並保存狀態，
+ *   但不觸發 orders 順序驗證（可向後或跳躍）。
+ */
+((G, D) => {
+  'use strict';
+
+  const STYLE_ID  = '__tabboard_v1__';
+  const LS_PREFIX = 'tb-orders:';
+
+  // ── 主題調色盤 ────────────────────────────────────────────────────────────────
+  const THEMES = {
+    dark:     { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#C3A5E5',     at:'#0C0D0C', bar:'#1CCAE8',  hv:'rgba(198,199,189,0.09)', bd:'rgba(198,199,189,0.12)' },
+    light:    { bg:'#F4F4F1', sh:'#1A1B1A', dim:'rgba(26,27,26,0.76)',    ab:'#9B6FD4',      at:'#ffffff', bar:'#0DA591',  hv:'rgba(26,27,26,0.07)',    bd:'rgba(26,27,26,0.12)'   },
+    teal:     { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#7849C9',      at:'#ffffff', bar:'#82C8E5',  hv:'rgba(13,165,145,0.12)',  bd:'rgba(198,199,189,0.12)' },
+    ocean:    { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#C3A5E5',      at:'#0C0D0C', bar:'#0DA591',  hv:'rgba(28,202,232,0.10)',  bd:'rgba(198,199,189,0.12)' },
+    indigo:   { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#82C8E5',      at:'#0C0D0C', bar:'#C3A5E5',  hv:'rgba(120,73,201,0.12)',  bd:'rgba(198,199,189,0.12)' },
+    warm:     { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#E5C3B3',      at:'#0C0D0C', bar:'#E3D322',  hv:'rgba(237,161,9,0.12)',   bd:'rgba(198,199,189,0.12)' },
+    safe:     { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#DBEDD8',      at:'#0C0D0C', bar:'#B3DE73',  hv:'rgba(39,174,96,0.12)',   bd:'rgba(198,199,189,0.12)' },
+    sky:      { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#C3A5E5',      at:'#0C0D0C', bar:'#1CCAE8',  hv:'rgba(130,200,229,0.12)', bd:'rgba(198,199,189,0.12)' },
+    lavender: { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#7849C9',      at:'#ffffff', bar:'#FF91D7',  hv:'rgba(195,165,229,0.12)', bd:'rgba(198,199,189,0.12)' },
+    salmon:   { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#EDA109',      at:'#0C0D0C', bar:'#E3D322',  hv:'rgba(229,195,179,0.12)', bd:'rgba(198,199,189,0.12)' },
+    special:  { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#27AE60',      at:'#ffffff', bar:'#DBEDD8',  hv:'rgba(179,222,115,0.12)', bd:'rgba(198,199,189,0.12)' },
+    pink:     { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#C3A5E5',      at:'#0C0D0C', bar:'#E6374B',  hv:'rgba(255,145,215,0.12)', bd:'rgba(198,199,189,0.12)' },
+    yellow:   { bg:'#0C0D0C', sh:'#C6C7BD', dim:'rgba(198,199,189,0.76)', ab:'#EDA109',      at:'#0C0D0C', bar:'#B3DE73',  hv:'rgba(227,211,34,0.12)',  bd:'rgba(198,199,189,0.12)' },
+    aurora:   { bg:'linear-gradient(160deg,#0C0D1E 0%,#0D1525 60%,#091420 100%)',
+                sh:'#D4F0FF', dim:'rgba(212,240,255,0.76)',
+                ab:'linear-gradient(135deg,#0DA591 0%,#1CCAE8 100%)',
+                at:'#0C0D0C', bar:'#FF91D7', hv:'rgba(195,165,229,0.14)', bd:'rgba(212,240,255,0.12)' },
+  };
+
+  // ── 全域預設值 ────────────────────────────────────────────────────────────────
+  const DEF = {
+    theme:          'dark',
+    tabStyle:       'side',
+    layout:         'vertical',
+    animation:      'fade',
+    width:          '100%',
+    minHeight:      '120px',
+    margin:         '0',
+    contentPadding: '10px',
+    tabWidth:       '140px',
+    defaultFirst:   false,
+    orders:         false,
+    ordersKey:      '',
+  };
+
+  // ── 工具 ──────────────────────────────────────────────────────────────────────
+  const mk = (tag, cls) => {
+    const e = D.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  };
+
+  // ── localStorage 輔助（orders 持久化）────────────────────────────────────────
+  function ordersLoad(key) {
+    try { return parseInt(localStorage.getItem(LS_PREFIX + key), 10) || 0; } catch(e) { return 0; }
+  }
+  function ordersSave(key, val) {
+    try { localStorage.setItem(LS_PREFIX + key, String(val)); } catch(e) {}
+  }
+  function ordersClear(key) {
+    try { localStorage.removeItem(LS_PREFIX + key); } catch(e) {}
+  }
+
+  // ── Orders 序列輔助 ───────────────────────────────────────────────────────────
+  // 找出 from 之後第一個非 disabled 的頁籤索引，無則回傳 -1
+  function nextNonDisabled(tabs, from) {
+    for (let i = from + 1; i < tabs.length; i++) {
+      if (!tabs[i].disabled) return i;
+    }
+    return -1;
+  }
+
+  // 更新所有頁籤的 orders 視覺狀態（圖示 + 樣式類別）
+  function updateOrdersVisuals(inst) {
+    const { tabs, tabListEl } = inst;
+    const cur     = inst.ordersActive;
+    const nextIdx = nextNonDisabled(tabs, cur);
+
+    tabListEl.querySelectorAll('.tb-item').forEach((item, i) => {
+      if (i >= tabs.length) return;
+      const tab = tabs[i];
+
+      item.classList.remove('tb-ord-completed', 'tb-ord-available', 'tb-ord-locked');
+
+      // disabled 頁籤不參與 orders 狀態管理
+      if (tab.disabled) return;
+
+      let iconName = tab.icon || 'circle-fill';
+
+      if (i < cur) {
+        // 已走過，鎖定
+        item.classList.add('tb-ord-completed');
+        iconName = 'check2-circle';
+      } else if (i === cur) {
+        // 當前 active，顯示原圖示（tb-active 由 doSelect 管理）
+        iconName = tab.icon || 'circle-fill';
+      } else if (i === nextIdx) {
+        // 下一個可點擊
+        item.classList.add('tb-ord-available');
+        iconName = tab.icon || 'circle-fill';
+      } else {
+        // 尚未解鎖
+        item.classList.add('tb-ord-locked');
+        iconName = 'lock-fill';
+      }
+
+      // 置換圖示 class（移除舊 bi-* 再加新的）
+      const ic = item.querySelector('.tb-ic');
+      if (ic) {
+        ic.className = ic.className.split(' ')
+          .filter(c => !c.startsWith('bi-'))
+          .join(' ') + ' bi-' + iconName;
+      }
+    });
+  }
+
+  // ── CSS（每頁注入一次）────────────────────────────────────────────────────────
+  function ensureCSS() {
+    if (D.getElementById(STYLE_ID)) return;
+    const s = D.createElement('style');
+    s.id = STYLE_ID;
+    s.textContent = `
+tab-board{display:block}
+tb-tab{display:none!important}
+.tb-wrap{display:block;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;box-sizing:border-box}
+.tb-wrap *,.tb-wrap *::before,.tb-wrap *::after{box-sizing:inherit}
+.tb-shell{background:var(--tb-bg);border-radius:16px;overflow:hidden}
+
+/* ── 共用 ─────────────────────────────────────────────────────────────────── */
+.tb-item{cursor:pointer;position:relative;display:flex;align-items:center;
+  transition:background .15s;user-select:none;-webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent}
+.tb-item.tb-dis{opacity:.35;pointer-events:none;cursor:default}
+.tb-ic{font-size:16px;line-height:1;color:var(--tb-dim);transition:color .15s;flex-shrink:0;display:block}
+.tb-lbl{font-size:13px;color:var(--tb-dim);transition:color .15s;white-space:nowrap;line-height:1.3;display:block}
+.tb-content{flex:1 1 auto;overflow:auto;color:var(--tb-sh)}
+
+/* ── Side ─────────────────────────────────────────────────────────────────── */
+.tb-s-side{display:flex;flex-direction:row;align-items:stretch}
+.tb-s-side .tb-tabs{display:flex;flex-direction:column;flex-shrink:0;
+  padding:6px 0;border-right:1px solid var(--tb-bd);overflow:hidden}
+.tb-s-side .tb-item{flex-direction:row;gap:8px;padding:8px 14px 8px 18px}
+.tb-s-side .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover{background:var(--tb-hv)}
+.tb-s-side .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover .tb-ic,
+.tb-s-side .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover .tb-lbl{color:var(--tb-sh)}
+.tb-s-side .tb-item.tb-active{background:var(--tb-hv)}
+.tb-s-side .tb-item.tb-active .tb-ic{color:var(--tb-bar)}
+.tb-s-side .tb-item.tb-active .tb-lbl{color:var(--tb-sh);font-weight:500}
+.tb-bar{position:absolute;left:0;top:20%;bottom:20%;width:3px;
+  border-radius:0 3px 3px 0;background:var(--tb-bar);
+  opacity:0;transition:opacity .2s}
+.tb-s-side .tb-item.tb-active .tb-bar{opacity:1}
+
+/* ── Filled ────────────────────────────────────────────────────────────────── */
+.tb-s-filled{display:flex;flex-direction:column}
+.tb-s-filled .tb-tabs{display:flex;flex-direction:row;overflow:hidden;
+  border-bottom:1px solid var(--tb-bd)}
+.tb-s-filled .tb-item{gap:5px;padding:9px 16px;flex-shrink:0}
+.tb-s-filled .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover .tb-ic,
+.tb-s-filled .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover .tb-lbl{color:var(--tb-sh)}
+.tb-s-filled .tb-item.tb-active{background:var(--tb-ab)}
+.tb-s-filled .tb-item.tb-active .tb-ic,
+.tb-s-filled .tb-item.tb-active .tb-lbl{color:var(--tb-at)}
+
+/* ── Dot ───────────────────────────────────────────────────────────────────── */
+.tb-s-dot{display:flex;flex-direction:column}
+.tb-s-dot .tb-tabs{display:flex;flex-direction:row;overflow:hidden;
+  border-bottom:1px solid var(--tb-bd)}
+.tb-s-dot .tb-item{gap:5px;padding:9px 16px 11px;flex-shrink:0}
+.tb-s-dot .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover .tb-ic,
+.tb-s-dot .tb-item:not(.tb-dis):not(.tb-active):not(.tb-ord-completed):not(.tb-ord-locked):hover .tb-lbl{color:var(--tb-sh)}
+.tb-s-dot .tb-item.tb-active .tb-ic,
+.tb-s-dot .tb-item.tb-active .tb-lbl{color:var(--tb-sh)}
+.tb-dot{width:5px;height:5px;border-radius:50%;background:var(--tb-bar);
+  flex-shrink:0;opacity:0;transition:opacity .15s}
+.tb-s-dot .tb-item.tb-active .tb-dot{opacity:1}
+
+/* ── 版面修飾（filled / dot 的圖示排列）──────────────────────────────────── */
+.tb-lv{flex-direction:column!important;align-items:center!important}
+.tb-lh{flex-direction:row!important;align-items:center!important}
+.tb-lv .tb-dot{margin-top:3px;align-self:center}
+.tb-lh .tb-dot{margin-left:4px}
+
+/* ── Orders 模式 ───────────────────────────────────────────────────────────── */
+
+/* 已完成：圖示用 bar 色，文字略暗，不可互動 */
+.tb-ord-completed{pointer-events:none!important;cursor:default!important}
+.tb-ord-completed .tb-ic{color:var(--tb-bar)!important;opacity:.76}
+.tb-ord-completed .tb-lbl{opacity:.60}
+
+/* 鎖定：整體半透明，不可互動 */
+.tb-ord-locked{pointer-events:none!important;cursor:default!important}
+.tb-ord-locked .tb-ic{opacity:.28!important}
+.tb-ord-locked .tb-lbl{opacity:.28!important}
+
+/* 下一個可點（脈衝動畫吸引注意）*/
+.tb-ord-available .tb-ic,.tb-ord-available .tb-lbl{color:var(--tb-sh)!important}
+@keyframes tb-pulse{0%,100%{opacity:1}50%{opacity:.50}}
+.tb-ord-available .tb-ic{animation:tb-pulse 2.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.tb-ord-available .tb-ic{animation:none}}
+
+/* 在 orders 模式下，已在 active tab 上不給 pointer cursor */
+.tb-orders .tb-item.tb-active{cursor:default!important}
+`.trim();
+    D.head.appendChild(s);
+  }
+
+  function applyVars(el, c) {
+    [
+      ['--tb-bg',  c.bg ], ['--tb-sh',  c.sh ],
+      ['--tb-dim', c.dim], ['--tb-ab',  c.ab ],
+      ['--tb-at',  c.at ], ['--tb-bar', c.bar],
+      ['--tb-hv',  c.hv ], ['--tb-bd',  c.bd ],
+    ].forEach(([k, v]) => el.style.setProperty(k, v));
+  }
+
+  // ── DOM 建構輔助 ──────────────────────────────────────────────────────────────
+  function makeItem(tab, i) {
+    const item = mk('div', 'tb-item');
+    if (tab.disabled) item.classList.add('tb-dis');
+    item.dataset.idx = String(i);
+    return item;
+  }
+
+  // orders 模式：永遠建立圖示元素（用於狀態圖示置換），無 icon 時預設 circle-fill
+  function appendIcon(item, icon, forceIcon) {
+    if (!icon && !forceIcon) return;
+    item.appendChild(mk('i', `bi bi-${icon || 'circle-fill'} tb-ic`));
+  }
+
+  function appendLabel(item, label) {
+    if (!label) return;
+    const lbl = mk('span', 'tb-lbl');
+    lbl.textContent = label;
+    item.appendChild(lbl);
+  }
+
+  function buildSide(inst) {
+    const { cfg, tabs, shell } = inst;
+    shell.classList.add('tb-s-side');
+    if (cfg.orders) shell.classList.add('tb-orders');
+
+    const tabList = mk('div', 'tb-tabs');
+    tabList.style.width = cfg.tabWidth;
+
+    tabs.forEach((tab, i) => {
+      const item = makeItem(tab, i);
+      item.appendChild(mk('div', 'tb-bar'));
+      appendIcon(item, tab.icon, cfg.orders);
+      appendLabel(item, tab.label);
+      tabList.appendChild(item);
+    });
+
+    const content = mk('div', 'tb-content');
+    content.style.minHeight = cfg.minHeight;
+    content.style.padding   = cfg.contentPadding;
+
+    shell.appendChild(tabList);
+    shell.appendChild(content);
+    Object.assign(inst, { tabListEl: tabList, contentEl: content });
+
+    tabList.addEventListener('click', e => {
+      const item = e.target.closest('.tb-item:not(.tb-dis)');
+      if (item) doSelect(inst, parseInt(item.dataset.idx, 10), 'user');
+    });
+  }
+
+  function buildTop(inst) {
+    const { cfg, tabs, shell } = inst;
+    const isFilled = cfg.tabStyle === 'filled';
+    shell.classList.add(isFilled ? 'tb-s-filled' : 'tb-s-dot');
+    if (cfg.orders) shell.classList.add('tb-orders');
+
+    const tabList = mk('div', 'tb-tabs');
+    const lc = cfg.layout === 'horizontal' ? 'tb-lh' : 'tb-lv';
+
+    tabs.forEach((tab, i) => {
+      const item = makeItem(tab, i);
+      item.classList.add(lc);
+      appendIcon(item, tab.icon, cfg.orders);
+      appendLabel(item, tab.label);
+      if (!isFilled) item.appendChild(mk('span', 'tb-dot'));
+      tabList.appendChild(item);
+    });
+
+    const content = mk('div', 'tb-content');
+    content.style.minHeight = cfg.minHeight;
+    content.style.padding   = cfg.contentPadding;
+
+    shell.appendChild(tabList);
+    shell.appendChild(content);
+    Object.assign(inst, { tabListEl: tabList, contentEl: content });
+
+    tabList.addEventListener('click', e => {
+      const item = e.target.closest('.tb-item:not(.tb-dis)');
+      if (item) doSelect(inst, parseInt(item.dataset.idx, 10), 'user');
+    });
+  }
+
+  // ── 選取邏輯 ──────────────────────────────────────────────────────────────────
+  // mode: 'user'  — 使用者點擊（遵守 orders 驗證，只能點下一個）
+  //        'api'  — 程式化呼叫（跳過驗證，可跳躍，但仍更新 ordersActive）
+  //        'init' — 初始化顯示（跳過驗證、不推進 ordersActive、不觸發 tb-complete）
+  function doSelect(inst, idx, mode) {
+    mode = mode || 'user';
+    const { tabs, contentEl, tabListEl, cfg, host } = inst;
+    if (idx < 0 || idx >= tabs.length || tabs[idx].disabled) return;
+
+    // Orders 驗證（僅 user 模式）
+    if (cfg.orders && mode === 'user') {
+      const next = nextNonDisabled(tabs, inst.ordersActive);
+      if (idx !== next) return; // 只允許點下一個
+    }
+
+    // 更新 active 樣式
+    tabListEl.querySelectorAll('.tb-item').forEach((el, i) => {
+      el.classList.toggle('tb-active', i === idx);
+    });
+
+    // 注入內容
+    const html = tabs[idx].content;
+    if (cfg.animation === 'fade') {
+      contentEl.style.transition = 'opacity .15s ease';
+      contentEl.style.opacity    = '0';
+      setTimeout(() => { contentEl.innerHTML = html; contentEl.style.opacity = '1'; }, 160);
+    } else if (cfg.animation === 'slide') {
+      contentEl.style.transition = 'opacity .2s ease,transform .2s ease';
+      contentEl.style.opacity    = '0';
+      contentEl.style.transform  = 'translateY(8px)';
+      setTimeout(() => {
+        contentEl.innerHTML       = html;
+        contentEl.style.opacity   = '1';
+        contentEl.style.transform = 'translateY(0)';
+      }, 210);
+    } else {
+      contentEl.innerHTML = html;
+    }
+
+    // Orders 進度更新（init 模式不推進）
+    if (cfg.orders && mode !== 'init') {
+      if (idx >= inst.ordersActive) {
+        inst.ordersActive = idx;
+        if (cfg.ordersKey) ordersSave(cfg.ordersKey, idx);
+      }
+    }
+
+    // Orders 視覺同步（init 也需要）
+    if (cfg.orders) updateOrdersVisuals(inst);
+
+    // tb-complete：最後一個可用頁籤被進入時觸發（不含 init）
+    if (cfg.orders && mode !== 'init') {
+      if (nextNonDisabled(tabs, inst.ordersActive) === -1) {
+        host.dispatchEvent(new CustomEvent('tb-complete', {
+          bubbles: true, cancelable: false,
+          detail: { total: tabs.filter(t => !t.disabled).length },
+        }));
+      }
+    }
+
+    // tb-select（所有模式均觸發）
+    inst.activeIndex = idx;
+    host.dispatchEvent(new CustomEvent('tb-select', {
+      bubbles: true, cancelable: false,
+      detail: { index: idx, label: tabs[idx].label },
+    }));
+  }
+
+  // ── Custom Element ────────────────────────────────────────────────────────────
+  if (!G.customElements) return;
+
+  class TabBoardElement extends HTMLElement {
+
+    static get observedAttributes() {
+      return [
+        'theme', 'tab-style', 'layout', 'animation', 'width',
+        'min-height', 'margin', 'content-padding', 'tab-width',
+        'default-first', 'orders', 'orders-key',
+      ];
+    }
+
+    connectedCallback() {
+      this._mountTimer = setTimeout(() => {
+        this._cachedTabs = this._parseTabs();
+        this._mount();
+      }, 0);
+    }
+
+    disconnectedCallback() {
+      clearTimeout(this._mountTimer);
+      this._unmount();
+    }
+
+    attributeChangedCallback(name, oldVal, newVal) {
+      if (oldVal === newVal) return;
+      if (this._mounted) { this._unmount(); this._mount(); }
+    }
+
+    _parseTabs() {
+      const tabs = [];
+      this.querySelectorAll('tb-tab').forEach(el => {
+        tabs.push({
+          icon:     el.getAttribute('icon')  || '',
+          label:    el.getAttribute('label') || '',
+          disabled: el.hasAttribute('disabled'),
+          content:  el.innerHTML.trim(),
+        });
+      });
+      return tabs;
+    }
+
+    _readCfg() {
+      const a = (k, d) => this.hasAttribute(k) ? (this.getAttribute(k) || d) : d;
+      const b = (k, d) => this.hasAttribute(k)
+        ? (this.getAttribute(k) !== 'false' && this.getAttribute(k) !== '0')
+        : d;
+      return {
+        theme:          a('theme',           DEF.theme),
+        tabStyle:       a('tab-style',       DEF.tabStyle),
+        layout:         a('layout',          DEF.layout),
+        animation:      a('animation',       DEF.animation),
+        width:          a('width',           DEF.width),
+        minHeight:      a('min-height',      DEF.minHeight),
+        margin:         a('margin',          DEF.margin),
+        contentPadding: a('content-padding', DEF.contentPadding),
+        tabWidth:       a('tab-width',       DEF.tabWidth),
+        defaultFirst:   b('default-first',   DEF.defaultFirst),
+        orders:         b('orders',          DEF.orders),
+        ordersKey:      a('orders-key',      DEF.ordersKey),
+      };
+    }
+
+    _mount() {
+      const cfg    = this._readCfg();
+      const colors = THEMES[cfg.theme] || THEMES.dark;
+      const tabs   = this._cachedTabs || [];
+
+      ensureCSS();
+
+      const wrap = mk('div', 'tb-wrap');
+      wrap.style.width  = cfg.width;
+      wrap.style.margin = cfg.margin;
+      applyVars(wrap, colors);
+
+      const shell = mk('div', 'tb-shell');
+      wrap.appendChild(shell);
+
+      this._inst = {
+        cfg, tabs, shell, host: this,
+        activeIndex: -1, ordersActive: 0,
+        tabListEl: null, contentEl: null,
+      };
+
+      cfg.tabStyle === 'side' ? buildSide(this._inst) : buildTop(this._inst);
+
+      this.innerHTML = '';
+      this.appendChild(wrap);
+      this._mounted = true;
+
+      if (cfg.orders) {
+        // 從 localStorage 讀取進度，邊界保護
+        const raw   = cfg.ordersKey ? ordersLoad(cfg.ordersKey) : 0;
+        const bound = Math.max(0, Math.min(raw, tabs.length - 1));
+        // 確保落在非 disabled 的頁籤
+        let start = bound;
+        while (start > 0 && tabs[start] && tabs[start].disabled) start--;
+        this._inst.ordersActive = start;
+        // 顯示目前進度頁籤（不推進）
+        setTimeout(() => doSelect(this._inst, start, 'init'), 50);
+      } else if (cfg.defaultFirst) {
+        const first = tabs.findIndex(t => !t.disabled);
+        if (first >= 0) setTimeout(() => doSelect(this._inst, first), 50);
+      }
+    }
+
+    _unmount() {
+      this.innerHTML = '';
+      this._mounted  = false;
+      this._inst     = null;
+    }
+
+    /** 程式化選取（跳過 orders 順序驗證，仍會更新進度與持久化）*/
+    select(index) {
+      if (this._inst) doSelect(this._inst, index, 'api');
+      return this;
+    }
+
+    /**
+     * 重置 orders 模式：清除 localStorage，回到第一個可用頁籤。
+     * 在非 orders 模式下無作用。
+     */
+    reset() {
+      if (!this._inst || !this._inst.cfg.orders) return this;
+      const { cfg, tabs } = this._inst;
+      if (cfg.ordersKey) ordersClear(cfg.ordersKey);
+      this._inst.ordersActive = 0;
+      const first = tabs.findIndex(t => !t.disabled);
+      if (first >= 0) doSelect(this._inst, first, 'init');
+      return this;
+    }
+
+    /** 重新掃描 <tb-tab> 子元素並重新掛載 */
+    refresh() {
+      this._cachedTabs = this._parseTabs();
+      if (this._mounted) { this._unmount(); this._mount(); }
+      return this;
+    }
+
+    /** 取得目前有效設定 */
+    getConfig() { return this._readCfg(); }
+  }
+
+  G.customElements.define('tab-board', TabBoardElement);
+
+})(window, document);
+
+</script>
+<style>
+  :root {
+    --bg:      #0C0D0C;
+    --shell:   #C6C7BD;
+    --ocean:   #1CCAE8;
+    --safe:    #27AE60;
+    --teal:    #0DA591;
+    --lavender:#C3A5E5;
+    --indigo:  #7849C9;
+    --warning: #E6374B;
+    --vanilla: #DBEDD8;
+    --yellow:  #E3D322;
+    --orange:  #EDA109;
+    --special: #B3DE73;
+  }
+  html, body { background: var(--bg); color: var(--shell); font-size: 18px; line-height: 1.5; }
+  .sec { margin-bottom: 44px; }
+  .sec-title { font-size:0.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ocean);margin-bottom:5px; }
+  .sec-sub   { font-size:0.8rem;color:rgba(198,199,189,0.42);margin-bottom:12px; }
+  .sec-sub code { background:rgba(198,199,189,0.10);border-radius:4px;padding:1px 5px;font-size:.78em;color:var(--vanilla); }
+  hr.dim { border-color:rgba(198,199,189,0.10);margin:36px 0; }
+  /* tab content inner styles */
+  .tc { font-size:.9rem;color:rgba(198,199,189,0.88);line-height:1.5; }
+  .tc h5 { font-size:1rem;font-weight:600;color:var(--shell);margin:0 0 8px; }
+  .tc p  { margin:0 0 8px; }
+  .tc p:last-child { margin-bottom:0; }
+  .tc ul { margin:0 0 8px;padding-left:18px; }
+  .tc li { margin-bottom:3px; }
+  .badge-step {
+    display:inline-block;font-size:.72rem;font-weight:700;border-radius:4px;
+    padding:2px 8px;margin-bottom:10px;
+  }
+  .bs-info    { background:rgba(28,202,232,0.18);color:var(--ocean); }
+  .bs-warn    { background:rgba(230,55,75,0.18);color:var(--warning); }
+  .bs-safe    { background:rgba(39,174,96,0.18);color:var(--safe); }
+  .bs-lavender{ background:rgba(195,165,229,0.18);color:var(--lavender); }
+  .tc-field   { background:rgba(198,199,189,0.07);border:1px solid rgba(198,199,189,0.14);border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:.88rem; }
+  .tc-field label { display:block;font-size:.75rem;color:rgba(198,199,189,0.5);margin-bottom:3px; }
+  .tc-field span  { color:var(--shell); }
+  .next-btn {
+    display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;
+    padding:5px 14px;border-radius:8px;border:none;cursor:pointer;
+    background:rgba(28,202,232,0.15);color:var(--ocean);
+    transition:background .15s;margin-top:6px;
+  }
+  .next-btn:hover { background:rgba(28,202,232,0.26); }
+  /* event log */
+  .ev-log {
+    font-family:monospace;font-size:.78rem;
+    min-height:22px;margin-top:10px;
+    color:rgba(198,199,189,0.40);
+  }
+  .ev-log .ev-sel  { color:var(--ocean); }
+  .ev-log .ev-done { color:var(--safe);font-weight:700; }
+  /* state guide */
+  .state-guide { display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px; }
+  .sg-item { display:flex;align-items:center;gap:6px;font-size:.8rem;color:rgba(198,199,189,0.6); }
+  .sg-ic { font-size:15px; }
+  .sg-ic.c-done    { color:rgba(130,200,229,0.76); }
+  .sg-ic.c-active  { color:rgba(130,200,229,1); }
+  .sg-ic.c-avail   { color:rgba(198,199,189,0.9); }
+  .sg-ic.c-locked  { color:rgba(198,199,189,0.28); }
+  /* reset btn */
+  .reset-btn {
+    display:inline-flex;align-items:center;gap:5px;font-size:.78rem;
+    padding:4px 12px;border-radius:6px;border:1px solid rgba(198,199,189,0.18);
+    background:transparent;color:rgba(198,199,189,0.55);cursor:pointer;
+    transition:all .15s;
+  }
+  .reset-btn:hover { border-color:rgba(230,55,75,0.5);color:var(--warning); }
+</style>
+</head>
+<body>
+<div class="container-fluid py-4 px-4" style="max-width:1200px">
+
+  <div class="mb-4">
+    <h1 style="font-size:1.4rem;font-weight:700;color:var(--lavender);margin:0">TabBoard</h1>
+    <div style="font-size:.8rem;color:rgba(198,199,189,0.38);margin-top:4px">
+      v1.1.0 &nbsp;·&nbsp; Orders Mode &nbsp;·&nbsp; 自含式 Demo
+    </div>
+  </div>
+
+  <!-- State legend -->
+  <div class="state-guide">
+    <div class="sg-item"><i class="bi bi-check2-circle sg-ic c-done"></i> completed — 已完成，不可回頭</div>
+    <div class="sg-item"><i class="bi bi-house-fill sg-ic c-active"></i> active — 目前頁籤</div>
+    <div class="sg-item"><i class="bi bi-star-fill sg-ic c-avail" style="animation:tb-pulse 2.2s ease-in-out infinite"></i> available — 下一步（脈衝提示）</div>
+    <div class="sg-item"><i class="bi bi-lock-fill sg-ic c-locked"></i> locked — 尚未解鎖</div>
+  </div>
+
+  <!-- Demo 1: side + orders -->
+  <div class="sec">
+    <div class="sec-title">Demo 1 — Side · safe · orders（3 步驟，有 orders-key 持久化）</div>
+    <div class="sec-sub">
+      <code>tab-style="side"</code> <code>theme="safe"</code>
+      <code>orders</code> <code>orders-key="demo1"</code>
+      <code>tab-width="150px"</code> <code>min-height="200px"</code>
+      &nbsp;→ 進度寫入 localStorage，重新整理後恢復
+    </div>
+    <div class="d-flex align-items-center gap-3 mb-2">
+      <button class="reset-btn" onclick="document.getElementById('ord1').reset()">
+        <i class="bi bi-arrow-counterclockwise"></i> 重置
+      </button>
+      <span style="font-size:.78rem;color:rgba(198,199,189,0.35)">清除 localStorage 並回到步驟一</span>
+    </div>
+    <tab-board id="ord1" theme="safe" tab-style="side" tab-width="150px" min-height="200px"
+      orders orders-key="demo1" animation="slide">
+      <tb-tab icon="file-text" label="步驟一：說明">
+        <div class="tc">
+          <span class="badge-step bs-info">STEP 1 / 3</span>
+          <h5>歡迎使用申請流程</h5>
+          <p>本流程共分三步驟，請依序完成。每個步驟完成後，下一步才會解鎖。</p>
+          <ul>
+            <li>步驟一：閱讀說明</li>
+            <li>步驟二：填寫資料</li>
+            <li>步驟三：確認送出</li>
+          </ul>
+          <p style="color:rgba(198,199,189,0.55);font-size:.82rem">點擊左側「步驟二」即可繼續。</p>
+        </div>
+      </tb-tab>
+      <tb-tab icon="pencil-square" label="步驟二：填寫">
+        <div class="tc">
+          <span class="badge-step bs-warn">STEP 2 / 3</span>
+          <h5>填寫申請資料</h5>
+          <div class="tc-field"><label>姓名</label><span>王小明</span></div>
+          <div class="tc-field"><label>電子郵件</label><span>ming@example.com</span></div>
+          <div class="tc-field"><label>申請項目</label><span>進階存取權限</span></div>
+          <p style="color:rgba(198,199,189,0.55);font-size:.82rem">確認資料無誤後，點擊「步驟三」繼續。</p>
+        </div>
+      </tb-tab>
+      <tb-tab icon="check-circle" label="步驟三：確認">
+        <div class="tc">
+          <span class="badge-step bs-safe">STEP 3 / 3</span>
+          <h5>確認送出</h5>
+          <p>所有步驟已完成，申請資料已記錄。</p>
+          <p style="color:var(--safe);font-weight:600">✓ 申請成功送出。</p>
+          <p style="font-size:.82rem;color:rgba(198,199,189,0.5)">
+            <code>tb-complete</code> 事件已觸發（見下方日誌）。
+          </p>
+        </div>
+      </tb-tab>
+    </tab-board>
+    <div class="ev-log" id="ev1">等待互動…</div>
+  </div>
+
+  <hr class="dim">
+
+  <!-- Demo 2: filled dot + orders + disabled -->
+  <div class="sec">
+    <div class="sec-title">Demo 2 — Dot · lavender · orders（含 disabled 頁籤，無持久化）</div>
+    <div class="sec-sub">
+      <code>tab-style="dot"</code> <code>theme="lavender"</code>
+      <code>orders</code> <code>layout="horizontal"</code>
+      &nbsp;→ 無 <code>orders-key</code>，不寫 localStorage；disabled 頁籤在序列中被跳過
+    </div>
+    <div class="d-flex align-items-center gap-3 mb-2">
+      <button class="reset-btn" onclick="document.getElementById('ord2').reset()">
+        <i class="bi bi-arrow-counterclockwise"></i> 重置
+      </button>
+    </div>
+    <tab-board id="ord2" theme="lavender" tab-style="dot" layout="horizontal"
+      min-height="160px" content-padding="16px" orders animation="fade">
+      <tb-tab icon="house-fill" label="首頁">
+        <div class="tc">
+          <span class="badge-step bs-lavender">STEP 1</span>
+          <h5>首頁</h5>
+          <p>這是起點。<code>disabled</code> 頁籤（維護中）會被 orders 序列跳過，直接解鎖「設定」。</p>
+        </div>
+      </tb-tab>
+      <tb-tab icon="tools" label="維護中" disabled>
+        <div class="tc"><p>此頁籤永遠 disabled，orders 序列自動跳過。</p></div>
+      </tb-tab>
+      <tb-tab icon="gear-fill" label="設定">
+        <div class="tc">
+          <span class="badge-step bs-lavender">STEP 2</span>
+          <h5>設定</h5>
+          <p>維護中頁籤已被跳過，orders 直接從「首頁」解鎖本頁籤。</p>
+        </div>
+      </tb-tab>
+      <tb-tab icon="check2-all" label="完成">
+        <div class="tc">
+          <span class="badge-step bs-safe">DONE</span>
+          <h5>流程完成</h5>
+          <p><code>tb-complete</code> 已觸發。</p>
+        </div>
+      </tb-tab>
+    </tab-board>
+    <div class="ev-log" id="ev2">等待互動…</div>
+  </div>
+
+  <hr class="dim">
+
+  <!-- Demo 3: filled + orders + el.select() API demo -->
+  <div class="sec">
+    <div class="sec-title">Demo 3 — Filled · indigo · orders（程式化 el.select() 跳躍示範）</div>
+    <div class="sec-sub">
+      <code>tab-style="filled"</code> <code>theme="indigo"</code>
+      <code>orders</code> <code>layout="vertical"</code>
+      &nbsp;→ <code>el.select()</code> 可跳躍，不受 orders 順序限制
+    </div>
+    <div class="d-flex align-items-center gap-3 mb-2">
+      <button class="reset-btn" onclick="document.getElementById('ord3').reset()">
+        <i class="bi bi-arrow-counterclockwise"></i> 重置
+      </button>
+      <button class="next-btn" onclick="document.getElementById('ord3').select(0)">
+        <i class="bi bi-skip-start-fill"></i> select(0)
+      </button>
+      <button class="next-btn" onclick="document.getElementById('ord3').select(1)">
+        <i class="bi bi-1-circle-fill"></i> select(1)
+      </button>
+      <button class="next-btn" onclick="document.getElementById('ord3').select(2)">
+        <i class="bi bi-2-circle-fill"></i> select(2)
+      </button>
+      <button class="next-btn" onclick="document.getElementById('ord3').select(3)">
+        <i class="bi bi-skip-end-fill"></i> select(3)
+      </button>
+    </div>
+    <tab-board id="ord3" theme="indigo" tab-style="filled" layout="vertical"
+      min-height="150px" content-padding="14px" orders animation="none">
+      <tb-tab icon="play-circle-fill" label="開始">
+        <div class="tc"><h5>開始</h5><p>按上方按鈕示範 <code>el.select(index)</code> 跳躍到任意頁籤，忽略 orders 順序限制，但仍會更新 ordersActive。</p></div>
+      </tb-tab>
+      <tb-tab icon="diagram-3-fill" label="架構">
+        <div class="tc"><h5>架構</h5><p>直接用 API 跳到此頁，orders 進度同步更新。</p></div>
+      </tb-tab>
+      <tb-tab icon="cpu-fill" label="部署">
+        <div class="tc"><h5>部署</h5><p>API 跳躍後，已跳過的頁籤會變成 completed 狀態。</p></div>
+      </tb-tab>
+      <tb-tab icon="trophy-fill" label="完成">
+        <div class="tc"><h5>完成</h5><p>跳到最後一頁同樣會觸發 <code>tb-complete</code> 事件。</p></div>
+      </tb-tab>
+    </tab-board>
+    <div class="ev-log" id="ev3">等待互動…</div>
+  </div>
+
+  <div class="pb-2" style="font-size:.75rem;color:rgba(198,199,189,0.22);text-align:center">
+    TabBoard v1.1.0 &nbsp;·&nbsp; Demo 09-22-26
+  </div>
+</div>
+
+<script>
+  // 事件監聽示範
+  document.getElementById('ord1').addEventListener('tb-select',   e => { document.getElementById('ev1').innerHTML = `tb-select &nbsp;<span class="ev-sel">index:${e.detail.index} label:"${e.detail.label}"</span>`; });
+  document.getElementById('ord1').addEventListener('tb-complete', e => { document.getElementById('ev1').innerHTML = `<span class="ev-done">tb-complete ✓ &nbsp;total:${e.detail.total} &nbsp;— 全部步驟已完成</span>`; });
+
+  document.getElementById('ord2').addEventListener('tb-select',   e => { document.getElementById('ev2').innerHTML = `tb-select &nbsp;<span class="ev-sel">index:${e.detail.index} label:"${e.detail.label}"</span>`; });
+  document.getElementById('ord2').addEventListener('tb-complete', e => { document.getElementById('ev2').innerHTML = `<span class="ev-done">tb-complete ✓ &nbsp;total:${e.detail.total}</span>`; });
+
+  document.getElementById('ord3').addEventListener('tb-select',   e => { document.getElementById('ev3').innerHTML = `tb-select &nbsp;<span class="ev-sel">index:${e.detail.index} label:"${e.detail.label}"</span>`; });
+  document.getElementById('ord3').addEventListener('tb-complete', e => { document.getElementById('ev3').innerHTML = `<span class="ev-done">tb-complete ✓ &nbsp;total:${e.detail.total}</span>`; });
+</script>
+</body>
+</html>

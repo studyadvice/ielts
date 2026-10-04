@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bp-stepper · compact-header Demo</title>
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<script src="bp-stepper.js"></script>
+<style>
+  :root {
+    --bg:      #0C0D0C;
+    --shell:   #C6C7BD;
+    --lavender:#C3A5E5;
+    --sky:     #95c9de;
+    --ocean:   #0ABDC6;
+    --teal:    #0DA591;
+    --yellow:  #DECA4B;
+    --orange:  #EDA109;
+    --salmon:  #E5C3B3;
+    --safe:    #299459;
+    --info:    #1E65C7;
+    --pink:    #FFB3D9;
+    --warning: #F08080;
+    --focus:   #e0be79;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { font-size: 18px; }
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ── 版面 ───────────────────────────────────── */
+  .page-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+  h1 {
+    font-size: 1.6rem;
+    color: var(--lavender);
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .subtitle {
+    color: var(--shell);
+    opacity: 0.78;
+    font-size: 0.95rem;
+    margin: 0 0 48px;
+  }
+  h2 {
+    font-size: 1.1rem;
+    color: var(--ocean);
+    font-weight: 600;
+    margin: 0 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(10,189,198,0.28);
+  }
+  .section {
+    margin-bottom: 56px;
+  }
+  .attr-note {
+    font-size: 0.82rem;
+    color: var(--yellow);
+    background: rgba(222,202,75,0.08);
+    border-left: 3px solid var(--yellow);
+    padding: 8px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 18px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 900px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  .compare-label {
+    font-size: 0.8rem;
+    color: var(--shell);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  code {
+    background: rgba(195,165,229,0.10);
+    color: var(--lavender);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.88em;
+  }
+
+  /* ── API 說明表格 ───────────────────────────── */
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin-top: 8px;
+  }
+  .api-table th {
+    text-align: left;
+    color: var(--ocean);
+    border-bottom: 1px solid rgba(10,189,198,0.30);
+    padding: 6px 10px;
+    font-weight: 600;
+  }
+  .api-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(198,199,189,0.10);
+    vertical-align: top;
+  }
+  .api-table tr:last-child td { border-bottom: none; }
+  .api-table .col-attr { color: var(--yellow); font-family: monospace; }
+  .api-table .col-default { color: var(--teal); font-family: monospace; }
+  .api-table .col-desc { color: var(--shell); opacity: 0.85; }
+
+  /* ── 互動按鈕 ───────────────────────────────── */
+  .demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border: 1.5px solid var(--ocean);
+    border-radius: 20px;
+    background: rgba(10,189,198,0.10);
+    color: var(--ocean);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, color .2s, box-shadow .2s;
+    margin-right: 8px;
+    margin-bottom: 16px;
+  }
+  .demo-btn:hover {
+    background: var(--ocean);
+    color: #0C0D0C;
+    box-shadow: 0 0 10px -2px var(--ocean);
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <h1>bp-stepper — <code>compact-header</code> 新屬性</h1>
+  <p class="subtitle">
+    將編號徽章、圖示、標題排成一行，縮小行內上下 padding，並在其下方顯示若隱若現的漸層橫線。
+  </p>
+
+  <!-- ① 對比示範 -->
+  <div class="section">
+    <h2>① 預設版型 vs. compact-header 對比</h2>
+    <div class="attr-note">
+      bp-stepper 加上 <strong>data-compact-header</strong> 即可啟用所有步驟的單行 header 模式
+    </div>
+    <div class="compare-grid">
+      <div>
+        <div class="compare-label">未啟用（預設）</div>
+        <bp-stepper data-theme="sky" data-layout="vertical" data-card-width="360px"
+                    data-auto-number="true">
+          <bp-step>
+            <span class="bp-step-icon">🔍</span>
+            <bp-step-title>搜尋需求</bp-step-title>
+            <bp-step-content>收集並整理使用者的核心需求，釐清優先順序與範圍邊界。</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <span class="bp-step-icon">✏️</span>
+            <bp-step-title>設計原型</bp-step-title>
+            <bp-step-content>根據需求建立低保真線稿，快速驗證流程可行性。</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <span class="bp-step-icon">🚀</span>
+            <bp-step-title>正式上線</bp-step-title>
+            <bp-step-content>完成測試後，部署到生產環境並通知相關團隊。</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <div>
+        <div class="compare-label">data-compact-header（新功能）</div>
+        <bp-stepper data-theme="sky" data-layout="vertical" data-card-width="360px"
+                    data-auto-number="true"
+                    data-compact-header>
+          <bp-step>
+            <span class="bp-step-icon">🔍</span>
+            <bp-step-title>搜尋需求</bp-step-title>
+            <bp-step-content>收集並整理使用者的核心需求，釐清優先順序與範圍邊界。</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <span class="bp-step-icon">✏️</span>
+            <bp-step-title>設計原型</bp-step-title>
+            <bp-step-content>根據需求建立低保真線稿，快速驗證流程可行性。</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <span class="bp-step-icon">🚀</span>
+            <bp-step-title>正式上線</bp-step-title>
+            <bp-step-content>完成測試後，部署到生產環境並通知相關團隊。</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 水平版型 + 各狀態 -->
+  <div class="section">
+    <h2>② 水平版型 + 各狀態顏色的橫線</h2>
+    <div class="attr-note">
+      橫線顏色跟隨步驟狀態（active → active 主色 / done → done 主色 / error → error 主色）
+    </div>
+    <bp-stepper data-theme="lavender" data-compact-header
+                data-card-width="240px" data-gap="48px">
+      <bp-step data-state="done">
+        <span class="bp-step-icon"><i class="bi bi-check2-circle"></i></span>
+        <bp-step-title>建立帳號</bp-step-title>
+        <bp-step-content>填寫基本資料並完成 Email 驗證。</bp-step-content>
+      </bp-step>
+      <bp-step data-state="done">
+        <span class="bp-step-icon"><i class="bi bi-shield-lock"></i></span>
+        <bp-step-title>安全設定</bp-step-title>
+        <bp-step-content>啟用雙因素驗證，提升帳號安全性。</bp-step-content>
+      </bp-step>
+      <bp-step data-state="active">
+        <span class="bp-step-icon"><i class="bi bi-person-badge"></i></span>
+        <bp-step-title>身份認證</bp-step-title>
+        <bp-step-content>上傳有效證件，等待人工審核（1～3 個工作日）。</bp-step-content>
+      </bp-step>
+      <bp-step data-state="error">
+        <span class="bp-step-icon"><i class="bi bi-exclamation-triangle"></i></span>
+        <bp-step-title>付款資訊</bp-step-title>
+        <bp-step-content>信用卡驗證失敗，請重新輸入卡號。</bp-step-content>
+      </bp-step>
+      <bp-step>
+        <span class="bp-step-icon"><i class="bi bi-rocket-takeoff"></i></span>
+        <bp-step-title>開始使用</bp-step-title>
+        <bp-step-content>完成所有步驟後即可使用全部功能。</bp-step-content>
+      </bp-step>
+    </bp-stepper>
+  </div>
+
+  <!-- ③ 多主題 -->
+  <div class="section">
+    <h2>③ 各主題 · compact-header 效果</h2>
+    <div style="display:flex;flex-direction:column;gap:24px;">
+
+      <bp-stepper data-theme="teal" data-compact-header data-gap="40px"
+                  data-card-width="220px">
+        <bp-step data-state="done">
+          <span class="bp-step-icon">📦</span>
+          <bp-step-title>包裝完成</bp-step-title>
+          <bp-step-content>商品已完成包裝，靜待取件。</bp-step-content>
+        </bp-step>
+        <bp-step data-state="active">
+          <span class="bp-step-icon">🚚</span>
+          <bp-step-title>配送中</bp-step-title>
+          <bp-step-content>貨物正在前往目的地的途中。</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <span class="bp-step-icon">🏠</span>
+          <bp-step-title>已送達</bp-step-title>
+          <bp-step-content>確認收件後請至後台簽收。</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+
+      <bp-stepper data-theme="orange" data-compact-header data-gap="40px"
+                  data-card-width="220px">
+        <bp-step data-state="done">
+          <span class="bp-step-icon">🧪</span>
+          <bp-step-title>Unit Tests</bp-step-title>
+          <bp-step-content>全部 142 個測試通過。</bp-step-content>
+        </bp-step>
+        <bp-step data-state="done">
+          <span class="bp-step-icon">🔍</span>
+          <bp-step-title>Code Review</bp-step-title>
+          <bp-step-content>核心成員審查完畢，已合併主線。</bp-step-content>
+        </bp-step>
+        <bp-step data-state="active">
+          <span class="bp-step-icon">⚙️</span>
+          <bp-step-title>CI / CD</bp-step-title>
+          <bp-step-content>自動化流水線正在執行部署腳本。</bp-step-content>
+        </bp-step>
+        <bp-step>
+          <span class="bp-step-icon">✅</span>
+          <bp-step-title>部署完成</bp-step-title>
+          <bp-step-content>服務已上線，監控中。</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+
+    </div>
+  </div>
+
+  <!-- ④ 個別步驟關閉 compact-header -->
+  <div class="section">
+    <h2>④ 個別步驟覆寫：<code>data-compact-header="false"</code></h2>
+    <div class="attr-note">
+      stepper 層級啟用 compact-header，但第二步加上 data-compact-header="false" 回復預設排版
+    </div>
+    <bp-stepper data-theme="pink" data-compact-header data-layout="vertical"
+                data-card-width="420px">
+      <bp-step data-state="done">
+        <span class="bp-step-icon">🎨</span>
+        <bp-step-title>視覺設計（compact）</bp-step-title>
+        <bp-step-content>badge + icon + title 排成一行，橫線若隱若現。</bp-step-content>
+      </bp-step>
+      <!-- 此步驟單獨關閉 compact-header，恢復預設縱排 -->
+      <bp-step data-state="active" data-compact-header="false">
+        <span class="bp-step-icon">🛠️</span>
+        <bp-step-title>元件開發（一般排版）</bp-step-title>
+        <bp-step-content>這個步驟加了 data-compact-header="false"，badge / icon / title 各自佔一行，回復預設縱排版型。</bp-step-content>
+      </bp-step>
+      <bp-step>
+        <span class="bp-step-icon">📋</span>
+        <bp-step-title>驗收測試（compact）</bp-step-title>
+        <bp-step-content>確認各使用場景下的視覺一致性與互動回饋。</bp-step-content>
+      </bp-step>
+    </bp-stepper>
+  </div>
+
+  <!-- ⑤ 自訂 padding / gap -->
+  <div class="section">
+    <h2>⑤ 自訂 header-pad-y 與 header-gap</h2>
+    <div class="attr-note">
+      data-header-pad-y="0px"  data-header-gap="10px"
+      &nbsp;—&nbsp; header 行上下 padding 歸零，圖示與標題間距放寬
+    </div>
+    <bp-stepper data-theme="focus" data-compact-header
+                data-header-pad-y="0px"
+                data-header-gap="10px"
+                data-card-width="230px"
+                data-gap="44px">
+      <bp-step data-state="done">
+        <span class="bp-step-icon"><i class="bi bi-lightbulb"></i></span>
+        <bp-step-title>構思</bp-step-title>
+        <bp-step-content>蒐集靈感，確定產品方向與定位。</bp-step-content>
+      </bp-step>
+      <bp-step data-state="active">
+        <span class="bp-step-icon"><i class="bi bi-pencil-square"></i></span>
+        <bp-step-title>撰寫</bp-step-title>
+        <bp-step-content>完成規格文件與 API 介面定義。</bp-step-content>
+      </bp-step>
+      <bp-step>
+        <span class="bp-step-icon"><i class="bi bi-send-check"></i></span>
+        <bp-step-title>發布</bp-step-title>
+        <bp-step-content>送交審核後對外公開。</bp-step-content>
+      </bp-step>
+    </bp-stepper>
+  </div>
+
+  <!-- ⑥ 無圖示 -->
+  <div class="section">
+    <h2>⑥ 無圖示（badge + title 兩欄）</h2>
+    <div class="attr-note">bp-step 沒有 .bp-step-icon 時，header 行只顯示 badge 與 title</div>
+    <bp-stepper data-theme="vanilla" data-compact-header
+                data-card-width="200px" data-gap="36px">
+      <bp-step data-state="done">
+        <bp-step-title>初始化</bp-step-title>
+        <bp-step-content>建立專案目錄與基礎設定檔。</bp-step-content>
+      </bp-step>
+      <bp-step data-state="active">
+        <bp-step-title>開發</bp-step-title>
+        <bp-step-content>實作核心功能，撰寫單元測試。</bp-step-content>
+      </bp-step>
+      <bp-step>
+        <bp-step-title>部署</bp-step-title>
+        <bp-step-content>推送至遠端倉庫並觸發 CI。</bp-step-content>
+      </bp-step>
+    </bp-stepper>
+  </div>
+
+  <!-- ⑦ 透明度控制 -->
+  <div class="section">
+    <h2>⑦ <code>data-content-opacity</code> 與 <code>data-content-opacity-done</code></h2>
+    <div class="compare-grid">
+
+      <div>
+        <div class="compare-label">預設（0.9 / done 0.65）</div>
+        <bp-stepper data-theme="indigo" data-compact-header
+                    data-layout="vertical" data-card-width="340px">
+          <bp-step data-state="done">
+            <span class="bp-step-icon">📁</span>
+            <bp-step-title>歸檔完成</bp-step-title>
+            <bp-step-content>done 狀態下內文透明度預設為 0.65，視覺上明顯偏暗。</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <span class="bp-step-icon">⚡</span>
+            <bp-step-title>執行中</bp-step-title>
+            <bp-step-content>一般狀態透明度預設為 0.9，略帶透明感。</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <span class="bp-step-icon">🔒</span>
+            <bp-step-title>待執行</bp-step-title>
+            <bp-step-content>尚未進入的步驟同樣套用 0.9 透明度。</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+      <div>
+        <div class="compare-label">data-content-opacity="1"（完全不透明）</div>
+        <bp-stepper data-theme="indigo" data-compact-header
+                    data-layout="vertical" data-card-width="340px"
+                    data-content-opacity="1"
+                    data-content-opacity-done="1">
+          <bp-step data-state="done">
+            <span class="bp-step-icon">📁</span>
+            <bp-step-title>歸檔完成</bp-step-title>
+            <bp-step-content>done 狀態透明度設為 1，與其他步驟一致，不再變暗。</bp-step-content>
+          </bp-step>
+          <bp-step data-state="active">
+            <span class="bp-step-icon">⚡</span>
+            <bp-step-title>執行中</bp-step-title>
+            <bp-step-content>一般狀態透明度設為 1，文字完全清晰。</bp-step-content>
+          </bp-step>
+          <bp-step>
+            <span class="bp-step-icon">🔒</span>
+            <bp-step-title>待執行</bp-step-title>
+            <bp-step-content>所有步驟的內文顏色與亮度完全一致。</bp-step-content>
+          </bp-step>
+        </bp-stepper>
+      </div>
+
+    </div>
+
+    <div class="attr-note" style="margin-top:20px;">
+      data-content-opacity-done 未設定時，fallback 沿用 data-content-opacity 的值；
+      若兩者都未設定，才回到內建預設（0.9 / 0.65）。
+    </div>
+  </div>
+
+  <!-- API 說明 -->
+  <div class="section">
+    <h2>屬性 API 一覽</h2>
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>屬性（data-*）</th>
+          <th>CSS 變數</th>
+          <th>預設值</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-attr">data-compact-header</td>
+          <td>—</td>
+          <td class="col-default">未設定（關閉）</td>
+          <td class="col-desc">
+            設於 <code>bp-stepper</code>：啟用所有步驟的單行 header 模式。<br>
+            設於 <code>bp-step</code>：個別覆寫（<code>="false"</code> 可關閉）。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-attr">data-header-pad-y</td>
+          <td class="col-default">--bps-header-pad-y</td>
+          <td class="col-default">2px</td>
+          <td class="col-desc">header 行的上下 padding，控制 badge/icon/title 一行的緊湊程度。</td>
+        </tr>
+        <tr>
+          <td class="col-attr">data-header-gap</td>
+          <td class="col-default">--bps-header-gap</td>
+          <td class="col-default">6px</td>
+          <td class="col-desc">badge、icon、title 三者在同一行內的水平間距。</td>
+        </tr>
+        <tr>
+          <td class="col-attr">data-content-opacity</td>
+          <td class="col-default">--bps-content-opacity</td>
+          <td class="col-default">0.9</td>
+          <td class="col-desc">
+            <code>bp-step-content</code> 在一般與 active 狀態下的透明度。<br>
+            設為 <code>"1"</code> 可完全取消透明效果。<br>
+            也作為 <code>data-content-opacity-done</code> 未設定時的 fallback。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-attr">data-content-opacity-done</td>
+          <td class="col-default">--bps-content-opacity-done</td>
+          <td class="col-default">0.65</td>
+          <td class="col-desc">
+            <code>bp-step-content</code> 在 done 狀態下的透明度。<br>
+            未設定時 fallback 至 <code>data-content-opacity</code>，
+            因此只需設定 <code>data-content-opacity="1"</code> 即可同時取消兩者。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /.page-wrap -->
+</body>
+</html>

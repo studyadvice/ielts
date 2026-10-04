@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>collocation-map Demo — 09-08-26</title>
+<style>
+:root {
+  --bg:       #0C0D0C;
+  --shell:    #C6C7BD;
+  --lavender: #C3A5E5;
+  --sky:      #95c9de;
+  --warning:  #F08080;
+  --salmon:   #E5C3B3;
+  --ocean:    #0ABDC6;
+  --safe:     #299459;
+  --teal:     #0DA591;
+  --vanilla:  #DBEDD8;
+  --yellow:   #DECA4B;
+  --focus:    #e0be79;
+  --special:  #b3de73;
+  --info:     #1E65C7;
+  --indigo:   #9B72CF;
+  --pink:     #FFB3D9;
+  --orange:   #EDA109;
+
+  font-size: 18px;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 32px 48px;
+  background: var(--bg);
+  color: var(--shell);
+  font-family: 'Inter', 'Noto Sans TC', system-ui;
+  line-height: 1.5;
+  min-width: 900px;
+}
+
+h1 { color: var(--lavender); font-size: 1.6rem; margin-bottom: 4px; }
+h2 { color: var(--ocean);    font-size: 1.1rem; margin: 40px 0 4px; letter-spacing: .04em; }
+h3 { color: var(--yellow);   font-size: 0.9rem; margin: 28px 0 6px; }
+p, li { font-size: 0.88rem; color: var(--shell); line-height: 1.5; }
+
+code {
+  font-size: 0.78rem;
+  background: rgba(198,199,189,.10);
+  color: var(--vanilla);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+pre {
+  font-size: 0.76rem;
+  background: rgba(198,199,189,.07);
+  border-left: 3px solid var(--indigo);
+  color: var(--vanilla);
+  padding: 14px 18px;
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+  margin: 10px 0 18px;
+}
+
+hr {
+  border: none;
+  border-top: 1px dashed rgba(198,199,189,.22);
+  margin: 36px 0;
+}
+
+/* 區塊 */
+.demo-section {
+  margin: 24px 0;
+  padding: 24px 28px;
+  background: rgba(198,199,189,.05);
+  border-radius: 8px;
+  border: 1px solid rgba(198,199,189,.12);
+}
+
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  align-items: flex-start;
+  margin: 16px 0;
+}
+
+/* 說明面板樣式 */
+.ex-panel {
+  min-height: 3.2rem;
+  padding: 10px 14px;
+  margin-top: 14px;
+  border-radius: 6px;
+  background: rgba(198,199,189,.08);
+  border: 1px solid rgba(198,199,189,.18);
+  font-size: 0.82rem;
+  color: var(--shell);
+  line-height: 1.5;
+  transition: opacity .2s;
+}
+.ex-panel:empty::before {
+  content: '← hover 或 click 搭配詞查看例句';
+  opacity: .35;
+  font-style: italic;
+}
+
+.label-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: .05em;
+}
+.tag-hover   { background: rgba(10,189,198,.2); color: var(--ocean); }
+.tag-click   { background: rgba(224,190,121,.2); color: var(--focus); }
+.tag-both    { background: rgba(195,165,229,.2); color: var(--lavender); }
+
+/* 屬性表格 */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8rem;
+  margin: 12px 0;
+}
+th {
+  text-align: left;
+  padding: 7px 12px;
+  background: rgba(155,114,207,.18);
+  color: var(--lavender);
+  font-size: 0.75rem;
+  letter-spacing: .05em;
+}
+td {
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(198,199,189,.09);
+  vertical-align: top;
+}
+td:first-child { color: var(--sky);    white-space: nowrap; }
+td:nth-child(2){ color: var(--vanilla);white-space: nowrap; }
+td:last-child  { color: var(--shell);  }
+
+/* 強調文字（例句中） */
+b, strong { color: var(--ocean); }
+</style>
+</head>
+<body>
+
+<h1>🔗 collocation-map</h1>
+<p style="margin:0 0 2px;color:var(--vanilla);font-size:.85rem;">
+  視覺化搭配詞元件 — 加入 <code>ui-reading2.js</code> 的新元件
+</p>
+<p style="margin:0;font-size:.76rem;opacity:.5;">
+  Demo · 09-08-26 &nbsp;|&nbsp; 依賴：ui-reading2.js（同目錄）
+</p>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     §1  anchor-side="left"（動詞→受詞）
+═══════════════════════════════════════════════ -->
+<h2>§1 anchor-side="left"　動詞 → 受詞型</h2>
+<p>錨點在左、搭配詞在右，圓點在文字外側（右）。</p>
+
+<div class="demo-section">
+  <span class="label-tag tag-hover">trigger: hover</span>
+
+  <div class="demo-row">
+
+    <!-- undermine -->
+    <div>
+      <collocation-map
+        anchor-side="left"
+        palette="safe,orange,indigo"
+        target="panel-undermine"
+        trigger="hover"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="lavender" weight="bold">undermine</cm-point>
+        <cm-item note="ex-u1">confidence</cm-item>
+        <cm-item note="ex-u2">trust</cm-item>
+        <cm-item note="ex-u3">the argument</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-undermine"></div>
+    </div>
+
+    <!-- address -->
+    <div>
+      <collocation-map
+        anchor-side="left"
+        palette="sky,yellow,teal,salmon"
+        target="panel-address"
+        trigger="hover"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="sky" weight="bold">address</cm-point>
+        <cm-item note="ex-a1">a problem</cm-item>
+        <cm-item note="ex-a2">concerns</cm-item>
+        <cm-item note="ex-a3">inequality</cm-item>
+        <cm-item note="ex-a4">the root cause</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-address"></div>
+    </div>
+
+    <!-- justify -->
+    <div>
+      <collocation-map
+        anchor-side="left"
+        palette="pink,focus,special"
+        target="panel-justify"
+        trigger="hover"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="salmon" weight="bold">justify</cm-point>
+        <cm-item note="ex-j1">a decision</cm-item>
+        <cm-item note="ex-j2">the cost</cm-item>
+        <cm-item note="ex-j3">inequality</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-justify"></div>
+    </div>
+
+  </div>
+
+  <pre>&lt;collocation-map
+  anchor-side="left"
+  palette="safe,orange,indigo"
+  target="panel-undermine"
+  trigger="hover"
+  gap="18px"
+  point-size="1.5rem"&gt;
+  &lt;cm-point theme="lavender" weight="bold"&gt;undermine&lt;/cm-point&gt;
+  &lt;cm-item note="ex-u1"&gt;confidence&lt;/cm-item&gt;
+  &lt;cm-item note="ex-u2"&gt;trust&lt;/cm-item&gt;
+  &lt;cm-item note="ex-u3"&gt;the argument&lt;/cm-item&gt;
+&lt;/collocation-map&gt;
+
+&lt;div id="panel-undermine"&gt;&lt;/div&gt;
+
+&lt;!-- 來源 div（JS 自動隱藏）--&gt;
+&lt;div id="ex-u1"&gt;The scandal &lt;b&gt;undermined public confidence&lt;/b&gt; in the government.&lt;/div&gt;</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §2  anchor-side="right"（形容詞→名詞）
+═══════════════════════════════════════════════ -->
+<h2>§2 anchor-side="right"　形容詞 → 名詞型</h2>
+<p>錨點在右、搭配詞在左，圓點在文字外側（左）。</p>
+
+<div class="demo-section">
+  <span class="label-tag tag-click">trigger: click（點選鎖定，再點解鎖）</span>
+
+  <div class="demo-row">
+
+    <!-- problem -->
+    <div>
+      <collocation-map
+        anchor-side="right"
+        palette="safe,orange,indigo,sky"
+        target="panel-problem"
+        trigger="click"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="shell" weight="bold">problem</cm-point>
+        <cm-item note="ex-p1">common</cm-item>
+        <cm-item note="ex-p2">pervasive</cm-item>
+        <cm-item note="ex-p3">pressing</cm-item>
+        <cm-item note="ex-p4">tricky</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-problem"></div>
+    </div>
+
+    <!-- impact -->
+    <div>
+      <collocation-map
+        anchor-side="right"
+        palette="teal,yellow,lavender,pink,focus"
+        target="panel-impact"
+        trigger="click"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="shell" weight="bold">impact</cm-point>
+        <cm-item note="ex-i1">significant</cm-item>
+        <cm-item note="ex-i2">lasting</cm-item>
+        <cm-item note="ex-i3">positive</cm-item>
+        <cm-item note="ex-i4">detrimental</cm-item>
+        <cm-item note="ex-i5">measurable</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-impact"></div>
+    </div>
+
+    <!-- concern -->
+    <div>
+      <collocation-map
+        anchor-side="right"
+        palette="salmon,ocean,special"
+        target="panel-concern"
+        trigger="click"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="shell" weight="bold">concern</cm-point>
+        <cm-item note="ex-c1">growing</cm-item>
+        <cm-item note="ex-c2">widespread</cm-item>
+        <cm-item note="ex-c3">legitimate</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-concern"></div>
+    </div>
+
+  </div>
+
+  <pre>&lt;collocation-map
+  anchor-side="right"
+  palette="safe,orange,indigo,sky"
+  target="panel-problem"
+  trigger="click"
+  gap="18px"&gt;
+  &lt;cm-point theme="shell" weight="bold"&gt;problem&lt;/cm-point&gt;
+  &lt;cm-item note="ex-p1"&gt;common&lt;/cm-item&gt;
+  &lt;cm-item note="ex-p2"&gt;pervasive&lt;/cm-item&gt;
+  &lt;cm-item note="ex-p3"&gt;pressing&lt;/cm-item&gt;
+  &lt;cm-item note="ex-p4"&gt;tricky&lt;/cm-item&gt;
+&lt;/collocation-map&gt;</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §3  trigger="both"　雙模式
+═══════════════════════════════════════════════ -->
+<h2>§3 trigger="both"　hover 預覽 + click 鎖定</h2>
+<p>滑入預覽例句，點擊鎖定；再點同一項解鎖。</p>
+
+<div class="demo-section">
+  <span class="label-tag tag-both">trigger: both</span>
+
+  <div class="demo-row">
+
+    <div>
+      <collocation-map
+        anchor-side="left"
+        palette="ocean,yellow,indigo,salmon,teal"
+        target="panel-both"
+        trigger="both"
+        gap="18px"
+        hover-dim="0.25"
+        point-size="1.5rem">
+        <cm-point theme="focus" weight="bold">assess</cm-point>
+        <cm-item note="ex-as1">risk</cm-item>
+        <cm-item note="ex-as2">evidence</cm-item>
+        <cm-item note="ex-as3">impact</cm-item>
+        <cm-item note="ex-as4">quality</cm-item>
+        <cm-item note="ex-as5">the situation</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-both"></div>
+    </div>
+
+    <div>
+      <collocation-map
+        anchor-side="right"
+        palette="pink,sky,safe,orange"
+        target="panel-both2"
+        trigger="both"
+        gap="18px"
+        hover-dim="0.2"
+        point-size="1.5rem">
+        <cm-point theme="shell" weight="bold">change</cm-point>
+        <cm-item note="ex-ch1">gradual</cm-item>
+        <cm-item note="ex-ch2">dramatic</cm-item>
+        <cm-item note="ex-ch3">meaningful</cm-item>
+        <cm-item note="ex-ch4">irreversible</cm-item>
+      </collocation-map>
+      <div class="ex-panel" id="panel-both2"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §4  線條樣式 & 自訂顏色
+═══════════════════════════════════════════════ -->
+<h2>§4 線條樣式 · 自訂顏色（含 #hex palette）</h2>
+
+<div class="demo-section">
+  <div class="demo-row" style="align-items:center; gap:56px;">
+
+    <!-- dashed 線 -->
+    <div>
+      <h3>line-style="dashed"</h3>
+      <collocation-map
+        anchor-side="left"
+        palette="#FFB3D9,#95c9de,#DECA4B"
+        line-style="dashed"
+        line-color="#9B72CF"
+        line-width="2px"
+        trigger="hover"
+        gap="14px">
+        <cm-point theme="#b3de73" size="1.3rem" weight="bold">weigh</cm-point>
+        <cm-item>the pros</cm-item>
+        <cm-item>the cons</cm-item>
+        <cm-item>the trade-offs</cm-item>
+      </collocation-map>
+    </div>
+
+    <!-- dotted 線 -->
+    <div>
+      <h3>line-style="dotted"</h3>
+      <collocation-map
+        anchor-side="right"
+        palette="teal,orange,lavender"
+        line-style="dotted"
+        line-color="#0ABDC6"
+        line-width="2.5px"
+        line-gap="22px"
+        trigger="hover"
+        gap="14px">
+        <cm-point theme="shell" size="1.3rem" weight="bold">trend</cm-point>
+        <cm-item>emerging</cm-item>
+        <cm-item>dominant</cm-item>
+        <cm-item>long-term</cm-item>
+      </collocation-map>
+    </div>
+
+    <!-- overhang 大 + 錨點對齊 start -->
+    <div>
+      <h3>anchor-align="start" · line-overhang="28px"</h3>
+      <collocation-map
+        anchor-side="left"
+        anchor-align="start"
+        palette="safe,pink,focus,sky"
+        line-overhang="28px"
+        line-color="#DECA4B"
+        trigger="hover"
+        gap="16px"
+        point-size="1rem">
+        <cm-point theme="yellow" weight="bold" size="1rem">attribute A to B</cm-point>
+        <cm-item>success to hard work</cm-item>
+        <cm-item>failure to bad luck</cm-item>
+        <cm-item>change to policy</cm-item>
+        <cm-item>growth to investment</cm-item>
+      </collocation-map>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §5  per-item target 覆蓋
+═══════════════════════════════════════════════ -->
+<h2>§5 cm-item 個別覆蓋 target</h2>
+<p>不同搭配詞的例句可顯示在不同 div，透過 <code>target</code> 屬性指定。</p>
+
+<div class="demo-section">
+  <div class="demo-row" style="align-items:flex-start;">
+    <div style="flex:0 0 auto;">
+      <collocation-map
+        anchor-side="left"
+        palette="ocean,yellow,lavender"
+        trigger="hover"
+        gap="18px"
+        point-size="1.5rem">
+        <cm-point theme="salmon" weight="bold">shift</cm-point>
+        <cm-item note="ex-sh1" target="panel-sh-left">focus</cm-item>
+        <cm-item note="ex-sh2" target="panel-sh-right">attention</cm-item>
+        <cm-item note="ex-sh3" target="panel-sh-right">perspective</cm-item>
+      </collocation-map>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <div style="font-size:.72rem;color:var(--ocean);margin-bottom:4px;">target="panel-sh-left"（ocean 那項）</div>
+        <div class="ex-panel" id="panel-sh-left"></div>
+      </div>
+      <div>
+        <div style="font-size:.72rem;color:var(--yellow);margin-bottom:4px;">target="panel-sh-right"（yellow / lavender 兩項共用）</div>
+        <div class="ex-panel" id="panel-sh-right"></div>
+      </div>
+    </div>
+  </div>
+
+  <pre>&lt;cm-item note="ex-sh1" target="panel-sh-left"&gt;focus&lt;/cm-item&gt;
+&lt;cm-item note="ex-sh2" target="panel-sh-right"&gt;attention&lt;/cm-item&gt;
+&lt;cm-item note="ex-sh3" target="panel-sh-right"&gt;perspective&lt;/cm-item&gt;</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §6  屬性總覽
+═══════════════════════════════════════════════ -->
+<h2>§6 屬性總覽</h2>
+<div class="demo-section">
+
+<h3>collocation-map</h3>
+<table>
+  <tr><th>屬性</th><th>預設值</th><th>說明</th></tr>
+  <tr><td>anchor-side</td><td>left</td><td>錨點位置：<code>left</code> | <code>right</code></td></tr>
+  <tr><td>anchor-align</td><td>center</td><td>錨點垂直對齊：<code>center</code> | <code>start</code> | <code>end</code></td></tr>
+  <tr><td>palette</td><td>（系統預設）</td><td>搭配詞自動配色，逗號分隔；支援色票名稱（ocean、yellow…）與 #hex（#FFFFFF）</td></tr>
+  <tr><td>dot-size</td><td>12px</td><td>圓點尺寸</td></tr>
+  <tr><td>dot-gap</td><td>8px</td><td>圓點與文字間距</td></tr>
+  <tr><td>line-color</td><td>shell</td><td>分隔線顏色，色票名稱或 #hex</td></tr>
+  <tr><td>line-style</td><td>solid</td><td><code>solid</code> | <code>dashed</code> | <code>dotted</code></td></tr>
+  <tr><td>line-width</td><td>1.5px</td><td>線條粗細</td></tr>
+  <tr><td>line-gap</td><td>18px</td><td>分隔線兩側水平留白</td></tr>
+  <tr><td>line-overhang</td><td>16px</td><td>線條超出首末搭配詞的距離</td></tr>
+  <tr><td>point-size</td><td>1.4rem</td><td>錨點字體大小</td></tr>
+  <tr><td>item-size</td><td>1rem</td><td>搭配詞字體大小</td></tr>
+  <tr><td>gap</td><td>16px</td><td>搭配詞之間垂直間距</td></tr>
+  <tr><td>hover-dim</td><td>0.35</td><td>非 active 項的透明度（0–1）</td></tr>
+  <tr><td>trigger</td><td>hover</td><td><code>hover</code> | <code>click</code> | <code>both</code></td></tr>
+  <tr><td>animate</td><td>true</td><td>透明度過渡動畫</td></tr>
+  <tr><td>target</td><td>—</td><td>全域說明面板 div id（#id 或 id 均可）</td></tr>
+</table>
+
+<h3>cm-point</h3>
+<table>
+  <tr><th>屬性</th><th>預設值</th><th>說明</th></tr>
+  <tr><td>theme</td><td>shell</td><td>文字顏色，色票名稱或 #hex</td></tr>
+  <tr><td>weight</td><td>bold</td><td><code>bold</code> | <code>normal</code> | 任何 CSS font-weight</td></tr>
+  <tr><td>size</td><td>（繼承）</td><td>字體大小，覆蓋 collocation-map 的 point-size</td></tr>
+</table>
+
+<h3>cm-item</h3>
+<table>
+  <tr><th>屬性</th><th>預設值</th><th>說明</th></tr>
+  <tr><td>theme</td><td>（取 palette）</td><td>覆蓋此項顏色，色票名稱或 #hex</td></tr>
+  <tr><td>note</td><td>—</td><td>例句來源 div id（JS 自動隱藏該 div）</td></tr>
+  <tr><td>target</td><td>（繼承全域）</td><td>覆蓋全域 target，指定此項注入哪個 div</td></tr>
+</table>
+
+<h3>全域預設值 CollocationMapConfig</h3>
+<pre>// 在載入 ui-reading2.js 之前設定，可覆蓋任何預設值
+window.CollocationMapConfig = {
+  cmPalette:     ['ocean','yellow','lavender','salmon','teal','safe','indigo','pink','sky','focus'],
+  cmAnchorSide:  'left',
+  cmAnchorAlign: 'center',
+  cmDotSize:     '12px',
+  cmDotGap:      '8px',
+  cmLineColor:   'shell',
+  cmLineStyle:   'solid',
+  cmLineWidth:   '1.5px',
+  cmLineGap:     '18px',
+  cmOverhang:    '16px',
+  cmPointSize:   '1.4rem',
+  cmItemSize:    '1rem',
+  cmGap:         '16px',
+  cmHoverDim:    0.35,
+  cmTrigger:     'hover',
+  cmAnimate:     true
+};</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     來源資料（JS 自動隱藏）
+═══════════════════════════════════════════════ -->
+
+<!-- undermine -->
+<div id="ex-u1">The scandal <b>undermined public confidence</b> in the government for years.</div>
+<div id="ex-u2">Repeated broken promises had <b>undermined trust</b> between the two negotiating parties.</div>
+<div id="ex-u3">Relying solely on anecdotes <b>undermines the argument</b> and weakens your overall position.</div>
+
+<!-- address -->
+<div id="ex-a1">The new policy was designed to <b>address a pressing problem</b> in urban housing.</div>
+<div id="ex-a2">The minister met community leaders to <b>address concerns</b> about air quality.</div>
+<div id="ex-a3">Education reform alone cannot fully <b>address inequality</b> without economic restructuring.</div>
+<div id="ex-a4">Treating symptoms is far less effective than <b>addressing the root cause</b> of a problem.</div>
+
+<!-- justify -->
+<div id="ex-j1">She struggled to <b>justify her decision</b> to leave a stable career.</div>
+<div id="ex-j2">The company failed to <b>justify the cost</b> of the new system to its shareholders.</div>
+<div id="ex-j3">No economic argument can <b>justify inequality</b> that leaves millions below the poverty line.</div>
+
+<!-- problem -->
+<div id="ex-p1">Procrastination is a <b>common problem</b> among students preparing for high-stakes exams.</div>
+<div id="ex-p2">Misinformation has become a <b>pervasive problem</b> across social media platforms worldwide.</div>
+<div id="ex-p3">Climate change remains the most <b>pressing problem</b> of the twenty-first century.</div>
+<div id="ex-p4">Balancing work and family responsibilities is a genuinely <b>tricky problem</b> without a simple fix.</div>
+
+<!-- impact -->
+<div id="ex-i1">The policy had a <b>significant impact</b> on reducing youth unemployment over five years.</div>
+<div id="ex-i2">Early childhood education can have a <b>lasting impact</b> on a person's cognitive development.</div>
+<div id="ex-i3">Mentoring programmes often have a surprisingly <b>positive impact</b> on employee retention.</div>
+<div id="ex-i4">Excessive screen time has a <b>detrimental impact</b> on sleep quality in adolescents.</div>
+<div id="ex-i5">The trial aimed to produce a <b>measurable impact</b> on local carbon emissions within two years.</div>
+
+<!-- concern -->
+<div id="ex-c1">There is <b>growing concern</b> among health experts about the long-term effects of processed food.</div>
+<div id="ex-c2">Data privacy has become a <b>widespread concern</b> as more services move online.</div>
+<div id="ex-c3">Critics raised <b>legitimate concerns</b> about the fairness of the selection process.</div>
+
+<!-- assess -->
+<div id="ex-as1">Governments must carefully <b>assess risk</b> before introducing sweeping regulatory changes.</div>
+<div id="ex-as2">Researchers need to <b>assess evidence</b> critically rather than accept findings at face value.</div>
+<div id="ex-as3">It is difficult to fully <b>assess the impact</b> of social media on mental health in the short term.</div>
+<div id="ex-as4">Universities use multiple criteria to <b>assess quality</b> in student research submissions.</div>
+<div id="ex-as5">Emergency teams were deployed to <b>assess the situation</b> on the ground after the earthquake.</div>
+
+<!-- change -->
+<div id="ex-ch1">Language evolves through <b>gradual change</b>, often imperceptible from one generation to the next.</div>
+<div id="ex-ch2">The shift to remote work represented a <b>dramatic change</b> in how companies operated overnight.</div>
+<div id="ex-ch3">Without <b>meaningful change</b> in corporate culture, diversity initiatives often stall.</div>
+<div id="ex-ch4">Once released, certain pollutants cause <b>irreversible change</b> to marine ecosystems.</div>
+
+<!-- shift -->
+<div id="ex-sh1">The report urged schools to <b>shift focus</b> from memorisation to critical thinking skills.</div>
+<div id="ex-sh2">Loud music at a concert can <b>shift attention</b> away from the lyrics and toward the spectacle.</div>
+<div id="ex-sh3">Travelling alone can <b>shift your perspective</b> on what really matters in day-to-day life.</div>
+
+<script src="ui-reading2.js"></script>
+</body>
+</html>

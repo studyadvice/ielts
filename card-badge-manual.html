@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>card-badge · 元件使用說明書</title>
+
+  <!-- Prism Tomorrow Theme -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+  <!-- Bootstrap Icons（圖示示範） -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design Tokens ──────────────────────────────────────── */
+    :root {
+      --bg:      #0C0D0C;
+      --bg2:     #131413;
+      --card:    #1e1f1e;
+      --border:  #2c2d2c;
+      --shell:   #C6C7BD;
+      --muted:   #6a6b66;
+      --accent:  #1E65C7;   /* info  — 主色 */
+      --hi:      #b3de73;   /* special — 副色 */
+      --safe:    #299459;
+      --warning: #F08080;
+      --stone:   #95c9de;
+      --region:  #2a2b2a;
+    }
+
+    /* ── Page Grid ──────────────────────────────────────────── */
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--shell);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.75;
+      display: grid;
+      grid-template-columns: 228px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 0 0 32px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .sb-head {
+      padding: 28px 22px 22px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .sb-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      opacity: 0.8;
+    }
+
+    .sb-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--shell);
+      margin-top: 3px;
+    }
+
+    .sb-ver {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--bg);
+      background: var(--hi);
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    .toc-group { padding: 4px 0; }
+
+    .toc-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 22px 3px;
+      font-weight: 600;
+    }
+
+    .toc-a {
+      display: block;
+      padding: 4px 22px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+    }
+
+    .toc-a:hover, .toc-a.is-active {
+      color: var(--accent);
+      background: rgba(30,101,199,0.07);
+      border-left-color: var(--accent);
+    }
+
+    /* ── Content ────────────────────────────────────────────── */
+    .content {
+      padding: 56px 64px 96px;
+      min-width: 0;
+      max-width: 900px;
+    }
+
+    /* ── Page Hero ──────────────────────────────────────────── */
+    .page-hero { margin-bottom: 52px; }
+
+    .page-hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--shell);
+      line-height: 1.2;
+    }
+
+    .page-hero h1 .mono {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .page-hero .tagline {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 540px;
+    }
+
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-ac  { background: rgba(30,101,199,0.13);  color: var(--accent); }
+    .badge-hi  { background: rgba(179,222,115,0.13);  color: var(--hi); }
+    .badge-sf  { background: rgba(41,148,89,0.13);  color: var(--safe); }
+
+    /* ── Section ────────────────────────────────────────────── */
+    section h2 {
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--shell);
+      margin-top: 60px;
+      margin-bottom: 6px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 24px;
+    }
+
+    section:first-of-type h2 { margin-top: 0; }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+
+    p { margin-bottom: 10px; }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 3px; }
+
+    /* Inline code */
+    :not(pre) > code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82em;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--hi);
+    }
+
+    /* ── Prism override ─────────────────────────────────────── */
+    pre[class*="language-"] {
+      background: #0e0f0e !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 0 0 8px 8px !important;
+      padding: 18px 22px !important;
+      margin: 0 !important;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.81rem !important;
+      line-height: 1.75 !important;
+    }
+
+    code[class*="language-"] {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: inherit !important;
+    }
+
+    /* info + special 配色 */
+    .token.tag, .token.selector        { color: var(--accent) !important; }
+    .token.attr-name                   { color: var(--stone) !important; }
+    .token.attr-value, .token.string   { color: var(--hi) !important; }
+    .token.comment, .token.prolog      { color: #4a5050 !important; font-style: italic; }
+    .token.keyword                     { color: #C3A5E5 !important; }
+    .token.number, .token.boolean      { color: var(--safe) !important; }
+    .token.punctuation                 { color: #484949 !important; }
+    .token.function                    { color: var(--accent) !important; }
+    .token.class-name                  { color: var(--hi) !important; }
+    .token.operator                    { color: var(--shell) !important; }
+    .token.property                    { color: var(--stone) !important; }
+
+    /* ── Example Card ───────────────────────────────────────── */
+    .ex {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .ex-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: #252625;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ex-title { font-size: 0.83rem; font-weight: 600; color: var(--shell); }
+
+    .ex-lv {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(30,101,199,0.14);
+      color: var(--accent);
+    }
+
+    .ex-preview {
+      padding: 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      min-height: 64px;
+    }
+
+    .ex-preview.block { display: block; }
+
+    .ex-code-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: #131413;
+      border-top: 1px solid var(--border);
+    }
+
+    .ex-code-head .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+    .ex-code-head .lang { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.06em; margin-left: auto; }
+
+    /* ── Callout ────────────────────────────────────────────── */
+    .callout {
+      border-left: 3px solid;
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      margin: 14px 0;
+      font-size: 0.88rem;
+    }
+
+    .callout b { display: block; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+
+    .tip   { border-color: var(--safe);    background: rgba(41,148,89,0.07); }
+    .tip b { color: var(--safe); }
+    .note  { border-color: var(--stone);   background: rgba(149,201,222,0.07); }
+    .note b{ color: var(--stone); }
+    .warn  { border-color: var(--warning); background: rgba(240,128,128,0.07); }
+    .warn b{ color: var(--warning); }
+
+    /* ── Reference Table ────────────────────────────────────── */
+    .table-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 16px 0; }
+
+    .rtable { width: 100%; border-collapse: collapse; font-size: 0.855rem; }
+    .rtable thead tr { background: #252625; }
+    .rtable th { text-align: left; padding: 9px 14px; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+    .rtable td { padding: 8px 14px; border-top: 1px solid var(--border); vertical-align: top; }
+    .rtable tr:hover td { background: rgba(255,255,255,0.015); }
+
+    .t-attr    { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--hi); white-space: nowrap; }
+    .t-default { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--safe); }
+    .t-desc    { color: var(--shell); }
+
+    /* ── Demo helpers ───────────────────────────────────────── */
+    .dbtn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+    .dbtn {
+      background: var(--region);
+      border: 1px solid var(--border);
+      color: var(--shell);
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dbtn:hover { background: #3a3b3a; border-color: var(--accent); }
+
+    .demo-output {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: var(--stone);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 36px;
+    }
+
+    .size-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* filter demo items */
+    .filter-items { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .filter-tag {
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content { padding: 32px 20px 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-tag">&lt;web-component&gt;</div>
+    <div class="sb-title">card-badge</div>
+    <div class="sb-ver">品牌主題版</div>
+  </div>
+
+  <nav>
+    <div class="toc-group">
+      <div class="toc-label">入門</div>
+      <a class="toc-a" href="#quickstart">快速開始</a>
+      <a class="toc-a" href="#concept">設計概念</a>
+    </div>
+    <div class="toc-group">
+      <div class="toc-label">外觀</div>
+      <a class="toc-a" href="#text-icon">文字與圖示</a>
+      <a class="toc-a" href="#theme">主題與外框</a>
+      <a class="toc-a" href="#size">尺寸系統</a>
+    </div>
+    <div class="toc-group">
+      <div class="toc-label">資料類型</div>
+      <a class="toc-a" href="#datetime">日期時間格式</a>
+      <a class="toc-a" href="#deadline">截止日期</a>
+      <a class="toc-a" href="#count">數量徽章</a>
+    </div>
+    <div class="toc-group">
+      <div class="toc-label">互動</div>
+      <a class="toc-a" href="#clickable">可點擊與懸停效果</a>
+      <a class="toc-a" href="#href">連結與自我移除</a>
+      <a class="toc-a" href="#copy">複製功能</a>
+      <a class="toc-a" href="#toggle">折疊控制</a>
+      <a class="toc-a" href="#filter">過濾功能</a>
+      <a class="toc-a" href="#rotate">輪播模式</a>
+      <a class="toc-a" href="#font">字體控制</a>
+    </div>
+    <div class="toc-group">
+      <div class="toc-label">進階</div>
+      <a class="toc-a" href="#alert">浮動提示</a>
+      <a class="toc-a" href="#events">自訂事件</a>
+      <a class="toc-a" href="#disabled">停用狀態</a>
+    </div>
+    <div class="toc-group">
+      <div class="toc-label">參考</div>
+      <a class="toc-a" href="#ref">完整屬性速查</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- ════════════════ CONTENT ════════════════ -->
+<main class="content">
+
+  <!-- Page Hero -->
+  <div class="page-hero">
+    <h1><span class="mono">&lt;card-badge&gt;</span> 元件說明書</h1>
+    <p class="tagline">多功能標籤 Web Component，支援文字、圖示、日期、數量徽章、輪播、折疊、複製、過濾與字體控制等行為。</p>
+    <div class="badges">
+      <span class="badge badge-ac">Light DOM</span>
+      <span class="badge badge-hi">作用域 CSS</span>
+      <span class="badge badge-sf">Custom Elements v1</span>
+    </div>
+  </div>
+
+  <!-- ── 1. Quick Start ─────────────────────────────────────── -->
+  <section id="quickstart">
+    <h2>快速開始</h2>
+    <p>將腳本加入頁面即可使用，不需要任何 CSS 框架。若要使用 Bootstrap Icons 圖示，則額外引入圖示字體。</p>
+
+    <div class="ex">
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- 元件腳本 --&gt;
+&lt;script src="./card-badge.js"&gt;&lt;/script&gt;
+
+&lt;!-- 若需要 Bootstrap Icons（可選） --&gt;
+&lt;link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"&gt;</code></pre>
+    </div>
+
+    <p>最簡用法，只需 <code>text</code> 屬性：</p>
+
+    <div class="ex">
+      <div class="ex-preview">
+        <card-badge text="Hello"></card-badge>
+        <card-badge text="標籤" theme="info"></card-badge>
+        <card-badge text="完成" theme="safe"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="Hello"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="標籤" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="完成" theme="safe"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 2. Concept ───────────────────────────────────────────── -->
+  <section id="concept">
+    <h2>設計概念</h2>
+    <p>元件採用 <strong>Light DOM</strong> 而非 Shadow DOM，渲染結果完全暴露在頁面 DOM 樹中，方便外部樣式覆蓋與除錯。</p>
+
+    <p>為了讓多個 <code>&lt;card-badge&gt;</code> 共存而不產生 CSS 衝突，每個實例在掛載時自動產生一組隨機的 <strong>UID</strong>（如 <code>cb-a3f9k2m</code>），所有樣式規則都以 <code>[data-badge-id="cb-xxx"]</code> 為選擇器前綴，形成天然的作用域。</p>
+
+    <div class="ex">
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">渲染後的 DOM 結構</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="範例" theme="info" data-badge-id="cb-a3f9k2m"&gt;
+  &lt;div class="cb-render-root" style="display: contents;"&gt;
+    &lt;style&gt;
+      [data-badge-id="cb-a3f9k2m"] { display: inline-block; ... }
+      [data-badge-id="cb-a3f9k2m"] .badge { ... }
+    &lt;/style&gt;
+    &lt;div class="badge"&gt;
+      &lt;span class="text"&gt;範例&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="callout note">
+      <b>說明</b>
+      <code>cb-render-root</code> 使用 <code>display: contents</code>，對佈局完全透明，外部看到的就是 <code>.badge</code> 本身，不會多包一層 div 影響排版。<code>badge-item</code> 子元素（輪播用）隱藏在 render root 之後，不參與渲染。
+    </div>
+  </section>
+
+  <!-- ── 3. Text & Icon ────────────────────────────────────────── -->
+  <section id="text-icon">
+    <h2>文字與圖示</h2>
+    <p>用 <code>text</code> 設定文字，<code>icon</code> 設定圖示。圖示支援兩種格式：以 <code>bi-</code> 開頭視為 Bootstrap Icons class，其餘視為直接插入的文字或 Emoji。</p>
+
+    <!-- Example 1 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 1 &nbsp;Emoji 圖示</span>
+        <span class="ex-lv">入門</span>
+      </div>
+      <div class="ex-preview">
+        <card-badge text="已完成" icon="✅" theme="safe"></card-badge>
+        <card-badge text="警告" icon="⚠️" theme="warning"></card-badge>
+        <card-badge text="新功能" icon="🚀" theme="info"></card-badge>
+        <card-badge icon="📌" theme="special"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="已完成" icon="✅" theme="safe"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="警告"   icon="⚠️" theme="warning"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="新功能" icon="🚀" theme="info"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 只有圖示、無文字 --&gt;
+&lt;card-badge icon="📌" theme="special"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <!-- Example 2 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 2 &nbsp;Bootstrap Icons（bi- 前綴）</span></div>
+      <div class="ex-preview">
+        <card-badge text="收藏" icon="bi-heart-fill" theme="warning"></card-badge>
+        <card-badge text="下載" icon="bi-download"  theme="info"></card-badge>
+        <card-badge text="設定" icon="bi-gear"       theme="stone"></card-badge>
+        <card-badge icon="bi-star-fill" theme="yellow"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- icon 值以 "bi-" 開頭，自動渲染為 &lt;i class="bi bi-xxx"&gt; --&gt;
+&lt;card-badge text="收藏" icon="bi-heart-fill" theme="warning"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="下載" icon="bi-download"  theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="設定" icon="bi-gear"       theme="stone"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 只有圖示 --&gt;
+&lt;card-badge icon="bi-star-fill" theme="yellow"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 4. Theme ──────────────────────────────────────────────── -->
+  <section id="theme">
+    <h2>主題與外框</h2>
+    <p><code>theme</code> 屬性接受品牌色鍵名（如 <code>info</code>、<code>safe</code>）或任意十六進位色碼。在色鍵後加 <code>-outline</code> 切換為外框樣式，或直接用 <code>outline="true"</code> 屬性。</p>
+
+    <!-- Example 3 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 3 &nbsp;品牌色一覽</span></div>
+      <div class="ex-preview">
+        <card-badge text="info"     theme="info"></card-badge>
+        <card-badge text="special"  theme="special"></card-badge>
+        <card-badge text="safe"     theme="safe"></card-badge>
+        <card-badge text="warning"  theme="warning"></card-badge>
+        <card-badge text="lavender" theme="lavender"></card-badge>
+        <card-badge text="sky"      theme="sky"></card-badge>
+        <card-badge text="stone"    theme="stone"></card-badge>
+        <card-badge text="indigo"   theme="indigo"></card-badge>
+        <card-badge text="pink"     theme="pink"></card-badge>
+        <card-badge text="orange"   theme="orange"></card-badge>
+        <card-badge text="yellow"   theme="yellow"></card-badge>
+        <card-badge text="salmon"   theme="salmon"></card-badge>
+        <card-badge text="vanilla"  theme="vanilla"></card-badge>
+        <card-badge text="shell"    theme="shell"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="info"    theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="special" theme="special"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="safe"    theme="safe"&gt;&lt;/card-badge&gt;
+&lt;!-- … 其餘色鍵同樣格式 --&gt;
+
+&lt;!-- 也可直接用 hex 色碼 --&gt;
+&lt;card-badge text="自訂色" theme="#A047D0"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <!-- Example 4 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 4 &nbsp;Outline（外框）樣式</span></div>
+      <div class="ex-preview">
+        <card-badge text="info-outline"    theme="info-outline"></card-badge>
+        <card-badge text="special-outline" theme="special-outline"></card-badge>
+        <card-badge text="safe-outline"    theme="safe-outline"></card-badge>
+        <card-badge text="warning-outline" theme="warning-outline"></card-badge>
+        <card-badge text="indigo-outline"  theme="indigo-outline"></card-badge>
+        <card-badge text="outline 屬性"    theme="sky" outline="true"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- 方式 1：theme 加 -outline 後綴 --&gt;
+&lt;card-badge text="info-outline"    theme="info-outline"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="special-outline" theme="special-outline"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 方式 2：theme 不變，加上 outline="true" 屬性 --&gt;
+&lt;card-badge text="outline 屬性" theme="sky" outline="true"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <b>提示</b>
+      Outline 模式下，背景會設為主題色的 12% 透明度，邊框為 1px solid 主題色，文字也使用主題色。亮色背景（如 <code>special</code>、<code>vanilla</code>）在 outline 模式下視覺效果特別清晰。
+    </div>
+  </section>
+
+  <!-- ── 5. Size ───────────────────────────────────────────────── -->
+  <section id="size">
+    <h2>尺寸系統</h2>
+    <p>用 <code>size</code> 選擇預設尺寸；<code>font-size</code> 和 <code>padding</code> 可個別覆蓋字體大小和內距。</p>
+
+    <!-- Example 5 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 5 &nbsp;六種預設尺寸</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview">
+        <div class="size-row">
+          <card-badge text="xs" size="xs" theme="info"></card-badge>
+          <card-badge text="sm" size="sm" theme="info"></card-badge>
+          <card-badge text="md" size="md" theme="info"></card-badge>
+          <card-badge text="re（預設）" size="re" theme="info"></card-badge>
+          <card-badge text="lg" size="lg" theme="info"></card-badge>
+          <card-badge text="xl" size="xl" theme="info"></card-badge>
+        </div>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="xs" size="xs" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="sm" size="sm" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="md" size="md" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="re（預設）" size="re" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="lg" size="lg" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="xl" size="xl" theme="info"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>size</th><th>font-size</th><th>padding</th><th>dot 尺寸</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">xs</td><td class="t-default">0.558rem</td><td class="t-default">1px 6px</td><td class="t-default">8px</td></tr>
+          <tr><td class="t-attr">sm</td><td class="t-default">0.713rem</td><td class="t-default">2px 8px</td><td class="t-default">10px</td></tr>
+          <tr><td class="t-attr">md</td><td class="t-default">0.838rem</td><td class="t-default">3px 10px</td><td class="t-default">10px</td></tr>
+          <tr><td class="t-attr">re（預設）</td><td class="t-default">1.01rem</td><td class="t-default">4px 10px</td><td class="t-default">12px</td></tr>
+          <tr><td class="t-attr">lg</td><td class="t-default">1.363rem</td><td class="t-default">6px 12px</td><td class="t-default">14px</td></tr>
+          <tr><td class="t-attr">xl</td><td class="t-default">1.758rem</td><td class="t-default">8px 14px</td><td class="t-default">16px</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 6 &nbsp;自訂字體大小與內距</span></div>
+      <div class="ex-preview">
+        <card-badge text="自訂尺寸" theme="info" font-size="1.1rem" padding="6px 18px"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- font-size 和 padding 的值需自帶單位 --&gt;
+&lt;card-badge text="自訂尺寸"
+            theme="info"
+            font-size="1.1rem"
+            padding="6px 18px"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 6. DateTime ───────────────────────────────────────────── -->
+  <section id="datetime">
+    <h2>日期時間格式</h2>
+    <p>設定 <code>type</code> 和 <code>value</code> 後，元件自動格式化並顯示日期或時間字串，不需要手動格式化。</p>
+
+    <!-- Example 7 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 7 &nbsp;三種格式類型</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview">
+        <card-badge type="date"     value="2025-08-15"          theme="info"    icon="📅"></card-badge>
+        <card-badge type="date"     value="2025-08-15" format="MM/DD" theme="stone"   icon="📅"></card-badge>
+        <card-badge type="time"     value="09:30:00"             theme="special" icon="🕘"></card-badge>
+        <card-badge type="datetime" value="2025-08-15T14:30:00"  theme="indigo"  icon="🗓️"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- type="date"，預設格式 YYYY-MM-DD --&gt;
+&lt;card-badge type="date" value="2025-08-15" theme="info" icon="📅"&gt;&lt;/card-badge&gt;
+
+&lt;!-- format 可選 YYYY-MM-DD / MM/DD / MM-DD --&gt;
+&lt;card-badge type="date" value="2025-08-15" format="MM/DD"
+            theme="stone" icon="📅"&gt;&lt;/card-badge&gt;
+
+&lt;!-- type="time"，顯示 HH:mm --&gt;
+&lt;card-badge type="time" value="09:30:00" theme="special" icon="🕘"&gt;&lt;/card-badge&gt;
+
+&lt;!-- type="datetime"，預設格式 MM/DD HH:mm --&gt;
+&lt;card-badge type="datetime" value="2025-08-15T14:30:00"
+            theme="indigo" icon="🗓️"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 7. Deadline ───────────────────────────────────────────── -->
+  <section id="deadline">
+    <h2>截止日期</h2>
+    <p><code>type="deadline"</code> 自動計算距今天數：逾期時切換為 <code>warning</code> 色並加警告圖示，接近截止（≤ <code>warning-days</code>）時改用 <code>yellow</code> 色，正常時使用設定的 theme 色。</p>
+
+    <!-- Example 8 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 8 &nbsp;截止日期三種狀態</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview">
+        <card-badge type="deadline" value="2020-01-01" theme="info"></card-badge>
+        <card-badge type="deadline" value="2099-12-30" warning-days="30" theme="info"></card-badge>
+        <card-badge type="deadline" value="2099-12-30" warning-days="999" theme="info"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- 已逾期 → warning 色 + ⚠️ 圖示 --&gt;
+&lt;card-badge type="deadline" value="2020-01-01" theme="info"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 距截止 ≤ warning-days → yellow 色；預設 warning-days="3" --&gt;
+&lt;card-badge type="deadline" value="2099-12-30"
+            warning-days="30" theme="info"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 剩餘天數 > warning-days → 使用 theme 色 --&gt;
+&lt;card-badge type="deadline" value="2099-12-30"
+            warning-days="5" theme="info"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>狀態</th><th>色彩</th><th>圖示</th></tr></thead>
+        <tbody>
+          <tr><td class="t-desc">已逾期（diffDays &lt; 0）</td><td class="t-default">warning</td><td class="t-default">⚠️（自動加入）</td></tr>
+          <tr><td class="t-desc">今天到期（diffDays = 0）</td><td class="t-default">attention（= yellow）</td><td class="t-default">📅</td></tr>
+          <tr><td class="t-desc">≤ warning-days</td><td class="t-default">attention（= yellow）</td><td class="t-default">📅</td></tr>
+          <tr><td class="t-desc">正常範圍</td><td class="t-default">與 theme 屬性同</td><td class="t-default">📅</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 8. Count ──────────────────────────────────────────────── -->
+  <section id="count">
+    <h2>數量徽章</h2>
+    <p>設定 <code>count</code> 屬性進入數量模式。數字超過 <code>max-count</code> 顯示「N+」；<code>dot-mode="true"</code> 則不顯示數字，只顯示圓點。</p>
+
+    <!-- Example 9 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 9 &nbsp;數量與圓點</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview">
+        <card-badge count="5"   theme="warning"                        size="md"></card-badge>
+        <card-badge count="100" theme="info"    max-count="99"         size="md"></card-badge>
+        <card-badge count="3"   theme="safe"    dot-mode="true"        size="md"></card-badge>
+        <card-badge count="0"   theme="special" show-zero="true"       size="md"></card-badge>
+        <card-badge count="8"   theme="info"    icon="bi-bell"         size="md"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- 基本數量 --&gt;
+&lt;card-badge count="5" theme="warning"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 超過 max-count 顯示 99+ --&gt;
+&lt;card-badge count="100" theme="info" max-count="99"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 圓點模式（只顯示色點） --&gt;
+&lt;card-badge count="3" theme="safe" dot-mode="true"&gt;&lt;/card-badge&gt;
+
+&lt;!-- count=0 時預設隱藏，show-zero="true" 強制顯示 --&gt;
+&lt;card-badge count="0" theme="special" show-zero="true"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 搭配圖示 --&gt;
+&lt;card-badge count="8" theme="info" icon="bi-bell"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <h3>動態更新數量</h3>
+    <div class="ex">
+      <div class="ex-preview block">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <card-badge id="cnt-demo" count="0" theme="info" show-zero="true" count-animate="true" size="lg"></card-badge>
+          <div class="dbtn-row" style="margin-top:0">
+            <button class="dbtn" onclick="
+              const el = document.getElementById('cnt-demo');
+              el.setAttribute('count', parseInt(el.getAttribute('count')||0) + 1)">＋ 增加</button>
+            <button class="dbtn" onclick="
+              const el = document.getElementById('cnt-demo');
+              const v = parseInt(el.getAttribute('count')||0);
+              if(v>0) el.setAttribute('count', v-1)">－ 減少</button>
+            <button class="dbtn" onclick="document.getElementById('cnt-demo').setAttribute('count','0')">清零</button>
+          </div>
+        </div>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML + JS</span></div>
+      <pre class="language-html"><code>&lt;card-badge id="badge" count="0" theme="info"
+            show-zero="true" count-animate="true"&gt;&lt;/card-badge&gt;
+
+&lt;script&gt;
+  const badge = document.getElementById('badge');
+
+  // 直接修改 count 屬性，元件自動更新並播放彈跳動畫
+  badge.setAttribute('count', parseInt(badge.getAttribute('count')) + 1);
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <b>提示</b>
+      <code>count-animate="true"</code> 讓數字更新時播放 scale 彈跳動畫，動畫名稱帶入實例 UID 確保多個徽章同時動畫不互相干擾。設為 <code>false</code> 可停用動畫。
+    </div>
+  </section>
+
+  <!-- ── 9. Clickable & Hover ──────────────────────────────────── -->
+  <section id="clickable">
+    <h2>可點擊與懸停效果</h2>
+    <p>加上 <code>clickable="true"</code> 後，元件獲得 <code>tabindex</code>、<code>cursor: pointer</code> 及焦點樣式，並可搭配 <code>hover-effect</code> 選擇懸停動畫。</p>
+
+    <!-- Example 10 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 10 &nbsp;五種懸停效果</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview">
+        <card-badge text="lift（預設）" theme="info"    clickable="true" hover-effect="lift"></card-badge>
+        <card-badge text="scale"       theme="special" clickable="true" hover-effect="scale"></card-badge>
+        <card-badge text="glow"        theme="safe"    clickable="true" hover-effect="glow"></card-badge>
+        <card-badge text="pulse"       theme="indigo"  clickable="true" hover-effect="pulse"></card-badge>
+        <card-badge text="rotate"      theme="orange"  clickable="true" hover-effect="rotate"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="lift（預設）" theme="info"
+            clickable="true" hover-effect="lift"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="scale"  theme="special"
+            clickable="true" hover-effect="scale"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="glow"   theme="safe"
+            clickable="true" hover-effect="glow"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="pulse"  theme="indigo"
+            clickable="true" hover-effect="pulse"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="rotate" theme="orange"
+            clickable="true" hover-effect="rotate"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>hover-effect</th><th>效果說明</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">lift</td><td class="t-desc">上浮 3px，加深陰影（預設）</td></tr>
+          <tr><td class="t-attr">scale</td><td class="t-desc">放大至 1.08 倍</td></tr>
+          <tr><td class="t-attr">glow</td><td class="t-desc">外發光（使用主題色 55% 透明度）</td></tr>
+          <tr><td class="t-attr">pulse</td><td class="t-desc">單次 scale 脈衝動畫（0.6s）</td></tr>
+          <tr><td class="t-attr">rotate</td><td class="t-desc">輕微旋轉 2deg + 上浮</td></tr>
+          <tr><td class="t-attr">none</td><td class="t-desc">無懸停效果</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout note">
+      <b>焦點樣式</b>
+      可點擊的徽章支援鍵盤焦點（Tab 鍵可聚焦，Enter / Space 可觸發點擊），焦點圈顏色使用 <code>focus-color</code> 屬性設定，預設與 <code>theme</code> 同色。
+    </div>
+  </section>
+
+  <!-- ── 10. Href & Removeself ─────────────────────────────────── -->
+  <section id="href">
+    <h2>連結與自我移除</h2>
+
+    <!-- Example 11 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 11 &nbsp;連結跳轉</span></div>
+      <div class="ex-preview">
+        <card-badge text="前往 GitHub" icon="bi-github" theme="info"
+                    href="https://github.com" href-target="_blank"
+                    clickable="true" hover-effect="lift"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="前往 GitHub" icon="bi-github"
+            theme="info"
+            href="https://github.com"
+            href-target="_blank"
+            clickable="true"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <!-- Example 12 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 12 &nbsp;點擊後自我移除</span></div>
+      <div class="ex-preview" id="removeself-preview">
+        <card-badge text="× 點我消失" theme="warning" clickable="true"
+                    removeself="true" hover-effect="scale"></card-badge>
+        <card-badge text="× 我也會消失" theme="info" clickable="true"
+                    removeself="true" hover-effect="scale"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- removeself="true" 讓徽章點擊後以動畫淡出並從 DOM 移除 --&gt;
+&lt;card-badge text="× 點我消失"
+            theme="warning"
+            clickable="true"
+            removeself="true"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 11. Copy ──────────────────────────────────────────────── -->
+  <section id="copy">
+    <h2>複製功能</h2>
+    <p>設定 <code>action="copy"</code> 後，點擊徽章會將文字寫入剪貼簿，同時可選擇性地貼到指定目標元素（<code>target</code>）或從來源元素讀取（<code>source</code>）。</p>
+
+    <!-- Example 13 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 13 &nbsp;複製固定文字</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview block">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <card-badge text="複製連結" icon="bi-clipboard" theme="info"
+                      clickable="true" action="copy"
+                      alert-message="連結已複製！" alert-type="success"
+                      hover-effect="lift"></card-badge>
+          <span style="color:var(--muted); font-size:0.85rem">← 點擊後顯示提示並複製「https://example.com」到剪貼簿</span>
+        </div>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- text 屬性也是複製的來源文字 --&gt;
+&lt;card-badge text="複製連結" icon="bi-clipboard"
+            theme="info" clickable="true"
+            action="copy"
+            alert-message="連結已複製！" alert-type="success"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <!-- Example 14 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 14 &nbsp;從 source 元素讀取並複製</span></div>
+      <div class="ex-preview block">
+        <div style="margin-bottom:10px;">
+          <input id="copy-src" type="text" value="這段文字會被複製"
+            style="background:var(--card); border:1px solid var(--border); color:var(--shell); padding:6px 10px; border-radius:6px; width:240px; font-size:0.9rem;">
+        </div>
+        <card-badge text="複製輸入框內容" icon="bi-copy" theme="special"
+                    clickable="true" action="copy"
+                    source="copy-src"
+                    alert-message="已複製！" alert-type="success"
+                    hover-effect="lift"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;input id="my-input" type="text" value="這段文字會被複製"&gt;
+
+&lt;!-- source 指向來源元素 id --&gt;
+&lt;card-badge text="複製輸入框內容" icon="bi-copy"
+            theme="special" clickable="true"
+            action="copy" source="my-input"
+            alert-message="已複製！" alert-type="success"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">action="copy"</td><td class="t-desc">啟用複製行為</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">source</td><td class="t-desc">讀取此 ID 元素的文字（input.value 或 textContent）</td><td class="t-default">—（用 text 屬性）</td></tr>
+          <tr><td class="t-attr">target</td><td class="t-desc">同時將文字寫入此 ID 元素（input.value 或 textContent）</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">copy-html</td><td class="t-desc">設為 <code>true</code> 時讀取 innerHTML 而非 textContent</td><td class="t-default">false</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 12. Toggle ───────────────────────────────────────────── -->
+  <section id="toggle">
+    <h2>折疊控制</h2>
+    <p>設定 <code>toggle-target</code> 為目標元素的 ID，點擊徽章時以動畫展開或收起目標元素；圖示會自動旋轉 180° 表示狀態。</p>
+
+    <!-- Example 15 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 15 &nbsp;折疊區塊</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview block">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <strong style="color:var(--shell); font-size:0.9rem">詳細說明</strong>
+          <card-badge icon="bi-chevron-down" theme="info-outline"
+                      clickable="true" toggle-target="toggle-section"
+                      hover-effect="none"></card-badge>
+        </div>
+        <div id="toggle-section" style="padding:12px 16px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.9rem;">
+          <p style="margin:0;">這是可以折疊的詳細內容區塊。點擊上方的徽章圖示可以展開或收起。圖示會跟著狀態旋轉，展開時指向上方。</p>
+        </div>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;div style="display:flex; align-items:center; gap:8px;"&gt;
+  &lt;strong&gt;詳細說明&lt;/strong&gt;
+
+  &lt;!-- toggle-target 指向要折疊的元素 id --&gt;
+  &lt;card-badge icon="bi-chevron-down"
+              theme="info-outline"
+              clickable="true"
+              toggle-target="detail-section"
+              hover-effect="none"&gt;&lt;/card-badge&gt;
+&lt;/div&gt;
+
+&lt;div id="detail-section"&gt;
+  &lt;p&gt;這是可以折疊的詳細內容。&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <b>提示</b>
+      圖示元素（<code>.badge i</code> 或 <code>.badge .icon</code>）在折疊時 <code>transform: rotate(0deg)</code>，展開時 <code>rotate(180deg)</code>，搭配 <code>bi-chevron-down</code> 效果最直觀。
+    </div>
+  </section>
+
+  <!-- ── 13. Filter ───────────────────────────────────────────── -->
+  <section id="filter">
+    <h2>過濾功能</h2>
+    <p>設定 <code>action="filter"</code> 與 <code>data-filter</code>，點擊後頁面上具有 <code>data-filter-group</code> 屬性的元素會依標籤篩選顯示或隱藏。</p>
+
+    <!-- Example 16 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 16 &nbsp;標籤過濾清單</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview block">
+        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px;">
+          <card-badge text="全部"  theme="info"    clickable="true" action="filter" data-filter="all"      size="sm"></card-badge>
+          <card-badge text="前端"  theme="special" clickable="true" action="filter" data-filter="frontend" size="sm"></card-badge>
+          <card-badge text="後端"  theme="safe"    clickable="true" action="filter" data-filter="backend"  size="sm"></card-badge>
+          <card-badge text="設計"  theme="indigo"  clickable="true" action="filter" data-filter="design"   size="sm"></card-badge>
+        </div>
+        <div class="filter-items">
+          <span class="filter-tag" data-filter-group="frontend">Vue.js</span>
+          <span class="filter-tag" data-filter-group="frontend">React</span>
+          <span class="filter-tag" data-filter-group="backend">Node.js</span>
+          <span class="filter-tag" data-filter-group="backend">Python</span>
+          <span class="filter-tag" data-filter-group="design">Figma</span>
+          <span class="filter-tag" data-filter-group="frontend,design">Tailwind</span>
+        </div>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- 過濾器徽章 --&gt;
+&lt;card-badge text="全部" theme="info"    clickable="true"
+            action="filter" data-filter="all"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="前端" theme="special" clickable="true"
+            action="filter" data-filter="frontend"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="後端" theme="safe"    clickable="true"
+            action="filter" data-filter="backend"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 被過濾的內容元素 --&gt;
+&lt;span data-filter-group="frontend"&gt;Vue.js&lt;/span&gt;
+&lt;span data-filter-group="backend"&gt;Node.js&lt;/span&gt;
+
+&lt;!-- 一個元素屬於多個分類，用逗號分隔 --&gt;
+&lt;span data-filter-group="frontend,design"&gt;Tailwind&lt;/span&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 14. Rotate ───────────────────────────────────────────── -->
+  <section id="rotate">
+    <h2>輪播模式</h2>
+    <p>輪播使用隱藏的 <code>&lt;badge-item&gt;</code> 子元素儲存候選內容。共有三種動作模式，決定每次點擊輪播的目標。</p>
+
+    <h3>三種輪播動作</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>action</th><th>行為</th><th>需要</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">rotate-content</td><td class="t-desc">每次點擊將 badge-item 的內容寫入 <code>target</code> 元素</td><td class="t-default">target</td></tr>
+          <tr><td class="t-attr">rotate-self</td><td class="t-desc">每次點擊自身切換下一個 badge-item 的文字／圖示／主題，並展開至 <code>target</code></td><td class="t-default">badge-item 子元素</td></tr>
+          <tr><td class="t-attr">rotate-self-auto</td><td class="t-desc">按 <code>interval</code> 自動輪播；點擊展開當前項目到 <code>target</code></td><td class="t-default">badge-item + interval</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Example 17 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 17 &nbsp;rotate-content：點擊輸出到目標區</span>
+      </div>
+      <div class="ex-preview block">
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+          <card-badge text="顯示訣竅" icon="💡" theme="info"
+                      clickable="true" action="rotate-content"
+                      target="rotate-out" hover-effect="lift">
+            <badge-item>訣竅 1：多用 outline 模式，視覺更輕量。</badge-item>
+            <badge-item>訣竅 2：用 size="xs" 搭配數量徽章作為通知點。</badge-item>
+            <badge-item>訣竅 3：hover-effect="glow" 在深色背景最搶眼。</badge-item>
+          </card-badge>
+        </div>
+        <div id="rotate-out" class="demo-output">點擊上方徽章顯示訣竅…</div>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="顯示訣竅" icon="💡"
+            theme="info" clickable="true"
+            action="rotate-content"
+            target="output-area"&gt;
+
+  &lt;!-- badge-item 子元素的 innerHTML 會依序寫入 target --&gt;
+  &lt;badge-item&gt;訣竅 1：多用 outline 模式，視覺更輕量。&lt;/badge-item&gt;
+  &lt;badge-item&gt;訣竅 2：用 size="xs" 搭配數量徽章作為通知點。&lt;/badge-item&gt;
+  &lt;badge-item&gt;訣竅 3：hover-effect="glow" 在深色背景最搶眼。&lt;/badge-item&gt;
+
+&lt;/card-badge&gt;
+
+&lt;div id="output-area"&gt;點擊徽章顯示訣竅…&lt;/div&gt;</code></pre>
+    </div>
+
+    <!-- Example 18 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 18 &nbsp;rotate-self：徽章本身切換外觀</span></div>
+      <div class="ex-preview">
+        <card-badge text="狀態 A" theme="info" clickable="true"
+                    action="rotate-self" hover-effect="scale">
+          <badge-item text="狀態 A" theme="info"    icon="🔵"></badge-item>
+          <badge-item text="狀態 B" theme="special" icon="🟡"></badge-item>
+          <badge-item text="狀態 C" theme="safe"    icon="🟢"></badge-item>
+        </card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="狀態 A" theme="info"
+            clickable="true" action="rotate-self"&gt;
+
+  &lt;!-- badge-item 用 text / icon / theme 屬性指定各輪播外觀 --&gt;
+  &lt;badge-item text="狀態 A" theme="info"    icon="🔵"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="狀態 B" theme="special" icon="🟡"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="狀態 C" theme="safe"    icon="🟢"&gt;&lt;/badge-item&gt;
+
+&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <!-- Example 19 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 19 &nbsp;rotate-self-auto：自動計時輪播</span></div>
+      <div class="ex-preview">
+        <card-badge text="自動輪播" theme="info" action="rotate-self-auto" interval="2s">
+          <badge-item text="Vue.js"   theme="safe"    icon="💚"></badge-item>
+          <badge-item text="React"    theme="info"    icon="⚛️"></badge-item>
+          <badge-item text="Angular"  theme="warning" icon="🔴"></badge-item>
+          <badge-item text="Svelte"   theme="orange"  icon="🔥"></badge-item>
+        </card-badge>
+        <span style="color:var(--muted); font-size:0.82rem; margin-left:8px">每 2 秒自動切換</span>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;!-- interval 支援秒（s）和分（m），如 "2s"、"0.5m" --&gt;
+&lt;card-badge text="自動輪播" theme="info"
+            action="rotate-self-auto"
+            interval="2s"&gt;
+
+  &lt;badge-item text="Vue.js"  theme="safe"    icon="💚"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="React"   theme="info"    icon="⚛️"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="Angular" theme="warning" icon="🔴"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="Svelte"  theme="orange"  icon="🔥"&gt;&lt;/badge-item&gt;
+
+&lt;/card-badge&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 15. Font Control ──────────────────────────────────────── -->
+  <section id="font">
+    <h2>字體控制</h2>
+    <p>設定 <code>font-control</code> 為目標元素 ID，搭配 <code>action</code> 為 <code>font-increase</code>、<code>font-decrease</code> 或 <code>font-reset</code>，點擊後調整目標字體大小。每次步進量由 <code>font-step</code> 設定（預設 2px）。</p>
+
+    <!-- Example 20 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 20 &nbsp;字體放大縮小重設</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview block">
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+          <card-badge text="A+" theme="info"    clickable="true"
+                      action="font-increase" font-control="font-demo" font-step="2" hover-effect="lift"></card-badge>
+          <card-badge text="A-" theme="stone"   clickable="true"
+                      action="font-decrease" font-control="font-demo" font-step="2" hover-effect="lift"></card-badge>
+          <card-badge text="重設" theme="region" clickable="true"
+                      action="font-reset"    font-control="font-demo"                hover-effect="lift"></card-badge>
+        </div>
+        <p id="font-demo" style="color:var(--shell);">這段文字的大小會被上方徽章控制。最小 12px，最大 32px。</p>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="A+" theme="info"
+            clickable="true"
+            action="font-increase"
+            font-control="target-text"
+            font-step="2"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="A-" theme="stone"
+            clickable="true"
+            action="font-decrease"
+            font-control="target-text"
+            font-step="2"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="重設" theme="region"
+            clickable="true"
+            action="font-reset"
+            font-control="target-text"&gt;&lt;/card-badge&gt;
+
+&lt;p id="target-text"&gt;這段文字的大小由徽章控制。&lt;/p&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 16. Alert ─────────────────────────────────────────────── -->
+  <section id="alert">
+    <h2>浮動提示</h2>
+    <p>點擊徽章後，可在頁面固定位置彈出一條品牌色浮動提示，幾秒後自動消失。訊息內容可從屬性直接設定，或從另一個元素動態讀取。</p>
+
+    <!-- Example 21 -->
+    <div class="ex">
+      <div class="ex-head">
+        <span class="ex-title">範例 21 &nbsp;四種提示類型</span>
+        <span class="ex-lv">常用</span>
+      </div>
+      <div class="ex-preview">
+        <card-badge text="成功訊息" theme="safe"    clickable="true"
+                    alert-message="操作成功！" alert-type="success"
+                    alert-position="top" alert-duration="3000" hover-effect="lift"></card-badge>
+        <card-badge text="一般資訊" theme="info"    clickable="true"
+                    alert-message="這是一則資訊提示。" alert-type="info"
+                    alert-position="top-right" alert-duration="3000" hover-effect="lift"></card-badge>
+        <card-badge text="注意警告" theme="yellow"  clickable="true"
+                    alert-message="請注意這個操作！" alert-type="warning"
+                    alert-position="top" alert-duration="3000" hover-effect="lift"></card-badge>
+        <card-badge text="錯誤訊息" theme="warning" clickable="true"
+                    alert-message="發生錯誤，請重試。" alert-type="danger"
+                    alert-position="top" alert-duration="3000" hover-effect="lift"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="成功訊息" theme="safe" clickable="true"
+            alert-message="操作成功！"
+            alert-type="success"
+            alert-position="top"
+            alert-duration="3000"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="一般資訊" theme="info" clickable="true"
+            alert-message="這是一則資訊提示。"
+            alert-type="info"
+            alert-position="top-right"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="注意警告" theme="yellow" clickable="true"
+            alert-message="請注意這個操作！"
+            alert-type="warning"&gt;&lt;/card-badge&gt;
+
+&lt;card-badge text="錯誤訊息" theme="warning" clickable="true"
+            alert-message="發生錯誤，請重試。"
+            alert-type="danger"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <!-- Example 22 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 22 &nbsp;從另一個元素讀取訊息</span></div>
+      <div class="ex-preview block">
+        <div style="margin-bottom:10px;">
+          <input id="alert-src" type="text" value="輸入要顯示的訊息"
+            style="background:var(--card); border:1px solid var(--border); color:var(--shell); padding:6px 10px; border-radius:6px; width:240px; font-size:0.9rem;">
+        </div>
+        <card-badge text="顯示訊息" icon="📢" theme="info"
+                    clickable="true" alert-source="alert-src"
+                    alert-type="info" hover-effect="lift"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;input id="msg-input" type="text" value="輸入要顯示的訊息"&gt;
+
+&lt;!-- alert-source 指向來源元素 id，動態讀取其 value 或 textContent --&gt;
+&lt;card-badge text="顯示訊息" icon="📢"
+            theme="info" clickable="true"
+            alert-source="msg-input"
+            alert-type="info"&gt;&lt;/card-badge&gt;</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">alert-message</td><td class="t-desc">直接設定顯示文字</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">alert-source</td><td class="t-desc">從此 ID 元素讀取文字（優先於 alert-message 以外情境）</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">alert-type</td><td class="t-desc"><code>info</code> / <code>success</code> / <code>warning</code> / <code>danger</code></td><td class="t-default">info</td></tr>
+          <tr><td class="t-attr">alert-duration</td><td class="t-desc">顯示時長（ms）</td><td class="t-default">4000</td></tr>
+          <tr><td class="t-attr">alert-position</td><td class="t-desc"><code>top</code> / <code>top-left</code> / <code>top-right</code> / <code>bottom</code> / <code>bottom-left</code> / <code>bottom-right</code></td><td class="t-default">top</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 17. Events ────────────────────────────────────────────── -->
+  <section id="events">
+    <h2>自訂事件</h2>
+    <p>元件在關鍵動作後會 <code>dispatchEvent</code> 自訂事件，讓外部 JavaScript 可以監聽並做進一步處理。所有事件都帶有 <code>bubbles: true</code>，可在父元素上冒泡接收。</p>
+
+    <!-- Example 23 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 23 &nbsp;監聽 badge-click</span></div>
+      <div class="ex-preview block">
+        <card-badge id="ev-demo" text="點我記錄" theme="info"
+                    clickable="true" hover-effect="lift"></card-badge>
+        <div id="ev-log" class="demo-output" style="margin-top:10px">等待事件…</div>
+        <script>
+          document.getElementById('ev-demo').addEventListener('badge-click', function(e) {
+            document.getElementById('ev-log').textContent =
+              'badge-click 觸發 | action: ' + (e.detail.action || '—') +
+              ' | text: ' + e.detail.text;
+          });
+        </script>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">JavaScript</span></div>
+      <pre class="language-javascript"><code>document.getElementById('my-badge').addEventListener('badge-click', function(e) {
+  console.log(e.detail);
+  // {
+  //   action       : 'copy',       // 目前的 action 屬性值
+  //   filter       : null,         // data-filter 值
+  //   source       : 'input-id',   // source 屬性值
+  //   target       : 'out-id',     // target 屬性值
+  //   toggleTarget : null,
+  //   fontControl  : null,
+  //   isCollapsed  : false,        // toggle 時的折疊狀態
+  //   type         : null,         // type 屬性值
+  //   value        : null,
+  //   text         : '複製內容',
+  //   count        : 0,
+  //   href         : null,
+  //   alertMessage : '已複製！'
+  // }
+});</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>事件名稱</th><th>觸發時機</th><th>detail 欄位</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">badge-click</td><td class="t-desc">任何點擊動作完成後</td><td class="t-default">action, filter, source, target, toggleTarget, fontControl, isCollapsed, type, value, text, count, href, alertMessage</td></tr>
+          <tr><td class="t-attr">badge-rotate</td><td class="t-desc">輪播切換（rotate-content / rotate-self）</td><td class="t-default">mode, currentIndex, totalItems, targetId</td></tr>
+          <tr><td class="t-attr">badge-expand</td><td class="t-desc">rotate-self-auto 手動點擊展開</td><td class="t-default">currentIndex, totalItems, targetId</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 18. Disabled ──────────────────────────────────────────── -->
+  <section id="disabled">
+    <h2>停用狀態</h2>
+    <p>設定 <code>disabled="true"</code> 後，元件套用灰化外觀，阻擋所有點擊與鍵盤事件，<code>cursor</code> 改為 <code>not-allowed</code>。</p>
+
+    <!-- Example 24 -->
+    <div class="ex">
+      <div class="ex-head"><span class="ex-title">範例 24 &nbsp;正常與停用對比</span></div>
+      <div class="ex-preview">
+        <card-badge text="正常" icon="✅" theme="info"    clickable="true" hover-effect="lift"></card-badge>
+        <card-badge text="停用" icon="🚫" theme="info"    clickable="true" disabled="true"></card-badge>
+        <card-badge text="正常外框" theme="special-outline" clickable="true" hover-effect="lift"></card-badge>
+        <card-badge text="停用外框" theme="special-outline" clickable="true" disabled="true"></card-badge>
+      </div>
+      <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
+      <pre class="language-html"><code>&lt;card-badge text="正常" theme="info" clickable="true"&gt;&lt;/card-badge&gt;
+
+&lt;!-- disabled="true" 灰化外觀、阻止所有互動 --&gt;
+&lt;card-badge text="停用" theme="info"
+            clickable="true" disabled="true"&gt;&lt;/card-badge&gt;
+
+&lt;!-- 也可在執行時動態切換 --&gt;
+&lt;script&gt;
+  badge.setAttribute('disabled', 'true');   // 停用
+  badge.setAttribute('disabled', 'false');  // 恢復
+&lt;/script&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ── 19. Full Reference ────────────────────────────────────── -->
+  <section id="ref">
+    <h2>完整屬性速查</h2>
+
+    <h3>顯示與外觀</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">屬性</th><th>說明</th><th style="width:20%">預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">text</td><td class="t-desc">顯示文字</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">icon</td><td class="t-desc">圖示；<code>bi-xxx</code> 為 Bootstrap Icons，其餘直接插入</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">theme</td><td class="t-desc">品牌色鍵或 hex 色碼；加 <code>-outline</code> 後綴切換外框樣式</td><td class="t-default">shell（或繼承）</td></tr>
+          <tr><td class="t-attr">outline</td><td class="t-desc"><code>true</code> 強制外框模式</td><td class="t-default">false</td></tr>
+          <tr><td class="t-attr">size</td><td class="t-desc"><code>xs</code> / <code>sm</code> / <code>md</code> / <code>re</code> / <code>lg</code> / <code>xl</code></td><td class="t-default">re</td></tr>
+          <tr><td class="t-attr">font-size</td><td class="t-desc">自訂字體大小（需含單位，如 <code>1rem</code>）</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">padding</td><td class="t-desc">自訂內距（需含單位，如 <code>4px 12px</code>）</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">focus-color</td><td class="t-desc">鍵盤焦點圈顏色（品牌色鍵或 hex）</td><td class="t-default">與 theme 同</td></tr>
+          <tr><td class="t-attr">disabled</td><td class="t-desc"><code>true</code> 灰化外觀、阻止所有互動</td><td class="t-default">false</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>資料類型</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">屬性</th><th>說明</th><th style="width:20%">預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">type</td><td class="t-desc"><code>date</code> / <code>time</code> / <code>datetime</code> / <code>deadline</code></td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">value</td><td class="t-desc">type 的資料值（日期字串、時間字串等）</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">format</td><td class="t-desc">date 格式：<code>YYYY-MM-DD</code> / <code>MM/DD</code> / <code>MM-DD</code></td><td class="t-default">YYYY-MM-DD</td></tr>
+          <tr><td class="t-attr">warning-days</td><td class="t-desc">deadline 模式：剩餘天數 ≤ 此值時警告色</td><td class="t-default">3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>數量徽章</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">屬性</th><th>說明</th><th style="width:20%">預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">count</td><td class="t-desc">數量值（整數）；設定後進入數量模式</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">max-count</td><td class="t-desc">超過此值顯示「N+」</td><td class="t-default">99</td></tr>
+          <tr><td class="t-attr">show-zero</td><td class="t-desc"><code>true</code> 強制顯示 count=0</td><td class="t-default">false（隱藏）</td></tr>
+          <tr><td class="t-attr">dot-mode</td><td class="t-desc"><code>true</code> 只顯示色點，不顯示數字</td><td class="t-default">false</td></tr>
+          <tr><td class="t-attr">count-animate</td><td class="t-desc"><code>false</code> 停用數字更新彈跳動畫</td><td class="t-default">true</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>互動行為</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">屬性</th><th>說明</th><th style="width:20%">預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">clickable</td><td class="t-desc"><code>true</code> 啟用點擊、焦點、hover 效果</td><td class="t-default">false</td></tr>
+          <tr><td class="t-attr">hover-effect</td><td class="t-desc"><code>lift</code> / <code>scale</code> / <code>glow</code> / <code>pulse</code> / <code>rotate</code> / <code>none</code></td><td class="t-default">lift</td></tr>
+          <tr><td class="t-attr">href</td><td class="t-desc">點擊後跳轉的 URL</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">href-target</td><td class="t-desc">連結開啟目標（如 <code>_blank</code>）</td><td class="t-default">_self</td></tr>
+          <tr><td class="t-attr">removeself</td><td class="t-desc"><code>true</code> 點擊後動畫淡出並從 DOM 移除</td><td class="t-default">false</td></tr>
+          <tr><td class="t-attr">toggle-target</td><td class="t-desc">折疊目標元素 ID</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">data-filter</td><td class="t-desc">過濾標籤值（配合 action="filter"）</td><td class="t-default">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>動作（action 屬性值）</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">action 值</th><th>說明</th><th style="width:20%">需要</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">copy</td><td class="t-desc">複製 text / source 元素內容至剪貼簿，可選寫入 target</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">filter</td><td class="t-desc">依 data-filter 篩選 data-filter-group 元素</td><td class="t-default">data-filter</td></tr>
+          <tr><td class="t-attr">rotate-content</td><td class="t-desc">將 badge-item 的 HTML 依序寫入 target</td><td class="t-default">target</td></tr>
+          <tr><td class="t-attr">rotate-self</td><td class="t-desc">徽章本身依序切換 badge-item 外觀並展開到 target</td><td class="t-default">badge-item</td></tr>
+          <tr><td class="t-attr">rotate-self-auto</td><td class="t-desc">自動計時輪播；點擊展開當前項到 target</td><td class="t-default">badge-item + interval</td></tr>
+          <tr><td class="t-attr">font-increase</td><td class="t-desc">增大 font-control 元素字體（上限 32px）</td><td class="t-default">font-control</td></tr>
+          <tr><td class="t-attr">font-decrease</td><td class="t-desc">縮小 font-control 元素字體（下限 12px）</td><td class="t-default">font-control</td></tr>
+          <tr><td class="t-attr">font-reset</td><td class="t-desc">清除 font-control 元素的 inline font-size</td><td class="t-default">font-control</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>輔助屬性</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">屬性</th><th>說明</th><th style="width:20%">預設</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">source</td><td class="t-desc">copy / alert-source 來源元素 ID</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">target</td><td class="t-desc">copy / rotate 輸出目標元素 ID</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">copy-html</td><td class="t-desc"><code>true</code> 讀取 innerHTML 而非 textContent</td><td class="t-default">false</td></tr>
+          <tr><td class="t-attr">font-control</td><td class="t-desc">字體控制目標元素 ID</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">font-step</td><td class="t-desc">字體增減步進量（px 整數）</td><td class="t-default">2</td></tr>
+          <tr><td class="t-attr">interval</td><td class="t-desc">rotate-self-auto 自動輪播間隔（支援 s/m 後綴）</td><td class="t-default">3s</td></tr>
+          <tr><td class="t-attr">alert-message</td><td class="t-desc">浮動提示文字</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">alert-source</td><td class="t-desc">從此 ID 元素讀取提示文字</td><td class="t-default">—</td></tr>
+          <tr><td class="t-attr">alert-type</td><td class="t-desc"><code>info</code> / <code>success</code> / <code>warning</code> / <code>danger</code></td><td class="t-default">info</td></tr>
+          <tr><td class="t-attr">alert-duration</td><td class="t-desc">浮動提示顯示時長（ms）</td><td class="t-default">4000</td></tr>
+          <tr><td class="t-attr">alert-position</td><td class="t-desc">顯示位置（6 個固定值）</td><td class="t-default">top</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>badge-item 子元素屬性</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th style="width:32%">屬性</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td class="t-attr">text</td><td class="t-desc">該輪播項目的文字（用於 rotate-self）</td></tr>
+          <tr><td class="t-attr">icon</td><td class="t-desc">該輪播項目的圖示（用於 rotate-self）</td></tr>
+          <tr><td class="t-attr">theme</td><td class="t-desc">該輪播項目的主題色（用於 rotate-self）</td></tr>
+          <tr><td class="t-attr">（內容）</td><td class="t-desc">innerHTML 直接寫入 target（用於 rotate-content）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ════════════════ SCRIPTS ════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="./card-badge.js"></script>
+
+<script>
+  if (window.Prism) Prism.highlightAll();
+
+  // Active TOC on scroll
+  const tocLinks = document.querySelectorAll('.toc-a');
+  const sections = document.querySelectorAll('section[id]');
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      tocLinks.forEach(l => l.classList.remove('is-active'));
+      const a = document.querySelector(`.toc-a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('is-active');
+    });
+  }, { rootMargin: '-8% 0px -88% 0px' });
+
+  sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>

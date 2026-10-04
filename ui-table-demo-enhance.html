@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ui-table v1.4.0 — 新功能 Demo</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0D0C;
+  --shell:#C6C7BD;
+  --lavender:#C3A5E5;
+  --sky:#95c9de;
+  --ocean:#0ABDC6;
+  --safe:#299459;
+  --teal:#0DA591;
+  --vanilla:#DBEDD8;
+  --yellow:#DECA4B;
+  --focus:#e0be79;
+  --warning:#F08080;
+  --salmon:#E5C3B3;
+  --indigo:#9B72CF;
+  --orange:#EDA109;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--shell);
+  font-family:'Segoe UI',system-ui,sans-serif;
+  font-size:1.125rem;
+  line-height:1.5;
+  display:flex;
+  min-height:100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar{
+  width:240px;flex-shrink:0;
+  background:rgba(195,165,229,0.04);
+  border-right:1px solid rgba(195,165,229,0.12);
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  padding:24px 0 48px;
+  scrollbar-width:thin;scrollbar-color:rgba(195,165,229,0.2) transparent;
+}
+.brand{padding:0 20px 18px;font-size:1rem;font-weight:700;color:var(--lavender);
+  border-bottom:1px solid rgba(195,165,229,0.1);margin-bottom:10px}
+.brand small{display:block;font-size:0.72rem;font-weight:400;color:rgba(149,201,222,0.7);margin-top:2px}
+nav a{display:block;padding:6px 20px;font-size:0.88rem;color:rgba(198,199,189,0.72);
+  text-decoration:none;border-left:2px solid transparent;transition:color .15s,border-color .15s,background .15s}
+nav a:hover{color:var(--lavender);background:rgba(195,165,229,0.06);border-left-color:rgba(195,165,229,0.4)}
+.nav-g{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(149,201,222,0.55);padding:12px 20px 4px}
+.ver-badge{
+  margin:16px 20px 0;padding:5px 10px;border-radius:5px;
+  background:rgba(13,165,145,0.12);border:1px solid rgba(13,165,145,0.28);
+  font-size:0.72rem;font-weight:700;color:var(--teal);letter-spacing:0.06em
+}
+
+/* ── Content ── */
+#content{flex:1;min-width:0;padding:48px 56px 120px;max-width:1100px}
+
+/* ── Typography ── */
+.page-title{font-size:2rem;font-weight:700;color:var(--lavender);letter-spacing:-0.02em;margin-bottom:6px}
+.page-sub{font-size:1rem;color:rgba(149,201,222,0.7);margin-bottom:48px}
+h2.sh{font-size:1.3rem;font-weight:700;color:var(--shell);margin:56px 0 8px;
+  padding-bottom:10px;border-bottom:1px solid rgba(149,201,222,0.14);scroll-margin-top:20px}
+h3.subh{font-size:1rem;font-weight:600;color:var(--lavender);margin:28px 0 10px;scroll-margin-top:20px}
+.desc{font-size:0.92rem;color:rgba(198,199,189,0.78);margin-bottom:18px;line-height:1.55}
+
+/* ── Demo block ── */
+.demo{
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(149,201,222,0.12);
+  border-radius:8px;overflow:hidden;margin-bottom:28px;
+}
+.demo-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:rgba(149,201,222,0.05);
+  border-bottom:1px solid rgba(149,201,222,0.1);
+}
+.demo-label{font-size:0.75rem;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;color:rgba(149,201,222,0.7);flex:1}
+.demo-body{padding:18px}
+
+/* ── Code ── */
+code{background:rgba(195,165,229,0.1);color:var(--lavender);padding:1px 6px;
+  border-radius:4px;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85em}
+pre.snippet{
+  background:#0e100e;border-radius:6px;padding:14px 18px;
+  font-size:0.82rem;line-height:1.6;overflow-x:auto;margin:0 0 18px;
+  font-family:'Cascadia Code','Fira Code',monospace;color:#C6C7BD;
+  border:1px solid rgba(149,201,222,0.08);
+}
+.tk-tag{color:var(--lavender)}.tk-attr{color:var(--sky)}.tk-val{color:var(--yellow)}
+.tk-cmt{color:rgba(149,201,222,0.4);font-style:italic}
+
+/* ── Info box ── */
+.note{
+  background:rgba(41,148,89,0.07);border:1px solid rgba(41,148,89,0.22);
+  border-radius:6px;padding:10px 14px;font-size:0.88rem;
+  color:rgba(198,199,189,0.9);margin:12px 0 20px;line-height:1.55;
+}
+.note b{color:var(--safe)}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="brand">ui-table<small>v1.4.0 新功能 Demo</small></div>
+  <div class="ver-badge">v1.4.0 NEW</div>
+  <nav>
+    <div class="nav-g">新功能</div>
+    <a href="#feat1">① Auto-reveal</a>
+    <a href="#feat2">② Cell 對齊</a>
+    <a href="#feat3">③ Hover / Min-height</a>
+    <a href="#feat4">④ 遮罩雙層 + Invert</a>
+    <a href="#feat5">⑤ ui-row-enhance</a>
+    <div class="nav-g">組合</div>
+    <a href="#rowborder">⑥ row-border</a>
+    <div class="nav-g">組合</div>
+    <a href="#combo">綜合範例</a>
+  </nav>
+</aside>
+
+<main id="content">
+<h1 class="page-title">ui-table v1.4.0</h1>
+<p class="page-sub">新功能完整示範：auto-reveal、cell 對齊、hover、遮罩強化、ui-row-enhance</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ① Auto-reveal -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="feat1">① Auto-reveal — 定時自動展開隱藏列</h2>
+<p class="desc">
+  在 <code>&lt;ui-table&gt;</code> 加上 <code>auto-reveal-interval="毫秒數"</code>，
+  頁面渲染後依序自動展開所有 <code>hidden</code> 列，不需要使用者任何操作。
+  也可透過全域 <code>UiTableConfig.autoRevealInterval</code> 設定預設值。
+</p>
+
+<div class="note">
+  <b>觸發邏輯：</b>渲染完成後掃描所有 <code>.uit-row.uit-hidden</code>，
+  每隔 interval × (index+1) ms 移除 <code>uit-hidden</code>。
+  與 <code>show-next</code>（點擊觸發）完全獨立，可同時使用。
+</div>
+
+<pre class="snippet"><span class="tk-tag">&lt;ui-table</span> <span class="tk-attr">theme</span>=<span class="tk-val">"teal"</span>
+           <span class="tk-attr">auto-reveal-interval</span>=<span class="tk-val">"800"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;ui-row&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>立即顯示<span class="tk-tag">&lt;/ui-col&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>第 0 筆<span class="tk-tag">&lt;/ui-col&gt;</span>
+  <span class="tk-tag">&lt;/ui-row&gt;</span>
+  <span class="tk-tag">&lt;ui-row</span> <span class="tk-attr">hidden</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>0.8s 後顯示<span class="tk-tag">&lt;/ui-col&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>第 1 筆<span class="tk-tag">&lt;/ui-col&gt;</span>
+  <span class="tk-tag">&lt;/ui-row&gt;</span>
+  <span class="tk-cmt">&lt;!-- 更多 hidden 列... --&gt;</span>
+<span class="tk-tag">&lt;/ui-table&gt;</span></pre>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">auto-reveal-interval="800" — 重新整理頁面觀看效果</span></div>
+  <div class="demo-body">
+    <ui-table theme="teal" auto-reveal-interval="800">
+      <ui-row>
+        <ui-col>立即顯示</ui-col>
+        <ui-col>✅ 第 0 筆（初始可見）</ui-col>
+      </ui-row>
+      <ui-row hidden>
+        <ui-col>0.8s 後</ui-col>
+        <ui-col>⏱ 第 1 筆</ui-col>
+      </ui-row>
+      <ui-row hidden>
+        <ui-col>1.6s 後</ui-col>
+        <ui-col>⏱ 第 2 筆</ui-col>
+      </ui-row>
+      <ui-row hidden>
+        <ui-col>2.4s 後</ui-col>
+        <ui-col>⏱ 第 3 筆</ui-col>
+      </ui-row>
+      <ui-row hidden>
+        <ui-col>3.2s 後</ui-col>
+        <ui-col>⏱ 第 4 筆</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<h3 class="subh">與 Group 搭配</h3>
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">auto-reveal-interval="600" + ui-group</span></div>
+  <div class="demo-body">
+    <ui-table theme="ocean" auto-reveal-interval="600">
+      <ui-group title-left="📊 銷售報表" title-right="逐步載入">
+        <ui-row>
+          <ui-col>項目</ui-col>
+          <ui-col>本月</ui-col>
+          <ui-col>上月</ui-col>
+        </ui-row>
+        <ui-row hidden>
+          <ui-col>營收</ui-col>
+          <ui-col>NT$ 1,240,000</ui-col>
+          <ui-col>NT$ 1,080,000</ui-col>
+        </ui-row>
+        <ui-row hidden>
+          <ui-col>訂單數</ui-col>
+          <ui-col>3,482</ui-col>
+          <ui-col>2,910</ui-col>
+        </ui-row>
+        <ui-row hidden>
+          <ui-col>轉換率</ui-col>
+          <ui-col>4.2%</ui-col>
+          <ui-col>3.8%</ui-col>
+        </ui-row>
+      </ui-group>
+    </ui-table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ② Cell 對齊 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="feat2">② Cell 對齊 — 水平與垂直</h2>
+<p class="desc">
+  透過 <code>cell-alignment</code>（left / center / right）與
+  <code>vertical-alignment</code>（top / middle / bottom）控制格子內容位置。
+  可設在 <code>&lt;ui-table&gt;</code> 屬性或 <code>UiTableConfig</code> 全域預設。
+</p>
+
+<pre class="snippet"><span class="tk-cmt">&lt;!-- 水平置中 + 垂直置中 --&gt;</span>
+<span class="tk-tag">&lt;ui-table</span> <span class="tk-attr">theme</span>=<span class="tk-val">"lavender"</span>
+           <span class="tk-attr">cell-alignment</span>=<span class="tk-val">"center"</span>
+           <span class="tk-attr">vertical-alignment</span>=<span class="tk-val">"middle"</span>
+           <span class="tk-attr">cell-min-height</span>=<span class="tk-val">"60px"</span><span class="tk-tag">&gt;</span>
+  ...
+<span class="tk-tag">&lt;/ui-table&gt;</span></pre>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">left（預設）/ center / right 水平對齊比較</span></div>
+  <div class="demo-body">
+    <h3 class="subh" style="margin-top:0">cell-alignment="left"（預設）</h3>
+    <ui-table theme="shell" cell-alignment="left">
+      <ui-row>
+        <ui-col>標籤靠左</ui-col>
+        <ui-col>內容靠左對齊</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>數值</ui-col>
+        <ui-col>NT$ 89,900</ui-col>
+      </ui-row>
+    </ui-table>
+
+    <h3 class="subh">cell-alignment="center"</h3>
+    <ui-table theme="lavender" cell-alignment="center">
+      <ui-row>
+        <ui-col>標籤置中</ui-col>
+        <ui-col>內容置中對齊</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>數值</ui-col>
+        <ui-col>NT$ 89,900</ui-col>
+      </ui-row>
+    </ui-table>
+
+    <h3 class="subh">cell-alignment="right"</h3>
+    <ui-table theme="sky" cell-alignment="right">
+      <ui-row>
+        <ui-col>標籤靠右</ui-col>
+        <ui-col>內容靠右對齊</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>數值</ui-col>
+        <ui-col>NT$ 89,900</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">vertical-alignment 三種 + cell-min-height="72px"</span></div>
+  <div class="demo-body">
+    <h3 class="subh" style="margin-top:0">vertical-alignment="top"（預設）</h3>
+    <ui-table theme="shell" vertical-alignment="top" cell-min-height="72px">
+      <ui-row>
+        <ui-col>說明</ui-col>
+        <ui-col>文字從格子頂端開始</ui-col>
+      </ui-row>
+    </ui-table>
+
+    <h3 class="subh">vertical-alignment="middle"</h3>
+    <ui-table theme="focus" vertical-alignment="middle" cell-min-height="72px">
+      <ui-row>
+        <ui-col>說明</ui-col>
+        <ui-col>文字垂直置中</ui-col>
+      </ui-row>
+    </ui-table>
+
+    <h3 class="subh">vertical-alignment="bottom"</h3>
+    <ui-table theme="salmon" vertical-alignment="bottom" cell-min-height="72px">
+      <ui-row>
+        <ui-col>說明</ui-col>
+        <ui-col>文字貼近格子底部</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ③ Hover + Min-height -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="feat3">③ Hover 背景色 ＋ Cell Min-height</h2>
+<p class="desc">
+  <code>hover-bg-color</code> 接受品牌色名或 HEX，滑鼠移入格子時顯示背景色。
+  <code>cell-min-height</code> 設定每格最小高度，讓內容稀少的格子仍保持一致外觀。
+</p>
+
+<pre class="snippet"><span class="tk-tag">&lt;ui-table</span> <span class="tk-attr">theme</span>=<span class="tk-val">"indigo"</span>
+           <span class="tk-attr">hover-bg-color</span>=<span class="tk-val">"indigo"</span>
+           <span class="tk-attr">cell-min-height</span>=<span class="tk-val">"48px"</span><span class="tk-tag">&gt;</span>
+  ...
+<span class="tk-tag">&lt;/ui-table&gt;</span></pre>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">hover-bg-color="indigo" — 移入格子試試</span></div>
+  <div class="demo-body">
+    <ui-table theme="indigo" hover-bg-color="indigo" cell-min-height="48px">
+      <ui-row>
+        <ui-col>專案名稱</ui-col>
+        <ui-col>Project Aurora</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>負責人</ui-col>
+        <ui-col>Alice Wang</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>截止日</ui-col>
+        <ui-col>2025-09-30</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>狀態</ui-col>
+        <ui-col>🟡 進行中</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">hover-bg-color="ocean" + cell-alignment="center"</span></div>
+  <div class="demo-body">
+    <ui-table theme="ocean" hover-bg-color="ocean" cell-alignment="center" cell-min-height="52px">
+      <ui-row>
+        <ui-col>訪客</ui-col>
+        <ui-col>頁面瀏覽</ui-col>
+        <ui-col>轉換</ui-col>
+        <ui-col>跳出率</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>12,480</ui-col>
+        <ui-col>48,203</ui-col>
+        <ui-col>522</ui-col>
+        <ui-col>38.4%</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>+14.2%</ui-col>
+        <ui-col>+8.7%</ui-col>
+        <ui-col>+22.1%</ui-col>
+        <ui-col>-2.3%</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ④ 遮罩雙層 + Invert -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="feat4">④ 遮罩強化 — 雙層點擊 ＋ Invert 反色</h2>
+<p class="desc">
+  <code>mask-text-2</code>：設定第二層遮罩文字，第一次點擊切換到第二層，第二次才揭開內容。<br>
+  <code>mask-invert</code>（屬性旗標）：使用深色底 + 主題色文字，與一般彩色底反向。<br>
+  兩者可組合使用。<code>mask-order</code> 鏈優先於 <code>mask-text-2</code>。
+</p>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">mask-text-2 — 雙層確認揭開</span></div>
+  <div class="demo-body">
+    <ui-table theme="warning">
+      <ui-row>
+        <ui-col>機密薪資</ui-col>
+        <ui-col
+          mask-text="點擊查看"
+          mask-text-2="確定要看嗎？再點一次"
+          mask-color="warning">
+          月薪 NT$ 150,000
+        </ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>最終報價</ui-col>
+        <ui-col
+          mask-text="🔒 業務機密"
+          mask-text-2="⚠️ 僅限主管查閱"
+          mask-color="orange">
+          NT$ 2,480,000（含稅）
+        </ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">mask-invert — 反色遮罩</span></div>
+  <div class="demo-body">
+    <ui-table theme="lavender">
+      <ui-row>
+        <ui-col>一般遮罩（彩色底）</ui-col>
+        <ui-col mask-text="點擊揭開" mask-color="lavender">
+          彩色底 + 深色文字
+        </ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>Invert 遮罩（深底）</ui-col>
+        <ui-col mask-text="點擊揭開" mask-color="lavender" mask-invert>
+          深底 + 主題色文字
+        </ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">雙層 + Invert 組合</span></div>
+  <div class="demo-body">
+    <ui-table theme="indigo">
+      <ui-row>
+        <ui-col>組合效果</ui-col>
+        <ui-col
+          mask-text="🔒 第一層：身份確認"
+          mask-text-2="⚠️ 第二層：最終確認"
+          mask-color="indigo"
+          mask-invert>
+          最終機密內容（兩次確認後揭開）
+        </ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">原有 mask-order 鏈（v1.3 功能，確認不受影響）</span></div>
+  <div class="demo-body">
+    <ui-table theme="teal">
+      <ui-group title-left="依序解鎖" title-right="從左到右">
+        <ui-row>
+          <ui-col mask-text="第 1 關" mask-color="teal" mask-order="1">解鎖後顯示 A</ui-col>
+          <ui-col mask-text="第 2 關" mask-color="ocean" mask-order="2">解鎖後顯示 B</ui-col>
+          <ui-col mask-text="第 3 關" mask-color="sky" mask-order="3">解鎖後顯示 C</ui-col>
+        </ui-row>
+      </ui-group>
+    </ui-table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ⑤ ui-row-enhance -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="feat5">⑤ &lt;ui-row-enhance&gt; — 彈性欄數列</h2>
+<p class="desc">
+  使用 <code>&lt;ui-row-enhance&gt;</code> 替代 <code>&lt;ui-row&gt;</code>，
+  讓該列根據實際 <code>&lt;ui-col&gt;</code> 數量決定欄數，
+  不受全局 <code>colN</code> 約束。<code>&lt;ui-row&gt;</code> 與
+  <code>&lt;ui-row-enhance&gt;</code> 可在同一 <code>&lt;ui-table&gt;</code> 或
+  <code>&lt;ui-group&gt;</code> 內混用。
+</p>
+
+<div class="note">
+  <b>設計原則：</b><code>&lt;ui-row&gt;</code> 維持原有行為（對齊全局 colN）。
+  <code>&lt;ui-row-enhance&gt;</code> 使用自身欄數，兩種列可在同一個 group 內自由混用。
+  <code>col-widths</code> 在 enhance 列中對比自身欄數驗證。
+</div>
+
+<pre class="snippet"><span class="tk-tag">&lt;ui-table</span> <span class="tk-attr">theme</span>=<span class="tk-val">"yellow"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-cmt">&lt;!-- 固定 2 欄（定義全局 colN=2） --&gt;</span>
+  <span class="tk-tag">&lt;ui-row&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>標題 A<span class="tk-tag">&lt;/ui-col&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>標題 B<span class="tk-tag">&lt;/ui-col&gt;</span>
+  <span class="tk-tag">&lt;/ui-row&gt;</span>
+  <span class="tk-cmt">&lt;!-- 自由 4 欄（ui-row-enhance） --&gt;</span>
+  <span class="tk-tag">&lt;ui-row-enhance&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>甲<span class="tk-tag">&lt;/ui-col&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>乙<span class="tk-tag">&lt;/ui-col&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>丙<span class="tk-tag">&lt;/ui-col&gt;</span>
+    <span class="tk-tag">&lt;ui-col&gt;</span>丁<span class="tk-tag">&lt;/ui-col&gt;</span>
+  <span class="tk-tag">&lt;/ui-row-enhance&gt;</span>
+<span class="tk-tag">&lt;/ui-table&gt;</span></pre>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">ui-row（2欄）與 ui-row-enhance（2/3/4/1欄）混用</span></div>
+  <div class="demo-body">
+    <ui-table theme="yellow">
+      <!-- ui-row 定義全局 colN = 2 -->
+      <ui-row border="2px solid">
+        <ui-col>⬛ ui-row（2欄）</ui-col>
+        <ui-col>標題列 B</ui-col>
+      </ui-row>
+      <!-- enhance：2欄 -->
+      <ui-row-enhance>
+        <ui-col>enhance 2欄 — 甲</ui-col>
+        <ui-col>enhance 2欄 — 乙</ui-col>
+      </ui-row-enhance>
+      <!-- enhance：3欄 -->
+      <ui-row-enhance>
+        <ui-col>enhance 3欄 — 甲</ui-col>
+        <ui-col>enhance 3欄 — 乙</ui-col>
+        <ui-col>enhance 3欄 — 丙</ui-col>
+      </ui-row-enhance>
+      <!-- enhance：4欄 -->
+      <ui-row-enhance>
+        <ui-col>4欄 A</ui-col>
+        <ui-col>4欄 B</ui-col>
+        <ui-col>4欄 C</ui-col>
+        <ui-col>4欄 D</ui-col>
+      </ui-row-enhance>
+      <!-- enhance：1欄（全寬） -->
+      <ui-row-enhance>
+        <ui-col>enhance 1欄 — 跨全列（自然全寬）</ui-col>
+      </ui-row-enhance>
+      <!-- 回到 ui-row -->
+      <ui-row>
+        <ui-col>⬛ ui-row 回到 2欄</ui-col>
+        <ui-col>對齊全局 colN</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">ui-row-enhance + col-widths 自訂比例</span></div>
+  <div class="demo-body">
+    <ui-table theme="salmon">
+      <ui-row>
+        <ui-col>全局 2 欄</ui-col>
+        <ui-col>定義 colN</ui-col>
+      </ui-row>
+      <ui-row-enhance col-widths="1:3">
+        <ui-col>窄欄</ui-col>
+        <ui-col>寬欄（佔 3 份），比例 1:3</ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance col-widths="2:1:1">
+        <ui-col>主要欄（佔 2）</ui-col>
+        <ui-col>次要</ui-col>
+        <ui-col>附註</ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance col-widths="1:1:1:1">
+        <ui-col>Q1</ui-col>
+        <ui-col>Q2</ui-col>
+        <ui-col>Q3</ui-col>
+        <ui-col>Q4</ui-col>
+      </ui-row-enhance>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">ui-row-enhance + hidden + auto-reveal 組合</span></div>
+  <div class="demo-body">
+    <ui-table theme="teal" auto-reveal-interval="700">
+      <ui-row>
+        <ui-col>固定欄位（ui-row）</ui-col>
+        <ui-col>初始可見</ui-col>
+      </ui-row>
+      <ui-row-enhance hidden>
+        <ui-col>逐步展開 A</ui-col>
+        <ui-col>0.7s</ui-col>
+        <ui-col>3 欄</ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance hidden>
+        <ui-col>逐步展開 B</ui-col>
+        <ui-col>1.4s</ui-col>
+        <ui-col>3 欄</ui-col>
+        <ui-col>4 欄！</ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance hidden>
+        <ui-col>逐步展開 C（5 欄）</ui-col>
+        <ui-col>2.1s</ui-col>
+        <ui-col>顯示</ui-col>
+        <ui-col>✓</ui-col>
+        <ui-col>完成</ui-col>
+      </ui-row-enhance>
+    </ui-table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 綜合範例 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="combo">綜合範例 — 多功能組合</h2>
+<p class="desc">
+  將 auto-reveal、cell 對齊、hover、遮罩雙層、ui-row-enhance 整合在同一個表格。
+</p>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">儀表板風格 — 所有新功能同時啟用</span></div>
+  <div class="demo-body">
+    <ui-table theme="lavender"
+              cell-alignment="center"
+              vertical-alignment="middle"
+              hover-bg-color="lavender"
+              cell-min-height="52px"
+              auto-reveal-interval="600">
+
+      <ui-group title-left="📊 本季關鍵指標" title-right="Q3 2025">
+        <!-- 標題列 -->
+        <ui-row col-widths="2:1:1:1">
+          <ui-col>指標</ui-col>
+          <ui-col>目標</ui-col>
+          <ui-col>實績</ui-col>
+          <ui-col>達成率</ui-col>
+        </ui-row>
+        <!-- 逐步展開資料列 -->
+        <ui-row hidden col-widths="2:1:1:1">
+          <ui-col>營收（百萬）</ui-col>
+          <ui-col>NT$ 12M</ui-col>
+          <ui-col>NT$ 13.4M</ui-col>
+          <ui-col>111.7%</ui-col>
+        </ui-row>
+        <ui-row hidden col-widths="2:1:1:1">
+          <ui-col>新客數</ui-col>
+          <ui-col>800</ui-col>
+          <ui-col>763</ui-col>
+          <ui-col>95.4%</ui-col>
+        </ui-row>
+        <ui-row hidden col-widths="2:1:1:1">
+          <ui-col>NPS 分數</ui-col>
+          <ui-col>+45</ui-col>
+          <ui-col
+            mask-text="🔒 機密"
+            mask-text-2="確定查看？">
+            +52
+          </ui-col>
+          <ui-col>N/A</ui-col>
+        </ui-row>
+      </ui-group>
+
+      <ui-group title-left="🔧 系統資訊" title-right="混合欄數區">
+        <!-- ui-row：2欄（定義 colN） -->
+        <ui-row>
+          <ui-col>版本</ui-col>
+          <ui-col>v1.4.0</ui-col>
+        </ui-row>
+        <!-- ui-row-enhance：3欄 -->
+        <ui-row-enhance hidden>
+          <ui-col>環境</ui-col>
+          <ui-col>Production</ui-col>
+          <ui-col>🟢 正常</ui-col>
+        </ui-row-enhance>
+        <!-- ui-row-enhance：4欄 -->
+        <ui-row-enhance hidden>
+          <ui-col>部署</ui-col>
+          <ui-col>GCP Asia</ui-col>
+          <ui-col>台北節點</ui-col>
+          <ui-col
+            mask-text="🔒 IP 隱藏"
+            mask-color="lavender"
+            mask-invert>
+            10.128.0.42
+          </ui-col>
+        </ui-row-enhance>
+      </ui-group>
+
+    </ui-table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- row-border -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 class="sh" id="rowborder">⑥ row-border — 全局列邊框</h2>
+<p class="desc">
+  在 <code>&lt;ui-table&gt;</code> 加上 <code>row-border="border-width"</code>，
+  所有列自動套用邊框，顏色跟隨 <code>theme</code>。
+  個別列的 <code>border</code> 屬性仍可覆寫。
+  也可透過 <code>UiTableConfig.rowBorder</code> 設定全局預設。
+</p>
+
+<pre class="snippet"><span class="tk-tag">&lt;ui-table</span> <span class="tk-attr">theme</span>=<span class="tk-val">"sky"</span>
+           <span class="tk-attr">row-border</span>=<span class="tk-val">"1px solid"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;ui-row&gt;</span>...<span class="tk-tag">&lt;/ui-row&gt;</span>
+  <span class="tk-cmt">&lt;!-- 個別列覆寫 --&gt;</span>
+  <span class="tk-tag">&lt;ui-row</span> <span class="tk-attr">border</span>=<span class="tk-val">"2px dashed"</span><span class="tk-tag">&gt;</span>...<span class="tk-tag">&lt;/ui-row&gt;</span>
+<span class="tk-tag">&lt;/ui-table&gt;</span></pre>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">row-border="1px solid"（全局）</span></div>
+  <div class="demo-body">
+    <ui-table theme="sky" row-border="1px solid">
+      <ui-row>
+        <ui-col>姓名</ui-col>
+        <ui-col>Alice Wang</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>部門</ui-col>
+        <ui-col>產品設計</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>年資</ui-col>
+        <ui-col>5 年</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>狀態</ui-col>
+        <ui-col>🟢 在職</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">row-border 全局 + 個別列 border 覆寫</span></div>
+  <div class="demo-body">
+    <ui-table theme="lavender" row-border="1px solid">
+      <ui-row border="2px solid">
+        <ui-col>標題列（2px solid 覆寫）</ui-col>
+        <ui-col>目標值</ui-col>
+        <ui-col>實績</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>營收</ui-col>
+        <ui-col>NT$ 12M</ui-col>
+        <ui-col>NT$ 13.4M</ui-col>
+      </ui-row>
+      <ui-row>
+        <ui-col>新客數</ui-col>
+        <ui-col>800</ui-col>
+        <ui-col>763</ui-col>
+      </ui-row>
+      <ui-row border="1px dashed">
+        <ui-col>備注列（dashed 覆寫）</ui-col>
+        <ui-col>—</ui-col>
+        <ui-col>—</ui-col>
+      </ui-row>
+    </ui-table>
+  </div>
+</div>
+
+<div class="demo">
+  <div class="demo-header"><span class="demo-label">row-border + ui-row-enhance 混用</span></div>
+  <div class="demo-body">
+    <ui-table theme="teal" row-border="1px solid">
+      <ui-row>
+        <ui-col>固定 2 欄（ui-row）</ui-col>
+        <ui-col>有格線</ui-col>
+      </ui-row>
+      <ui-row-enhance>
+        <ui-col>enhance 3 欄</ui-col>
+        <ui-col>同樣有格線</ui-col>
+        <ui-col>✓</ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance>
+        <ui-col>enhance 4 欄</ui-col>
+        <ui-col>格線正常</ui-col>
+        <ui-col>顯示</ui-col>
+        <ui-col>✓</ui-col>
+      </ui-row-enhance>
+    </ui-table>
+  </div>
+</div>
+
+</main>
+
+<script src="ui-table.js"></script>
+</body>
+</html>
