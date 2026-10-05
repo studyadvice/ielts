@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-fillin 全功能示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<style>
+:root{
+  --bg:#0C0D0C;--shell:#C6C7BD;--focus:#D4FFFC;--sky:#82C8E5;--teal:#0DA591;--lavender:#C3A5E5;
+  --ok:#27AE60;--bad:#E6374B;--orange:#EDA109;--line:rgba(198,199,189,0.78);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Mono CJK TC",monospace;
+}
+html{font-size:112.5%}
+body{margin:0;padding:24px;background:var(--bg);color:var(--shell);font:1rem/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+h1{margin:0 0 12px;color:var(--focus);font-size:2rem;line-height:1.25}
+h2{margin:0 0 12px;color:var(--focus);font-size:1.5rem;line-height:1.25}
+h3{margin:0 0 12px;color:var(--teal);font-size:1rem;line-height:1.5}
+p{margin:0 0 12px}
+code{padding:2px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--sky);font:1rem/1.5 var(--mono)}
+pre{margin:0;padding:12px;overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--shell);font:1rem/1.5 var(--mono);white-space:pre-wrap;word-break:break-word}
+pre code{padding:0;border:0}
+a{color:var(--sky)}
+a:hover{color:var(--focus)}
+
+.top{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.nav{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 0;padding:0;list-style:none}
+.nav a{display:block;padding:8px 12px;border:1px solid var(--sky);border-radius:6px;text-decoration:none}
+.nav a:hover{background:var(--sky);color:var(--bg)}
+
+.demo{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.note{max-width:80rem}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.pane{min-width:0}
+.pane + .pane{}
+@media (max-width:1100px){.cols{grid-template-columns:minmax(0,1fr)}}
+.extra{margin-top:12px}
+
+.panel{margin-bottom:12px;padding:12px;border:1px solid var(--line);border-radius:6px}
+.pad-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:12px;margin-bottom:12px}
+.pad-grid label{display:flex;flex-direction:column;gap:6px;margin:0}
+.pad-grid .nm{color:var(--sky);font-family:var(--mono)}
+input[type="text"]{box-sizing:border-box;width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--shell);font:1rem/1.5 var(--mono)}
+input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.dbtn{appearance:none;padding:12px 24px;border:1px solid var(--sky);border-radius:6px;background:transparent;color:var(--shell);font:inherit;cursor:pointer}
+.dbtn:hover{background:var(--sky);color:var(--bg)}
+.dbtn.on{background:var(--lavender);border-color:var(--lavender);color:var(--bg)}
+.fs-row{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
+.fs-row .nm{color:var(--sky);font-family:var(--mono)}
+.demo-alert{margin:12px 0 0;padding:12px;border:1px solid var(--orange);border-radius:6px;background:var(--orange);color:var(--bg)}
+.demo-alert[hidden]{display:none}
+
+#s7-live .dbtn{margin:12px 12px 0 0}
+#ev-log{margin-top:12px;max-height:16rem;overflow:auto;padding:12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono)}
+#ev-log:empty::before{content:"操作元件後，事件會記錄在這裡。"}
+#ev-log div{margin-bottom:6px;word-break:break-word}
+
+.ref{width:100%;margin-bottom:12px;border-collapse:collapse}
+.ref th,.ref td{padding:12px;border:1px solid var(--line);text-align:left;vertical-align:top}
+.ref th{color:var(--teal)}
+.ref-wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>ui-fillin 全功能示範</h1>
+  <p class="note">選擇題挖空元件。題幹用 <code>{*正確答案|選項二|選項三}</code> 標記空格，題號與答案表自動對齊。每個區塊左側是實際效果，右側是同一份原始碼，兩邊取自同一段文字，不會不一致。</p>
+  <p class="note">元件的提示訊息使用 bootstrap alert，所以頁面需要載入 bootstrap 5 的樣式表。</p>
+  <ul class="nav">
+    <li><a href="#ref">語法與屬性總表</a></li>
+    <li><a href="#s1">一、基本單選</a></li>
+    <li><a href="#s2">二、複選</a></li>
+    <li><a href="#s3">三、跳脫字元與例外</a></li>
+    <li><a href="#s4">四、results-id 自由排版</a></li>
+    <li><a href="#s5">五、padding 屬性</a></li>
+    <li><a href="#s6">六、主題變數</a></li>
+    <li><a href="#s7">七、事件與方法</a></li>
+    <li><a href="#s8">八、錯誤處理</a></li>
+    <li><a href="#s9">九、全域 font-size</a></li>
+  </ul>
+</header>
+
+<section id="ref" class="demo">
+  <h2>語法與屬性總表</h2>
+
+  <h3>標記語法</h3>
+  <div class="ref-wrap">
+  <table class="ref">
+    <tr><th>寫法</th><th>說明</th></tr>
+    <tr><td><code>{A|B|C}</code></td><td>一個空格，直線分隔選項。題號依出現順序自動產生。選項至少兩個才會成為空格。</td></tr>
+    <tr><td><code>{*A|B|C}</code></td><td>選項開頭的星號表示正確答案。</td></tr>
+    <tr><td><code>{*A|*B|C}</code></td><td>多個星號即為複選，必須完全相符才算對。</td></tr>
+    <tr><td><code>\| \* \{ \}</code></td><td>反斜線跳脫，讓選項能出現這些符號。</td></tr>
+    <tr><td>頭尾空白</td><td>每個選項的頭尾空白自動去除。</td></tr>
+  </table>
+  </div>
+
+  <h3>標籤與屬性</h3>
+  <div class="ref-wrap">
+  <table class="ref">
+    <tr><th>元素</th><th>屬性</th><th>說明</th><th>預設</th></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>results-id</code></td><td>批改結果要輸出到哪一個 div 的 id。該 div 內原有的 HTML 與其他元件不會被清除。內含 <code>data-uf-results</code> 的元素就是結果的寫入位置，沒有的話，結果附加在 div 末端。</td><td>不輸出</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>font-size</code></td><td>全域字級，元件內所有文字依此縮放。純數字視為 rem。</td><td>1rem</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>root-padding</code></td><td>元件最外層容器。</td><td>12px</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>main-padding</code></td><td>題幹區塊。</td><td>12px</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>blank-padding</code></td><td>題幹內的空格按鈕。</td><td>12px</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>menu-padding</code></td><td>浮出的選項清單外框。</td><td>12px</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>option-padding</code></td><td>清單內每一個選項。</td><td>12px</td></tr>
+    <tr><td><code>&lt;ui-fillin&gt;</code></td><td><code>ans-padding</code></td><td>答案區塊外框。</td><td>12px</td></tr>
+    <tr><td><code>&lt;main-box&gt;</code></td><td><code>source</code></td><td>來源 div 的 id，必填。解析後來源 div 會被隱藏並清空。</td><td>無</td></tr>
+    <tr><td><code>&lt;ans-box&gt;</code></td><td>無</td><td>答案表與按鈕列。省略時元件自動補上。</td><td>無</td></tr>
+  </table>
+  </div>
+  <p>padding 屬性值只接受 px 或純數字，最多四個值，例如 <code>8</code>、<code>8px 16px</code>。其他寫法會被忽略並改用預設值。</p>
+
+  <h3>事件、方法與樣式變數</h3>
+  <div class="ref-wrap">
+  <table class="ref">
+    <tr><th>類型</th><th>名稱</th><th>說明</th></tr>
+    <tr><td>事件</td><td><code>fillin-change</code></td><td>選擇變動。<code>detail</code> 為題號與所選文字陣列。</td></tr>
+    <tr><td>事件</td><td><code>fillin-submit</code></td><td>提交批改。<code>detail.results</code> 為每題的題號、對錯、是否作答。</td></tr>
+    <tr><td>事件</td><td><code>fillin-reset</code></td><td>重做。</td></tr>
+    <tr><td>方法</td><td><code>submit()</code></td><td>提交並批改，提交後鎖定。</td></tr>
+    <tr><td>方法</td><td><code>reset()</code></td><td>清除作答、解除鎖定並清空結果區塊。</td></tr>
+    <tr><td>方法</td><td><code>closeMenu()</code></td><td>關閉目前開啟的選項清單。</td></tr>
+    <tr><td>CSS 變數</td><td><code>--uf-bg</code> <code>--uf-text</code> <code>--uf-sky</code> <code>--uf-lavender</code> <code>--uf-focus</code> <code>--uf-ok</code> <code>--uf-bad</code> <code>--uf-head</code> <code>--uf-info</code> <code>--uf-line</code> <code>--uf-sans</code> <code>--uf-serif</code> <code>--uf-font-size</code></td><td>全部顏色與字體都由變數控制，在 <code>ui-fillin</code> 上覆寫即可換主題。</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- 一、基本單選 -->
+<section id="s1" class="demo">
+  <h2>一、基本單選</h2>
+  <p class="note">點空格按鈕，選項在旁邊浮出。選完後答案表同步更新。可以直接按「提交答案」，沒作答的題目算錯誤，顯示為未作答。提交後空格鎖定，按「重做」可重新作答。</p>
+  <div class="cols">
+    <div class="pane"><h3>實際效果</h3><div id="s1-live"></div></div>
+    <div class="pane"><h3>對應程式碼</h3><pre id="s1-code"></pre></div>
+  </div>
+</section>
+
+<!-- 二、複選 -->
+<section id="s2" class="demo">
+  <h2>二、複選</h2>
+  <p class="note">第一個空格有兩個星號，所以是複選：清單會顯示「可複選」，點選項可切換，點清單外面關閉。選漏或多選都算錯。</p>
+  <div class="cols">
+    <div class="pane"><h3>實際效果</h3><div id="s2-live"></div></div>
+    <div class="pane"><h3>對應程式碼</h3><pre id="s2-code"></pre></div>
+  </div>
+</section>
+
+<!-- 三、跳脫字元與例外 -->
+<section id="s3" class="demo">
+  <h2>三、跳脫字元與例外</h2>
+  <p class="note">第一個空格的選項是符號本身，用反斜線跳脫，正確答案是直線。第二個空格示範選項頭尾空白會自動去除。句尾那個只有一個選項的大括號不會變成空格，原樣保留為文字。</p>
+  <div class="cols">
+    <div class="pane"><h3>實際效果</h3><div id="s3-live"></div></div>
+    <div class="pane"><h3>對應程式碼</h3><pre id="s3-code"></pre></div>
+  </div>
+</section>
+
+<!-- 四、results-id -->
+<section id="s4" class="demo">
+  <h2>四、results-id 自由排版</h2>
+  <p class="note">在 <code>ui-fillin</code> 加上 <code>results-id</code>，提交後元件把精簡的語意結果寫進該 div，沒有任何版面樣式，排版完全由你決定。結果區塊裡可以自由放 HTML 標籤與其他 js 元件，元件只動 <code>data-uf-results</code> 這個位置，其他內容保持原樣，不會被重建，所以其他元件的狀態與計時不會中斷。下面的 <code>demo-tick</code> 是一個每秒計數的小元件，提交與重做時它都繼續運作。每一項結果帶有 <code>data-state</code>（correct 或 incorrect）與 <code>data-answered</code>（true 或 false），只顯示對錯，不含比例。</p>
+  <div class="cols">
+    <div class="pane"><h3>實際效果</h3><div id="s4-live"></div></div>
+    <div class="pane"><h3>對應程式碼</h3><pre id="s4-code"></pre></div>
+  </div>
+  <div class="extra"><h3>結果區塊的樣式（頁面自己寫的）</h3><pre id="s4-csscode"></pre></div>
+</section>
+
+<!-- 五、padding -->
+<section id="s5" class="demo">
+  <h2>五、padding 屬性</h2>
+  <p class="note">六個屬性都可以即時調整，預設都是 12px。輸入數字或 px 值，留空就還原預設。輸入無效的值會被元件忽略。</p>
+  <div class="cols">
+    <div class="pane">
+      <h3>實際效果</h3>
+      <div class="panel">
+        <div class="pad-grid">
+          <label><span class="nm">root-padding</span><input type="text" data-pad="root" placeholder="12px"></label>
+          <label><span class="nm">main-padding</span><input type="text" data-pad="main" placeholder="12px"></label>
+          <label><span class="nm">blank-padding</span><input type="text" data-pad="blank" placeholder="12px"></label>
+          <label><span class="nm">menu-padding</span><input type="text" data-pad="menu" placeholder="12px"></label>
+          <label><span class="nm">option-padding</span><input type="text" data-pad="option" placeholder="12px"></label>
+          <label><span class="nm">ans-padding</span><input type="text" data-pad="ans" placeholder="12px"></label>
+        </div>
+        <div class="btns">
+          <button type="button" class="dbtn" id="pad-big">全部設為 24px</button>
+          <button type="button" class="dbtn" id="pad-wide">空格設為 8px 24px</button>
+          <button type="button" class="dbtn" id="pad-clear">還原預設</button>
+        </div>
+        <div class="demo-alert" id="pad-msg" role="alert" hidden></div>
+      </div>
+      <div id="s5-live"></div>
+    </div>
+    <div class="pane">
+      <h3>對應程式碼</h3>
+      <pre id="s5-code"></pre>
+      <div class="extra"><h3>目前的開頭標籤</h3><pre id="pad-tag"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- 六、主題 -->
+<section id="s6" class="demo">
+  <h2>六、主題變數</h2>
+  <p class="note">元件的顏色全部來自 CSS 變數。按下面的按鈕，會在 <code>ui-fillin</code> 上覆寫變數。你也可以在樣式表寫 <code>ui-fillin{--uf-sky:#1CCAE8}</code>，效果相同。提交後可以看到對錯顏色。</p>
+  <div class="cols">
+    <div class="pane">
+      <h3>實際效果</h3>
+      <div class="btns" style="margin-bottom:12px">
+        <button type="button" class="dbtn on" data-theme="default">預設</button>
+        <button type="button" class="dbtn" data-theme="lavender">薰衣草</button>
+        <button type="button" class="dbtn" data-theme="ocean">海洋</button>
+        <button type="button" class="dbtn" data-theme="salmon">鮭魚</button>
+      </div>
+      <div id="s6-live"></div>
+    </div>
+    <div class="pane">
+      <h3>對應程式碼</h3>
+      <pre id="s6-code"></pre>
+      <div class="extra"><h3>目前的開頭標籤</h3><pre id="theme-tag"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- 七、事件與方法 -->
+<section id="s7" class="demo">
+  <h2>七、事件與方法</h2>
+  <p class="note">元件對外發出三種事件，並提供 <code>submit()</code> 與 <code>reset()</code> 方法。下面的按鈕在元件外面，直接呼叫方法。事件紀錄顯示每次事件帶出的資料。</p>
+  <div class="cols">
+    <div class="pane">
+      <h3>實際效果</h3>
+      <div id="s7-live"></div>
+    </div>
+    <div class="pane">
+      <h3>對應程式碼</h3>
+      <pre id="s7-code"></pre>
+      <div class="extra"><h3>事件監聽（本頁實際執行的函式）</h3><pre id="s7-js"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- 八、錯誤處理 -->
+<section id="s8" class="demo">
+  <h2>八、錯誤處理</h2>
+  <p class="note">來源 div 找不到，或題幹裡沒有任何可用的空格時，元件會用 bootstrap alert 說明原因，不會讓頁面出錯。</p>
+  <div class="cols">
+    <div class="pane"><h3>實際效果</h3><div id="s8-live"></div></div>
+    <div class="pane"><h3>對應程式碼</h3><pre id="s8-code"></pre></div>
+  </div>
+</section>
+
+<!-- 九、font-size -->
+<section id="s9" class="demo">
+  <h2>九、全域 font-size</h2>
+  <p class="note">在 <code>ui-fillin</code> 加上 <code>font-size</code>，預設 1rem。題幹、空格按鈕、選項清單、答案表、按鈕列都依它縮放，題幹字級固定為它的 1.1 倍。值只接受純數字或 rem，無效值會被忽略。本頁根字級設為 18px，所以 1rem 等於 18px。</p>
+  <div class="cols">
+    <div class="pane">
+      <h3>實際效果</h3>
+      <div class="panel">
+        <label class="fs-row"><span class="nm">font-size</span><input type="text" id="fs-input" placeholder="1rem"></label>
+        <div class="btns">
+          <button type="button" class="dbtn on" data-fs="1">1rem</button>
+          <button type="button" class="dbtn" data-fs="1.25">1.25rem</button>
+          <button type="button" class="dbtn" data-fs="1.5">1.5rem</button>
+          <button type="button" class="dbtn" data-fs="2">2rem</button>
+        </div>
+        <div class="demo-alert" id="fs-msg" role="alert" hidden></div>
+      </div>
+      <div id="s9-live"></div>
+    </div>
+    <div class="pane">
+      <h3>對應程式碼</h3>
+      <pre id="s9-code"></pre>
+      <div class="extra"><h3>目前的開頭標籤</h3><pre id="fs-tag"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 各區塊的原始碼（同時用於實際效果與程式碼顯示） ============ -->
+
+<script type="text/x-demo" data-demo="s1">
+<div id="q1-source" hidden>
+  <p>To find out more about our products, {*fill in|fill out|fill up} the coupon and send it to us at the address {*given|gave|giving} below.</p>
+</div>
+
+<ui-fillin>
+  <main-box source="q1-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+</script>
+
+<script type="text/x-demo" data-demo="s2">
+<div id="q2-source" hidden>
+  <p>The store is open on {*Saturday|*Sunday|Monday|Tuesday}, and customers who order online {*receive|receives|received} free delivery.</p>
+</div>
+
+<ui-fillin>
+  <main-box source="q2-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+</script>
+
+<script type="text/x-demo" data-demo="s3">
+<div id="q3-source" hidden>
+  <p>In a search box, the symbol {*\||\*|\{|\}} separates alternatives. Trimmed options: {* alpha | beta | gamma }. This stays plain text: {only one}.</p>
+</div>
+
+<ui-fillin>
+  <main-box source="q3-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+</script>
+
+<script type="text/x-demo" data-demo="s4">
+<div id="q4-source" hidden>
+  <p>She {*has|have|having} lived here {*since|for|from} 2020, and she {*works|work|working} in the city center.</p>
+</div>
+
+<ui-fillin results-id="q4-results">
+  <main-box source="q4-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+
+<div id="q4-results">
+  <h3>批改結果</h3>
+  <demo-tick></demo-tick>
+  <div data-uf-results></div>
+</div>
+</script>
+
+<script type="text/x-demo-css" data-demo="s4">
+#q4-results{margin-top:12px}
+#q4-results [data-uf-results]{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+#q4-results [data-uf-results]:empty::before{content:"提交後，結果會出現在這裡。"}
+#q4-results .uf-result{padding:12px;border:1px solid;border-radius:6px}
+#q4-results [data-state="correct"]{color:#27AE60}
+#q4-results [data-state="incorrect"]{color:#E6374B}
+#q4-results [data-answered="false"]{border-style:dashed}
+</script>
+
+<script type="text/x-demo" data-demo="s5">
+<div id="q5-source" hidden>
+  <p>The meeting {*starts|start|starting} at nine, so please {*arrive|arrives|arrived} early.</p>
+</div>
+
+<ui-fillin id="pad-demo">
+  <main-box source="q5-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+</script>
+
+<script type="text/x-demo" data-demo="s6">
+<div id="q6-source" hidden>
+  <p>We {*have|has|having} finished the report, and the team {*is|are|be} ready for review.</p>
+</div>
+
+<ui-fillin id="theme-demo">
+  <main-box source="q6-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+</script>
+
+<script type="text/x-demo" data-demo="s7">
+<div id="q7-source" hidden>
+  <p>If I {*were|was|am} you, I {*would|will|did} choose the earlier flight.</p>
+</div>
+
+<ui-fillin id="ev-demo">
+  <main-box source="q7-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+
+<button id="ev-submit" class="dbtn">呼叫 submit()</button>
+<button id="ev-reset" class="dbtn">呼叫 reset()</button>
+<button id="ev-clear" class="dbtn">清除紀錄</button>
+<div id="ev-log"></div>
+</script>
+
+<script type="text/x-demo" data-demo="s8">
+<!-- source 指向不存在的 id -->
+<ui-fillin>
+  <main-box source="id-that-does-not-exist"></main-box>
+</ui-fillin>
+
+<!-- 來源內沒有任何可用的空格 -->
+<div id="q8-source" hidden>
+  <p>This sentence has no blank at all.</p>
+</div>
+
+<ui-fillin>
+  <main-box source="q8-source"></main-box>
+</ui-fillin>
+</script>
+
+<script type="text/x-demo" data-demo="s9">
+<div id="q9-source" hidden>
+  <p>Every student {*must|musts|musting} bring a {*valid|validly|validate} ticket to the hall.</p>
+</div>
+
+<ui-fillin id="fs-demo" font-size="1">
+  <main-box source="q9-source"></main-box>
+  <ans-box></ans-box>
+</ui-fillin>
+</script>
+
+<!-- 先把各區塊的原始碼放進頁面，再載入元件 -->
+<script>
+(function () {
+  function dedent(s) {
+    var lines = s.replace(/^\n+/, '').replace(/\s+$/, '').split('\n');
+    var min = Infinity;
+    lines.forEach(function (l) {
+      if (l.trim()) { var m = l.match(/^ */)[0].length; if (m < min) min = m; }
+    });
+    if (min === Infinity) min = 0;
+    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  }
+  document.querySelectorAll('script[type="text/x-demo"]').forEach(function (s) {
+    var id = s.getAttribute('data-demo');
+    document.getElementById(id + '-live').innerHTML = s.textContent;
+    document.getElementById(id + '-code').textContent = dedent(s.textContent);
+  });
+  document.querySelectorAll('script[type="text/x-demo-css"]').forEach(function (s) {
+    var id = s.getAttribute('data-demo');
+    var st = document.createElement('style');
+    st.textContent = s.textContent;
+    document.head.appendChild(st);
+    var box = document.getElementById(id + '-csscode');
+    if (box) box.textContent = dedent(s.textContent);
+  });
+})();
+</script>
+
+<script src="ui-fillin.js"></script>
+
+<script>
+/* ---------- 示範用的其他元件：每秒計數 ---------- */
+customElements.define('demo-tick', class extends HTMLElement {
+  connectedCallback() {
+    this.n = 0;
+    this.textContent = '其他元件仍在運作：0 秒';
+    this._t = setInterval(() => { this.textContent = '其他元件仍在運作：' + (++this.n) + ' 秒'; }, 1000);
+  }
+  disconnectedCallback() { clearInterval(this._t); }
+});
+
+/* ---------- 五、padding 即時調整 ---------- */
+(function () {
+  var PADS = ['root', 'main', 'blank', 'menu', 'option', 'ans'];
+  var target = document.getElementById('pad-demo');
+  var tag = document.getElementById('pad-tag');
+  var msg = document.getElementById('pad-msg');
+  var inputs = Array.prototype.slice.call(document.querySelectorAll('[data-pad]'));
+  var VALID = /^\s*\d+(\.\d+)?(px)?(\s+\d+(\.\d+)?(px)?){0,3}\s*$/;
+
+  function renderTag() {
+    var attrs = PADS.filter(function (k) { return target.hasAttribute(k + '-padding'); })
+      .map(function (k) { return ' ' + k + '-padding="' + target.getAttribute(k + '-padding') + '"'; })
+      .join('');
+    tag.textContent = '<ui-fillin id="pad-demo"' + attrs + '>';
+  }
+  function setPad(k, v) {
+    if (v === '') target.removeAttribute(k + '-padding');
+    else target.setAttribute(k + '-padding', v);
+  }
+  function check() {
+    var bad = inputs.filter(function (i) { return i.value.trim() !== '' && !VALID.test(i.value); })
+      .map(function (i) { return i.getAttribute('data-pad') + '-padding'; });
+    if (bad.length) {
+      msg.textContent = bad.join('、') + ' 的值無效，元件已忽略並改用預設的 12px。';
+      msg.hidden = false;
+    } else {
+      msg.hidden = true;
+    }
+  }
+  inputs.forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      setPad(inp.getAttribute('data-pad'), inp.value.trim());
+      check();
+      renderTag();
+    });
+  });
+  function fillAll(fn) {
+    inputs.forEach(function (inp) {
+      var v = fn(inp.getAttribute('data-pad'));
+      inp.value = v;
+      setPad(inp.getAttribute('data-pad'), v);
+    });
+    check();
+    renderTag();
+  }
+  document.getElementById('pad-big').addEventListener('click', function () { fillAll(function () { return '24px'; }); });
+  document.getElementById('pad-wide').addEventListener('click', function () {
+    fillAll(function (k) { return k === 'blank' ? '8px 24px' : ''; });
+  });
+  document.getElementById('pad-clear').addEventListener('click', function () { fillAll(function () { return ''; }); });
+  renderTag();
+})();
+
+/* ---------- 六、主題切換 ---------- */
+(function () {
+  var THEMES = {
+    'default': {},
+    lavender: { '--uf-sky': '#C3A5E5', '--uf-lavender': '#FF91D7', '--uf-head': '#C3A5E5', '--uf-info': '#7849C9' },
+    ocean: { '--uf-sky': '#1CCAE8', '--uf-lavender': '#82C8E5', '--uf-head': '#0DA591', '--uf-info': '#2351DB' },
+    salmon: { '--uf-sky': '#E5C3B3', '--uf-lavender': '#EDA109', '--uf-head': '#E3D322', '--uf-info': '#7849C9' }
+  };
+  var VARS = ['--uf-sky', '--uf-lavender', '--uf-head', '--uf-info'];
+  var target = document.getElementById('theme-demo');
+  var tag = document.getElementById('theme-tag');
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-theme]'));
+
+  function apply(name) {
+    VARS.forEach(function (p) { target.style.removeProperty(p); });
+    var t = THEMES[name];
+    Object.keys(t).forEach(function (k) { target.style.setProperty(k, t[k]); });
+    var css = Object.keys(t).map(function (k) { return k + ':' + t[k]; }).join(';');
+    tag.textContent = css ? '<ui-fillin id="theme-demo" style="' + css + '">' : '<ui-fillin id="theme-demo">';
+    btns.forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-theme') === name); });
+  }
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { apply(b.getAttribute('data-theme')); });
+  });
+  apply('default');
+})();
+
+/* ---------- 九、全域 font-size ---------- */
+(function () {
+  var target = document.getElementById('fs-demo');
+  var input = document.getElementById('fs-input');
+  var tag = document.getElementById('fs-tag');
+  var msg = document.getElementById('fs-msg');
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-fs]'));
+  var VALID = /^\s*\d+(\.\d+)?(rem)?\s*$/;
+  function render() {
+    var v = target.getAttribute('font-size');
+    tag.textContent = v ? '<ui-fillin id="fs-demo" font-size="' + v + '">' : '<ui-fillin id="fs-demo">';
+    btns.forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-fs') === v); });
+  }
+  function set(v) {
+    if (v === '') target.removeAttribute('font-size');
+    else target.setAttribute('font-size', v);
+    var bad = v !== '' && (!VALID.test(v) || parseFloat(v) <= 0);
+    msg.textContent = bad ? 'font-size 的值無效，元件已忽略並改用預設的 1rem。' : '';
+    msg.hidden = !bad;
+    render();
+  }
+  input.addEventListener('input', function () { set(input.value.trim()); });
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { input.value = b.getAttribute('data-fs'); set(b.getAttribute('data-fs')); });
+  });
+  render();
+})();
+
+/* ---------- 七、事件與方法 ---------- */
+function wireEvents(root, log) {
+  function add(name, detail) {
+    var t = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+    var line = document.createElement('div');
+    line.textContent = t + '  ' + name + '  ' + JSON.stringify(detail || {});
+    log.prepend(line);
+  }
+  root.addEventListener('fillin-change', function (e) { add('fillin-change', e.detail); });
+  root.addEventListener('fillin-submit', function (e) { add('fillin-submit', e.detail); });
+  root.addEventListener('fillin-reset', function () { add('fillin-reset'); });
+}
+function wireButtons(root) {
+  document.getElementById('ev-submit').addEventListener('click', function () { root.submit(); });
+  document.getElementById('ev-reset').addEventListener('click', function () { root.reset(); });
+}
+(function () {
+  var root = document.getElementById('ev-demo');
+  var log = document.getElementById('ev-log');
+  wireEvents(root, log);
+  wireButtons(root);
+  document.getElementById('ev-clear').addEventListener('click', function () { log.replaceChildren(); });
+  document.getElementById('s7-js').textContent = wireEvents.toString() + '\n\n' + wireButtons.toString();
+})();
+</script>
+</body>
+</html>
