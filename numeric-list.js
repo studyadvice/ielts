@@ -1,9 +1,6 @@
 (function (global) {
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  品牌色票（theme-color、hover、active 屬性皆可使用名稱）
-   * ═══════════════════════════════════════════════════════════════════ */
   var Palette = {
     shell:    '#C6C7BD',
     lavender: '#C3A5E5',
@@ -24,7 +21,7 @@
   };
 
   var Config = {
-    borderColor:        '#31332f',
+    borderColor:        '#6a6b68',
     borderHoverColor:   '#82C8E5',
     borderActiveColor:  '#C3A5E5',
     numberColor:        '#82C8E5',
@@ -63,12 +60,6 @@
 
   var store = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  顏色解析
-   *  1. 品牌色名稱（不分大小寫）：sky、Lavender ...
-   *  2. 合法 CSS 顏色：#82C8E5、rgb(...)
-   *  3. 其餘視為無效，回傳 null 並在 console 提示
-   * ═══════════════════════════════════════════════════════════════════ */
   function resolveColor(value, attrName) {
     if (value === null || value === undefined) return null;
     var v = String(value).trim();
