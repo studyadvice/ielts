@@ -177,6 +177,8 @@
     /* show-next */
     '.uit-col.has-sn{cursor:pointer;transition:opacity .2s}',
     '.uit-col.has-sn:hover{opacity:.82}',
+    '.uit-sn-ico{display:inline-flex;align-items:center;flex-shrink:0;margin-left:auto;transition:transform .25s ease}',
+    '.uit-col.sn-open .uit-sn-ico{transform:rotate(180deg)}',
 
     /* 遮罩 */
     '.uit-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;gap:8px;font-weight:600;transition:opacity .3s ease;font-size:var(--uit-fs);border-radius:inherit}',
@@ -610,10 +612,11 @@
 
     var ci = mk('div', 'uit-ci');
     /* 優先順序：ui-col > ui-row > ui-table 的 font-color > theme */
-    ci.style.color = resolveColor(colEl.getAttribute('font-color')) ||
-                     (rowStyle && rowStyle.fontColor) ||
-                     this.fontColor ||
-                     this.color;
+    var cellFc = resolveColor(colEl.getAttribute('font-color')) ||
+                 (rowStyle && rowStyle.fontColor) ||
+                 this.fontColor ||
+                 this.color;
+    ci.style.color = cellFc;
 
     var ico = colEl.getAttribute('icon');
     if (ico) ci.insertAdjacentHTML('beforeend', mkIco(ico));
@@ -652,6 +655,12 @@
         });
       }
 
+      if (hasSN) {
+        var sn = mk('span', 'uit-sn-ico');
+        sn.innerHTML = '<i class="bi bi-chevron-down" aria-hidden="true"></i>';
+        ci.appendChild(sn);
+      }
+
       div.appendChild(ci);
     }
 
@@ -659,12 +668,13 @@
       var maskGrad   = colEl.getAttribute('mask-gradient') || '';
       var maskText2  = colEl.getAttribute('mask-text-2')   || '';   // 雙層第二層文字
       var maskInvert = colEl.hasAttribute('mask-invert');            // 反色模式
-      var mc = resolveColor(colEl.getAttribute('mask-color')) || this.color;
+      var mcAttr = resolveColor(colEl.getAttribute('mask-color'));
+      var mc = mcAttr || this.color;
       var m  = mk('div', 'uit-mask');
 
       if (maskInvert) {
         m.style.background = hexRgba(BG, 0.97);
-        m.style.color      = mc;
+        m.style.color      = mcAttr || cellFc;   /* 反色遮罩的文字：mask-color > font-color > theme */
       } else if (maskGrad) {
         m.style.background = MASK_GRADIENTS[maskGrad] || maskGrad;
         m.style.color      = MASK_GRAD_TEXT;
@@ -856,8 +866,10 @@
       }
 
       snCols.forEach(function (c) {
+        c.classList.toggle('sn-open', !nxt.el.classList.contains('uit-hidden'));
         c.addEventListener('click', function () {
-          nxt.el.classList.toggle('uit-hidden');
+          var open = !nxt.el.classList.toggle('uit-hidden');
+          snCols.forEach(function (x) { x.classList.toggle('sn-open', open); });
         });
       });
     });
