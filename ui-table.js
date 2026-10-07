@@ -22,20 +22,6 @@
 
   var BG = '#0C0D0C';
 
-  /* ----------------------------------------------------------------
-   * 全域設定（可在引入前用 window.UiTableConfig = {...} 預設）
-   *
-   * 新增（v1.4.0）：
-   *   autoRevealInterval  — ms；>0 時頁面載入後依序展開所有 hidden 列
-   *   cellAlignment       — left | center | right
-   *   verticalAlignment   — top | middle | bottom
-   *   hoverBgColor        — 品牌色名或 hex；'' = 無 hover 效果
-   *   cellMinHeight       — 例如 '40px'；'' = 不限
-   * 新增（v1.4.1）：
-   *   rowBorder           — 全局列邊框，格式同 CSS border-width，例如 '1px solid'
-   *                         會套用到所有 ui-row 與 ui-row-enhance；
-   *                         個別列的 border 屬性仍可覆寫
-   * ---------------------------------------------------------------- */
   var CFG = global.UiTableConfig = Object.assign({
     theme:              'shell',
     cellPadding:        '6px',
@@ -100,7 +86,6 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
 
-  /* ── 對齊工具函式 ── */
   function alignH(v) {
     if (v === 'center') return 'center';
     if (v === 'right')  return 'flex-end';
@@ -151,16 +136,6 @@
     setTimeout(function () { once(); setInterval(once, interval); }, interval);
   }
 
-  /* ----------------------------------------------------------------
-   * CSS
-   *
-   * 變更（v1.4.0）：
-   *   - ui-row-enhance 加入隱藏規則
-   *   - .uit-col 改為 flex column，啟用垂直對齊與 min-height 變數
-   *   - .uit-ci 加入水平對齊變數 --uit-halign
-   *   - .uit-ct 加入文字對齊變數 --uit-txtalign
-   *   - 新增 .uit-col:hover 規則（--uit-hover 空時透明無效果）
-   * ---------------------------------------------------------------- */
   var CSS = [
 
     'ui-table,ui-group,ui-row,ui-row-enhance,ui-col,cell-item{display:none}',
@@ -179,27 +154,21 @@
     '.uit-gb{overflow:hidden;max-height:9999px;transition:max-height .35s ease,opacity .28s ease;opacity:1}',
     '.uit-gb.collapsed{max-height:0!important;opacity:0}',
 
-    /* ui-row */
     '.uit-row{display:grid;position:relative;box-sizing:border-box}',
     '.uit-row.uit-hidden{display:none!important}',
 
-    /* ui-col —— 改為 flex column，支援垂直對齊與 min-height */
     '.uit-col{position:relative;box-sizing:border-box;overflow:hidden;word-break:break-word;min-width:0;' +
       'display:flex;flex-direction:column;' +
       'justify-content:var(--uit-valign,flex-start);' +
       'min-height:var(--uit-minh,0)}',
 
-    /* hover：--uit-hover 未設定時為 transparent，無視覺效果 */
     '.uit-col:hover{background:var(--uit-hover,transparent)}',
 
-    /* ui-ci —— 加入水平對齊 */
     '.uit-ci{display:flex;align-items:flex-start;gap:6px;min-width:0;justify-content:var(--uit-halign,flex-start)}',
     '.uit-ico{display:inline-flex;align-items:center;flex-shrink:0;margin-top:.1em}',
 
-    /* uit-ct —— 加入文字對齊 */
     '.uit-ct{flex:1;min-width:0;font-size:var(--uit-fs);text-align:var(--uit-txtalign,left)}',
 
-    /* expandable */
     '.uit-col.is-exp .uit-ct{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}',
     '.uit-col.is-exp.expanded .uit-ct{display:block;overflow:visible}',
     '.uit-etog{cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;opacity:.82;color:var(--uit-tm);margin-top:.15em;transition:opacity .2s}',
@@ -217,16 +186,13 @@
     '.uit-mask.revealed{opacity:0;pointer-events:none}',
     '.uit-mlock{display:inline-flex;align-items:center}',
 
-    /* 輪播 */
     '.uit-car{position:relative;overflow:hidden;flex:1;font-size:var(--uit-fs)}',
     '.uit-car-item{width:100%;box-sizing:border-box}',
 
-    /* 進度條 */
     '.uit-pb{height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin-top:6px;flex-shrink:0}',
     '.uit-pf{height:100%;border-radius:2px;transform-origin:left center}',
     '@keyframes uit-prog{from{transform:scaleX(1)}to{transform:scaleX(0)}}',
 
-    /* Alert */
     '.uit-alert-A{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px 12px;white-space:normal;text-align:center;opacity:0;transition:opacity .35s ease;pointer-events:none;font-weight:600;font-size:var(--uit-fs)}',
     '.uit-alert-A.vis{opacity:1}',
     '.uit-alert-ext{position:fixed;z-index:9999;pointer-events:none;padding:5px 14px;border-radius:6px;font-weight:600;line-height:1.5;white-space:nowrap;opacity:0;transition:opacity .35s ease;font-size:var(--uit-fs,1rem)}',
@@ -250,9 +216,6 @@
 
   injectCSS();
 
-  /* ----------------------------------------------------------------
-   * UiTable 建構子
-   * ---------------------------------------------------------------- */
   function UiTable(el) {
     this.el     = el;
     this.wrap   = null;   // 在 _render 後設定
@@ -269,9 +232,6 @@
     });
   }
 
-  /* ----------------------------------------------------------------
-   * init：決定資料來源後啟動渲染
-   * ---------------------------------------------------------------- */
   UiTable.prototype.init = function () {
     var self = this;
     if (this.src) {
@@ -291,15 +251,6 @@
     }
   };
 
-  /* ----------------------------------------------------------------
-   * _fromJSON：從 JSON 物件建立 DOM，再呼叫 _render
-   *
-   * 新增（v1.4.0）：
-   *   - data 頂層支援 autoRevealInterval / cellAlignment /
-   *     verticalAlignment / hoverBgColor / cellMinHeight
-   *   - row 層支援 enhance: true → 建立 <ui-row-enhance>
-   *   - col 層支援 maskText2 / maskInvert
-   * ---------------------------------------------------------------- */
   UiTable.prototype._fromJSON = function (data) {
     var self = this;
 
@@ -320,7 +271,6 @@
       if (gd.iniCollapse) g.setAttribute('ini-collapse', '');
 
       (gd.rows || []).forEach(function (rd) {
-        /* enhance: true → <ui-row-enhance>；否則 <ui-row> */
         var r = mk(rd.enhance ? 'ui-row-enhance' : 'ui-row');
         if (rd.hidden)      r.setAttribute('hidden',       '');
         if (rd.cellPadding) r.setAttribute('cell-padding', rd.cellPadding);
@@ -370,15 +320,6 @@
     this._render();
   };
 
-  /* ----------------------------------------------------------------
-   * _render：主渲染流程
-   *
-   * 新增（v1.4.0）：
-   *   - 讀取對齊、hover、min-height 設定並注入 CSS 變數
-   *   - 儲存 this.wrap 供 _setupAutoReveal 使用
-   *   - 渲染後呼叫 _setupAutoReveal
-   *   - 無 group 時的 qsa 加入 ui-row-enhance
-   * ---------------------------------------------------------------- */
   UiTable.prototype._render = function () {
     this.colN = this._getColCount();
 
@@ -387,22 +328,15 @@
 
     var c  = this.color;
     var fs = this.el.getAttribute('font-size') || CFG.fontSize;
-
-    /* 讀取對齊設定（element 屬性 > CFG） */
     var caRaw = this.el.getAttribute('cell-alignment')    || CFG.cellAlignment;
     var vaRaw = this.el.getAttribute('vertical-alignment') || CFG.verticalAlignment;
     var ha    = alignH(caRaw);
     var va    = alignV(vaRaw);
     var ta    = alignTxt(caRaw);
-
-    /* Hover 色 */
     var hoverRaw = this.el.getAttribute('hover-bg-color') || CFG.hoverBgColor;
     var hoverC   = resolveColor(hoverRaw);
-
-    /* Min-height */
     var minh = this.el.getAttribute('cell-min-height') || CFG.cellMinHeight;
 
-    /* 全局列邊框（element 屬性 > CFG） */
     this._rowBorder = this.el.getAttribute('row-border') || CFG.rowBorder || '';
 
     var vars = [
@@ -442,13 +376,6 @@
     this._setupAutoReveal();
   };
 
-  /* ----------------------------------------------------------------
-   * _setupAutoReveal：頁面載入後依序展開 hidden 列
-   *
-   * 觸發條件（任一）：
-   *   <ui-table auto-reveal-interval="1500"> 元素屬性
-   *   UiTableConfig.autoRevealInterval = 1500 全域設定
-   * ---------------------------------------------------------------- */
   UiTable.prototype._setupAutoReveal = function () {
     var ms = parseInt(this.el.getAttribute('auto-reveal-interval')) ||
              CFG.autoRevealInterval;
@@ -462,12 +389,6 @@
     });
   };
 
-  /* ----------------------------------------------------------------
-   * _getColCount：取第一個含有作用欄的 ui-row 的欄數
-   *
-   * 注意（v1.4.0）：只掃描 <ui-row>，不含 <ui-row-enhance>。
-   * ui-row-enhance 各列自行決定欄數，不參與全局 colN 計算。
-   * ---------------------------------------------------------------- */
   UiTable.prototype._getColCount = function () {
     var rows = qsa('ui-row', this.el);
     for (var i = 0; i < rows.length; i++) {
@@ -479,11 +400,6 @@
     return 0;
   };
 
-  /* ----------------------------------------------------------------
-   * _renderGroup：渲染 ui-group（含折疊）
-   *
-   * 更新（v1.4.0）：qsa 加入 ui-row-enhance
-   * ---------------------------------------------------------------- */
   UiTable.prototype._renderGroup = function (gEl) {
     var self = this;
     var div  = mk('div', 'uit-group');
@@ -528,18 +444,10 @@
     return div;
   };
 
-  /* ----------------------------------------------------------------
-   * _renderRows：渲染多列，統一建立全域遮罩鏈
-   *
-   * 更新（v1.4.0）：
-   *   根據標籤名稱分流——ui-row-enhance 傳 useLocalN=true，
-   *   讓 _renderRow 使用自身欄數而非全局 colN。
-   * ---------------------------------------------------------------- */
   UiTable.prototype._renderRows = function (rowEls, container) {
     var self = this;
     var rds  = [];
 
-    /* Step 1：跨列計算 mask-order 出現次數 */
     var globalMoCount = {};
     rowEls.forEach(function (r) {
       qsa(':scope > ui-col', r)
@@ -550,7 +458,6 @@
         });
     });
 
-    /* Step 2：渲染各列；ui-row-enhance 用自身欄數 */
     rowEls.forEach(function (r) {
       var useLocalN = r.tagName.toLowerCase() === 'ui-row-enhance';
       var d = self._renderRow(r, globalMoCount, useLocalN);
@@ -560,7 +467,6 @@
       }
     });
 
-    /* Step 3：全局遮罩鏈 */
     var masks = Array.from(
       container.querySelectorAll('.uit-mask[data-mask-order]')
     ).sort(function (a, b) {
@@ -579,14 +485,6 @@
     return rds;
   };
 
-  /* ----------------------------------------------------------------
-   * _renderRow：渲染單列
-   *
-   * 更新（v1.4.0）：
-   *   新增第三參數 useLocalN（boolean）。
-   *   useLocalN = true  → 欄數取自本列實際 ui-col 數（ui-row-enhance）
-   *   useLocalN = false → 欄數使用全局 this.colN（ui-row，原有行為）
-   * ---------------------------------------------------------------- */
   UiTable.prototype._renderRow = function (rowEl, globalMoCount, useLocalN) {
     var self = this;
 
@@ -596,11 +494,7 @@
     if (!active.length) return null;
 
     var hasSpan = active.some(function (c) { return c.hasAttribute('span'); });
-
-    /* 決定本列使用的欄數 */
     var colN = useLocalN ? active.length : this.colN;
-
-    /* col-widths 驗證對比 colN（enhance 列對比自身欄數） */
     var cw = hasSpan ? null : rowEl.getAttribute('col-widths');
     if (cw) {
       var parts = cw.split(':');
@@ -621,7 +515,6 @@
       : 'repeat(' + colN + ',1fr)';
     div.style.gridTemplateColumns = tpl;
 
-    /* 個別列 border 屬性優先；若無則使用全局 this._rowBorder */
     var bdr = rowEl.getAttribute('border') || this._rowBorder;
     if (bdr) div.style.border = bdr + ' ' + this.color;
 
@@ -647,9 +540,6 @@
     return div;
   };
 
-  /* ----------------------------------------------------------------
-   * _setupMaskChain：依序解鎖遮罩陣列（原有邏輯不變）
-   * ---------------------------------------------------------------- */
   UiTable.prototype._setupMaskChain = function (masks) {
     if (!masks.length) return;
 
@@ -673,23 +563,11 @@
     unlockAt(0);
   };
 
-  /* ----------------------------------------------------------------
-   * _renderCol：渲染單欄
-   *
-   * 更新（v1.4.0）：
-   *   遮罩新增兩種模式：
-   *   ① mask-text-2（雙層）：第一次點擊顯示第二層文字，第二次才揭開
-   *   ② mask-invert（反色）：深底色 + 主題色文字（對比一般的彩色底 + 深文字）
-   *
-   *   優先權：mask-order > mask-text-2 > 單層（原有邏輯）
-   *   mask-invert 與其他三種皆可搭配（套在背景色邏輯上）。
-   * ---------------------------------------------------------------- */
   UiTable.prototype._renderCol = function (colEl, pad, rowStyle, globalMoCount) {
     var self = this;
     var div  = mk('div', 'uit-col');
     div.style.padding = pad;
 
-    /* span 跨欄 */
     var spanVal = colEl.getAttribute('span');
     if (spanVal) {
       if (spanVal === 'all') {
@@ -702,14 +580,12 @@
       }
     }
 
-    /* 欄寬 & 固定欄 */
     var w = colEl.getAttribute('width');
     if (w) div.style.width = w;
     var fx = colEl.getAttribute('fixed');
     if (fx === 'left')  { div.classList.add('fix-l'); div.style.background = BG; }
     if (fx === 'right') { div.classList.add('fix-r'); div.style.background = BG; }
 
-    /* 功能旗標 */
     var hasMask  = colEl.hasAttribute('mask-text');
     var hasCar   = colEl.hasAttribute('carousel-interval');
     var hasExp   = colEl.hasAttribute('expandable');
@@ -717,7 +593,6 @@
     var hasSN    = colEl.hasAttribute('show-next');
     var hasMO    = colEl.hasAttribute('mask-order');
 
-    /* 互斥警告 */
     if (hasMask  && hasExp)  console.warn('[ui-table] mask-text+expandable 互斥，expandable 已忽略。');
     if (hasMask  && hasCar)  console.warn('[ui-table] mask-text+carousel-interval 互斥，carousel-interval 已忽略。');
     if (hasAlert && hasCar)  console.warn('[ui-table] alert-msg+carousel-interval 互斥，carousel-interval 已忽略。');
@@ -727,7 +602,6 @@
 
     if (hasSN) div.classList.add('has-sn');
 
-    /* 內容區 */
     var ci = mk('div', 'uit-ci');
     ci.style.color = this.color;
 
@@ -771,7 +645,6 @@
       div.appendChild(ci);
     }
 
-    /* ── 遮罩層 ── */
     if (hasMask) {
       var maskGrad   = colEl.getAttribute('mask-gradient') || '';
       var maskText2  = colEl.getAttribute('mask-text-2')   || '';   // 雙層第二層文字
@@ -779,17 +652,13 @@
       var mc = resolveColor(colEl.getAttribute('mask-color')) || this.color;
       var m  = mk('div', 'uit-mask');
 
-      /* ── 背景色決策：invert > gradient > 純色 ── */
       if (maskInvert) {
-        /* 反色：深底 + 主題色文字 */
         m.style.background = hexRgba(BG, 0.97);
         m.style.color      = mc;
       } else if (maskGrad) {
-        /* 漸層 */
         m.style.background = MASK_GRADIENTS[maskGrad] || maskGrad;
         m.style.color      = MASK_GRAD_TEXT;
       } else {
-        /* 純色 */
         m.style.background = hexRgba(mc, 0.97);
         m.style.color      = BG;
       }
@@ -798,9 +667,7 @@
       lbl.textContent = colEl.getAttribute('mask-text');
       m.appendChild(lbl);
 
-      /* ── 點擊行為決策：mask-order > mask-text-2 > 單層 ── */
       if (hasMO) {
-        /* 有序解鎖鏈（原有邏輯） */
         var moVal = parseInt(colEl.getAttribute('mask-order'));
         var isDup = !isNaN(moVal) && globalMoCount && globalMoCount[moVal] > 1;
 
@@ -817,7 +684,6 @@
         }
 
       } else if (maskText2) {
-        /* 雙層：第一次顯示第二層文字，第二次揭開 */
         m.classList.add('unlockable');
         m._dualLayer = 1;
         m.addEventListener('click', function () {
@@ -830,7 +696,6 @@
         });
 
       } else {
-        /* 單層：直接揭開（原有邏輯） */
         m.classList.add('unlockable');
         m.addEventListener('click', function () { m.classList.add('revealed'); });
       }
@@ -838,15 +703,11 @@
       div.appendChild(m);
     }
 
-    /* Alert */
     if (hasAlert) this._setupAlert(div, colEl);
 
     return div;
   };
 
-  /* ----------------------------------------------------------------
-   * _setupCarousel（不變）
-   * ---------------------------------------------------------------- */
   UiTable.prototype._setupCarousel = function (ci, colDiv, items, ms, hasPb, pbClr) {
     if (!items.length) return;
 
@@ -920,9 +781,6 @@
     }, ms);
   };
 
-  /* ----------------------------------------------------------------
-   * _setupAlert（不變）
-   * ---------------------------------------------------------------- */
   UiTable.prototype._setupAlert = function (colDiv, colEl) {
     var msg      = colEl.getAttribute('alert-msg') || '';
     var clr      = resolveColor(colEl.getAttribute('alert-color')) || this.color;
@@ -975,9 +833,6 @@
     }
   };
 
-  /* ----------------------------------------------------------------
-   * _bindSN（不變）
-   * ---------------------------------------------------------------- */
   UiTable.prototype._bindSN = function (rds) {
     rds.forEach(function (rd, i) {
       var snCols = rd.el.querySelectorAll('.has-sn');
@@ -997,9 +852,6 @@
     });
   };
 
-  /* ----------------------------------------------------------------
-   * boot & 暴露
-   * ---------------------------------------------------------------- */
   function boot() {
     document.querySelectorAll('ui-table').forEach(function (el) {
       if (!el._uit) {
