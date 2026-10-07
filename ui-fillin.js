@@ -21,6 +21,9 @@ ui-fillin{
 ui-fillin main-box{display:block;box-sizing:border-box;padding:var(--uf-main-padding);font-family:var(--uf-serif);font-size:calc(var(--uf-font-size) * 1.1);line-height:1.5}
 ui-fillin main-box p{margin:0 0 8px}
 ui-fillin main-box p:last-child{margin-bottom:0}
+ui-fillin main-box ul,ui-fillin main-box ol{margin:0;padding:0;list-style:none}
+ui-fillin main-box li{margin:0 0 8px}
+ui-fillin main-box li:last-child{margin-bottom:0}
 ui-fillin main-box:empty,ui-fillin ans-box:empty{display:none}
 
 ui-fillin .uf-blank{display:inline-flex;align-items:center;gap:4px;box-sizing:border-box;max-width:20rem;margin:0 2px;padding:var(--uf-blank-padding);
@@ -98,6 +101,25 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       out.push(m[1] + 'px');
     }
     return out.join(' ');
+  }
+
+  // 洗牌（Fisher-Yates），優先使用 crypto 亂數
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      let j;
+      if (window.crypto && window.crypto.getRandomValues) {
+        const u = new Uint32Array(1);
+        window.crypto.getRandomValues(u);
+        j = u[0] % (i + 1);
+      } else {
+        j = Math.floor(Math.random() * (i + 1));
+      }
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
   }
 
   // font-size 屬性值：純數字或 rem，一律換算成 rem
@@ -263,6 +285,13 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
     _build(src) {
       const frag = document.createDocumentFragment();
       Array.from(src.childNodes).forEach((n) => frag.appendChild(n.cloneNode(true)));
+      // 布林屬性 random：來源內的清單項目（li）隨機換序，題號之後依新順序自動編
+      if (this.hasAttribute('random')) {
+        frag.querySelectorAll('ul,ol').forEach((list) => {
+          const lis = Array.from(list.children).filter((c) => c.tagName === 'LI');
+          shuffle(lis).forEach((li) => list.appendChild(li));
+        });
+      }
       const walker = document.createTreeWalker(frag, NodeFilter.SHOW_TEXT);
       const nodes = [];
       while (walker.nextNode()) nodes.push(walker.currentNode);
