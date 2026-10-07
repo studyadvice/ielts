@@ -125,7 +125,7 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
     <tr><td>方法</td><td><code>submit()</code></td><td>提交並批改，提交後鎖定。</td></tr>
     <tr><td>方法</td><td><code>reset()</code></td><td>清除作答、解除鎖定並清空結果區塊。</td></tr>
     <tr><td>方法</td><td><code>closeMenu()</code></td><td>關閉目前開啟的選項清單。</td></tr>
-    <tr><td>CSS 變數</td><td><code>--uf-bg</code> <code>--uf-text</code> <code>--uf-sky</code> <code>--uf-lavender</code> <code>--uf-focus</code> <code>--uf-ok</code> <code>--uf-bad</code> <code>--uf-head</code> <code>--uf-info</code> <code>--uf-line</code> <code>--uf-sans</code> <code>--uf-serif</code> <code>--uf-font-size</code></td><td>全部顏色與字體都由變數控制，在 <code>ui-fillin</code> 上覆寫即可換主題。</td></tr>
+    <tr><td>CSS 變數</td><td><code>--uf-accent</code> <code>--uf-bg</code> <code>--uf-text</code> <code>--uf-ok</code> <code>--uf-bad</code> <code>--uf-line</code> <code>--uf-sans</code> <code>--uf-serif</code> <code>--uf-font-size</code></td><td><code>--uf-accent</code> 是主題色，下拉選單、題號、空格、按鈕、表頭、提示全部共用這一個顏色。對錯固定用 <code>--uf-ok</code> 與 <code>--uf-bad</code>。在 <code>ui-fillin</code> 上覆寫變數即可換主題。</td></tr>
   </table>
   </div>
 </section>
@@ -174,7 +174,7 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 <!-- 五、padding -->
 <section id="s5" class="demo">
   <h2>五、padding 屬性</h2>
-  <p class="note">六個屬性都可以即時調整，預設都是 12px。輸入數字或 px 值，留空就還原預設。輸入無效的值會被元件忽略。</p>
+  <p class="note">六個屬性都可以即時調整，預設都是 12px。輸入數字或 px 值，留空就還原預設。輸入無效的值會被元件忽略。預設值維持 12px，按「緊湊建議值」可以預覽更緊湊的搭配，字體大小不變。</p>
   <div class="cols">
     <div class="pane">
       <h3>實際效果</h3>
@@ -190,6 +190,7 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
         <div class="btns">
           <button type="button" class="dbtn" id="pad-big">全部設為 24px</button>
           <button type="button" class="dbtn" id="pad-wide">空格設為 8px 24px</button>
+          <button type="button" class="dbtn" id="pad-compact">緊湊建議值</button>
           <button type="button" class="dbtn" id="pad-clear">還原預設</button>
         </div>
         <div class="demo-alert" id="pad-msg" role="alert" hidden></div>
@@ -207,15 +208,17 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 <!-- 六、主題 -->
 <section id="s6" class="demo">
   <h2>六、主題變數</h2>
-  <p class="note">元件的顏色全部來自 CSS 變數。按下面的按鈕，會在 <code>ui-fillin</code> 上覆寫變數。你也可以在樣式表寫 <code>ui-fillin{--uf-sky:#1CCAE8}</code>，效果相同。提交後可以看到對錯顏色。</p>
+  <p class="note">一個主題就是一個顏色：元件只用 <code>--uf-accent</code> 一個主題色，下拉選單、題號、空格、按鈕、表頭與提示全部相同。對錯固定用綠色與紅色，不隨主題改變。按下面的按鈕，會在 <code>ui-fillin</code> 上覆寫這個變數，你也可以在樣式表寫 <code>ui-fillin{--uf-accent:#1CCAE8}</code>，效果相同。</p>
   <div class="cols">
     <div class="pane">
       <h3>實際效果</h3>
       <div class="btns" style="margin-bottom:12px">
-        <button type="button" class="dbtn on" data-theme="default">預設</button>
-        <button type="button" class="dbtn" data-theme="lavender">薰衣草</button>
-        <button type="button" class="dbtn" data-theme="ocean">海洋</button>
-        <button type="button" class="dbtn" data-theme="salmon">鮭魚</button>
+        <button type="button" class="dbtn on" data-theme="default">天空 sky</button>
+        <button type="button" class="dbtn" data-theme="lavender">薰衣草 lavender</button>
+        <button type="button" class="dbtn" data-theme="ocean">海洋 ocean</button>
+        <button type="button" class="dbtn" data-theme="salmon">鮭魚 salmon</button>
+        <button type="button" class="dbtn" data-theme="teal">藍綠 teal</button>
+        <button type="button" class="dbtn" data-theme="pink">粉紅 pink</button>
       </div>
       <div id="s6-live"></div>
     </div>
@@ -498,29 +501,26 @@ customElements.define('demo-tick', class extends HTMLElement {
   document.getElementById('pad-wide').addEventListener('click', function () {
     fillAll(function (k) { return k === 'blank' ? '8px 24px' : ''; });
   });
+  document.getElementById('pad-compact').addEventListener('click', function () {
+    var P = { root: '8px', main: '4px 8px', blank: '2px 10px', menu: '6px', option: '6px 12px', ans: '8px' };
+    fillAll(function (k) { return P[k]; });
+  });
   document.getElementById('pad-clear').addEventListener('click', function () { fillAll(function () { return ''; }); });
   renderTag();
 })();
 
 /* ---------- 六、主題切換 ---------- */
 (function () {
-  var THEMES = {
-    'default': {},
-    lavender: { '--uf-sky': '#C3A5E5', '--uf-lavender': '#FF91D7', '--uf-head': '#C3A5E5', '--uf-info': '#7849C9' },
-    ocean: { '--uf-sky': '#1CCAE8', '--uf-lavender': '#82C8E5', '--uf-head': '#0DA591', '--uf-info': '#2351DB' },
-    salmon: { '--uf-sky': '#E5C3B3', '--uf-lavender': '#EDA109', '--uf-head': '#E3D322', '--uf-info': '#7849C9' }
-  };
-  var VARS = ['--uf-sky', '--uf-lavender', '--uf-head', '--uf-info'];
+  var THEMES = { 'default': '#82C8E5', lavender: '#C3A5E5', ocean: '#1CCAE8', salmon: '#E5C3B3', teal: '#0DA591', pink: '#FF91D7' };
   var target = document.getElementById('theme-demo');
   var tag = document.getElementById('theme-tag');
   var btns = Array.prototype.slice.call(document.querySelectorAll('[data-theme]'));
 
   function apply(name) {
-    VARS.forEach(function (p) { target.style.removeProperty(p); });
-    var t = THEMES[name];
-    Object.keys(t).forEach(function (k) { target.style.setProperty(k, t[k]); });
-    var css = Object.keys(t).map(function (k) { return k + ':' + t[k]; }).join(';');
-    tag.textContent = css ? '<ui-fillin id="theme-demo" style="' + css + '">' : '<ui-fillin id="theme-demo">';
+    var c = THEMES[name];
+    if (name === 'default') target.style.removeProperty('--uf-accent');
+    else target.style.setProperty('--uf-accent', c);
+    tag.textContent = name === 'default' ? '<ui-fillin id="theme-demo">' : '<ui-fillin id="theme-demo" style="--uf-accent:' + c + '">';
     btns.forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-theme') === name); });
   }
   btns.forEach(function (b) {

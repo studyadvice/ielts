@@ -6,8 +6,8 @@
   /* ---------- 樣式（與腳本同檔，不使用 shadow DOM） ---------- */
   const CSS = `
 ui-fillin{
-  --uf-bg:#0C0D0C;--uf-text:#C6C7BD;--uf-sky:#82C8E5;--uf-lavender:#C3A5E5;--uf-focus:#D4FFFC;
-  --uf-ok:#27AE60;--uf-bad:#E6374B;--uf-head:#0DA591;--uf-info:#2351DB;
+  --uf-bg:#0C0D0C;--uf-text:#C6C7BD;--uf-accent:#82C8E5;
+  --uf-ok:#27AE60;--uf-bad:#E6374B;
   --uf-line:rgba(198,199,189,0.78);
   --uf-sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --uf-serif:Georgia,"Noto Serif TC","PMingLiU",serif;
@@ -24,49 +24,50 @@ ui-fillin main-box p:last-child{margin-bottom:0}
 ui-fillin main-box:empty,ui-fillin ans-box:empty{display:none}
 
 ui-fillin .uf-blank{display:inline-flex;align-items:center;gap:4px;box-sizing:border-box;max-width:20rem;margin:0 2px;padding:var(--uf-blank-padding);
-  vertical-align:baseline;white-space:nowrap;appearance:none;background:transparent;color:var(--uf-sky);border:1px solid var(--uf-sky);border-radius:6px;
+  vertical-align:baseline;white-space:nowrap;appearance:none;background:transparent;color:var(--uf-accent);border:1px solid var(--uf-accent);border-radius:6px;
   font:var(--uf-font-size)/1.25 var(--uf-sans);cursor:pointer}
 ui-fillin .uf-blank .uf-no{font-weight:700}
 ui-fillin .uf-blank .uf-no::after{content:"."}
 ui-fillin .uf-blank .uf-val{overflow:hidden;text-overflow:ellipsis}
 ui-fillin .uf-blank .uf-mark{font-weight:700}
 ui-fillin .uf-blank .uf-mark:empty{display:none}
-ui-fillin .uf-blank:not(:disabled):hover,ui-fillin .uf-blank.is-open{background:var(--uf-sky);color:var(--uf-bg)}
-ui-fillin .uf-blank.is-picked{color:var(--uf-lavender);border-color:var(--uf-lavender)}
-ui-fillin .uf-blank.is-picked:not(:disabled):hover,ui-fillin .uf-blank.is-picked.is-open{background:var(--uf-lavender);color:var(--uf-bg)}
-ui-fillin .uf-blank.is-ok{color:var(--uf-ok);border-color:var(--uf-ok)}
-ui-fillin .uf-blank.is-bad{color:var(--uf-bad);border-color:var(--uf-bad)}
+ui-fillin .uf-blank:not(:disabled):hover,ui-fillin .uf-blank.is-open{box-shadow:inset 0 0 0 1px var(--uf-accent)}
+ui-fillin .uf-blank.is-picked{background:var(--uf-accent);color:var(--uf-bg)}
+ui-fillin .uf-blank.is-ok{background:transparent;color:var(--uf-ok);border-color:var(--uf-ok)}
+ui-fillin .uf-blank.is-bad{background:transparent;color:var(--uf-bad);border-color:var(--uf-bad)}
 ui-fillin .uf-blank:disabled{cursor:default}
-ui-fillin .uf-blank:focus-visible,ui-fillin .uf-btn:focus-visible,ui-fillin .uf-opt:focus-visible{outline:2px solid var(--uf-focus);outline-offset:2px}
+ui-fillin .uf-blank:focus-visible,ui-fillin .uf-btn:focus-visible,ui-fillin .uf-opt:focus-visible{outline:2px solid var(--uf-accent);outline-offset:2px}
 
 ui-fillin .uf-menu{position:fixed;z-index:1000;display:flex;flex-direction:column;gap:2px;box-sizing:border-box;min-width:10rem;
   max-width:min(24rem,calc(100vw - 16px));max-height:60vh;overflow:auto;padding:var(--uf-menu-padding);
-  background:var(--uf-bg);color:var(--uf-text);border:1px solid var(--uf-sky);border-radius:6px;font:var(--uf-font-size)/1.25 var(--uf-sans)}
+  background:var(--uf-bg);color:var(--uf-text);border:1px solid var(--uf-accent);border-radius:6px;font:var(--uf-font-size)/1.25 var(--uf-sans)}
 ui-fillin .uf-menu[hidden]{display:none}
-ui-fillin .uf-hint{padding:0 12px;color:var(--uf-lavender)}
+ui-fillin .uf-hint{padding:0 12px;color:var(--uf-accent)}
 ui-fillin .uf-opt{display:flex;align-items:baseline;gap:12px;width:100%;box-sizing:border-box;padding:var(--uf-option-padding);
   appearance:none;background:transparent;color:var(--uf-text);border:0;border-radius:4px;font:inherit;text-align:left;cursor:pointer}
-ui-fillin .uf-opt .uf-key{flex:none;font-weight:700}
-ui-fillin .uf-opt:hover{background:var(--uf-focus);color:var(--uf-bg)}
-ui-fillin .uf-opt.is-on{background:var(--uf-lavender);color:var(--uf-bg)}
+ui-fillin .uf-opt .uf-key{flex:none;font-weight:700;color:var(--uf-accent)}
+ui-fillin .uf-opt.is-on{color:var(--uf-accent);box-shadow:inset 0 0 0 1px var(--uf-accent)}
+ui-fillin .uf-opt.is-on::after{content:"✓";margin-left:auto;font-weight:700}
+ui-fillin .uf-opt:hover,ui-fillin .uf-opt.is-on:hover{background:var(--uf-accent);color:var(--uf-bg)}
+ui-fillin .uf-opt:hover .uf-key{color:var(--uf-bg)}
 
-ui-fillin ans-box{display:block;box-sizing:border-box;margin-top:0;padding:var(--uf-ans-padding);border-top:1px solid var(--uf-line)}
+ui-fillin ans-box{display:block;box-sizing:border-box;margin-top:0;padding:var(--uf-ans-padding);border-top:1px dashed var(--uf-line)}
 ui-fillin .uf-scroll{overflow-x:auto}
 ui-fillin .uf-table{width:100%;border-collapse:collapse}
 ui-fillin .uf-table th,ui-fillin .uf-table td{min-width:5rem;padding:6px 12px;line-height:1.25;border:1px solid var(--uf-line);text-align:center;vertical-align:middle}
-ui-fillin .uf-table th{color:var(--uf-head);font-weight:700}
+ui-fillin .uf-table th{color:var(--uf-accent);font-weight:700}
 ui-fillin .uf-table td.is-ok{background:var(--uf-ok);color:var(--uf-bg)}
 ui-fillin .uf-table td.is-bad{background:var(--uf-bad);color:var(--uf-bg)}
 ui-fillin .uf-table .uf-mark{margin-left:8px;font-weight:700}
 ui-fillin .uf-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-ui-fillin .uf-btn{appearance:none;padding:8px 20px;border:1px solid var(--uf-sky);border-radius:6px;background:transparent;color:var(--uf-text);font:inherit;cursor:pointer}
-ui-fillin .uf-btn.is-primary{background:var(--uf-sky);color:var(--uf-bg)}
+ui-fillin .uf-btn{appearance:none;padding:8px 20px;border:1px solid var(--uf-accent);border-radius:6px;background:transparent;color:var(--uf-text);font:inherit;cursor:pointer}
+ui-fillin .uf-btn.is-primary{background:var(--uf-accent);color:var(--uf-bg)}
 ui-fillin .uf-btn.is-ghost{border-color:var(--uf-line)}
 ui-fillin .uf-btn:disabled{cursor:default;background:transparent;color:var(--uf-line);border-color:var(--uf-line)}
 
 ui-fillin .uf-alerts{margin-bottom:8px}
 ui-fillin .uf-alerts:empty{display:none}
-ui-fillin .uf-alert{margin:0;padding:8px 12px;border:1px solid var(--uf-info);border-radius:6px;background:var(--uf-info);color:var(--uf-focus);font:inherit}
+ui-fillin .uf-alert{margin:0;padding:8px 12px;border:1px solid var(--uf-accent);border-radius:6px;background:var(--uf-accent);color:var(--uf-bg);font:inherit}
 ui-fillin .uf-btn,ui-fillin .uf-opt{line-height:1.25}
 ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);color:var(--uf-bg)}
 `;
