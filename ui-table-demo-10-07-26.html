@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ui-table 示範：文字顏色與 alert 提示</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+:root { font-size: 18px; }
+html { scroll-behavior: smooth; }
+body {
+  background: #0C0D0C;
+  color: #C6C7BD;
+  font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 24px 48px 96px;
+  max-width: none;
+}
+h1 { font-size: 2rem; color: #82C8E5; margin: 0 0 12px; }
+h2 { font-size: 1.5rem; color: #82C8E5; margin: 48px 0 12px; padding-top: 12px; }
+h3 { font-size: 1.2rem; color: #E5C3B3; margin: 24px 0 8px; }
+p, li { font-size: 1rem; line-height: 1.5; }
+code { color: #B3DE73; font-size: 1rem; }
+pre {
+  background: #181A18;
+  border: 1px solid #3A3B38;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 12px 0 24px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code { color: #DBEDD8; }
+.demo-box { margin: 12px 0 24px; padding: 12px; max-width: 760px; }
+.demo-box.narrow { max-width: 560px; }
+.alert-note {
+  background: #181A18;
+  color: #DBEDD8;
+  border: 1px solid #1CCAE8;
+  border-radius: 6px;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 12px 16px;
+  margin: 12px 0;
+}
+.alert-note strong { color: #E3D322; }
+.gap-top { margin-top: 72px; }
+</style>
+</head>
+<body>
+
+<h1>ui-table 示範</h1>
+<div class="alert alert-note" role="alert">
+  本頁包含兩個重點：<strong>文字顏色</strong>（整張表格、整列、單一儲存格）與 <strong>alert 提示</strong>。
+  alert 提示不是點擊觸發，而是依 <code>alert-interval</code> 定時出現，所以請停留在頁面上等待，每則提示會顯示約 2.5 秒。
+</div>
+
+<!-- ======================= 1. 整張表格 ======================= -->
+<h2>一、整張表格的文字顏色</h2>
+<p>
+  <code>theme</code> 決定邊框與標題列的顏色，同時是文字的預設顏色。
+  加上 <code>font-color</code> 後，只改文字，邊框仍維持 theme 顏色。
+</p>
+
+<h3>只設 theme（文字與邊框同色）</h3>
+<div class="demo-box">
+  <ui-table theme="sky" cell-min-height="36px" row-border="1px solid">
+    <ui-row col-border="1px dashed">
+      <ui-col>natural ingredients</ui-col>
+      <ui-col>university students</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed">
+      <ui-col>healthy habits</ui-col>
+      <ui-col>student cards</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+
+<h3>theme 加 font-color（名稱）</h3>
+<div class="demo-box">
+  <ui-table theme="sky" font-color="vanilla" cell-min-height="36px" row-border="1px solid">
+    <ui-row col-border="1px dashed">
+      <ui-col>natural ingredients</ui-col>
+      <ui-col>university students</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed">
+      <ui-col>healthy habits</ui-col>
+      <ui-col>student cards</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+
+<h3>theme 加 font-color（十六進位）</h3>
+<div class="demo-box">
+  <ui-table theme="indigo" font-color="#E5C3B3" cell-min-height="36px" row-border="1px solid">
+    <ui-row col-border="1px dashed">
+      <ui-col>her parents</ui-col>
+      <ui-col>some friends</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed">
+      <ui-col>my support</ui-col>
+      <ui-col>some information</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+<pre><code>&lt;ui-table theme="sky" font-color="vanilla"&gt; ... &lt;/ui-table&gt;
+&lt;ui-table theme="indigo" font-color="#E5C3B3"&gt; ... &lt;/ui-table&gt;</code></pre>
+
+<!-- ======================= 2. 單一 cell ======================= -->
+<h2>二、整列與單一儲存格的文字顏色</h2>
+<p>
+  <code>font-color</code> 也能放在 <code>&lt;ui-row&gt;</code> 與 <code>&lt;ui-col&gt;</code>。
+  優先順序由高到低：ui-col、ui-row、ui-table、theme。
+</p>
+<div class="demo-box">
+  <ui-table theme="sky" font-color="vanilla" cell-min-height="36px" row-border="1px solid">
+    <ui-row col-border="1px dashed">
+      <ui-col>沿用整表的 vanilla</ui-col>
+      <ui-col font-color="warning">這一格單獨用 warning</ui-col>
+    </ui-row>
+    <ui-row font-color="salmon" col-border="1px dashed">
+      <ui-col>整列用 salmon</ui-col>
+      <ui-col>整列用 salmon</ui-col>
+    </ui-row>
+    <ui-row font-color="salmon" col-border="1px dashed">
+      <ui-col font-color="special">整列 salmon，這格 special</ui-col>
+      <ui-col font-color="#FF91D7">這格用十六進位粉紅</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+<pre><code>&lt;ui-row font-color="salmon"&gt;
+  &lt;ui-col font-color="special"&gt;單一儲存格&lt;/ui-col&gt;
+&lt;/ui-row&gt;</code></pre>
+<p>
+  內容中的 <code>&lt;span style="color:..."&gt;</code> 一直都有效，適合只改一個詞的顏色，例如
+  <span style="color:#E3D322">這個詞</span>。
+</p>
+
+<!-- ======================= 3. 遮罩 ======================= -->
+<h2>三、遮罩與文字顏色</h2>
+<p>
+  使用 <code>mask-invert</code> 的遮罩，提示文字顏色的優先順序是 <code>mask-color</code>、儲存格的 <code>font-color</code>、theme。
+  遮罩揭開後，底下的內容照原本的 <code>font-color</code> 顯示。
+</p>
+<div class="demo-box narrow">
+  <ui-table theme="sky" font-color="vanilla" cell-min-height="40px" row-border="1px solid">
+    <ui-row col-border="1px dashed">
+      <ui-col mask-text="點擊揭曉" mask-invert>natural ingredients</ui-col>
+      <ui-col mask-text="點擊揭曉" mask-invert font-color="warning">warning 文字</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed">
+      <ui-col mask-text="點擊揭曉" mask-invert mask-color="special">遮罩用 special</ui-col>
+      <ui-col mask-text="點擊揭曉" mask-invert font-color="#FF91D7">十六進位粉紅</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+<pre><code>&lt;ui-col mask-text="點擊揭曉" mask-invert font-color="warning"&gt;...&lt;/ui-col&gt;</code></pre>
+
+<!-- ======================= 4. show-next ======================= -->
+<h2>四、點擊儲存格展開下一列</h2>
+<p>
+  在 <code>ui-col</code> 加上 <code>show-next</code>，該格會自動出現 Bootstrap Icons 的向下箭頭，點擊後展開下一列，箭頭翻轉向上。
+  下一列要加 <code>hidden</code> 才會一開始收起。需要載入 bootstrap-icons 的 CSS。
+</p>
+<div class="demo-box narrow">
+  <ui-table theme="sky" cell-min-height="40px" row-border="1px solid">
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col show-next="true">Opportunity to study abroad</ui-col>
+      <ui-col>留學的機會</ui-col>
+    </ui-row>
+    <ui-row hidden col-border="1px dashed" col-widths="2:3">
+      <ui-col font-color="salmon">名詞在前</ui-col>
+      <ui-col font-color="salmon">opportunity 先講，to study abroad 補充說明</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col show-next="true">Impact on the environment</ui-col>
+      <ui-col>對環境的影響</ui-col>
+    </ui-row>
+    <ui-row hidden col-border="1px dashed" col-widths="2:3">
+      <ui-col font-color="salmon">名詞在前</ui-col>
+      <ui-col font-color="salmon">impact 先講，on the environment 補充說明</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+<pre><code>&lt;ui-row&gt;&lt;ui-col show-next="true"&gt;點我&lt;/ui-col&gt;&lt;/ui-row&gt;
+&lt;ui-row hidden&gt;&lt;ui-col&gt;被展開的下一列&lt;/ui-col&gt;&lt;/ui-row&gt;</code></pre>
+
+<h3>兩欄以上：各欄展開自己的下一列內容</h3>
+<p>
+  同一列有兩個以上的 <code>show-next</code> 時，每一欄只展開下一列同位置的儲存格，其他位置保持空白。
+  也可以明確指定：<code>show-next="col"</code> 強制各欄各自展開，<code>show-next="row"</code> 強制整列展開。
+</p>
+<div class="demo-box">
+  <ui-table theme="sky" cell-min-height="40px" row-border="1px solid">
+    <ui-row col-border="1px dashed">
+      <ui-col show-next="true">Opportunity to study abroad</ui-col>
+      <ui-col show-next="true">Impact on the environment</ui-col>
+      <ui-col show-next="true">Stress caused by heavy workloads</ui-col>
+    </ui-row>
+    <ui-row hidden col-border="1px dashed">
+      <ui-col font-color="salmon">opportunity 先講，to study abroad 補充說明</ui-col>
+      <ui-col font-color="salmon">impact 先講，on the environment 補充說明</ui-col>
+      <ui-col font-color="salmon">stress 先講，caused by heavy workloads 補充說明</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+<pre><code>&lt;ui-row&gt;
+  &lt;ui-col show-next="true"&gt;A&lt;/ui-col&gt;
+  &lt;ui-col show-next="true"&gt;B&lt;/ui-col&gt;
+&lt;/ui-row&gt;
+&lt;ui-row hidden&gt;
+  &lt;ui-col&gt;A 的下一列內容&lt;/ui-col&gt;
+  &lt;ui-col&gt;B 的下一列內容&lt;/ui-col&gt;
+&lt;/ui-row&gt;</code></pre>
+
+<!-- ======================= 自動編號 ======================= -->
+<h2>五、自動編號</h2>
+<p>
+  在 <code>ui-row-enhance</code>（一般 <code>ui-row</code> 也可）加上 <code>auto-number</code>，每個儲存格左側會依序出現圓圈編號，每列各自從 1 起算。
+  <code>auto-number="fill"</code> 為實心圓圈。圓圈顏色跟著文字顏色，1 到 9 使用 Bootstrap Icons，10 以上改用同尺寸的 SVG 圓圈。
+</p>
+<div class="demo-box">
+  <ui-table theme="sky" cell-min-height="40px" row-border="1px solid">
+    <ui-row-enhance auto-number col-border="1px dashed">
+      <ui-col>Natural ingredients</ui-col>
+      <ui-col>Increasingly aware</ui-col>
+      <ui-col>Negatively impact my sleep</ui-col>
+    </ui-row-enhance>
+    <ui-row-enhance auto-number="fill" font-color="salmon" col-border="1px dashed">
+      <ui-col>The caregiving burden increases.</ui-col>
+      <ui-col>Short videos are becoming popular.</ui-col>
+    </ui-row-enhance>
+    <ui-row-enhance auto-number="fill" font-color="special" col-border="1px dashed">
+      <ui-col icon="bi-star-fill">自訂 icon 的格子不放編號</ui-col>
+      <ui-col>第 2 格仍編為 2</ui-col>
+      <ui-col mask-text="點擊揭曉" mask-invert>遮罩揭開後才看到編號</ui-col>
+    </ui-row-enhance>
+  </ui-table>
+</div>
+<pre><code>&lt;ui-row-enhance auto-number="fill" font-color="salmon"&gt;
+  &lt;ui-col&gt;...&lt;/ui-col&gt;
+&lt;/ui-row-enhance&gt;</code></pre>
+
+<!-- ======================= 6. alert ======================= -->
+<h2>六、alert 提示</h2>
+<p>alert 要三個屬性同時設定才會啟動，缺一個就會被略過，只在主控台出現錯誤訊息：</p>
+<ul>
+  <li><code>alert-msg</code>：提示內容，或隱藏來源儲存格的 id。</li>
+  <li><code>alert-interval</code>：間隔毫秒數，首次出現也在這段時間之後。</li>
+  <li><code>alert-pos</code>：A 在儲存格內，B 在儲存格上方，其他字母（例如 C）在儲存格右側。</li>
+</ul>
+<p>選填：<code>alert-color</code> 設定提示底色。顯示時間由 <code>UiTableConfig.alertDuration</code> 控制，本頁設為 2500 毫秒。</p>
+
+<div class="demo-box narrow gap-top">
+  <ui-table theme="sky" cell-min-height="48px" row-border="1px solid">
+    <!-- 隱藏來源儲存格：alert-msg 填它的 id，就能放含 HTML 的提示 -->
+    <ui-col id="hint-rich" hidden>提示可以含 <b>粗體</b> 與連結</ui-col>
+
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col>位置</ui-col>
+      <ui-col>儲存格</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col>A：顯示在儲存格內</ui-col>
+      <ui-col alert-msg="3 秒後出現在儲存格內" alert-interval="3000" alert-pos="A" alert-color="yellow">等待 3 秒</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col>A：蓋住遮罩的儲存格</ui-col>
+      <ui-col mask-text="點擊揭曉" alert-msg="遮罩上也看得到提示" alert-interval="4000" alert-pos="A" alert-color="orange">natural ingredients</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col>B：顯示在儲存格上方</ui-col>
+      <ui-col alert-msg="4 秒後出現在上方" alert-interval="4000" alert-pos="B" alert-color="ocean">等待 4 秒</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col>C：顯示在儲存格右側</ui-col>
+      <ui-col alert-msg="5 秒後出現在右側" alert-interval="5000" alert-pos="C" alert-color="special">等待 5 秒</ui-col>
+    </ui-row>
+    <ui-row col-border="1px dashed" col-widths="2:3">
+      <ui-col>引用來源儲存格的 id</ui-col>
+      <ui-col alert-msg="hint-rich" alert-interval="6000" alert-pos="B" alert-color="lavender">等待 6 秒</ui-col>
+    </ui-row>
+  </ui-table>
+</div>
+
+<pre><code>&lt;ui-col alert-msg="3 秒後出現在儲存格內"
+        alert-interval="3000"
+        alert-pos="A"
+        alert-color="yellow"&gt;等待 3 秒&lt;/ui-col&gt;
+
+&lt;!-- 含 HTML 的提示：先放隱藏來源，再用 id 引用 --&gt;
+&lt;ui-col id="hint-rich" hidden&gt;提示可以含 &lt;b&gt;粗體&lt;/b&gt;&lt;/ui-col&gt;
+&lt;ui-col alert-msg="hint-rich" alert-interval="6000" alert-pos="B"&gt;...&lt;/ui-col&gt;</code></pre>
+
+<script>
+  /* 必須在載入 ui-table.js 之前設定 */
+  window.UiTableConfig = { alertDuration: 2500 };
+</script>
+<script src="ui-table.js"></script>
+</body>
+</html>

@@ -114,6 +114,19 @@
     return ICO[name] ? '<span class="uit-ico">' + ICO[name] + '</span>' : '';
   }
 
+  /* 圓圈編號：1 到 9 用 Bootstrap Icons，10 以上用同尺寸的 SVG 圓圈 */
+  function mkNum(n, fill) {
+    if (n >= 0 && n <= 9) {
+      return '<span class="uit-ico"><i class="bi bi-' + n + '-circle' +
+        (fill ? '-fill' : '') + '" aria-hidden="true"></i></span>';
+    }
+    return '<span class="uit-ico"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true">' +
+      '<circle cx="8" cy="8" r="7.2" stroke="currentColor" stroke-width="1.2" fill="' +
+      (fill ? 'currentColor' : 'none') + '"/>' +
+      '<text x="8" y="8" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="600" fill="' +
+      (fill ? BG : 'currentColor') + '">' + n + '</text></svg></span>';
+  }
+
   function mk(tag, cls) {
     var el = document.createElement(tag);
     if (cls) el.className = cls;
@@ -177,6 +190,7 @@
     /* show-next */
     '.uit-col.has-sn{cursor:pointer;transition:opacity .2s}',
     '.uit-col.has-sn:hover{opacity:.82}',
+    '.uit-col.uit-cell-off{visibility:hidden}',
     '.uit-sn-ico{display:inline-flex;align-items:center;flex-shrink:0;margin-left:auto;transition:transform .25s ease}',
     '.uit-col.sn-open .uit-sn-ico{transform:rotate(180deg)}',
 
@@ -282,6 +296,7 @@
         if (rd.colBorder)   r.setAttribute('col-border',   rd.colBorder);
         if (rd.fontSize)    r.setAttribute('font-size',    rd.fontSize);
         if (rd.fontColor)   r.setAttribute('font-color',   rd.fontColor);
+        if (rd.autoNumber)  r.setAttribute('auto-number',  rd.autoNumber === true ? '' : rd.autoNumber);
         if (rd.lineHeight)  r.setAttribute('line-height',  rd.lineHeight);
         if (rd.textIndent)  r.setAttribute('text-indent',  rd.textIndent);
 
@@ -530,6 +545,7 @@
     var rowStyle = {
       fontSize:   rowEl.getAttribute('font-size'),
       fontColor:  resolveColor(rowEl.getAttribute('font-color')),
+      autoNumber: rowEl.hasAttribute('auto-number') ? (rowEl.getAttribute('auto-number') || 'outline') : null,
       lineHeight: rowEl.getAttribute('line-height'),
       textIndent: rowEl.getAttribute('text-indent'),
       colBorder:  hasSpan ? null : rowEl.getAttribute('col-border')
@@ -537,7 +553,7 @@
 
     var colTotal = active.length;
     active.forEach(function (colEl, idx) {
-      var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount);
+      var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount, idx + 1);
       div.appendChild(cd);
 
       if (rowStyle.colBorder && idx < colTotal - 1) {
@@ -571,7 +587,7 @@
     unlockAt(0);
   };
 
-  UiTable.prototype._renderCol = function (colEl, pad, rowStyle, globalMoCount) {
+  UiTable.prototype._renderCol = function (colEl, pad, rowStyle, globalMoCount, numIdx) {
     var self = this;
     var div  = mk('div', 'uit-col');
     div.style.padding = pad;
@@ -608,7 +624,10 @@
     var useCar = hasCar && !hasMask && !hasAlert;
     var useExp = hasExp && !hasMask;
 
-    if (hasSN) div.classList.add('has-sn');
+    if (hasSN) {
+      div.classList.add('has-sn');
+      div.dataset.snMode = (colEl.getAttribute('show-next') || '').toLowerCase();
+    }
 
     var ci = mk('div', 'uit-ci');
     /* 優先順序：ui-col > ui-row > ui-table 的 font-color > theme */
@@ -619,7 +638,12 @@
     ci.style.color = cellFc;
 
     var ico = colEl.getAttribute('icon');
-    if (ico) ci.insertAdjacentHTML('beforeend', mkIco(ico));
+    if (ico) {
+      ci.insertAdjacentHTML('beforeend', mkIco(ico));
+    } else if (rowStyle && rowStyle.autoNumber && numIdx) {
+      /* auto-number：同列由 1 起算；自訂 icon 的儲存格以 icon 為準，但仍佔用該位置的編號 */
+      ci.insertAdjacentHTML('beforeend', mkNum(numIdx, rowStyle.autoNumber === 'fill'));
+    }
 
     if (useCar) {
       div.appendChild(ci);
@@ -856,7 +880,8 @@
 
   UiTable.prototype._bindSN = function (rds) {
     rds.forEach(function (rd, i) {
-      var snCols = rd.el.querySelectorAll('.has-sn');
+      var cells = Array.from(rd.el.children);
+      var snCols = cells.filter(function (c) { return c.classList.contains('has-sn'); });
       if (!snCols.length) return;
 
       var nxt = rds[i + 1];
@@ -865,13 +890,49 @@
         return;
       }
 
-      snCols.forEach(function (c) {
+      /* 模式：show-next="col" 各欄各自展開；"row" 整列展開；
+         其他值（true）時，同列有兩個以上 show-next 就各欄各自展開，只有一個則整列展開 */
+      function modeOf(c) {
+        var m = c.dataset.snMode;
+        if (m === 'col' || m === 'row') return m;
+        return snCols.length > 1 ? 'col' : 'row';
+      }
+      var rowCols = snCols.filter(function (c) { return modeOf(c) === 'row'; });
+      var colCols = snCols.filter(function (c) { return modeOf(c) === 'col'; });
+      var nxtCells = Array.from(nxt.el.children);
+
+      /* 整列模式 */
+      rowCols.forEach(function (c) {
         c.classList.toggle('sn-open', !nxt.el.classList.contains('uit-hidden'));
         c.addEventListener('click', function () {
           var open = !nxt.el.classList.toggle('uit-hidden');
-          snCols.forEach(function (x) { x.classList.toggle('sn-open', open); });
+          rowCols.forEach(function (x) { x.classList.toggle('sn-open', open); });
         });
       });
+
+      /* 各欄模式：下一列同位置的儲存格各自展開；沒有 show-next 的欄保持空白 */
+      if (colCols.length) {
+        nxtCells.forEach(function (nc) { nc.classList.add('uit-cell-off'); });
+
+        function syncRow() {
+          var any = nxtCells.some(function (nc) { return !nc.classList.contains('uit-cell-off'); });
+          nxt.el.classList.toggle('uit-hidden', !any);
+        }
+        syncRow();
+
+        colCols.forEach(function (c) {
+          var target = nxtCells[cells.indexOf(c)];
+          if (!target) {
+            console.warn('[ui-table] show-next 在下一列找不到對應欄位，已略過。');
+            return;
+          }
+          c.addEventListener('click', function () {
+            var off = target.classList.toggle('uit-cell-off');
+            c.classList.toggle('sn-open', !off);
+            syncRow();
+          });
+        });
+      }
     });
   };
 
