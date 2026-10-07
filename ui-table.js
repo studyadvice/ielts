@@ -7,15 +7,15 @@
     special:  '#B3DE73',
     warning:  '#E6374B',
     salmon:   '#E5C3B3',
-    sky:      '#95C9DE',
+    sky:      '#82C8E5',
     ocean:    '#1CCAE8',
-    safe:     '#299459',
+    safe:     '#27AE60',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
     info:     '#2351DB',
     indigo:   '#7849C9',
     pink:     '#FF91D7',
-    focus:    '#3C7BCF',
+    focus:    '#D4FFFC',
     orange:   '#EDA109',
     teal:     '#0DA591'
   };
@@ -78,7 +78,7 @@
   }
 
   function hexRgba(hex, a) {
-    a = Math.max(+a || 0, 0.76);
+    a = Math.max(+a || 0, 0.78);
     var h = hex.replace('#', '');
     var r = parseInt(h.slice(0, 2), 16);
     var g = parseInt(h.slice(2, 4), 16);
@@ -189,11 +189,11 @@
     '.uit-car{position:relative;overflow:hidden;flex:1;font-size:var(--uit-fs)}',
     '.uit-car-item{width:100%;box-sizing:border-box}',
 
-    '.uit-pb{height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin-top:6px;flex-shrink:0}',
+    '.uit-pb{height:3px;background:#3A3B38;border-radius:2px;overflow:hidden;margin-top:6px;flex-shrink:0}',
     '.uit-pf{height:100%;border-radius:2px;transform-origin:left center}',
     '@keyframes uit-prog{from{transform:scaleX(1)}to{transform:scaleX(0)}}',
 
-    '.uit-alert-A{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px 12px;white-space:normal;text-align:center;opacity:0;transition:opacity .35s ease;pointer-events:none;font-weight:600;font-size:var(--uit-fs)}',
+    '.uit-alert-A{z-index:11;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px 12px;white-space:normal;text-align:center;opacity:0;transition:opacity .35s ease;pointer-events:none;font-weight:600;font-size:var(--uit-fs)}',
     '.uit-alert-A.vis{opacity:1}',
     '.uit-alert-ext{position:fixed;z-index:9999;pointer-events:none;padding:5px 14px;border-radius:6px;font-weight:600;line-height:1.5;white-space:nowrap;opacity:0;transition:opacity .35s ease;font-size:var(--uit-fs,1rem)}',
     '.uit-alert-ext.vis{opacity:1}',
@@ -255,6 +255,7 @@
     var self = this;
 
     if (data.fontSize)           this.el.setAttribute('font-size',           data.fontSize);
+    if (data.fontColor)          this.el.setAttribute('font-color',          data.fontColor);
     if (data.autoRevealInterval) this.el.setAttribute('auto-reveal-interval', String(data.autoRevealInterval));
     if (data.cellAlignment)      this.el.setAttribute('cell-alignment',       data.cellAlignment);
     if (data.verticalAlignment)  this.el.setAttribute('vertical-alignment',   data.verticalAlignment);
@@ -278,12 +279,14 @@
         if (rd.colWidths)   r.setAttribute('col-widths',   rd.colWidths);
         if (rd.colBorder)   r.setAttribute('col-border',   rd.colBorder);
         if (rd.fontSize)    r.setAttribute('font-size',    rd.fontSize);
+        if (rd.fontColor)   r.setAttribute('font-color',   rd.fontColor);
         if (rd.lineHeight)  r.setAttribute('line-height',  rd.lineHeight);
         if (rd.textIndent)  r.setAttribute('text-indent',  rd.textIndent);
 
         (rd.cols || []).forEach(function (cd) {
           var c = mk('ui-col');
           if (cd.icon)              c.setAttribute('icon',              cd.icon);
+          if (cd.fontColor)         c.setAttribute('font-color',        cd.fontColor);
           if (cd.span)              c.setAttribute('span',              String(cd.span));
           if (cd.width)             c.setAttribute('width',             cd.width);
           if (cd.fixed)             c.setAttribute('fixed',             cd.fixed);
@@ -322,6 +325,8 @@
 
   UiTable.prototype._render = function () {
     this.colN = this._getColCount();
+    /* 整表文字顏色：font-color（優先於 theme 的文字色，邊框與標題列仍用 theme） */
+    this.fontColor = resolveColor(this.el.getAttribute('font-color'));
 
     var wrap = mk('div', 'uit-wrap');
     this.wrap = wrap;
@@ -522,6 +527,7 @@
 
     var rowStyle = {
       fontSize:   rowEl.getAttribute('font-size'),
+      fontColor:  resolveColor(rowEl.getAttribute('font-color')),
       lineHeight: rowEl.getAttribute('line-height'),
       textIndent: rowEl.getAttribute('text-indent'),
       colBorder:  hasSpan ? null : rowEl.getAttribute('col-border')
@@ -603,7 +609,11 @@
     if (hasSN) div.classList.add('has-sn');
 
     var ci = mk('div', 'uit-ci');
-    ci.style.color = this.color;
+    /* 優先順序：ui-col > ui-row > ui-table 的 font-color > theme */
+    ci.style.color = resolveColor(colEl.getAttribute('font-color')) ||
+                     (rowStyle && rowStyle.fontColor) ||
+                     this.fontColor ||
+                     this.color;
 
     var ico = colEl.getAttribute('icon');
     if (ico) ci.insertAdjacentHTML('beforeend', mkIco(ico));
@@ -818,6 +828,7 @@
       timedTrigger(
         function () {
           var r = colDiv.getBoundingClientRect();
+          if (!r.width && !r.height) return;   /* 儲存格被隱藏或摺疊時不顯示，避免跑到左上角 */
           if (pos === 'B') {
             ext.style.left = r.left + 'px';
             ext.style.top  = (r.top - (ext.offsetHeight || 34) - 6) + 'px';
