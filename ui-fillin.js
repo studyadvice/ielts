@@ -6,7 +6,7 @@
   /* ---------- 樣式（與腳本同檔，不使用 shadow DOM） ---------- */
   const CSS = `
 ui-fillin{
-  --uf-bg:#0C0D0C;--uf-text:#C6C7BD;--uf-accent:#82C8E5;
+  --uf-bg:#0C0D0C;--uf-text:#C6C7BD;--uf-accent:#C6C7BD;
   --uf-ok:#27AE60;--uf-bad:#E6374B;
   --uf-line:rgba(198,199,189,0.78);
   --uf-sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
