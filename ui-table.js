@@ -86,6 +86,18 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
 
+  /* inverse 用的實色底：hex 轉成不透明度 0.97 的 rgba，其他格式（rgb 等）原樣使用 */
+  function solidBg(c) {
+    if (/^#/.test(c)) {
+      var h = c.replace('#', '');
+      if (h.length === 3) {
+        c = '#' + h.split('').map(function (x) { return x + x; }).join('');
+      }
+      return hexRgba(c, 0.97);
+    }
+    return c;
+  }
+
   function alignH(v) {
     if (v === 'center') return 'center';
     if (v === 'right')  return 'flex-end';
@@ -186,6 +198,7 @@
     '.uit-col.is-exp.expanded .uit-ct{display:block;overflow:visible}',
     '.uit-etog{cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;opacity:.82;color:var(--uit-tm);margin-top:.15em;transition:opacity .2s}',
     '.uit-etog:hover{opacity:1}',
+    '.uit-col.is-inv .uit-etog{color:#0C0D0C}',
 
     /* show-next */
     '.uit-col.has-sn{cursor:pointer;transition:opacity .2s}',
@@ -311,6 +324,7 @@
           if (cd.expandable)        c.setAttribute('expandable',        '');
           if (cd.maskText)          c.setAttribute('mask-text',         cd.maskText);
           if (cd.maskText2)         c.setAttribute('mask-text-2',       cd.maskText2);
+          if (cd.inverse)           c.setAttribute('inverse',           '');
           if (cd.maskInvert)        c.setAttribute('mask-invert',       '');
           if (cd.maskColor)         c.setAttribute('mask-color',        cd.maskColor);
           if (cd.maskOrder != null) c.setAttribute('mask-order',        String(cd.maskOrder));
@@ -616,6 +630,7 @@
     var hasAlert = colEl.hasAttribute('alert-msg');
     var hasSN    = colEl.hasAttribute('show-next');
     var hasMO    = colEl.hasAttribute('mask-order');
+    var hasInv   = colEl.hasAttribute('inverse');
 
     if (hasMask  && hasExp)  console.warn('[ui-table] mask-text+expandable 互斥，expandable 已忽略。');
     if (hasMask  && hasCar)  console.warn('[ui-table] mask-text+carousel-interval 互斥，carousel-interval 已忽略。');
@@ -635,7 +650,14 @@
                  (rowStyle && rowStyle.fontColor) ||
                  this.fontColor ||
                  this.color;
-    ci.style.color = cellFc;
+    if (hasInv) {
+      /* inverse：底色 = 原文字色，文字與圖示 = #0C0D0C；放在 fixed 之後，所以優先於 fixed 的底色 */
+      div.classList.add('is-inv');
+      div.style.background = solidBg(cellFc);
+      ci.style.color = BG;
+    } else {
+      ci.style.color = cellFc;
+    }
 
     var ico = colEl.getAttribute('icon');
     if (ico) {
@@ -650,7 +672,7 @@
       var items  = Array.from(colEl.querySelectorAll('cell-item'));
       var ms     = parseInt(colEl.getAttribute('carousel-interval')) || 3000;
       var hasPb  = colEl.hasAttribute('progress-bar');
-      var pbClr  = resolveColor(colEl.getAttribute('progress-bar-color')) || this.color;
+      var pbClr  = resolveColor(colEl.getAttribute('progress-bar-color')) || (hasInv ? BG : this.color);
       this._setupCarousel(ci, div, items, ms, hasPb, pbClr);
     } else {
       var clone = colEl.cloneNode(true);
