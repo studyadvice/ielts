@@ -15,8 +15,8 @@ ui-fillin{
   --uf-root-padding:12px;--uf-main-padding:12px;--uf-blank-padding:12px;
   --uf-menu-padding:12px;--uf-option-padding:12px;--uf-ans-padding:12px;
   display:block;position:relative;box-sizing:border-box;width:100%;
-  padding:var(--uf-root-padding);border:1px solid var(--uf-line);border-radius:8px;background:var(--uf-bg);color:var(--uf-text);
-  font:var(--uf-font-size)/1.5 var(--uf-sans);
+  padding:var(--uf-root-padding);border:2px solid var(--uf-line);background:var(--uf-bg);color:var(--uf-text);
+  font:var(--uf-font-size)/1.25 var(--uf-sans);
 }
 ui-fillin main-box{display:block;box-sizing:border-box;padding:var(--uf-main-padding);font-family:var(--uf-serif);font-size:calc(var(--uf-font-size) * 1.1);line-height:1.5}
 ui-fillin main-box p{margin:0 0 8px}
