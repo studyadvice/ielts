@@ -1319,6 +1319,8 @@
     this.startOpen   = el.hasAttribute('open');
     this.disabled    = el.hasAttribute('disabled');
     this.targetId    = el.getAttribute('target')       || '';
+    this.href        = el.getAttribute('href')         || '';
+    this.hrefTarget  = el.getAttribute('href-target')  || '_self';
     this.labelClosed = el.textContent.trim();
     this.labelOpen   = el.getAttribute('label-open')   || '';
     this.group       = el.getAttribute('group')        || '';
@@ -1357,6 +1359,8 @@
     if (this.targetId) {
       this._target = document.getElementById(this.targetId);
       if (!this._target) console.warn('[ui-btn] 找不到 target: #' + this.targetId);
+    } else if (this.href) {
+      this._target = null;
     } else {
       this._target = this._nextSib;
       if (!this._target && !this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 屬性。');
@@ -1448,9 +1452,19 @@
       btn.appendChild(dot);
     }
 
-    btn.addEventListener('click', function () {
-      self._toggle();
+    btn.addEventListener('click', function (e) {
+      if (!self.href || self.targetId) self._toggle();
       if (self.alertMsg) showAlert(self.alertMsg, self.alertOpts);
+      if (self.href) {
+        var t = self.hrefTarget;
+        if (e.ctrlKey || e.metaKey || t === '_blank') {
+          window.open(self.href, '_blank', 'noopener');
+        } else if (t === '_self') {
+          window.location.href = self.href;
+        } else {
+          window.open(self.href, t);
+        }
+      }
     });
     wrap.appendChild(btn);
     this.el.before(wrap);
