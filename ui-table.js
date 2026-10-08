@@ -50,6 +50,13 @@
       '<rect x="3" y="11" width="18" height="11" rx="2"/>',
       '<path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
       '</svg>'
+    ].join(''),
+    'i-grip': [
+      '<svg width="0.65em" height="1em" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">',
+      '<circle cx="2.5" cy="3" r="1.4"/><circle cx="7.5" cy="3" r="1.4"/>',
+      '<circle cx="2.5" cy="8" r="1.4"/><circle cx="7.5" cy="8" r="1.4"/>',
+      '<circle cx="2.5" cy="13" r="1.4"/><circle cx="7.5" cy="13" r="1.4"/>',
+      '</svg>'
     ].join('')
   };
 
@@ -200,6 +207,17 @@
     '.uit-etog:hover{opacity:1}',
     '.uit-col.is-inv .uit-etog{color:#0C0D0C}',
 
+    /* extra-info 圖示與 popover（popover 掛在 body，不受儲存格 overflow 裁切） */
+    '.uit-xi{cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;height:1.5em;padding:0 3px;color:var(--uit-tm);opacity:.82;transition:opacity .2s;user-select:none}',
+    '.uit-xi:hover,.uit-xi.open{opacity:1}',
+    '.uit-col.is-inv .uit-xi{color:#0C0D0C}',
+    '.uit-pop{position:fixed;z-index:9990;display:none;box-sizing:border-box;max-width:min(480px,calc(100vw - 16px));max-height:60vh;overflow:auto;padding:12px 16px;line-height:1.5;word-break:break-word;border:1px solid #C6C7BD;box-shadow:0 6px 20px #000}',
+    '.uit-pop.vis{display:block}',
+    '.uit-pop a{color:inherit;text-decoration:underline}',
+    '.uit-pop p,.uit-pop ul,.uit-pop ol{margin:0 0 8px}',
+    '.uit-pop ul,.uit-pop ol{padding-left:24px}',
+    '.uit-pop>:last-child{margin-bottom:0}',
+
     /* show-next */
     '.uit-col.has-sn{cursor:pointer;transition:opacity .2s}',
     '.uit-col.has-sn:hover{opacity:.82}',
@@ -244,6 +262,111 @@
   }
 
   injectCSS();
+
+  /* ---------- extra-info popover（全頁只有一個實例） ---------- */
+  var _pop = null;      /* { el: popover 元素, anchor: 目前的圖示 } */
+  var _popEl = null;
+  var _popRaf = 0;
+  var _popBound = false;
+
+  function popEl() {
+    if (_popEl) return _popEl;
+    _popEl = mk('div', 'uit-pop');
+    _popEl.style.background = hexRgba(BG, 0.97);
+    document.body.appendChild(_popEl);
+    if (!_popBound) {
+      _popBound = true;
+      /* 捕獲階段：先於儲存格自己的 click 處理，點到 popover 與目前圖示以外的任何地方就關閉 */
+      document.addEventListener('click', function (e) {
+        if (!_pop) return;
+        if (_pop.el.contains(e.target) || _pop.anchor.contains(e.target)) return;
+        closePop();
+      }, true);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closePop();
+      });
+      window.addEventListener('scroll', function (e) {
+        if (_pop && _pop.el.contains(e.target)) return;   /* popover 自己內部捲動不重新定位 */
+        schedulePlace();
+      }, true);
+      window.addEventListener('resize', schedulePlace);
+    }
+    return _popEl;
+  }
+
+  function closePop() {
+    if (!_pop) return;
+    _pop.el.classList.remove('vis');
+    _pop.anchor.classList.remove('open');
+    _pop = null;
+  }
+
+  function schedulePlace() {
+    if (!_pop || _popRaf) return;
+    _popRaf = requestAnimationFrame(function () { _popRaf = 0; placePop(); });
+  }
+
+  function placePop() {
+    if (!_pop) return;
+    var el = _pop.el;
+    var r  = _pop.anchor.getBoundingClientRect();
+    var vw = document.documentElement.clientWidth;
+    var vh = document.documentElement.clientHeight;
+    /* 圖示被隱藏（display:none）或已捲出視窗時關閉 */
+    if ((!r.width && !r.height) || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) {
+      closePop();
+      return;
+    }
+    var M = 8, GAP = 6;
+    el.style.width = '';
+    el.style.maxHeight = '';
+    el.style.left = '0px';
+    el.style.top  = '0px';
+    var ow = el.offsetWidth;
+    var oh = el.offsetHeight;
+    el.style.width = ow + 'px';   /* 固定寬度，移動位置時不會重新換行 */
+
+    /* 水平：對齊圖示右緣往左展開，並夾在視窗內 */
+    var left = Math.max(M, Math.min(r.right - ow, vw - ow - M));
+
+    /* 垂直：優先放下方，不夠就放上方，兩邊都不夠時選較大的一側並限制高度 */
+    var below = vh - r.bottom - GAP - M;
+    var above = r.top - GAP - M;
+    var top;
+    if (oh <= below) {
+      top = r.bottom + GAP;
+    } else if (oh <= above) {
+      top = r.top - GAP - oh;
+    } else if (below >= above) {
+      el.style.maxHeight = Math.max(below, 80) + 'px';
+      top = r.bottom + GAP;
+    } else {
+      el.style.maxHeight = Math.max(above, 80) + 'px';
+      top = r.top - GAP - el.offsetHeight;
+    }
+    el.style.left = left + 'px';
+    el.style.top  = Math.max(M, top) + 'px';
+  }
+
+  function openPop(anchor, id, color, fs) {
+    if (_pop && _pop.anchor === anchor) { closePop(); return; }
+    closePop();
+    var src = document.getElementById(id);
+    if (!src) {
+      console.error('[ui-table] extra-info 找不到 id="' + id + '" 的元素。');
+      return;
+    }
+    src.style.display = 'none';
+    var el = popEl();
+    el.innerHTML = src.innerHTML;          /* 點擊當下才讀取，所以內容之後有變動也會顯示最新的 */
+    el.style.borderColor = color;
+    el.style.color       = color;
+    el.style.fontSize    = fs;
+    el.classList.add('vis');
+    anchor.classList.add('open');
+    _pop = { el: el, anchor: anchor };
+    placePop();
+  }
 
   function UiTable(el) {
     this.el     = el;
@@ -325,6 +448,7 @@
           if (cd.maskText)          c.setAttribute('mask-text',         cd.maskText);
           if (cd.maskText2)         c.setAttribute('mask-text-2',       cd.maskText2);
           if (cd.inverse)           c.setAttribute('inverse',           '');
+          if (cd.extraInfo)         c.setAttribute('extra-info',        cd.extraInfo);
           if (cd.maskInvert)        c.setAttribute('mask-invert',       '');
           if (cd.maskColor)         c.setAttribute('mask-color',        cd.maskColor);
           if (cd.maskOrder != null) c.setAttribute('mask-order',        String(cd.maskOrder));
@@ -631,13 +755,19 @@
     var hasSN    = colEl.hasAttribute('show-next');
     var hasMO    = colEl.hasAttribute('mask-order');
     var hasInv   = colEl.hasAttribute('inverse');
+    var xid      = (colEl.getAttribute('extra-info') || '').trim();
+    var hasExtra = colEl.hasAttribute('extra-info');
 
     if (hasMask  && hasExp)  console.warn('[ui-table] mask-text+expandable 互斥，expandable 已忽略。');
     if (hasMask  && hasCar)  console.warn('[ui-table] mask-text+carousel-interval 互斥，carousel-interval 已忽略。');
     if (hasAlert && hasCar)  console.warn('[ui-table] alert-msg+carousel-interval 互斥，carousel-interval 已忽略。');
+    if (hasExtra && !xid)    console.error('[ui-table] extra-info 需要填入 div 的 id，已忽略。');
+    if (hasExtra && hasMask) console.warn('[ui-table] mask-text+extra-info 互斥，extra-info 已忽略。');
+    if (hasExtra && hasCar)  console.warn('[ui-table] carousel-interval+extra-info 互斥，extra-info 已忽略。');
 
     var useCar = hasCar && !hasMask && !hasAlert;
     var useExp = hasExp && !hasMask;
+    var useExtra = hasExtra && !!xid && !hasMask && !hasCar;
 
     if (hasSN) {
       div.classList.add('has-sn');
@@ -685,6 +815,21 @@
         if (rowStyle.textIndent) ct.style.textIndent  = rowStyle.textIndent;
       }
       ci.appendChild(ct);
+
+      if (useExtra) {
+        var xi = mk('span', 'uit-xi');
+        xi.innerHTML = ICO['i-grip'];
+        if (rowStyle && rowStyle.fontSize) xi.style.fontSize = rowStyle.fontSize;
+        xi.addEventListener('click', function (e) {
+          e.stopPropagation();   /* 避免同時觸發 show-next 或展開 */
+          openPop(xi, xid, self.color, self.el.getAttribute('font-size') || CFG.fontSize);
+        });
+        ci.appendChild(xi);
+        /* 載入時自動隱藏來源區塊 */
+        var xs = document.getElementById(xid);
+        if (xs) xs.style.display = 'none';
+        else console.warn('[ui-table] extra-info 找不到 id="' + xid + '" 的元素，點擊時會再試一次。');
+      }
 
       if (useExp) {
         div.classList.add('is-exp');
