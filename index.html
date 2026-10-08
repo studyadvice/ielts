@@ -6,7 +6,7 @@
 <title>IELTS Grammar 雅思文法繁體中文</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="bp-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/netizen-nelson/web-dev/bp-styles.css">
 <style>
 :root {font-size: 16px;}
 html { scroll-behavior: smooth; }
@@ -17,11 +17,13 @@ body {
   padding: 12px;
 }
 .split { display: grid; gap: 36px; align-items: start; }
+.bd-sky { font-weight: 800; color: #82C8E5;}
 </style>
 </head>
 <body class="bp-text-shell bp-bg-background">
 <section id="start-title">
 <div class="mx-3 bp-bg-fill bp-text-shell">
+	<div class="px-3 fs-small bp-text-special">適合寬螢幕精讀</div>
 	<div class="container p-3">
 		<div class="row align-items-center">
 			<div class="col-8">
@@ -37,11 +39,12 @@ body {
 <section id="syllabus">
 <div class="m-3">
 	<div class="container p-3">
+	  <div class="fs-smaller">Your journey to IELTS 7 starts here.</div>
       <div class="split" style="grid-template-columns: 390px 1fr;">
 		<div id="src-basics">
 			<h5>看懂和說寫出正確的句子主幹</h5>
 			<p>
-				1-1-1 Stunning views<br>
+				1-1-1 Natural ingredients<br>
 				1-1-2 Increasingly aware<br>
 				1-1-3 Negatively impact my sleep
 			</p>
@@ -111,8 +114,8 @@ body {
 		</div>
         <ui-list width="380px" gap="8px" theme-color="sky">
           <list-item source="src-basics"     target="detail-panel">
-            <p class="fw-bold">重新詮釋基礎</p>
-            <p class="fs-small">詞性修飾關係與句子結構</p>
+            <p class="fw-bold">基礎語法知識</p>
+            <p class="fs-small">重新詮釋詞性修飾關係與句子結構</p>
           </list-item>
           <list-item source="src-language-orders"  target="detail-panel">
             <p class="fw-bold">語序--中英文思維的差異</p>
@@ -135,15 +138,14 @@ body {
             <p class="fs-small">子句與主句的整合、時態對齊及特殊構造</p>
           </list-item>
         </ui-list>
-
         <div id="detail-panel" class="mt-5 p-3">
 			<h5 class="fw-bold">← 點擊左側項目以查看細目</h5>
 			<p class="bp-bg-fill p-3">
 				本課程依句子成長的方向編排，從中英語序的差異出發，依序處理名詞後位修飾、句子外延的副詞成分，以及子句與主句的對應。以語塊為核心：先掌握能直接用的短語塊，再看它如何接上主句、長成複雜句。本課程僅強調能提高資訊密度卻仍能清晰傳達的可控複雜句；簡單句與複雜句各司其職，不必為了複雜而複雜。
 			</p>
 			<p class="p-2">
-				<bp-stepper data-theme="sky" data-color-active="sky" data-color-done="sky" data-layout="vertical" data-card-width="500px" data-mode="progress-show"
-                    data-arrow-size="12px" data-gap="56px" data-auto-number="false" data-text-color="white" data-compact-header>
+				<bp-stepper data-theme="sky" data-color-active="sky" data-color-done="sky" data-layout="vertical" data-card-width="480px" data-mode="progress-show"
+                    data-arrow-size="12px" data-font-size="1.1rem" data-gap="50px" data-auto-number="false" data-text-color="white" data-compact-header>
 					<bp-step>
 						<bp-step-title>示範【語塊組合技術】實現說寫自由造句</bp-step-title>
 						<bp-step-content>
@@ -185,40 +187,296 @@ body {
 </section>
 <section id="chapter1-basics">
 	<div class="container m-3 p-3">
-		<h2><i class="bi bi-1-square-fill"></i>重新詮釋基礎</h2>
+		<h2 class="bp-text-sky"><i class="bi bi-1-square-fill"></i>基礎語法知識</h2>
 		<div class="row">
-			<h4><i class="bi bi-bookmarks"></i>詞性修飾關係</h4>
-			<div >
-			
+			<h4><i class="bi bi-bookmarks"></i>概覽</h4>
+			<div class="mx-4 mb-3 p-3">
+				修飾語一多，英文句子的關鍵資訊就容易被淹沒。本單元先聚焦句子主幹，要求聽讀時能充分理解，說寫時能輸出無誤。後半段的句子結構，則為日後在長句中快速抓出關鍵資訊打下基礎。
 			</div>
 		</div>
-		
-		<div class="row">
+		<h4><i class="bi bi-bookmarks"></i>詞性修飾關係</h4>
+		<div class="row my-3 px-3">
+			<div class="col">
+					<ui-table id="basics" theme="sky" font-color="shell" cell-min-height="36px" row-border="1px solid">
+						<ui-group title-left="形容詞修飾名詞" title-right="組合起來是名詞" ini-collapse>
+							<ui-row>
+								<ui-col show-next="col">天然成分</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+								The deli owner promises to use only <span class="bd-sky">natural ingredients</span>.<br>
+									熟食店老闆承諾僅使用天然成分。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">走路三分鐘</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									It takes <span class="bd-sky">a three-minute walk</span> from my apartment to the MRT station.<br>
+									從我公寓到捷運站只需走路三分鐘。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">迫切的問題</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									Housing costs have become <span class="bd-sky">a pressing problem</span> for young workers.<br>
+									住房成本已成為年輕上班族迫切的問題。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">無薪加班</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									Many employees are expected to do <span class="bd-sky">unpaid overtime</span>.<br>
+									許多員工被要求無薪加班。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col>
+									所有格和數量詞都放在名詞之前<br>
+									their support, some people, some water
+								</ui-col>
+							</ui-row>
+						</ui-group>
+					</ui-table>
+			</div>
+			<div class="col">
+				<ui-table id="basics-noun" theme="sky" font-color="shell" cell-min-height="36px" row-border="1px solid">
+					<ui-group title-left="名詞修飾名詞" title-right="名詞充當形容詞，稱為轉品，組合起來仍是名詞" ini-collapse>
+							<ui-row>
+								<ui-col show-next="col">同儕壓力</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									<span class="bd-sky">Peer pressure</span> can strongly influence teenagers' choices.<br>
+									同儕壓力可能大大影響青少年的選擇。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">大學生</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									<span class="bd-sky">University students</span> often struggle to balance study and work.<br>
+									大學生常常難以兼顧學業與工作。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">學生卡</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									All students must scan their <span class="bd-sky">student cards</span> at the gate.<br>
+									所有學生都必須在閘門刷學生卡。
+								</ui-col>
+							</ui-row>
+					</ui-group>
+				</ui-table>
+			</div>
+		</div>
+		<div class="row mb-3 px-3">
+			<div class="col">
+					<ui-table id="basics-adv-adj" theme="sky" font-color="shell" cell-min-height="36px" row-border="1px solid">
+						<ui-group title-left="副詞修飾形容詞" title-right="組合起來是形容詞" ini-collapse>
+							<ui-row>
+								<ui-col show-next="col">越來越意識到</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									Young people are becoming <span class="bd-sky">increasingly aware</span> of mental health issues.<br>
+									年輕人越來越意識到心理健康問題。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">相對便宜</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									Street food in Taiwan is <span class="bd-sky">relatively cheap</span>.<br>
+									台灣的街頭小吃相對便宜。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">由衷感激</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									I am <span class="bd-sky">deeply grateful</span> for my parents' support.<br>
+									我由衷感激父母的支持。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">非常有效</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									Short breaks are <span class="bd-sky">highly effective</span> for staying focused.<br>
+									短暫休息對保持專注非常有效。
+								</ui-col>
+							</ui-row>
+						</ui-group>
+					</ui-table>
+			</div>
+			<div class="col">
+					<ui-table id="basics-adv-verb" theme="sky" font-color="shell" cell-min-height="36px" row-border="1px solid">
+						<ui-group title-left="副詞修飾動詞" ini-collapse>
+							<ui-row>
+								<ui-col show-next="col">對睡眠造成負面影響</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									Late-night screen time can <span class="bd-sky">negatively impact our sleep</span>.<br>
+									深夜使用螢幕可能對我們的睡眠造成負面影響。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">徹底改變</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									This experience <span class="bd-sky">completely changed</span> my life.<br>
+									這次經驗徹底改變了我的人生。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">強力支持</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									We <span class="bd-sky">strongly supports</span> free public transport.<br>
+									我們強力支持免費大眾運輸。
+								</ui-col>
+							</ui-row>
+							<ui-row>
+								<ui-col show-next="col">仔細規劃</ui-col>
+							</ui-row>
+							<ui-row hidden>
+								<ui-col>
+									I always <span class="bd-sky">carefully plan</span> my study schedule.<br>
+									我總是仔細規劃我的讀書時間表。
+								</ui-col>
+							</ui-row>
+						</ui-group>
+					</ui-table>
+			</div>
+		</div>
+		<div class="px-3">
+			<ui-table id="basics-roles" theme="sky" font-color="shell" cell-min-height="36px" row-border="1px solid">
+				<ui-group title-left="認識單字只是第一步；知道它在句子裡做什麼(角色或功能)才是重點" ini-collapse>
+					<ui-row-enhance>
+						<ui-col>
+							<i class="bi bi-chat-left-text bp-text-sky"></i> 絕對不能單憑中文意思斷定單字的詞性
+						</ui-col>
+					</ui-row-enhance>
+					<ui-row>
+						<ui-col>
+							Would you <span class="bd-sky">run</span> to the nearest convenience store and get me a bottle of mineral water?<br>
+							動詞run是句子的主要動作
+						</ui-col>
+						<ui-col>
+							I go for a <span class="bd-sky">run</span> every morning, rain or shine.<br>
+							名詞run的功能：做go for的受詞
+						</ui-col>
+					</ui-row>
+					<ui-row>
+						<ui-col>
+							<span class="bd-sky">everyday</span> tips<br>
+							形容詞everyday修飾名詞tips
+						</ui-col>
+						<ui-col>
+							I do yoga <span class="bd-sky">every day</span>.<br>
+							副詞every day修飾動詞do
+						</ui-col>
+					</ui-row>
+					<ui-row-enhance>
+						<ui-col>
+							<i class="bi bi-chat-left-text bp-text-sky"></i> 拼字相同，但只要詞性不同，功能就會不同
+						</ui-col>
+					</ui-row-enhance>
+					<ui-row>
+						<ui-col>
+							I made an ambitious <span class="bd-sky">plan</span>.<br>
+							名詞plan的功能：做及物動詞made的受詞
+						</ui-col>
+						<ui-col>
+							We always <span class="bd-sky">plan</span> our camping trip together.<br>
+							動詞plan是句子的主要動作
+						</ui-col>
+					</ui-row>
+				</ui-group>
+			</ui-table>
+			<div class="my-3">
+			<ui-table id="basics-prep-conj" theme="sky" font-color="shell" cell-min-height="36px" row-border="1px solid">
+				<ui-group title-left="介系詞和連接詞用來表達前後內容的關係" ini-collapse>
+					<ui-row>
+						<ui-col>
+							the problem <span class="bd-sky">of</span> overcrowding<br>
+							表達同位(...的)<br>
+							a senior member <span class="bd-sky">of</span> the gym<br>
+							表示歸屬或來歷(...的)
+						</ui-col>
+						<ui-col>
+							I missed the bus <span class="bd-sky">because</span> I couldn't find my keys.<br>
+							表達因果關係
+						</ui-col>
+					</ui-row>
+					<ui-row>
+						<ui-col>
+							buy a tablet <span class="bd-sky">for</span> my father<br>
+							表達給<br>
+							I don't stay up late <span class="bd-sky">for</span> health reasons.<br>
+							表示因為
+						</ui-col>
+						<ui-col>
+							I missed the bus <span class="bd-sky">after</span> my alarm clock failed to go off.<br>
+							表達時間關係
+						</ui-col>
+					</ui-row>
+					<ui-row-enhance>
+						<ui-col>
+							<i class="bi bi-chat-left-text bp-text-sky"></i> 介系詞之後要有名詞或其相等語(稱為受詞)；連接詞之後要有主詞和動詞。中文意思相同但詞性不同，用法必定不同：becuase of vs. because是典型的例子。<br>
+							I didn't accept that job offer <span class="bd-sky">because of</span> the long commute.<br>
+							I didn't accept that job offer <span class="bd-sky">because of</span> having to work overtime.<br>
+							I didn't accept that job offer <span class="bd-sky">because</span> the pay didn't meet my expectations.
+						</ui-col>
+					</ui-row-enhance>
+				</ui-group>
+			</ui-table>
+			</div>
+		</div>
+		<div class="mb-5 px-3">
+			<ui-btn theme="shell" variant="outline" icon="bi-box-arrow-up-right" href="assess-ch1-1.html">綜合練習和延伸學習 Assessment & Extension</ui-btn>
+		</div>
+		<div class="my-3">
 			<h4><i class="bi bi-bookmarks"></i>句子結構</h4>
-			
+
 		</div>
 	</div>
-
+	<span data-popover-content="1" data-popover-title="12" data-popover-modal="end" data-popover-modal-size="688px">build strong habits</span>
 </section>
-<section id="chapter1-basics">
+<section id="chapter2">
 	<div class="container m-3 p-3">
-		<h2><i class="bi bi-2-square-fill"></i>語序--中英文思維的差異</h2>
+		<h2 class="bp-text-sky"><i class="bi bi-2-square-fill"></i>語序--中英文思維的差異</h2>
 		<div class="row">
-			<h4><i class="bi bi-bookmarks"></i>開始</h4>
+			<h4><i class="bi bi-bookmarks"></i>概覽</h4>
 			<div >
-			
+
 			</div>
 		</div>
 		<div class="row">
 			<h4><i class="bi bi-bookmarks"></i>Opportunity to study abroad</h4>
 			<div >
-			
+
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<h4><i class="bi bi-bookmarks"></i>Impact on the environment</h4>
-			
+
 		</div>
 	</div>
 
@@ -229,12 +487,14 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 <script src="bp-popnote.js"></script>
 <script src="chunk-demo.js"></script>
-<script src="dual-line.js"></script>
 <script src="numeric-list.js"></script>
-<script src="tab-board.js"></script>
+<script src="ui-fillin.js"></script>
 <script src="ui-plus.js"></script>
 <script src="ui-reading2.js"></script>
 <script src="bp-stepper.js"></script>
-<script src="ui-badge.js"></script>
+<script src="ui-table.js"></script>
+<script>
+	PopoverConfig.set({ theme: 'sky', modal: 'dialog', modalSize: 'lg'});
+</script>
 </body>
 </html>
