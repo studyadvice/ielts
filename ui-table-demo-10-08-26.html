@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-table inverse，extra-info 與 alert 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C;
+    --shell: #C6C7BD;
+    --focus: #D4FFFC;
+    --vanilla: #DBEDD8;
+    --code-bg: #151615;
+    --line: #3A3B38;
+  }
+  html { font-size: 18px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--shell);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .page { padding: 32px 48px 64px; }
+  h1 { margin: 0 0 8px; font-size: 2rem; line-height: 1.25; color: var(--focus); }
+  h2 { margin: 0 0 8px; font-size: 1.5rem; line-height: 1.25; color: var(--shell); }
+  p { margin: 0 0 16px; }
+  .lead { margin-bottom: 40px; }
+  .notice { margin: 0 0 24px; padding: 16px; background: #E6374B; color: #0C0D0C; font-weight: 700; }
+  .notice[hidden] { display: none; }
+  .block { margin-bottom: 56px; }
+  .live { margin: 16px 0; }
+  .live.room { margin-top: 56px; }
+  pre {
+    margin: 0 0 16px;
+    padding: 16px;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  code {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--vanilla);
+    white-space: pre;
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <div class="notice" id="load-error" role="alert" hidden>找不到 ui-table.js，或它載入失敗。請確認 ui-table.js 與這個 HTML 檔放在同一個資料夾，並查看主控台的第一則錯誤訊息。</div>
+
+  <h1>ui-table 的 inverse，extra-info 與 alert 屬性</h1>
+  <p class="lead">inverse 讓儲存格的文字色與底色對調。extra-info 在儲存格右側加上圖示，點擊後以 popover 顯示指定 div 的內容。alert 讓儲存格定時浮現提示訊息。</p>
+
+  <section class="block">
+    <h2>基本用法：表頭反色</h2>
+    <p>只有加了 inverse 的儲存格會反色，其餘維持原樣。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table row-border="1px solid">
+        <ui-row cell-padding="12px" col-widths="1:2:2">
+          <ui-col inverse>句型</ui-col>
+          <ui-col inverse>範例</ui-col>
+          <ui-col inverse>說明</ui-col>
+        </ui-row>
+        <ui-row cell-padding="12px" col-widths="1:2:2">
+          <ui-col>現在簡單式</ui-col>
+          <ui-col>She walks to school every day.</ui-col>
+          <ui-col>描述習慣或事實。</ui-col>
+        </ui-row>
+        <ui-row cell-padding="12px" col-widths="1:2:2">
+          <ui-col>現在完成式</ui-col>
+          <ui-col>I have lived here for ten years.</ui-col>
+          <ui-col>從過去持續到現在的狀態。</ui-col>
+        </ui-row>
+      </ui-table>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>各種字色的反色效果</h2>
+    <p>第一列是反色，第二列是原樣，方便對照。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table cell-alignment="center">
+        <ui-row cell-padding="12px">
+          <ui-col font-color="lavender" inverse>lavender</ui-col>
+          <ui-col font-color="sky" inverse>sky</ui-col>
+          <ui-col font-color="salmon" inverse>salmon</ui-col>
+          <ui-col font-color="teal" inverse>teal</ui-col>
+          <ui-col font-color="special" inverse>special</ui-col>
+        </ui-row>
+        <ui-row cell-padding="12px">
+          <ui-col font-color="lavender">lavender</ui-col>
+          <ui-col font-color="sky">sky</ui-col>
+          <ui-col font-color="salmon">salmon</ui-col>
+          <ui-col font-color="teal">teal</ui-col>
+          <ui-col font-color="special">special</ui-col>
+        </ui-row>
+      </ui-table>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>字色的優先順序</h2>
+    <p>底色沿用原本的文字色，優先順序為 ui-col，ui-row，ui-table，最後是 theme。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table font-color="sky" cell-alignment="center">
+        <ui-row cell-padding="12px" col-widths="1:1:1">
+          <ui-col>沿用整表的 font-color</ui-col>
+          <ui-col inverse>底色為 sky</ui-col>
+          <ui-col font-color="yellow" inverse>ui-col 的 font-color 優先，底色為 yellow</ui-col>
+        </ui-row>
+        <ui-row font-color="pink" cell-padding="12px" col-widths="1:1:1">
+          <ui-col>沿用 ui-row 的 font-color</ui-col>
+          <ui-col inverse>底色為 pink</ui-col>
+          <ui-col font-color="orange" inverse>底色為 orange</ui-col>
+        </ui-row>
+      </ui-table>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>與其他屬性並用</h2>
+    <p>圖示，展開，輪播，遮罩與自動編號都可以和 inverse 同時使用。展開箭頭與輪播進度條在反色底上會自動改為深色。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table theme="teal" row-border="1px solid">
+        <ui-group title-left="與其他屬性並用" title-right="inverse">
+          <ui-row cell-padding="12px" col-widths="1:1:1:1">
+            <ui-col inverse icon="i-check">帶圖示的反色儲存格</ui-col>
+            <ui-col inverse expandable>這段文字比較長，預設只顯示兩行，點擊右側箭頭可以展開。雅思寫作第二部分需要清楚的論點與具體的例子，段落之間也要有自然的銜接。</ui-col>
+            <ui-col inverse carousel-interval="2500" progress-bar>
+              <cell-item>輪播第一句</cell-item>
+              <cell-item>輪播第二句</cell-item>
+              <cell-item>輪播第三句</cell-item>
+            </ui-col>
+            <ui-col inverse mask-text="點擊揭曉" mask-invert>遮罩下的內容</ui-col>
+          </ui-row>
+          <ui-row auto-number="fill" cell-padding="12px" col-widths="1:1:1:1">
+            <ui-col inverse>自動編號一</ui-col>
+            <ui-col>自動編號二</ui-col>
+            <ui-col inverse>自動編號三</ui-col>
+            <ui-col>自動編號四</ui-col>
+          </ui-row>
+        </ui-group>
+      </ui-table>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>extra-info：基本用法</h2>
+    <p>extra-info 的值是 div 的 id。該 div 在元件載入時自動隱藏，內容支援 HTML 標籤。點擊圖示開啟，再點一次圖示，點外面或按 Esc 關閉。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table theme="sky" row-border="1px solid">
+        <ui-row cell-padding="12px" col-widths="1:2:2">
+          <ui-col inverse>句型</ui-col>
+          <ui-col inverse>範例</ui-col>
+          <ui-col inverse>說明</ui-col>
+        </ui-row>
+        <ui-row cell-padding="12px" col-widths="1:2:2">
+          <ui-col>現在完成式</ui-col>
+          <ui-col extra-info="xi-perfect">I have lived here for ten years.</ui-col>
+          <ui-col extra-info="xi-plain">從過去持續到現在的狀態。點擊右側圖示查看補充。</ui-col>
+        </ui-row>
+      </ui-table>
+      <div id="xi-perfect">
+        <p><b>結構</b>：have 或 has 加上過去分詞。</p>
+        <ul>
+          <li>for 接一段時間</li>
+          <li>since 接起點</li>
+        </ul>
+        <p>延伸閱讀：<a href="#">更多例句</a></p>
+      </div>
+      <div id="xi-plain">純文字也可以，不需要任何標籤。</div>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>extra-info：與 inverse，expandable 並用，以及文字換行</h2>
+    <p>圖示是排在文字右側的獨立欄位，文字只會在圖示左側換行，不會壓到圖示。反色儲存格的圖示自動改為深色。同一個 div 可以被多個儲存格引用。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table theme="teal" row-border="1px solid">
+        <ui-row cell-padding="12px" col-widths="1:1:1">
+          <ui-col inverse extra-info="xi-mix">反色儲存格，圖示會自動改為深色。</ui-col>
+          <ui-col expandable extra-info="xi-mix">這段文字比較長，同時有展開箭頭與補充圖示。文字會在圖示左側自動換行，不會壓到圖示。雅思口說第二部分需要完整的敘述結構。</ui-col>
+          <ui-col extra-info="xi-mix">ThisIsAnExtremelyLongUnbrokenTokenUsedToTestWrappingInsideNarrowCells</ui-col>
+        </ui-row>
+      </ui-table>
+      <div id="xi-mix"><p>同一個 div 可以被多個儲存格重複引用。</p></div>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>extra-info：與遮罩，輪播互斥</h2>
+    <p>有 mask-text 或 carousel-interval 的儲存格，extra-info 會被忽略，不會出現圖示，並在主控台顯示警告。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table theme="lavender" row-border="1px solid">
+        <ui-row cell-padding="12px" col-widths="1:1">
+          <ui-col mask-text="點擊揭曉" extra-info="xi-excl">有遮罩，extra-info 被忽略。</ui-col>
+          <ui-col carousel-interval="2500" extra-info="xi-excl">
+            <cell-item>有輪播，extra-info 被忽略。</cell-item>
+            <cell-item>第二句輪播內容。</cell-item>
+          </ui-col>
+        </ui-row>
+      </ui-table>
+      <div id="xi-excl" hidden>這個區塊不會被顯示。</div>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>alert：三種顯示位置</h2>
+    <p>alert-msg 是提示文字，alert-interval 是間隔毫秒數。每個提示在載入後經過一個間隔第一次出現，顯示 5 秒，之後每隔一個間隔重複一次，所以間隔要大於 5000。alert-pos 決定位置：A 蓋在儲存格上，B 在儲存格上方，C 在儲存格右側。以下三個提示會在約 6，7，8 秒後依序出現。</p>
+    <div class="live room"></div>
+    <script type="text/x-demo">
+      <ui-table theme="sky" row-border="1px solid" cell-alignment="center">
+        <ui-row cell-padding="16px" col-widths="1:1:1:1">
+          <ui-col alert-msg="答對了！" alert-interval="6000" alert-pos="A" alert-color="safe">pos A：蓋在儲存格上</ui-col>
+          <ui-col alert-msg="B 顯示在儲存格上方" alert-interval="7000" alert-pos="B" alert-color="warning">pos B：顯示在儲存格上方</ui-col>
+          <ui-col alert-msg="C 顯示在儲存格右側" alert-interval="8000" alert-pos="C" alert-color="lavender">pos C：顯示在儲存格右側</ui-col>
+          <ui-col>備註欄，C 的提示會蓋在這裡。</ui-col>
+        </ui-row>
+      </ui-table>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>alert：HTML 訊息與預設顏色</h2>
+    <p>alert-msg 的值如果是隱藏的 ui-col 的 id，就會改用那個 ui-col 的內容，支援 HTML 標籤。沒有指定 alert-color 時使用 theme 色。</p>
+    <div class="live room"></div>
+    <script type="text/x-demo">
+      <ui-table theme="teal" row-border="1px solid" cell-alignment="center">
+        <ui-row cell-padding="16px" col-widths="1:1">
+          <ui-col alert-msg="al-html" alert-interval="6500" alert-pos="A" alert-color="orange">訊息來自隱藏的 ui-col</ui-col>
+          <ui-col alert-msg="純文字訊息，使用 theme 色" alert-interval="9000" alert-pos="B">沒有指定 alert-color</ui-col>
+        </ui-row>
+        <ui-col hidden id="al-html"><b>提醒</b>：訊息支援 <i>HTML</i> 標籤。</ui-col>
+      </ui-table>
+    </script>
+    <pre><code class="src"></code></pre>
+  </section>
+
+  <section class="block" data-json="demoData">
+    <h2>JSON 資料來源</h2>
+    <p>在欄位物件加上 inverse: true 或 extraInfo 即可，extraInfo 指定的 div 要放在 ui-table 之外。下方是頁面使用的資料。</p>
+    <div class="live"></div>
+    <script type="text/x-demo">
+      <ui-table data-id="demoData"></ui-table>
+      <div id="xi-json">extraInfo 在 JSON 資料來源中的寫法。</div>
+    </script>
+    <pre><code class="src"></code></pre>
+    <pre><code class="json"></code></pre>
+  </section>
+
+  <section class="block">
+    <h2>inverse 行為說明</h2>
+    <ui-table row-border="1px solid">
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col inverse>項目</ui-col>
+        <ui-col inverse>行為</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>底色</ui-col>
+        <ui-col>該儲存格原本的文字色，不透明度 0.97。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>文字與圖示</ui-col>
+        <ui-col>固定為 #0C0D0C。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>fixed</ui-col>
+        <ui-col>與 fixed 並用時，inverse 的底色優先。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>hover</ui-col>
+        <ui-col>反色儲存格不套用 hover-bg-color。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>expandable</ui-col>
+        <ui-col>展開箭頭改為 #0C0D0C。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>progress-bar</ui-col>
+        <ui-col>未指定 progress-bar-color 時，預設改為 #0C0D0C。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>mask-invert</ui-col>
+        <ui-col>只影響遮罩層，可以和 inverse 同時使用。</ui-col>
+      </ui-row>
+    </ui-table>
+  </section>
+
+  <section class="block">
+    <h2>extra-info 行為說明</h2>
+    <ui-table row-border="1px solid">
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col inverse>項目</ui-col>
+        <ui-col inverse>行為</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>來源區塊</ui-col>
+        <ui-col>以 id 指定的 div，載入時自動隱藏，內容支援 HTML 標籤。要放在 ui-table 與 ui-col 之外。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>圖示</ui-col>
+        <ui-col>儲存格內容右側的圓點格圖示，顏色沿用 theme。反色儲存格改為 #0C0D0C。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>popover</ui-col>
+        <ui-col>深色底加 theme 色邊框與文字。點擊圖示開啟，再點一次圖示，點外面或按 Esc 關閉，全頁同時只開一個。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>定位</ui-col>
+        <ui-col>預設對齊圖示右緣往左下展開，下方空間不足時翻到上方，並限制在視窗內。頁面捲動時跟著圖示移動。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>互斥</ui-col>
+        <ui-col>與 mask-text，carousel-interval 互斥，extra-info 會被忽略並在主控台顯示警告。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>並用</ui-col>
+        <ui-col>可以和 inverse，expandable，show-next 並用。圖示排在內容之後，展開箭頭之前，不會點擊穿透到 show-next。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>內容更新</ui-col>
+        <ui-col>點擊當下才讀取 div 的內容，之後用 JavaScript 修改 div，popover 會顯示最新的。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>載入閃現</ui-col>
+        <ui-col>想避免載入瞬間看到來源區塊，可以在 div 加上 hidden 屬性。</ui-col>
+      </ui-row>
+    </ui-table>
+  </section>
+
+  <section class="block">
+    <h2>alert 行為說明</h2>
+    <ui-table row-border="1px solid">
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col inverse>項目</ui-col>
+        <ui-col inverse>行為</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>alert-msg</ui-col>
+        <ui-col>提示文字，或隱藏的 ui-col 的 id。使用 id 時內容支援 HTML 標籤。隱藏的 ui-col 要放在 ui-table 底下，ui-row 之外。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>alert-interval</ui-col>
+        <ui-col>間隔毫秒數。載入後經過一個間隔第一次出現，之後每隔一個間隔重複。要大於顯示時間，否則提示會連續出現。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>顯示時間</ui-col>
+        <ui-col>預設 5000 毫秒，由 UiTable.config.alertDuration 決定，要在初始化之前設定。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>alert-pos</ui-col>
+        <ui-col>A 蓋在儲存格上，B 顯示在儲存格上方並靠左對齊，C 顯示在儲存格右側，未指定時為 C。B 與 C 掛在 body 上，不受儲存格裁切，也不會擋住點擊。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>alert-color</ui-col>
+        <ui-col>品牌色名稱或色碼，未指定時使用 theme 色。底色不透明度 0.92，文字為 #0C0D0C。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>互斥</ui-col>
+        <ui-col>與 carousel-interval 互斥，carousel-interval 會被忽略並在主控台顯示警告。</ui-col>
+      </ui-row>
+      <ui-row cell-padding="12px" col-widths="1:4">
+        <ui-col>被隱藏時</ui-col>
+        <ui-col>B 與 C 在儲存格被隱藏時（例如 show-next 尚未展開的列）不顯示。</ui-col>
+      </ui-row>
+    </ui-table>
+  </section>
+
+</main>
+
+<script src="ui-table.js"></script>
+<script>
+  window.demoData = {
+    groups: [{
+      titleLeft: '欄位說明',
+      titleRight: 'JSON 資料來源',
+      rows: [
+        { cellPadding: '12px', colWidths: '1:3', cols: [
+          { content: '欄位', inverse: true },
+          { content: '說明', inverse: true }
+        ] },
+        { cellPadding: '12px', colWidths: '1:3', cols: [
+          { content: 'inverse' },
+          { content: '設為 true 時，該儲存格的文字色與底色對調。' }
+        ] },
+        { cellPadding: '12px', colWidths: '1:3', cols: [
+          { content: 'fontColor' },
+          { content: '反色時成為底色。', fontColor: 'lavender', inverse: true }
+        ] },
+        { cellPadding: '12px', colWidths: '1:3', cols: [
+          { content: 'extraInfo' },
+          { content: '指定補充說明 div 的 id，點擊圖示顯示。', extraInfo: 'xi-json' }
+        ] }
+      ]
+    }]
+  };
+
+  (function () {
+    function dedent(t) {
+      var lines = t.replace(/\t/g, '  ').split('\n');
+      while (lines.length && !lines[0].trim()) lines.shift();
+      while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+      var min = Infinity;
+      lines.forEach(function (l) {
+        if (l.trim()) {
+          var n = l.match(/^ */)[0].length;
+          if (n < min) min = n;
+        }
+      });
+      if (!isFinite(min)) min = 0;
+      return lines.map(function (l) { return l.slice(min); }).join('\n');
+    }
+
+    /* 範例原始碼與實際渲染共用同一份內容，不會彼此脫節 */
+    document.querySelectorAll('script[type="text/x-demo"]').forEach(function (s) {
+      var src = dedent(s.textContent);
+      var block = s.closest('.block');
+      block.querySelector('.live').innerHTML = src;
+      block.querySelector('code.src').textContent = src;
+      var key = block.getAttribute('data-json');
+      if (key && window[key]) {
+        block.querySelector('code.json').textContent = JSON.stringify(window[key], null, 2);
+      }
+    });
+
+    /* ui-table.js 沒載入時，顯示提示而不是丟出 ReferenceError */
+    if (window.UiTable && typeof UiTable.init === 'function') {
+      UiTable.init();
+    } else {
+      document.getElementById('load-error').hidden = false;
+    }
+  })();
+</script>
+</body>
+</html>

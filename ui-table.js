@@ -1105,19 +1105,24 @@
 
   function boot() {
     document.querySelectorAll('ui-table').forEach(function (el) {
-      if (!el._uit) {
-        el._uit = true;
+      if (el._uit) return;
+      el._uit = true;
+      try {
         new UiTable(el).init();
+      } catch (err) {
+        /* 單一表格初始化失敗時，不影響其他表格，也不影響全域物件的匯出 */
+        console.error('[ui-table] 初始化失敗：', err);
       }
     });
   }
+
+  /* 先匯出全域物件，再啟動自動初始化，避免初始化過程出錯時 UiTable 變成未定義 */
+  global.UiTable = { init: boot, config: CFG, colors: BRAND };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
   } else {
     boot();
   }
-
-  global.UiTable = { init: boot, config: CFG, colors: BRAND };
 
 })(window);
