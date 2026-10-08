@@ -1346,12 +1346,6 @@
     this._lbl    = null;
     this._icoEl  = null;
     this._wrap   = null;
-
-    var ns = el.nextElementSibling;
-    while (ns && ns.tagName && ns.tagName.toLowerCase() === 'ui-btn') {
-      ns = ns.nextElementSibling;
-    }
-    this._nextSib = ns || null;
   }
 
   UiBtn.prototype.init = function () {
@@ -1360,11 +1354,8 @@
     if (this.targetId) {
       this._target = document.getElementById(this.targetId);
       if (!this._target) console.warn('[ui-btn] 找不到 target: #' + this.targetId);
-    } else if (this.href) {
-      this._target = null;
-    } else {
-      this._target = this._nextSib;
-      if (!this._target && !this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 屬性。');
+    } else if (!this.href && !this.alertMsg && !this.unlockChunkTargets.length) {
+      console.warn('[ui-btn] 未設定 target、href、alert 或 unlock-chunk，按鈕不會有任何作用。', this.el);
     }
 
     if (this.scrollGate) {
@@ -1454,7 +1445,7 @@
     }
 
     btn.addEventListener('click', function () {
-      if (self._target || !self.href) self._toggle();
+      if (self.targetId || self.unlockChunkTargets.length || !self.href) self._toggle();
       if (self.alertMsg) showAlert(self.alertMsg, self.alertOpts);
       if (self.href) self._go();
     });

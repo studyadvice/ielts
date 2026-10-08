@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-btn href 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#0C0D0C;--shell:#C6C7BD;--lavender:#C3A5E5;--sky:#82C8E5;--warning:#E6374B;
+  --salmon:#E5C3B3;--ocean:#1CCAE8;--safe:#27AE60;--teal:#0DA591;--vanilla:#DBEDD8;
+  --yellow:#E3D322;--focus:#D4FFFC;--special:#B3DE73;--info:#2351DB;--indigo:#7849C9;
+  --pink:#FF91D7;--orange:#EDA109;
+}
+html{font-size:16px}
+body{background:var(--bg);color:var(--shell);font-size:1.125rem;line-height:1.5;margin:0;padding:0}
+.page{width:100%;max-width:none;box-sizing:border-box;padding:32px 56px}
+h1{font-size:2rem;line-height:1.3;color:var(--focus);margin:0 0 8px 0}
+h2{font-size:1.5rem;line-height:1.3;color:var(--sky);margin:0 0 12px 0}
+p{margin:0 0 12px 0}
+code{font-size:1.125rem;background:rgba(198,199,189,0.78);color:#0C0D0C;padding:2px 6px;border-radius:4px}
+.card-demo{background:rgba(198,199,189,0.08);border:1px solid #2D2E2C;border-radius:10px;padding:24px;margin:0 0 24px 0}
+.row-btn{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:16px 0}
+.ubtn{font-size:1.125rem !important}
+.hidden-box{display:none;background:#1B1C1A;border:1px solid #2D2E2C;border-radius:8px;padding:16px;margin:16px 0}
+table{width:100%;border-collapse:collapse;font-size:1.125rem;line-height:1.5}
+th,td{border:1px solid #2D2E2C;padding:10px 14px;text-align:left;vertical-align:top}
+th{color:var(--yellow);background:#191A18}
+.alert{font-size:1.125rem;line-height:1.5;margin:0 0 24px 0}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-btn 的 href 跳頁功能</h1>
+  <p>檔案：<code>ui-plus.js</code>　建立日期：10-08-26</p>
+
+  <div class="alert alert-info" role="alert">
+    按下按鈕後，會依 <code>href-target</code> 的設定開新分頁或在目前分頁跳轉。以下範例連結皆為 https://example.com。
+  </div>
+
+  <div class="card-demo">
+    <h2>1. 開新分頁</h2>
+    <p>設定 <code>href</code> 與 <code>href-target="_blank"</code>。</p>
+    <div class="row-btn">
+      <ui-btn href="https://example.com" href-target="_blank" theme="sky" icon="bi-box-arrow-up-right">開新分頁</ui-btn>
+      <ui-btn href="https://example.com" href-target="_blank" theme="teal" variant="outline" icon="bi-box-arrow-up-right">outline 樣式</ui-btn>
+      <ui-btn href="https://example.com" href-target="_blank" theme="pink" variant="ghost" icon="bi-box-arrow-up-right">ghost 樣式</ui-btn>
+    </div>
+  </div>
+
+  <div class="card-demo">
+    <h2>2. 目前分頁跳轉（預設）</h2>
+    <p>不設定 <code>href-target</code> 時預設為 <code>_self</code>。此範例跳到本頁底部的錨點。</p>
+    <div class="row-btn">
+      <ui-btn href="#page-end" theme="lavender" icon="bi-arrow-down-circle">跳到頁面底部</ui-btn>
+    </div>
+  </div>
+
+  <div class="card-demo">
+    <h2>3. 搭配提示訊息與延遲</h2>
+    <p>同時設定 <code>alert</code> 與 <code>href-delay</code>（單位毫秒），先顯示提示，延遲後再開啟新分頁。</p>
+    <div class="row-btn">
+      <ui-btn href="https://example.com" href-target="_blank" href-delay="1200"
+              alert="即將開啟新分頁" alert-theme="safe" alert-icon="bi-check-circle"
+              theme="safe" icon="bi-rocket-takeoff">提示後開啟</ui-btn>
+    </div>
+  </div>
+
+  <div class="card-demo">
+    <h2>4. 同時展開區塊與跳頁</h2>
+    <p>指定 <code>target</code> 時，仍會切換該元素的顯示狀態，同時執行跳頁。</p>
+    <div class="row-btn">
+      <ui-btn target="box-open" href="https://example.com" href-target="_blank"
+              label-open="收合並再次開啟" theme="orange" chevron icon="bi-layout-text-window">展開並開啟</ui-btn>
+    </div>
+    <div id="box-open" class="hidden-box">這是由 <code>target="box-open"</code> 控制的內容區塊。</div>
+  </div>
+
+  <div class="card-demo">
+    <h2>屬性說明</h2>
+    <table>
+      <thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>target</code></td><td>無</td><td>要展開或收合的元素 id，必須明確指定。不再預設切換下一個兄弟元素。</td></tr>
+        <tr><td><code>href</code></td><td>無</td><td>要前往的網址。未設定 <code>target</code> 時，不會再預設切換下一個兄弟元素。</td></tr>
+        <tr><td><code>href-target</code></td><td>_self</td><td><code>_self</code> 為目前分頁，<code>_blank</code> 為新分頁，也可填視窗名稱。</td></tr>
+        <tr><td><code>href-delay</code></td><td>0</td><td>延遲跳轉的毫秒數，可搭配 <code>alert</code> 使用。</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:16px">安全限制：<code>javascript:</code>、<code>data:</code>、<code>vbscript:</code> 開頭的網址會被忽略。</p>
+  </div>
+
+  <div id="page-end" class="alert alert-success" role="alert">這裡是頁面底部，範例 2 的錨點位置。</div>
+</div>
+<script src="ui-plus.js"></script>
+</body>
+</html>
