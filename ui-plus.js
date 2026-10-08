@@ -1319,6 +1319,9 @@
     this.startOpen   = el.hasAttribute('open');
     this.disabled    = el.hasAttribute('disabled');
     this.targetId    = el.getAttribute('target')       || '';
+    this.href        = (el.getAttribute('href') || '').trim();
+    this.hrefTarget  = el.getAttribute('href-target')  || '_self';
+    this.hrefDelay   = parseInt(el.getAttribute('href-delay')) || 0;
     this.labelClosed = el.textContent.trim();
     this.labelOpen   = el.getAttribute('label-open')   || '';
     this.group       = el.getAttribute('group')        || '';
@@ -1357,6 +1360,8 @@
     if (this.targetId) {
       this._target = document.getElementById(this.targetId);
       if (!this._target) console.warn('[ui-btn] 找不到 target: #' + this.targetId);
+    } else if (this.href) {
+      this._target = null;
     } else {
       this._target = this._nextSib;
       if (!this._target && !this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 屬性。');
@@ -1449,14 +1454,35 @@
     }
 
     btn.addEventListener('click', function () {
-      self._toggle();
+      if (self._target || !self.href) self._toggle();
       if (self.alertMsg) showAlert(self.alertMsg, self.alertOpts);
+      if (self.href) self._go();
     });
     wrap.appendChild(btn);
     this.el.before(wrap);
     this.el.style.display = 'none';
     this._btn  = btn;
     this._wrap = wrap;
+  };
+
+  UiBtn.prototype._go = function () {
+    var url = this.href;
+    if (/^\s*(javascript|data|vbscript):/i.test(url)) {
+      console.warn('[ui-btn] href 不允許使用的協定，已忽略：', url);
+      return;
+    }
+    var tgt = this.hrefTarget;
+    var run = function () {
+      if (tgt === '_self') {
+        location.href = url;
+      } else if (tgt === '_blank') {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else {
+        window.open(url, tgt);
+      }
+    };
+    if (this.hrefDelay > 0) setTimeout(run, this.hrefDelay);
+    else run();
   };
 
   UiBtn.prototype._toggle = function () {
