@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-table 欄間箭頭示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --c-bg: #0C0D0C;
+    --c-shell: #C6C7BD;
+    --c-sky: #82C8E5;
+    --c-lavender: #C3A5E5;
+    --c-teal: #0DA591;
+    --c-orange: #EDA109;
+    --c-pink: #FF91D7;
+    --c-focus: #D4FFFC;
+    --c-warning: #E6374B;
+    --c-safe: #27AE60;
+    --c-info: #4171bf;
+  }
+  html { font-size: 16px; }
+  body {
+    font-family: system-ui, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    background: var(--c-bg);
+    color: var(--c-shell);
+    font-size: 1.125rem;
+    line-height: 1.5;
+    padding: 24px 32px 64px;
+    --bs-body-bg: #0C0D0C;
+    --bs-body-color: #C6C7BD;
+  }
+  main { width: 100%; max-width: none; }
+  h1 { font-size: 2rem; color: var(--c-focus); margin: 0 0 8px; line-height: 1.3; }
+  h2 { font-size: 1.5rem; color: var(--c-sky); margin: 48px 0 8px; line-height: 1.3; }
+  p, li { font-size: 1.125rem; line-height: 1.5; }
+  code {
+    font-size: 1.125rem;
+    color: var(--c-pink);
+    background: #1a1b1a;
+    padding: 1px 6px;
+  }
+  .alert {
+    font-size: 1.125rem;
+    line-height: 1.5;
+    padding: 12px 16px;
+    margin: 12px 0 16px;
+    border-radius: 0;
+  }
+  .alert-info    { background: rgba(65,113,191,.85); color: #D4FFFC; border-color: #4171bf; }
+  .alert-warning { background: rgba(237,161,9,.88);  color: #0C0D0C; border-color: #EDA109; }
+  .alert-success { background: rgba(39,174,96,.88);  color: #0C0D0C; border-color: #27AE60; }
+  .alert code { background: rgba(12,13,12,.82); }
+  .spec { width: 100%; border-collapse: collapse; margin: 12px 0 8px; }
+  .spec th, .spec td {
+    border: 1px solid rgba(198,199,189,.5);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  .spec th { background: rgba(130,200,229,.85); color: #0C0D0C; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 1100px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+
+<h1>ui-table 欄間箭頭示範</h1>
+<p>在相鄰兩個 <code>ui-col</code> 的交界線上，壓一個實心往右箭頭。箭頭掛在整列上，所以不會被儲存格裁掉。</p>
+
+<div class="alert alert-info" role="alert">
+  規則：純顯示用有箭尾的粗箭頭，可點擊用實心三角形，點擊後顯示右邊儲存格的內容。箭頭與遮罩互斥，只要箭頭兩側任一欄有 <code>mask-text</code>，箭頭就會被忽略，並在主控台提示。
+</div>
+
+<table class="spec">
+  <thead><tr><th>屬性</th><th>設在哪裡</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td><code>arrow</code></td><td>ui-col 或 ui-row</td><td>空值或 <code>right</code> 為純顯示粗箭頭，<code>click</code> 為可點擊三角形，<code>none</code> 為關閉。設在 ui-col 表示該欄與下一欄之間，設在 ui-row 表示整列每個交界。欄的設定優先於列。</td></tr>
+    <tr><td><code>arrow-open</code></td><td>ui-col 或 ui-row</td><td>搭配 <code>arrow="click"</code>，讓右邊的儲存格一開始就是顯示的。</td></tr>
+    <tr><td><code>arrow-size</code></td><td>ui-col 或 ui-row</td><td>箭頭高度。純數字視為 px，也可寫 px、rem、em。預設 1.5rem。</td></tr>
+    <tr><td><code>arrow-color</code></td><td>ui-col 或 ui-row</td><td>品牌色名稱或色碼。預設 focus。</td></tr>
+    <tr><td><code>arrow-pos</code></td><td>ui-col 或 ui-row</td><td><code>top</code>、<code>center</code>、<code>bottom</code>。預設 center。</td></tr>
+    <tr><td><code>UiTableConfig</code></td><td>全域</td><td>可設定 <code>arrowSize</code>、<code>arrowColor</code>、<code>arrowPos</code> 當預設值。</td></tr>
+  </tbody>
+</table>
+
+<h2>一、純顯示：有箭尾的粗箭頭</h2>
+<p>整列寫一次 <code>arrow</code> 就好。第二列示範個別欄用 <code>arrow="none"</code> 關掉。</p>
+<ui-table theme="sky" font-size="1.125rem" cell-padding="14px" row-border="1px solid">
+  <ui-group title-left="形容詞修飾名詞" title-right="組合起來是名詞">
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow>
+      <ui-col>形容詞：fast</ui-col>
+      <ui-col>名詞：car</ui-col>
+      <ui-col>名詞片語：a fast car</ui-col>
+    </ui-row>
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow>
+      <ui-col>輸入</ui-col>
+      <ui-col arrow="none">處理（這一格右邊沒有箭頭）</ui-col>
+      <ui-col>輸出</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+<h2>二、箭頭大小：arrow-size</h2>
+<ui-table theme="teal" font-size="1.125rem" cell-padding="14px" row-border="1px solid">
+  <ui-group title-left="三種尺寸" title-right="1rem、1.5rem、2.5rem">
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow arrow-size="1rem">
+      <ui-col>arrow-size="1rem"</ui-col>
+      <ui-col>第二欄</ui-col>
+      <ui-col>第三欄</ui-col>
+    </ui-row>
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow arrow-size="1.5rem">
+      <ui-col>arrow-size="1.5rem"（預設）</ui-col>
+      <ui-col>第二欄</ui-col>
+      <ui-col>第三欄</ui-col>
+    </ui-row>
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow arrow-size="2.5rem">
+      <ui-col>arrow-size="2.5rem"</ui-col>
+      <ui-col>第二欄</ui-col>
+      <ui-col>第三欄</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+<h2>三、顏色與垂直位置：arrow-color、arrow-pos</h2>
+<ui-table theme="lavender" font-size="1.125rem" cell-padding="14px" cell-min-height="112px" row-border="1px solid">
+  <ui-group title-left="位置與顏色" title-right="top、center、bottom">
+    <ui-row col-widths="1:1:1" col-border="1px solid">
+      <ui-col arrow arrow-pos="top" arrow-color="orange">arrow-pos="top"，arrow-color="orange"</ui-col>
+      <ui-col arrow arrow-pos="center" arrow-color="pink">arrow-pos="center"，arrow-color="pink"</ui-col>
+      <ui-col>最後一欄</ui-col>
+    </ui-row>
+    <ui-row col-widths="1:1:1" col-border="1px solid">
+      <ui-col arrow arrow-pos="bottom" arrow-color="safe">arrow-pos="bottom"，arrow-color="safe"</ui-col>
+      <ui-col arrow arrow-color="#E6374B">arrow-color="#E6374B"</ui-col>
+      <ui-col>最後一欄</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+<h2>四、可點擊：三角形顯示右邊的儲存格</h2>
+<div class="alert alert-warning" role="alert">
+  右邊的儲存格一開始是空白的，點三角形才顯示內容，再點一次收合。連續幾欄時會逐步揭示：左邊的儲存格還沒出現，它右邊的三角形就不會出現。
+</div>
+<ui-table theme="sky" font-size="1.125rem" cell-padding="14px" row-border="1px solid">
+  <ui-group title-left="問題、提示、答案" title-right="一步一步點">
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow="click" arrow-color="focus">
+      <ui-col>Would you run to the store?</ui-col>
+      <ui-col font-color="vanilla">提示：run 在這裡是句子的主要動作。</ui-col>
+      <ui-col font-color="safe">答案：動詞</ui-col>
+    </ui-row>
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow="click" arrow-color="orange">
+      <ui-col>I go for a run every morning.</ui-col>
+      <ui-col font-color="vanilla">提示：它是 go for 的受詞。</ui-col>
+      <ui-col font-color="safe">答案：名詞</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+<h2>五、arrow-open 與 show-next 並用</h2>
+<div class="alert alert-warning" role="alert">
+  第一個三角形加了 <code>arrow-open</code>，第二欄一開始就顯示，只有第三欄要點第二個三角形。第一欄的往下箭頭仍然是 <code>show-next</code>，負責展開下一列。展開後的那一列用純顯示的粗箭頭。
+</div>
+<ui-table theme="lavender" font-size="1.125rem" cell-padding="14px" row-border="1px solid">
+  <ui-group title-left="兩種展開方式" title-right="往下是下一列，往右是右邊的格子">
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow-color="pink">
+      <ui-col show-next="row" arrow="click" arrow-open>副詞修飾形容詞</ui-col>
+      <ui-col arrow="click">組合起來是形容詞</ui-col>
+      <ui-col font-color="vanilla">例：very tall</ui-col>
+    </ui-row>
+    <ui-row hidden col-widths="1:1:1" col-border="1px solid" arrow arrow-color="safe" font-color="vanilla">
+      <ui-col>副詞</ui-col>
+      <ui-col>形容詞</ui-col>
+      <ui-col>形容詞片語</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+<h2>六、與遮罩互斥</h2>
+<div class="alert alert-info" role="alert">
+  第二欄有 <code>mask-text</code>，所以第一欄與第二欄之間、第二欄與第三欄之間的箭頭都被忽略。打開瀏覽器主控台會看到警告。
+</div>
+<ui-table theme="teal" font-size="1.125rem" cell-padding="14px" row-border="1px solid">
+  <ui-group title-left="遮罩列" title-right="點遮罩揭曉">
+    <ui-row col-widths="1:1:1" col-border="1px solid" arrow>
+      <ui-col>第一欄</ui-col>
+      <ui-col mask-text="點我揭曉">被遮住的答案</ui-col>
+      <ui-col>第三欄</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+<h2>七、不等寬與跨欄：箭頭永遠落在實際的交界線</h2>
+<ui-table theme="sky" font-size="1.125rem" cell-padding="14px" row-border="1px solid">
+  <ui-group title-left="欄寬比例與 span" title-right="用量測的位置，不是算出來的">
+    <ui-row col-widths="2:1:3" col-border="1px solid" arrow arrow-color="pink">
+      <ui-col>col-widths="2:1:3"，寬欄</ui-col>
+      <ui-col>窄欄</ui-col>
+      <ui-col>更寬的欄</ui-col>
+    </ui-row>
+    <ui-row col-border="1px solid" arrow arrow-color="orange">
+      <ui-col span="2">span="2"，箭頭落在跨欄後的右緣</ui-col>
+      <ui-col>單欄</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+
+</main>
+
+<script>
+  window.UiTableConfig = { fontSize: '1.125rem' };
+</script>
+<script src="ui-table.js"></script>
+</body>
+</html>

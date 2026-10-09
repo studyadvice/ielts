@@ -32,7 +32,10 @@
     verticalAlignment:  'top',
     hoverBgColor:       '',
     cellMinHeight:      '',
-    rowBorder:          ''
+    rowBorder:          '',
+    arrowSize:          '1.5rem',
+    arrowColor:         'focus',
+    arrowPos:           'center'
   }, global.UiTableConfig || {});
 
   var ICO = {
@@ -160,6 +163,31 @@
     return el.hasAttribute('hidden') && el.hasAttribute('id');
   }
 
+  /* 箭頭尺寸：純數字視為 px，也接受 px、rem、em，其餘用後備值 */
+  function normSize(v, fb) {
+    v = String(v == null ? '' : v).trim();
+    if (/^\d*\.?\d+$/.test(v)) return v + 'px';
+    if (/^\d*\.?\d+(px|rem|em)$/.test(v)) return v;
+    return fb;
+  }
+
+  /* fat：有箭尾的粗箭頭（純顯示）；tri：實心三角形（可點擊） */
+  var ARROW_SHAPE = {
+    fat: { ratio: 1.7, vb: '0 0 34 20', d: 'M0 6H20V0L34 10L20 20V14H0Z' },
+    tri: { ratio: 0.7, vb: '0 0 14 20', d: 'M0 0L14 10L0 20Z' }
+  };
+
+  function mkArrow(kind, size, color, pos) {
+    var sh = ARROW_SHAPE[kind];
+    var el = mk('div', 'uit-arrow p-' + pos + (kind === 'tri' ? ' is-click' : ''));
+    el.style.setProperty('--uit-asz', size);
+    el.style.setProperty('--uit-ar', sh.ratio);
+    el.innerHTML = '<svg viewBox="' + sh.vb + '" aria-hidden="true">' +
+      '<path d="' + sh.d + '" fill="' + color + '" stroke="' + BG + '"' +
+      ' stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke" paint-order="stroke"/></svg>';
+    return el;
+  }
+
   function timedTrigger(showFn, hideFn, interval, duration) {
     function once() {
       showFn();
@@ -244,6 +272,17 @@
     '.uit-alert-A.vis{opacity:1}',
     '.uit-alert-ext{position:fixed;z-index:9999;pointer-events:none;padding:5px 14px;font-weight:600;line-height:1.5;white-space:nowrap;opacity:0;transition:opacity .35s ease;font-size:var(--uit-fs,1rem)}',
     '.uit-alert-ext.vis{opacity:1}',
+
+    /* 欄間箭頭：掛在列上，不受儲存格 overflow 裁切 */
+    '.uit-arrow{position:absolute;z-index:12;display:none;line-height:0;pointer-events:none}',
+    '.uit-arrow.on{display:block}',
+    '.uit-arrow.p-center{top:50%;transform:translate(-50%,-50%)}',
+    '.uit-arrow.p-top{top:12px;transform:translate(-50%,0)}',
+    '.uit-arrow.p-bottom{bottom:12px;transform:translate(-50%,0)}',
+    '.uit-arrow svg{display:block;overflow:visible;height:var(--uit-asz,1.5rem);width:calc(var(--uit-asz,1.5rem) * var(--uit-ar,1.7));transition:transform .25s ease,filter .2s ease}',
+    '.uit-arrow.is-click{pointer-events:auto;cursor:pointer;padding:6px}',
+    '.uit-arrow.is-click:hover svg{filter:brightness(1.12);transform:scale(1.15)}',
+    '.uit-col.uit-arrow-off{visibility:hidden}',
 
     /* 固定欄 */
     '.uit-col.fix-l{position:sticky;left:0;z-index:5}',
@@ -435,6 +474,11 @@
         if (rd.autoNumber)  r.setAttribute('auto-number',  rd.autoNumber === true ? '' : rd.autoNumber);
         if (rd.lineHeight)  r.setAttribute('line-height',  rd.lineHeight);
         if (rd.textIndent)  r.setAttribute('text-indent',  rd.textIndent);
+        if (rd.arrow != null)      r.setAttribute('arrow',       rd.arrow === true ? '' : rd.arrow);
+        if (rd.arrowSize)          r.setAttribute('arrow-size',  rd.arrowSize);
+        if (rd.arrowColor)         r.setAttribute('arrow-color', rd.arrowColor);
+        if (rd.arrowPos)           r.setAttribute('arrow-pos',   rd.arrowPos);
+        if (rd.arrowOpen)          r.setAttribute('arrow-open',  '');
 
         (rd.cols || []).forEach(function (cd) {
           var c = mk('ui-col');
@@ -459,6 +503,11 @@
           if (cd.alertColor)        c.setAttribute('alert-color',       cd.alertColor);
           if (cd.alertInterval)     c.setAttribute('alert-interval',    String(cd.alertInterval));
           if (cd.alertPos)          c.setAttribute('alert-pos',         cd.alertPos);
+          if (cd.arrow != null)     c.setAttribute('arrow',             cd.arrow === true ? '' : cd.arrow);
+          if (cd.arrowSize)         c.setAttribute('arrow-size',        cd.arrowSize);
+          if (cd.arrowColor)        c.setAttribute('arrow-color',       cd.arrowColor);
+          if (cd.arrowPos)          c.setAttribute('arrow-pos',         cd.arrowPos);
+          if (cd.arrowOpen)         c.setAttribute('arrow-open',        '');
 
           if (cd.items && cd.items.length) {
             cd.items.forEach(function (it) {
@@ -690,16 +739,116 @@
     };
 
     var colTotal = active.length;
+    var colDivs  = [];
     active.forEach(function (colEl, idx) {
       var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount, idx + 1);
       div.appendChild(cd);
+      colDivs.push(cd);
 
       if (rowStyle.colBorder && idx < colTotal - 1) {
         cd.style.borderRight = rowStyle.colBorder + ' ' + self.color;
       }
     });
 
+    self._setupArrows(div, rowEl, active, colDivs);
+
     return div;
+  };
+
+  /* 欄間箭頭：arrow 設在起點欄（或整列），箭頭壓在它與下一欄的交界線上。
+     arrow / arrow="right"：純顯示的粗箭頭
+     arrow="click"：實心三角形，點擊後顯示右邊儲存格的內容，再點一次收合
+     arrow="none"：整列設定時，個別欄關閉
+     arrow-open：搭配 click，右邊儲存格一開始就是顯示的 */
+  UiTable.prototype._setupArrows = function (rowDiv, rowEl, colEls, colDivs) {
+    var rowArrow = rowEl.getAttribute('arrow');
+    var items = [];
+
+    colEls.forEach(function (colEl, i) {
+      var explicit = colEl.hasAttribute('arrow');
+      var raw = explicit ? colEl.getAttribute('arrow') : rowArrow;
+      if (raw === null) return;
+      var mode = String(raw).trim().toLowerCase();
+      if (mode === 'none') return;
+
+      if (i === colEls.length - 1) {
+        if (explicit) console.warn('[ui-table] 最後一欄右邊沒有下一欄，arrow 已忽略。');
+        return;
+      }
+      var nextEl = colEls[i + 1];
+      if (colEl.hasAttribute('mask-text') || nextEl.hasAttribute('mask-text')) {
+        console.warn('[ui-table] arrow 與 mask-text 互斥，此處的 arrow 已忽略。');
+        return;
+      }
+      if (mode && mode !== 'right' && mode !== 'click') {
+        console.warn('[ui-table] arrow="' + raw + '" 不是有效的值，已當作純顯示箭頭。');
+      }
+
+      var isClick = mode === 'click';
+      var kind = isClick ? 'tri' : 'fat';
+
+      function pick(name) {
+        return colEl.getAttribute(name) || rowEl.getAttribute(name) || '';
+      }
+      var size  = normSize(pick('arrow-size'), normSize(CFG.arrowSize, '1.5rem'));
+      var color = resolveColor(pick('arrow-color')) || resolveColor(CFG.arrowColor) || BRAND.focus;
+      var pos   = (pick('arrow-pos') || CFG.arrowPos || 'center').toLowerCase();
+      if (pos === 'middle') pos = 'center';
+      if (pos !== 'top' && pos !== 'bottom') pos = 'center';
+
+      var el = mkArrow(kind, size, color, pos);
+      var it = {
+        el: el, left: colDivs[i], right: colDivs[i + 1], click: isClick,
+        opened: colEl.hasAttribute('arrow-open') || rowEl.hasAttribute('arrow-open')
+      };
+      if (isClick) {
+        el.addEventListener('click', function (e) {
+          e.stopPropagation();
+          it.opened = !it.opened;
+          place();
+        });
+      }
+
+      /* 替箭頭兩側的儲存格預留空間，避免箭頭壓到文字 */
+      var half    = Math.max(ARROW_SHAPE[kind].ratio, 1) / 2;
+      var reserve = 'calc(' + size + ' * ' + half + ' + 12px)';
+      [[colDivs[i], 'paddingRight'], [colDivs[i + 1], 'paddingLeft']].forEach(function (x) {
+        x[0].style[x[1]] = 'max(' + (x[0].style[x[1]] || '0px') + ', ' + reserve + ')';
+      });
+
+      rowDiv.appendChild(el);
+      items.push(it);
+    });
+
+    if (!items.length) return;
+
+    /* 依左到右的順序計算：右邊儲存格是否被箭頭藏起來，以及箭頭本身顯示與否。
+       左邊儲存格看不到時，右邊一律藏起來，所以逐步揭示可以連鎖（甲 ▶ 乙 ▶ 丙）。 */
+    function place() {
+      items.forEach(function (it) {
+        var l = it.left, r = it.right;
+        var lOk = !l.classList.contains('uit-cell-off') && !l.classList.contains('uit-arrow-off');
+        if (it.click) r.classList.toggle('uit-arrow-off', !(it.opened && lOk));
+
+        var sameLine = Math.abs(l.offsetTop - r.offsetTop) < 2 && r.offsetLeft > l.offsetLeft;
+        var vis = lOk && !r.classList.contains('uit-cell-off') && sameLine && rowDiv.offsetWidth > 0;
+        it.el.classList.toggle('on', vis);
+        if (it.click) it.el.classList.toggle('open', it.opened);
+        if (vis) it.el.style.left = r.offsetLeft + 'px';
+      });
+    }
+
+    place();
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(place);
+      ro.observe(rowDiv);
+      colDivs.forEach(function (c) { ro.observe(c); });
+    }
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(place);
+      colDivs.forEach(function (c) { mo.observe(c, { attributes: true, attributeFilter: ['class'] }); });
+    }
+    window.addEventListener('resize', place);
   };
 
   UiTable.prototype._setupMaskChain = function (masks) {
