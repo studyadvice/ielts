@@ -216,6 +216,7 @@
 
     '.uit-row{display:grid;position:relative;box-sizing:border-box}',
     '.uit-row.uit-hidden{display:none!important}',
+    '.uit-row + .uit-row{margin-top:-1px}',
 
     '.uit-col{position:relative;box-sizing:border-box;overflow:hidden;word-break:break-word;min-width:0;' +
       'display:flex;flex-direction:column;' +
