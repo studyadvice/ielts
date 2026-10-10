@@ -15,7 +15,7 @@ chunk-demo { display: block; }
   display: flex; align-items: center; flex-wrap: wrap;
   gap: 4px 8px; padding: 16px 22px 8px;
   border-radius: 12px; border: 1px solid;
-  font-size: 1.1rem; line-height: 2.2;
+  font-size: 1rem; line-height: 2.0;
 }
 
 /* ── 語塊錨點（定位容器）────────────── */
@@ -113,7 +113,7 @@ chunk-demo { display: block; }
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--lc, #C6C7BD); flex-shrink: 0; margin-top: 5px;
 }
-.cd-lv-text { font-size: .91rem; line-height: 1.5; color: #9da09a; white-space: normal; }
+.cd-lv-text { font-size: .95rem; line-height: 1.5; color: #9da09a; white-space: normal; }
 .cd-lv.is-sel .cd-lv-text { color: #dde0d8; }
 
 /* ── 整句預覽 ───────────────────────────── */
