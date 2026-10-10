@@ -1,6 +1,6 @@
 (function (win, doc) {
   'use strict';
-  const CSS_ID = '__chunk-demo-v6__';
+  const CSS_ID = '__chunk-demo-v7__';
   if (!doc.getElementById(CSS_ID)) {
     const s = doc.createElement('style');
     s.id = CSS_ID;
@@ -119,6 +119,7 @@ chunk-demo { display: block; }
 /* ── 整句預覽 ───────────────────────────── */
 .cd-preview {
   margin-top: 1px; padding: 3px;
+  margin-left: var(--pv-indent, 0px);
   border-left: 3px solid var(--pvb, #B3DE73);
   border-radius: 0 6px 6px 0;
   background: var(--pvbg, rgba(255,255,255,.035));
@@ -297,6 +298,7 @@ chunk-demo { display: block; }
     previewBorderColor: null,
     previewTextColor:   null,
     previewBg:          null,
+    previewIndent:      0,
     showPreview:        false,
     showDots:           true,
     maskMode:           false,
@@ -316,6 +318,15 @@ chunk-demo { display: block; }
     noteBorderColor: null,
     noteIndent:      0,
 
+    /* 元件外部間距（null = 不設定，維持瀏覽器預設 0）與句子框內部間距 */
+    margin:        null,
+    marginTop:     null,
+    marginRight:   null,
+    marginBottom:  null,
+    marginLeft:    null,
+    barPadding:    null,   /* 句子框 padding，元件預設為 16px 22px 8px */
+    barLineHeight: null,   /* 句子框 line-height，元件預設為 2.2 */
+
     mode:    'dropdown',   /* 'dropdown' | 'dots' | 'dots-ext' */
     dotsPos: 'bottom',     /* 'bottom' | 'top'  — dots-ext 面板位置 */
   };
@@ -328,6 +339,9 @@ chunk-demo { display: block; }
         'theme', 'border-width', 'border-style', 'data-config',
         'show-dots', 'width', 'dropdown-width', 'button-width',
         'level-colors', 'mask-mode',
+        'preview-indent',
+        'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+        'bar-padding', 'bar-line-height',
         'translation', 'show-translation', 'translation-indent',
         'note', 'show-note', 'note-indent',
         'long-chunk-threshold',
@@ -351,6 +365,7 @@ chunk-demo { display: block; }
       this._revealed = new Set();
       this._ro       = null;
       this._locked   = new Set();
+      this._mApplied = new Set();   /* 已由元件寫入 inline style 的 margin 屬性 */
       this._docClick = () => this._close();
       this._docKey   = e => { if (e.key === 'Escape') this._close(); };
     }
@@ -415,6 +430,21 @@ chunk-demo { display: block; }
 
       const mmAttr = this.getAttribute('mask-mode');
       if (mmAttr !== null) cfg.maskMode = mmAttr === 'true';
+
+      const pviAttr = this.getAttribute('preview-indent');
+      if (pviAttr !== null) cfg.previewIndent = parseFloat(pviAttr) || 0;
+
+      const attrOrKeep = (name, key) => {
+        const v = this.getAttribute(name);
+        if (v !== null && v.trim() !== '') cfg[key] = v.trim();
+      };
+      attrOrKeep('margin',          'margin');
+      attrOrKeep('margin-top',      'marginTop');
+      attrOrKeep('margin-right',    'marginRight');
+      attrOrKeep('margin-bottom',   'marginBottom');
+      attrOrKeep('margin-left',     'marginLeft');
+      attrOrKeep('bar-padding',     'barPadding');
+      attrOrKeep('bar-line-height', 'barLineHeight');
 
       const stAttr = this.getAttribute('show-translation');
       if (stAttr !== null) cfg.showTranslation = stAttr === 'true';
@@ -515,6 +545,8 @@ chunk-demo { display: block; }
         this.style.removeProperty('width');
       }
 
+      this._applyOuterSpacing(cfg);
+
       if (cfg.maskMode) {
         this.style.setProperty('--cd-mask-bg', cfg._maskColor);
       } else {
@@ -548,6 +580,7 @@ chunk-demo { display: block; }
         pv.style.setProperty('--pvb', cfg._pvColor);
         if (cfg.previewTextColor) pv.style.setProperty('--pvt',  cfg.previewTextColor);
         if (cfg.previewBg)        pv.style.setProperty('--pvbg', cfg.previewBg);
+        if (cfg.previewIndent)    pv.style.setProperty('--pv-indent', cfg.previewIndent + 'px');
         const t     = doc.createElement('div');
         t.className = 'cd-pv-text';
         t.innerHTML = this._full();
@@ -592,11 +625,33 @@ chunk-demo { display: block; }
       }
     }
 
+    /* 外部間距：只動自己寫入過的屬性，不會清掉使用者自己加的 inline style */
+    _applyOuterSpacing(cfg) {
+      const map = [
+        ['margin',        cfg.margin],
+        ['margin-top',    cfg.marginTop],
+        ['margin-right',  cfg.marginRight],
+        ['margin-bottom', cfg.marginBottom],
+        ['margin-left',   cfg.marginLeft],
+      ];
+      map.forEach(([prop, val]) => {
+        if (val !== null && val !== undefined && val !== '') {
+          this.style.setProperty(prop, val);
+          this._mApplied.add(prop);
+        } else if (this._mApplied.has(prop)) {
+          this.style.removeProperty(prop);
+          this._mApplied.delete(prop);
+        }
+      });
+    }
+
     _buildBar(cfg) {
       const bar = doc.createElement('div');
       bar.className        = 'cd-bar';
       bar.style.background  = cfg.sentenceBg;
       bar.style.borderColor = cfg.sentenceBorder;
+      if (cfg.barPadding)    bar.style.padding    = cfg.barPadding;
+      if (cfg.barLineHeight) bar.style.lineHeight = cfg.barLineHeight;
 
       const PUNCT_RE = /^([.,!?;:…\u3002\uff0c\uff01\uff1f\uff1b\uff1a]+)([\s\S]*)$/;
       const parts    = this._sent.split(/(\{\d+\})/);
@@ -640,7 +695,8 @@ chunk-demo { display: block; }
 
     _checkLongBtns(bar, cfg) {
       if (!cfg) cfg = this._cfg();
-      const padH      = 44;
+      const cs        = win.getComputedStyle(bar);
+      const padH      = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
       const barW      = bar.clientWidth - padH;
       if (barW <= 0) return;
 
