@@ -164,7 +164,6 @@ blockquote::before {
     opacity: 0.5;
 }
 
-/* ── Utilities ───────────────────────────── */
 .bp-hidden { display: none; }
 
 .bp-annotation {
@@ -226,3 +225,15 @@ blockquote::before {
 .bp-hatch-pink     { --hatch-color: #FF91D7; }
 .bp-hatch-orange   { --hatch-color: #EDA109; }
 .bp-hatch-special  { --hatch-color: #B3DE73; }
+
+.bd-sky { font-weight: 800; color: #82C8E5;}
+
+.custom-list {
+  list-style: none;
+  padding-left: 0;
+}
+.custom-list li {
+  display: flex;
+  align-items: flex-start; /* 確保圖示與第一行文字頂端對齊 */
+  margin-bottom: 9px; /* 項目之間的間距 */
+}
