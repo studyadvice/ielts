@@ -1,3 +1,43 @@
+/* 可開放的字體 / padding 設定
+ * 屬性寫法：fs-{部位}="1.25"（純數字視為 rem）、ff-{部位}="serif"、pad-{部位}="4 14"（純數字視為 px）
+ * 也可直接在任何上層元素設定 CSS 變數 --ct-fs-{部位}、--ct-ff-{部位}、--ct-pad-{部位} */
+const CT_CARD_FS  = ['body','number','question','input','submit','aux','feedback','hintbox','flipnote','info','infobox'];
+const CT_CARD_PAD = ['input','submit','aux','info','infobox'];
+const CT_GROUP_FS  = ['nav','page','counter','result-score','result-text','retry'];
+const CT_GROUP_PAD = ['nav','page','retry'];
+
+/* 額外資訊的色彩覆蓋：info-color（按鈕與面板強調色）、info-bg（面板底色）、info-fg（面板文字色）
+ * 可填色票名稱（sky、lavender…）或任何 CSS 色彩值 */
+function ctApplyInfoColors(el) {
+    [['info-color', '--ct-info-color'], ['info-bg', '--ct-info-bg'], ['info-fg', '--ct-info-fg']].forEach(([attr, v]) => {
+        const val = el.getAttribute(attr);
+        if (val !== null && val.trim() !== '') {
+            el.style.setProperty(v, CardToggle.prototype._resolveColor.call(el, val.trim()));
+        }
+    });
+}
+
+function ctApplyTypography(el, fsParts, padParts) {
+    const num = /^\d+(\.\d+)?$/;
+    fsParts.forEach(part => {
+        const fs = el.getAttribute('fs-' + part);
+        if (fs !== null && fs.trim() !== '') {
+            el.style.setProperty('--ct-fs-' + part, num.test(fs.trim()) ? fs.trim() + 'rem' : fs.trim());
+        }
+        const ff = el.getAttribute('ff-' + part);
+        if (ff !== null && ff.trim() !== '') {
+            el.style.setProperty('--ct-ff-' + part, ff.trim());
+        }
+    });
+    padParts.forEach(part => {
+        const pad = el.getAttribute('pad-' + part);
+        if (pad !== null && pad.trim() !== '') {
+            const v = pad.trim().split(/\s+/).map(t => num.test(t) ? t + 'px' : t).join(' ');
+            el.style.setProperty('--ct-pad-' + part, v);
+        }
+    });
+}
+
 class CardToggle extends HTMLElement {
     constructor() {
         super();
@@ -62,6 +102,32 @@ class CardToggle extends HTMLElement {
                 --ct-bar-width-hover: 5px;
                 /* 預設動態顏色變數 */
                 --ct-active-color: var(--ct-color-special);
+                /* 各部位字體大小（最小 1.125rem） */
+                --ct-fs-body:         1.125rem;
+                --ct-fs-number:       1.125rem;
+                --ct-fs-input:        1.125rem;
+                --ct-fs-submit:       1.125rem;
+                --ct-fs-aux:          1.125rem;
+                --ct-fs-feedback:     1.125rem;
+                --ct-fs-hintbox:      1.125rem;
+                --ct-fs-flipnote:     1.125rem;
+                --ct-fs-info:         1.125rem;
+                --ct-fs-infobox:      1.125rem;
+                --ct-fs-nav:          1.125rem;
+                --ct-fs-page:         1.125rem;
+                --ct-fs-counter:      1.125rem;
+                --ct-fs-result-score: 2.4rem;
+                --ct-fs-result-text:  1.125rem;
+                --ct-fs-retry:        1.125rem;
+                /* 各部位 padding（縮小版） */
+                --ct-pad-input:  6px 10px;
+                --ct-pad-submit: 4px 14px;
+                --ct-pad-aux:    3px 12px;
+                --ct-pad-info:    3px 12px;
+                --ct-pad-infobox: 8px 14px;
+                --ct-pad-nav:    4px 14px;
+                --ct-pad-page:   2px 6px;
+                --ct-pad-retry:  4px 14px;
             }
 
             card-toggle {
@@ -76,7 +142,8 @@ class CardToggle extends HTMLElement {
                 border: 1px solid color-mix(in srgb, var(--ct-color-shell) 20%, var(--ct-bg-primary));
                 color: var(--ct-color-shell);
                 line-height: 1.5;
-                font-size: 1rem;
+                font-size: var(--ct-fs-body);
+                font-family: var(--ct-ff-body, inherit);
             }
 
             card-toggle::before {
@@ -135,25 +202,10 @@ class CardToggle extends HTMLElement {
             card-toggle[dashed][color="focus"]    { border-color: color-mix(in srgb, var(--ct-color-focus) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="indigo"]   { border-color: color-mix(in srgb, var(--ct-color-indigo) 55%, var(--ct-bg-primary)); }
 
-            card-toggle[size="xsm"] {
-                padding: 3px 8px 3px 7px;
-                font-size: 0.9rem;
-            }
-
-            card-toggle[size="sm"] {
-                padding: 6px 14px 6px 12px;
-                font-size: 0.95rem;
-            }
-
-            card-toggle[size="lg"] {
-                padding: 13px 20px 13px 18px;
-                font-size: 1.1rem;
-            }
-
-            card-toggle[size="xlg"] {
-                padding: 16px 24px 16px 22px;
-                font-size: 1.2rem;
-            }
+            card-toggle[size="xsm"] { padding: 3px 8px 3px 7px; }
+            card-toggle[size="sm"]  { padding: 6px 14px 6px 12px; }
+            card-toggle[size="lg"]  { padding: 13px 20px 13px 18px; }
+            card-toggle[size="xlg"] { padding: 16px 24px 16px 22px; }
 
             card-toggle[color="safe"]::before { background-color: var(--ct-color-safe); }
             card-toggle[color="safe"]:hover {
@@ -281,15 +333,22 @@ class CardToggle extends HTMLElement {
                 animation: ct-shake 0.5s ease;
             }
 
+            .ct-question {
+                font-size: var(--ct-fs-question, 1em);
+                font-family: var(--ct-ff-question, inherit);
+            }
+
             .ct-quiz-input {
                 width: 100%;
-                padding: 12px 16px;
+                padding: var(--ct-pad-input);
                 border: 2px solid color-mix(in srgb, var(--ct-color-shell) 20%, var(--ct-bg-primary));
                 border-radius: 5px;
                 background-color: var(--ct-bg-primary);
                 color: var(--ct-color-shell);
-                font-size: 1rem;
-                margin-top: 12px;
+                font-size: var(--ct-fs-input);
+                font-family: var(--ct-ff-input, inherit);
+                line-height: 1.4;
+                margin-top: 8px;
                 transition: border-color 0.3s ease;
                 box-sizing: border-box;
             }
@@ -299,17 +358,19 @@ class CardToggle extends HTMLElement {
                 border-color: var(--ct-color-special);
             }
 
-            /* 按鈕基礎樣式 */
+            /* 提交按鈕 */
             .ct-quiz-button {
-                padding: 10px 24px;
+                padding: var(--ct-pad-submit);
                 border: none;
                 border-radius: 5px;
                 background-color: var(--ct-color-special);
                 color: var(--ct-bg-primary);
-                font-size: 1rem;
+                font-size: var(--ct-fs-submit);
+                font-family: var(--ct-ff-submit, inherit);
                 font-weight: 600;
+                line-height: 1.3;
                 cursor: pointer;
-                margin-top: 12px;
+                margin-top: 8px;
                 transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
             }
 
@@ -323,15 +384,18 @@ class CardToggle extends HTMLElement {
                 transform: translateY(0);
             }
 
+            /* 提示 / 重置按鈕 */
             .ct-reset-button {
-                padding: 8px 16px;
+                padding: var(--ct-pad-aux);
                 border: 1px solid var(--ct-color-lavender);
                 border-radius: 5px;
                 background-color: transparent;
                 color: var(--ct-color-lavender);
-                font-size: 0.9rem;
+                font-size: var(--ct-fs-aux);
+                font-family: var(--ct-ff-aux, inherit);
+                line-height: 1.3;
                 cursor: pointer;
-                margin-top: 12px;
+                margin-top: 8px;
                 margin-left: 8px;
                 transition: background-color 0.18s ease, border-color 0.18s ease;
             }
@@ -340,76 +404,63 @@ class CardToggle extends HTMLElement {
                 background-color: color-mix(in srgb, var(--ct-color-lavender) 10%, var(--ct-bg-primary));
             }
 
-            /* 尺寸相關的按鈕樣式 */
-            card-toggle[size="xsm"] .ct-quiz-button {
+            /* 額外資訊按鈕與面板 */
+            .ct-info-button {
+                padding: var(--ct-pad-info);
+                border: 1px solid var(--ct-info-color, var(--ct-color-sky));
+                border-radius: 5px;
+                background-color: transparent;
+                color: var(--ct-info-color, var(--ct-color-sky));
+                font-size: var(--ct-fs-info);
+                font-family: var(--ct-ff-info, inherit);
+                line-height: 1.3;
+                cursor: pointer;
+                margin-top: 8px;
+                margin-left: 8px;
+                transition: background-color 0.18s ease;
+            }
+
+            .ct-info-button:hover,
+            .ct-info-button.ct-open {
+                background-color: color-mix(in srgb, var(--ct-info-color, var(--ct-color-sky)) 14%, var(--ct-bg-primary));
+            }
+
+            .ct-info-panel {
+                margin-top: 8px;
+                padding: var(--ct-pad-infobox);
+                border-left: 3px solid var(--ct-info-color, var(--ct-color-sky));
+                border-radius: 0 5px 5px 0;
+                background-color: var(--ct-info-bg, color-mix(in srgb, var(--ct-info-color, var(--ct-color-sky)) 10%, var(--ct-bg-primary)));
+                color: var(--ct-info-fg, var(--ct-color-shell));
+                font-size: var(--ct-fs-infobox);
+                font-family: var(--ct-ff-infobox, inherit);
+                line-height: 1.5;
+                cursor: default;
+                animation: ct-fade-in 0.3s ease;
+            }
+
+            .ct-info-panel > :last-child { margin-bottom: 0; }
+
+            /* 內嵌提示（Bootstrap alert） */
+            .ct-hint-alert {
+                margin: 8px 0 0;
                 padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-
-            card-toggle[size="xsm"] .ct-reset-button {
-                padding: 5px 10px;
-                font-size: 0.8rem;
-            }
-
-            card-toggle[size="xsm"] .ct-quiz-input {
-                padding: 8px 12px;
-                font-size: 0.85rem;
-            }
-
-            card-toggle[size="sm"] .ct-quiz-button {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-
-            card-toggle[size="sm"] .ct-reset-button {
-                padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-
-            card-toggle[size="sm"] .ct-quiz-input {
-                padding: 10px 14px;
-                font-size: 0.9rem;
-            }
-
-            card-toggle[size="lg"] .ct-quiz-button {
-                padding: 12px 28px;
-                font-size: 1.05rem;
-            }
-
-            card-toggle[size="lg"] .ct-reset-button {
-                padding: 9px 18px;
-                font-size: 0.95rem;
-            }
-
-            card-toggle[size="lg"] .ct-quiz-input {
-                padding: 14px 18px;
-                font-size: 1.05rem;
-            }
-
-            card-toggle[size="xlg"] .ct-quiz-button {
-                padding: 14px 32px;
-                font-size: 1.1rem;
-            }
-
-            card-toggle[size="xlg"] .ct-reset-button {
-                padding: 10px 20px;
-                font-size: 1rem;
-            }
-
-            card-toggle[size="xlg"] .ct-quiz-input {
-                padding: 13px 20px 13px 18px;
-                font-size: 1.1rem;
+                font-size: var(--ct-fs-hintbox);
+                font-family: var(--ct-ff-hintbox, inherit);
+                line-height: 1.4;
             }
 
             .ct-error {
                 color: var(--ct-color-warning);
                 margin-top: 8px;
-                font-size: 0.9rem;
+                font-size: var(--ct-fs-feedback);
+                font-family: var(--ct-ff-feedback, inherit);
             }
 
             .ct-success {
                 color: var(--ct-color-safe);
-                font-size: 1.1rem;
+                font-size: var(--ct-fs-feedback);
+                font-family: var(--ct-ff-feedback, inherit);
             }
 
             /* 群組容器樣式 */
@@ -450,18 +501,20 @@ class CardToggle extends HTMLElement {
                 display: flex;
                 justify-content: center;
                 gap: 12px;
-                margin-top: 16px;
+                margin-top: 12px;
             }
 
             .ct-nav-btn {
-                padding: 8px 20px;
+                padding: var(--ct-pad-nav);
                 border: 1px solid var(--ct-color-shell);
                 border-radius: 5px;
                 background-color: transparent;
                 color: var(--ct-color-shell);
                 cursor: pointer;
                 transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
-                font-size: 0.95rem;
+                font-size: var(--ct-fs-nav);
+                font-family: var(--ct-ff-nav, inherit);
+                line-height: 1.3;
             }
 
             .ct-nav-btn:hover:not(:disabled) {
@@ -480,20 +533,22 @@ class CardToggle extends HTMLElement {
                 display: flex;
                 justify-content: center;
                 gap: 6px;
-                margin-top: 12px;
+                margin-top: 10px;
                 flex-wrap: wrap;
             }
 
             .ct-page-btn {
-                width: 32px;
-                height: 32px;
+                min-width: 32px;
+                padding: var(--ct-pad-page);
                 border: 1px solid color-mix(in srgb, var(--ct-color-shell) 30%, var(--ct-bg-primary));
                 border-radius: 4px;
                 background-color: transparent;
                 color: var(--ct-color-shell);
                 cursor: pointer;
                 transition: background-color 0.18s ease, border-color 0.18s ease;
-                font-size: 0.85rem;
+                font-size: var(--ct-fs-page);
+                font-family: var(--ct-ff-page, inherit);
+                line-height: 1.3;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -511,7 +566,7 @@ class CardToggle extends HTMLElement {
                 font-weight: 600;
             }
 
-            /* ── 答題狀態頁碼 ── */
+            /* 答題狀態頁碼 */
             .ct-page-btn.answered-correct {
                 border-color: color-mix(in srgb, var(--ct-color-safe) 60%, var(--ct-bg-primary));
                 color: var(--ct-color-safe);
@@ -533,24 +588,25 @@ class CardToggle extends HTMLElement {
                 border-color: var(--ct-color-orange);
             }
 
-            /* ── 題目計數器 ── */
+            /* 題目計數器 */
             .ct-counter {
                 text-align: center;
-                font-size: 0.8rem;
+                font-size: var(--ct-fs-counter);
+                font-family: var(--ct-ff-counter, inherit);
+                line-height: 1.4;
                 color: color-mix(in srgb, var(--ct-color-shell) 78%, var(--ct-bg-primary));
-                margin-bottom: 10px;
+                margin-bottom: 8px;
                 letter-spacing: 0.04em;
                 user-select: none;
             }
             .ct-counter-current {
                 color: var(--ct-active-color);
                 font-weight: 700;
-                font-size: 0.9rem;
             }
 
-            /* ── 完成畫面 ── */
+            /* 完成畫面 */
             .ct-result-screen {
-                padding: 28px 24px;
+                padding: 20px 24px;
                 border-radius: 6px;
                 background-color: var(--ct-bg-secondary);
                 border: 1px solid color-mix(in srgb, var(--ct-color-shell) 15%, var(--ct-bg-primary));
@@ -558,35 +614,42 @@ class CardToggle extends HTMLElement {
                 animation: ct-fade-in 0.35s ease;
             }
             .ct-result-score {
-                font-size: 2.4rem;
+                font-size: var(--ct-fs-result-score);
+                font-family: var(--ct-ff-result-score, inherit);
                 font-weight: 700;
                 color: var(--ct-active-color);
                 line-height: 1.2;
                 margin-bottom: 6px;
             }
             .ct-result-label {
-                font-size: 0.88rem;
+                font-size: var(--ct-fs-result-text);
+                font-family: var(--ct-ff-result-text, inherit);
+                line-height: 1.4;
                 color: color-mix(in srgb, var(--ct-color-shell) 78%, var(--ct-bg-primary));
-                margin-bottom: 20px;
+                margin-bottom: 14px;
             }
             .ct-result-breakdown {
                 display: flex;
                 justify-content: center;
                 gap: 24px;
-                margin-bottom: 20px;
-                font-size: 0.88rem;
+                margin-bottom: 14px;
+                font-size: var(--ct-fs-result-text);
+                font-family: var(--ct-ff-result-text, inherit);
+                line-height: 1.4;
             }
             .ct-result-correct { color: var(--ct-color-safe); }
             .ct-result-wrong   { color: var(--ct-color-orange); }
             .ct-result-skipped { color: color-mix(in srgb, var(--ct-color-shell) 78%, var(--ct-bg-primary)); }
             .ct-result-retry {
-                padding: 8px 22px;
+                padding: var(--ct-pad-retry);
                 border: 1px solid var(--ct-active-color);
                 border-radius: 5px;
                 background: transparent;
                 color: var(--ct-active-color);
                 cursor: pointer;
-                font-size: 0.9rem;
+                font-size: var(--ct-fs-retry);
+                font-family: var(--ct-ff-retry, inherit);
+                line-height: 1.3;
                 transition: background-color 0.18s ease;
             }
             .ct-result-retry:hover {
@@ -601,6 +664,9 @@ class CardToggle extends HTMLElement {
                 border-radius: 0 4px 4px 0;
                 margin-top: 10px;
                 color: var(--ct-color-lavender);
+                font-size: var(--ct-fs-hintbox);
+                font-family: var(--ct-ff-hintbox, inherit);
+                line-height: 1.4;
                 animation: ct-fade-in 0.3s ease;
             }
 
@@ -633,9 +699,11 @@ class CardToggle extends HTMLElement {
             .ct-toggle-hint {
                 display: inline-block;
                 margin-top: 10px;
-                font-size: 0.8rem;
+                font-size: var(--ct-fs-flipnote);
+                font-family: var(--ct-ff-flipnote, inherit);
+                line-height: 1.4;
                 color: var(--ct-color-stone);
-                opacity: 0.75;
+                opacity: 0.78;
                 user-select: none;
             }
 
@@ -819,16 +887,18 @@ class CardToggle extends HTMLElement {
         }
 
         this._applyLineStyles();
+        ctApplyTypography(this, CT_CARD_FS, CT_CARD_PAD);
+        ctApplyInfoColors(this);
     }
 
     _addNumber() {
         const number = this.getAttribute('number');
-        const numberSize = this.getAttribute('number-size') || '0.8rem';
+        const numberSize = this.getAttribute('number-size') || 'var(--ct-fs-number)';
         
         const numberSpan = document.createElement('span');
         numberSpan.className = 'ct-number';
         numberSpan.textContent = number + '. ';
-        numberSpan.style.opacity = '0.6';
+        numberSpan.style.opacity = '0.78';
         numberSpan.style.fontSize = numberSize;
         numberSpan.style.fontWeight = '600';
         numberSpan.style.marginRight = '4px';
@@ -975,6 +1045,9 @@ class CardToggle extends HTMLElement {
         const hideSubmit = this.hasAttribute('hide-submit');
         const hideHint = this.hasAttribute('hide-hint');
         const hideReset = this.hasAttribute('hide-reset');
+        const hideInfo = this.hasAttribute('hide-info');
+        const hasInfo = this.hasAttribute('info') || this.hasAttribute('info-source');
+        const infoText = this.getAttribute('info-text') || '額外資訊';
         
         const submitText = this.getAttribute('submit-text') || '提交答案';
         const hintText = this.getAttribute('hint-text') || '提示';
@@ -983,7 +1056,7 @@ class CardToggle extends HTMLElement {
         this._inputId = 'ct-input-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 
         let html = `<div class="ct-quiz-content">`;
-        html += `<p>${question}</p>`;
+        html += `<p class="ct-question">${question}</p>`;
         html += `<input type="text" id="${this._inputId}" class="ct-quiz-input" placeholder="${placeholder}">`;
         
         if (!hideSubmit) {
@@ -998,12 +1071,18 @@ class CardToggle extends HTMLElement {
                     <i class="bi bi-lightbulb"></i> ${hintText}
                 </button>`;
             } else {
-                html += `<button class="ct-reset-button" onclick="alert('提示：${hint}')">
+                html += `<button class="ct-reset-button" onclick="this.closest('card-toggle')._showInlineHint()">
                     <i class="bi bi-lightbulb"></i> ${hintText}
                 </button>`;
             }
         }
         
+        if (hasInfo && !hideInfo) {
+            html += `<button class="ct-info-button" onclick="this.closest('card-toggle')._toggleInfo(this)">
+                <i class="bi bi-info-circle"></i> ${infoText}
+            </button>`;
+        }
+
         if (!hideReset) {
             html += `<button class="ct-reset-button" onclick="this.closest('card-toggle').reset()">
                 <i class="bi bi-arrow-counterclockwise"></i> ${resetText}
@@ -1013,6 +1092,63 @@ class CardToggle extends HTMLElement {
         html += `</div>`;
         
         return html;
+    }
+
+    /**
+     * 額外資訊：點一次顯示，再點一次收合。
+     * info="..."              直接寫 HTML 內容
+     * info-source="id"        讀取該區塊（含 <template>）的 innerHTML；優先於 info
+     *                         （source 已用於答對後的背面內容，故另用 info-source）
+     * info-target="id"        顯示在指定元素，未設定則顯示在卡片內
+     */
+    _toggleInfo(btn) {
+        const targetId = this.getAttribute('info-target');
+        const host = targetId
+            ? document.getElementById(targetId)
+            : this.querySelector('.ct-quiz-content');
+        if (!host) {
+            console.error(`找不到額外資訊目標元素 #${targetId}`);
+            return;
+        }
+
+        const existing = host.querySelector(':scope > .ct-info-panel');
+        if (existing) {
+            existing.remove();
+            if (btn) btn.classList.remove('ct-open');
+            return;
+        }
+
+        let html = '';
+        const sourceId = this.getAttribute('info-source');
+        if (sourceId) {
+            const src = document.getElementById(sourceId);
+            html = src
+                ? src.innerHTML
+                : `<span style="color: var(--ct-color-warning);"><i class="bi bi-exclamation-triangle"></i> 找不到額外資訊來源 #${sourceId}</span>`;
+        } else {
+            html = this.getAttribute('info') || '';
+        }
+
+        const panel = document.createElement('div');
+        panel.className = 'ct-info-panel';
+        panel.innerHTML = html;
+        host.appendChild(panel);
+        if (btn) btn.classList.add('ct-open');
+        if (targetId) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* 沒有指定 hint-target 時，以 Bootstrap alert 顯示在卡片內，取代原生 alert() */
+    _showInlineHint() {
+        const hint = this.getAttribute('hint');
+        const box  = this.querySelector('.ct-quiz-content');
+        if (!hint || !box) return;
+        const old = box.querySelector('.ct-hint-alert');
+        if (old) old.remove();
+        const el = document.createElement('div');
+        el.className = 'alert alert-info ct-hint-alert';
+        el.setAttribute('role', 'alert');
+        el.innerHTML = `<i class="bi bi-lightbulb-fill"></i> 提示：${hint}`;
+        box.appendChild(el);
     }
 
     _showHint() {
@@ -1336,7 +1472,7 @@ class CardToggle extends HTMLElement {
 
     _handleMaxAttempts(errorMessage) {
         const finalContent = `
-            <p style="color: var(--ct-color-warning); font-size: 1rem;">
+            <p style="color: var(--ct-color-warning); font-size: var(--ct-fs-feedback);">
                 <i class="bi bi-x-circle-fill"></i> 已達嘗試上限
             </p>
             <p style="margin-top: 8px;">${errorMessage}</p>
@@ -1359,6 +1495,15 @@ class CardToggle extends HTMLElement {
             const targetElement = document.getElementById(hintTarget);
             if (targetElement) {
                 targetElement.innerHTML = '';
+            }
+        }
+
+        const infoTarget = this.getAttribute('info-target');
+        if (infoTarget) {
+            const infoEl = document.getElementById(infoTarget);
+            if (infoEl) {
+                const p = infoEl.querySelector(':scope > .ct-info-panel');
+                if (p) p.remove();
             }
         }
 
@@ -1415,6 +1560,9 @@ class CardToggleGroup extends HTMLElement {
             // 回退到預設的 special 色彩
             this.style.setProperty('--ct-active-color', `var(--ct-color-special)`);
         }
+
+        ctApplyTypography(this, CT_GROUP_FS.concat(CT_CARD_FS), CT_GROUP_PAD.concat(CT_CARD_PAD));
+        ctApplyInfoColors(this);
 
         this._cards       = Array.from(this.querySelectorAll('card-toggle'));
         this._answerState = this._cards.map(() => 'unanswered');

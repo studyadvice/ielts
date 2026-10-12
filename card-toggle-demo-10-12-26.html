@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>card-toggle 示範</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+    body { background: #0C0D0C; color: #C6C7BD; font-size: 1.125rem; line-height: 1.5; }
+    .wrap { width: 100%; max-width: none; padding: 24px 48px; }
+    h1 { font-size: 2rem; color: #D4FFFC; margin: 0 0 16px; }
+    h2 { font-size: 1.5rem; color: #C3A5E5; margin: 32px 0 12px; }
+    code { font-size: 1.125rem; color: #E5C3B3; }
+    .note { margin: 0 0 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <h1>card-toggle 示範</h1>
+    <p class="note">按鈕改為縮減 padding，字體維持不變；各部位字體與 padding 皆可由屬性或 CSS 變數調整。</p>
+
+    <h2>1. 預設小按鈕</h2>
+    <card-toggle question="台灣的首都是哪裡？" answer="台北" hint="提示內容會以 Bootstrap alert 顯示在卡片內。"
+                 content="答對了，首都是台北。" color="sky" number="1"></card-toggle>
+
+    <h2>2. 各部位字體設定（卡片屬性）</h2>
+    <p class="note"><code>fs-submit="1.5"</code>、<code>fs-input="1.25"</code>、<code>ff-question="serif"</code>、<code>pad-submit="8 24"</code></p>
+    <card-toggle question="水的化學式是什麼？" answer="H2O" hint="兩個氫，一個氧。"
+                 content="答對了，H2O。" color="lavender"
+                 fs-question="1.375" ff-question="serif" fs-input="1.25" fs-submit="1.5" pad-submit="8 24" fs-aux="1.25"></card-toggle>
+
+    <h2>3. 群組層級設定（套用到所有子卡片與導覽）</h2>
+    <p class="note"><code>fs-nav</code>、<code>fs-page</code>、<code>fs-counter</code>、<code>pad-nav</code> 設在群組上。</p>
+    <card-toggle-group mode="slide" theme="special" show-pages show-result lock-nav
+                       fs-nav="1.25" fs-page="1.125" fs-counter="1.25" pad-nav="6 18" fs-submit="1.25">
+        <card-toggle question="2 + 3 = ?" answer="5" content="答對了。" color="info"></card-toggle>
+        <card-toggle question="一週有幾天？" answer="7" content="答對了。" color="info"></card-toggle>
+        <card-toggle question="一年有幾個月？" answer="12" content="答對了。" color="info"></card-toggle>
+    </card-toggle-group>
+
+    <h2>4. 以 CSS 變數全域調整</h2>
+    <p class="note">在任何上層元素設定變數即可，例如下方區塊把提交按鈕調得更緊湊。</p>
+    <div style="--ct-pad-submit: 2px 10px; --ct-fs-submit: 1.125rem; --ct-pad-aux: 2px 8px;">
+        <card-toggle question="一個直角有幾度？" answer="90" content="答對了。" color="teal"></card-toggle>
+    </div>
+    <h2>5. 額外資訊按鈕</h2>
+    <p class="note"><code>info</code> 直接寫內容；<code>info-source</code> 讀取來源區塊的 HTML；<code>info-color</code>、<code>info-bg</code>、<code>info-fg</code> 覆蓋色彩；<code>fs-info</code>、<code>fs-infobox</code>、<code>ff-infobox</code> 設定字體。</p>
+    <card-toggle question="光合作用的產物之一是什麼？" answer="氧氣" content="答對了。" color="safe"
+                 info="光合作用會把<b>二氧化碳</b>與水轉換為葡萄糖，並釋出氧氣。" info-text="背景知識"></card-toggle>
+
+    <div id="info-src-1" style="display:none">
+        <p><strong>來源區塊</strong>可以放任何 HTML：</p>
+        <ul><li>清單</li><li><em>強調文字</em></li><li><a href="#" onclick="return false">連結</a></li></ul>
+    </div>
+    <card-toggle question="1 加 1 等於多少？" answer="2" content="答對了。" color="info"
+                 info-source="info-src-1" info-text="展開來源" info-color="pink" info-bg="#1b1220" info-fg="#FF91D7"
+                 fs-info="1.25" fs-infobox="1.25" ff-infobox="serif" pad-infobox="12 18"></card-toggle>
+
+    <div id="info-out"></div>
+    <card-toggle question="一小時有幾分鐘？" answer="60" content="答對了。" color="teal"
+                 info="此內容顯示在卡片外的指定區塊。" info-target="info-out" info-color="orange"></card-toggle>
+</div>
+<script src="card-toggle.js"></script>
+</body>
+</html>
