@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>term-glossary 示範</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+    :root { font-size: 16px; }
+    body { background: #0C0D0C; color: #C6C7BD; font-size: 1.125rem; line-height: 1.5; min-width: 1080px; }
+    .wrap { padding: 24px 48px; }
+    h1 { font-size: 2rem; color: #D4FFFC; margin: 0 0 16px; }
+    h2 { font-size: 1.5rem; color: #C3A5E5; margin: 32px 0 12px; }
+    code { font-size: 1.125rem; color: #E5C3B3; }
+    .note { margin: 0 0 12px; }
+    ul.demo li { margin-bottom: 6px; }
+    table.ref { width: 100%; margin: 0 0 24px; }
+    table.ref th, table.ref td { padding: 6px 12px; font-size: 1.125rem; line-height: 1.4; vertical-align: top; }
+    table.ref th { color: #82C8E5; white-space: nowrap; }
+    table.ref td:first-child { color: #E5C3B3; white-space: nowrap; }
+    #open-glossary { font-size: 1.125rem; padding: 4px 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <h1>term-glossary 示範</h1>
+    <p class="note">頁面上有虛線底線的詞都已標記 <code>data-term</code>。點一下詞會開啟詞彙表並定位到該詞條，右下角的按鈕也可以開啟。</p>
+    <p class="note"><button id="open-glossary" class="btn btn-outline-info">用外部按鈕開啟</button>（由 <code>trigger</code> 屬性指定）</p>
+
+    <h2>1. 例句自動擷取</h2>
+    <ul class="demo">
+        <li>The caregiving <span data-term="vi">burden increases</span>.</li>
+        <li>Short videos are <span data-term="vi">becoming</span> popular.</li>
+        <li>She is increasing her daily water <span data-term="vt">intake</span>.</li>
+        <li>My sister and I share our interests.<br>The video taught me <span data-term="vt">a new skill</span>.</li>
+        <li>同一個詞再出現一次：The burden <span data-term="vi">increases</span> every year.</li>
+    </ul>
+
+    <h2>2. 分組、手動例句與尚無解釋</h2>
+    <ul class="demo">
+        <li>The deli owner promises to use only <span data-term="chunk" data-term-example="<b>natural ingredients</b> 是形容詞加名詞的語塊">natural ingredients</span>.</li>
+        <li>Housing costs have become <span data-term="chunk">a pressing problem</span> for young workers.</li>
+        <li><span data-term="svo" data-term-theme="pink">主詞加動詞加受詞</span>是最常見的句型。</li>
+        <li>這個詞沒有寫 <span data-term="no_info_demo">解釋區塊</span>，詞彙表會標示「尚無解釋」。</li>
+    </ul>
+
+    <h2>3. 隱藏的解釋區塊</h2>
+    <p class="note">下列區塊都帶有 <code>hidden</code>，id 規則為 <code>{data-term 的值}_info</code>。</p>
+</div>
+
+<div id="vi_info" hidden data-title="不及物動詞 Vi" data-group="文法">
+    <p>沒有受詞的動詞，例如 <b>increase</b>、<b>become</b>。</p>
+</div>
+<div id="vt_info" hidden data-title="及物動詞 Vt" data-group="文法">
+    <p>後面要接受詞的動詞。</p>
+    <ul><li>increase her intake</li><li>teach me a skill</li></ul>
+</div>
+<div id="chunk_info" hidden data-title="語塊" data-group="詞彙">
+    <p>固定搭配、可整塊使用的詞組。</p>
+</div>
+<div id="svo_info" hidden data-title="SVO 句型" data-group="文法">
+    <p>主詞、動詞、受詞三個成分組成的基本句型。</p>
+</div>
+
+<term-glossary heading="詞彙表" theme="auto" group-themes="文法:sky,詞彙:salmon"
+               trigger="#open-glossary" fs="1.125" lh="1.4" fab-text="詞彙表"
+               fs-name="1.25" pad-entry="10 14" offcanvas-width="34"></term-glossary>
+
+<div class="wrap">
+<h2>4. &lt;term-glossary&gt; 屬性</h2>
+<table class="table table-dark table-bordered ref">
+<thead><tr><th>名稱</th><th>可用值或型別</th><th>預設或必要性</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>heading</td><td>文字</td><td>詞彙表</td><td>offcanvas 標題</td></tr>
+<tr><td>theme</td><td>色票名稱或 auto</td><td>sky</td><td>主題色；auto 依分組輪流配色，沒有分組時依詞條順序配色</td></tr>
+<tr><td>theme-accent</td><td>任何 CSS 色彩</td><td>無</td><td>覆蓋主題色，用於浮動按鈕、搜尋框聚焦、未指定色的詞條</td></tr>
+<tr><td>theme-bg</td><td>色票名稱或 CSS 色彩</td><td>background</td><td>覆蓋 offcanvas 底色</td></tr>
+<tr><td>theme-fg</td><td>色票名稱或 CSS 色彩</td><td>shell</td><td>覆蓋 offcanvas 文字色</td></tr>
+<tr><td>group-themes</td><td>分組:色票,分組:色票</td><td>無</td><td>各分組配色，例如 文法:sky,詞彙:salmon</td></tr>
+<tr><td>mark-style</td><td>dotted、solid、band、none</td><td>dotted</td><td>頁面標記詞的樣式</td></tr>
+<tr><td>fs</td><td>數字（rem）或 CSS 長度</td><td>1.125</td><td>整體字體大小</td></tr>
+<tr><td>lh</td><td>數字</td><td>1.4</td><td>整體行高，建議不超過 1.5</td></tr>
+<tr><td>ff</td><td>CSS font-family</td><td>繼承頁面</td><td>整體字型</td></tr>
+<tr><td>fs-{部位}</td><td>數字（rem）或 CSS 長度</td><td>跟隨 fs</td><td>部位字體大小；部位：fab、title、search、tag、name、def、example、count、empty</td></tr>
+<tr><td>ff-{部位}</td><td>CSS font-family</td><td>跟隨 ff</td><td>部位字型；部位同上</td></tr>
+<tr><td>pad-{部位}</td><td>數字（px）或 "6 12"</td><td>各部位預設</td><td>部位 padding；部位：fab、search、tag、entry</td></tr>
+<tr><td>offcanvas-width</td><td>數字（rem）或 480px、40vw</td><td>32</td><td>offcanvas 寬度，最大不超過視窗寬度</td></tr>
+<tr><td>width</td><td>同 offcanvas-width</td><td>無</td><td>offcanvas-width 的舊名稱，兩者並存時以 offcanvas-width 為準</td></tr>
+<tr><td>position</td><td>end、start</td><td>end</td><td>offcanvas 開啟的位置</td></tr>
+<tr><td>modal</td><td>布林屬性</td><td>關閉</td><td>加上後使用遮罩，頁面不可捲動</td></tr>
+<tr><td>sort</td><td>order、alpha</td><td>order</td><td>詞條初始排序，使用者可在介面切換</td></tr>
+<tr><td>example-max</td><td>整數</td><td>3</td><td>每個詞條預設顯示的例句數，其餘可展開</td></tr>
+<tr><td>scope</td><td>CSS 選擇器</td><td>body</td><td>只掃描符合的範圍</td></tr>
+<tr><td>trigger</td><td>CSS 選擇器</td><td>無</td><td>點擊符合的元素即開啟詞彙表</td></tr>
+<tr><td>no-fab</td><td>布林屬性</td><td>關閉</td><td>不顯示浮動按鈕</td></tr>
+<tr><td>fab-text</td><td>文字</td><td>無</td><td>浮動按鈕上的文字</td></tr>
+<tr><td>fab-icon</td><td>Bootstrap Icons 名稱</td><td>bi-journal-text</td><td>浮動按鈕圖示，可省略 bi- 前綴</td></tr>
+<tr><td>fab-pos</td><td>bottom-end、bottom-start、top-end、top-start</td><td>bottom-end</td><td>浮動按鈕位置</td></tr>
+</tbody>
+</table>
+<h2>5. 解釋區塊（id="{data-term}_info"）</h2>
+<table class="table table-dark table-bordered ref">
+<thead><tr><th>名稱</th><th>可用值或型別</th><th>預設或必要性</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>id</td><td>{data-term 的值}_info</td><td>必填</td><td>解釋區塊，內容可含任何 HTML，建議加上 hidden</td></tr>
+<tr><td>data-title</td><td>文字</td><td>第一個標記處的文字</td><td>詞條顯示名稱</td></tr>
+<tr><td>data-group</td><td>文字</td><td>無</td><td>分組名稱</td></tr>
+<tr><td>data-theme</td><td>色票名稱或 CSS 色彩</td><td>無</td><td>詞條專屬色，優先於分組色</td></tr>
+</tbody>
+</table>
+<h2>6. 標記處屬性</h2>
+<table class="table table-dark table-bordered ref">
+<thead><tr><th>名稱</th><th>可用值或型別</th><th>預設或必要性</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>data-term</td><td>字串</td><td>必填</td><td>詞條識別碼，同值只收錄一筆，並對應 {值}_info 區塊</td></tr>
+<tr><td>data-term-example</td><td>HTML</td><td>無</td><td>手動例句，排在自動擷取例句之前</td></tr>
+<tr><td>data-term-title</td><td>文字</td><td>無</td><td>_info 區塊未設定 data-title 時的備用名稱</td></tr>
+<tr><td>data-term-group</td><td>文字</td><td>無</td><td>_info 區塊未設定 data-group 時的備用分組</td></tr>
+<tr><td>data-term-theme</td><td>色票名稱或 CSS 色彩</td><td>無</td><td>_info 區塊未設定 data-theme 時的備用顏色</td></tr>
+<tr><td>data-term-click</td><td>off、open</td><td>無</td><td>off 為點擊不開啟詞彙表；open 為即使有 data-popover-* 仍開啟</td></tr>
+</tbody>
+</table>
+<h2>7. 方法、屬性與事件</h2>
+<table class="table table-dark table-bordered ref">
+<thead><tr><th>名稱</th><th>可用值或型別</th><th>預設或必要性</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>open(key?)</td><td>方法</td><td></td><td>開啟詞彙表，帶入 key 時定位到該詞條</td></tr>
+<tr><td>close()、toggle()</td><td>方法</td><td></td><td>關閉、切換</td></tr>
+<tr><td>refresh()</td><td>方法</td><td></td><td>立即重新掃描頁面</td></tr>
+<tr><td>terms</td><td>唯讀屬性</td><td></td><td>詞條陣列，每筆含 key、title、group、hasInfo、count</td></tr>
+<tr><td>glossary-updated</td><td>事件</td><td></td><td>掃描完成，detail.count 為詞條數</td></tr>
+<tr><td>glossary-open、glossary-close</td><td>事件</td><td></td><td>詞彙表開啟、關閉</td></tr>
+</tbody>
+</table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="term-glossary.js"></script>
+</body>
+</html>
