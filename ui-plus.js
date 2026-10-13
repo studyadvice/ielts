@@ -648,7 +648,8 @@
     chalkThickness:  2.5,
     chalkDuration:   420,
     chunkDotSize:    11,
-    chunkDim:        0.22,
+	chunkDotGap:     '12px',
+    chunkDim:        0.25,
     chunkTransition: 300,
     chunkTheme:      ''
   }, global.UiReadingConfig || {});
@@ -1061,6 +1062,7 @@
     el.dataset.urm = '1';
 
     var dotSize = +(el.getAttribute('dot-size') || UR_CFG.chunkDotSize);
+	var dotGap  = el.getAttribute('dot-gap')    || UR_CFG.chunkDotGap;
     var dimVal  =  +(el.getAttribute('dim')     || UR_CFG.chunkDim);
     var dur     = +(el.getAttribute('duration') || UR_CFG.chunkTransition);
 
@@ -1090,6 +1092,7 @@
 
     var nav  = document.createElement('div');
     nav.className = 'urm-cs-nav';
+	nav.style.gap = dotGap;
     var dots = [];
 
     chunkMetas.forEach(function (meta) {
