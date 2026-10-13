@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cell-drawer — 全屬性 Demo · 10-13-26</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style>
+:root { font-size: 18px; }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: #0C0D0C;
+  color: #C6C7BD;
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+  min-width: 1100px;
+  line-height: 1.5;
+  margin: 0;
+}
+/* ── nav ── */
+.top-nav {
+  position: sticky; top: 0; z-index: 200;
+  background: #111311;
+  border-bottom: 1px solid #1e201e;
+  display: flex; align-items: center;
+  padding: 0 28px; gap: 0;
+  overflow-x: auto; white-space: nowrap;
+  height: 44px;
+}
+.top-nav::-webkit-scrollbar { height: 0; }
+.nav-brand {
+  font-size: .72rem; font-weight: 700; color: #82C8E5;
+  padding-right: 16px; margin-right: 8px;
+  border-right: 1px solid #1e201e;
+  white-space: nowrap; flex-shrink: 0;
+  letter-spacing: .05em;
+}
+.top-nav a {
+  font-size: .68rem; color: rgba(198,199,189,.82);
+  text-decoration: none; padding: 0 9px;
+  line-height: 44px; display: inline-block;
+  transition: color .15s; white-space: nowrap;
+  border-right: 1px solid #1a1b1a;
+}
+.top-nav a:hover { color: #82C8E5; }
+.top-nav a.is-new { color: rgba(179,222,115,.82); }
+.top-nav a.is-new:hover { color: #B3DE73; }
+/* ── layout ── */
+.page-wrap { max-width: 1480px; margin: 0 auto; padding: 0 32px 100px; }
+/* ── hero ── */
+.hero {
+  padding: 36px 0 28px;
+  border-bottom: 1px solid #1a1b1a;
+  margin-bottom: 48px;
+}
+.hero h1 {
+  font-size: 1.3rem; font-weight: 700; color: #82C8E5;
+  margin: 0 0 6px;
+}
+.hero p { font-size: .8rem; color: rgba(198,199,189,.82); margin: 0 0 14px; }
+.file-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.file-chip {
+  font-size: .68rem; font-family: monospace;
+  color: #B3DE73;
+  background: #111e0d;
+  border: 1px solid #2a3d1a;
+  border-radius: 4px; padding: 3px 10px;
+  display: inline-block;
+}
+/* ── section ── */
+.sec {
+  margin-top: 56px; padding-top: 22px;
+  border-top: 1px solid #1a1b1a;
+}
+.sec-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+.sec-title {
+  font-size: 1rem; font-weight: 700; color: #82C8E5;
+  margin: 0;
+}
+.badge-new {
+  font-size: .58rem; font-weight: 700;
+  color: #B3DE73; background: #111e0d;
+  border: 1px solid #2a3d1a;
+  border-radius: 3px; padding: 1px 7px;
+  letter-spacing: .07em;
+}
+.sec-desc {
+  font-size: .78rem; color: rgba(198,199,189,.82);
+  margin: 0 0 18px; line-height: 1.5;
+}
+/* ── demo rows ── */
+.demo-rows { display: flex; flex-direction: column; gap: 14px; }
+.demo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px; align-items: start;
+}
+.demo-row.w60 { grid-template-columns: 1.5fr 1fr; }
+.demo-row.w40 { grid-template-columns: 1fr 1.5fr; }
+.demo-lbl {
+  font-size: .64rem; font-family: monospace;
+  color: rgba(198,199,189,.82);
+  margin-bottom: 5px; letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.demo-code pre {
+  margin: 0; border-radius: 6px;
+  font-size: .7rem !important;
+  line-height: 1.45 !important;
+  overflow-x: auto;
+}
+.demo-code pre code.hljs { font-size: inherit !important; padding: 12px 14px !important; }
+.demo-note {
+  font-size: .68rem; color: rgba(198,199,189,.82);
+  margin-top: 7px; padding: 6px 10px;
+  border-left: 2px solid #1e3a4a;
+  background: #0f1415; border-radius: 0 3px 3px 0;
+  line-height: 1.45;
+}
+.demo-note b { color: #82C8E5; }
+.demo-note code {
+  font-size: .7em; background: #1a1b1a;
+  padding: 0 4px; border-radius: 2px;
+  color: #B3DE73;
+}
+.demo-live { display: flex; flex-direction: column; gap: 10px; }
+/* ── ref table ── */
+.ref-wrap { overflow-x: auto; }
+.ref-tbl {
+  width: 100%; border-collapse: collapse;
+  font-size: .74rem;
+}
+.ref-tbl th {
+  color: #82C8E5; font-size: .65rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  border-bottom: 1px solid #22342e;
+  padding: 7px 14px; text-align: left;
+  white-space: nowrap;
+}
+.ref-tbl td {
+  padding: 6px 14px; border-bottom: 1px solid #161716;
+  vertical-align: top; line-height: 1.45;
+}
+.ref-tbl tr:hover td { background: #111211; }
+.ref-tbl .grp td {
+  background: #0f1613; color: #82C8E5;
+  font-size: .63rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 5px 14px;
+}
+.ref-tbl .n { font-family: monospace; color: #B3DE73; white-space: nowrap; }
+.ref-tbl .t { font-family: monospace; color: #C3A5E5; white-space: nowrap; font-size: .68rem; }
+.ref-tbl .d { font-family: monospace; color: #E5C3B3; font-size: .68rem; }
+.ref-tbl .new-star::after { content: ' ★'; color: #B3DE73; font-size: .55rem; }
+/* ── color grid ── */
+.color-grid {
+  display: grid; grid-template-columns: repeat(8, 1fr);
+  gap: 6px; margin-top: 10px;
+}
+.color-chip {
+  height: 32px; border-radius: 4px;
+  display: flex; align-items: center;
+  padding: 0 8px; font-size: .62rem;
+  font-family: monospace; font-weight: 700;
+  white-space: nowrap; cursor: default;
+  letter-spacing: .02em;
+}
+/* ── hljs overrides ── */
+.hljs { background: #161716 !important; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="nav-brand">cell-drawer</span>
+  <a href="#ref">快速參考</a>
+  <a href="#s-theme">theme</a>
+  <a href="#s-strip">strip-width / position</a>
+  <a href="#s-mode">mode</a>
+  <a href="#s-dots">dots / badge / level</a>
+  <a href="#s-carousel">輪播細節</a>
+  <a href="#s-btnstart">btn-start</a>
+  <a href="#s-height">height</a>
+  <a href="#s-slide">投影片文字</a>
+  <a href="#s-font" class="is-new">slide-font ★</a>
+  <a href="#s-surface" class="is-new">surface-bg ★</a>
+  <a href="#s-dotclr" class="is-new">dot-color ★</a>
+  <a href="#s-badge" class="is-new">badge ★</a>
+  <a href="#s-start" class="is-new">start ★</a>
+  <a href="#s-cd" class="is-new">countdown ★</a>
+  <a href="#s-combo">組合範例</a>
+</nav>
+
+<div class="page-wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <h1><i class="bi bi-layout-sidebar-inset me-2"></i>cell-drawer 全屬性 Demo</h1>
+  <p>左側程式碼，右側即時渲染。★ 標示為修改版新增屬性。</p>
+  <div class="file-chips">
+    <span class="file-chip">cell-drawer.js</span>
+    <span class="file-chip">cell-drawer-demo-10-13-26.html</span>
+    <span class="file-chip">兩個檔案放同一資料夾</span>
+  </div>
+</div>
+
+<!-- QUICK REFERENCE TABLE -->
+<section class="sec" id="ref">
+  <div class="sec-head"><h2 class="sec-title">全屬性快速參考</h2></div>
+  <p class="sec-desc">布林屬性直接加屬性名即為啟用，不需填值。★ 為修改版新增屬性。</p>
+  <div class="ref-wrap">
+  <table class="ref-tbl">
+    <thead><tr><th>屬性</th><th>型別</th><th>預設值</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">主題外觀</td></tr>
+      <tr><td class="n">theme</td><td class="t">string</td><td class="d">'lavender'</td><td>主色。16 個內建色名或任意 hex 色碼</td></tr>
+      <tr><td class="n">strip-width</td><td class="t">number(px)</td><td class="d">8</td><td>色條寬度（px）</td></tr>
+      <tr><td class="n">strip-position</td><td class="t">'left'|'right'</td><td class="d">'left'</td><td>色條與 start 面板的位置</td></tr>
+      <tr class="grp"><td colspan="4">顯示模式</td></tr>
+      <tr><td class="n">mode</td><td class="t">'single'|'auto'|'fixed'|'carousel'</td><td class="d">'single'</td><td>single=單行省略；auto=自動換行；fixed=固定高度滾動；carousel=自動輪播</td></tr>
+      <tr><td class="n">level</td><td class="t">number</td><td class="d">0</td><td>初始顯示的層級索引（0 起算）</td></tr>
+      <tr><td class="n">height</td><td class="t">CSS string</td><td class="d">'auto'</td><td>fixed 模式的固定高度，如 '80px'</td></tr>
+      <tr class="grp"><td colspan="4">導覽點與徽章</td></tr>
+      <tr><td class="n">show-dots</td><td class="t">boolean</td><td class="d">false</td><td>在色條上顯示層級圓點</td></tr>
+      <tr><td class="n">show-badge</td><td class="t">boolean</td><td class="d">false</td><td>顯示右下角頁碼（目前/總計）</td></tr>
+      <tr class="grp"><td colspan="4">輪播控制</td></tr>
+      <tr><td class="n">carousel-interval</td><td class="t">number(ms)</td><td class="d">3000</td><td>切換間隔毫秒數，最小 400</td></tr>
+      <tr><td class="n">carousel-pause</td><td class="t">'false'</td><td class="d">true</td><td>預設滑鼠移入暫停，設為 'false' 停用</td></tr>
+      <tr><td class="n">progress-height</td><td class="t">number(px)</td><td class="d">2</td><td>輪播進度條高度</td></tr>
+      <tr><td class="n">progress-style</td><td class="t">'bar'|'fuse'</td><td class="d">'bar'</td><td>進度條樣式：bar=純色；fuse=燃燒特效</td></tr>
+      <tr><td class="n">progress-dir</td><td class="t">'ltr'|'rtl'</td><td class="d">'ltr'</td><td>進度條填充方向</td></tr>
+      <tr><td class="n">show-countdown</td><td class="t">boolean</td><td class="d">false</td><td>顯示右下角倒數秒數</td></tr>
+      <tr><td class="n">no-loop</td><td class="t">boolean</td><td class="d">false</td><td>到最後一頁後停止，不循環</td></tr>
+      <tr><td class="n">btn-start</td><td class="t">boolean</td><td class="d">false</td><td>carousel 模式下顯示啟動按鈕</td></tr>
+      <tr class="grp"><td colspan="4">投影片文字</td></tr>
+      <tr><td class="n">slide-color</td><td class="t">color</td><td class="d">'#C6C7BD'</td><td>投影片文字顏色</td></tr>
+      <tr><td class="n">slide-padding</td><td class="t">CSS string</td><td class="d">'6px 8px'</td><td>投影片內距</td></tr>
+      <tr><td class="n">slide-line-height</td><td class="t">number</td><td class="d">1.5</td><td>投影片行高</td></tr>
+      <tr><td class="n new-star">slide-font-size</td><td class="t">CSS size</td><td class="d">'.85rem'</td><td>投影片字體大小</td></tr>
+      <tr><td class="n new-star">slide-font-family</td><td class="t">CSS string</td><td class="d">inherit</td><td>投影片字體族群</td></tr>
+      <tr class="grp"><td colspan="4">內容區 ★</td></tr>
+      <tr><td class="n new-star">surface-bg</td><td class="t">color</td><td class="d">auto</td><td>主體內容區背景色（預設由 #0C0D0C 混 shell 推導）</td></tr>
+      <tr class="grp"><td colspan="4">導覽點色彩 ★</td></tr>
+      <tr><td class="n new-star">dot-color</td><td class="t">color</td><td class="d">'rgba(12,13,12,.78)'</td><td>非作用中圓點顏色</td></tr>
+      <tr><td class="n new-star">dot-active-color</td><td class="t">color</td><td class="d">'#D4FFFC'</td><td>作用中圓點顏色</td></tr>
+      <tr class="grp"><td colspan="4">頁碼徽章 ★</td></tr>
+      <tr><td class="n new-star">badge-color</td><td class="t">color</td><td class="d">'rgba(198,199,189,.78)'</td><td>頁碼文字顏色</td></tr>
+      <tr><td class="n new-star">badge-font-size</td><td class="t">CSS size</td><td class="d">'.6rem'</td><td>頁碼字體大小</td></tr>
+      <tr><td class="n new-star">badge-font-family</td><td class="t">CSS string</td><td class="d">monospace</td><td>頁碼字體族群</td></tr>
+      <tr class="grp"><td colspan="4">起始區塊（cell-start）★</td></tr>
+      <tr><td class="n new-star">start-bg</td><td class="t">color</td><td class="d">theme 色</td><td>cell-start 與 btn-start 背景色</td></tr>
+      <tr><td class="n new-star">start-color</td><td class="t">color</td><td class="d">auto by lum</td><td>文字色（依亮度自動判斷）</td></tr>
+      <tr><td class="n new-star">start-font-size</td><td class="t">CSS size</td><td class="d">varies</td><td>圖示、標籤、按鈕字體大小（同時套用）</td></tr>
+      <tr><td class="n new-star">start-font-family</td><td class="t">CSS string</td><td class="d">inherit</td><td>字體族群</td></tr>
+      <tr class="grp"><td colspan="4">倒數計時器 ★</td></tr>
+      <tr><td class="n new-star">countdown-color</td><td class="t">color</td><td class="d">theme 色</td><td>倒數秒數文字顏色</td></tr>
+      <tr><td class="n new-star">countdown-font-size</td><td class="t">CSS size</td><td class="d">'.52rem'</td><td>倒數秒數字體大小</td></tr>
+      <tr><td class="n new-star">countdown-font-family</td><td class="t">CSS string</td><td class="d">monospace</td><td>倒數秒數字體族群</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- dynamic sections rendered by JS -->
+<div id="js-sections"></div>
+
+</div><!-- .page-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="./cell-drawer.js"></script>
+<script>
+(function () {
+  /* ── renderer ── */
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function buildRow(demo) {
+    const row = document.createElement('div');
+    row.className = 'demo-row' + (demo.layout ? ' ' + demo.layout : '');
+
+    /* code column */
+    const codeCol = document.createElement('div');
+    codeCol.className = 'demo-code';
+    if (demo.label) {
+      const lbl = document.createElement('div');
+      lbl.className = 'demo-lbl';
+      lbl.textContent = demo.label;
+      codeCol.appendChild(lbl);
+    }
+    const pre = document.createElement('pre');
+    const codeEl = document.createElement('code');
+    codeEl.className = 'language-html';
+    codeEl.textContent = demo.code.trim();
+    pre.appendChild(codeEl);
+    codeCol.appendChild(pre);
+    if (demo.note) {
+      const noteEl = document.createElement('div');
+      noteEl.className = 'demo-note';
+      noteEl.innerHTML = demo.note;
+      codeCol.appendChild(noteEl);
+    }
+
+    /* live column */
+    const liveCol = document.createElement('div');
+    liveCol.className = 'demo-live';
+    const liveWrap = document.createElement('div');
+    liveWrap.innerHTML = demo.code.trim();
+    liveCol.appendChild(liveWrap);
+
+    row.appendChild(codeCol);
+    row.appendChild(liveCol);
+    hljs.highlightElement(codeEl);
+    return row;
+  }
+
+  function buildSection(sec) {
+    const el = document.createElement('section');
+    el.className = 'sec';
+    el.id = sec.id;
+
+    const head = document.createElement('div');
+    head.className = 'sec-head';
+    const h2 = document.createElement('h2');
+    h2.className = 'sec-title';
+    h2.textContent = sec.title;
+    head.appendChild(h2);
+    if (sec.isNew) {
+      const badge = document.createElement('span');
+      badge.className = 'badge-new';
+      badge.textContent = '★ 新增';
+      head.appendChild(badge);
+    }
+    el.appendChild(head);
+
+    if (sec.desc) {
+      const desc = document.createElement('p');
+      desc.className = 'sec-desc';
+      desc.innerHTML = sec.desc;
+      el.appendChild(desc);
+    }
+
+    if (sec.extra) {
+      const ext = document.createElement('div');
+      ext.innerHTML = sec.extra;
+      el.appendChild(ext);
+    }
+
+    const rows = document.createElement('div');
+    rows.className = 'demo-rows';
+    sec.demos.forEach(d => rows.appendChild(buildRow(d)));
+    el.appendChild(rows);
+    return el;
+  }
+
+  /* ── demo data ── */
+  const SECTIONS = [
+
+    /* ───────────── theme ───────────── */
+    {
+      id: 's-theme', title: 'theme — 主題色彩',
+      desc: '控制色條、邊框、進度條的主色。可使用以下 16 個內建色名，或任意 hex 色碼。',
+      extra: `<div class="color-grid mb-4">
+        <div class="color-chip" style="background:#C6C7BD;color:#0C0D0C">shell</div>
+        <div class="color-chip" style="background:#C3A5E5;color:#0C0D0C">lavender</div>
+        <div class="color-chip" style="background:#82C8E5;color:#0C0D0C">sky</div>
+        <div class="color-chip" style="background:#E6374B;color:#0C0D0C">warning</div>
+        <div class="color-chip" style="background:#E5C3B3;color:#0C0D0C">salmon</div>
+        <div class="color-chip" style="background:#1CCAE8;color:#0C0D0C">ocean</div>
+        <div class="color-chip" style="background:#27AE60;color:#0C0D0C">safe</div>
+        <div class="color-chip" style="background:#0DA591;color:#0C0D0C">teal</div>
+        <div class="color-chip" style="background:#DBEDD8;color:#0C0D0C">vanilla</div>
+        <div class="color-chip" style="background:#E3D322;color:#0C0D0C">yellow</div>
+        <div class="color-chip" style="background:#D4FFFC;color:#0C0D0C">focus</div>
+        <div class="color-chip" style="background:#B3DE73;color:#0C0D0C">special</div>
+        <div class="color-chip" style="background:#4171BF;color:#fff">info</div>
+        <div class="color-chip" style="background:#7849C9;color:#fff">indigo</div>
+        <div class="color-chip" style="background:#FF91D7;color:#0C0D0C">pink</div>
+        <div class="color-chip" style="background:#EDA109;color:#0C0D0C">orange</div>
+      </div>`,
+      demos: [
+        {
+          label: '內建色名',
+          code: `<cell-drawer theme="ocean">
+  <cell-level>ocean 主題</cell-level>
+  <cell-level>點擊色條換頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: '另一色名',
+          code: `<cell-drawer theme="warning">
+  <cell-level>warning 主題</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: '直接填 hex 色碼',
+          code: `<cell-drawer theme="#FF6B35">
+  <cell-level>自訂 hex 色碼 #FF6B35</cell-level>
+  <cell-level>第二頁內容</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '任何合法的 CSS color 值均可使用，包含 hex / rgb / hsl。'
+        }
+      ]
+    },
+
+    /* ───────────── strip-width / strip-position ───────────── */
+    {
+      id: 's-strip', title: 'strip-width / strip-position — 色條寬度與位置',
+      desc: '<code>strip-width</code> 設定色條像素寬度；<code>strip-position</code> 控制色條在左（預設）或右。',
+      demos: [
+        {
+          label: 'strip-width 窄（3px）',
+          code: `<cell-drawer theme="teal" strip-width="3">
+  <cell-level>strip-width="3" 最細</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'strip-width 寬（20px）',
+          code: `<cell-drawer theme="teal" strip-width="20">
+  <cell-level>strip-width="20" 加寬</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'strip-position="right"',
+          code: `<cell-drawer theme="pink" strip-position="right">
+  <cell-level>色條在右側</cell-level>
+  <cell-level>點擊右側色條換頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '設為 <b>right</b> 時，色條與 cell-start 區塊均移至右側。'
+        }
+      ]
+    },
+
+    /* ───────────── mode ───────────── */
+    {
+      id: 's-mode', title: 'mode — 顯示模式',
+      desc: '四種模式控制內容的溢出行為與換頁方式。',
+      demos: [
+        {
+          label: 'mode="single"（預設）— 單行省略',
+          code: `<cell-drawer theme="lavender" mode="single">
+  <cell-level>這是很長的文字內容，超出寬度後會自動以省略號截斷，不換行顯示。</cell-level>
+  <cell-level>第二頁亦為單行模式。</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'mode="auto" — 自動換行',
+          code: `<cell-drawer theme="lavender" mode="auto">
+  <cell-level>這是很長的文字內容，在 auto 模式下會自動換行，高度隨內容增長，不截斷。</cell-level>
+  <cell-level>第二頁同樣自動換行。</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'mode="fixed" — 固定高度',
+          code: `<cell-drawer theme="lavender" mode="fixed" height="72px">
+  <cell-level>固定高度 72px，內容超出時出現捲軸（scrollbar 顏色跟隨 theme）。文字可以很長很長很長很長很長很長，超出高度後會捲動。</cell-level>
+  <cell-level>第二頁同樣固定高度。</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'mode="carousel" — 自動輪播',
+          code: `<cell-drawer theme="lavender" mode="carousel"
+  carousel-interval="2000">
+  <cell-level>輪播第 1 頁</cell-level>
+  <cell-level>輪播第 2 頁</cell-level>
+  <cell-level>輪播第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '滑鼠移入自動暫停（可用 <b>carousel-pause="false"</b> 停用）。'
+        }
+      ]
+    },
+
+    /* ───────────── show-dots / show-badge / level ───────────── */
+    {
+      id: 's-dots', title: 'show-dots / show-badge / level — 導覽點、頁碼與初始索引',
+      desc: '',
+      demos: [
+        {
+          label: 'show-dots — 色條上的層級圓點',
+          code: `<cell-drawer theme="sky" show-dots>
+  <cell-level>第 1 頁（點色條換頁）</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+  <cell-level>第 4 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '圓點數量對應 cell-level 數量，目前頁圓點以 focus 色標示。'
+        },
+        {
+          label: 'show-badge — 右下角頁碼',
+          code: `<cell-drawer theme="orange" show-badge>
+  <cell-level>第一頁（右下角看到 1/3）</cell-level>
+  <cell-level>第二頁（2/3）</cell-level>
+  <cell-level>第三頁（3/3）</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'level — 初始顯示索引（0 起算）',
+          code: `<cell-drawer theme="indigo" show-badge level="2">
+  <cell-level>第 0 頁（被跳過）</cell-level>
+  <cell-level>第 1 頁（被跳過）</cell-level>
+  <cell-level>第 2 頁（從這裡開始）</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>level="2"</b> 表示預設顯示第 3 個 cell-level（索引從 0 起算）。'
+        }
+      ]
+    },
+
+    /* ───────────── carousel 細節 ───────────── */
+    {
+      id: 's-carousel', title: 'carousel-interval / progress-height / progress-style / progress-dir / carousel-pause / no-loop',
+      desc: '輪播模式的細節控制。',
+      demos: [
+        {
+          label: 'carousel-interval + progress-height',
+          code: `<cell-drawer theme="special"
+  mode="carousel"
+  carousel-interval="1500"
+  progress-height="5">
+  <cell-level>間隔 1.5 秒，進度條高 5px</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'progress-style="fuse" — 燃燒特效',
+          code: `<cell-drawer theme="warning"
+  mode="carousel"
+  carousel-interval="2500"
+  progress-style="fuse">
+  <cell-level>fuse 燃燒進度條</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'progress-dir="rtl" — 由右往左',
+          code: `<cell-drawer theme="pink"
+  mode="carousel"
+  carousel-interval="2000"
+  progress-dir="rtl"
+  progress-style="fuse">
+  <cell-level>進度條由右往左（fuse 火頭在左）</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'no-loop — 最後一頁停止 ＋ carousel-pause="false"',
+          code: `<cell-drawer theme="salmon"
+  mode="carousel"
+  carousel-interval="1800"
+  no-loop
+  carousel-pause="false">
+  <cell-level>no-loop：到最後一頁後停止</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>最後一頁（停在這裡，滑入不暫停）</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        }
+      ]
+    },
+
+    /* ───────────── btn-start ───────────── */
+    {
+      id: 's-btnstart', title: 'btn-start + show-countdown — 啟動按鈕與倒數',
+      desc: '<code>btn-start</code> 讓輪播等待使用者按下按鈕才開始，<code>show-countdown</code> 顯示每頁剩餘秒數。',
+      demos: [
+        {
+          label: 'btn-start — 手動啟動輪播',
+          code: `<cell-drawer theme="teal"
+  mode="carousel"
+  carousel-interval="3000"
+  btn-start>
+  <cell-level>按右側按鈕開始輪播</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'btn-start + show-countdown + fuse',
+          code: `<cell-drawer theme="yellow"
+  mode="carousel"
+  carousel-interval="3000"
+  progress-style="fuse"
+  btn-start
+  show-countdown>
+  <cell-level>倒數秒數顯示在右下角</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>show-countdown</b> 右下角顯示剩餘秒數，暫停時變淡。'
+        }
+      ]
+    },
+
+    /* ───────────── height ───────────── */
+    {
+      id: 's-height', title: 'height — 固定高度',
+      desc: '搭配 <code>mode="fixed"</code> 使用，設定 CSS 高度值。超出高度的內容可捲動，捲軸顏色跟隨 <code>theme</code>。',
+      demos: [
+        {
+          label: 'height="60px" — 窄行高',
+          code: `<cell-drawer theme="info" mode="fixed" height="60px">
+  <cell-level>固定高度 60px。這段文字很長，超出高度後出現細捲軸，可以垂直捲動閱讀全部內容，捲軸顏色跟隨主題色。</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'height="120px" — 較高',
+          code: `<cell-drawer theme="info" mode="fixed" height="120px">
+  <cell-level>固定高度 120px。
+    ・第一行內容
+    ・第二行內容
+    ・第三行內容
+    ・第四行內容（需要捲動才看到以下）
+    ・第五行內容
+    ・第六行內容
+  </cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        }
+      ]
+    },
+
+    /* ───────────── 投影片文字（既有屬性）───────────── */
+    {
+      id: 's-slide', title: 'slide-color / slide-padding / slide-line-height — 投影片文字樣式',
+      desc: '控制文字顏色、內距與行高，三個屬性均可獨立設定。',
+      demos: [
+        {
+          label: 'slide-color — 文字顏色',
+          code: `<cell-drawer theme="lavender"
+  slide-color="#E3D322">
+  <cell-level>文字改為 yellow #E3D322</cell-level>
+  <cell-level>第二頁同樣套用</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'slide-padding — 內距',
+          code: `<cell-drawer theme="ocean"
+  slide-padding="18px 24px">
+  <cell-level>上下 18px、左右 24px 的較大內距</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'slide-line-height — 行高',
+          code: `<cell-drawer theme="safe" mode="auto"
+  slide-line-height="2"
+  slide-padding="8px 12px">
+  <cell-level>行高設為 2，文字間距明顯變寬。
+這是第二行文字。
+這是第三行文字。</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        }
+      ]
+    },
+
+    /* ───────────── slide-font-size / slide-font-family（新增）───────────── */
+    {
+      id: 's-font',
+      title: 'slide-font-size / slide-font-family — 投影片字體',
+      isNew: true,
+      desc: '直接控制投影片內容的字體大小與字體族群，接受所有合法 CSS 值。',
+      demos: [
+        {
+          label: 'slide-font-size — 放大字體',
+          code: `<cell-drawer theme="sky"
+  slide-font-size="1.1rem">
+  <cell-level>字體放大為 1.1rem</cell-level>
+  <cell-level>第二頁同樣套用</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'slide-font-size — 縮小字體',
+          code: `<cell-drawer theme="sky"
+  slide-font-size=".7rem">
+  <cell-level>字體縮小為 .7rem，適合資訊密度高的場景</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'slide-font-family — 等寬字體',
+          code: `<cell-drawer theme="special"
+  slide-font-family="monospace"
+  slide-font-size=".8rem">
+  <cell-level>font-family: monospace 等寬字體效果</cell-level>
+  <cell-level>const x = 42;</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'slide-font-family — serif 字體',
+          code: `<cell-drawer theme="salmon"
+  slide-font-family="Georgia, 'Times New Roman', serif"
+  slide-font-size=".9rem">
+  <cell-level>Georgia serif 字體，適合引用文字</cell-level>
+  <cell-level>"Actions speak louder."</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>slide-font-family</b> 接受完整的 CSS font-family 字串，含引號與備用字體。'
+        }
+      ]
+    },
+
+    /* ───────────── surface-bg（新增）───────────── */
+    {
+      id: 's-surface',
+      title: 'surface-bg — 內容區背景色',
+      isNew: true,
+      desc: '覆蓋 cell-drawer 主體（.cd-body）的背景色。預設由底色 #0C0D0C 與 shell 混合推導。',
+      demos: [
+        {
+          label: '深色調背景',
+          code: `<cell-drawer theme="indigo"
+  surface-bg="#12102a">
+  <cell-level>深紫底色的內容區</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: '半透明色調',
+          code: `<cell-drawer theme="orange"
+  surface-bg="rgba(237,161,9,.1)">
+  <cell-level>orange 半透明暖色底</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '搭配 <b>theme</b> 顏色使用同色系，可達到內外呼應的視覺效果。'
+        },
+        {
+          label: '亮底色（覆蓋預設深色）',
+          code: `<cell-drawer theme="teal"
+  surface-bg="#0f2420"
+  slide-color="#82C8E5">
+  <cell-level>深綠底色 + sky 文字色</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        }
+      ]
+    },
+
+    /* ───────────── dot-color / dot-active-color（新增）───────────── */
+    {
+      id: 's-dotclr',
+      title: 'dot-color / dot-active-color — 導覽點色彩',
+      isNew: true,
+      desc: '分別控制非作用中與作用中圓點的顏色，需搭配 <code>show-dots</code> 才能顯示圓點。',
+      demos: [
+        {
+          label: '自訂兩種圓點顏色',
+          code: `<cell-drawer theme="pink"
+  show-dots
+  dot-color="rgba(255,145,215,.78)"
+  dot-active-color="#FF91D7">
+  <cell-level>作用中圓點亮 pink（點色條換頁）</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+  <cell-level>第 4 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: '高對比圓點',
+          code: `<cell-drawer theme="teal"
+  show-dots
+  dot-color="rgba(198,199,189,.78)"
+  dot-active-color="#D4FFFC">
+  <cell-level>非作用中圓點用 shell 色</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>dot-color</b> 預設為 rgba(12,13,12,.78)（幾乎不可見），配合淺色 theme 時需手動調亮。'
+        }
+      ]
+    },
+
+    /* ───────────── badge-color / badge-font-size / badge-font-family（新增）───────────── */
+    {
+      id: 's-badge',
+      title: 'badge-color / badge-font-size / badge-font-family — 頁碼徽章樣式',
+      isNew: true,
+      desc: '分別控制右下角頁碼的文字顏色、大小與字體，需搭配 <code>show-badge</code> 才顯示。',
+      demos: [
+        {
+          label: '套用主題色頁碼',
+          code: `<cell-drawer theme="yellow"
+  show-badge
+  badge-color="#E3D322"
+  badge-font-size=".75rem">
+  <cell-level>頁碼改為 yellow 色</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: '自訂字體族群',
+          code: `<cell-drawer theme="info"
+  show-badge
+  badge-color="#82C8E5"
+  badge-font-size=".72rem"
+  badge-font-family="'Georgia', serif">
+  <cell-level>頁碼使用 Georgia serif</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>badge-font-family</b> 預設為 monospace，帶有等寬數字對齊感；改為 serif 風格不同。'
+        }
+      ]
+    },
+
+    /* ───────────── cell-start + start-* 屬性（新增）───────────── */
+    {
+      id: 's-start',
+      title: 'cell-start / start-bg / start-color / start-font-size / start-font-family — 起始區塊',
+      isNew: true,
+      desc: '<code>cell-start</code> 是放在 cell-drawer 內的子元素，作為左側（或右側）固定標籤。新增的四個屬性可覆蓋其背景色、文字色與字體。',
+      demos: [
+        {
+          label: 'cell-start 基本用法（預設色）',
+          code: `<cell-drawer theme="teal">
+  <cell-start icon="bi-bookmark-fill">A1</cell-start>
+  <cell-level>左側固定標籤，圖示用 Bootstrap Icons</cell-level>
+  <cell-level>點色條換頁，標籤固定不動</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'start-bg + start-color — 覆蓋背景與文字色',
+          code: `<cell-drawer theme="teal"
+  start-bg="#062318"
+  start-color="#0DA591">
+  <cell-start icon="bi-pin-angle-fill">B2</cell-start>
+  <cell-level>start-bg 深綠，start-color 用 teal 色</cell-level>
+  <cell-level>第二頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'start-font-size + start-font-family',
+          code: `<cell-drawer theme="indigo"
+  start-font-size="1rem"
+  start-font-family="Georgia, serif">
+  <cell-start icon="bi-stars">V</cell-start>
+  <cell-level>放大字體、改用 serif 字體族群</cell-level>
+  <cell-level>圖示大小與標籤文字同步放大</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>start-font-size</b> 同時套用圖示（<code>bi-*</code>）、標籤文字與 btn-start 按鈕，保持比例一致。'
+        }
+      ]
+    },
+
+    /* ───────────── countdown-* 屬性（新增）───────────── */
+    {
+      id: 's-cd',
+      title: 'countdown-color / countdown-font-size / countdown-font-family — 倒數計時器',
+      isNew: true,
+      desc: '控制右下角倒數秒數的文字顏色、大小與字體，需搭配 <code>show-countdown</code> 顯示。',
+      demos: [
+        {
+          label: 'countdown-color — 自訂顏色',
+          code: `<cell-drawer theme="safe"
+  mode="carousel"
+  carousel-interval="4000"
+  btn-start
+  show-countdown
+  countdown-color="#B3DE73">
+  <cell-level>倒數文字改為 special 綠</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: 'countdown-font-size + countdown-font-family',
+          code: `<cell-drawer theme="orange"
+  mode="carousel"
+  carousel-interval="4000"
+  progress-style="fuse"
+  btn-start
+  show-countdown
+  countdown-color="#EDA109"
+  countdown-font-size=".78rem"
+  countdown-font-family="'Georgia', serif">
+  <cell-level>倒數放大為 .78rem，serif 字體</cell-level>
+  <cell-level>第 2 頁</cell-level>
+  <cell-level>第 3 頁</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '<b>countdown-font-family</b> 預設為等寬字體（monospace），改為 serif 可強調數字的視覺重量。'
+        }
+      ]
+    },
+
+    /* ───────────── 組合範例 ───────────── */
+    {
+      id: 's-combo', title: '組合範例 — 新舊屬性綜合使用',
+      desc: '將多個屬性組合在同一個元素上，展示完整的自訂效果。',
+      demos: [
+        {
+          label: '語法卡片風格',
+          code: `<cell-drawer
+  theme="lavender"
+  strip-width="5"
+  mode="auto"
+  show-badge
+  slide-color="#C3A5E5"
+  slide-font-size=".82rem"
+  slide-font-family="monospace"
+  slide-padding="10px 14px"
+  surface-bg="#13101f"
+  badge-color="#C3A5E5"
+  badge-font-size=".65rem">
+  <cell-level>&lt;code&gt;font-family: monospace&lt;/code&gt;</cell-level>
+  <cell-level>slide-color="#C3A5E5"
+surface-bg="#13101f"</cell-level>
+  <cell-level>組合：字體 + 背景 + 徽章顏色</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        },
+        {
+          label: '學習卡片（cell-start + 輪播 + 倒數）',
+          code: `<cell-drawer
+  theme="sky"
+  mode="carousel"
+  carousel-interval="4000"
+  progress-style="fuse"
+  progress-height="3"
+  btn-start
+  show-countdown
+  show-badge
+  strip-position="right"
+  slide-color="#D4FFFC"
+  slide-font-size=".88rem"
+  surface-bg="#0c1a20"
+  start-bg="#061218"
+  start-color="#82C8E5"
+  badge-color="#82C8E5"
+  countdown-color="#D4FFFC">
+  <cell-start icon="bi-journal-text">Ch1</cell-start>
+  <cell-level>第一章：名詞片語結構</cell-level>
+  <cell-level>第二章：介系詞與名詞</cell-level>
+  <cell-level>第三章：後位修飾語</cell-level>
+  <cell-level>第四章：綜合練習</cell-level>
+</cell-drawer>`,
+          layout: 'w60',
+          note: '色條在右、fuse 進度條、btn-start 手動啟動、倒數秒數、頁碼，全部綜合使用。'
+        },
+        {
+          label: '警示條（三色組合）',
+          code: `<cell-drawer
+  theme="warning"
+  strip-width="6"
+  mode="single"
+  slide-color="#E6374B"
+  slide-font-size=".9rem"
+  surface-bg="#1f0b0e"
+  dot-color="rgba(230,55,75,.78)"
+  dot-active-color="#E6374B"
+  show-dots
+  show-badge
+  badge-color="#E6374B">
+  <cell-level>⚠ 警告：此操作無法撤銷</cell-level>
+  <cell-level>⚠ 請在繼續之前備份資料</cell-level>
+  <cell-level>⚠ 確認後立即執行</cell-level>
+</cell-drawer>`,
+          layout: 'w60'
+        }
+      ]
+    }
+
+  ];
+
+  /* ── render all sections ── */
+  const root = document.getElementById('js-sections');
+  SECTIONS.forEach(sec => root.appendChild(buildSection(sec)));
+
+})();
+</script>
+</body>
+</html>
