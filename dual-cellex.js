@@ -67,7 +67,6 @@ class DualCell {
       carouselIndicatorColor:  R(options.carouselIndicatorColor) || tc.menuButtonColor || '#b3de73',
       carouselIndicatorHeight: options.carouselIndicatorHeight || '3px',
 
-      // ── 回調 ──────────────────────────────────────────────────
       onCellClick:   options.onCellClick   || null,
       onMenuClick:   options.onMenuClick   || null,
       onContentPush: options.onContentPush || null,
@@ -82,14 +81,7 @@ class DualCell {
   }
 
   static getThemeConfig(name) {
-    // ── 個人品牌配色系統 ─────────────────────────────────────────
-    // shell:#C6C7BD  lavender:#C3A5E5  special:#b3de73  warning:#F08080
-    // salmon:#E5C3B3 sky:#0ABDC6       safe:#299459     vanilla:#DBEDD8
-    // yellow:#DECA4B info:#1E65C7      stone:#95c9de    indigo:#9B72CF
-    // pink:#FFB3D9   orange:#EDA109    focus:#E0BE79
-    // ────────────────────────────────────────────────────────────
     const T = {
-      // ── 既有品牌色（已全數對齊）──────────────────────────────
       lavender:  { borderColor:'#C3A5E5', cellBgColor:'#2a2435', hoverBgColor:'#3d344a', textColor:'#e8dff5', menuButtonColor:'#C3A5E5', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#C3A5E5' },
       special:   { borderColor:'#b3de73', cellBgColor:'#2a2e1a', hoverBgColor:'#3d4329', textColor:'#edf0d9', menuButtonColor:'#b3de73', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#b3de73' },
       warning:   { borderColor:'#F08080', cellBgColor:'#2e2422', hoverBgColor:'#443532', textColor:'#f5e8e6', menuButtonColor:'#F08080', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#F08080' },
@@ -99,25 +91,10 @@ class DualCell {
       pink:      { borderColor:'#FFB3D9', cellBgColor:'#2e2228', hoverBgColor:'#44323d', textColor:'#ffe8f5', menuButtonColor:'#FFB3D9', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FFB3D9' },
       orange:    { borderColor:'#EDA109', cellBgColor:'#2d2510', hoverBgColor:'#42381a', textColor:'#f5ece0', menuButtonColor:'#EDA109', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#EDA109' },
       yellow:    { borderColor:'#DECA4B', cellBgColor:'#2c2d10', hoverBgColor:'#403f1a', textColor:'#f5f2d9', menuButtonColor:'#DECA4B', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#DECA4B' },
-
-      // ── 更新色值（★）────────────────────────────────────────
-      // info: #1E65C7 → #1E65C7（對齊品牌 info 藍）
       info:      { borderColor:'#1E65C7', cellBgColor:'#1a2540', hoverBgColor:'#263a58', textColor:'#d9e8ff', menuButtonColor:'#1E65C7', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#1E65C7' },
-      // stone: #7090A8 → #95c9de（對齊品牌石藍）
       stone:     { borderColor:'#95c9de', cellBgColor:'#1e2830', hoverBgColor:'#2c3d48', textColor:'#daeaf5', menuButtonColor:'#95c9de', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#95c9de' },
-      // attention: #E5E5A6 → #DECA4B（對齊品牌 yellow，向後相容保留別名）
-      attention: { borderColor:'#DECA4B', cellBgColor:'#2b2a12', hoverBgColor:'#3d3c1e', textColor:'#f5f0d0', menuButtonColor:'#DECA4B', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#DECA4B' },
-
-      // ── 新增品牌主題（✦）────────────────────────────────────
-      // vanilla: #DBEDD8（薄荷米綠）
       vanilla:   { borderColor:'#DBEDD8', cellBgColor:'#1e2b1e', hoverBgColor:'#2b3d2a', textColor:'#e8f5e5', menuButtonColor:'#DBEDD8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#DBEDD8' },
-      // indigo: #9B72CF（紫羅蘭）
       indigo:    { borderColor:'#9B72CF', cellBgColor:'#221838', hoverBgColor:'#33254e', textColor:'#eedff8', menuButtonColor:'#9B72CF', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#9B72CF' },
-      // focus: #E0BE79（草綠）✦ 新增
-      focus:     { borderColor:'#E0BE79', cellBgColor:'#1e2d1a', hoverBgColor:'#2c4025', textColor:'#e2f5d0', menuButtonColor:'#E0BE79', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#E0BE79' },
-
-      // ── 保留向後相容（非品牌色）──────────────────────────────
-      brown:     { borderColor:'#d9b375', cellBgColor:'#2b2621', hoverBgColor:'#3f3931', textColor:'#f2ebe3', menuButtonColor:'#d9b375', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#d9b375' },
       default:   { borderColor:'#C6C7BD', cellBgColor:'#333333', hoverBgColor:'#404040', textColor:'#C6C7BD', menuButtonColor:'#C6C7BD', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#C6C7BD' },
     };
     return T[name?.toLowerCase()] || T.default;
@@ -125,8 +102,6 @@ class DualCell {
 
   static resolveColor(color) {
     if (!color) return null;
-    // ── 個人品牌色名稱對照表 ──────────────────────────────────
-    // ★ = 更新色值    ✦ = 新增色票
     const M = {
       shell:     '#C6C7BD',
       lavender:  '#C3A5E5',
@@ -137,16 +112,11 @@ class DualCell {
       safe:      '#299459',
       vanilla:   '#DBEDD8',   // ★ #DBEDD8 → #DBEDD8
       yellow:    '#DECA4B',
-      focus:     '#E0BE79',   // ✦ 新增
       info:      '#1E65C7',   // ★ #1E65C7 → #1E65C7
       stone:     '#95c9de',   // ★ #7090A8 → #95c9de
       indigo:    '#9B72CF',   // ★ #9B72CF → #9B72CF
       pink:      '#FFB3D9',
       orange:    '#EDA109',
-      attention: '#DECA4B',   // ★ #E5E5A6 → #DECA4B（向後相容，同 yellow）
-      // 非品牌色，保留向後相容
-      brown:     '#d9b375',
-      // 功能性顏色
       bg:        '#0C0D0C',
       area:      '#333333',
     };
@@ -244,7 +214,6 @@ class DualCell {
     const R = DualCell.resolveColor;
     const O = this.options;
 
-    // ── 遮罩 ──
     const ov1Text  = a('overlay-1-text')  ?? O.overlay1Text;
     const ov1Color = R(a('overlay-1-color')) || O.overlay1Color;
     const ov2Text  = a('overlay-2-text')  ?? O.overlay2Text;
@@ -252,12 +221,9 @@ class DualCell {
     const ovInvert = el.hasAttribute('overlay-invert')
       ? el.getAttribute('overlay-invert') === 'true' : O.overlayInvert;
 
-    // ── 垂直輪播：偵測直接子元素 <dual-item> ──
-    // 超過 1 個 item 才有輪播意義，只有 1 個或沒有都視為靜態
     const itemEls       = Array.from(el.querySelectorAll(':scope > dual-item, :scope > [data-item]'));
     const carouselItems = itemEls.length > 1 ? itemEls.map(i => i.innerHTML) : null;
 
-    // per-col 輪播設定：有設屬性才覆蓋，否則留 null 讓 _startCarousel 退回全域值
     const ciInterval  = a('carousel-interval') !== null ? parseInt(a('carousel-interval')) : null;
     const ciIndicator = el.hasAttribute('carousel-indicator')
       ? el.getAttribute('carousel-indicator') !== 'false' : null;
@@ -265,7 +231,6 @@ class DualCell {
     const ciHeight    = a('carousel-indicator-height');
 
     return {
-      // 輪播模式：content 顯示第一項；靜態模式：整個 innerHTML
       content:     carouselItems ? carouselItems[0] : el.innerHTML,
       width:       a('width'),
       spanAll:     el.getAttribute('span') === 'all',
@@ -274,13 +239,10 @@ class DualCell {
       menuAction:  a('menu-action') || 'push',
       menuTarget:  a('target'),
       cellId:      el.id || null,
-      // 遮罩
       ov1Text, ov1Color, ov2Text, ov2Color, ovInvert,
       hasOverlay: !!(ov1Text || ov2Text),
-      // Hover
       hoverSource: a('hover-source'),
       hoverTarget: a('hover-target'),
-      // 輪播
       carouselItems,
       carouselInterval:        ciInterval,
       carouselIndicator:       ciIndicator,
@@ -309,10 +271,6 @@ class DualCell {
     if (parts.length !== n || parts.some(isNaN)) return Array(n).fill(1);
     return parts;
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // CSS 樣式（per-instance，不同實例互不干擾）
-  // ════════════════════════════════════════════════════════════════
 
   createStyles() {
     const id  = this.container.id;
@@ -418,10 +376,6 @@ class DualCell {
     document.head.appendChild(style);
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // DOM 建表
-  // ════════════════════════════════════════════════════════════════
-
   createTable() {
     const table = document.createElement('div');
     table.className = 'dc-table';
@@ -438,10 +392,7 @@ class DualCell {
 
     this.setupTableEvents(table);
     this.container.appendChild(table);
-
-    // 所有 cell 建立並掛上 DOM 後才啟動輪播，確保 getBoundingClientRect 等操作可用
     this._initCarousels();
-    // 全域定時展開（情境一）
     this._startAutoRevealInterval();
   }
 
@@ -520,9 +471,7 @@ class DualCell {
   createRow(rowData, rowIdx) {
     const container = document.createElement('div');
     container.className = 'dc-row-container';
-    // 若此列初始為隱藏（由 hidden 屬性宣告），立即設 display:none
     if (rowData.hidden)          container.style.display = 'none';
-    // 儲存 per-row 自動展開延遲（毫秒），供 _showRow 使用
     if (rowData.autoRevealDelay) container.dataset.autoRevealDelay = rowData.autoRevealDelay;
 
     const row = document.createElement('div');
@@ -566,8 +515,6 @@ class DualCell {
     cell.dataset.colIdx = colIdx;
     if (colData.cellId)  cell.id          = colData.cellId;
     if (colData.padding) cell.style.padding = colData.padding;
-
-    // 欄寬：spanAll > 固定 width > flex 比例
     if (colData.spanAll) {
       cell.style.cssText += ';flex:1 0 100%;border-right:none';
     } else if (colData.width) {
@@ -591,7 +538,6 @@ class DualCell {
         cell.appendChild(this.createMenuButton(colData, rowIdx, colIdx));
     }
 
-    // ── 兩層遮罩：layer2 先插入（底層），layer1 後插入（頂層）──
     if (colData.hasOverlay) {
       cell.classList.add('has-overlay');
       if (!colData.ovInvert) contentDiv.classList.add('blurred');
@@ -599,14 +545,11 @@ class DualCell {
       if (colData.ov1Text) cell.appendChild(this.createOverlayEl(colData.ov1Text, colData.ov1Color, colData.ovInvert, 1));
     }
 
-    // ── 垂直輪播：建立讀秒進度條並登記，等 createTable() 結束後統一啟動 ──
     if (colData.carouselItems) {
       cell.classList.add('has-carousel');
 
-      // 進度條容器（貼底部）
       const track = document.createElement('div');
       track.className = 'dc-progress-track';
-      // 粗細優先順序：per-col > 全域
       track.style.height = colData.carouselIndicatorHeight || this.options.carouselIndicatorHeight;
 
       const bar = document.createElement('div');
@@ -614,7 +557,6 @@ class DualCell {
       track.appendChild(bar);
       cell.appendChild(track);
 
-      // 登記到 Map，createTable() 最後再統一 _initCarousels()
       this._carouselCells.set(cell, colData);
     }
 
@@ -650,34 +592,12 @@ class DualCell {
     return btn;
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // 垂直輪播引擎
-  // ════════════════════════════════════════════════════════════════
-
-  /** 統一啟動所有已登記的輪播 cell。在 createTable() 最後呼叫。 */
   _initCarousels() {
     this._carouselCells.forEach((colData, cellEl) => {
       if (cellEl.isConnected) this._startCarousel(cellEl, colData);
     });
   }
 
-  /**
-   * 啟動單一 cell 的輪播週期。
-   *
-   * 時序設計（遞迴 setTimeout，不用 setInterval，無累積誤差）：
-   *
-   *   ┌─────────────────────────────── interval ─────────────────────────────┐
-   *   │  顯示第 N 項，進度條從 100% 線性縮短到 0%                             │
-   *   └──────────────────────────────────────────────────────────────────────┘
-   *        ↓  setTimeout(interval) 到期
-   *   退場動畫 (300ms)：dc-car-exit，內容向上淡出
-   *        ↓  setTimeout(300) 到期
-   *   換 innerHTML 為第 N+1 項
-   *   進場動畫 (380ms)：dc-car-enter，內容從下方淡入
-   *   同時重啟進度條（兩者同步）
-   *        ↓  setTimeout(interval) 到期
-   *   下一輪…
-   */
   _startCarousel(cellEl, colData) {
     const items    = colData.carouselItems;
     // per-col 明確設定的優先；null 退回全域
@@ -691,21 +611,12 @@ class DualCell {
     const trackEl   = cellEl.querySelector('.dc-progress-track');
     const barEl     = cellEl.querySelector('.dc-progress-bar');
 
-    // 若關閉 indicator，隱藏進度條容器
     if (!showInd && trackEl) { trackEl.style.display = 'none'; }
-    // 確保尺寸與顏色正確（per-col 可能與全域不同）
     if (trackEl && indHeight) trackEl.style.height = indHeight;
     if (barEl)   barEl.style.background = indColor;
 
     let idx = 0;
 
-    /**
-     * 重啟進度條的 CSS 動畫。
-     *
-     * 「移除 animation → 強制 reflow → 重新賦值」是瀏覽器重播同名 CSS 動畫的
-     * 唯一可靠方法。若省略 offsetHeight 這行（reflow），瀏覽器會認為動畫
-     * 沒有改變而跳過重播，導致第二輪之後進度條停在 0% 不動。
-     */
     const restartBar = () => {
       if (!barEl || !showInd) return;
       barEl.style.animation = 'none';
@@ -713,11 +624,6 @@ class DualCell {
       barEl.style.animation = `dc-shrink ${interval}ms linear forwards`;
     };
 
-    /**
-     * 執行一次切換（退場 → 換內容 → 進場 → 重啟計時）。
-     * 退場與進場動畫不重疊：退場完全結束後才換 innerHTML 並啟動進場，
-     * 保證畫面不會同時出現舊內容和新內容。
-     */
     const advance = () => {
       // 1. 退場動畫
       contentEl.classList.add('dc-car-exit');
@@ -739,18 +645,12 @@ class DualCell {
         // 5. 遞迴安排下一次切換
         setTimeout(advance, interval);
 
-      }, 300);  // 等退場動畫的 300ms 播完
+      }, 300);
     };
 
-    // 首次顯示：第一項不需要進場動畫（剛建立元件），直接啟動進度條
     restartBar();
-    // interval 毫秒後觸發第一次切換
     setTimeout(advance, interval);
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // 事件委派（整個 table 只掛一個 click、一個 mouseover）
-  // ════════════════════════════════════════════════════════════════
 
   setupTableEvents(tableEl) {
     tableEl.addEventListener('click', (e) => {
@@ -793,17 +693,12 @@ class DualCell {
     });
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // 遮罩點擊
-  // ════════════════════════════════════════════════════════════════
-
   handleOverlayClick(overlayEl, cellEl) {
     const layer      = parseInt(overlayEl.dataset.layer);
     const contentDiv = cellEl.querySelector('.dc-content');
     overlayEl.remove();
 
     if (layer === 1) {
-      // 如果 layer 2 還在，等下次點擊；否則直接揭開
       const layer2 = cellEl.querySelector('.dc-overlay[data-layer="2"]');
       if (!layer2) {
         contentDiv.classList.remove('blurred');
@@ -811,16 +706,11 @@ class DualCell {
         cellEl.classList.remove('has-overlay');
       }
     } else {
-      // layer 2 被點到 → 最後一層，揭開內容
       contentDiv.classList.remove('blurred');
       contentDiv.classList.add('dc-revealed');
       cellEl.classList.remove('has-overlay');
     }
   }
-
-  // ════════════════════════════════════════════════════════════════
-  // 選單動作
-  // ════════════════════════════════════════════════════════════════
 
   handleMenuAction(action, customTarget, rowIdx, colIdx, btnEl) {
     const cellEl     = this.container.querySelector(
@@ -913,16 +803,6 @@ class DualCell {
     if (tgtContent) tgtContent.innerHTML = sourceContentDiv.innerHTML;
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // show-next 與 auto-reveal 輔助方法
-  // ════════════════════════════════════════════════════════════════
-
-  /**
-   * 顯示一個隱藏的列，並在它有 auto-reveal-delay 屬性時
-   * 於指定毫秒後自動展開它之後的下一個隱藏列（情境二：逐步自動鏈）。
-   * 注意：只有被 show-next 動作（或本方法自身遞迴）觸發才會走這條路，
-   * 全域 _startAutoRevealInterval 不呼叫本方法，兩條路徑互不干擾。
-   */
   _showRow(rowContainer) {
     if (!rowContainer || rowContainer.style.display !== 'none') return;
     rowContainer.style.display = '';
@@ -936,10 +816,6 @@ class DualCell {
     }
   }
 
-  /**
-   * 從 fromContainer 往後找，回傳第一個 display:none 的 dc-row-container。
-   * 略過所有已可見的列，也略過非列元素（例如 dc-toggle）。
-   */
   _nextHiddenRow(fromContainer) {
     let el = fromContainer?.nextElementSibling;
     while (el) {
@@ -972,10 +848,6 @@ class DualCell {
     });
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // 資料查詢
-  // ════════════════════════════════════════════════════════════════
-
   getColData(rowIdx, colIdx) {
     let cur = 0;
     for (const item of this.rows) {
@@ -991,10 +863,6 @@ class DualCell {
     return null;
   }
 }
-
-// ════════════════════════════════════════════════════════════════
-// Custom Elements（標籤識別用，DualCellElement 有行為，其餘純被動）
-// ════════════════════════════════════════════════════════════════
 
 class DualCellElement extends HTMLElement {
   connectedCallback() {
@@ -1055,7 +923,7 @@ class DualGroupElement extends HTMLElement {}
 class DualRowElement   extends HTMLElement {}
 class DualColElement   extends HTMLElement {}
 class DualSlotElement  extends HTMLElement {}
-class DualItemElement  extends HTMLElement {}   // 輪播子項目，純標籤識別
+class DualItemElement  extends HTMLElement {}
 
 [
   ['dual-cell',  DualCellElement],
@@ -1067,10 +935,6 @@ class DualItemElement  extends HTMLElement {}   // 輪播子項目，純標籤�
 ].forEach(([name, cls]) => {
   if (!customElements.get(name)) customElements.define(name, cls);
 });
-
-// ════════════════════════════════════════════════════════════════
-// data-dual-cell 屬性自動初始化
-// ════════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-dual-cell]').forEach(el => {
