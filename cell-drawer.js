@@ -46,6 +46,14 @@
     slideColor:       BRAND_COLORS.shell,
     slidePadding:     '6px 8px',
     slideLineHeight:  1.5,
+    slideFontSize:    '.85rem',
+    slideFontFamily:  '',
+    surfaceBg:        '',
+    dotColor:         'rgba(12,13,12,.78)',
+    dotActiveColor:   BRAND_COLORS.focus,
+    badgeColor:       'rgba(198,199,189,.78)',
+    startBg:          '',
+    startColor:       '',
     height:           'auto',
   };
 
@@ -72,7 +80,8 @@
         overflow: hidden;
         min-height: 32px;
         position: relative;
-        font-size: .85rem;
+        font-size: var(--cd-fsz, .85rem);
+        font-family: var(--cd-ff, inherit);
         opacity: 1;
       }
 
@@ -106,11 +115,11 @@
         width: 3px;
         height: 3px;
         border-radius: 50%;
-        background: rgba(12,13,12,.78);
+        background: var(--cd-dot, rgba(12,13,12,.78));
         transition: background .2s;
       }
       .cd-strip-dot.active {
-        background: ${BRAND_COLORS.focus};
+        background: var(--cd-dot-active, ${BRAND_COLORS.focus});
       }
 
       .cd-body {
@@ -146,9 +155,9 @@
         position: absolute;
         right: 5px;
         bottom: 3px;
-        font-size: .6rem;
-        color: rgba(198,199,189,.78);
-        font-family: monospace;
+        font-size: var(--cd-badge-fsz, .6rem);
+        color: var(--cd-badge-clr, rgba(198,199,189,.78));
+        font-family: var(--cd-badge-ff, monospace);
         pointer-events: none;
         letter-spacing: .05em;
         line-height: 1;
@@ -213,7 +222,8 @@
         user-select: none;
         cursor: default;
         font-weight: 700;
-        font-size: .78rem;
+        font-size: var(--cd-start-fsz, .78rem);
+        font-family: var(--cd-start-ff, inherit);
         letter-spacing: .04em;
         line-height: 1.2;
 
@@ -226,12 +236,12 @@
         border-right: 1px solid var(--cd-start-sep, ${BASE_BG});
       }
       .cd-start-icon {
-        font-size: 1.05rem;
+        font-size: var(--cd-start-icon-fsz, 1.05rem);
         line-height: 1;
         display: block;
       }
       .cd-start-text {
-        font-size: .7rem;
+        font-size: var(--cd-start-text-fsz, .7rem);
         display: block;
         text-align: center;
         line-height: 1.2;
@@ -255,12 +265,12 @@
       .cd-btnstart:hover { filter: brightness(1.25); }
       .cd-btnstart:active { filter: brightness(.8); }
       .cd-btnstart-icon {
-        font-size: .9rem;
+        font-size: var(--cd-btn-icon-fsz, .9rem);
         line-height: 1;
         display: block;
       }
       .cd-btnstart-label {
-        font-size: .58rem;
+        font-size: var(--cd-btn-lbl-fsz, .58rem);
         line-height: 1.2;
         text-align: center;
         display: block;
@@ -381,9 +391,9 @@
         position: absolute;
         bottom: calc(var(--cd-ph, 2px) + 1px);
         right: 4px;
-        font-size: .52rem;
-        font-family: monospace;
-        color: var(--cd-color, #C3A5E5);
+        font-size: var(--cd-cd-fsz, .52rem);
+        font-family: var(--cd-cd-ff, monospace);
+        color: var(--cd-cd-clr, var(--cd-color, #C3A5E5));
         opacity: .55;
         pointer-events: none;
         letter-spacing: .03em;
@@ -571,7 +581,14 @@
       return ['theme','strip-width','mode','level','show-badge','show-dots',
               'carousel-interval','progress-height','progress-style','progress-dir',
               'show-countdown','no-loop','strip-position',
-              'slide-color','slide-padding','slide-line-height','height','btn-start'];
+              'slide-color','slide-padding','slide-line-height',
+              'slide-font-size','slide-font-family',
+              'surface-bg',
+              'dot-color','dot-active-color',
+              'badge-color','badge-font-size','badge-font-family',
+              'start-bg','start-color','start-font-size','start-font-family',
+              'countdown-color','countdown-font-size','countdown-font-family',
+              'height','btn-start'];
     }
     attributeChangedCallback (name, oldVal, newVal) {
       if (oldVal === newVal || !this._ready) return;
@@ -587,8 +604,20 @@
         this._applyProgressStyle();
       } else if (name === 'show-countdown') {
         this._applyCountdownVisibility();
-      } else if (name === 'slide-color' || name === 'slide-padding' || name === 'slide-line-height') {
+      } else if (name === 'slide-color' || name === 'slide-padding' || name === 'slide-line-height' ||
+                 name === 'slide-font-size' || name === 'slide-font-family') {
         this._applySlideStyle();
+      } else if (name === 'surface-bg') {
+        this._applySurfaceBg();
+      } else if (name === 'dot-color' || name === 'dot-active-color') {
+        this._applyDotStyle();
+      } else if (name === 'badge-color' || name === 'badge-font-size' || name === 'badge-font-family') {
+        this._applyBadgeStyle();
+      } else if (name === 'start-bg' || name === 'start-color' ||
+                 name === 'start-font-size' || name === 'start-font-family') {
+        this._applyStartStyle();
+      } else if (name === 'countdown-color' || name === 'countdown-font-size' || name === 'countdown-font-family') {
+        this._applyCountdownStyle();
       } else if (name === 'strip-position') {
         this._applyStripPosition();
       } else if (name === 'height') {
@@ -828,6 +857,10 @@
       this._updateDots();
       this._applyCarouselMode();
       this._applyCountdownVisibility();
+      this._applySurfaceBg();
+      this._applyDotStyle();
+      this._applyBadgeStyle();
+      this._applyCountdownStyle();
       this._loadContent(this._curIdx, false);
     }
 
@@ -847,9 +880,58 @@
       const sc  = this.getAttribute('slide-color')       || DEFAULTS.slideColor;
       const sp  = this.getAttribute('slide-padding')     || DEFAULTS.slidePadding;
       const slh = this.getAttribute('slide-line-height') || DEFAULTS.slideLineHeight;
+      const fsz = this.getAttribute('slide-font-size')   || DEFAULTS.slideFontSize;
+      const ff  = this.getAttribute('slide-font-family') || DEFAULTS.slideFontFamily;
       this._wrap.style.setProperty('--cd-sc',  sc);
       this._wrap.style.setProperty('--cd-sp',  sp);
       this._wrap.style.setProperty('--cd-slh', slh);
+      this._wrap.style.setProperty('--cd-fsz', fsz);
+      if (ff) this._wrap.style.setProperty('--cd-ff', ff);
+      else    this._wrap.style.removeProperty('--cd-ff');
+    }
+
+    _applySurfaceBg () {
+      if (!this._wrap) return;
+      const bg = this.getAttribute('surface-bg') || DEFAULTS.surfaceBg;
+      if (bg) {
+        this._wrap.style.setProperty('--cd-surface', bg);
+      } else {
+        this._wrap.style.setProperty('--cd-surface',
+          'color-mix(in srgb, ' + BASE_BG + ' 80%, ' + BRAND_COLORS.shell + ')');
+      }
+    }
+
+    _applyDotStyle () {
+      if (!this._wrap) return;
+      const dc  = this.getAttribute('dot-color')        || DEFAULTS.dotColor;
+      const dac = this.getAttribute('dot-active-color') || DEFAULTS.dotActiveColor;
+      this._wrap.style.setProperty('--cd-dot',        dc);
+      this._wrap.style.setProperty('--cd-dot-active', dac);
+    }
+
+    _applyBadgeStyle () {
+      if (!this._wrap) return;
+      const bc  = this.getAttribute('badge-color')       || DEFAULTS.badgeColor;
+      const bfsz = this.getAttribute('badge-font-size');
+      const bff  = this.getAttribute('badge-font-family');
+      this._wrap.style.setProperty('--cd-badge-clr', bc);
+      if (bfsz) this._wrap.style.setProperty('--cd-badge-fsz', bfsz);
+      else       this._wrap.style.removeProperty('--cd-badge-fsz');
+      if (bff)  this._wrap.style.setProperty('--cd-badge-ff',  bff);
+      else       this._wrap.style.removeProperty('--cd-badge-ff');
+    }
+
+    _applyCountdownStyle () {
+      if (!this._wrap) return;
+      const cc   = this.getAttribute('countdown-color');
+      const cfsz = this.getAttribute('countdown-font-size');
+      const cff  = this.getAttribute('countdown-font-family');
+      if (cc)   this._wrap.style.setProperty('--cd-cd-clr',  cc);
+      else       this._wrap.style.removeProperty('--cd-cd-clr');
+      if (cfsz) this._wrap.style.setProperty('--cd-cd-fsz',  cfsz);
+      else       this._wrap.style.removeProperty('--cd-cd-fsz');
+      if (cff)  this._wrap.style.setProperty('--cd-cd-ff',   cff);
+      else       this._wrap.style.removeProperty('--cd-cd-ff');
     }
 
     _isFixed () {
@@ -886,20 +968,42 @@
       const g = parseInt(c.slice(3,5),16);
       const b = parseInt(c.slice(5,7),16);
       const lum = 0.299*r + 0.587*g + 0.114*b;
-      const textCol = lum > 140 ? BASE_BG : BRAND_COLORS.vanilla;
+      const autoText = lum > 140 ? BASE_BG : BRAND_COLORS.vanilla;
       const shade = 'color-mix(in srgb, ' + c + ' 60%, ' + BASE_BG + ')';
 
-      if (this._wrap) this._wrap.style.setProperty('--cd-start-sep', shade);
+      const startBg    = this.getAttribute('start-bg')    || DEFAULTS.startBg    || c;
+      const startColor = this.getAttribute('start-color') || DEFAULTS.startColor || autoText;
+      const startFsz   = this.getAttribute('start-font-size');
+      const startFf    = this.getAttribute('start-font-family');
+
+      if (this._wrap) {
+        this._wrap.style.setProperty('--cd-start-sep', shade);
+        if (startFsz) {
+          this._wrap.style.setProperty('--cd-start-fsz',      startFsz);
+          this._wrap.style.setProperty('--cd-start-icon-fsz', startFsz);
+          this._wrap.style.setProperty('--cd-start-text-fsz', startFsz);
+          this._wrap.style.setProperty('--cd-btn-icon-fsz',   startFsz);
+          this._wrap.style.setProperty('--cd-btn-lbl-fsz',    startFsz);
+        } else {
+          this._wrap.style.removeProperty('--cd-start-fsz');
+          this._wrap.style.removeProperty('--cd-start-icon-fsz');
+          this._wrap.style.removeProperty('--cd-start-text-fsz');
+          this._wrap.style.removeProperty('--cd-btn-icon-fsz');
+          this._wrap.style.removeProperty('--cd-btn-lbl-fsz');
+        }
+        if (startFf) this._wrap.style.setProperty('--cd-start-ff', startFf);
+        else          this._wrap.style.removeProperty('--cd-start-ff');
+      }
 
       if (this._startEl) {
-        this._startEl.style.background = c;
-        this._startEl.style.color      = textCol;
-        this._startEl.style.borderColor = c;
+        this._startEl.style.background  = startBg;
+        this._startEl.style.color       = startColor;
+        this._startEl.style.borderColor = startBg;
       }
 
       if (this._btnStartEl) {
-        this._btnStartEl.style.background = c;
-        this._btnStartEl.style.color      = textCol;
+        this._btnStartEl.style.background = startBg;
+        this._btnStartEl.style.color      = startColor;
       }
     }
 
