@@ -230,7 +230,7 @@
   var CSS_READING = [
     'text-morph,morph-from,morph-to{display:none}',
     'margin-pin,read-pulse,chalk-mark,col-pair{display:none}',
-    'chunk-spot,chunk{display:none}',
+    'chunk-spot,chunk-item{display:none}',
 
     '.urm-morph{display:block}',
     '.urm-morph-body{transition:opacity var(--urm-md,.38s) ease,transform var(--urm-md,.38s) ease}',
@@ -1068,7 +1068,7 @@
 
     var segments = [], chunkMetas = [], palIdx = 0;
     Array.from(el.childNodes).forEach(function (node) {
-      if (node.nodeType === 1 && node.tagName.toLowerCase() === 'chunk') {
+      if (node.nodeType === 1 && node.tagName.toLowerCase() === 'chunk-item') {
         var rawTheme = node.getAttribute('theme') || UR_CFG.chunkTheme;
         var color    = rawTheme ? clr(rawTheme) : _csPalette[palIdx++ % _csPalette.length];
         segments.push({ type: 'chunk', idx: chunkMetas.length });
@@ -1081,7 +1081,7 @@
     });
 
     if (!chunkMetas.length) {
-      console.warn('[ui-reading] <chunk-spot> 內找不到 <chunk>，已略過。');
+      console.warn('[ui-reading] <chunk-spot> 內找不到 <chunk-item>，已略過。');
       return;
     }
 
