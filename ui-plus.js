@@ -316,6 +316,7 @@
     '.urm-cs-subdot:hover{opacity:.82;transform:scale(1.28)}',
     '.urm-cs-subdot.urm-cs-subactive{opacity:1;transform:scale(1.42);outline-color:var(--urm-cs-c)}',
     '.urm-cs-subchunk{transition:opacity var(--urm-cs-dur,.3s) ease,color var(--urm-cs-dur,.3s) ease}',
+    '.urm-cs-chunk.urm-cs-subdimmed .urm-cs-subtext{opacity:var(--urm-cs-subdim,.45)}',
     '.urm-cs-chunk.urm-cs-subdimmed .urm-cs-subchunk:not(.urm-cs-sublit){opacity:var(--urm-cs-subdim,.45)}',
     '.urm-cs-chunk.urm-cs-subdimmed .urm-cs-subchunk.urm-cs-sublit{opacity:1;color:var(--urm-cs-c)}',
     '.urm-cs-extra{line-height:1.5}'
@@ -1000,13 +1001,17 @@
       if (node.nodeType === 1 && node.tagName.toLowerCase() === 'chunk-item') {
         var rawTheme = node.getAttribute('theme') || UR_CFG.chunkTheme;
         var color    = rawTheme ? clr(rawTheme) : _csPalette[palIdx++ % _csPalette.length];
-        var subCount = 0;
-        var processedHtml = node.innerHTML.replace(
-          /<chunk-subitem([^>]*)>([\s\S]*?)<\/chunk-subitem>/gi,
-          function (m, attrs, inner) {
+        var subCount    = 0;
+        var _SIRE       = /(<chunk-subitem[^>]*>[\s\S]*?<\/chunk-subitem>)/gi;
+        var _parts      = node.innerHTML.split(_SIRE);
+        var _hasSub     = _parts.length > 1;
+        var processedHtml = _parts.map(function (part) {
+          if (/^<chunk-subitem/i.test(part)) {
+            var inner = part.replace(/<chunk-subitem[^>]*>([\s\S]*?)<\/chunk-subitem>/i, '$1');
             return '<span class="urm-cs-subchunk" data-sidx="' + (subCount++) + '">' + inner + '</span>';
           }
-        );
+          return (_hasSub && part.trim()) ? '<span class="urm-cs-subtext">' + part + '</span>' : part;
+        }).join('');
         segments.push({ type: 'chunk', idx: chunkMetas.length });
         chunkMetas.push({
           html:     processedHtml,
