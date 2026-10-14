@@ -102,62 +102,69 @@ sentence-build { display: block; }
       const e = this;
       this.cfg = {
         /* data */
-        src          : sa(e,'src',''),
-        lang         : sa(e,'lang','en'),
+        src       : sa(e,'src',''),
+        lang      : sa(e,'lang','en'),
         /* pool (Option A) */
-        poolSrc      : sa(e,'pool-src',''),
-        poolSelect   : sa(e,'pool-select','random'),   /* random | sequence */
-        reshuffleRst : ba(e,'reshuffle-on-reset',true),
-        showProg     : ba(e,'show-progress',false),
+        poolSrc   : sa(e,'pool-src',''),
+        poolSelect: sa(e,'pool-select','random'),   /* random | sequence */
+        showProg  : ba(e,'show-progress',false),
         /* interaction */
-        mode         : sa(e,'mode','click'),            /* click | drag | both */
-        shuffle      : ba(e,'shuffle',true),
-        allowRpt     : ba(e,'allow-repeat',false),
-        autoChk      : ba(e,'auto-check',false),
-        chkMode      : sa(e,'check-mode','submit'),     /* submit | immediate */
-        maxAtt       : na(e,'max-attempts',3),
+        mode      : sa(e,'mode','click'),            /* click | drag | both */
+        shuffle   : ba(e,'shuffle',true),
+        allowRpt  : ba(e,'allow-repeat',false),
+        autoChk   : ba(e,'auto-check',false),
+        chkMode   : sa(e,'check-mode','submit'),     /* submit | immediate */
+        maxAtt    : na(e,'max-attempts',3),
         /* feedback */
-        showLbls     : ba(e,'show-labels',true),
-        msgOk        : sa(e,'msg-correct','正確！'),
-        msgBad       : sa(e,'msg-wrong','再試一次'),
-        msgAns       : sa(e,'msg-answered',''),
+        showLbls  : ba(e,'show-labels',true),
+        msgOk     : sa(e,'msg-correct','正確！'),
+        msgBad    : sa(e,'msg-wrong','再試一次'),
+        msgAns    : sa(e,'msg-answered',''),
         /* buttons */
-        btnChk       : sa(e,'btn-check','確認'),
-        btnRst       : sa(e,'btn-reset','重置'),
-        btnHnt       : sa(e,'btn-hint',''),
-        btnAns       : sa(e,'btn-answer','看答案'),
-        hintTxt      : sa(e,'hint-text',''),
+        btnChk    : sa(e,'btn-check','確認'),
+        btnRst    : sa(e,'btn-reset','重置'),
+        btnHnt    : sa(e,'btn-hint',''),
+        btnAns    : sa(e,'btn-answer','看答案'),
+        hintTxt   : sa(e,'hint-text',''),
+        /* next-question button (pool mode) */
+        btnNext   : sa(e,'btn-next',''),             /* auto-set below if pool mode */
+        nextOn    : sa(e,'next-on','done'),          /* done | always */
         /* visual */
-        theme        : sa(e,'theme','sky'),
-        chkStyle     : sa(e,'chunk-style','pill'),      /* pill | box | tag */
-        chkFS        : sa(e,'chunk-font-size','1rem'),
-        chkPad       : sa(e,'chunk-padding','2px 10px'),
-        lblFS        : sa(e,'label-font-size','0.75rem'),
-        gap          : sa(e,'gap','6px'),
-        margin       : sa(e,'margin','1px'),
-        padding      : sa(e,'padding','6px 9px'),
-        poolDir      : sa(e,'pool-direction','row'),
-        zoneDir      : sa(e,'zone-direction','row'),
-        zoneMinH     : sa(e,'zone-min-height','44px'),
-        zBorder      : sa(e,'zone-border','1px dashed'),
-        divider      : ba(e,'divider',true),
-        lPool        : sa(e,'label-pool',''),
-        lZone        : sa(e,'label-zone',''),
-        showCnt      : ba(e,'show-count',false),
-        animDur      : na(e,'anim-duration',150),
-        showRst      : ba(e,'show-reset',true),
-        rstIcon      : sa(e,'reset-icon','↺'),
-        rstSz        : sa(e,'reset-icon-size','0.85rem'),
+        theme     : sa(e,'theme','sky'),
+        chkStyle  : sa(e,'chunk-style','pill'),      /* pill | box | tag */
+        chkFS     : sa(e,'chunk-font-size','1rem'),
+        chkPad    : sa(e,'chunk-padding','2px 10px'),
+        lblFS     : sa(e,'label-font-size','0.75rem'),
+        gap       : sa(e,'gap','6px'),
+        margin    : sa(e,'margin','1px'),
+        padding   : sa(e,'padding','6px 9px'),
+        poolDir   : sa(e,'pool-direction','row'),
+        zoneDir   : sa(e,'zone-direction','row'),
+        zoneMinH  : sa(e,'zone-min-height','44px'),
+        zBorder   : sa(e,'zone-border','1px dashed'),
+        divider   : ba(e,'divider',true),
+        lPool     : sa(e,'label-pool',''),
+        lZone     : sa(e,'label-zone',''),
+        showCnt   : ba(e,'show-count',false),
+        animDur   : na(e,'anim-duration',150),
+        showRst   : ba(e,'show-reset',true),
+        rstIcon   : sa(e,'reset-icon','↺'),
+        rstSz     : sa(e,'reset-icon-size','0.85rem'),
         /* timer */
-        timer        : sa(e,'timer',''),
-        tWarn        : na(e,'timer-warn',10),
-        tAction      : sa(e,'timer-action','lock'),     /* lock | submit | answer */
-        tLabel       : sa(e,'timer-label',''),
+        timer     : sa(e,'timer',''),
+        tWarn     : na(e,'timer-warn',10),
+        tAction   : sa(e,'timer-action','lock'),     /* lock | submit | answer */
+        tLabel    : sa(e,'timer-label',''),
         /* shake-wrong: always true — not an attribute */
         /* timer-position: always bottom — not an attribute */
       };
 
-      /* save element-level hint so per-question hints can fall back to it */
+      /* In pool mode, default btn-next to "下一題" unless explicitly overridden */
+      if (this.cfg.poolSrc && !e.hasAttribute('btn-next')) {
+        this.cfg.btnNext = '下一題';
+      }
+
+      /* Save element-level hint so per-question hints can fall back to it */
       this._baseHint = this.cfg.hintTxt;
 
       this._parse();
@@ -176,7 +183,6 @@ sentence-build { display: block; }
 
     _parse() {
       if (this.cfg.poolSrc) {
-        /* ── Pool mode (Option A) ── */
         this._qPool     = [];
         this._qCurrent  = -1;
         this._qRoundNum = 0;
@@ -200,7 +206,7 @@ sentence-build { display: block; }
       this._ans = this._chks.filter(c=>!c.dec).map(c=>c.idx);
     }
 
-    /* ── Pool (Option A) ── */
+    /* ── Pool ── */
 
     _parsePool() {
       const cont = document.querySelector(this.cfg.poolSrc);
@@ -212,7 +218,6 @@ sentence-build { display: block; }
           th:sa(el,'theme',''),    fs:sa(el,'font-size',''),
           fix:ba(el,'fixed',false), dec:ba(el,'decoy',false),
         })),
-        /* per-question hint — optional; undefined means fall back to element-level hint */
         hint: div.hasAttribute('data-hint') ? div.getAttribute('data-hint') : undefined,
       }));
 
@@ -232,16 +237,15 @@ sentence-build { display: block; }
           [this._qQueue[i], this._qQueue[j]] = [this._qQueue[j], this._qQueue[i]];
         }
       }
-      /* sequence mode: queue stays 0,1,2,... */
       this._qPos = 0;
     }
 
     _pickQ() {
-      /* wrap around: reshuffle queue when exhausted */
+      /* wrap: reshuffle when queue is exhausted */
       if (this._qPos >= this._qQueue.length) {
         const last = this._qCurrent;
         this._initQueue();
-        /* anti-repeat: ensure first item of new round ≠ last item of previous */
+        /* anti-repeat: first of new round must not equal last of previous round */
         if (this.cfg.poolSelect === 'random' &&
             this._qPool.length > 1 &&
             this._qQueue[0] === last) {
@@ -250,19 +254,15 @@ sentence-build { display: block; }
         }
       }
       this._qCurrent  = this._qQueue[this._qPos++];
-      this._qRoundNum = this._qPos; /* 1-based position in current round */
+      this._qRoundNum = this._qPos;
     }
 
     _loadQ(idx) {
       const q = this._qPool[idx];
-      /* shallow-copy each chunk object so mutations don't affect the pool */
       this._chks   = q.chunks.map(c => ({...c}));
       this._ans    = this._chks.filter(c=>!c.dec).map(c=>c.idx);
-      /* per-question hint overrides element-level hint; undefined → fall back */
       this.cfg.hintTxt = q.hint !== undefined ? q.hint : this._baseHint;
     }
-
-    /* ── Pool init ── */
 
     _initP() {
       const all = this._chks.map((_,i) => i);
@@ -340,7 +340,7 @@ sentence-build { display: block; }
       if (this.cfg.showRst) {
         const rib = this._mk('button','sb-rib');
         rib.innerHTML = this.cfg.rstIcon;
-        rib.title = '重置';
+        rib.title = '重置本題';
         rib.style.fontSize = this.cfg.rstSz;
         rib.addEventListener('click', () => this._rst());
         zh.appendChild(rib);
@@ -391,8 +391,7 @@ sentence-build { display: block; }
       if (!this._eProg || !this._qPool) return;
       const n = this._qPool.length;
       this._eProgTxt.textContent = `第 ${this._qRoundNum} / ${n} 題`;
-      const pct = n > 0 ? (this._qRoundNum / n) * 100 : 0;
-      this._eProgFill.style.width = `${pct}%`;
+      this._eProgFill.style.width = `${(this._qRoundNum / n) * 100}%`;
     }
 
     _mk(tag, cls) {
@@ -452,7 +451,7 @@ sentence-build { display: block; }
 
     _rB() {
       this._eBs.innerHTML = '';
-      this._eBChk = null; this._eBns = null;
+      this._eBChk = null; this._eBns = null; this._eBNext = null;
       const tc = clr(this.cfg.theme), fgc = fg(this.cfg.theme), gh = '#252625';
 
       const mk = (txt, bg, co) => {
@@ -462,26 +461,39 @@ sentence-build { display: block; }
         return b;
       };
 
+      /* 確認 */
       if (this.cfg.btnChk) {
         const b = mk(this.cfg.btnChk, tc, fgc);
         b.addEventListener('click', () => this._chk());
         this._eBChk = b; this._eBs.appendChild(b);
       }
+      /* 重置（當前題目，不換題） */
       if (this.cfg.btnRst) {
         const b = mk(this.cfg.btnRst, gh, '#C6C7BD');
         b.addEventListener('click', () => this._rst());
         this._eBs.appendChild(b);
       }
+      /* 提示 */
       if (this.cfg.btnHnt && this.cfg.hintTxt) {
         const b = mk(this.cfg.btnHnt, gh, '#C6C7BD');
         b.addEventListener('click', () => this._tHnt());
         this._eBs.appendChild(b);
       }
+      /* 看答案（達 max-attempts 後才顯示） */
       if (this.cfg.btnAns) {
         const b = mk(this.cfg.btnAns, clr('warning'), '#fff');
         b.style.display = 'none';
         b.addEventListener('click', () => this._sAns());
         this._eBns = b; this._eBs.appendChild(b);
+      }
+      /* 下一題（pool 模式專用）
+         next-on="done"   → 隱藏，答題完成後才顯示
+         next-on="always" → 永遠可見，學生可自行跳題 */
+      if (this.cfg.poolSrc && this.cfg.btnNext) {
+        const b = mk(this.cfg.btnNext, clr('safe'), fg('safe'));
+        if (this.cfg.nextOn === 'done' && !this._st.done) b.style.display = 'none';
+        b.addEventListener('click', () => this._nextQ());
+        this._eBNext = b; this._eBs.appendChild(b);
       }
     }
 
@@ -611,10 +623,11 @@ sentence-build { display: block; }
         this._mark(true);
         if (this.cfg.showLbls) this._rZ();
         if (this._eBChk) this._eBChk.disabled = true;
+        this._showNext();
       } else {
         this._fb(this.cfg.msgBad, 'warning');
         this._mark(false);
-        this._shk(); /* shake-wrong is always enabled */
+        this._shk();
         if (this._st.att >= this.cfg.maxAtt && this._eBns)
           this._eBns.style.display = '';
       }
@@ -645,6 +658,12 @@ sentence-build { display: block; }
 
     _fb(msg, col) { this._eFb.style.color = clr(col); this._eFb.textContent = msg; }
 
+    /* reveal "下一題" button when nextOn="done" and question is completed */
+    _showNext() {
+      if (this._eBNext && this.cfg.nextOn === 'done')
+        this._eBNext.style.display = '';
+    }
+
     _tHnt() {
       if (this._hEl) { this._hEl.remove(); this._hEl = null; return; }
       const h = this._mk('div','sb-hint');
@@ -660,27 +679,37 @@ sentence-build { display: block; }
       this._rP(); this._rZ(); this._mark(true);
       if (this.cfg.msgAns) this._fb(this.cfg.msgAns, 'shell');
       if (this._eBChk) this._eBChk.disabled = true;
-      if (this._eBns) this._eBns.style.display = 'none';
+      if (this._eBns)  this._eBns.style.display = 'none';
+      this._showNext();
     }
 
-    /* ── Reset ── */
-
+    /* ── Reset（重置當前題目，不換題） ── */
     _rst() {
       if (this._iv) clearInterval(this._iv);
-
-      /* pool mode: advance to next question */
-      if (this.cfg.poolSrc && this._qPool.length > 0 && this.cfg.reshuffleRst) {
-        this._pickQ();
-        this._loadQ(this._qCurrent);
-      }
-
+      /* reshuffle chunks of the CURRENT question — question does NOT advance */
       this._initP();
-      this._st = { att:0, done:false, locked:false };
+      this._st  = { att:0, done:false, locked:false };
       this._rem = this._tot;
       this._eFb.textContent = '';
       if (this._hEl) { this._hEl.remove(); this._hEl = null; }
       this._rP(); this._rZ(); this._upC(); this._rB();
-      this._upProg(); /* no-op if not pool mode */
+      /* _upProg: no change — still on the same question */
+      if (this.cfg.timer) { this._updT(); this._startT(); }
+    }
+
+    /* ── Next question（換題，pool 模式） ── */
+    _nextQ() {
+      if (!this.cfg.poolSrc || !this._qPool || this._qPool.length === 0) return;
+      if (this._iv) clearInterval(this._iv);
+      this._pickQ();
+      this._loadQ(this._qCurrent);
+      this._initP();
+      this._st  = { att:0, done:false, locked:false };
+      this._rem = this._tot;
+      this._eFb.textContent = '';
+      if (this._hEl) { this._hEl.remove(); this._hEl = null; }
+      this._rP(); this._rZ(); this._upC(); this._rB();
+      this._upProg();
       if (this.cfg.timer) { this._updT(); this._startT(); }
     }
 
