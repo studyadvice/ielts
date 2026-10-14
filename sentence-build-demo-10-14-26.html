@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sentence-build · Demo 10-14-26</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+:root { font-size: 18px; }
+body {
+  background: #0C0D0C; color: #C6C7BD;
+  font-family: 'Inter','Noto Sans TC',system-ui;
+  min-width: 1080px; padding: 28px 36px; line-height: 1.5;
+}
+.page-title { color: #82C8E5; font-size: 1.55rem; font-weight: 700; margin-bottom: 2px; }
+.page-sub   { color: #9a9b96; font-size: 0.8rem; margin-bottom: 32px; letter-spacing: 0.05em; }
+
+.section-head {
+  color: #9a9b96; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  margin: 36px 0 14px; border-bottom: 1px solid #2a2b2a; padding-bottom: 6px;
+}
+
+.demo-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.demo-block { background: #111211; border-radius: 8px; padding: 18px 20px;
+              border: 1px solid #2a2b2a; }
+.demo-block.full { grid-column: 1 / -1; }
+
+.demo-badge { display: inline-block; font-size: 0.68rem; padding: 2px 9px;
+              border-radius: 3px; margin-bottom: 8px; letter-spacing: 0.07em;
+              font-weight: 600; text-transform: uppercase; }
+.demo-title { font-size: 1rem; font-weight: 600; color: #C6C7BD; margin-bottom: 4px; }
+.demo-desc  { font-size: 0.8rem; color: #9a9b96; margin-bottom: 14px; line-height: 1.4; }
+.demo-desc code {
+  background: #1e1f1e; color: #B3DE73; padding: 1px 5px;
+  border-radius: 3px; font-size: 0.76rem;
+}
+
+.pool-note {
+  font-size: 0.78rem; color: #4171BF; background: #111d2b;
+  border-left: 3px solid #4171BF; padding: 6px 10px;
+  border-radius: 0 4px 4px 0; margin-bottom: 12px; line-height: 1.4;
+}
+.pool-note code { color: #82C8E5; background: none; font-size: 0.76rem; }
+
+.ref-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin-top:8px; }
+.ref-table th { background:#1e1f1e; color:#82C8E5; padding:5px 10px;
+                text-align:left; font-weight:600; border-bottom:1px solid #2e2f2e; }
+.ref-table td { padding:4px 10px; border-bottom:1px solid #222322;
+                color:#C6C7BD; vertical-align:top; }
+.ref-table tr:last-child td { border-bottom:none; }
+.ref-table td:first-child { color:#B3DE73; font-family:monospace; white-space:nowrap; }
+.ref-table td:nth-child(2){ color:#9a9b96; }
+.ref-table td:nth-child(3){ color:#E3D322; font-family:monospace; white-space:nowrap; }
+.ref-table tr.new-row td  { background: #141f14; }
+.ref-table tr.new-row td:first-child::after {
+  content: ' ★'; color: #B3DE73; font-size: 0.65rem;
+}
+</style>
+</head>
+<body>
+
+<div class="page-title">⟨sentence-build⟩ 語塊排列練習元件</div>
+<div class="page-sub">sentence-build.js · Demo 10-14-26</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1 — 既有六種示範
+     ═══════════════════════════════════════════════ -->
+<div class="section-head">既有功能示範</div>
+<div class="demo-grid">
+
+  <!-- ① 點選 · sky -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#82C8E5;color:#0C0D0C;">① 點選 · sky</div>
+    <div class="demo-title">基本點選模式</div>
+    <div class="demo-desc">
+      點擊語塊加入答題區，再點可移回。<br>
+      <code>mode="click"</code> <code>show-count</code>
+    </div>
+    <sentence-build theme="sky" label-pool="語塊庫" label-zone="組合你的句子"
+      show-count msg-answered="語法標籤已顯示">
+      <chunk-item label="主詞">Cities</chunk-item>
+      <chunk-item label="現在分詞片語（後位修飾）">investing in public transport</chunk-item>
+      <chunk-item label="頻率副詞">often</chunk-item>
+      <chunk-item label="動詞">see</chunk-item>
+      <chunk-item label="受詞">a sharp drop in air pollution</chunk-item>
+    </sentence-build>
+  </div>
+
+  <!-- ② 拖曳 · ocean · box -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#1CCAE8;color:#0C0D0C;">② 拖曳 · ocean</div>
+    <div class="demo-title">拖曳 + 方塊樣式 + 提示</div>
+    <div class="demo-desc">
+      拖曳至答題區，可在區內調整順序，或拖回語塊庫。<br>
+      <code>mode="drag"</code> <code>chunk-style="box"</code>
+    </div>
+    <sentence-build theme="ocean" mode="drag" chunk-style="box"
+      chunk-padding="3px 14px" zone-min-height="52px"
+      btn-hint="提示" hint-text="S（含後位修飾）+ be + 主語補語">
+      <chunk-item label="主詞">The major challenge</chunk-item>
+      <chunk-item label="現在分詞片語（後位修飾）">facing small businesses</chunk-item>
+      <chunk-item label="連綴動詞">is</chunk-item>
+      <chunk-item label="主語補語（名詞片語）">the rising cost of raw materials imported from overseas</chunk-item>
+    </sentence-build>
+  </div>
+
+  <!-- ③ 計時 · salmon -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#E5C3B3;color:#0C0D0C;">③ 計時 · salmon</div>
+    <div class="demo-title">倒數 30 秒，到期自動送出</div>
+    <div class="demo-desc">
+      <code>timer="30"</code> <code>timer-action="submit"</code> <code>timer-warn="8"</code>
+    </div>
+    <sentence-build theme="salmon" timer="30" timer-warn="8"
+      timer-action="submit" timer-label="剩餘" max-attempts="2"
+      msg-correct="時間內完成！" msg-wrong="注意後位修飾的位置">
+      <chunk-item label="主詞">Many employees</chunk-item>
+      <chunk-item label="現在分詞片語（後位修飾）">working from home</chunk-item>
+      <chunk-item label="動詞（SVOC）">find</chunk-item>
+      <chunk-item label="受詞">the lack of clear boundaries between work and personal life</chunk-item>
+      <chunk-item label="受詞補語（形容詞）">exhausting</chunk-item>
+    </sentence-build>
+  </div>
+
+  <!-- ④ 立即回饋 + decoy · special -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#B3DE73;color:#0C0D0C;">④ 立即回饋 · special</div>
+    <div class="demo-title">立即回饋 + 干擾選項</div>
+    <div class="demo-desc">
+      每放入一塊即時標色。<code>check-mode="immediate"</code> + <code>decoy</code>
+    </div>
+    <sentence-build theme="special" check-mode="immediate" chunk-padding="3px 12px"
+      btn-hint="提示"
+      hint-text="&lt;b&gt;from rural areas&lt;/b&gt; 是介系詞片語，做後位修飾">
+      <chunk-item label="主詞">A growing number of young people</chunk-item>
+      <chunk-item label="介系詞片語（後位修飾）">from rural areas</chunk-item>
+      <chunk-item label="動詞片語">migrate to major cities</chunk-item>
+      <chunk-item label="目的副詞片語">in search of better job opportunities</chunk-item>
+      <chunk-item decoy>have migrated to cities</chunk-item>
+      <chunk-item decoy>to rural areas</chunk-item>
+    </sentence-build>
+  </div>
+
+  <!-- ⑤ 自動驗證 · teal · tag · both -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#0DA591;color:#C6C7BD;">⑤ 自動驗證 · teal</div>
+    <div class="demo-title">全部放入即自動驗證 + 標籤樣式</div>
+    <div class="demo-desc">
+      <code>auto-check</code> <code>mode="both"</code> <code>chunk-style="tag"</code>
+    </div>
+    <sentence-build theme="teal" mode="both" auto-check chunk-style="tag"
+      chunk-padding="4px 10px 4px 7px" zone-min-height="52px"
+      show-count msg-correct="完美！" msg-wrong="順序不對，試著重新排列">
+      <chunk-item label="副詞子句（時間）">When I landed my first paid job,</chunk-item>
+      <chunk-item label="主詞">my parents</chunk-item>
+      <chunk-item label="動詞片語（否定）">couldn't stop smiling</chunk-item>
+    </sentence-build>
+  </div>
+
+  <!-- ⑥ 計時鎖定 · indigo -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#7849C9;color:#C6C7BD;">⑥ 鎖定 · indigo</div>
+    <div class="demo-title">倒數歸零鎖定，答錯一次顯示「看答案」</div>
+    <div class="demo-desc">
+      <code>timer-action="lock"</code> <code>max-attempts="1"</code>
+    </div>
+    <sentence-build theme="indigo" timer="20" timer-warn="6"
+      timer-action="lock" timer-label="倒數" max-attempts="1"
+      msg-answered="以上為正確排列" show-count>
+      <chunk-item label="對比副詞片語">Unlike their colleagues with long daily commutes,</chunk-item>
+      <chunk-item label="主詞">employees</chunk-item>
+      <chunk-item label="現在分詞片語（後位修飾）">working from home and independently managing their own schedules</chunk-item>
+      <chunk-item label="動詞">report</chunk-item>
+      <chunk-item label="that 子句（受詞）">that this has had a more positive than negative impact on their work-life balance</chunk-item>
+    </sentence-build>
+  </div>
+
+</div><!-- /demo-grid -->
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2 — Pool 亂數題庫模式
+     ═══════════════════════════════════════════════ -->
+<div class="section-head">新功能：pool-src 亂數題庫模式</div>
+
+<div class="pool-note">
+  題庫定義在頁面底部的隱藏 <code>&lt;div&gt;</code> 容器內。每個 <code>&lt;div data-item&gt;</code> 是一道題。<br>
+  按下 <b>↺ 重置</b> 即從題庫抽下一題，所有語塊重新打亂，主題色固定不變。
+</div>
+
+<div class="demo-grid">
+
+  <!-- ⑦ Pool 亂數 · sky · 形容詞片語題組 -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#82C8E5;color:#0C0D0C;">⑦ Pool 亂數 · sky</div>
+    <div class="demo-title">形容詞語塊題組（5 題，亂數不重複）</div>
+    <div class="demo-desc">
+      <code>pool-src="#pool-adj"</code> <code>pool-select="random"</code><br>
+      <code>show-progress</code> <code>reshuffle-on-reset</code>（預設 true）<br>
+      每輪 5 題不重複；新一輪開始時防止重複最後一題。
+    </div>
+    <sentence-build
+      pool-src="#pool-adj"
+      pool-select="random"
+      show-progress
+      theme="sky"
+      label-pool="語塊庫"
+      label-zone="組合你的句子"
+      show-count
+      btn-hint="提示"
+      msg-answered="以上為正確排列">
+    </sentence-build>
+  </div>
+
+  <!-- ⑧ Pool 循序 · ocean · 時態題組 + 每題獨立提示 -->
+  <div class="demo-block">
+    <div class="demo-badge" style="background:#1CCAE8;color:#0C0D0C;">⑧ Pool 循序 · ocean</div>
+    <div class="demo-title">時態題組（3 題，按序 + 每題各自提示）</div>
+    <div class="demo-desc">
+      <code>pool-src="#pool-tense"</code> <code>pool-select="sequence"</code><br>
+      每題可在 <code>data-hint</code> 帶獨立提示；無 <code>data-hint</code> 則顯示元件層提示。
+    </div>
+    <sentence-build
+      pool-src="#pool-tense"
+      pool-select="sequence"
+      show-progress
+      theme="ocean"
+      mode="drag"
+      chunk-style="box"
+      chunk-padding="3px 14px"
+      zone-min-height="52px"
+      btn-hint="提示"
+      hint-text="（此題無額外提示）"
+      show-count
+      max-attempts="2">
+    </sentence-build>
+  </div>
+
+</div><!-- /demo-grid -->
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3 — 屬性速查（含新屬性）
+     ═══════════════════════════════════════════════ -->
+<div class="section-head">屬性速查（★ 為本次新增）</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+  <div>
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;">⟨sentence-build⟩ — 資料 / 題庫</div>
+    <table class="ref-table">
+      <tr><th>屬性</th><th>型別／值</th><th>預設</th></tr>
+      <tr><td>src</td><td>CSS selector（單題外部來源）</td><td>—</td></tr>
+      <tr class="new-row"><td>pool-src</td><td>CSS selector（題庫容器）</td><td>—</td></tr>
+      <tr class="new-row"><td>pool-select</td><td>random / sequence</td><td>random</td></tr>
+      <tr class="new-row"><td>reshuffle-on-reset</td><td>boolean</td><td>true</td></tr>
+      <tr class="new-row"><td>show-progress</td><td>boolean</td><td>false</td></tr>
+    </table>
+
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">⟨sentence-build⟩ — 互動 / 回饋</div>
+    <table class="ref-table">
+      <tr><th>屬性</th><th>型別／值</th><th>預設</th></tr>
+      <tr><td>lang</td><td>en / zh / mixed</td><td>en</td></tr>
+      <tr><td>mode</td><td>click / drag / both</td><td>click</td></tr>
+      <tr><td>shuffle</td><td>boolean</td><td>true</td></tr>
+      <tr><td>allow-repeat</td><td>boolean</td><td>false</td></tr>
+      <tr><td>auto-check</td><td>boolean</td><td>false</td></tr>
+      <tr><td>check-mode</td><td>submit / immediate</td><td>submit</td></tr>
+      <tr><td>max-attempts</td><td>number</td><td>3</td></tr>
+      <tr><td>show-labels</td><td>boolean</td><td>true</td></tr>
+      <tr><td>msg-correct</td><td>string</td><td>正確！</td></tr>
+      <tr><td>msg-wrong</td><td>string</td><td>再試一次</td></tr>
+      <tr><td>msg-answered</td><td>string</td><td>""</td></tr>
+      <tr><td>btn-check</td><td>string（空=隱藏）</td><td>確認</td></tr>
+      <tr><td>btn-reset</td><td>string（空=隱藏）</td><td>重置</td></tr>
+      <tr><td>btn-hint</td><td>string（空=隱藏）</td><td>""</td></tr>
+      <tr><td>btn-answer</td><td>string（空=隱藏）</td><td>看答案</td></tr>
+      <tr><td>hint-text</td><td>string / HTML（元件層預設）</td><td>""</td></tr>
+    </table>
+
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">⟨sentence-build⟩ — 樣式</div>
+    <table class="ref-table">
+      <tr><th>屬性</th><th>型別／值</th><th>預設</th></tr>
+      <tr><td>theme</td><td>palette keyword / hex</td><td>sky</td></tr>
+      <tr><td>chunk-style</td><td>pill / box / tag</td><td>pill</td></tr>
+      <tr><td>chunk-font-size</td><td>rem</td><td>1rem</td></tr>
+      <tr><td>chunk-padding</td><td>CSS shorthand</td><td>2px 10px</td></tr>
+      <tr><td>label-font-size</td><td>rem</td><td>0.75rem</td></tr>
+      <tr><td>gap</td><td>CSS value</td><td>6px</td></tr>
+      <tr><td>margin</td><td>CSS shorthand</td><td>1px</td></tr>
+      <tr><td>padding</td><td>CSS shorthand</td><td>6px 9px</td></tr>
+      <tr><td>pool-direction</td><td>row / column</td><td>row</td></tr>
+      <tr><td>zone-direction</td><td>row / column</td><td>row</td></tr>
+      <tr><td>zone-min-height</td><td>CSS value</td><td>44px</td></tr>
+      <tr><td>zone-border</td><td>CSS border（不含色）</td><td>1px dashed</td></tr>
+      <tr><td>divider</td><td>boolean</td><td>true</td></tr>
+      <tr><td>label-pool</td><td>string（空=隱藏）</td><td>""</td></tr>
+      <tr><td>label-zone</td><td>string（空=隱藏）</td><td>""</td></tr>
+      <tr><td>show-count</td><td>boolean</td><td>false</td></tr>
+      <tr><td>anim-duration</td><td>ms</td><td>150</td></tr>
+      <tr><td>show-reset</td><td>boolean（小↺鈕）</td><td>true</td></tr>
+      <tr><td>reset-icon</td><td>字元 / HTML</td><td>↺</td></tr>
+      <tr><td>reset-icon-size</td><td>CSS value</td><td>0.85rem</td></tr>
+      <tr><td>timer</td><td>秒數（空=不啟用）</td><td>""</td></tr>
+      <tr><td>timer-warn</td><td>number</td><td>10</td></tr>
+      <tr><td>timer-action</td><td>lock / submit / answer</td><td>lock</td></tr>
+      <tr><td>timer-label</td><td>string</td><td>""</td></tr>
+    </table>
+    <div style="font-size:0.72rem;color:#9a9b96;margin-top:6px;">
+      ✦ shake-wrong 恆啟用，不開放設定 ／ timer-position 恆為 bottom，不開放設定
+    </div>
+  </div>
+
+  <div>
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;">⟨chunk-item⟩</div>
+    <table class="ref-table">
+      <tr><th>屬性</th><th>型別／值</th><th>預設</th></tr>
+      <tr><td>label</td><td>string</td><td>""</td></tr>
+      <tr><td>theme</td><td>palette keyword / hex</td><td>""（繼承父）</td></tr>
+      <tr><td>font-size</td><td>rem</td><td>""（繼承父）</td></tr>
+      <tr><td>fixed</td><td>boolean</td><td>false</td></tr>
+      <tr><td>decoy</td><td>boolean</td><td>false</td></tr>
+    </table>
+
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">
+      ⟨div data-item⟩（題庫子元素）
+    </div>
+    <table class="ref-table">
+      <tr><th>屬性</th><th>說明</th><th>預設</th></tr>
+      <tr class="new-row"><td>data-item</td><td>必填，宣告為一道題</td><td>—</td></tr>
+      <tr class="new-row"><td>data-hint</td><td>覆蓋元件層 hint-text；省略→使用元件層</td><td>—</td></tr>
+    </table>
+
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">
+      Pool 模式 HTML 結構
+    </div>
+    <pre style="background:#1a1b1a;color:#B3DE73;font-size:0.72rem;padding:10px 14px;border-radius:6px;line-height:1.6;overflow-x:auto;">&lt;!-- 題庫容器（可放頁面任何位置） --&gt;
+&lt;div id="my-pool" hidden&gt;
+
+  &lt;div data-item&gt;
+    &lt;chunk-item label="主詞"&gt;Cities&lt;/chunk-item&gt;
+    &lt;chunk-item label="後位修飾"&gt;investing in...&lt;/chunk-item&gt;
+    &lt;chunk-item label="動詞片語"&gt;often see...&lt;/chunk-item&gt;
+  &lt;/div&gt;
+
+  &lt;div data-item data-hint="這題的提示文字"&gt;
+    &lt;chunk-item label="主詞"&gt;Technology&lt;/chunk-item&gt;
+    &lt;chunk-item decoy&gt;had changed&lt;/chunk-item&gt;
+    &lt;chunk-item label="現完動詞"&gt;has changed&lt;/chunk-item&gt;
+    &lt;chunk-item label="受詞"&gt;the way we work&lt;/chunk-item&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;!-- 元件本身無需子元素 --&gt;
+&lt;sentence-build
+  pool-src="#my-pool"
+  pool-select="random"
+  show-progress
+  theme="sky"&gt;
+&lt;/sentence-build&gt;</pre>
+
+    <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">亂數防重複機制</div>
+    <div style="font-size:0.78rem;color:#9a9b96;line-height:1.6;">
+      每輪以 Fisher-Yates 洗牌建立完整佇列，確保每道題在一輪內只出現一次。<br>
+      輪次交界時，若新輪第一題與上一輪最後一題相同，自動與佇列中另一題對調，避免連續重複。<br>
+      <code>pool-select="sequence"</code> 時佇列不洗牌，按宣告順序循環。
+    </div>
+  </div>
+
+</div><!-- /attr grid -->
+
+
+<!-- ═══════════════════════════════════════════════
+     隱藏題庫資料
+     ═══════════════════════════════════════════════ -->
+
+<!-- Pool ⑦：形容詞語塊（後位修飾）5 題 -->
+<div id="pool-adj" hidden>
+
+  <div data-item data-hint="句型：S（Cities）+ 後位修飾 + 副詞 + V + O">
+    <chunk-item label="主詞">Cities</chunk-item>
+    <chunk-item label="現在分詞片語（後位修飾）">investing in public transport</chunk-item>
+    <chunk-item label="頻率副詞">often</chunk-item>
+    <chunk-item label="動詞片語">see a sharp drop in air pollution</chunk-item>
+  </div>
+
+  <div data-item data-hint="句型：S（The major challenge）+ 後位修飾 + be + 主語補語">
+    <chunk-item label="主詞">The major challenge</chunk-item>
+    <chunk-item label="現在分詞片語（後位修飾）">facing small businesses</chunk-item>
+    <chunk-item label="連綴動詞">is</chunk-item>
+    <chunk-item label="主語補語（名詞片語）">the rising cost of raw materials imported from overseas</chunk-item>
+  </div>
+
+  <div data-item data-hint="句型：S + 後位修飾 + V + O + OC；注意 find 後接受詞補語">
+    <chunk-item label="主詞">Many employees</chunk-item>
+    <chunk-item label="現在分詞片語（後位修飾）">working from home</chunk-item>
+    <chunk-item label="動詞（SVOC）">find</chunk-item>
+    <chunk-item label="受詞">the lack of clear boundaries between work and personal life</chunk-item>
+    <chunk-item label="受詞補語（形容詞）">exhausting</chunk-item>
+  </div>
+
+  <div data-item data-hint="介系詞片語 from rural areas 做後位修飾，緊接主詞">
+    <chunk-item label="主詞">A growing number of young people</chunk-item>
+    <chunk-item label="介系詞片語（後位修飾）">from rural areas</chunk-item>
+    <chunk-item label="動詞片語">migrate to major cities</chunk-item>
+    <chunk-item label="目的副詞片語">in search of better job opportunities</chunk-item>
+  </div>
+
+  <div data-item data-hint="unlike 引導對比副詞片語置句首，主詞 employees 後接長串後位修飾">
+    <chunk-item label="對比副詞片語">Unlike their colleagues with long daily commutes,</chunk-item>
+    <chunk-item label="主詞">employees</chunk-item>
+    <chunk-item label="現在分詞片語（後位修飾）">working from home and independently managing their own schedules</chunk-item>
+    <chunk-item label="動詞">report</chunk-item>
+    <chunk-item label="that 子句（受詞）">that this has had a more positive than negative impact on their work-life balance</chunk-item>
+  </div>
+
+</div>
+
+<!-- Pool ⑧：時態 3 題（每題各自提示） -->
+<div id="pool-tense" hidden>
+
+  <div data-item data-hint="現在完成式 has changed：動作發生於過去，對現在有影響；the way we work 是關係子句後位修飾 the way">
+    <chunk-item label="主詞">Technology</chunk-item>
+    <chunk-item label="現在完成式動詞">has changed</chunk-item>
+    <chunk-item label="受詞（先行詞）">the way</chunk-item>
+    <chunk-item label="關係子句（後位修飾）">we work</chunk-item>
+    <chunk-item decoy>has been changing</chunk-item>
+  </div>
+
+  <div data-item data-hint="while 引導進行式（背景動作），主句用過去簡單式（突發事件）打斷它">
+    <chunk-item label="主要子句（突發事件）">It started to rain</chunk-item>
+    <chunk-item label="連接詞">while</chunk-item>
+    <chunk-item label="副詞子句（背景進行）">we were walking home</chunk-item>
+    <chunk-item decoy>we walked home</chunk-item>
+  </div>
+
+  <div data-item data-hint="by the time 後面用過去簡單式，主句用過去完成式表示「更早完成的動作」">
+    <chunk-item label="時間副詞子句">By the time we arrived,</chunk-item>
+    <chunk-item label="主詞">the show</chunk-item>
+    <chunk-item label="過去完成式動詞片語">had already started</chunk-item>
+    <chunk-item decoy>already started</chunk-item>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="sentence-build.js"></script>
+</body>
+</html>
