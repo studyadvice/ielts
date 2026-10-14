@@ -1001,6 +1001,8 @@
       if (node.nodeType === 1 && node.tagName.toLowerCase() === 'chunk-item') {
         var rawTheme = node.getAttribute('theme') || UR_CFG.chunkTheme;
         var color    = rawTheme ? clr(rawTheme) : _csPalette[palIdx++ % _csPalette.length];
+        var subLabels = Array.from(node.querySelectorAll('chunk-subitem'))
+                          .map(function (e) { return e.getAttribute('label') || ''; });
         var subCount    = 0;
         var _SIRE       = /(<chunk-subitem[^>]*>[\s\S]*?<\/chunk-subitem>)/gi;
         var _parts      = node.innerHTML.split(_SIRE);
@@ -1014,10 +1016,11 @@
         }).join('');
         segments.push({ type: 'chunk', idx: chunkMetas.length });
         chunkMetas.push({
-          html:     processedHtml,
-          color:    color,
-          label:    node.getAttribute('label') || '',
-          subCount: subCount
+          html:      processedHtml,
+          color:     color,
+          label:     node.getAttribute('label') || '',
+          subCount:  subCount,
+          subLabels: subLabels
         });
       } else if (node.nodeType === 3) {
         if (node.textContent.trim() !== '') segments.push({ type: 'text', text: node.textContent });
@@ -1104,6 +1107,7 @@
           sdot.className = 'urm-cs-subdot';
           sdot.style.width  = subDotSize + 'px';
           sdot.style.height = subDotSize + 'px';
+          if (meta.subLabels[si]) sdot.dataset.subLabel = meta.subLabels[si];
           subRow.appendChild(sdot);
           subDots[ci].push(sdot);
         }
@@ -1206,6 +1210,33 @@
           e.stopPropagation();
           activateSub(ci, si);
         });
+        var lbl = sdot.dataset.subLabel || '';
+        if (lbl) {
+          sdot.addEventListener('mouseenter', function () {
+            ensureCsAnnot();
+            clearTimeout(_csAnnotTm);
+            _csAnnotEl.innerHTML = lbl;
+            var r    = sdot.getBoundingClientRect();
+            var left = Math.min(r.left, window.innerWidth - 396);
+            var top  = r.bottom + 9;
+            _csAnnotEl.style.visibility = 'hidden';
+            _csAnnotEl.style.top  = top + 'px';
+            _csAnnotEl.style.left = Math.max(8, left) + 'px';
+            _csAnnotEl.classList.add('urm-cs-av');
+            requestAnimationFrame(function () {
+              var ar = _csAnnotEl.getBoundingClientRect();
+              if (ar.bottom > window.innerHeight - 8) {
+                _csAnnotEl.style.top = Math.max(8, r.top - ar.height - 9) + 'px';
+              }
+              _csAnnotEl.style.visibility = '';
+            });
+          });
+          sdot.addEventListener('mouseleave', function () {
+            _csAnnotTm = setTimeout(function () {
+              if (_csAnnotEl) _csAnnotEl.classList.remove('urm-cs-av');
+            }, 120);
+          });
+        }
       });
     });
   }
