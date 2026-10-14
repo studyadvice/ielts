@@ -1,13 +1,8 @@
-/* 可開放的字體 / padding 設定
- * 屬性寫法：fs-{部位}="1.25"（純數字視為 rem）、ff-{部位}="serif"、pad-{部位}="4 14"（純數字視為 px）
- * 也可直接在任何上層元素設定 CSS 變數 --ct-fs-{部位}、--ct-ff-{部位}、--ct-pad-{部位} */
 const CT_CARD_FS  = ['body','number','question','input','submit','aux','feedback','hintbox','flipnote','info','infobox'];
 const CT_CARD_PAD = ['input','submit','aux','info','infobox'];
 const CT_GROUP_FS  = ['nav','page','counter','result-score','result-text','retry'];
 const CT_GROUP_PAD = ['nav','page','retry'];
 
-/* 額外資訊的色彩覆蓋：info-color（按鈕與面板強調色）、info-bg（面板底色）、info-fg（面板文字色）
- * 可填色票名稱（sky、lavender…）或任何 CSS 色彩值 */
 function ctApplyInfoColors(el) {
     [['info-color', '--ct-info-color'], ['info-bg', '--ct-info-bg'], ['info-fg', '--ct-info-fg']].forEach(([attr, v]) => {
         const val = el.getAttribute(attr);
@@ -150,16 +145,15 @@ class CardToggle extends HTMLElement {
                 content: '';
                 position: absolute;
                 left: 0;
-                top: 20%;
-                bottom: 20%;
+                top: 8%;
+                bottom: 8%;
                 width: var(--ct-bar-width, 3px);
-                border-radius: 0 2px 2px 0;
                 background-color: var(--ct-bg-primary);
                 transition: width 0.2s ease, background-color 0.2s ease;
             }
 
             card-toggle:hover::before {
-                width: var(--ct-bar-width-hover, 5px);
+                width: var(--ct-bar-width-hover, 6px);
             }
 
             card-toggle:hover {
