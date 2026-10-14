@@ -807,65 +807,10 @@ class CardToggle extends HTMLElement {
             card-toggle[skin="grid"][color="shell"],
             card-toggle[skin="ruled"][color="shell"]     { --ct-skin-line: color-mix(in srgb, var(--ct-color-shell) 13%, var(--ct-bg-primary)); }
 
-            /* ── shape="envelope"：信封形狀 ──────────────────────────────── */
-            /*
-             * clip-path: polygon(0 36px, 50% 0, 100% 36px, 100% 100%, 0 100%)
-             * 固定 36px 折痕深度，不受卡片高度百分比影響。
-             * ::after 繪製兩條對角折痕線（X → V 形），顏色跟隨 color 屬性。
-             * ::before 左側 bar 從折痕線起始（top: 36px），視覺整齊。
-             */
-            card-toggle[shape="envelope"] {
-                --ct-envelope-fold: color-mix(in srgb, var(--ct-color-shell) 18%, var(--ct-bg-primary));
-                clip-path: polygon(0 36px, 50% 0, 100% 36px, 100% 100%, 0 100%);
-                padding-top: 50px;
-                min-height: 90px;
-            }
-            card-toggle[shape="envelope"]::before {
-                top: 38px;
-            }
-            card-toggle[shape="envelope"]::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 36px;
-                pointer-events: none;
-                background:
-                    linear-gradient(
-                        to bottom right,
-                        transparent 49.8%, var(--ct-envelope-fold) 49.8%,
-                        var(--ct-envelope-fold) 50.2%, transparent 50.2%
-                    ),
-                    linear-gradient(
-                        to bottom left,
-                        transparent 49.8%, var(--ct-envelope-fold) 49.8%,
-                        var(--ct-envelope-fold) 50.2%, transparent 50.2%
-                    );
-            }
-
-            /* envelope × color：折痕線跟隨色票 */
-            card-toggle[shape="envelope"][color="sky"]      { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-sky) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="lavender"] { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-lavender) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="safe"]     { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-safe) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="warning"]  { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-warning) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="info"]     { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-info) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="orange"]   { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-orange) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="focus"]    { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-focus) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="teal"]     { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-teal) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="ocean"]    { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-ocean) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="indigo"]   { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-indigo) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="pink"]     { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-pink) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="salmon"]   { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-salmon) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="special"]  { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-special) 30%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="shell"]    { --ct-envelope-fold: color-mix(in srgb, var(--ct-color-shell) 28%, var(--ct-bg-primary)); }
-            card-toggle[shape="envelope"][color="attention"]{ --ct-envelope-fold: color-mix(in srgb, var(--ct-color-yellow) 30%, var(--ct-bg-primary)); }
-        `;
         document.head.appendChild(style);
     }
 
     _initialize() {
-        // 統一綁定一個 click handler（toggle 模式需要在 replaced 狀態也能點擊）
         if (!this._clickBound) {
             this.addEventListener('click', (event) => this._handleClick(event));
             this._clickBound = true;
