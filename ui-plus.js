@@ -1218,7 +1218,7 @@
             _csAnnotEl.innerHTML = lbl;
             var r    = sdot.getBoundingClientRect();
             var left = Math.min(r.left, window.innerWidth - 396);
-            var top  = r.bottom + 9;
+            var top  = r.bottom + 16;
             _csAnnotEl.style.visibility = 'hidden';
             _csAnnotEl.style.top  = top + 'px';
             _csAnnotEl.style.left = Math.max(8, left) + 'px';
