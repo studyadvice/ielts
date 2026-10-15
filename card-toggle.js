@@ -1712,6 +1712,9 @@ class CardToggleGroup extends HTMLElement {
             }
         }
 
+        const wrongHtml = wrong > 0 ? `<span class="ct-result-wrong">✗ 答錯 ${wrong} 題</span>` : '';
+        const skippedHtml = skipped > 0 ? `<span class="ct-result-skipped">略過 ${skipped} 題</span>` : '';
+
         const resultEl = document.createElement('div');
         resultEl.className = 'ct-result-screen';
         resultEl.innerHTML = `
@@ -1719,8 +1722,8 @@ class CardToggleGroup extends HTMLElement {
             <div class="ct-result-label">共 ${total} 題答題完成</div>
             <div class="ct-result-breakdown">
                 <span class="ct-result-correct">✓ 答對 ${correct} 題</span>
-                ${wrong   > 0 ? `<span class="ct-result-wrong">✗ 答錯 ${wrong} 題</span>`   : ''}
-                ${skipped > 0 ? `<span class="ct-result-skipped">略過 ${skipped} 題</span>` : ''}
+                ${wrongHtml}
+                ${skippedHtml}
             </div>
             ${customHTML}
             <button class="ct-result-retry" onclick="this.closest('card-toggle-group')._retryAll()">
