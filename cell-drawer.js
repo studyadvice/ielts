@@ -1188,7 +1188,7 @@
 
       if (this._badge) {
         this._badge.textContent = this._levels.length > 1
-          ? (this._curIdx + 1) + '/' + (this._levels.length - 1)
+          ? (this._curIdx + 1) + '/' + (this._levels.length)
           : '';
         this._applyBadgeVisibility();
       }
