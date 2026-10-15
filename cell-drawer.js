@@ -1179,7 +1179,7 @@
     _updateDots () {
       if (!this._dots) return;
       this._dots.innerHTML = '';
-      const count = Math.min(this._levels.length, 8);
+      const count = Math.min(this._levels.length, 18);
       for (let i = 0; i < count; i++) {
         const d = document.createElement('span');
         d.className = 'cd-strip-dot' + (i === this._curIdx ? ' active' : '');
@@ -1188,7 +1188,7 @@
 
       if (this._badge) {
         this._badge.textContent = this._levels.length > 1
-          ? (this._curIdx + 1) + '/' + (this._levels.length - 1)
+          ? (this._curIdx + 1) + '/' + (this._levels.length)
           : '';
         this._applyBadgeVisibility();
       }
