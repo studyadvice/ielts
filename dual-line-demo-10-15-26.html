@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dual-line.js Demo · 10-15-26</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script src="dual-line.js"></script>
+  <style>
+    :root {
+      --bg:       #0C0D0C;
+      --shell:    #C6C7BD;
+      --lavender: #C3A5E5;
+      --special:  #B3DE73;
+      --warning:  #E6374B;
+      --salmon:   #E5C3B3;
+      --sky:      #82C8E5;
+      --ocean:    #1CCAE8;
+      --safe:     #27AE60;
+      --teal:     #0DA591;
+      --vanilla:  #DBEDD8;
+      --focus:    #D4FFFC;
+      --yellow:   #E3D322;
+      --info:     #4171BF;
+      --indigo:   #7849C9;
+      --pink:     #FF91D7;
+      --orange:   #EDA109;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--shell);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 1.125rem;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── 標題層級 ── */
+    h1 { font-size: 2.4rem; color: var(--lavender); letter-spacing: 0.02em; }
+    h2 {
+      font-size: 1.7rem;
+      color: var(--ocean);
+      margin-top: 72px;
+      margin-bottom: 0;
+    }
+    h3 { font-size: 1.25rem; color: var(--sky); margin-top: 32px; margin-bottom: 8px; }
+    h4 { font-size: 1.1rem;  color: var(--vanilla); margin-bottom: 8px; }
+
+    /* ── 版面容器 ── */
+    .wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 48px 80px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 64px 0 48px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(195, 165, 229, 0.13);
+      color: var(--lavender);
+      border: 1px solid rgba(195, 165, 229, 0.42);
+      border-radius: 4px;
+      padding: 3px 14px;
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+      letter-spacing: 0.05em;
+    }
+    .hero p {
+      color: rgba(198, 199, 189, 0.82);
+      max-width: 680px;
+      margin: 12px auto 0;
+      font-size: 1.125rem;
+    }
+
+    /* ── 色票 ── */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .swatch {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(198, 199, 189, 0.14);
+    }
+    .swatch-color { height: 54px; }
+    .swatch-color.transparent-check {
+      background-image:
+        linear-gradient(45deg, #555 25%, transparent 25%),
+        linear-gradient(-45deg, #555 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #555 75%),
+        linear-gradient(-45deg, transparent 75%, #555 75%);
+      background-size: 14px 14px;
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+      background-color: #888;
+    }
+    .swatch-info {
+      padding: 6px 10px 8px;
+      background: rgba(198, 199, 189, 0.07);
+    }
+    .swatch-name {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--shell);
+      line-height: 1.3;
+    }
+    .swatch-hex {
+      display: block;
+      font-size: 0.78rem;
+      color: rgba(198, 199, 189, 0.62);
+      font-family: 'Consolas', monospace;
+      letter-spacing: 0.03em;
+    }
+    .changed-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      color: var(--orange);
+      background: rgba(237, 161, 9, 0.14);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-top: 2px;
+    }
+
+    /* ── Demo 區塊 ── */
+    .demo-panel {
+      background: rgba(198, 199, 189, 0.04);
+      border: 1px solid rgba(198, 199, 189, 0.11);
+      border-radius: 8px;
+      padding: 22px 24px;
+      margin-top: 14px;
+    }
+    .demo-label {
+      font-size: 0.85rem;
+      color: rgba(198, 199, 189, 0.52);
+      font-family: 'Consolas', monospace;
+      margin-bottom: 12px;
+    }
+    .demo-label span { color: var(--yellow); }
+
+    /* ── VR 展示列 ── */
+    .vr-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      padding: 12px 0;
+    }
+    .vr-text {
+      font-size: 1rem;
+      color: var(--shell);
+      padding: 0 4px;
+    }
+
+    /* ── 程式碼片段 ── */
+    .code-block {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(198, 199, 189, 0.1);
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.88rem;
+      color: var(--vanilla);
+      margin-top: 10px;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+    .code-block .k  { color: var(--lavender); }
+    .code-block .a  { color: var(--sky); }
+    .code-block .v  { color: var(--yellow); }
+    .code-block .c  { color: rgba(198,199,189,0.42); }
+
+    /* ── 留白對照區塊 ── */
+    .content-block {
+      border-radius: 6px;
+      padding: 14px 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .block-a {
+      background: rgba(130, 200, 229, 0.12);
+      border: 1px solid rgba(130, 200, 229, 0.35);
+      color: var(--sky);
+    }
+    .block-b {
+      background: rgba(39, 174, 96, 0.1);
+      border: 1px solid rgba(39, 174, 96, 0.32);
+      color: var(--safe);
+    }
+    .spacer-label {
+      text-align: center;
+      font-size: 0.82rem;
+      color: rgba(227, 211, 34, 0.78);
+      font-family: monospace;
+      letter-spacing: 0.04em;
+      padding: 2px 0;
+    }
+
+    /* ── extraclass 展示 ── */
+    .bs-demo {
+      background: rgba(65, 113, 191, 0.09);
+      border: 1px solid rgba(65, 113, 191, 0.28);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .tag { color: var(--lavender); font-family: monospace; }
+    .attr { color: var(--sky); font-family: monospace; }
+    .val  { color: var(--yellow); font-family: monospace; }
+
+    /* ── 即時設定器 ── */
+    .configurator {
+      background: rgba(198, 199, 189, 0.04);
+      border: 1px solid rgba(198, 199, 189, 0.15);
+      border-radius: 10px;
+      padding: 28px 32px;
+    }
+    .cfg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .cfg-field label {
+      display: block;
+      font-size: 0.875rem;
+      color: rgba(198, 199, 189, 0.72);
+      margin-bottom: 5px;
+      font-family: monospace;
+    }
+    .cfg-field select,
+    .cfg-field input[type="text"] {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(198, 199, 189, 0.22);
+      border-radius: 4px;
+      color: var(--shell);
+      padding: 6px 10px;
+      font-size: 0.95rem;
+      font-family: monospace;
+    }
+    .cfg-field select:focus,
+    .cfg-field input:focus {
+      outline: none;
+      border-color: var(--sky);
+    }
+    .cfg-field select option { background: #1a1b1a; }
+    .cfg-style-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+    .cfg-style-btn {
+      background: rgba(198, 199, 189, 0.08);
+      border: 1px solid rgba(198, 199, 189, 0.2);
+      border-radius: 4px;
+      color: var(--shell);
+      padding: 5px 14px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      font-family: monospace;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .cfg-style-btn.active {
+      background: rgba(130, 200, 229, 0.2);
+      border-color: var(--sky);
+      color: var(--sky);
+    }
+    .live-preview {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(198, 199, 189, 0.1);
+      border-radius: 6px;
+      padding: 36px 24px;
+      margin-top: 20px;
+    }
+    .live-code {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(198, 199, 189, 0.1);
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-family: 'Consolas', monospace;
+      font-size: 0.875rem;
+      color: var(--vanilla);
+      margin-top: 12px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* ── 通用輔助 ── */
+    .section-hr { margin-top: 72px; }
+    .muted { color: rgba(198, 199, 189, 0.58); font-size: 1rem; }
+    .row-gap { margin-top: 16px; }
+    .inline-tag {
+      display: inline-block;
+      background: rgba(195, 165, 229, 0.12);
+      color: var(--lavender);
+      font-family: monospace;
+      font-size: 0.9rem;
+      padding: 1px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(195, 165, 229, 0.28);
+    }
+    .new-badge {
+      display: inline-block;
+      background: rgba(39, 174, 96, 0.15);
+      color: var(--safe);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 10px;
+      vertical-align: middle;
+      margin-left: 8px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════════ -->
+  <div class="hero">
+    <div class="hero-badge">dual-line.js · v2.0 · 2026-10-15</div>
+    <h1>&lt;dual-hr&gt; &amp; &lt;dual-vr&gt;</h1>
+    <p>
+      雙色分割線語意元件。本版更新色票、新增
+      <strong style="color:var(--yellow)">透明留白模式</strong>（<code>line-style="none"</code>），
+      並支援 <strong style="color:var(--sky)">extraclass</strong> 直接套用 Bootstrap class。
+    </p>
+  </div>
+
+  <dual-hr color-left="lavender" color-right="ocean" thickness="2px" margin="0"></dual-hr>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       色票
+  ═══════════════════════════════════════════════════════ -->
+  <h2>色票 Palette</h2>
+  <dual-hr color-left="lavender" color-right="sky" thickness="1px" margin="10px 0 20px"></dual-hr>
+
+  <div class="palette-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0C0D0C; border-bottom:1px solid rgba(198,199,189,0.14)"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">bg</span>
+        <span class="swatch-hex">#0C0D0C</span>
+        <span class="changed-badge">NEW</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C6C7BD"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">shell</span>
+        <span class="swatch-hex">#C6C7BD</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#DBEDD8"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">vanilla</span>
+        <span class="swatch-hex">#DBEDD8</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E5C3B3"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">salmon</span>
+        <span class="swatch-hex">#E5C3B3</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E3D322"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">yellow</span>
+        <span class="swatch-hex">#E3D322</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#EDA109"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">orange</span>
+        <span class="swatch-hex">#EDA109</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#82C8E5"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">sky</span>
+        <span class="swatch-hex">#82C8E5</span>
+        <span class="changed-badge">修正</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1CCAE8"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">ocean</span>
+        <span class="swatch-hex">#1CCAE8</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#D4FFFC"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">focus</span>
+        <span class="swatch-hex">#D4FFFC</span>
+        <span class="changed-badge">修正</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0DA591"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">teal</span>
+        <span class="swatch-hex">#0DA591</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#27AE60"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">safe</span>
+        <span class="swatch-hex">#27AE60</span>
+        <span class="changed-badge">修正</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#B3DE73"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">special</span>
+        <span class="swatch-hex">#B3DE73</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C3A5E5"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">lavender</span>
+        <span class="swatch-hex">#C3A5E5</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#7849C9"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">indigo</span>
+        <span class="swatch-hex">#7849C9</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FF91D7"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">pink</span>
+        <span class="swatch-hex">#FF91D7</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E6374B"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">warning</span>
+        <span class="swatch-hex">#E6374B</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#4171BF"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">info</span>
+        <span class="swatch-hex">#4171BF</span>
+        <span class="changed-badge">修正</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color transparent-check"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">transparent</span>
+        <span class="swatch-hex">'transparent'</span>
+        <span class="changed-badge">NEW</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       dual-hr
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-hr">
+    <h2><span class="inline-tag">&lt;dual-hr&gt;</span> 水平分割線</h2>
+  </div>
+  <dual-hr color-left="ocean" color-right="teal" thickness="1px" margin="10px 0 20px"></dual-hr>
+
+  <!-- Solid -->
+  <h3>Solid</h3>
+  <div class="demo-panel">
+    <div class="demo-label">預設 <span>color-left="yellow" color-right="sky"</span></div>
+    <dual-hr></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>color-left="lavender" color-right="pink" ratio="3:7" thickness="2px"</span></div>
+    <dual-hr color-left="lavender" color-right="pink" ratio="3:7" thickness="2px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>color-left="teal" color-right="safe" ratio="7:3" thickness="3px"</span></div>
+    <dual-hr color-left="teal" color-right="safe" ratio="7:3" thickness="3px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>color-left="warning" color-right="orange" ratio="1:9" thickness="4px"</span></div>
+    <dual-hr color-left="warning" color-right="orange" ratio="1:9" thickness="4px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>color-left="indigo" color-right="lavender" ratio="5:5" thickness="6px"</span></div>
+    <dual-hr color-left="indigo" color-right="lavender" ratio="5:5" thickness="6px"></dual-hr>
+  </div>
+
+  <!-- Dashed -->
+  <h3>Dashed</h3>
+  <div class="demo-panel">
+    <div class="demo-label"><span>line-style="dashed" dash="12px" gap="6px"</span> color-left="sky" color-right="lavender"</div>
+    <dual-hr color-left="sky" color-right="lavender" line-style="dashed" dash="12px" gap="6px" thickness="2px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>line-style="dashed" dash="4px" gap="4px"</span> color-left="safe" color-right="yellow" ratio="2:8"</div>
+    <dual-hr color-left="safe" color-right="yellow" line-style="dashed" dash="4px" gap="4px" thickness="2px" ratio="2:8"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>line-style="dashed" dash="20px" gap="8px"</span> color-left="ocean" color-right="warning" thickness="3px"</div>
+    <dual-hr color-left="ocean" color-right="warning" line-style="dashed" dash="20px" gap="8px" thickness="3px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>line-style="dashed" dash="6px" gap="12px"</span> color-left="pink" color-right="indigo" thickness="2px"</div>
+    <dual-hr color-left="pink" color-right="indigo" line-style="dashed" dash="6px" gap="12px" thickness="2px"></dual-hr>
+  </div>
+
+  <!-- Dotted -->
+  <h3>Dotted</h3>
+  <div class="demo-panel">
+    <div class="demo-label"><span>line-style="dotted" dash="8px" gap="6px"</span> color-left="orange" color-right="teal"</div>
+    <dual-hr color-left="orange" color-right="teal" line-style="dotted" dash="8px" gap="6px" thickness="8px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>line-style="dotted" dash="5px" gap="8px"</span> color-left="salmon" color-right="lavender" ratio="4:6"</div>
+    <dual-hr color-left="salmon" color-right="lavender" line-style="dotted" dash="5px" gap="8px" thickness="5px" ratio="4:6"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>line-style="dotted" dash="10px" gap="4px"</span> color-left="sky" color-right="pink" thickness="10px"</div>
+    <dual-hr color-left="sky" color-right="pink" line-style="dotted" dash="10px" gap="4px" thickness="10px"></dual-hr>
+
+    <div class="demo-label" style="margin-top:20px"><span>line-style="dotted" dash="4px" gap="10px"</span> color-left="special" color-right="ocean"</div>
+    <dual-hr color-left="special" color-right="ocean" line-style="dotted" dash="4px" gap="10px" thickness="4px"></dual-hr>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       dual-vr
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-hr">
+    <h2><span class="inline-tag">&lt;dual-vr&gt;</span> 垂直分割線</h2>
+  </div>
+  <dual-hr color-left="teal" color-right="special" thickness="1px" margin="10px 0 20px"></dual-hr>
+
+  <h3>Solid</h3>
+  <div class="demo-panel">
+    <div class="vr-row">
+      <span class="vr-text">Section A</span>
+      <dual-vr color-top="yellow" color-bottom="sky" height="60px" thickness="2px"></dual-vr>
+      <span class="vr-text">Section B</span>
+      <dual-vr color-top="lavender" color-bottom="pink" ratio="3:7" height="60px" thickness="2px"></dual-vr>
+      <span class="vr-text">Section C</span>
+      <dual-vr color-top="teal" color-bottom="safe" ratio="7:3" height="60px" thickness="3px"></dual-vr>
+      <span class="vr-text">Section D</span>
+      <dual-vr color-top="warning" color-bottom="orange" height="60px" thickness="4px"></dual-vr>
+      <span class="vr-text">Section E</span>
+    </div>
+    <div class="demo-label" style="margin-top:8px">
+      <span>color-top / color-bottom</span>（亦接受 color-left / color-right 別名）
+    </div>
+  </div>
+
+  <h3>Dashed ＆ Dotted</h3>
+  <div class="demo-panel">
+    <div class="vr-row">
+      <span class="vr-text">Alpha</span>
+      <dual-vr color-top="sky" color-bottom="indigo" line-style="dashed" dash="10px" gap="5px" height="80px" thickness="2px"></dual-vr>
+      <span class="vr-text">Beta</span>
+      <dual-vr color-top="ocean" color-bottom="warning" line-style="dashed" dash="4px" gap="8px" height="80px" thickness="2px"></dual-vr>
+      <span class="vr-text">Gamma</span>
+      <dual-vr color-top="orange" color-bottom="teal" line-style="dotted" dash="8px" gap="6px" height="80px" thickness="8px"></dual-vr>
+      <span class="vr-text">Delta</span>
+      <dual-vr color-top="pink" color-bottom="special" line-style="dotted" dash="5px" gap="10px" height="80px" thickness="5px"></dual-vr>
+      <span class="vr-text">Epsilon</span>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       透明線條 / 留白
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-hr">
+    <h2>
+      透明線條 · 留白方法
+      <span class="new-badge">NEW</span>
+    </h2>
+  </div>
+  <dual-hr color-left="yellow" color-right="safe" thickness="1px" margin="10px 0 20px"></dual-hr>
+
+  <p class="muted">
+    設定 <code style="color:var(--yellow)">line-style="none"</code>，元素保有所有尺寸但視覺完全透明，
+    是插入固定高度留白的最簡方式。搭配 <code style="color:var(--sky)">extraclass</code>
+    可改用 Bootstrap 間距系統（詳見下節）。
+  </p>
+
+  <!-- 對照示範 -->
+  <div class="row g-4 mt-2">
+    <!-- 無留白 -->
+    <div class="col-md-4">
+      <h4>① 無留白（相鄰）</h4>
+      <div class="demo-panel">
+        <div class="content-block block-a">Block A</div>
+        <div class="content-block block-b" style="margin-top:2px">Block B</div>
+      </div>
+      <div class="code-block">&lt;<span class="k">dual-hr</span>
+  <span class="c">&lt;!-- 沒有分隔 --&gt;</span>
+&gt;</div>
+    </div>
+
+    <!-- thickness 留白 1rem -->
+    <div class="col-md-4">
+      <h4>② thickness 留白（固定高度）</h4>
+      <div class="demo-panel">
+        <div class="content-block block-a">Block A</div>
+        <dual-hr line-style="none" thickness="2rem" margin="0"></dual-hr>
+        <div class="spacer-label">↕ 2rem 透明留白</div>
+        <div class="content-block block-b">Block B</div>
+      </div>
+      <div class="code-block">&lt;<span class="k">dual-hr</span>
+  <span class="a">line-style</span>=<span class="v">"none"</span>
+  <span class="a">thickness</span>=<span class="v">"2rem"</span>
+&gt;&lt;/<span class="k">dual-hr</span>&gt;</div>
+    </div>
+
+    <!-- 多段不同高度 -->
+    <div class="col-md-4">
+      <h4>③ 多段不同留白</h4>
+      <div class="demo-panel">
+        <div class="content-block block-a" style="font-size:0.88rem">Block A</div>
+        <dual-hr line-style="none" thickness="0.5rem" margin="0"></dual-hr>
+        <div class="spacer-label">0.5rem</div>
+        <div class="content-block block-b" style="font-size:0.88rem">Block B</div>
+        <dual-hr line-style="none" thickness="2rem" margin="0"></dual-hr>
+        <div class="spacer-label">2rem</div>
+        <div class="content-block block-a" style="font-size:0.88rem">Block C</div>
+        <dual-hr line-style="none" thickness="3.5rem" margin="0"></dual-hr>
+        <div class="spacer-label">3.5rem</div>
+        <div class="content-block block-b" style="font-size:0.88rem">Block D</div>
+      </div>
+      <div class="code-block">&lt;<span class="k">dual-hr</span> <span class="a">line-style</span>=<span class="v">"none"</span>
+  <span class="a">thickness</span>=<span class="v">"0.5rem"</span>&gt;
+&lt;<span class="k">dual-hr</span> <span class="a">line-style</span>=<span class="v">"none"</span>
+  <span class="a">thickness</span>=<span class="v">"2rem"</span>&gt;
+&lt;<span class="k">dual-hr</span> <span class="a">line-style</span>=<span class="v">"none"</span>
+  <span class="a">thickness</span>=<span class="v">"3.5rem"</span>&gt;</div>
+    </div>
+  </div>
+
+  <!-- dual-vr 透明 -->
+  <h3>dual-vr 透明間隔</h3>
+  <div class="demo-panel">
+    <div class="vr-row" style="align-items:stretch">
+      <span class="vr-text" style="padding:10px; background:rgba(130,200,229,0.1); border-radius:4px; color:var(--sky)">Left Panel</span>
+      <dual-vr line-style="none" thickness="2rem" height="100%"></dual-vr>
+      <span class="vr-text" style="padding:10px; background:rgba(39,174,96,0.1); border-radius:4px; color:var(--safe)">Right Panel</span>
+    </div>
+    <div class="demo-label" style="margin-top:10px">
+      <span>line-style="none" thickness="2rem"</span> 水平方向固定留白
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       extraclass / Bootstrap 整合
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-hr">
+    <h2>
+      <code style="color:var(--sky)">extraclass</code> · Bootstrap 整合
+      <span class="new-badge">NEW</span>
+    </h2>
+  </div>
+  <dual-hr color-left="sky" color-right="indigo" thickness="1px" margin="10px 0 20px"></dual-hr>
+
+  <p class="muted">
+    <code style="color:var(--sky)">extraclass</code> 屬性的值會整批套用到元素的 <code>classList</code>。
+    當 <code>extraclass</code> 存在且未同時設定 <code>margin</code> 屬性時，
+    元件會跳過 inline margin，讓 Bootstrap class 接管間距。
+  </p>
+
+  <!-- 規則說明表 -->
+  <div class="demo-panel" style="margin-bottom:20px">
+    <table style="width:100%; border-collapse:collapse; font-size:0.92rem; font-family:monospace">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(198,199,189,0.18)">
+          <th style="padding:8px 12px; color:var(--lavender); text-align:left; font-weight:700">條件</th>
+          <th style="padding:8px 12px; color:var(--lavender); text-align:left; font-weight:700">margin 來源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(198,199,189,0.08)">
+          <td style="padding:8px 12px; color:var(--shell)">無 extraclass</td>
+          <td style="padding:8px 12px; color:var(--yellow)">inline style（屬性值或預設值）</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(198,199,189,0.08)">
+          <td style="padding:8px 12px; color:var(--shell)">有 extraclass，無 margin 屬性</td>
+          <td style="padding:8px 12px; color:var(--safe)">Bootstrap class 接管（不設 inline margin）</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; color:var(--shell)">有 extraclass，也有 margin 屬性</td>
+          <td style="padding:8px 12px; color:var(--orange)">inline style 優先（明確設定，優先級高）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 示範 1：my-5 -->
+  <h3>示範：extraclass="my-5"</h3>
+  <div class="bs-demo">
+    <div class="content-block block-a">Block A</div>
+
+    <dual-hr
+      color-left="lavender"
+      color-right="ocean"
+      thickness="2px"
+      extraclass="my-5">
+    </dual-hr>
+
+    <div class="content-block block-b">Block B（距上方 Block A 已有 Bootstrap my-5 間距）</div>
+  </div>
+  <div class="code-block">&lt;<span class="k">dual-hr</span>
+  <span class="a">color-left</span>=<span class="v">"lavender"</span>
+  <span class="a">color-right</span>=<span class="v">"ocean"</span>
+  <span class="a">thickness</span>=<span class="v">"2px"</span>
+  <span class="a">extraclass</span>=<span class="v">"my-5"</span>
+&gt;&lt;/<span class="k">dual-hr</span>&gt;
+<span class="c">// 不設 margin 屬性 → Bootstrap my-5 完整生效</span></div>
+
+  <!-- 示範 2：透明線條 + my-5 -->
+  <h3>示範：透明留白 + extraclass="my-5"</h3>
+  <p class="muted" style="margin-bottom:12px">
+    最簡潔的 Bootstrap 留白寫法，厚度設為 0（或不設），完全靠 <code>my-5</code> 撐開。
+  </p>
+  <div class="bs-demo">
+    <div class="content-block block-a">Section 1</div>
+
+    <dual-hr line-style="none" thickness="0" extraclass="my-5"></dual-hr>
+
+    <div class="content-block block-b">Section 2（Bootstrap my-5 留白）</div>
+
+    <dual-hr line-style="none" thickness="0" extraclass="my-3"></dual-hr>
+
+    <div class="content-block block-a">Section 3（Bootstrap my-3 留白）</div>
+  </div>
+  <div class="code-block"><span class="c">&lt;!-- my-5 留白 --&gt;</span>
+&lt;<span class="k">dual-hr</span> <span class="a">line-style</span>=<span class="v">"none"</span> <span class="a">thickness</span>=<span class="v">"0"</span> <span class="a">extraclass</span>=<span class="v">"my-5"</span>&gt;&lt;/<span class="k">dual-hr</span>&gt;
+
+<span class="c">&lt;!-- my-3 留白 --&gt;</span>
+&lt;<span class="k">dual-hr</span> <span class="a">line-style</span>=<span class="v">"none"</span> <span class="a">thickness</span>=<span class="v">"0"</span> <span class="a">extraclass</span>=<span class="v">"my-3"</span>&gt;&lt;/<span class="k">dual-hr</span>&gt;</div>
+
+  <!-- 示範 3：dual-vr + mx-3 -->
+  <h3>示範：dual-vr + extraclass="mx-3"</h3>
+  <div class="bs-demo">
+    <div class="vr-row">
+      <span class="vr-text">Left</span>
+      <dual-vr color-top="teal" color-bottom="ocean" height="60px" thickness="2px" extraclass="mx-3"></dual-vr>
+      <span class="vr-text">Center</span>
+      <dual-vr color-top="yellow" color-bottom="pink" height="60px" thickness="2px" extraclass="mx-3"></dual-vr>
+      <span class="vr-text">Right</span>
+    </div>
+  </div>
+  <div class="code-block">&lt;<span class="k">dual-vr</span>
+  <span class="a">color-top</span>=<span class="v">"teal"</span> <span class="a">color-bottom</span>=<span class="v">"ocean"</span>
+  <span class="a">height</span>=<span class="v">"60px"</span> <span class="a">thickness</span>=<span class="v">"2px"</span>
+  <span class="a">extraclass</span>=<span class="v">"mx-3"</span>
+&gt;&lt;/<span class="k">dual-vr</span>&gt;</div>
+
+  <!-- 示範 4：多個 class -->
+  <h3>示範：extraclass 多個 class（margin + 其他）</h3>
+  <div class="bs-demo">
+    <div class="content-block block-a">Block A</div>
+    <dual-hr
+      color-left="special"
+      color-right="teal"
+      thickness="3px"
+      extraclass="my-4 opacity-75">
+    </dual-hr>
+    <div class="content-block block-b">Block B（my-4 間距 + opacity-75 透明度）</div>
+  </div>
+  <div class="code-block">&lt;<span class="k">dual-hr</span>
+  <span class="a">color-left</span>=<span class="v">"special"</span> <span class="a">color-right</span>=<span class="v">"teal"</span>
+  <span class="a">thickness</span>=<span class="v">"3px"</span>
+  <span class="a">extraclass</span>=<span class="v">"my-4 opacity-75"</span>
+&gt;&lt;/<span class="k">dual-hr</span>&gt;
+<span class="c">// extraclass 可接受空格分隔的多個 class</span></div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       即時設定器
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-hr">
+    <h2>即時設定器</h2>
+  </div>
+  <dual-hr color-left="indigo" color-right="pink" thickness="1px" margin="10px 0 20px"></dual-hr>
+
+  <div class="configurator">
+    <div class="cfg-grid">
+      <div class="cfg-field">
+        <label>color-left</label>
+        <select id="cfg-cl">
+          <option value="yellow" selected>yellow</option>
+          <option value="sky">sky</option>
+          <option value="lavender">lavender</option>
+          <option value="ocean">ocean</option>
+          <option value="teal">teal</option>
+          <option value="safe">safe</option>
+          <option value="special">special</option>
+          <option value="warning">warning</option>
+          <option value="salmon">salmon</option>
+          <option value="orange">orange</option>
+          <option value="pink">pink</option>
+          <option value="indigo">indigo</option>
+          <option value="info">info</option>
+          <option value="vanilla">vanilla</option>
+          <option value="shell">shell</option>
+          <option value="focus">focus</option>
+          <option value="transparent">transparent</option>
+        </select>
+      </div>
+      <div class="cfg-field">
+        <label>color-right</label>
+        <select id="cfg-cr">
+          <option value="yellow">yellow</option>
+          <option value="sky" selected>sky</option>
+          <option value="lavender">lavender</option>
+          <option value="ocean">ocean</option>
+          <option value="teal">teal</option>
+          <option value="safe">safe</option>
+          <option value="special">special</option>
+          <option value="warning">warning</option>
+          <option value="salmon">salmon</option>
+          <option value="orange">orange</option>
+          <option value="pink">pink</option>
+          <option value="indigo">indigo</option>
+          <option value="info">info</option>
+          <option value="vanilla">vanilla</option>
+          <option value="shell">shell</option>
+          <option value="focus">focus</option>
+          <option value="transparent">transparent</option>
+        </select>
+      </div>
+      <div class="cfg-field">
+        <label>ratio</label>
+        <input type="text" id="cfg-ratio" value="5:5" placeholder="e.g. 3:7">
+      </div>
+      <div class="cfg-field">
+        <label>thickness</label>
+        <input type="text" id="cfg-thick" value="2px" placeholder="e.g. 2px">
+      </div>
+      <div class="cfg-field">
+        <label>dash</label>
+        <input type="text" id="cfg-dash" value="8px" placeholder="e.g. 8px">
+      </div>
+      <div class="cfg-field">
+        <label>gap</label>
+        <input type="text" id="cfg-gap" value="5px" placeholder="e.g. 5px">
+      </div>
+    </div>
+
+    <div class="cfg-field">
+      <label>line-style</label>
+      <div class="cfg-style-group">
+        <button class="cfg-style-btn active" data-style="solid">solid</button>
+        <button class="cfg-style-btn" data-style="dashed">dashed</button>
+        <button class="cfg-style-btn" data-style="dotted">dotted</button>
+        <button class="cfg-style-btn" data-style="none">none（透明）</button>
+      </div>
+    </div>
+
+    <div class="live-preview">
+      <dual-hr id="live-hr" color-left="yellow" color-right="sky" thickness="2px" line-style="solid" ratio="5:5" dash="8px" gap="5px" margin="0"></dual-hr>
+    </div>
+
+    <div class="live-code" id="live-code"></div>
+  </div>
+
+</div><!-- /.wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── 即時設定器 ── */
+  const liveHR   = document.getElementById('live-hr');
+  const liveCode = document.getElementById('live-code');
+
+  let currentStyle = 'solid';
+
+  function updateLive() {
+    const cl    = document.getElementById('cfg-cl').value;
+    const cr    = document.getElementById('cfg-cr').value;
+    const ratio = document.getElementById('cfg-ratio').value.trim() || '5:5';
+    const thick = document.getElementById('cfg-thick').value.trim() || '2px';
+    const dash  = document.getElementById('cfg-dash').value.trim()  || '8px';
+    const gap   = document.getElementById('cfg-gap').value.trim()   || '5px';
+
+    liveHR.setAttribute('color-left',  cl);
+    liveHR.setAttribute('color-right', cr);
+    liveHR.setAttribute('ratio',       ratio);
+    liveHR.setAttribute('thickness',   thick);
+    liveHR.setAttribute('line-style',  currentStyle);
+    liveHR.setAttribute('dash',        dash);
+    liveHR.setAttribute('gap',         gap);
+
+    const dashAttr = (currentStyle === 'dashed' || currentStyle === 'dotted')
+      ? `\n  dash="${dash}" gap="${gap}"` : '';
+
+    liveCode.textContent =
+      `<dual-hr\n  color-left="${cl}" color-right="${cr}"\n` +
+      `  ratio="${ratio}" thickness="${thick}"\n` +
+      `  line-style="${currentStyle}"${dashAttr}\n></dual-hr>`;
+  }
+
+  /* style 按鈕 */
+  document.querySelectorAll('.cfg-style-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cfg-style-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStyle = btn.dataset.style;
+      updateLive();
+    });
+  });
+
+  /* 所有輸入變更 */
+  ['cfg-cl','cfg-cr','cfg-ratio','cfg-thick','cfg-dash','cfg-gap'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateLive);
+    document.getElementById(id).addEventListener('change', updateLive);
+  });
+
+  /* 初始化 */
+  updateLive();
+</script>
+</body>
+</html>
