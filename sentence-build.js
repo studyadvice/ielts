@@ -34,11 +34,11 @@
     s.textContent = `
 sentence-build { display: block; }
 .sb-wrap  { border-radius: 6px; background: #161716; }
-.sb-prog  { font-size: .78rem; color: #9a9b96; margin-bottom: 5px;
-            letter-spacing: .03em; display: flex; align-items: center; gap: 8px; }
+.sb-prog  { font-size: .8rem; color: #9a9b96; margin-bottom: 5px;
+            letter-spacing: .03em; display: flex; align-items: center; gap: 6px; }
 .sb-prog-bar  { flex: 1; height: 3px; background: #252625; border-radius: 2px; overflow: hidden; }
 .sb-prog-fill { height: 100%; border-radius: 2px; transition: width .4s ease; }
-.sb-dlbl  { font-size: .78rem; margin-bottom: 4px; letter-spacing: .03em; color: #9a9b96; }
+.sb-dlbl  { font-size: .78rem; margin-bottom: 3px; letter-spacing: .03em; color: #9a9b96; }
 .sb-pool  { display: flex; flex-wrap: wrap; align-content: flex-start; min-height: 32px; }
 .sb-div   { border: none; border-top: 1px solid #2e2f2e; margin: 6px 0; }
 .sb-zhd   { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
@@ -52,22 +52,22 @@ sentence-build { display: block; }
 .sb-zone.dov { background: #1e2c30; }
 .sb-chunk { cursor: pointer; user-select: none; display: inline-flex;
             flex-direction: column; align-items: center; }
-.sb-chunk:hover .sb-bg { opacity: .82; }
+.sb-chunk:hover .sb-bg { opacity: .85; }
 .sb-chunk.ghost        { opacity: .35; }
 .sb-bg    { display: inline-block; white-space: nowrap; transition: outline .12s, opacity .15s; }
 .sb-bg.ok { outline: 2px solid #27AE60; outline-offset: 1px; }
 .sb-bg.no { outline: 2px solid #E6374B; outline-offset: 1px; }
 .sb-clbl  { font-size: .72rem; color: #9a9b96; margin-top: 2px; text-align: center;
-            max-width: 200px; line-height: 1.3; }
+            max-width: 200px; line-height: 1.25; }
 .sb-ph    { border: 2px dashed rgba(130,200,229,0.82); border-radius: 999px;
             display: inline-block; min-width: 48px; height: 28px;
             vertical-align: middle; pointer-events: none; }
 .sb-fb    { font-size: .88rem; min-height: 1.4em; margin-top: 5px; }
-.sb-hint  { font-size: .85rem; margin-top: 4px; line-height: 1.4; }
+.sb-hint  { font-size: .85rem; margin-top: 4px; line-height: 1.25; }
 .sb-btns  { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-.sb-btn   { border: none; cursor: pointer; border-radius: 4px; font-size: .85rem;
+.sb-btn   { border: none; cursor: pointer; font-size: .75rem;
             padding: 3px 12px; transition: opacity .15s; font-family: inherit; }
-.sb-btn:hover    { opacity: .82; }
+.sb-btn:hover    { opacity: .85; }
 .sb-btn:disabled { opacity: .38; cursor: not-allowed; }
 .sb-tr    { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
 .sb-tlbl  { font-size: .82rem; color: #9a9b96; }
@@ -133,14 +133,14 @@ sentence-build { display: block; }
         theme     : sa(e,'theme','sky'),
         chkStyle  : sa(e,'chunk-style','pill'),      /* pill | box | tag */
         chkFS     : sa(e,'chunk-font-size','1rem'),
-        chkPad    : sa(e,'chunk-padding','2px 10px'),
+        chkPad    : sa(e,'chunk-padding','2px 8px'),
         lblFS     : sa(e,'label-font-size','0.75rem'),
-        gap       : sa(e,'gap','6px'),
+        gap       : sa(e,'gap','8px'),
         margin    : sa(e,'margin','1px'),
-        padding   : sa(e,'padding','6px 9px'),
+        padding   : sa(e,'padding','3px 6px'),
         poolDir   : sa(e,'pool-direction','row'),
         zoneDir   : sa(e,'zone-direction','row'),
-        zoneMinH  : sa(e,'zone-min-height','44px'),
+        zoneMinH  : sa(e,'zone-min-height','32px'),
         zBorder   : sa(e,'zone-border','1px dashed'),
         divider   : ba(e,'divider',true),
         lPool     : sa(e,'label-pool',''),
@@ -149,7 +149,7 @@ sentence-build { display: block; }
         animDur   : na(e,'anim-duration',150),
         showRst   : ba(e,'show-reset',true),
         rstIcon   : sa(e,'reset-icon','↺'),
-        rstSz     : sa(e,'reset-icon-size','0.85rem'),
+        rstSz     : sa(e,'reset-icon-size','0.8rem'),
         /* timer */
         timer     : sa(e,'timer',''),
         tWarn     : na(e,'timer-warn',10),
