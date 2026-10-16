@@ -289,6 +289,166 @@
         position: relative;
         z-index: 1;
       }
+
+      /* ══ 測驗模式 ══ */
+
+      /* 選項容器 */
+      ir-choices {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      ir-choices[layout="column"] {
+        grid-template-columns: 1fr;
+      }
+
+      /* 單一選項 */
+      ir-choice {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 14px;
+        background: rgba(255,255,255,0.05);
+        border: 1.5px solid rgba(198,199,189,0.22);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        line-height: 1.45;
+        color: ${BrandColors.shell};
+        transition: background 0.18s, border-color 0.18s;
+        position: relative;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      ir-choice:hover:not([disabled]) {
+        background: rgba(130,200,229,0.12);
+        border-color: rgba(130,200,229,0.55);
+      }
+      ir-choice[disabled] { cursor: default; }
+
+      /* 選項標籤字母圓圈 */
+      .ir-choice-key {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(198,199,189,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        color: ${BrandColors.shell};
+        transition: background 0.18s, border-color 0.18s, color 0.18s;
+      }
+
+      /* 答對 */
+      ir-choice[state="correct"] {
+        background: rgba(39,174,96,0.15);
+        border-color: ${BrandColors.safe};
+      }
+      ir-choice[state="correct"] .ir-choice-key {
+        background: ${BrandColors.safe};
+        border-color: ${BrandColors.safe};
+        color: #0C0D0C;
+      }
+
+      /* 答錯（被選的那個） */
+      ir-choice[state="wrong"] {
+        background: rgba(230,55,75,0.15);
+        border-color: ${BrandColors.warning};
+      }
+      ir-choice[state="wrong"] .ir-choice-key {
+        background: ${BrandColors.warning};
+        border-color: ${BrandColors.warning};
+        color: #fff;
+      }
+
+      /* 其他未選但正確的選項（顯示正解） */
+      ir-choice[state="reveal"] {
+        background: rgba(39,174,96,0.08);
+        border-color: rgba(39,174,96,0.45);
+      }
+      ir-choice[state="reveal"] .ir-choice-key {
+        border-color: ${BrandColors.safe};
+        color: ${BrandColors.safe};
+      }
+
+      /* 解說區塊 */
+      .ir-quiz-explain {
+        margin-top: 14px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.28s ease, transform 0.28s ease;
+        pointer-events: none;
+      }
+      .ir-quiz-explain.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .ir-quiz-explain.is-correct {
+        background: rgba(39,174,96,0.12);
+        border: 1px solid rgba(39,174,96,0.4);
+        color: #a5e6bc;
+      }
+      .ir-quiz-explain.is-wrong {
+        background: rgba(230,55,75,0.12);
+        border: 1px solid rgba(230,55,75,0.4);
+        color: #f0a0a8;
+      }
+
+      /* 答題後的繼續按鈕 */
+      .ir-quiz-next-wrap {
+        display: flex;
+        margin-top: 14px;
+        opacity: 0;
+        transform: translateY(4px);
+        transition: opacity 0.25s ease 0.15s, transform 0.25s ease 0.15s;
+        pointer-events: none;
+      }
+      .ir-quiz-next-wrap.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      /* 題號標籤 */
+      .ir-quiz-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        color: rgba(198,199,189,0.5);
+        margin-bottom: 8px;
+        font-family: 'Space Mono', monospace;
+      }
+
+      /* 計分板 */
+      .ir-quiz-scoreboard {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 14px 20px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(198,199,189,0.15);
+        border-radius: 6px;
+        margin-top: 16px;
+        font-size: 0.88rem;
+        color: ${BrandColors.shell};
+      }
+      .ir-quiz-score-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+      .ir-quiz-score-val {
+        font-size: 1.6rem;
+        font-family: 'Space Mono', monospace;
+        line-height: 1;
+      }
+      .ir-quiz-score-lbl { font-size: 0.68rem; opacity: 0.6; letter-spacing: 0.06em; }
+      .ir-quiz-score-divider { width: 1px; height: 36px; background: rgba(198,199,189,0.18); }
     `;
 
     const styleEl = document.createElement('style');
@@ -330,6 +490,12 @@
 
     _onActivated() {
       this._applyBorderStyles();
+
+      /* ── 測驗模式優先接管 ── */
+      if (this.hasAttribute('quiz')) {
+        this._setupQuiz();
+        return;
+      }
 
       if (this.hasAttribute('manual') && this.getAttribute('next')) {
         this._insertManualButton();
@@ -454,19 +620,141 @@
 
     reset() {
       this._irConnected = false;
+      this._quizAnswered = false;
       this.removeAttribute('active');
       this._clearBorderStyles();
       this.querySelector('.ir-countdown-bar')?.remove();
       this.querySelector('.ir-manual-wrap')?.remove();
+      /* 測驗模式：還原選項狀態 */
+      this.querySelectorAll('ir-choice').forEach(c => {
+        c.removeAttribute('state');
+        c.removeAttribute('disabled');
+      });
+      this.querySelector('.ir-quiz-explain')?.remove();
+      this.querySelector('.ir-quiz-next-wrap')?.remove();
+    }
+
+    /* ── 測驗模式核心 ── */
+    _setupQuiz() {
+      if (this._quizAnswered) return;   /* 重試同一題時不重複渲染 */
+
+      const answer      = (this.getAttribute('answer') || '').trim().toLowerCase();
+      const correctNext = this.getAttribute('correct-next');
+      const wrongNext   = this.getAttribute('wrong-next');
+      const nextDelay   = parseInt(this.getAttribute('quiz-next-delay'), 10) ?? 1200;
+      const explainTxt  = this.getAttribute('explain') || '';
+      const correctMsg  = this.getAttribute('correct-msg')  || '✓ 答對了！';
+      const wrongMsg    = this.getAttribute('wrong-msg')    || '✗ 答錯了。';
+      const nextLabel   = this.getAttribute('quiz-next-label') || '繼續 ▶';
+      const nextColor   = this.getAttribute('color') || window.InfoRegionConfig.defaultColor;
+      const autoNext    = !this.hasAttribute('manual-next');  /* 預設自動跳題 */
+
+      /* 題號標籤（可選） */
+      const labelTxt = this.getAttribute('quiz-label');
+      if (labelTxt && !this.querySelector('.ir-quiz-label')) {
+        const lbl = document.createElement('div');
+        lbl.className = 'ir-quiz-label';
+        lbl.textContent = labelTxt;
+        this.insertBefore(lbl, this.firstChild);
+      }
+
+      /* 收集選項 */
+      const choices = Array.from(this.querySelectorAll('ir-choice'));
+      const keys    = 'ABCDEFGHIJKLMNOP';
+
+      choices.forEach((ch, i) => {
+        /* 注入字母圈（只做一次） */
+        if (!ch.querySelector('.ir-choice-key')) {
+          const keyEl = document.createElement('span');
+          keyEl.className = 'ir-choice-key';
+          keyEl.textContent = keys[i] || String(i + 1);
+          ch.insertBefore(keyEl, ch.firstChild);
+        }
+
+        ch.removeAttribute('disabled');
+        ch.removeAttribute('state');
+
+        ch.addEventListener('click', () => {
+          if (ch.hasAttribute('disabled') || this._quizAnswered) return;
+
+          const chosen = (ch.getAttribute('value') || '').trim().toLowerCase();
+          const correct = chosen === answer;
+          this._quizAnswered = true;
+
+          /* 通知 group 計分 */
+          const grp = this.closest('info-region-group');
+          if (grp?._recordQuizResult) grp._recordQuizResult(this.id, correct);
+
+          /* 鎖定所有選項 */
+          choices.forEach(c => c.setAttribute('disabled', ''));
+
+          /* 標記狀態 */
+          ch.setAttribute('state', correct ? 'correct' : 'wrong');
+          if (!correct) {
+            choices
+              .filter(c => (c.getAttribute('value') || '').trim().toLowerCase() === answer)
+              .forEach(c => c.setAttribute('state', 'reveal'));
+          }
+
+          /* 解說文字 */
+          const explainEl = document.createElement('div');
+          explainEl.className = `ir-quiz-explain ${correct ? 'is-correct' : 'is-wrong'}`;
+          explainEl.textContent = (correct ? correctMsg : wrongMsg) +
+            (explainTxt ? '　' + explainTxt : '');
+          this.appendChild(explainEl);
+          requestAnimationFrame(() => explainEl.classList.add('is-visible'));
+
+          /* 決定下一個 id */
+          const nextId = correct ? correctNext : wrongNext;
+
+          if (autoNext && nextId) {
+            setTimeout(() => this._triggerNextById(nextId), nextDelay);
+          } else if (nextId) {
+            /* 手動繼續按鈕 */
+            const wrap = document.createElement('div');
+            wrap.className = 'ir-quiz-next-wrap';
+            const justifyMap = { left:'flex-start', center:'center', right:'flex-end' };
+            const align = this.getAttribute('manual-align') ||
+                          window.InfoRegionConfig.manualAlign;
+            wrap.style.justifyContent = justifyMap[align] || 'flex-end';
+
+            const btn = document.createElement('button');
+            btn.className = `ir-btn ir-manual-btn ir-btn--${nextColor}`;
+            btn.textContent = nextLabel;
+            btn.addEventListener('click', () => {
+              btn.classList.add('is-leaving');
+              btn.addEventListener('animationend', () => {
+                wrap.remove();
+                this._triggerNextById(nextId);
+              }, { once: true });
+            });
+
+            wrap.appendChild(btn);
+            this.appendChild(wrap);
+            requestAnimationFrame(() => wrap.classList.add('is-visible'));
+          }
+          /* nextId 為 null → 本題為終點，不跳轉 */
+        }, { once: false });
+      });
+    }
+
+    _triggerNextById(id) {
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('active', 'true');
+      else console.warn(`[InfoRegion] 找不到 id="${id}" 的元素。`);
     }
   }
 
   class InfoRegionGroup extends HTMLElement {
     constructor() {
       super();
-      this._progressBar = null;
-      this._percentEl   = null;
-      this._observer    = null;
+      this._progressBar    = null;
+      this._percentEl      = null;
+      this._observer       = null;
+      this._answeredSet    = new Set();   /* 已答對的題目 id，防進度條倒退 */
+      this._quizScore      = { correct: 0, wrong: 0 };
+      this._scoreboardEl   = null;
     }
 
     connectedCallback() {
@@ -491,9 +779,75 @@
         this._setupGlobalProgress();
         this._setupObserver();
       }
+      if (this.hasAttribute('show-score')) {
+        this._setupScoreboard();
+      }
       if (this.hasAttribute('auto-start')) {
         Promise.resolve().then(() => this._start());
       }
+    }
+
+    /* 記錄單題答題結果 */
+    _recordQuizResult(id, correct) {
+      if (correct) {
+        if (!this._answeredSet.has(id)) {
+          this._answeredSet.add(id);
+          this._quizScore.correct++;
+        }
+      } else {
+        /* 答錯且本題從未答對過，才累加 wrong */
+        if (!this._answeredSet.has(id)) {
+          this._quizScore.wrong++;
+        }
+      }
+      this._updateScoreboard();
+    }
+
+    _setupScoreboard() {
+      const board = document.createElement('div');
+      board.className = 'ir-quiz-scoreboard';
+
+      const mkItem = (val, lbl) => {
+        const item = document.createElement('div');
+        item.className = 'ir-quiz-score-item';
+        const v = document.createElement('span');
+        v.className = 'ir-quiz-score-val';
+        v.textContent = val;
+        const l = document.createElement('span');
+        l.className = 'ir-quiz-score-lbl';
+        l.textContent = lbl;
+        item.append(v, l);
+        return { item, val: v };
+      };
+
+      const divider = () => {
+        const d = document.createElement('div');
+        d.className = 'ir-quiz-score-divider';
+        return d;
+      };
+
+      const { item: cItem, val: cVal } = mkItem('0', '答對');
+      const { item: wItem, val: wVal } = mkItem('0', '答錯');
+      const { item: tItem, val: tVal } = mkItem('0', '總題數');
+      cVal.style.color = BrandColors.safe;
+      wVal.style.color = BrandColors.warning;
+
+      board.append(cItem, divider(), wItem, divider(), tItem);
+      this._scoreboardEl = { board, cVal, wVal, tVal };
+
+      /* 插在 controls 後面或最前面 */
+      const controls = this.querySelector('.ir-controls');
+      if (controls) controls.insertAdjacentElement('afterend', board);
+      else this.insertBefore(board, this.firstChild);
+    }
+
+    _updateScoreboard() {
+      if (!this._scoreboardEl) return;
+      const { cVal, wVal, tVal } = this._scoreboardEl;
+      const total = this._quizScore.correct + this._quizScore.wrong;
+      cVal.textContent = String(this._quizScore.correct);
+      wVal.textContent = String(this._quizScore.wrong);
+      tVal.textContent = String(total);
     }
 
     _setupLayout() {
@@ -616,10 +970,23 @@
 
     _updateProgress() {
       if (!this._progressBar) return;
-      const children  = this._getChildren();
-      const ratio     = children.length > 0
-        ? children.filter(el => el.getAttribute('active') === 'true').length / children.length
-        : 0;
+      const children = this._getChildren();
+
+      /* 若有 quiz-item 屬性，只統計題目型區塊（不含解說區塊） */
+      const quizItems = children.filter(el => el.hasAttribute('quiz-item'));
+      const countBase = quizItems.length > 0 ? quizItems : children;
+
+      /* 已答對的集合（不因重試倒退）優先；若非測驗群組則用 active 計數 */
+      let ratio = 0;
+      if (quizItems.length > 0) {
+        ratio = countBase.length > 0
+          ? Math.min(this._answeredSet.size / countBase.length, 1)
+          : 0;
+      } else {
+        ratio = countBase.length > 0
+          ? countBase.filter(el => el.getAttribute('active') === 'true').length / countBase.length
+          : 0;
+      }
 
       this._progressBar.style.transform = `scaleX(${ratio})`;
 
@@ -653,6 +1020,9 @@
     }
 
     _reset(reenableTransition = true) {
+      this._answeredSet.clear();
+      this._quizScore   = { correct: 0, wrong: 0 };
+      this._updateScoreboard();
       this._getChildren().forEach(el => el.reset());
 
       if (this._progressBar) {
@@ -678,8 +1048,27 @@
     reset() { this._reset(); }
   }
 
+  /* ── ir-choices / ir-choice：純語意容器，邏輯由 InfoRegion 驅動 ── */
+  class IrChoices extends HTMLElement {}
+  class IrChoice  extends HTMLElement {
+    connectedCallback() {
+      /* 確保 role 語意 */
+      if (!this.getAttribute('role')) this.setAttribute('role', 'button');
+      if (!this.getAttribute('tabindex')) this.setAttribute('tabindex', '0');
+      /* 鍵盤支援 */
+      this.addEventListener('keydown', e => {
+        if ((e.key === 'Enter' || e.key === ' ') && !this.hasAttribute('disabled')) {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    }
+  }
+
   customElements.define('info-region',       InfoRegion);
   customElements.define('info-region-group', InfoRegionGroup);
+  customElements.define('ir-choices',        IrChoices);
+  customElements.define('ir-choice',         IrChoice);
 
   window.InfoRegion = {
     activate(id) {

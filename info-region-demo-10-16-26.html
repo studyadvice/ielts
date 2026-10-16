@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>info-region · 測驗模式 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0C0D0C;
+    --shell:    #C6C7BD;
+    --lavender: #C3A5E5;
+    --sky:      #82C8E5;
+    --warning:  #E6374B;
+    --salmon:   #E5C3B3;
+    --ocean:    #1CCAE8;
+    --safe:     #27AE60;
+    --teal:     #0DA591;
+    --vanilla:  #DBEDD8;
+    --yellow:   #E3D322;
+    --focus:    #D4FFFC;
+    --special:  #B3DE73;
+    --info:     #4171BF;
+    --indigo:   #7849C9;
+    --pink:     #FF91D7;
+    --orange:   #EDA109;
+    --region:   #333333;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    min-height: 100%;
+  }
+
+  .page-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── 頁面標題區 ── */
+  .page-header {
+    margin-bottom: 48px;
+    border-bottom: 1px solid rgba(198,199,189,0.14);
+    padding-bottom: 32px;
+  }
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--sky);
+    margin-bottom: 6px;
+  }
+  .page-header p {
+    font-size: 1rem;
+    color: rgba(198,199,189,0.65);
+  }
+
+  /* ── 區段標題 ── */
+  .section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: rgba(198,199,189,0.4);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(198,199,189,0.08);
+  }
+
+  /* ── code 標籤 ── */
+  code {
+    background: rgba(255,255,255,0.07);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--lavender);
+  }
+
+  /* ── 屬性說明表 ── */
+  .attr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin-top: 20px;
+  }
+  .attr-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: rgba(198,199,189,0.45);
+    font-family: 'Space Mono', monospace;
+    border-bottom: 1px solid rgba(198,199,189,0.1);
+  }
+  .attr-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(198,199,189,0.07);
+    color: var(--shell);
+    vertical-align: top;
+  }
+  .attr-table td:first-child { color: var(--sky); font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+  .attr-table td:nth-child(2) { color: var(--salmon); }
+
+  /* ── Bootstrap-style alert ── */
+  .ir-alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    display: none;
+  }
+  .ir-alert.show { display: block; }
+  .ir-alert.alert-info    { background: rgba(65,113,191,0.18); border: 1px solid rgba(65,113,191,0.4); color: #a0b8e8; }
+  .ir-alert.alert-success { background: rgba(39,174,96,0.15); border: 1px solid rgba(39,174,96,0.4); color: #a5e6bc; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header class="page-header">
+    <h1>info-region · 測驗模式</h1>
+    <p>quiz 屬性擴充 Demo &mdash; 示範三種分歧拓撲</p>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════════
+       範例一：線性測驗 + 解說插入 + 計分板
+  ══════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">範例一 &nbsp;線性測驗 + 錯誤解說插入 + 計分板</div>
+
+    <div id="demo-alert-1" class="ir-alert alert-info"></div>
+
+    <info-region-group
+      global-progress
+      progress-position="top"
+      progress-color="sky"
+      show-percent
+      show-score
+      show-controls="true"
+      start-label="▶ 開始測驗"
+      start-color="sky"
+      reset-label="↺ 重設"
+      reset-color="warning"
+      auto-start
+    >
+
+      <!-- 題目 1 -->
+      <info-region
+        id="q1"
+        quiz
+        quiz-item
+        quiz-label="第 1 題 / 共 3 題"
+        answer="b"
+        correct-next="q2"
+        wrong-next="q1-exp"
+        explain="HTTP 是無狀態協定，每次請求皆獨立，伺服器不保留先前狀態。"
+        correct-msg="✓ 正確！"
+        wrong-msg="✗ 稍有偏差，看看解說再繼續。"
+        color="sky"
+        manual-next
+        quiz-next-label="下一題 ▶"
+      >
+        <p style="font-weight:600;margin-bottom:12px;">HTTP 是哪一種類型的協定？</p>
+        <ir-choices layout="column">
+          <ir-choice value="a">有狀態（Stateful）協定</ir-choice>
+          <ir-choice value="b">無狀態（Stateless）協定</ir-choice>
+          <ir-choice value="c">串流（Streaming）協定</ir-choice>
+          <ir-choice value="d">全雙工（Full-duplex）協定</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <!-- 題目 1 解說（答錯才出現） -->
+      <info-region
+        id="q1-exp"
+        color="warning"
+        next="q2"
+        countdown="2800"
+        countdown-color="warning"
+      >
+        <p style="color:rgba(230,55,75,0.9);font-weight:600;margin-bottom:6px;">重點提示</p>
+        <p>HTTP 每次 Request/Response 都是獨立的，伺服器不記憶前次請求，因此稱為「無狀態」協定。Cookie、Session 是為了補充狀態管理而出現的機制。</p>
+      </info-region>
+
+      <!-- 題目 2 -->
+      <info-region
+        id="q2"
+        quiz
+        quiz-item
+        quiz-label="第 2 題 / 共 3 題"
+        answer="c"
+        correct-next="q3"
+        wrong-next="q2-exp"
+        explain="DNS 負責將網域名稱（如 example.com）解析為 IP 位址。"
+        correct-msg="✓ 完全正確！"
+        wrong-msg="✗ 再想想看。"
+        color="sky"
+        manual-next
+        quiz-next-label="下一題 ▶"
+      >
+        <p style="font-weight:600;margin-bottom:12px;">DNS 的主要功能是什麼？</p>
+        <ir-choices>
+          <ir-choice value="a">傳送電子郵件</ir-choice>
+          <ir-choice value="b">加密網路流量</ir-choice>
+          <ir-choice value="c">將網域名稱解析為 IP 位址</ir-choice>
+          <ir-choice value="d">分配動態 IP 給裝置</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <!-- 題目 2 解說 -->
+      <info-region
+        id="q2-exp"
+        color="warning"
+        next="q3"
+        countdown="2800"
+        countdown-color="warning"
+      >
+        <p style="color:rgba(230,55,75,0.9);font-weight:600;margin-bottom:6px;">重點提示</p>
+        <p>DNS（Domain Name System）就像電話簿，把人類好記的網址翻譯成機器使用的 IP 位址。DHCP 才是動態分配 IP 的協定。</p>
+      </info-region>
+
+      <!-- 題目 3 -->
+      <info-region
+        id="q3"
+        quiz
+        quiz-item
+        quiz-label="第 3 題 / 共 3 題"
+        answer="d"
+        correct-next="q-end"
+        wrong-next="q3-exp"
+        explain="TCP 三次握手：SYN → SYN-ACK → ACK，確保雙方都能收送資料後才建立連線。"
+        correct-msg="✓ 答對了！"
+        wrong-msg="✗ TCP 握手順序有點複雜，看解說吧。"
+        color="sky"
+        manual-next
+        quiz-next-label="查看結果 ▶"
+      >
+        <p style="font-weight:600;margin-bottom:12px;">TCP 建立連線的「三次握手」順序為何？</p>
+        <ir-choices>
+          <ir-choice value="a">ACK → SYN → SYN-ACK</ir-choice>
+          <ir-choice value="b">SYN-ACK → SYN → ACK</ir-choice>
+          <ir-choice value="c">SYN → ACK → SYN-ACK</ir-choice>
+          <ir-choice value="d">SYN → SYN-ACK → ACK</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <!-- 題目 3 解說 -->
+      <info-region
+        id="q3-exp"
+        color="warning"
+        next="q-end"
+        countdown="2800"
+        countdown-color="warning"
+      >
+        <p style="color:rgba(230,55,75,0.9);font-weight:600;margin-bottom:6px;">重點提示</p>
+        <p>客戶端先發 SYN，伺服器回覆 SYN-ACK（表示「我收到了，你能收到我嗎？」），最後客戶端回 ACK 確認。三步完成即可傳送資料。</p>
+      </info-region>
+
+      <!-- 結尾 -->
+      <info-region id="q-end" color="special" class="ir-gold">
+        <p style="font-size:1.1rem;font-weight:600;margin-bottom:6px;">測驗完成 🎉</p>
+        <p>查看右上角計分板，了解本次答題狀況。點「↺ 重設」可以重新作答。</p>
+      </info-region>
+
+    </info-region-group>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════
+       範例二：答錯重試（wrong-next 指回自己）
+  ══════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">範例二 &nbsp;答錯重試（wrong-next 指回自身）</div>
+
+    <info-region-group auto-start show-controls start-label="▶ 開始" reset-label="↺ 重設">
+
+      <info-region
+        id="retry-q1"
+        quiz
+        answer="b"
+        correct-next="retry-done"
+        wrong-next="retry-q1"
+        explain="JavaScript 是動態弱型別語言，typeof null 回傳 'object' 是歷史遺留 bug。"
+        correct-msg="✓ 答對，繼續！"
+        wrong-msg="✗ 錯了，請再試一次。"
+        color="lavender"
+        manual-next
+        quiz-next-label="繼續 ▶"
+      >
+        <p style="font-weight:600;margin-bottom:12px;"><code>typeof null</code> 在 JavaScript 中回傳什麼？</p>
+        <ir-choices>
+          <ir-choice value="a">"null"</ir-choice>
+          <ir-choice value="b">"object"</ir-choice>
+          <ir-choice value="c">"undefined"</ir-choice>
+          <ir-choice value="d">"number"</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <info-region id="retry-done" color="teal">
+        <p style="font-weight:600;">全部答對了！</p>
+        <p style="margin-top:4px;font-size:0.92rem;opacity:0.8;">
+          這是著名的 JS 設計遺留問題，<code>typeof null === 'object'</code> 自第一版起便存在，現今為維持向後相容性而保留。
+        </p>
+      </info-region>
+
+    </info-region-group>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════
+       範例三：依答案分歧到不同後續題目
+  ══════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">範例三 &nbsp;依答題結果分歧到不同後續題目</div>
+
+    <info-region-group auto-start show-controls start-label="▶ 開始" reset-label="↺ 重設">
+
+      <!-- 入口題：根據答案決定往 easy 或 hard 路線 -->
+      <info-region
+        id="branch-q1"
+        quiz
+        answer="a"
+        correct-next="branch-hard"
+        wrong-next="branch-easy"
+        explain=""
+        correct-msg="✓ 基礎紮實，進入進階題。"
+        wrong-msg="✗ 先複習基礎題。"
+        color="orange"
+        manual-next
+        quiz-next-label="前往下一題 ▶"
+      >
+        <p style="font-weight:600;margin-bottom:4px;">難度分流題</p>
+        <p style="font-size:0.88rem;opacity:0.7;margin-bottom:12px;">根據你的答案，後續會進入不同路線。</p>
+        <p style="font-weight:600;margin-bottom:12px;">在 Python 中，<code>list.append(x)</code> 的時間複雜度是？</p>
+        <ir-choices>
+          <ir-choice value="a">O(1) 均攤</ir-choice>
+          <ir-choice value="b">O(n)</ir-choice>
+          <ir-choice value="c">O(log n)</ir-choice>
+          <ir-choice value="d">O(n²)</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <!-- 進階路線 -->
+      <info-region
+        id="branch-hard"
+        quiz
+        answer="c"
+        correct-next="branch-end"
+        wrong-next="branch-end"
+        explain="Python dict 使用雜湊表，查找時間複雜度為 O(1) 均攤；最差情況（雜湊碰撞）為 O(n)。"
+        correct-msg="✓ 正確！"
+        wrong-msg="✗ 接近了，記得「均攤」的概念。"
+        color="indigo"
+        manual-next
+        quiz-next-label="查看結果 ▶"
+      >
+        <p style="color:var(--indigo);font-size:0.78rem;margin-bottom:10px;">【進階路線】</p>
+        <p style="font-weight:600;margin-bottom:12px;">Python <code>dict</code> 查找的時間複雜度（平均）？</p>
+        <ir-choices>
+          <ir-choice value="a">O(n)</ir-choice>
+          <ir-choice value="b">O(log n)</ir-choice>
+          <ir-choice value="c">O(1) 均攤</ir-choice>
+          <ir-choice value="d">O(n log n)</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <!-- 基礎路線 -->
+      <info-region
+        id="branch-easy"
+        quiz
+        answer="b"
+        correct-next="branch-end"
+        wrong-next="branch-end"
+        explain="for 迴圈依序訪問每個元素，時間複雜度為 O(n)，n 為串列長度。"
+        correct-msg="✓ 正確！"
+        wrong-msg="✗ 想想迴圈執行了幾次。"
+        color="teal"
+        manual-next
+        quiz-next-label="查看結果 ▶"
+      >
+        <p style="color:var(--teal);font-size:0.78rem;margin-bottom:10px;">【基礎路線】</p>
+        <p style="font-weight:600;margin-bottom:12px;">用 for 迴圈遍歷長度為 n 的串列，時間複雜度？</p>
+        <ir-choices>
+          <ir-choice value="a">O(1)</ir-choice>
+          <ir-choice value="b">O(n)</ir-choice>
+          <ir-choice value="c">O(n²)</ir-choice>
+          <ir-choice value="d">O(log n)</ir-choice>
+        </ir-choices>
+      </info-region>
+
+      <!-- 兩條路線匯聚的結尾 -->
+      <info-region id="branch-end" color="special" class="ir-gold">
+        <p style="font-size:1.05rem;font-weight:600;margin-bottom:6px;">本段結束</p>
+        <p style="font-size:0.9rem;">不論走哪條路線，你都完成了分歧測驗。點「↺ 重設」可重來。</p>
+      </info-region>
+
+    </info-region-group>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════
+       屬性速查表
+  ══════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">測驗模式屬性速查</div>
+    <table class="attr-table">
+      <thead>
+        <tr>
+          <th>屬性</th>
+          <th>預設值</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>quiz</td><td>（布林）</td><td>啟動測驗模式，掛在 <code>&lt;info-region&gt;</code> 上</td></tr>
+        <tr><td>answer</td><td>—</td><td>正確答案的 value 值（不分大小寫）</td></tr>
+        <tr><td>correct-next</td><td>—</td><td>答對後導向的元素 id</td></tr>
+        <tr><td>wrong-next</td><td>—</td><td>答錯後導向的元素 id；指向自身可做重試</td></tr>
+        <tr><td>explain</td><td>—</td><td>答題後顯示的補充說明文字</td></tr>
+        <tr><td>correct-msg</td><td>✓ 答對了！</td><td>答對時顯示的訊息前綴</td></tr>
+        <tr><td>wrong-msg</td><td>✗ 答錯了。</td><td>答錯時顯示的訊息前綴</td></tr>
+        <tr><td>manual-next</td><td>（布林）</td><td>有此屬性則顯示繼續按鈕；否則自動跳題</td></tr>
+        <tr><td>quiz-next-delay</td><td>1200（ms）</td><td>自動跳題的延遲時間</td></tr>
+        <tr><td>quiz-next-label</td><td>繼續 ▶</td><td>手動繼續按鈕的文字</td></tr>
+        <tr><td>quiz-label</td><td>—</td><td>顯示在題目上方的小標（如「第 1 題 / 共 3 題」）</td></tr>
+        <tr><td>quiz-item</td><td>（布林）</td><td>標記此區塊為題目，供進度條只統計題目（非解說）</td></tr>
+        <tr><td colspan="3" style="padding-top:14px;color:rgba(198,199,189,0.45);font-family:'Space Mono',monospace;font-size:0.7rem;">info-region-group 屬性</td></tr>
+        <tr><td>show-score</td><td>（布林）</td><td>顯示答對 / 答錯 / 總題數計分板</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<script>
+// 載入 info-region.js（同目錄）
+(function() {
+  const s = document.createElement('script');
+  s.src = 'info-region.js';
+  s.onerror = () => {
+    const a = document.getElementById('demo-alert-1');
+    if (a) {
+      a.textContent = '⚠ 找不到 info-region.js，請確認檔案與此 HTML 放在同一目錄。';
+      a.className = 'ir-alert alert-info show';
+    }
+  };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
