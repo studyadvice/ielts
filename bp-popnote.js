@@ -171,8 +171,8 @@
       text       : 'var(--shell,#C6C7BD)',
       bg         : 'var(--area,#1a1b1a)',
       border     : 'var(--card-border,#2e2f2e)',
-      accent     : PALETTE.lavender,   // 預設邊框強調色
-      ctaBg      : PALETTE.lavender,
+      accent     : PALETTE.sky,   // 預設邊框強調色
+      ctaBg      : PALETTE.yellow,
       ctaText    : '#0C0D0C',
       closeColor : 'rgba(198,199,189,0.78)',
     },
@@ -245,16 +245,15 @@
 
       /* ── Sticky ── */
       'bp-notice[type="sticky"]{' +
-        'display:block;position:fixed;left:0;right:0;z-index:1040;padding:0 16px;}',
+        'display:block;position:fixed;left:0;right:0;z-index:1040;padding:0 28px;}',
       'bp-notice[type="sticky"][position="top"]{top:' + so + ';}',
       'bp-notice[type="sticky"]:not([position="top"]){bottom:' + so + ';}',
       'bp-notice[type="sticky"] .bpn-box{' +
         'border-radius:0;border-left-width:1px;' +
-        'border-top:2px solid ' + t.accent + ';' +
-        'max-width:100%;justify-content:center;}',
+        'border-top:3px solid ' + t.accent + ';' +
+        'max-width:95%;justify-content:center;}',
     ];
 
-    /* ── 標準色 token（動態生成，包含別名）── */
     Object.keys(NOTICE_COLOR_MAP).forEach(function (token) {
       var color = NOTICE_COLOR_MAP[token];
       rules.push(
@@ -272,7 +271,7 @@
         'color:#EFD9A2;overflow:hidden;}',
       '.bpn-box[data-color="gold"]::before{' +
         'content:"";position:absolute;inset:0;pointer-events:none;' +
-        'background:linear-gradient(102deg,transparent 25%,rgba(255,210,80,.13) 50%,transparent 75%);' +
+        'background:linear-gradient(102deg,transparent 25%,rgba(255,210,80,.13) 50%,transparent 855%);' +
         'background-size:200% 100%;' +
         'animation:bpn-gold-shimmer 4s ease-in-out infinite;}',
       '@keyframes bpn-gold-shimmer{' +
