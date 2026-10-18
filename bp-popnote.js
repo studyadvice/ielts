@@ -1,5 +1,5 @@
 // ================================================================
-// bp-popnote.js  v2.0  — 合併版
+// bp-popnote.js  v2.1  — 合併版
 // 包含兩個獨立元件：
 //
 //  ① bp-notice  公告 / 廣告 / Sticky Bar                <bp-notice>
@@ -88,6 +88,23 @@
 //   PopoverConfig.set({ carousel: { animation: 'crossfade', interval: 5000 } });
 //   PopoverConfig.set({ modal: 'dialog', modalSize: 'lg', modalStatic: true });
 //   PopoverConfig.addTheme('brand', { bg:'#100820', titleColor:'#A080FF', borderColor:'#A080FF' });
+//
+// ── bp-popnote show-btn 詳情按鈕 ─────────────────────────────
+//   data-popover-show-btn="詳情"  — 按鈕文字（存在此屬性即顯示按鈕）
+//   data-popover-btn-href="#sec1" — 目標：#錨點 或 完整 URL
+//
+//   範例（書籤跳轉）：
+//   <span data-popover-content="說明"
+//         data-popover-show-btn="詳細說明"
+//         data-popover-btn-href="#grammar-section">觸發詞</span>
+//
+//   範例（外部連結）：
+//   <span data-popover-content="說明"
+//         data-popover-show-btn="前往官網"
+//         data-popover-btn-href="https://example.com">觸發詞</span>
+//
+//   外部網址（https:// 或 //）自動加 target="_blank" rel="noopener noreferrer"。
+//   適用所有模式：Floating、Panel、Modal、Offcanvas。
 //
 // ── bp-popnote 事後標注 API ───────────────────────────────────
 //   BpPopnote.annotate({ text:'特定詞', content:'說明', theme:'ocean', within:'#article' });
@@ -770,6 +787,43 @@
     #xpop-bs-offcanvas .btn-close:hover {
       opacity: 1;
     }
+
+    /* ── show-btn（詳情按鈕）────────────────────────────────── */
+    .xpop-show-btn-wrap {
+      padding: 4px 16px 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .xpop-panel-wrap .xpop-show-btn-wrap {
+      padding: 6px 16px 16px;
+    }
+    .xpop-show-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 14px;
+      border: 1px solid var(--xpop-border-color, #C3A5E5);
+      border-radius: 5px;
+      background: transparent;
+      color: var(--xpop-title-color, #C3A5E5);
+      font-size: calc(var(--xpop-font-size, 1rem) * 0.85);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: background 0.18s, color 0.18s, opacity 0.18s;
+      white-space: nowrap;
+    }
+    .xpop-show-btn:hover {
+      background: var(--xpop-border-color, #C3A5E5);
+      color: #0C0D0C;
+    }
+    /* Modal / Offcanvas 內的 show-btn 繼承 theme 色 */
+    .xpop-modal-show-btn-wrap {
+      display: flex;
+      justify-content: flex-end;
+      padding: 4px 0 2px;
+    }
   `;
 
   // ── 主題定義（參照共用調色盤）────────────────────────────────
@@ -880,6 +934,8 @@
     if (rule.hint   === false)     mark.dataset.popoverHint       = 'false';
     if (rule.interval !== undefined) mark.dataset.popoverInterval = String(rule.interval);
     if (rule.offset !== undefined)   mark.dataset.popoverOffset   = String(rule.offset);
+    if (rule.showBtn !== undefined)  mark.dataset.popoverShowBtn  = rule.showBtn;
+    if (rule.btnHref !== undefined)  mark.dataset.popoverBtnHref  = rule.btnHref;
 
     mid.parentNode.insertBefore(mark, mid);
     mark.appendChild(mid);
@@ -993,6 +1049,37 @@
       if (tpl) return tpl.innerHTML;
     }
     return trigger.dataset.popoverContent || '';
+  }
+
+  // ── show-btn 詳情按鈕 ─────────────────────────────────────────
+  /**
+   * 從 trigger 讀取 data-popover-show-btn / data-popover-btn-href，
+   * 建立包裝 div（含 <a> 按鈕）並回傳，無屬性則回傳 null。
+   * @param {Element} trigger
+   * @param {Object}  theme      — getTheme() 結果（用來套 CSS 變數）
+   * @param {boolean} [forModal] — Modal/Offcanvas 內使用較小的 wrap class
+   */
+  function buildShowBtnEl(trigger, theme, forModal) {
+    const label = trigger.dataset.popoverShowBtn;
+    if (!label && label !== '') return null;           // 屬性不存在 → 不顯示
+    const btnLabel = label || '詳情';
+    const href     = trigger.dataset.popoverBtnHref || '#';
+    // 判斷外部網址（含 http / https / // ）或書籤
+    const isExternal = /^(https?:\/\/|\/\/)/.test(href);
+
+    const wrap = document.createElement('div');
+    wrap.className = forModal ? 'xpop-modal-show-btn-wrap' : 'xpop-show-btn-wrap';
+
+    const btn = document.createElement('a');
+    btn.className = 'xpop-show-btn';
+    btn.href      = href;
+    btn.innerHTML = btnLabel + ' <i class="bi bi-arrow-right-short"></i>';
+    if (isExternal) {
+      btn.target = '_blank';
+      btn.rel    = 'noopener noreferrer';
+    }
+    wrap.appendChild(btn);
+    return wrap;
   }
 
   // ── 內容 DOM 建構 ─────────────────────────────────────────────
@@ -1196,6 +1283,13 @@
     titleEl.innerHTML = title;
     body.innerHTML    = html;
 
+    const modalShowBtnEl = buildShowBtnEl(trigger, theme, true);
+    if (modalShowBtnEl) {
+      modalShowBtnEl.style.setProperty('--xpop-border-color', theme.borderColor);
+      modalShowBtnEl.style.setProperty('--xpop-title-color',  theme.titleColor);
+      body.appendChild(modalShowBtnEl);
+    }
+
     const dialog = modalEl.querySelector('.modal-dialog');
     dialog.className = 'modal-dialog modal-dialog-scrollable';
     dialog.style.maxWidth = '';
@@ -1243,6 +1337,13 @@
     applyThemeStyles(ocEl, header, titleEl, theme);
     titleEl.innerHTML = title;
     body.innerHTML    = html;
+
+    const ocShowBtnEl = buildShowBtnEl(trigger, theme, true);
+    if (ocShowBtnEl) {
+      ocShowBtnEl.style.setProperty('--xpop-border-color', theme.borderColor);
+      ocShowBtnEl.style.setProperty('--xpop-title-color',  theme.titleColor);
+      body.appendChild(ocShowBtnEl);
+    }
 
     const prev = bootstrap.Offcanvas.getInstance(ocEl);
     if (prev) prev.dispose();
@@ -1316,6 +1417,13 @@
       wrap.appendChild(barEl);
     }
 
+    const panelShowBtnEl = buildShowBtnEl(trigger, theme, false);
+    if (panelShowBtnEl) {
+      panelShowBtnEl.style.setProperty('--xpop-border-color', theme.borderColor);
+      panelShowBtnEl.style.setProperty('--xpop-title-color',  theme.titleColor);
+      wrap.appendChild(panelShowBtnEl);
+    }
+
     panelEl.innerHTML = '';
     panelEl.appendChild(wrap);
 
@@ -1371,6 +1479,13 @@
     if (isCarousel) {
       pop.appendChild(progressEl);
       pop.appendChild(barEl);
+    }
+
+    const showBtnEl = buildShowBtnEl(trigger, theme, false);
+    if (showBtnEl) {
+      showBtnEl.style.setProperty('--xpop-border-color', theme.borderColor);
+      showBtnEl.style.setProperty('--xpop-title-color',  theme.titleColor);
+      pop.appendChild(showBtnEl);
     }
 
     document.body.appendChild(pop);

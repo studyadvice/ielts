@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote v2.1 — show-btn Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root {
+  --bg:       #0C0D0C;
+  --shell:    #C6C7BD;
+  --lavender: #C3A5E5;
+  --sky:      #82C8E5;
+  --warning:  #E6374B;
+  --salmon:   #E5C3B3;
+  --ocean:    #1CCAE8;
+  --safe:     #27AE60;
+  --teal:     #0DA591;
+  --vanilla:  #DBEDD8;
+  --yellow:   #E3D322;
+  --focus:    #D4FFFC;
+  --special:  #B3DE73;
+  --info:     #4171BF;
+  --indigo:   #7849C9;
+  --pink:     #FF91D7;
+  --orange:   #EDA109;
+  --area:     #141514;
+  --card:     #1a1b1a;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 18px; }
+body {
+  background: var(--bg);
+  color: var(--shell);
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── Layout ── */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 32px 120px;
+}
+h1 { color: var(--lavender); font-size: 1.55rem; font-weight: 700; margin-bottom: 6px; }
+.subtitle { color: rgba(198,199,189,0.78); font-size: 0.88rem; margin-bottom: 40px; }
+h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
+     border-bottom: 1px solid rgba(130,200,229,0.22); padding-bottom: 8px; margin: 40px 0 20px; }
+
+/* ── Demo cards ── */
+.demo-card {
+  background: var(--card);
+  border: 1px solid rgba(198,199,189,0.12);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+}
+.demo-label {
+  font-size: 0.75rem;
+  color: rgba(198,199,189,0.6);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.code-badge {
+  display: inline-block;
+  background: rgba(195,165,229,0.12);
+  color: var(--lavender);
+  border: 1px solid rgba(195,165,229,0.28);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  padding: 2px 8px;
+  margin: 2px 3px;
+}
+
+/* ── Inline sentence demo ── */
+.sentence {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 0;
+}
+
+/* ── Panel target ── */
+#side-panel {
+  background: var(--area);
+  border: 1px solid rgba(198,199,189,0.1);
+  border-radius: 8px;
+  min-height: 60px;
+  padding: 0;
+}
+#side-panel:empty::after {
+  content: '（點擊左側觸發詞後，內容顯示於此）';
+  display: block;
+  color: rgba(198,199,189,0.35);
+  font-size: 0.82rem;
+  padding: 18px 20px;
+}
+
+/* ── Anchor target sections ── */
+.anchor-section {
+  background: var(--area);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 8px 8px 0;
+  padding: 20px 24px;
+  margin-top: 16px;
+}
+.anchor-section h3 { color: var(--teal); font-size: 1rem; margin-bottom: 8px; }
+
+/* ── Tag highlight for trigger words ── */
+[data-popover-content],
+[data-popover-target] {
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <h1><i class="bi bi-chat-square-text-fill me-2"></i>bp-popnote v2.1 — show-btn 詳情按鈕 Demo</h1>
+  <p class="subtitle">新增屬性：<span class="code-badge">data-popover-show-btn</span> + <span class="code-badge">data-popover-btn-href</span>，支援書籤跳轉或跳至外部網址。</p>
+
+  <!-- ① 原始用法（基準） -->
+  <h2>① 原始用法（無 show-btn）</h2>
+  <div class="demo-card">
+    <div class="demo-label">floating popover · theme=yellow · panel 模式</div>
+    <p class="sentence">
+      I <span
+        data-popover-panel="#cc1"
+        data-popover-content="在詞彙資源和語法多樣性毫無加分機會"
+        data-popover-theme="yellow"
+        data-popover-label="照抄題目用詞和句型">
+        do exercise
+      </span> every day.
+    </p>
+    <div id="cc1" class="mt-3"></div>
+  </div>
+
+  <!-- ② show-btn + 書籤跳轉 -->
+  <h2>② show-btn + 書籤跳轉（同頁 #anchor）</h2>
+  <div class="demo-card">
+    <div class="demo-label">panel 模式 · theme=yellow · show-btn 跳至 #grammar-section</div>
+    <p class="sentence">
+      I <span
+        data-popover-panel="#cc2"
+        data-popover-content="在詞彙資源和語法多樣性毫無加分機會"
+        data-popover-theme="yellow"
+        data-popover-label="照抄題目用詞和句型"
+        data-popover-show-btn="語法說明"
+        data-popover-btn-href="#grammar-section">
+        do exercise
+      </span> every day.
+    </p>
+    <div id="cc2" class="mt-3"></div>
+    <div class="anchor-section mt-3" id="grammar-section">
+      <h3><i class="bi bi-bookmark-fill me-1"></i>#grammar-section</h3>
+      <p style="color:rgba(198,199,189,0.82);font-size:0.9rem;margin:0;">
+        這裡是書籤錨點目標。按鈕點擊後頁面會跳至此處，適合在同一長篇文章內部導航，
+        例如從句子標注跳至文末的詳細語法解說區塊。
+      </p>
+    </div>
+  </div>
+
+  <!-- ③ show-btn + 外部連結 -->
+  <h2>③ show-btn + 外部連結（自動 _blank）</h2>
+  <div class="demo-card">
+    <div class="demo-label">floating popover · theme=sky · show-btn 跳至外部 URL</div>
+    <p class="sentence">
+      The IELTS exam uses a <span
+        data-popover-content="考官評分時，字彙豐富度與精準度佔 25% 分數。"
+        data-popover-theme="sky"
+        data-popover-title="詞彙資源（Lexical Resource）"
+        data-popover-show-btn="IELTS 官方說明"
+        data-popover-btn-href="https://www.ielts.org/about-ielts/what-is-ielts">
+        band scoring system
+      </span> from 0 to 9.
+    </p>
+  </div>
+
+  <!-- ④ Modal 模式 + show-btn -->
+  <h2>④ Modal 模式 + show-btn</h2>
+  <div class="demo-card">
+    <div class="demo-label">data-popover-modal="dialog" · theme=indigo · show-btn 書籤跳轉</div>
+    <p class="sentence">
+      雅思口說第二部分要求考生在兩分鐘內說明一個
+      <span
+        data-popover-title="Personal Experience（個人經歷）"
+        data-popover-content="考官希望聽到具體的時間、地點、人物與感受，而非泛泛而談的總結。"
+        data-popover-modal="dialog"
+        data-popover-theme="indigo"
+        data-popover-show-btn="評分標準詳情"
+        data-popover-btn-href="#scoring-anchor">
+        個人經歷
+      </span>。
+    </p>
+    <div class="anchor-section" id="scoring-anchor">
+      <h3><i class="bi bi-bookmark-fill me-1"></i>#scoring-anchor</h3>
+      <p style="color:rgba(198,199,189,0.82);font-size:0.9rem;margin:0;">
+        口說評分四項維度：流利度與連貫性、詞彙資源、語法範圍與精準度、發音。
+      </p>
+    </div>
+  </div>
+
+  <!-- ⑤ Offcanvas 模式 + show-btn -->
+  <h2>⑤ Offcanvas 模式 + show-btn</h2>
+  <div class="demo-card">
+    <div class="demo-label">data-popover-modal="end" · theme=teal · show-btn 外部連結</div>
+    <p class="sentence">
+      Band 7 requires demonstrating
+      <span
+        data-popover-title="Cohesion & Coherence"
+        data-popover-content="有效使用連接詞、指稱詞與詞彙鏈，使篇章邏輯連貫，而非僅靠列舉。"
+        data-popover-modal="end"
+        data-popover-theme="teal"
+        data-popover-show-btn="Band Descriptors"
+        data-popover-btn-href="https://www.ielts.org/globalassets/assets/pdf/ielts-writing-band-descriptors-task-2.pdf">
+        cohesion and coherence
+      </span> at the discourse level.
+    </p>
+  </div>
+
+  <!-- ⑥ show-btn 僅有屬性（空字串 → 預設「詳情」） -->
+  <h2>⑥ 屬性值為空字串 → 按鈕文字自動為「詳情」</h2>
+  <div class="demo-card">
+    <div class="demo-label">data-popover-show-btn=""（空值）→ 顯示「詳情」</div>
+    <p class="sentence">
+      過度使用
+      <span
+        data-popover-content="連接詞如 however、therefore 若濫用，反而顯得生硬不自然。"
+        data-popover-theme="salmon"
+        data-popover-show-btn=""
+        data-popover-btn-href="#grammar-section">
+        連接詞
+      </span>
+      會影響語言自然度。
+    </p>
+  </div>
+
+  <!-- ⑦ annotate API 使用 showBtn / btnHref -->
+  <h2>⑦ BpPopnote.annotate() API — showBtn + btnHref</h2>
+  <div class="demo-card">
+    <div class="demo-label">事後標注 · theme=safe · show-btn 書籤</div>
+    <p class="sentence" id="annotate-target">
+      Writing task 2 expects candidates to present a well-structured argument with clear topic sentences and logical conclusions.
+    </p>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="bp-popnote.js"></script>
+<script>
+  // ⑦ 事後標注
+  BpPopnote.annotate({
+    text      : 'topic sentences',
+    content   : '每段開頭的主題句應清楚陳述該段論點，避免以細節開場。',
+    theme     : 'safe',
+    title     : 'Topic Sentence',
+    showBtn   : '寫作技巧詳情',
+    btnHref   : '#grammar-section',
+    within    : '#annotate-target',
+  });
+</script>
+</body>
+</html>
