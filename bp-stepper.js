@@ -21,25 +21,20 @@
   };
 
   const THEMES = {
-    // 冷色系 → done 用 safe（清晰綠，與藍/紫拉開距離）
     lavender: { color: BRAND.lavender, colorActive: BRAND.special,  colorDone: BRAND.safe,   titleColor: BRAND.lavender, badgeBg: 'rgba(195,165,229,0.15)'  },
     sky:      { color: BRAND.sky,      colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.sky,      badgeBg: 'rgba(149,201,222,0.12)'  },
     info:     { color: BRAND.info,     colorActive: BRAND.indigo,   colorDone: BRAND.safe,   titleColor: BRAND.info,     badgeBg: 'rgba(35,81,219,0.12)'    },
     indigo:   { color: BRAND.indigo,   colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.indigo,   badgeBg: 'rgba(120,73,201,0.12)'   },
-    // 青/綠系 → done 互補（safe↔teal 交叉，兩者都是綠系但色調不同）
     ocean:    { color: BRAND.ocean,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.ocean,    badgeBg: 'rgba(28,202,232,0.12)'   },
     teal:     { color: BRAND.teal,     colorActive: BRAND.ocean,    colorDone: BRAND.safe,   titleColor: BRAND.teal,     badgeBg: 'rgba(13,165,145,0.12)'   },
     safe:     { color: BRAND.safe,     colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.safe,     badgeBg: 'rgba(41,148,89,0.12)'    },
-    // 暖色系 → done 用 teal（藍綠，跳脫暖色氛圍，明確標示完成）
     yellow:   { color: BRAND.yellow,   colorActive: BRAND.orange,   colorDone: BRAND.teal,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
     orange:   { color: BRAND.orange,   colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.orange,   badgeBg: 'rgba(237,161,9,0.12)'    },
     focus:    { color: BRAND.focus,    colorActive: BRAND.special,  colorDone: BRAND.teal,   titleColor: BRAND.focus,    badgeBg: 'rgba(60,123,207,0.12)'   },
     special:  { color: BRAND.special,  colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.special,  badgeBg: 'rgba(179,222,115,0.12)'  },
-    // 粉/暖中性 → done 用 teal
     pink:     { color: BRAND.pink,     colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.pink,     badgeBg: 'rgba(255,145,215,0.12)'  },
     salmon:   { color: BRAND.salmon,   colorActive: BRAND.pink,     colorDone: BRAND.teal,   titleColor: BRAND.salmon,   badgeBg: 'rgba(229,195,179,0.12)'  },
     warning:  { color: BRAND.warning,  colorActive: BRAND.orange,   colorDone: BRAND.salmon, titleColor: BRAND.warning,  badgeBg: 'rgba(230,55,75,0.12)'    },
-    // 中性 → done 用 safe（清晰對比）
     shell:    { color: BRAND.shell,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.shell,    badgeBg: 'rgba(198,199,189,0.13)'  },
     vanilla:  { color: BRAND.vanilla,  colorActive: BRAND.focus,    colorDone: BRAND.teal,   titleColor: BRAND.vanilla,  badgeBg: 'rgba(219,237,216,0.12)'  },
   };
@@ -74,27 +69,15 @@
     connectorLabelColor: BRAND.shell,
     theme:               null,
     autoNumber:          true,
-    // ── progress 模式推進按鈕 ──────────────────────────────────────────────────
-    //   progressIcon     : 圖示內容（HTML 字串 / emoji）；空字串 = 不顯示圖示
-    //   progressText     : 文字標籤；空字串 = 不顯示文字
-    //   progressDoneIcon : 最後一步的圖示覆寫；空字串 = 沿用 progressIcon
-    //   progressDoneText : 最後一步的文字覆寫；空字串 = 沿用 progressText
-    //   progBtnSize      : 按鈕高度（圖示模式同時為寬度）
     progressIcon:     '&#8250;',  // ›
     progressText:     '',
     progressDoneIcon: '',
     progressDoneText: '',
     progressIconClass:     '',   // e.g. "bi bi-arrow-right"（優先於 progressIcon）
     progressDoneIconClass: '',   // e.g. "bi bi-check-circle-fill"
-    //   progressHideLast : true = 最後一步不注入完成按鈕（當流程結尾不需按鈕觸發時使用）
-    //                      個別步驟可在 bp-step 加 data-no-btn 達到同樣效果
     progressHideLast: false,
     progBtnSize:      '28px',
-    uiTitleGap:       '8px',    // ui-title 與元件之間的間距（獨立於 data-gap）
-    // ── compact-header 模式：badge + icon + title 排成一行 ────────────────────
-    //   compactHeader : true = 啟用；可在 bp-step 層級以 data-compact-header="false" 個別關閉
-    //   headerPadY    : header 行的上下 padding（預設 2px；比 card padding 小，視覺更緊湊）
-    //   headerGap     : badge / icon / title 三者之間的水平間距
+    uiTitleGap:       '8px',
     compactHeader: false,
     headerPadY:    '2px',
     headerGap:     '6px',
@@ -106,7 +89,6 @@
   };
 function buildCSS() {
     return `
-/* ── ui-title：標題嵌入元件內部，緊貼步驟上方 ─────────────────── */
 .bps-ui-title {
   display:        block;
   width:          100%;
@@ -122,22 +104,15 @@ function buildCSS() {
   box-sizing:     border-box;
 }
 
-/* 水平模式：允許換行讓標題佔第一行，步驟在第二行
-   row-gap 設為 0，標題到步驟的間距完全由 .bps-ui-title 的 margin-bottom 決定
-   與 data-gap（column-gap）完全脫鉤                                         */
 bp-stepper[data-has-title]:not([data-layout="vertical"]) {
   flex-wrap:     wrap;
   align-content: flex-start;
   row-gap:       0;
 }
-/* 確保步驟不因為 flex-wrap 意外換行（每個步驟各自維持定寬） */
+
 bp-stepper[data-has-title]:not([data-layout="vertical"]) > bp-step {
   flex-shrink: 0;
 }
-
-/* 垂直模式：flex gap 無法分行設定，用補償 margin 抵銷 --bps-effective-gap
-   最終間距 = --bps-effective-gap + (--bps-ui-title-gap - --bps-effective-gap)
-            = --bps-ui-title-gap（獨立生效，與 data-gap 脫鉤）               */
 bp-stepper[data-layout="vertical"][data-has-title] .bps-ui-title {
   margin-bottom: calc(var(--bps-ui-title-gap, 8px) - var(--bps-effective-gap));
 }
@@ -478,7 +453,6 @@ bp-stepper[data-layout="vertical"] > bp-step[data-state="done"]:not(:last-child)
 bp-stepper[data-layout="vertical"] > bp-step[data-state="active"]:not(:last-child)::before { border-top-color: var(--bps-color-active); }
 bp-stepper[data-layout="vertical"] > bp-step[data-state="error"]:not(:last-child)::before  { border-top-color: var(--bps-color-error);  }
 
-/* ── 垂直 solid ──────────────────────────────────────────────── */
 bp-stepper[data-layout="vertical"][data-connector="solid"] > bp-step:not(:last-child)::after {
   background: var(--bps-color);
 }
@@ -538,7 +512,6 @@ bp-stepper[data-clickable="true"] .bps-row > bp-step:focus-visible {
   outline-offset: 3px;
 }
 
-/* ── 連接器說明標籤 ───────────────────────────────────────────────────────── */
 .bps-connector-label {
   display:        none;
   position:       absolute;
@@ -576,7 +549,6 @@ bp-stepper[mode="progress-show"]      bp-step {
   padding-bottom: calc(var(--bps-prog-btn-sz, 28px) + 18px);
 }
 
-/* ── 按鈕基礎樣式（三種變體共用） ────────────────────────────────────────── */
 .bps-prog-btn {
   position:         absolute;
   bottom:           10px;
@@ -648,7 +620,6 @@ bp-step:not([data-prog-hidden]):has(+ bp-step[data-prog-hidden])::before {
   display: none;
 }
 
-/* ── 揭示動畫 ────────────────────────────────────────────────────────────── */
 @keyframes bps-reveal-h {
   from { opacity: 0; transform: translateX(30px) scale(0.94); }
   to   { opacity: 1; transform: translateX(0)    scale(1);    }
@@ -789,17 +760,99 @@ bp-step[data-state="error"] .bps-step-header::after {
 .bps-ending-reveal {
   animation: bps-ending-in 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* ── btn-js 自訂呼叫按鈕 ──────────────────────────────────────────────────────
+   用法：在任一 bp-step 加上 btn-js="myFunction()"
+   按鈕固定在卡片左下角；配色與 theme 保持同步。                              */
+.bps-js-btn {
+  position:        absolute;
+  bottom:          10px;
+  left:            10px;
+  height:          var(--bps-prog-btn-sz, 28px);
+  min-width:       var(--bps-prog-btn-sz, 28px);
+  padding:         0 12px;
+  border:          var(--bps-stroke) solid var(--bps-color);
+  border-radius:   calc(var(--bps-prog-btn-sz, 28px) / 2);
+  background:      var(--bps-badge-bg);
+  color:           var(--bps-color);
+  cursor:          pointer;
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             5px;
+  font-size:       var(--bps-badge-fs);
+  font-weight:     700;
+  white-space:     nowrap;
+  box-sizing:      border-box;
+  transition:      background .22s, color .22s, border-color .22s,
+                   box-shadow .22s, transform .15s;
+  z-index:         2;
+  line-height:     1;
+  user-select:     none;
+}
+.bps-js-btn:hover {
+  background: var(--bps-color);
+  color:      #0C0D0C;
+  box-shadow: 0 0 10px -2px var(--bps-color);
+}
+.bps-js-btn:active { transform: scale(0.91); }
+
+/* 狀態覆寫：active */
+bp-step[data-state="active"] .bps-js-btn {
+  border-color: var(--bps-color-active);
+  color:        var(--bps-color-active);
+}
+bp-step[data-state="active"] .bps-js-btn:hover {
+  background:  var(--bps-color-active);
+  color:       #0C0D0C;
+  box-shadow:  0 0 10px -2px var(--bps-color-active);
+}
+
+/* 狀態覆寫：done（淡化，仍可點擊）*/
+bp-step[data-state="done"] .bps-js-btn {
+  border-color: var(--bps-color-done);
+  color:        var(--bps-color-done);
+  opacity:      0.55;
+}
+bp-step[data-state="done"] .bps-js-btn:hover {
+  background:  var(--bps-color-done);
+  color:       #0C0D0C;
+  opacity:     1;
+  box-shadow:  0 0 10px -2px var(--bps-color-done);
+}
+
+/* 狀態覆寫：error */
+bp-step[data-state="error"] .bps-js-btn {
+  border-color: var(--bps-color-error);
+  color:        var(--bps-color-error);
+}
+bp-step[data-state="error"] .bps-js-btn:hover {
+  background:  var(--bps-color-error);
+  color:       #0C0D0C;
+  box-shadow:  0 0 10px -2px var(--bps-color-error);
+}
+
+/* 若同一步驟同時有 bps-prog-btn（右下）和 bps-js-btn（左下），
+   給 progress 模式步驟補上足夠的 padding-bottom 空間。            */
+bp-stepper[data-mode="progress"] bp-step[btn-js],
+bp-stepper[mode="progress"]      bp-step[btn-js],
+bp-stepper[data-mode="progress-show"] bp-step[btn-js],
+bp-stepper[mode="progress-show"]      bp-step[btn-js] {
+  padding-bottom: calc(var(--bps-prog-btn-sz, 28px) + 18px);
+}
+/* 非 progress 模式但有 btn-js 的步驟也需要空間 */
+bp-step[btn-js]:not(.bps-prog-btn-present) {
+  padding-bottom: calc(var(--bps-prog-btn-sz, 28px) + 18px);
+}
 `;
   }
 
-  // ─── 十六進位色碼 → {r,g,b} 整數（用於自動推算卡片背景）────────────────────────
   function hexToRgb(hex) {
     if (!hex || typeof hex !== 'string') return null;
     const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
     return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : null;
   }
 
-  // ─── JS 屬性名稱 → CSS 變數名稱對照表 ──────────────────────────────────────────
   const DATA_MAP = {
     color:               '--bps-color',
     colorActive:         '--bps-color-active',
@@ -835,7 +888,6 @@ bp-step[data-state="error"] .bps-step-header::after {
     contentOpacityDone:  '--bps-content-opacity-done',  // bp-step-content done 狀態透明度
   };
 
-  // ─── 注入全域 CSS（僅執行一次）────────────────────────────────────────────────
   function injectCSS() {
     if (document.getElementById('bp-stepper-style')) return;
     const s = document.createElement('style');
@@ -909,28 +961,6 @@ bp-step[data-state="error"] .bps-step-header::after {
     el.setAttribute('data-wrapped', '');
     syncWrapConnector(el);
   }
-
-  // ─── 注入 progress 推進按鈕 ───────────────────────────────────────────────────
-  //  按鈕支援三種顯示模式，由 icon / text 是否有內容自動判斷：
-  //    icon-only  → data-variant="icon"  → 正圓形，無文字
-  //    text-only  → data-variant="text"  → 膠囊形，無圖示
-  //    icon+text  → data-variant="both"  → 膠囊形，左圖示右文字
-  //
-  //  stepper 層級配置（data-* 屬性）：
-  //    data-progress-icon      預設圖示（預設 ›）
-  //    data-progress-text      文字標籤（預設空 = icon-only）
-  //    data-progress-done-icon 最後一步圖示覆寫（預設空 = 沿用圖示）
-  //    data-progress-done-text 最後一步文字覆寫（預設空 = 沿用文字）
-  //    data-prog-btn-size      CSS 變數 --bps-prog-btn-sz（透過 DATA_MAP）
-  //    data-progress-hide-last 存在即隱藏最後一步的完成按鈕（值為 "false" 時視為未設定）
-  //                            適用於「最後一步已自帶操作」或「不需按鈕觸發完成」的情境
-  //    data-show-ending="id"   最後一步按鈕點擊後顯示指定 id 的 div（淡入動畫）
-  //                            initEl 初始化時會自動隱藏目標 div；resetStates 呼叫後恢復隱藏
-  //
-  //  bp-step 層級（逐步覆寫）：
-  //    data-progress-icon, data-progress-text
-  //    data-no-btn             存在即跳過該步驟的按鈕注入（可用於任意步驟，不限最後一步）
-  // ────────────────────────────────────────────────────────────────────────────
   function injectProgressBtns(el, cfg) {
     const isShow = getMode(el) === 'progress-show';
 
@@ -969,9 +999,6 @@ bp-step[data-state="error"] .bps-step-header::after {
       if (step.querySelector('.bps-prog-btn')) return;
       const isLast = i === steps.length - 1;
 
-      // ── 跳過條件 ────────────────────────────────────────────────────────────
-      //   hideLast       → 最後一步整體隱藏
-      //   data-no-btn    → 個別步驟隱藏（任意位置均可使用）
       if (isLast && hideLast) return;
       if (step.hasAttribute('data-no-btn')) return;
 
@@ -1018,8 +1045,6 @@ bp-step[data-state="error"] .bps-step-header::after {
         } else {
           setActive(el, i + 1);
         }
-        // ── 最後一步：顯示結尾區塊 ────────────────────────────────────────────
-        //   data-show-ending="someId" → 找到 #someId 並播放淡入動畫
         if (isLast && el.dataset.showEnding) {
           const endingEl = document.getElementById(el.dataset.showEnding);
           if (endingEl) {
@@ -1041,6 +1066,71 @@ bp-step[data-state="error"] .bps-step-header::after {
         if (i >= hideFrom) step.setAttribute('data-prog-hidden', '');
       });
     }
+  }
+
+  // ─── btn-js 自訂呼叫按鈕注入 ──────────────────────────────────────────────────
+  //   在任一 bp-step 加上 btn-js="fnName(args)" 即可注入一顆左下角按鈕。
+  //   支援屬性：
+  //     btn-js="expression"   必填，任意 JS 運算式（eval 在 window 環境下執行）
+  //     btn-js-label="文字"   按鈕顯示文字（預設 "執行"）
+  //     btn-js-icon="HTML"    按鈕圖示 HTML（可搭配 Bootstrap Icons class）
+  //     btn-js-icon-class=""  圖示 class（優先於 btn-js-icon）
+  function injectJsBtns(el) {
+    el.querySelectorAll(':scope > bp-step[btn-js], .bps-row > bp-step[btn-js]').forEach(function (step) {
+      if (step.querySelector('.bps-js-btn')) return; // 避免重複注入
+
+      const expr      = step.getAttribute('btn-js') || '';
+      const label     = step.getAttribute('btn-js-label') || '執行';
+      const iconClass = step.getAttribute('btn-js-icon-class') || '';
+      const iconHTML  = iconClass
+        ? '<i class="' + iconClass + '" aria-hidden="true"></i>'
+        : (step.getAttribute('btn-js-icon') || '');
+
+      const hasIcon = iconHTML.length > 0;
+      const hasText = label.length > 0;
+      if (!expr) return; // btn-js 為空時略過
+
+      const btn = document.createElement('button');
+      btn.className = 'bps-js-btn';
+      btn.type      = 'button';
+
+      if (hasIcon && !hasText) {
+        btn.dataset.variant = 'icon';
+        btn.setAttribute('aria-label', label || '執行');
+        btn.innerHTML = iconHTML;
+      } else if (!hasIcon && hasText) {
+        btn.dataset.variant = 'text';
+        btn.textContent = label;
+      } else {
+        btn.dataset.variant = 'both';
+        btn.innerHTML =
+          '<span class="bps-prog-icon">' + iconHTML + '</span>' +
+          '<span class="bps-prog-text">' + label + '</span>';
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        try {
+          // eslint-disable-next-line no-new-func
+          (new Function('step', 'stepper', 'BPStepper', 'return (' + expr + ')'))(step, el, window.BPStepper);
+        } catch (err) {
+          console.error('[bp-stepper] btn-js 執行錯誤：', expr, err);
+        }
+      });
+
+      step.appendChild(btn);
+
+      // 確保步驟有足夠的 bottom padding（非 progress 模式手動補）
+      const mode = getMode(el);
+      if (mode !== 'progress' && mode !== 'progress-show') {
+        const btnSz = parseInt(
+          getComputedStyle(el).getPropertyValue('--bps-prog-btn-sz') || '28', 10
+        );
+        const current = parseInt(getComputedStyle(step).paddingBottom, 10) || 0;
+        const needed  = btnSz + 18;
+        if (current < needed) step.style.paddingBottom = needed + 'px';
+      }
+    });
   }
 
   function progressShowNext(el, fromIndex) {
@@ -1071,9 +1161,6 @@ bp-step[data-state="error"] .bps-step-header::after {
   }
 
   // ─── compact-header：將 badge、icon、title 包進單行 wrapper ──────────────────
-  //  stepper 層級：data-compact-header（無值 / 非 "false" → 啟用）
-  //  step   層級：data-compact-header="false" → 個別關閉
-  //              data-compact-header（有值且非 "false"）→ 個別啟用（覆寫 stepper 關閉）
   function applyCompactHeader(el, cfg) {
     const stepperOn = el.dataset.compactHeader !== undefined
       ? el.dataset.compactHeader !== 'false'
@@ -1244,6 +1331,9 @@ bp-step[data-state="error"] .bps-step-header::after {
     //    需在 applyWrap 之後執行，使 getSteps() 能正確取得 wrap 後的步驟順序
     const mode = getMode(el);
     if (mode === 'progress' || mode === 'progress-show') injectProgressBtns(el, cfg);
+
+    // 8. btn-js 自訂呼叫按鈕（獨立於 progress 模式，任何步驟均可使用）
+    injectJsBtns(el);
   }
 
   function init(root) {
@@ -1308,7 +1398,6 @@ bp-step[data-state="error"] .bps-step-header::after {
       }
     });
     syncWrapConnector(el);
-    // 重置時將結尾區塊恢復隱藏
     if (el.dataset.showEnding) {
       const endingEl = document.getElementById(el.dataset.showEnding);
       if (endingEl) {

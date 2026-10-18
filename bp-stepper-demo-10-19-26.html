@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bp-stepper · btn-js Demo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<style>
+:root {
+  --bg:       #0C0D0C;
+  --shell:    #C6C7BD;
+  --lavender: #C3A5E5;
+  --sky:      #82C8E5;
+  --ocean:    #1CCAE8;
+  --safe:     #27AE60;
+  --teal:     #0DA591;
+  --warning:  #E6374B;
+  --salmon:   #E5C3B3;
+  --yellow:   #E3D322;
+  --focus:    #D4FFFC;
+  --special:  #B3DE73;
+  --info:     #4171BF;
+  --indigo:   #7849C9;
+  --pink:     #FF91D7;
+  --orange:   #EDA109;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--shell);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+body { padding: 0 0 60px; }
+
+/* ── 頁首 ── */
+.demo-header {
+  background: rgba(195,165,229,0.08);
+  border-bottom: 1px solid rgba(195,165,229,0.18);
+  padding: 28px 40px 20px;
+}
+.demo-header h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--lavender);
+  margin: 0 0 4px;
+}
+.demo-header p {
+  font-size: 0.95rem;
+  color: rgba(198,199,189,0.82);
+  margin: 0;
+}
+.badge-new {
+  display: inline-block;
+  background: var(--special);
+  color: #0C0D0C;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 8px;
+  vertical-align: middle;
+  margin-left: 8px;
+  letter-spacing: .04em;
+}
+
+/* ── 版面 ── */
+.demo-body { max-width: 1400px; margin: 0 auto; padding: 36px 40px 0; }
+.demo-section {
+  margin-bottom: 52px;
+}
+.demo-section h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ocean);
+  margin: 0 0 6px;
+  letter-spacing: .03em;
+}
+.demo-section p.desc {
+  font-size: 0.88rem;
+  color: rgba(198,199,189,0.80);
+  margin: 0 0 18px;
+  line-height: 1.45;
+}
+.demo-box {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(198,199,189,0.10);
+  border-radius: 12px;
+  padding: 24px 20px 20px;
+  overflow-x: auto;
+}
+
+/* ── 程式碼區 ── */
+.code-block {
+  background: rgba(12,13,12,0.88);
+  border: 1px solid rgba(195,165,229,0.18);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.82rem;
+  color: var(--salmon);
+  overflow-x: auto;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+.code-block .attr  { color: var(--sky); }
+.code-block .val   { color: var(--special); }
+.code-block .tag   { color: var(--lavender); }
+.code-block .cmt   { color: rgba(198,199,189,0.45); font-style: italic; }
+
+/* ── API 說明表 ── */
+.api-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.api-table th {
+  background: rgba(195,165,229,0.10);
+  color: var(--lavender);
+  font-weight: 700;
+  text-align: left;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(195,165,229,0.18);
+}
+.api-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(198,199,189,0.07);
+  color: var(--shell);
+  vertical-align: top;
+}
+.api-table td code {
+  background: rgba(130,200,229,0.12);
+  color: var(--sky);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+.api-table td.default { color: var(--salmon); font-size: 0.82rem; }
+
+/* ── Bootstrap Alert 覆寫 ── */
+#demo-alert-zone .alert {
+  font-size: 0.88rem;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* ── 結果輸出面板 ── */
+#result-panel {
+  background: rgba(13,165,145,0.08);
+  border: 1px solid rgba(13,165,145,0.28);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 0.88rem;
+  color: var(--teal);
+  min-height: 48px;
+  margin-top: 16px;
+  transition: all .3s;
+}
+#result-panel.empty { color: rgba(198,199,189,0.35); font-style: italic; }
+</style>
+</head>
+<body>
+
+<header class="demo-header">
+  <h1>bp-stepper <span class="badge-new">NEW</span> <code style="font-size:1rem;color:var(--special)">btn-js</code> 屬性 Demo</h1>
+  <p>在任一 <code>bp-step</code> 加上 <code>btn-js="JS運算式"</code>，即可注入一顆配色繼承自 theme 的自訂呼叫按鈕。</p>
+</header>
+
+<main class="demo-body">
+
+  <!-- Alert 輸出區 -->
+  <div id="demo-alert-zone" style="margin-bottom:24px;min-height:52px;"></div>
+
+  <!-- ─────────────────────────────────────────────────────────────────────────
+       範例 1：純按鈕呼叫（lavender theme，文字標籤）
+  ──────────────────────────────────────────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2>① 基本用法：文字標籤按鈕（lavender theme）</h2>
+    <p class="desc">
+      在 <code>bp-step</code> 加上 <code>btn-js="..."</code> 與 <code>btn-js-label="標籤"</code>。<br>
+      按鈕固定在卡片左下角，配色跟隨 theme 並因步驟狀態（active / done / error）自動變色。
+    </p>
+    <div class="demo-box">
+      <bp-stepper data-theme="lavender" data-compact-header>
+        <bp-step
+          btn-js="demoAlert('lavender','已呼叫步驟一的自訂函數！','safe')"
+          btn-js-label="呼叫函數">
+          <bp-step-title>步驟一</bp-step-title>
+          <bp-step-content>資料驗證完畢，點擊左下按鈕觸發業務函數。</bp-step-content>
+        </bp-step>
+        <bp-step
+          btn-js="demoAlert('lavender','步驟二執行了 saveData()','ocean')"
+          btn-js-label="儲存資料">
+          <bp-step-title>步驟二</bp-step-title>
+          <bp-step-content>確認後呼叫儲存邏輯，結果顯示於頁面上方。</bp-step-content>
+        </bp-step>
+        <bp-step data-state="done"
+          btn-js="demoAlert('lavender','步驟三：已完成狀態仍可觸發','teal')"
+          btn-js-label="查看報告">
+          <bp-step-title>步驟三</bp-step-title>
+          <bp-step-content>done 狀態下按鈕半透明，hover 恢復全亮。</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+    </div>
+    <div class="code-block">
+<span class="tag">&lt;bp-step</span>
+  <span class="attr">btn-js</span>=<span class="val">"myFunction()"</span>
+  <span class="attr">btn-js-label</span>=<span class="val">"呼叫函數"</span><span class="tag">&gt;</span>
+  ...
+<span class="tag">&lt;/bp-step&gt;</span>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────────────────
+       範例 2：圖示按鈕 + progress 模式（ocean theme）
+  ──────────────────────────────────────────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2>② 圖示按鈕 + progress 模式共存（ocean theme）</h2>
+    <p class="desc">
+      同一步驟可同時擁有 progress 推進按鈕（右下）與 btn-js 自訂按鈕（左下）。<br>
+      使用 <code>btn-js-icon-class</code> 搭配 Bootstrap Icons，不顯示文字時呈現正圓形。
+    </p>
+    <div class="demo-box">
+      <bp-stepper
+        data-theme="ocean"
+        data-mode="progress"
+        data-progress-icon="›"
+        data-progress-text="下一步"
+        data-compact-header>
+        <bp-step
+          btn-js="demoAlert('ocean','已預覽此步驟內容','sky')"
+          btn-js-icon-class="bi bi-eye"
+          btn-js-label="預覽">
+          <bp-step-title>準備資料</bp-step-title>
+          <bp-step-content>左下按鈕預覽，右下按鈕推進到下一步。</bp-step-content>
+        </bp-step>
+        <bp-step
+          btn-js="demoAlert('ocean','已匯出 CSV','yellow')"
+          btn-js-icon-class="bi bi-download"
+          btn-js-label="匯出">
+          <bp-step-title>處理中</bp-step-title>
+          <bp-step-content>btn-js 與 progress 按鈕同時存在，互不干擾。</bp-step-content>
+        </bp-step>
+        <bp-step
+          btn-js="demoAlert('ocean','已送出最終確認','safe')"
+          btn-js-icon-class="bi bi-send"
+          btn-js-label="送出">
+          <bp-step-title>完成</bp-step-title>
+          <bp-step-content>最後一步依然支援自訂呼叫。</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+    </div>
+    <div class="code-block">
+<span class="tag">&lt;bp-step</span>
+  <span class="attr">btn-js</span>=<span class="val">"exportCSV(step)"</span>
+  <span class="attr">btn-js-icon-class</span>=<span class="val">"bi bi-download"</span>
+  <span class="attr">btn-js-label</span>=<span class="val">"匯出"</span><span class="tag">&gt;</span>
+  ...
+<span class="tag">&lt;/bp-step&gt;</span>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────────────────
+       範例 3：傳遞 step / stepper / BPStepper 參數（indigo theme，垂直）
+  ──────────────────────────────────────────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2>③ 存取 <code>step</code>、<code>stepper</code>、<code>BPStepper</code> 參數（indigo，垂直）</h2>
+    <p class="desc">
+      <code>btn-js</code> 運算式執行時自動注入三個參數：<br>
+      <code>step</code>（當前 bp-step 元素）、<code>stepper</code>（父 bp-stepper 元素）、<code>BPStepper</code>（全域 API）。<br>
+      下方範例示範直接讀取步驟的 <code>dataset</code> 並呼叫 <code>BPStepper.setError()</code>。
+    </p>
+    <div class="demo-box">
+      <bp-stepper
+        data-theme="indigo"
+        data-layout="vertical"
+        data-card-width="340px"
+        data-compact-header>
+        <bp-step
+          data-step-id="review"
+          btn-js="showStepInfo(step, stepper)"
+          btn-js-label="顯示資訊"
+          btn-js-icon-class="bi bi-info-circle">
+          <bp-step-title>審核</bp-step-title>
+          <bp-step-content>按鈕可讀取 step.dataset，顯示步驟相關資訊。</bp-step-content>
+        </bp-step>
+        <bp-step
+          data-step-id="sign"
+          btn-js="BPStepper.setError(stepper, 1)"
+          btn-js-label="模擬錯誤"
+          btn-js-icon-class="bi bi-exclamation-triangle">
+          <bp-step-title>簽核</bp-step-title>
+          <bp-step-content>呼叫 <code>BPStepper.setError(stepper, index)</code> 切換此步驟為 error 狀態。</bp-step-content>
+        </bp-step>
+        <bp-step
+          data-step-id="archive"
+          btn-js="BPStepper.resetStates(stepper); demoAlert('indigo','已重置所有步驟狀態','lavender')"
+          btn-js-label="重置"
+          btn-js-icon-class="bi bi-arrow-counterclockwise">
+          <bp-step-title>歸檔</bp-step-title>
+          <bp-step-content>呼叫 <code>BPStepper.resetStates(stepper)</code> 重置整個流程。</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+    </div>
+    <div id="result-panel" class="empty">（步驟資訊將顯示於此）</div>
+    <div class="code-block">
+<span class="cmt">// btn-js 運算式內可直接使用三個注入參數：</span>
+<span class="attr">btn-js</span>=<span class="val">"BPStepper.setError(stepper, 1)"</span>
+<span class="attr">btn-js</span>=<span class="val">"BPStepper.resetStates(stepper)"</span>
+<span class="attr">btn-js</span>=<span class="val">"myFn(step, stepper)"</span>  <span class="cmt">// step = bp-step 元素</span>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────────────────
+       範例 4：僅圖示（純圓形）＋ warning theme
+  ──────────────────────────────────────────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2>④ 純圖示（正圓形）版本（warning theme）</h2>
+    <p class="desc">
+      只設定 <code>btn-js-icon-class</code>，不設定 <code>btn-js-label</code>（或設為空字串），按鈕呈現正圓形，與 progress 按鈕的圓形 icon 模式一致。
+    </p>
+    <div class="demo-box">
+      <bp-stepper data-theme="warning" data-compact-header>
+        <bp-step
+          btn-js="demoAlert('warning','刪除動作需要二次確認','warning')"
+          btn-js-icon-class="bi bi-trash3"
+          btn-js-label="">
+          <bp-step-title>建立草稿</bp-step-title>
+          <bp-step-content>垃圾桶圖示按鈕，左下正圓形。</bp-step-content>
+        </bp-step>
+        <bp-step data-state="active"
+          btn-js="demoAlert('warning','已複製連結到剪貼簿','salmon')"
+          btn-js-icon-class="bi bi-link-45deg"
+          btn-js-label="">
+          <bp-step-title>提交審核</bp-step-title>
+          <bp-step-content>active 狀態下圖示顏色跟隨 colorActive。</bp-step-content>
+        </bp-step>
+        <bp-step
+          btn-js="demoAlert('warning','已開啟分享面板','orange')"
+          btn-js-icon-class="bi bi-share"
+          btn-js-label="">
+          <bp-step-title>發佈</bp-step-title>
+          <bp-step-content>分享圖示，純圓形無文字。</bp-step-content>
+        </bp-step>
+      </bp-stepper>
+    </div>
+    <div class="code-block">
+<span class="cmt">// 不設 btn-js-label（或設為空字串）→ 正圓形圖示按鈕</span>
+<span class="tag">&lt;bp-step</span>
+  <span class="attr">btn-js</span>=<span class="val">"deleteItem(step)"</span>
+  <span class="attr">btn-js-icon-class</span>=<span class="val">"bi bi-trash3"</span>
+  <span class="attr">btn-js-label</span>=<span class="val">""</span><span class="tag">&gt;</span>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────────────────
+       API 速查表
+  ──────────────────────────────────────────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2>⑤ 屬性速查</h2>
+    <div class="demo-box" style="padding:0;overflow:auto;">
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th style="width:220px">屬性</th>
+            <th style="width:100px">預設值</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>btn-js</code></td>
+            <td class="default">（必填）</td>
+            <td>任意 JS 運算式。執行時自動注入 <code>step</code>（bp-step 元素）、<code>stepper</code>（bp-stepper 元素）、<code>BPStepper</code>（全域 API）三個參數。</td>
+          </tr>
+          <tr>
+            <td><code>btn-js-label</code></td>
+            <td class="default">"執行"</td>
+            <td>按鈕顯示文字。設為空字串時按鈕縮為正圓形（圖示模式）。</td>
+          </tr>
+          <tr>
+            <td><code>btn-js-icon-class</code></td>
+            <td class="default">""</td>
+            <td>Bootstrap Icons 或其他 icon font 的 class 字串，例如 <code>"bi bi-download"</code>。優先於 <code>btn-js-icon</code>。</td>
+          </tr>
+          <tr>
+            <td><code>btn-js-icon</code></td>
+            <td class="default">""</td>
+            <td>圖示 HTML 字串（emoji 或 SVG 等）。<code>btn-js-icon-class</code> 存在時忽略此屬性。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="code-block">
+<span class="cmt">// 配置範例</span>
+<span class="tag">&lt;bp-step</span>
+  <span class="attr">btn-js</span>=<span class="val">"submitOrder(step, stepper)"</span>
+  <span class="attr">btn-js-label</span>=<span class="val">"送出訂單"</span>
+  <span class="attr">btn-js-icon-class</span>=<span class="val">"bi bi-bag-check"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;bp-step-title&gt;</span>確認<span class="tag">&lt;/bp-step-title&gt;</span>
+  <span class="tag">&lt;bp-step-content&gt;</span>核對無誤後點擊送出。<span class="tag">&lt;/bp-step-content&gt;</span>
+<span class="tag">&lt;/bp-step&gt;</span>
+    </div>
+  </section>
+
+</main>
+
+<!-- bp-stepper 元件腳本 -->
+<script src="bp-stepper.js"></script>
+
+<script>
+/* ── Demo 輔助函數 ── */
+const BRAND_COLORS = {
+  lavender: '#C3A5E5', sky: '#82C8E5', ocean: '#1CCAE8',
+  safe: '#27AE60', teal: '#0DA591', warning: '#E6374B',
+  salmon: '#E5C3B3', yellow: '#E3D322', special: '#B3DE73',
+  info: '#4171BF', indigo: '#7849C9', pink: '#FF91D7',
+  orange: '#EDA109', shell: '#C6C7BD',
+};
+
+function demoAlert(theme, msg, colorKey) {
+  const zone = document.getElementById('demo-alert-zone');
+  const color = BRAND_COLORS[colorKey] || BRAND_COLORS.lavender;
+  const div = document.createElement('div');
+  div.className = 'alert alert-dismissible fade show';
+  div.style.cssText = `
+    background: rgba(12,13,12,0.92);
+    border: 1px solid ${color};
+    color: ${color};
+    padding: 10px 16px;
+    border-radius: 8px;
+  `;
+  div.innerHTML = `
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <strong>[${theme}]</strong> ${msg}
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close" style="filter:opacity(0.6)"></button>
+  `;
+  zone.appendChild(div);
+  setTimeout(() => {
+    const bsAlert = bootstrap.Alert.getOrCreateInstance(div);
+    bsAlert.close();
+  }, 4000);
+}
+
+function showStepInfo(step, stepper) {
+  const panel = document.getElementById('result-panel');
+  const id    = step.getAttribute('data-step-id') || '（無 data-step-id）';
+  const state = step.dataset.state || '（無狀態）';
+  const idx   = [...stepper.querySelectorAll('bp-step')].indexOf(step);
+  panel.classList.remove('empty');
+  panel.innerHTML = `
+    <i class="bi bi-info-circle me-2" style="color:var(--lavender)"></i>
+    <strong style="color:var(--lavender)">step 資訊：</strong>
+    data-step-id = <code style="color:var(--sky)">${id}</code>　
+    index = <code style="color:var(--yellow)">${idx}</code>　
+    state = <code style="color:var(--special)">${state}</code>
+  `;
+}
+</script>
+</body>
+</html>
