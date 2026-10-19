@@ -74,6 +74,8 @@
     resetBtnHeight:     null,
     resetBtnFontSize:   null,
     resetBtnPadding:    null,
+    choiceFontSize:     null,   /* ir-choice 字體大小，null = 用 CSS 預設 0.95rem */
+    choicePadding:      null,   /* ir-choice 內距，null = 用 CSS 預設 10px 14px   */
   };
 
   window.InfoRegionConfig = Object.assign({}, defaults, window.InfoRegionConfig || {});
@@ -308,12 +310,12 @@
         display: flex;
         align-items: flex-start;
         gap: 10px;
-        padding: 10px 14px;
+        padding: ${cfg.choicePadding || '10px 14px'};
         background: rgba(255,255,255,0.05);
         border: 1.5px solid rgba(198,199,189,0.22);
         border-radius: 6px;
         cursor: pointer;
-        font-size: 0.95rem;
+        font-size: ${cfg.choiceFontSize ? addUnit(cfg.choiceFontSize, 'rem') : '0.95rem'};
         line-height: 1.45;
         color: ${BrandColors.shell};
         transition: background 0.18s, border-color 0.18s;
@@ -1055,6 +1057,10 @@
       /* 確保 role 語意 */
       if (!this.getAttribute('role')) this.setAttribute('role', 'button');
       if (!this.getAttribute('tabindex')) this.setAttribute('tabindex', '0');
+
+      /* ── 字體大小與內距：屬性 > 父 info-region 屬性 > InfoRegionConfig ── */
+      this._applyChoiceStyles();
+
       /* 鍵盤支援 */
       this.addEventListener('keydown', e => {
         if ((e.key === 'Enter' || e.key === ' ') && !this.hasAttribute('disabled')) {
@@ -1062,6 +1068,34 @@
           this.click();
         }
       });
+    }
+
+    static get observedAttributes() {
+      return ['choice-font-size', 'choice-padding'];
+    }
+
+    attributeChangedCallback() {
+      this._applyChoiceStyles();
+    }
+
+    _applyChoiceStyles() {
+      const cfg = window.InfoRegionConfig;
+      const region = this.closest('info-region');
+
+      /* 解析優先順序：自身屬性 > 最近 info-region 屬性 > InfoRegionConfig */
+      const resolveAttr = (attrName, cfgKey) => {
+        const self = this.getAttribute(attrName);
+        if (self != null) return self;
+        const parent = region && region.getAttribute(attrName);
+        if (parent != null) return parent;
+        return cfg[cfgKey] != null ? String(cfg[cfgKey]) : null;
+      };
+
+      const fs = resolveAttr('choice-font-size', 'choiceFontSize');
+      const pa = resolveAttr('choice-padding',   'choicePadding');
+
+      if (fs) this.style.fontSize = addUnit(fs, 'rem');
+      if (pa) this.style.padding  = pa;
     }
   }
 
