@@ -2,671 +2,355 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>practice-tracker Demo — 10-19-26</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>practice-tracker Demo — click-go</title>
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
     --bg:      #0C0D0C;
     --shell:   #C6C7BD;
     --lavender:#C3A5E5;
     --sky:     #82C8E5;
+    --teal:    #0DA591;
+    --safe:    #27AE60;
+    --special: #B3DE73;
+    --ocean:   #1CCAE8;
+    --orange:  #EDA109;
     --warning: #E6374B;
     --salmon:  #E5C3B3;
-    --ocean:   #1CCAE8;
-    --safe:    #27AE60;
-    --teal:    #0DA591;
-    --vanilla: #DBEDD8;
-    --yellow:  #E3D322;
-    --focus:   #D4FFFC;
-    --special: #B3DE73;
-    --info:    #4171BF;
-    --indigo:  #7849C9;
-    --pink:    #FF91D7;
-    --orange:  #EDA109;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { font-size: 18px; }
   body {
     background: var(--bg);
     color: var(--shell);
     font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-    font-size: 1.125rem; /* 18px */
-    min-height: 100vh;
-    padding: 0 0 120px;
     line-height: 1.5;
+    padding: 0 0 120px;
   }
 
-  /* ── 頂部導覽 ── */
+  /* ── 頂部說明 ── */
   header {
-    background: rgba(30,31,30,0.95);
-    border-bottom: 1px solid rgba(198,199,189,0.12);
-    padding: 20px 48px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    background: rgba(13,165,145,0.12);
+    border-bottom: 1px solid rgba(13,165,145,0.28);
+    padding: 36px 48px 28px;
   }
   header h1 {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
     color: var(--ocean);
     letter-spacing: 0.04em;
+    margin-bottom: 10px;
   }
-  header .badge {
-    font-size: 0.8rem;
-    background: rgba(28,202,232,0.15);
-    color: var(--ocean);
-    border: 1px solid rgba(28,202,232,0.3);
+  header p { font-size: 1rem; color: var(--shell); opacity: 0.82; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(179,222,115,0.15);
+    border: 1px solid rgba(179,222,115,0.4);
+    color: var(--special);
+    font-size: 0.82rem;
+    padding: 2px 10px;
     border-radius: 20px;
-    padding: 3px 12px;
+    margin-right: 8px;
+    vertical-align: middle;
   }
 
-  /* ── 主體布局 ── */
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 48px 48px 0;
+  /* ── 示範控制列 ── */
+  .demo-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(198,199,189,0.10);
+    background: rgba(255,255,255,0.02);
   }
-
-  /* ── 章節通用 ── */
-  section {
-    margin-bottom: 56px;
+  .demo-controls label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    user-select: none;
   }
-  section h2 {
-    font-size: 1.25rem;
+  .demo-controls input[type="checkbox"] {
+    width: 18px; height: 18px; cursor: pointer;
+    accent-color: var(--teal);
+  }
+  .demo-controls button {
+    background: rgba(28,202,232,0.12);
+    border: 1px solid rgba(28,202,232,0.35);
+    color: var(--ocean);
+    font-size: 0.9rem;
+    padding: 6px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .demo-controls button:hover {
+    background: rgba(28,202,232,0.22);
+  }
+  .hint {
+    font-size: 0.82rem;
     color: var(--lavender);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(195,165,229,0.2);
+    opacity: 0.78;
+    margin-left: auto;
+  }
+
+  /* ── 練習區塊 ── */
+  main { max-width: 860px; margin: 0 auto; padding: 0 48px; }
+
+  section[id^="ex-"] {
+    margin: 56px 0;
+    padding: 36px 40px;
+    border: 1px solid rgba(198,199,189,0.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.025);
+    transition: border-color 0.35s, background 0.35s;
+    scroll-margin-top: 24px;
+  }
+  section[id^="ex-"].is-active {
+    border-color: rgba(39,174,96,0.5);
+    background: rgba(39,174,96,0.05);
+  }
+
+  section h2 {
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 16px;
     letter-spacing: 0.03em;
   }
-
-  /* ── 屬性卡片 grid ── */
-  .attr-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  .attr-card {
-    background: rgba(26,27,26,0.9);
-    border: 1px solid rgba(198,199,189,0.12);
-    border-radius: 8px;
-    padding: 16px 20px;
-  }
-  .attr-card .attr-name {
-    font-size: 0.82rem;
-    font-family: 'Consolas', 'Courier New', monospace;
-    color: var(--ocean);
-    margin-bottom: 6px;
-    letter-spacing: 0.02em;
-  }
-  .attr-card .attr-key {
-    font-size: 0.78rem;
-    color: rgba(198,199,189,0.5);
-    margin-bottom: 8px;
-    font-family: monospace;
-  }
-  .attr-card .attr-default {
-    font-size: 0.82rem;
-    color: var(--yellow);
-    margin-bottom: 4px;
-  }
-  .attr-card .attr-desc {
-    font-size: 0.83rem;
-    color: rgba(198,199,189,0.75);
-    line-height: 1.45;
-  }
-
-  /* ── demo 展示區塊 ── */
-  .demo-wrap {
-    background: rgba(18,19,18,0.8);
-    border: 1px solid rgba(198,199,189,0.1);
-    border-radius: 10px;
-    padding: 32px 36px;
+  section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--shell);
+    opacity: 0.85;
     margin-bottom: 20px;
   }
-  .demo-label {
-    font-size: 0.8rem;
-    color: rgba(198,199,189,0.45);
-    margin-bottom: 14px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .demo-code {
-    background: rgba(12,13,12,0.85);
-    border: 1px solid rgba(198,199,189,0.1);
-    border-radius: 6px;
-    padding: 16px 20px;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.85rem;
-    color: var(--vanilla);
-    overflow-x: auto;
-    white-space: pre;
-    margin-top: 12px;
-    line-height: 1.5;
-  }
-  .demo-code .hl-tag  { color: var(--sky); }
-  .demo-code .hl-attr { color: var(--lavender); }
-  .demo-code .hl-val  { color: var(--yellow); }
 
-  /* inline tracker 容器 */
-  .tracker-inline-wrap {
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  /* ── 完成按鈕 ── */
-  .btn-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 16px;
-  }
-  .btn-mark {
-    background: rgba(13,165,145,0.15);
-    border: 1px solid rgba(13,165,145,0.35);
-    color: var(--teal);
-    border-radius: 6px;
-    padding: 8px 18px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-  }
-  .btn-mark:hover {
-    background: rgba(13,165,145,0.3);
-    color: var(--vanilla);
-  }
-  .btn-mark.done {
-    background: rgba(39,174,96,0.2);
-    border-color: rgba(39,174,96,0.4);
+  .btn-done {
+    background: rgba(39,174,96,0.14);
+    border: 1px solid rgba(39,174,96,0.4);
     color: var(--safe);
+    font-size: 0.95rem;
+    padding: 8px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .btn-done:hover   { background: rgba(39,174,96,0.26); }
+  .btn-done:disabled {
+    opacity: 0.38;
     cursor: default;
   }
 
-  /* ── 表格比較 ── */
-  .ref-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
+  /* ── 說明卡 ── */
+  .doc-card {
+    max-width: 860px;
+    margin: 40px auto 0;
+    padding: 24px 40px;
+    background: rgba(195,165,229,0.07);
+    border: 1px solid rgba(195,165,229,0.22);
+    border-radius: 10px;
   }
-  .ref-table th {
-    text-align: left;
-    padding: 10px 16px;
-    border-bottom: 2px solid rgba(195,165,229,0.25);
+  .doc-card h3 {
+    font-size: 1rem;
     color: var(--lavender);
-    font-weight: 600;
-    background: rgba(26,27,26,0.6);
+    margin-bottom: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
-  .ref-table td {
-    padding: 10px 16px;
-    border-bottom: 1px solid rgba(198,199,189,0.08);
-    vertical-align: top;
+  .doc-card dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 20px;
+    font-size: 0.92rem;
   }
-  .ref-table tr:hover td { background: rgba(255,255,255,0.03); }
-  .ref-table code {
-    font-family: 'Consolas','Courier New',monospace;
+  .doc-card dt {
     color: var(--ocean);
-    font-size: 0.82rem;
+    font-family: monospace;
+    white-space: nowrap;
   }
-  .ref-table .col-key code  { color: var(--lavender); }
-  .ref-table .col-def  { color: var(--yellow); font-size: 0.83rem; }
-  .ref-table .col-desc { color: rgba(198,199,189,0.78); }
+  .doc-card dd { color: var(--shell); opacity: 0.82; }
 
-  /* ── 虛設 section（for tracker 偵測）── */
-  .ex-sections { display: none; }
-
-  /* ── 橫分隔 ── */
-  .divider {
-    border: none;
-    border-top: 1px solid rgba(198,199,189,0.1);
-    margin: 56px 0;
+  code {
+    background: rgba(255,255,255,0.07);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: var(--salmon);
+    font-family: monospace;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>practice-tracker.js</h1>
-  <span class="badge">Demo · 10-19-26</span>
+  <h1>practice-tracker <span class="badge">click-go</span> 功能示範</h1>
+  <p>
+    布林屬性 <code>click-go</code>（預設關閉）啟用後，點擊進度面板中的任一方塊，頁面將平滑捲動至對應的練習節。
+    下方切換開關可即時切換兩種模式以便比較。
+  </p>
 </header>
 
-<main>
-
-  <!-- ① 新增屬性總覽 -->
-  <section>
-    <h2>新增開放屬性一覽</h2>
-
-    <table class="ref-table">
-      <thead>
-        <tr>
-          <th class="col-attr">data-* 屬性</th>
-          <th class="col-key">JS config key</th>
-          <th class="col-def">預設值</th>
-          <th class="col-desc">說明</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>data-font-size-panel</code></td>
-          <td class="col-key"><code>fontSizePanel</code></td>
-          <td class="col-def">0.85rem</td>
-          <td class="col-desc">面板整體基礎字體大小（其餘字體繼承於此）</td>
-        </tr>
-        <tr>
-          <td><code>data-font-size-title</code></td>
-          <td class="col-key"><code>fontSizeTitle</code></td>
-          <td class="col-def">0.78rem</td>
-          <td class="col-desc">標題列「進度」文字大小</td>
-        </tr>
-        <tr>
-          <td><code>data-font-size-count</code></td>
-          <td class="col-key"><code>fontSizeCount</code></td>
-          <td class="col-def">0.76rem</td>
-          <td class="col-desc">格子下方進度計數「N / Total 完成」</td>
-        </tr>
-        <tr>
-          <td><code>data-font-size-complete</code></td>
-          <td class="col-key"><code>fontSizeComplete</code></td>
-          <td class="col-def">0.80rem</td>
-          <td class="col-desc">全部完成時顯示的主訊息</td>
-        </tr>
-        <tr>
-          <td><code>data-font-size-complete-sub</code></td>
-          <td class="col-key"><code>fontSizeCompleteSub</code></td>
-          <td class="col-def">0.73rem</td>
-          <td class="col-desc">全部完成時的副訊息（completeSubText）</td>
-        </tr>
-        <tr>
-          <td><code>data-cell-size</code></td>
-          <td class="col-key"><code>cellSize</code></td>
-          <td class="col-def">16px</td>
-          <td class="col-desc">每個完成方塊的寬高（正方形）</td>
-        </tr>
-        <tr>
-          <td><code>data-cell-gap</code></td>
-          <td class="col-key"><code>cellGap</code></td>
-          <td class="col-def">6px</td>
-          <td class="col-desc">方塊與方塊之間的間距</td>
-        </tr>
-        <tr>
-          <td><code>data-cell-radius</code></td>
-          <td class="col-key"><code>cellRadius</code></td>
-          <td class="col-def">4px</td>
-          <td class="col-desc">方塊圓角半徑（已存在，一併列出）</td>
-        </tr>
-        <tr>
-          <td><code>data-cells-per-row</code></td>
-          <td class="col-key"><code>cellsPerRow</code></td>
-          <td class="col-def">5</td>
-          <td class="col-desc">每排顯示幾個方塊（已存在，一併列出）</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <hr class="divider">
-
-  <!-- ② 預設尺寸（inline） -->
-  <section>
-    <h2>範例 A　預設尺寸（方塊 16px，間距 6px）</h2>
-
-    <div class="demo-wrap">
-      <div class="demo-label">Live Demo</div>
-      <div class="tracker-inline-wrap">
-
-        <!-- inline tracker A -->
-        <practice-tracker id="tracker-a"
-          data-inline
-          data-prefix="ex-a-"
-          data-title="預設進度"
-          data-complete-text="全部完成！"
-          data-complete-sub="繼續保持"
-          data-watch-stepper="false">
-        </practice-tracker>
-
-        <!-- 虛設 section 供偵測 -->
-        <div style="flex:1;min-width:260px">
-          <div class="btn-row" id="btn-row-a"></div>
-        </div>
-      </div>
-
-      <div class="demo-code"><span class="hl-tag">&lt;practice-tracker</span>
-  <span class="hl-attr">data-inline</span>
-  <span class="hl-attr">data-prefix</span>=<span class="hl-val">"ex-a-"</span>
-  <span class="hl-attr">data-title</span>=<span class="hl-val">"預設進度"</span>
-  <span class="hl-attr">data-complete-text</span>=<span class="hl-val">"全部完成！"</span>
-  <span class="hl-attr">data-complete-sub</span>=<span class="hl-val">"繼續保持"</span>
-  <span class="hl-attr">data-watch-stepper</span>=<span class="hl-val">"false"</span><span class="hl-tag">&gt;</span>
-<span class="hl-tag">&lt;/practice-tracker&gt;</span></div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- ③ 大方塊 -->
-  <section>
-    <h2>範例 B　大方塊（方塊 28px，間距 10px，圓角 8px）</h2>
-
-    <div class="demo-wrap">
-      <div class="demo-label">Live Demo</div>
-      <div class="tracker-inline-wrap">
-        <practice-tracker id="tracker-b"
-          data-inline
-          data-prefix="ex-b-"
-          data-title="大格進度"
-          data-cell-size="28px"
-          data-cell-gap="10px"
-          data-cell-radius="8px"
-          data-cells-per-row="4"
-          data-complete-text="太棒了！"
-          data-watch-stepper="false">
-        </practice-tracker>
-
-        <div style="flex:1;min-width:260px">
-          <div class="btn-row" id="btn-row-b"></div>
-        </div>
-      </div>
-
-      <div class="demo-code"><span class="hl-tag">&lt;practice-tracker</span>
-  <span class="hl-attr">data-inline</span>
-  <span class="hl-attr">data-prefix</span>=<span class="hl-val">"ex-b-"</span>
-  <span class="hl-attr">data-cell-size</span>=<span class="hl-val">"28px"</span>
-  <span class="hl-attr">data-cell-gap</span>=<span class="hl-val">"10px"</span>
-  <span class="hl-attr">data-cell-radius</span>=<span class="hl-val">"8px"</span>
-  <span class="hl-attr">data-cells-per-row</span>=<span class="hl-val">"4"</span><span class="hl-tag">&gt;</span>
-<span class="hl-tag">&lt;/practice-tracker&gt;</span></div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- ④ 大字體 -->
-  <section>
-    <h2>範例 C　放大字體（各部位字體獨立設定）</h2>
-
-    <div class="demo-wrap">
-      <div class="demo-label">Live Demo</div>
-      <div class="tracker-inline-wrap">
-        <practice-tracker id="tracker-c"
-          data-inline
-          data-prefix="ex-c-"
-          data-title="字體示範"
-          data-panel-width="260px"
-          data-font-size-panel="1rem"
-          data-font-size-title="0.95rem"
-          data-font-size-count="0.9rem"
-          data-font-size-complete="1rem"
-          data-font-size-complete-sub="0.85rem"
-          data-complete-text="全部搞定！"
-          data-complete-sub="字體放大後的完成副文字"
-          data-watch-stepper="false">
-        </practice-tracker>
-
-        <div style="flex:1;min-width:260px">
-          <div class="btn-row" id="btn-row-c"></div>
-        </div>
-      </div>
-
-      <div class="demo-code"><span class="hl-tag">&lt;practice-tracker</span>
-  <span class="hl-attr">data-inline</span>
-  <span class="hl-attr">data-prefix</span>=<span class="hl-val">"ex-c-"</span>
-  <span class="hl-attr">data-panel-width</span>=<span class="hl-val">"260px"</span>
-  <span class="hl-attr">data-font-size-panel</span>=<span class="hl-val">"1rem"</span>
-  <span class="hl-attr">data-font-size-title</span>=<span class="hl-val">"0.95rem"</span>
-  <span class="hl-attr">data-font-size-count</span>=<span class="hl-val">"0.9rem"</span>
-  <span class="hl-attr">data-font-size-complete</span>=<span class="hl-val">"1rem"</span>
-  <span class="hl-attr">data-font-size-complete-sub</span>=<span class="hl-val">"0.85rem"</span>
-  <span class="hl-attr">data-complete-text</span>=<span class="hl-val">"全部搞定！"</span>
-  <span class="hl-attr">data-complete-sub</span>=<span class="hl-val">"字體放大後的完成副文字"</span><span class="hl-tag">&gt;</span>
-<span class="hl-tag">&lt;/practice-tracker&gt;</span></div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- ⑤ window.PracticeTrackerConfig 方式 -->
-  <section>
-    <h2>範例 D　透過 <code>window.PracticeTrackerConfig</code> 設定</h2>
-
-    <div class="demo-wrap">
-      <div class="demo-label">JS 全域設定（適合整站統一調整）</div>
-      <div class="demo-code"><span class="hl-tag">window</span>.PracticeTrackerConfig = {
-  <span class="hl-attr">cellSize</span>:            <span class="hl-val">'20px'</span>,
-  <span class="hl-attr">cellGap</span>:             <span class="hl-val">'8px'</span>,
-  <span class="hl-attr">cellRadius</span>:          <span class="hl-val">'6px'</span>,
-  <span class="hl-attr">fontSizePanel</span>:       <span class="hl-val">'0.9rem'</span>,
-  <span class="hl-attr">fontSizeTitle</span>:       <span class="hl-val">'0.85rem'</span>,
-  <span class="hl-attr">fontSizeCount</span>:       <span class="hl-val">'0.82rem'</span>,
-  <span class="hl-attr">fontSizeComplete</span>:    <span class="hl-val">'0.88rem'</span>,
-  <span class="hl-attr">fontSizeCompleteSub</span>: <span class="hl-val">'0.78rem'</span>,
-};</div>
-    </div>
-
-    <p style="font-size:0.9rem;color:rgba(198,199,189,0.65);margin-top:8px;">
-      data-* 屬性的優先序高於 <code>window.PracticeTrackerConfig</code>，可針對個別 tracker 做覆蓋。
-    </p>
-  </section>
-
-</main>
-
-<!-- 虛設 section 元素（供 tracker 偵測） -->
-<div class="ex-sections" aria-hidden="true">
-  <section id="ex-a-1"></section>
-  <section id="ex-a-2"></section>
-  <section id="ex-a-3"></section>
-  <section id="ex-a-4"></section>
-  <section id="ex-a-5"></section>
-  <section id="ex-a-6"></section>
-  <section id="ex-a-7"></section>
-
-  <section id="ex-b-1"></section>
-  <section id="ex-b-2"></section>
-  <section id="ex-b-3"></section>
-  <section id="ex-b-4"></section>
-  <section id="ex-b-5"></section>
-  <section id="ex-b-6"></section>
-  <section id="ex-b-7"></section>
-  <section id="ex-b-8"></section>
-
-  <section id="ex-c-1"></section>
-  <section id="ex-c-2"></section>
-  <section id="ex-c-3"></section>
-  <section id="ex-c-4"></section>
-  <section id="ex-c-5"></section>
+<!-- 說明卡 -->
+<div class="doc-card" style="max-width:860px;margin:28px auto 0;padding:24px 40px;">
+  <h3>用法速查</h3>
+  <dl>
+    <dt>&lt;practice-tracker&gt;</dt>
+    <dd>預設模式，方塊<strong>不</strong>可點擊（<code>click-go</code> 未設）</dd>
+    <dt>&lt;practice-tracker click-go&gt;</dt>
+    <dd>啟用點擊跳轉；方塊出現 pointer cursor 與 hover 亮度效果</dd>
+    <dt>&lt;practice-tracker data-click-go="false"&gt;</dt>
+    <dd>明確關閉（等同預設）</dd>
+    <dt>window.PracticeTrackerConfig</dt>
+    <dd><code>{ clickGo: true }</code> — 以全域設定啟用</dd>
+  </dl>
 </div>
 
+<!-- 示範控制列 -->
+<div class="demo-controls">
+  <label>
+    <input type="checkbox" id="toggleClickGo">
+    啟用 <code>click-go</code>（點擊方塊跳轉至對應節）
+  </label>
+  <button id="btnReset">重置進度</button>
+  <span class="hint">← 勾選後，點擊右下角進度面板的方塊試試</span>
+</div>
+
+<!-- 練習區塊 -->
+<main>
+  <section id="ex-01">
+    <h2>01 — 熱身：基礎呼吸練習</h2>
+    <p>
+      用腹式呼吸法進行 5 分鐘放鬆，吸氣 4 秒、屏氣 4 秒、呼氣 6 秒。
+      注意肩膀放鬆，背部挺直，感受橫膈膜的起伏。
+    </p>
+    <button class="btn-done" data-sec="ex-01">標記完成</button>
+  </section>
+
+  <section id="ex-02">
+    <h2>02 — 核心：平板支撐訓練</h2>
+    <p>
+      進行 3 組平板支撐，每組 30 秒，組間休息 20 秒。
+      確保身體呈一直線，避免臀部上抬或下沉，收緊腹部核心肌群。
+    </p>
+    <button class="btn-done" data-sec="ex-02">標記完成</button>
+  </section>
+
+  <section id="ex-03">
+    <h2>03 — 下肢：深蹲與弓箭步</h2>
+    <p>
+      深蹲 15 下 × 3 組，隨後交替弓箭步 10 下 × 2 組。
+      膝蓋對齊第二腳趾，不超過腳尖，控制下降速度。
+    </p>
+    <button class="btn-done" data-sec="ex-03">標記完成</button>
+  </section>
+
+  <section id="ex-04">
+    <h2>04 — 上肢：伏地挺身變式</h2>
+    <p>
+      標準伏地挺身 10 下、寬距 10 下、窄距 10 下，各做 2 組。
+      下降時胸口幾乎觸地，上推時手肘完全伸展。
+    </p>
+    <button class="btn-done" data-sec="ex-04">標記完成</button>
+  </section>
+
+  <section id="ex-05">
+    <h2>05 — 有氧：開合跳與登山者</h2>
+    <p>
+      開合跳 30 秒 + 登山者 30 秒交替，共進行 4 輪，總計 4 分鐘。
+      維持節奏穩定，不因疲勞而讓腰部塌陷。
+    </p>
+    <button class="btn-done" data-sec="ex-05">標記完成</button>
+  </section>
+
+  <section id="ex-06">
+    <h2>06 — 伸展：收操靜態拉伸</h2>
+    <p>
+      針對股四頭肌、腿後腱、胸肌及肩胛各靜態伸展 30 秒。
+      緩慢呼氣並放鬆目標肌群，感受到輕微緊繃但不疼痛為佳。
+    </p>
+    <button class="btn-done" data-sec="ex-06">標記完成</button>
+  </section>
+</main>
+
+<!-- tracker 元素（預設不含 click-go） -->
+<practice-tracker
+  data-complete-text="今日訓練完成！"
+  data-complete-sub="做得很好，明天繼續。"
+  data-cells-per-row="3"
+  data-cell-size="20px"
+  data-cell-gap="8px"
+  data-panel-width="200px"
+></practice-tracker>
+
+<script src="practice-tracker.js"></script>
 <script>
-/* ── 多 tracker 支援：practice-tracker.js 原本只處理第一個元素。
-   本 demo 以簡易 patch 讓每個 inline tracker 獨立初始化。 ── */
+  /* ── 示範控制邏輯 ── */
+  const trackerEl = document.querySelector('practice-tracker');
+  const toggle    = document.getElementById('toggleClickGo');
+  const btnReset  = document.getElementById('btnReset');
 
-(function(){
-  'use strict';
-
-  /* ── 品牌色票（與 .js 一致）── */
-  const BRAND = {
-    bg:'#0C0D0C', shell:'#C6C7BD', lavender:'#C3A5E5', sky:'#82C8E5',
-    warning:'#E6374B', salmon:'#E5C3B3', ocean:'#1CCAE8', safe:'#27AE60',
-    teal:'#0DA591', vanilla:'#DBEDD8', yellow:'#E3D322', focus:'#D4FFFC',
-    special:'#B3DE73', info:'#4171BF', indigo:'#7849C9', pink:'#FF91D7',
-    orange:'#EDA109',
-  };
-
-  const DEFAULTS = {
-    prefix:'ex-', position:'bottom-right', offsetX:'24px', offsetY:'24px',
-    panelWidth:'220px', zIndex:'999', collapsed:false,
-    cellSize:'16px', cellGap:'6px', cellRadius:'4px', cellsPerRow:5,
-    colorDone:BRAND.safe, colorPending:'#2a2b2a', colorPanel:'#1a1b1a',
-    colorText:BRAND.shell, colorComplete:BRAND.special,
-    fontSizePanel:'0.85rem', fontSizeTitle:'0.78rem', fontSizeCount:'0.76rem',
-    fontSizeComplete:'0.80rem', fontSizeCompleteSub:'0.73rem',
-    title:'進度', labelDone:'完成', completeText:'全部完成', completeSubText:'',
-    animateCell:true, animateDuration:'0.3s',
-    eventName:'pt:stage-complete', watchStepper:true,
-  };
-
-  const ATTR_MAP = {
-    'data-prefix':           {key:'prefix',type:'string'},
-    'data-position':         {key:'position',type:'string'},
-    'data-offset-x':         {key:'offsetX',type:'string'},
-    'data-offset-y':         {key:'offsetY',type:'string'},
-    'data-panel-width':      {key:'panelWidth',type:'string'},
-    'data-z-index':          {key:'zIndex',type:'string'},
-    'data-collapsed':        {key:'collapsed',type:'bool'},
-    'data-cell-size':        {key:'cellSize',type:'string'},
-    'data-cell-gap':         {key:'cellGap',type:'string'},
-    'data-cell-radius':      {key:'cellRadius',type:'string'},
-    'data-cells-per-row':    {key:'cellsPerRow',type:'int'},
-    'data-color-done':       {key:'colorDone',type:'string'},
-    'data-color-pending':    {key:'colorPending',type:'string'},
-    'data-color-panel':      {key:'colorPanel',type:'string'},
-    'data-color-text':       {key:'colorText',type:'string'},
-    'data-color-complete':   {key:'colorComplete',type:'string'},
-    'data-title':            {key:'title',type:'string'},
-    'data-label-done':       {key:'labelDone',type:'string'},
-    'data-complete-text':    {key:'completeText',type:'string'},
-    'data-complete-sub':     {key:'completeSubText',type:'string'},
-    'data-animate-cell':     {key:'animateCell',type:'bool'},
-    'data-animate-duration': {key:'animateDuration',type:'string'},
-    'data-event-name':       {key:'eventName',type:'string'},
-    'data-watch-stepper':    {key:'watchStepper',type:'bool'},
-    'data-font-size-panel':       {key:'fontSizePanel',type:'string'},
-    'data-font-size-title':       {key:'fontSizeTitle',type:'string'},
-    'data-font-size-count':       {key:'fontSizeCount',type:'string'},
-    'data-font-size-complete':    {key:'fontSizeComplete',type:'string'},
-    'data-font-size-complete-sub':{key:'fontSizeCompleteSub',type:'string'},
-  };
-
-  function readAttrs(el, cfg){
-    for(const [attr,meta] of Object.entries(ATTR_MAP)){
-      if(!el.hasAttribute(attr)) continue;
-      const raw = el.getAttribute(attr);
-      switch(meta.type){
-        case 'bool': cfg[meta.key]=(raw!=='false'); break;
-        case 'int':  cfg[meta.key]=parseInt(raw,10); break;
-        default:     cfg[meta.key]=raw;
-      }
-    }
-  }
-
-  function applyVars(el, cfg){
-    el.style.setProperty('--pt-width',         cfg.panelWidth);
-    el.style.setProperty('--pt-panel-bg',       cfg.colorPanel);
-    el.style.setProperty('--pt-text',           cfg.colorText);
-    el.style.setProperty('--pt-z',              String(cfg.zIndex));
-    el.style.setProperty('--pt-cell',           cfg.cellSize);
-    el.style.setProperty('--pt-gap',            cfg.cellGap);
-    el.style.setProperty('--pt-radius',         cfg.cellRadius);
-    el.style.setProperty('--pt-cols',           String(cfg.cellsPerRow));
-    el.style.setProperty('--pt-done',           cfg.colorDone);
-    el.style.setProperty('--pt-pending',        cfg.colorPending);
-    el.style.setProperty('--pt-complete-color', cfg.colorComplete);
-    el.style.setProperty('--pt-anim',           cfg.animateCell ? cfg.animateDuration : '0s');
-    el.style.setProperty('--pt-fs-panel',       cfg.fontSizePanel);
-    el.style.setProperty('--pt-fs-title',       cfg.fontSizeTitle);
-    el.style.setProperty('--pt-fs-count',       cfg.fontSizeCount);
-    el.style.setProperty('--pt-fs-complete',    cfg.fontSizeComplete);
-    el.style.setProperty('--pt-fs-complete-sub',cfg.fontSizeCompleteSub);
-  }
-
-  /* 為每個 <practice-tracker data-inline> 建立獨立 tracker */
-  document.querySelectorAll('practice-tracker[data-inline]').forEach(hostEl => {
-    const cfg = Object.assign({}, DEFAULTS);
-    readAttrs(hostEl, cfg);
-    hostEl.innerHTML = '';
-    applyVars(hostEl, cfg);
-
-    /* 收集此 tracker 管轄的 sections */
-    const sections = Array.from(document.querySelectorAll(`section[id^="${cfg.prefix}"]`));
-    if(!sections.length) return;
-    const total   = sections.length;
-    const doneSet = new Set();
-    const cells   = {};
-
-    /* 標題列 */
-    const header   = document.createElement('pt-header');
-    const titleEl  = document.createElement('pt-title');
-    const toggleEl = document.createElement('pt-toggle');
-    titleEl.textContent  = cfg.title;
-    toggleEl.textContent = cfg.collapsed ? '+' : '−';
-    header.append(titleEl, toggleEl);
-
-    /* 主體 */
-    const body = document.createElement('pt-body');
-    body.style.maxHeight = '300px';
-
-    /* 格子 */
-    const grid = document.createElement('pt-grid');
-    sections.forEach(sec => {
-      const cell = document.createElement('pt-cell');
-      cell.setAttribute('data-id', sec.id);
-      cell.title = sec.id;
-      grid.appendChild(cell);
-      cells[sec.id] = cell;
+  /* 標記完成按鈕 */
+  document.querySelectorAll('.btn-done').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const secId = btn.dataset.sec;
+      /* pt:stage-complete 必須從 document 發出，並帶 detail.sectionId */
+      document.dispatchEvent(
+        new CustomEvent('pt:stage-complete', { detail: { sectionId: secId } })
+      );
+      const sec = document.getElementById(secId);
+      sec.classList.add('is-active');
+      btn.disabled = true;
+      btn.textContent = '已完成 ✓';
     });
-
-    const countEl = document.createElement('pt-count');
-    countEl.textContent = `0 / ${total} ${cfg.labelDone}`;
-    body.append(grid, countEl);
-
-    /* 完成訊息 */
-    const completeEl = document.createElement('pt-complete');
-    completeEl.textContent = cfg.completeText;
-    if(cfg.completeSubText){
-      const sub = document.createElement('pt-complete-sub');
-      sub.textContent = cfg.completeSubText;
-      completeEl.appendChild(sub);
-    }
-
-    hostEl.append(header, body, completeEl);
-    if(cfg.collapsed) hostEl.classList.add('is-collapsed');
-
-    header.addEventListener('click', () => {
-      const now = hostEl.classList.toggle('is-collapsed');
-      toggleEl.textContent = now ? '+' : '−';
-      if(!now) body.style.maxHeight = '300px';
-    });
-
-    function markDone(sectionId){
-      if(doneSet.has(sectionId) || !cells[sectionId]) return;
-      doneSet.add(sectionId);
-      const cell = cells[sectionId];
-      cell.classList.add('is-done');
-      if(cfg.animateCell){
-        cell.classList.add('pt-pop');
-        setTimeout(() => cell.classList.remove('pt-pop'),
-          parseFloat(cfg.animateDuration)*1000+50);
-      }
-      countEl.textContent = `${doneSet.size} / ${total} ${cfg.labelDone}`;
-      if(doneSet.size===total) hostEl.classList.add('pt-complete-state');
-    }
-
-    /* 建立互動按鈕 */
-    const btnRowId = hostEl.id === 'tracker-a' ? 'btn-row-a'
-                   : hostEl.id === 'tracker-b' ? 'btn-row-b'
-                   : 'btn-row-c';
-    const btnRow = document.getElementById(btnRowId);
-    if(btnRow){
-      sections.forEach(sec => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-mark';
-        btn.textContent = `完成 ${sec.id.replace(cfg.prefix,'')}`;
-        btn.dataset.secId = sec.id;
-        btn.addEventListener('click', function(){
-          if(this.classList.contains('done')) return;
-          this.classList.add('done');
-          this.textContent = `✓ ${sec.id.replace(cfg.prefix,'')}`;
-          markDone(sec.id);
-        });
-        btnRow.appendChild(btn);
-      });
-    }
   });
-})();
-</script>
 
+  /* 切換 click-go */
+  toggle.addEventListener('change', () => {
+    /* 重建 tracker：更新屬性後重新初始化最簡單的方式是
+       直接設定 data-click-go，然後手動觸發元件重建。
+       本示範採用替換元素節點的方式示意完整流程。 */
+    const newTracker = trackerEl.cloneNode(false); // 複製屬性，清空子節點
+    if (toggle.checked) {
+      newTracker.setAttribute('data-click-go', 'true');
+    } else {
+      newTracker.removeAttribute('data-click-go');
+    }
+    /* 保留已完成狀態的 section class，重置進度顯示 */
+    trackerEl.replaceWith(newTracker);
+    /* 重新跑 init（透過重新載入腳本邏輯） */
+    const s = document.createElement('script');
+    s.textContent = '(window.__ptReinit && window.__ptReinit()) || location.reload()';
+    document.body.appendChild(s);
+    /* 最簡可靠方式：直接 reload（保留 hash） */
+    const checked = toggle.checked;
+    sessionStorage.setItem('pt_clickgo', checked ? '1' : '0');
+    location.reload();
+  });
+
+  /* 從 sessionStorage 恢復勾選狀態 */
+  (function restoreState() {
+    const val = sessionStorage.getItem('pt_clickgo');
+    if (val === '1') {
+      toggle.checked = true;
+      trackerEl.setAttribute('data-click-go', 'true');
+      /* 因為腳本已在 DOMContentLoaded 後執行，直接修改屬性無法觸發
+         已初始化的 tracker 重新套用，因此在 reload 前就寫入屬性，
+         讓下一次頁面載入時 readElementAttrs 讀到正確值。
+         此處 tracker 已由 practice-tracker.js 初始化；
+         reload 已完成，直接呈現最新狀態。 */
+    }
+  })();
+
+  /* 重置按鈕 */
+  btnReset.addEventListener('click', () => {
+    sessionStorage.removeItem('pt_clickgo');
+    toggle.checked = false;
+    location.reload();
+  });
+</script>
 </body>
 </html>

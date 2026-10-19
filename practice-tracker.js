@@ -3,7 +3,6 @@
 
   const CSS_ID = '__practice-tracker-v1__';
 
-  /* ── 品牌色票 ─────────────────────────────────────────── */
   const BRAND = {
     bg:       '#0C0D0C',
     shell:    '#C6C7BD',
@@ -24,7 +23,6 @@
     orange:   '#EDA109',
   };
 
-  /* ── 預設配置 ─────────────────────────────────────────── */
   const DEFAULTS = {
     prefix:          'ex-',          // section id 前綴
     position:        'bottom-right', // bottom-right / bottom-left / top-right / top-left
@@ -33,7 +31,6 @@
     panelWidth:      '220px',
     zIndex:          '999',
     collapsed:       false,
-    /* ── 小方塊 ── */
     cellSize:        '16px',         // 每格寬高（data-cell-size）
     cellGap:         '6px',          // 格與格間距（data-cell-gap）
     cellRadius:      '4px',
@@ -43,7 +40,6 @@
     colorPanel:      '#1a1b1a',
     colorText:       BRAND.shell,
     colorComplete:   BRAND.special,
-    /* ── 字體大小 ── */
     fontSizePanel:   '0.85rem',      // 面板基礎字體（data-font-size-panel）
     fontSizeTitle:   '0.78rem',      // 標題列文字（data-font-size-title）
     fontSizeCount:   '0.76rem',      // 進度計數文字（data-font-size-count）
@@ -58,13 +54,9 @@
     animateDuration: '0.3s',
     eventName:       'pt:stage-complete',
     watchStepper:    true,
+    clickGo:         false,          // 點擊方塊捲動至對應 section（data-click-go）
   };
 
-  /* ── 元素屬性對應表 ───────────────────────────────────── */
-  /*
-   * 支援在 <practice-tracker> 元素上用 data-* 屬性覆蓋配置。
-   * 優先序：DEFAULTS → window.PracticeTrackerConfig → data-* 屬性（最高）
-   */
   const ATTR_MAP = {
     'data-prefix':           { key: 'prefix',          type: 'string' },
     'data-position':         { key: 'position',         type: 'string' },
@@ -90,15 +82,14 @@
     'data-animate-duration':      { key: 'animateDuration',     type: 'string' },
     'data-event-name':            { key: 'eventName',           type: 'string' },
     'data-watch-stepper':         { key: 'watchStepper',        type: 'bool'   },
-    /* ── 字體大小 ── */
     'data-font-size-panel':       { key: 'fontSizePanel',       type: 'string' },
     'data-font-size-title':       { key: 'fontSizeTitle',       type: 'string' },
     'data-font-size-count':       { key: 'fontSizeCount',       type: 'string' },
     'data-font-size-complete':    { key: 'fontSizeComplete',    type: 'string' },
     'data-font-size-complete-sub':{ key: 'fontSizeCompleteSub', type: 'string' },
+    'data-click-go':              { key: 'clickGo',             type: 'bool'   },
   };
 
-  /* ── 讀取元素屬性、就地覆蓋 cfg ─────────────────────── */
   function readElementAttrs(el, cfg) {
     for (const [attr, meta] of Object.entries(ATTR_MAP)) {
       if (!el.hasAttribute(attr)) continue;
@@ -111,12 +102,10 @@
     }
   }
 
-  /* ── 注入全域樣式（僅一次）──────────────────────────── */
   if (!doc.getElementById(CSS_ID)) {
     const s = doc.createElement('style');
     s.id = CSS_ID;
     s.textContent = `
-/* 語意標籤：預設 block */
 practice-tracker,
 pt-header, pt-title, pt-toggle,
 pt-body, pt-grid, pt-cell,
@@ -125,7 +114,6 @@ pt-count, pt-complete, pt-complete-sub {
   box-sizing: border-box;
 }
 
-/* ── 面板外框（position:fixed 浮動，預設）────────────────── */
 practice-tracker {
   position: fixed;
   width: var(--pt-width, 220px);
@@ -144,12 +132,6 @@ practice-tracker.pt-complete-state {
   border-color: rgba(179,222,115,0.45);
 }
 
-/* ── 行內嵌入模式（data-inline）────────────────────────── */
-/*
- * 寫法：<practice-tracker data-inline ...>
- * 元素保留在文件流中，不蓋住內容。
- * 移除 data-inline 即恢復浮動模式。
- */
 practice-tracker[data-inline] {
   position: relative;
   top:    auto !important;
@@ -159,7 +141,6 @@ practice-tracker[data-inline] {
   box-shadow: 0 4px 20px rgba(0,0,0,0.45), 0 1px 6px rgba(0,0,0,0.30);
 }
 
-/* ── 標題列 ──────────────────────────────────────────────── */
 pt-header {
   display: flex;
   align-items: center;
@@ -187,7 +168,6 @@ pt-toggle {
 }
 pt-header:hover pt-toggle { opacity: 0.85; }
 
-/* ── 主體（可收合）──────────────────────────────────────── */
 pt-body {
   padding: 10px 12px 12px;
   overflow: hidden;
@@ -204,7 +184,6 @@ practice-tracker.is-collapsed pt-body {
   pointer-events: none;
 }
 
-/* ── 格子陣列 ────────────────────────────────────────────── */
 pt-grid {
   display: grid;
   grid-template-columns: repeat(var(--pt-cols, 5), var(--pt-cell, 16px));
@@ -226,8 +205,14 @@ pt-cell.is-done {
 pt-cell.pt-pop {
   transform: scale(1.4);
 }
+pt-cell[data-clickable] {
+  cursor: pointer;
+}
+pt-cell[data-clickable]:hover {
+  filter: brightness(1.35);
+  transform: scale(1.12);
+}
 
-/* ── 進度文字 ────────────────────────────────────────────── */
 pt-count {
   font-size: var(--pt-fs-count, 0.76rem);
   opacity: 0.55;
@@ -238,7 +223,6 @@ practice-tracker.pt-complete-state pt-count {
   opacity: 0.3;
 }
 
-/* ── 完成訊息 ────────────────────────────────────────────── */
 pt-complete {
   display: none;
   padding: 0 12px 10px;
@@ -261,24 +245,19 @@ pt-complete-sub {
     doc.head.appendChild(s);
   }
 
-  /* ── CSS 變數注入 ────────────────────────────────────── */
   function applyCSSVars(el, cfg) {
-    /* ── 版型 ── */
     el.style.setProperty('--pt-width',          cfg.panelWidth);
     el.style.setProperty('--pt-panel-bg',        cfg.colorPanel);
     el.style.setProperty('--pt-text',            cfg.colorText);
     el.style.setProperty('--pt-z',               String(cfg.zIndex));
-    /* ── 小方塊 ── */
     el.style.setProperty('--pt-cell',            cfg.cellSize);
     el.style.setProperty('--pt-gap',             cfg.cellGap);
     el.style.setProperty('--pt-radius',          cfg.cellRadius);
     el.style.setProperty('--pt-cols',            String(cfg.cellsPerRow));
-    /* ── 顏色 ── */
     el.style.setProperty('--pt-done',            cfg.colorDone);
     el.style.setProperty('--pt-pending',         cfg.colorPending);
     el.style.setProperty('--pt-complete-color',  cfg.colorComplete);
     el.style.setProperty('--pt-anim',            cfg.animateCell ? cfg.animateDuration : '0s');
-    /* ── 字體大小 ── */
     el.style.setProperty('--pt-fs-panel',        cfg.fontSizePanel);
     el.style.setProperty('--pt-fs-title',        cfg.fontSizeTitle);
     el.style.setProperty('--pt-fs-count',        cfg.fontSizeCount);
@@ -286,7 +265,6 @@ pt-complete-sub {
     el.style.setProperty('--pt-fs-complete-sub', cfg.fontSizeCompleteSub);
   }
 
-  /* ── 浮動位置 ────────────────────────────────────────── */
   function applyPosition(el, cfg) {
     const pos = cfg.position || 'bottom-right';
     el.style.top    = pos.includes('top')    ? cfg.offsetY : 'auto';
@@ -351,6 +329,14 @@ pt-complete-sub {
       const cell = doc.createElement('pt-cell');
       cell.setAttribute('data-id', sec.id);
       cell.title = sec.id;
+
+      if (cfg.clickGo) {
+        cell.setAttribute('data-clickable', '');
+        cell.addEventListener('click', () => {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
       grid.appendChild(cell);
       cells[sec.id] = cell;
     });
@@ -421,11 +407,9 @@ pt-complete-sub {
       if (id) markDone(id);
     });
 
-    /* ⑮ 公開 API */
     win.PracticeTracker = { markDone, total, doneSet, cfg };
   }
 
-  /* ── 時機：DOMContentLoaded 或立即執行 ──────────────── */
   if (doc.readyState === 'loading') {
     doc.addEventListener('DOMContentLoaded', init);
   } else {
