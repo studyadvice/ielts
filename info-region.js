@@ -672,6 +672,13 @@
           keyEl.textContent = keys[i] || String(i + 1);
           ch.insertBefore(keyEl, ch.firstChild);
         }
+        /* 注入後立即將已解析的 font-size 同步到圓圈 */
+        if (typeof ch._applyKeySize === 'function') {
+          const resolvedFs = ch.style.fontSize ||
+            window.InfoRegionConfig.choiceFontSize ||
+            (this.getAttribute('choice-font-size'));
+          if (resolvedFs) ch._applyKeySize(resolvedFs);
+        }
 
         ch.removeAttribute('disabled');
         ch.removeAttribute('state');
@@ -1079,7 +1086,7 @@
     }
 
     _applyChoiceStyles() {
-      const cfg = window.InfoRegionConfig;
+      const cfg    = window.InfoRegionConfig;
       const region = this.closest('info-region');
 
       /* 解析優先順序：自身屬性 > 最近 info-region 屬性 > InfoRegionConfig */
@@ -1094,8 +1101,33 @@
       const fs = resolveAttr('choice-font-size', 'choiceFontSize');
       const pa = resolveAttr('choice-padding',   'choicePadding');
 
-      if (fs) this.style.fontSize = addUnit(fs, 'rem');
-      if (pa) this.style.padding  = pa;
+      if (fs) {
+        this.style.fontSize = addUnit(fs, 'rem');
+        this._applyKeySize(fs);
+      }
+      if (pa) this.style.padding = pa;
+    }
+
+    /* 讓 .ir-choice-key 圓圈的尺寸與字體跟隨 choice-font-size
+       基準：choice-font-size = 0.95rem 時圓圈 24px / 字 0.75rem
+       換算：圓圈 = fontSize_px * 1.45（無單位 rem 值 × 16 × 1.45）
+             key 字 = fontSize_px * 0.79                              */
+    _applyKeySize(fsValue) {
+      const keyEl = this.querySelector('.ir-choice-key');
+      if (!keyEl) return;
+
+      /* 解析出純數字（rem 值）*/
+      const numStr = String(fsValue).replace(/[a-z%]/gi, '').trim();
+      const remVal = parseFloat(numStr);
+      if (isNaN(remVal)) return;
+
+      const basePx   = remVal * 16;
+      const circlePx = Math.round(basePx * 1.45);
+      const keyFsRem = (remVal * 0.79).toFixed(3) + 'rem';
+
+      keyEl.style.width    = circlePx + 'px';
+      keyEl.style.height   = circlePx + 'px';
+      keyEl.style.fontSize = keyFsRem;
     }
   }
 
