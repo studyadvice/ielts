@@ -33,8 +33,9 @@
     panelWidth:      '220px',
     zIndex:          '999',
     collapsed:       false,
-    cellSize:        '16px',
-    cellGap:         '6px',
+    /* ── 小方塊 ── */
+    cellSize:        '16px',         // 每格寬高（data-cell-size）
+    cellGap:         '6px',          // 格與格間距（data-cell-gap）
     cellRadius:      '4px',
     cellsPerRow:     5,
     colorDone:       BRAND.safe,
@@ -42,6 +43,13 @@
     colorPanel:      '#1a1b1a',
     colorText:       BRAND.shell,
     colorComplete:   BRAND.special,
+    /* ── 字體大小 ── */
+    fontSizePanel:   '0.85rem',      // 面板基礎字體（data-font-size-panel）
+    fontSizeTitle:   '0.78rem',      // 標題列文字（data-font-size-title）
+    fontSizeCount:   '0.76rem',      // 進度計數文字（data-font-size-count）
+    fontSizeComplete:'0.80rem',      // 完成主訊息（data-font-size-complete）
+    fontSizeCompleteSub: '0.73rem',  // 完成副訊息（data-font-size-complete-sub）
+    /* ── 其他 ── */
     title:           '進度',
     labelDone:       '完成',
     completeText:    '全部完成',
@@ -78,10 +86,16 @@
     'data-label-done':       { key: 'labelDone',        type: 'string' },
     'data-complete-text':    { key: 'completeText',     type: 'string' },
     'data-complete-sub':     { key: 'completeSubText',  type: 'string' },
-    'data-animate-cell':     { key: 'animateCell',      type: 'bool'   },
-    'data-animate-duration': { key: 'animateDuration',  type: 'string' },
-    'data-event-name':       { key: 'eventName',        type: 'string' },
-    'data-watch-stepper':    { key: 'watchStepper',     type: 'bool'   },
+    'data-animate-cell':          { key: 'animateCell',         type: 'bool'   },
+    'data-animate-duration':      { key: 'animateDuration',     type: 'string' },
+    'data-event-name':            { key: 'eventName',           type: 'string' },
+    'data-watch-stepper':         { key: 'watchStepper',        type: 'bool'   },
+    /* ── 字體大小 ── */
+    'data-font-size-panel':       { key: 'fontSizePanel',       type: 'string' },
+    'data-font-size-title':       { key: 'fontSizeTitle',       type: 'string' },
+    'data-font-size-count':       { key: 'fontSizeCount',       type: 'string' },
+    'data-font-size-complete':    { key: 'fontSizeComplete',    type: 'string' },
+    'data-font-size-complete-sub':{ key: 'fontSizeCompleteSub', type: 'string' },
   };
 
   /* ── 讀取元素屬性、就地覆蓋 cfg ─────────────────────── */
@@ -120,7 +134,7 @@ practice-tracker {
   border-radius: 10px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
   font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-  font-size: 0.85rem;
+  font-size: var(--pt-fs-panel, 0.85rem);
   color: var(--pt-text, #C6C7BD);
   overflow: hidden;
   z-index: var(--pt-z, 999);
@@ -156,7 +170,7 @@ pt-header {
   user-select: none;
 }
 pt-title {
-  font-size: 0.78rem;
+  font-size: var(--pt-fs-title, 0.78rem);
   font-weight: 600;
   letter-spacing: 0.05em;
   opacity: 0.8;
@@ -215,7 +229,7 @@ pt-cell.pt-pop {
 
 /* ── 進度文字 ────────────────────────────────────────────── */
 pt-count {
-  font-size: 0.76rem;
+  font-size: var(--pt-fs-count, 0.76rem);
   opacity: 0.55;
   margin-top: 2px;
   transition: opacity 0.3s;
@@ -228,7 +242,7 @@ practice-tracker.pt-complete-state pt-count {
 pt-complete {
   display: none;
   padding: 0 12px 10px;
-  font-size: 0.8rem;
+  font-size: var(--pt-fs-complete, 0.80rem);
   font-weight: 700;
   color: var(--pt-complete-color, #B3DE73);
   letter-spacing: 0.02em;
@@ -238,7 +252,7 @@ practice-tracker.pt-complete-state pt-complete {
   display: block;
 }
 pt-complete-sub {
-  font-size: 0.73rem;
+  font-size: var(--pt-fs-complete-sub, 0.73rem);
   font-weight: 400;
   opacity: 0.7;
   margin-top: 2px;
@@ -249,18 +263,27 @@ pt-complete-sub {
 
   /* ── CSS 變數注入 ────────────────────────────────────── */
   function applyCSSVars(el, cfg) {
+    /* ── 版型 ── */
     el.style.setProperty('--pt-width',          cfg.panelWidth);
     el.style.setProperty('--pt-panel-bg',        cfg.colorPanel);
     el.style.setProperty('--pt-text',            cfg.colorText);
     el.style.setProperty('--pt-z',               String(cfg.zIndex));
+    /* ── 小方塊 ── */
     el.style.setProperty('--pt-cell',            cfg.cellSize);
     el.style.setProperty('--pt-gap',             cfg.cellGap);
     el.style.setProperty('--pt-radius',          cfg.cellRadius);
     el.style.setProperty('--pt-cols',            String(cfg.cellsPerRow));
+    /* ── 顏色 ── */
     el.style.setProperty('--pt-done',            cfg.colorDone);
     el.style.setProperty('--pt-pending',         cfg.colorPending);
     el.style.setProperty('--pt-complete-color',  cfg.colorComplete);
     el.style.setProperty('--pt-anim',            cfg.animateCell ? cfg.animateDuration : '0s');
+    /* ── 字體大小 ── */
+    el.style.setProperty('--pt-fs-panel',        cfg.fontSizePanel);
+    el.style.setProperty('--pt-fs-title',        cfg.fontSizeTitle);
+    el.style.setProperty('--pt-fs-count',        cfg.fontSizeCount);
+    el.style.setProperty('--pt-fs-complete',     cfg.fontSizeComplete);
+    el.style.setProperty('--pt-fs-complete-sub', cfg.fontSizeCompleteSub);
   }
 
   /* ── 浮動位置 ────────────────────────────────────────── */
