@@ -433,6 +433,26 @@
         pointer-events: auto;
       }
 
+      /* 重試按鈕列 */
+      .ir-quiz-retry-wrap {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 8px;
+        opacity: 0;
+        transform: translateY(4px);
+        transition: opacity 0.25s ease 0.25s, transform 0.25s ease 0.25s;
+        pointer-events: none;
+      }
+      .ir-quiz-retry-wrap.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .ir-quiz-retry-wrap .ir-btn {
+        font-size: 0.8rem;
+        padding: 4px 13px;
+      }
+
       /* 題號標籤 */
       .ir-quiz-label {
         font-size: 0.72rem;
@@ -646,6 +666,7 @@
       });
       this.querySelector('.ir-quiz-explain')?.remove();
       this.querySelector('.ir-quiz-next-wrap')?.remove();
+      this.querySelector('.ir-quiz-retry-wrap')?.remove();
     }
 
     /* ── 測驗模式核心 ── */
@@ -662,6 +683,9 @@
       const nextLabel   = this.getAttribute('quiz-next-label') || '繼續 ▶';
       const nextColor   = this.getAttribute('color') || window.InfoRegionConfig.defaultColor;
       const autoNext    = !this.hasAttribute('manual-next');  /* 預設自動跳題 */
+      const showRetry   = this.hasAttribute('show-retry');
+      const retryLabel  = this.getAttribute('retry-label') || '↺ 重試';
+      const retryColor  = this.getAttribute('retry-color') || 'warning';
 
       /* 題號標籤（可選） */
       const labelTxt = this.getAttribute('quiz-label');
@@ -725,6 +749,33 @@
           explainEl.innerHTML = msgHtml + explainHtml;
           this.appendChild(explainEl);
           requestAnimationFrame(() => explainEl.classList.add('is-visible'));
+
+          /* 重試按鈕（show-retry 屬性啟用，答對也顯示） */
+          if (showRetry) {
+            const retryWrap = document.createElement('div');
+            retryWrap.className = 'ir-quiz-retry-wrap';
+
+            const retryBtn = document.createElement('button');
+            retryBtn.className = `ir-btn ir-manual-btn ir-btn--${retryColor}`;
+            retryBtn.textContent = retryLabel;
+
+            retryBtn.addEventListener('click', () => {
+              /* 原地重置：還原選項狀態，清除解說與按鈕列，重新執行 _setupQuiz */
+              this._quizAnswered = false;
+              this.querySelectorAll('ir-choice').forEach(c => {
+                c.removeAttribute('state');
+                c.removeAttribute('disabled');
+              });
+              this.querySelector('.ir-quiz-explain')?.remove();
+              this.querySelector('.ir-quiz-next-wrap')?.remove();
+              this.querySelector('.ir-quiz-retry-wrap')?.remove();
+              this._setupQuiz();
+            });
+
+            retryWrap.appendChild(retryBtn);
+            this.appendChild(retryWrap);
+            requestAnimationFrame(() => retryWrap.classList.add('is-visible'));
+          }
 
           /* 決定下一個 id */
           const nextId = correct ? correctNext : wrongNext;

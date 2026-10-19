@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>info-region — explain HTML 標籤支援 Demo</title>
+<title>info-region — show-retry Demo</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -15,7 +15,7 @@
     background: var(--bg); color: var(--shell);
     font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 1.125rem; line-height: 1.5;
-    padding: 40px 48px; max-width: 1100px; margin: 0 auto;
+    padding: 40px 48px; max-width: 960px; margin: 0 auto;
   }
   h1 { font-size: 1.6rem; color: var(--ocean); margin-bottom: 6px; }
   .subtitle { font-size: 1rem; color: rgba(198,199,189,0.6); margin-bottom: 40px; }
@@ -32,67 +32,56 @@
   }
   .trigger-btn:hover { background: #3a3b3a; }
   .divider { border: none; border-top: 1px solid rgba(198,199,189,0.12); margin: 40px 0; }
-  .tag-list {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
+
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 8px; }
+  .attr-table th {
+    text-align: left; padding: 10px 16px;
+    background: rgba(195,165,229,0.1); color: var(--lavender);
+    border-bottom: 1px solid rgba(195,165,229,0.25);
   }
-  .tag-chip {
-    font-family: 'Space Mono', monospace; font-size: 0.82rem;
-    padding: 3px 10px; border-radius: 4px;
-    background: rgba(195,165,229,0.12); color: var(--lavender);
-    border: 1px solid rgba(195,165,229,0.25);
-  }
+  .attr-table td { padding: 10px 16px; border-bottom: 1px solid rgba(198,199,189,0.1); vertical-align: top; }
+  .attr-table tr:last-child td { border-bottom: none; }
+  .attr-table code { color: var(--special); background: rgba(179,222,115,0.08); padding: 1px 6px; border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<h1>explain 屬性支援基本 HTML 標籤</h1>
+<h1>quiz 重試小按鈕：show-retry</h1>
 <p class="subtitle">info-region.js &nbsp;·&nbsp; 功能更新 Demo &nbsp;·&nbsp; 2026-10-19</p>
 
-<p class="desc" style="margin-bottom:20px;">
-  支援的標籤：
-</p>
-<div class="tag-list">
-  <span class="tag-chip">&lt;br&gt;</span>
-  <span class="tag-chip">&lt;b&gt; / &lt;strong&gt;</span>
-  <span class="tag-chip">&lt;i&gt; / &lt;em&gt;</span>
-  <span class="tag-chip">&lt;u&gt;</span>
-  <span class="tag-chip">&lt;code&gt;</span>
-  <span class="tag-chip">&lt;small&gt;</span>
-  <span class="tag-chip">&lt;span&gt;</span>
-</div>
-
-<!-- ① br 換行 + strong -->
+<!-- ① 基本用法 -->
 <section>
-  <h2>① <code>&lt;br&gt;</code> 換行與 <code>&lt;strong&gt;</code> 加粗</h2>
+  <h2>① 基本用法 <code>show-retry</code></h2>
   <p class="desc">
-    <code>explain="補述用法的, <strong>which</strong> 主格關代，<br>代替前句(結果)，導出原因"</code>
+    加上 <code>show-retry</code> 屬性後，答題完畢（答對或答錯）都會在解說區塊下方出現
+    小型重試按鈕，點擊後原地還原選項狀態、清除解說，重新開放作答。
   </p>
   <button class="trigger-btn" onclick="document.getElementById('demo1').setAttribute('active','true')">▶ 觸發</button>
-  <info-region id="demo1" color="sky" quiz answer="b"
+  <info-region id="demo1" color="sky" quiz answer="b" show-retry
     explain="補述用法的, <strong>which</strong> 主格關代，<br>代替前句(結果)，導出原因">
-    <p style="margin-bottom:14px;">Which 的用法？</p>
+    <p style="margin-bottom:14px;">Which 補述子句代替的是？</p>
     <ir-choices>
-      <ir-choice value="a">限定關代，指特定事物</ir-choice>
-      <ir-choice value="b">補述關代，代整個前句（正確）</ir-choice>
-      <ir-choice value="c">疑問詞，用於問句</ir-choice>
-      <ir-choice value="d">連接詞，連接對等子句</ir-choice>
+      <ir-choice value="a">單一名詞</ir-choice>
+      <ir-choice value="b">整個前句（正確）</ir-choice>
+      <ir-choice value="c">形容詞片語</ir-choice>
+      <ir-choice value="d">副詞子句</ir-choice>
     </ir-choices>
   </info-region>
 </section>
 
 <hr class="divider">
 
-<!-- ② code + em -->
+<!-- ② 自訂文字與顏色 -->
 <section>
-  <h2>② <code>&lt;code&gt;</code> 行內程式碼與 <code>&lt;em&gt;</code> 斜體</h2>
+  <h2>② 自訂文字與顏色 <code>retry-label</code> / <code>retry-color</code></h2>
   <p class="desc">
-    適合用於語言學或程式教學，在解說中標示術語或語法。
+    預設文字為 <code>↺ 重試</code>、顏色為 <code>warning</code>。<br>
+    可自訂為任意文字與品牌色票名稱。
   </p>
   <button class="trigger-btn" onclick="document.getElementById('demo2').setAttribute('active','true')">▶ 觸發</button>
   <info-region id="demo2" color="lavender" quiz answer="c"
-    correct-msg="✓ 正確！"
-    wrong-msg="✗ 再想想。"
-    explain="<em>非限定子句</em>必須以逗號隔開，子句內關代可用 <code>which</code> 或 <code>who</code>，<br>不可省略，也不可改為 <code>that</code>。">
+    show-retry retry-label="⟳ 再答一次" retry-color="ocean"
+    explain="<em>非限定子句</em>前必須加逗號，且 <code>that</code> 不可用於補述子句。">
     <p style="margin-bottom:14px;">補述關代子句中，下列何者<u>不可</u>使用？</p>
     <ir-choices>
       <ir-choice value="a">which</ir-choice>
@@ -105,18 +94,19 @@
 
 <hr class="divider">
 
-<!-- ③ span 自訂顏色 + small -->
+<!-- ③ 搭配 manual-next（重試 + 手動繼續並存） -->
 <section>
-  <h2>③ <code>&lt;span&gt;</code> 內嵌樣式與 <code>&lt;small&gt;</code></h2>
+  <h2>③ 搭配 <code>manual-next</code>（重試與繼續並存）</h2>
   <p class="desc">
-    可用 <code>style</code> 屬性對局部文字著色，搭配 <code>&lt;small&gt;</code> 加注小字。
+    重試按鈕（左）與繼續按鈕（右）同時出現；點重試不影響繼續按鈕，
+    反之亦然。適合允許使用者自行決定是否跳題的情境。
   </p>
   <button class="trigger-btn" onclick="document.getElementById('demo3').setAttribute('active','true')">▶ 觸發</button>
   <info-region id="demo3" color="special" quiz answer="a"
-    correct-msg="✓ 答對！"
-    wrong-msg="✗ 答錯。"
+    show-retry retry-label="↺ 重試" retry-color="warning"
+    manual-next quiz-next-label="下一題 ▶" correct-next="demo3-end" wrong-next="demo3-end"
     explain="<span style='color:#82C8E5'>She missed the bus</span>，which made her late.<br><small>↑ which 代替整個前句，非單一名詞</small>">
-    <p style="margin-bottom:14px;">下列 which 代替的是？</p>
+    <p style="margin-bottom:14px;">which 在此句中代替的是？</p>
     <ir-choices>
       <ir-choice value="a">整個前句（正確）</ir-choice>
       <ir-choice value="b">the bus</ir-choice>
@@ -124,29 +114,41 @@
       <ir-choice value="d">late</ir-choice>
     </ir-choices>
   </info-region>
+  <info-region id="demo3-end" color="teal">
+    <p>🎉 作答完畢！</p>
+  </info-region>
 </section>
 
 <hr class="divider">
 
-<!-- ④ correct-msg / wrong-msg 也支援 HTML -->
+<!-- 屬性一覽 -->
 <section>
-  <h2>④ <code>correct-msg</code> / <code>wrong-msg</code> 同樣支援 HTML</h2>
-  <p class="desc">
-    訊息標頭也可加粗或著色，與解說文字共用同一渲染路徑。
-  </p>
-  <button class="trigger-btn" onclick="document.getElementById('demo4').setAttribute('active','true')">▶ 觸發</button>
-  <info-region id="demo4" color="orange" quiz answer="b"
-    correct-msg="<b style='color:#27AE60'>✓ 完全正確！</b>"
-    wrong-msg="<b style='color:#E6374B'>✗ 答錯了。</b>"
-    explain="<strong>which</strong> 引導補述子句時，逗號<u>不可省略</u>，<br>且整個子句可移除而不影響主句語意。<br><small>cf. 限定子句：the book <em>that</em> I read（無逗號，可省略 that）</small>">
-    <p style="margin-bottom:14px;">補述子句的逗號規則：</p>
-    <ir-choices>
-      <ir-choice value="a">逗號可省略</ir-choice>
-      <ir-choice value="b">逗號不可省略（正確）</ir-choice>
-      <ir-choice value="c">視語境決定</ir-choice>
-      <ir-choice value="d">只在句末時才加逗號</ir-choice>
-    </ir-choices>
-  </info-region>
+  <h2>屬性一覽</h2>
+  <table class="attr-table">
+    <thead>
+      <tr><th>屬性</th><th>型別</th><th>預設值</th><th>說明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>show-retry</code></td>
+        <td>boolean（有無）</td>
+        <td>無（不顯示）</td>
+        <td>答題後在解說區塊下方顯示重試小按鈕</td>
+      </tr>
+      <tr>
+        <td><code>retry-label</code></td>
+        <td>string</td>
+        <td><code>↺ 重試</code></td>
+        <td>重試按鈕文字</td>
+      </tr>
+      <tr>
+        <td><code>retry-color</code></td>
+        <td>色票名稱</td>
+        <td><code>warning</code></td>
+        <td>重試按鈕顏色，同 BrandColors 色票</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <script src="info-region.js"></script>
