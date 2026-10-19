@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>info-region — explain HTML 標籤支援 Demo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --lavender: #C3A5E5; --sky: #82C8E5;
+    --ocean: #1CCAE8; --safe: #27AE60; --warning: #E6374B; --salmon: #E5C3B3;
+    --special: #B3DE73; --orange: #EDA109; --region: #333333; --indigo: #7849C9;
+  }
+  body {
+    background: var(--bg); color: var(--shell);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 1.125rem; line-height: 1.5;
+    padding: 40px 48px; max-width: 1100px; margin: 0 auto;
+  }
+  h1 { font-size: 1.6rem; color: var(--ocean); margin-bottom: 6px; }
+  .subtitle { font-size: 1rem; color: rgba(198,199,189,0.6); margin-bottom: 40px; }
+  section { margin-bottom: 52px; }
+  h2 { font-size: 1.15rem; color: var(--lavender); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  h2 code { font-size: 0.9rem; color: var(--special); background: rgba(179,222,115,0.1); padding: 2px 8px; border-radius: 4px; }
+  .desc { font-size: 0.95rem; color: rgba(198,199,189,0.65); margin-bottom: 16px; line-height: 1.5; }
+  .desc code { font-size: 0.88em; color: var(--special); background: rgba(179,222,115,0.1); padding: 1px 6px; border-radius: 3px; }
+  .trigger-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--region); border: 1px solid rgba(130,200,229,0.4);
+    border-radius: 6px; padding: 8px 22px; font-size: 0.95rem;
+    color: var(--sky); cursor: pointer; margin-bottom: 16px; transition: background 0.2s;
+  }
+  .trigger-btn:hover { background: #3a3b3a; }
+  .divider { border: none; border-top: 1px solid rgba(198,199,189,0.12); margin: 40px 0; }
+  .tag-list {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
+  }
+  .tag-chip {
+    font-family: 'Space Mono', monospace; font-size: 0.82rem;
+    padding: 3px 10px; border-radius: 4px;
+    background: rgba(195,165,229,0.12); color: var(--lavender);
+    border: 1px solid rgba(195,165,229,0.25);
+  }
+</style>
+</head>
+<body>
+
+<h1>explain 屬性支援基本 HTML 標籤</h1>
+<p class="subtitle">info-region.js &nbsp;·&nbsp; 功能更新 Demo &nbsp;·&nbsp; 2026-10-19</p>
+
+<p class="desc" style="margin-bottom:20px;">
+  支援的標籤：
+</p>
+<div class="tag-list">
+  <span class="tag-chip">&lt;br&gt;</span>
+  <span class="tag-chip">&lt;b&gt; / &lt;strong&gt;</span>
+  <span class="tag-chip">&lt;i&gt; / &lt;em&gt;</span>
+  <span class="tag-chip">&lt;u&gt;</span>
+  <span class="tag-chip">&lt;code&gt;</span>
+  <span class="tag-chip">&lt;small&gt;</span>
+  <span class="tag-chip">&lt;span&gt;</span>
+</div>
+
+<!-- ① br 換行 + strong -->
+<section>
+  <h2>① <code>&lt;br&gt;</code> 換行與 <code>&lt;strong&gt;</code> 加粗</h2>
+  <p class="desc">
+    <code>explain="補述用法的, <strong>which</strong> 主格關代，<br>代替前句(結果)，導出原因"</code>
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo1').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo1" color="sky" quiz answer="b"
+    explain="補述用法的, <strong>which</strong> 主格關代，<br>代替前句(結果)，導出原因">
+    <p style="margin-bottom:14px;">Which 的用法？</p>
+    <ir-choices>
+      <ir-choice value="a">限定關代，指特定事物</ir-choice>
+      <ir-choice value="b">補述關代，代整個前句（正確）</ir-choice>
+      <ir-choice value="c">疑問詞，用於問句</ir-choice>
+      <ir-choice value="d">連接詞，連接對等子句</ir-choice>
+    </ir-choices>
+  </info-region>
+</section>
+
+<hr class="divider">
+
+<!-- ② code + em -->
+<section>
+  <h2>② <code>&lt;code&gt;</code> 行內程式碼與 <code>&lt;em&gt;</code> 斜體</h2>
+  <p class="desc">
+    適合用於語言學或程式教學，在解說中標示術語或語法。
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo2').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo2" color="lavender" quiz answer="c"
+    correct-msg="✓ 正確！"
+    wrong-msg="✗ 再想想。"
+    explain="<em>非限定子句</em>必須以逗號隔開，子句內關代可用 <code>which</code> 或 <code>who</code>，<br>不可省略，也不可改為 <code>that</code>。">
+    <p style="margin-bottom:14px;">補述關代子句中，下列何者<u>不可</u>使用？</p>
+    <ir-choices>
+      <ir-choice value="a">which</ir-choice>
+      <ir-choice value="b">who</ir-choice>
+      <ir-choice value="c">that（正確）</ir-choice>
+      <ir-choice value="d">whom</ir-choice>
+    </ir-choices>
+  </info-region>
+</section>
+
+<hr class="divider">
+
+<!-- ③ span 自訂顏色 + small -->
+<section>
+  <h2>③ <code>&lt;span&gt;</code> 內嵌樣式與 <code>&lt;small&gt;</code></h2>
+  <p class="desc">
+    可用 <code>style</code> 屬性對局部文字著色，搭配 <code>&lt;small&gt;</code> 加注小字。
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo3').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo3" color="special" quiz answer="a"
+    correct-msg="✓ 答對！"
+    wrong-msg="✗ 答錯。"
+    explain="<span style='color:#82C8E5'>She missed the bus</span>，which made her late.<br><small>↑ which 代替整個前句，非單一名詞</small>">
+    <p style="margin-bottom:14px;">下列 which 代替的是？</p>
+    <ir-choices>
+      <ir-choice value="a">整個前句（正確）</ir-choice>
+      <ir-choice value="b">the bus</ir-choice>
+      <ir-choice value="c">her</ir-choice>
+      <ir-choice value="d">late</ir-choice>
+    </ir-choices>
+  </info-region>
+</section>
+
+<hr class="divider">
+
+<!-- ④ correct-msg / wrong-msg 也支援 HTML -->
+<section>
+  <h2>④ <code>correct-msg</code> / <code>wrong-msg</code> 同樣支援 HTML</h2>
+  <p class="desc">
+    訊息標頭也可加粗或著色，與解說文字共用同一渲染路徑。
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo4').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo4" color="orange" quiz answer="b"
+    correct-msg="<b style='color:#27AE60'>✓ 完全正確！</b>"
+    wrong-msg="<b style='color:#E6374B'>✗ 答錯了。</b>"
+    explain="<strong>which</strong> 引導補述子句時，逗號<u>不可省略</u>，<br>且整個子句可移除而不影響主句語意。<br><small>cf. 限定子句：the book <em>that</em> I read（無逗號，可省略 that）</small>">
+    <p style="margin-bottom:14px;">補述子句的逗號規則：</p>
+    <ir-choices>
+      <ir-choice value="a">逗號可省略</ir-choice>
+      <ir-choice value="b">逗號不可省略（正確）</ir-choice>
+      <ir-choice value="c">視語境決定</ir-choice>
+      <ir-choice value="d">只在句末時才加逗號</ir-choice>
+    </ir-choices>
+  </info-region>
+</section>
+
+<script src="info-region.js"></script>
+</body>
+</html>

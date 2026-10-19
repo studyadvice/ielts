@@ -405,6 +405,18 @@
         border: 1px solid rgba(230,55,75,0.4);
         color: #f0a0a8;
       }
+      .ir-quiz-explain code {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.88em;
+        background: rgba(255,255,255,0.1);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+      .ir-quiz-explain br { display: block; content: ''; margin-top: 4px; }
+      .ir-quiz-explain strong, .ir-quiz-explain b { font-weight: 700; }
+      .ir-quiz-explain em, .ir-quiz-explain i { font-style: italic; }
+      .ir-quiz-explain u { text-decoration: underline; }
+      .ir-quiz-explain small { font-size: 0.82em; opacity: 0.82; }
 
       /* 答題後的繼續按鈕 */
       .ir-quiz-next-wrap {
@@ -705,11 +717,12 @@
               .forEach(c => c.setAttribute('state', 'reveal'));
           }
 
-          /* 解說文字 */
+          /* 解說文字（支援基本 HTML 標籤：<b> <strong> <i> <em> <u> <br> <span> <code> <small>） */
           const explainEl = document.createElement('div');
           explainEl.className = `ir-quiz-explain ${correct ? 'is-correct' : 'is-wrong'}`;
-          explainEl.textContent = (correct ? correctMsg : wrongMsg) +
-            (explainTxt ? '　' + explainTxt : '');
+          const msgHtml     = correct ? correctMsg : wrongMsg;
+          const explainHtml = explainTxt ? '　' + explainTxt : '';
+          explainEl.innerHTML = msgHtml + explainHtml;
           this.appendChild(explainEl);
           requestAnimationFrame(() => explainEl.classList.add('is-visible'));
 
