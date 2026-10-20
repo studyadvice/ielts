@@ -320,7 +320,7 @@
 
     G.BpNotice = {
     config     : BpNoticeConfig,
-    palette    : PALETTE,        // 共用調色盤（唯讀參考）
+    palette    : PALETTE,
     colorMap   : NOTICE_COLOR_MAP,
     init       : initAllNotices,
     _reCSS     : function () { if (_noticeCssEl) injectNoticeCSS(); },
@@ -352,6 +352,7 @@
   }
 
   const POPNOTE_CSS = `
+    /* ── 觸發器基礎（dashed 預設） ── */
     [data-popover-title],
     [data-popover-content],
     [data-popover-target] {
@@ -359,10 +360,50 @@
       border-bottom-width: 1px;
       border-bottom-style: dashed;
       border-bottom-color: var(--xpop-hint-color, #C3A5E5);
-      transition: border-color 0.2s, color 0.2s;
+      transition: border-color 0.2s, color 0.2s, background 0.2s, padding 0.15s;
     }
     [data-popover-hint="false"] {
       border-bottom: none !important;
+    }
+
+    /* ── hint-style: solid ── */
+    [data-popover-hint-style="solid"] {
+      border-bottom-style: solid !important;
+    }
+
+    /* ── hint-style: pill ── */
+    [data-popover-hint-style="pill"] {
+      border-bottom: none !important;
+      background: rgba(var(--xpop-hint-rgb, 195,165,229), 0.18) !important;
+      color: var(--xpop-hint-color, #C3A5E5) !important;
+      border-radius: 999px !important;
+      padding: 1px 8px !important;
+      display: inline-block;
+    }
+    [data-popover-hint-style="pill"]:hover {
+      background: rgba(var(--xpop-hint-rgb, 195,165,229), 0.32) !important;
+    }
+
+    /* ── hint-style: pill-full ── */
+    [data-popover-hint-style="pill-full"] {
+      border-bottom: none !important;
+      background: rgba(var(--xpop-hint-rgb, 195,165,229), 0.22) !important;
+      color: var(--xpop-hint-color, #C3A5E5) !important;
+      border-radius: 6px !important;
+      padding: 3px 12px !important;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: left;
+    }
+    [data-popover-hint-style="pill-full"]:hover {
+      background: rgba(var(--xpop-hint-rgb, 195,165,229), 0.36) !important;
+    }
+
+    /* panel-active 在 pill / pill-full 上加亮框 */
+    [data-popover-hint-style="pill"].xpop-panel-active,
+    [data-popover-hint-style="pill-full"].xpop-panel-active {
+      outline: 1px solid var(--xpop-hint-color, #C3A5E5);
     }
 
     .xpop-container {
@@ -440,7 +481,6 @@
       border-right-color: var(--xpop-bg, #130e1e);
     }
 
-    /* ── Header / Body / Carousel ────────────────────────────── */
     .xpop-header {
       padding: 10px 16px 8px;
       font-size: calc(var(--xpop-font-size, 1rem) * 1.05);
@@ -603,7 +643,6 @@
       overflow-y: auto;
     }
 
-    /* ── Bootstrap Offcanvas theming ─────────────────────────── */
     #xpop-bs-offcanvas .offcanvas-header {
       border-bottom-width: 1px;
       border-bottom-style: solid;
@@ -627,7 +666,6 @@
       opacity: 1;
     }
 
-    /* ── show-btn（詳情按鈕）────────────────────────────────── */
     .xpop-show-btn-wrap {
       padding: 4px 16px 14px;
       display: flex;
@@ -720,14 +758,43 @@
     addTheme(name, def) { config._customThemes[name] = def; },
   };
 
-  // ── State ─────────────────────────────────────────────────────
   let currentPop = null, currentTrigger = null, carouselState = null;
   let panelActiveTrigger = null, panelCarouselState = null;
 
   function getTheme(n)   { return config._customThemes[n] || THEMES[n] || THEMES.dark; }
   function ra(el, k, fb) { return el.dataset[k] !== undefined ? el.dataset[k] : fb; }
 
-  // ── 事後標注 API ──────────────────────────────────────────────
+  /* hex (#RRGGBB 或 #RGB) → "R,G,B" 字串，供 rgba() 的 CSS 變數使用 */
+  function hexToRgb(hex) {
+    if (!hex || hex.charAt(0) !== '#') return null;
+    let h = hex.slice(1);
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    if (h.length !== 6) return null;
+    const r = parseInt(h.slice(0,2),16);
+    const g = parseInt(h.slice(2,4),16);
+    const b = parseInt(h.slice(4,6),16);
+    if (isNaN(r)||isNaN(g)||isNaN(b)) return null;
+    return r+','+g+','+b;
+  }
+
+  /*
+   * 將觸發器的 hint 顏色設到 CSS 變數。
+   * 優先序：data-popover-color（自訂色）> theme.borderColor
+   * 支援調色盤 token（例如 "sky"）或任意 hex
+   */
+  function applyHintColor(trigger, theme) {
+    const raw = trigger.dataset.popoverColor;
+    let color;
+    if (raw) {
+      color = (PALETTE[raw] || raw);          // 先查 token，再當 hex/keyword 用
+    } else {
+      color = theme.borderColor;
+    }
+    trigger.style.setProperty('--xpop-hint-color', color);
+    const rgb = hexToRgb(color);
+    if (rgb) trigger.style.setProperty('--xpop-hint-rgb', rgb);
+  }
+
   function _contextMatches(textNode, targetText, ctx) {
     const block = textNode.parentNode.closest(
       'p,li,td,th,div,section,article,blockquote,h1,h2,h3,h4,h5,h6'
@@ -760,6 +827,8 @@
     if (rule.modal  !== undefined) mark.dataset.popoverModal      = String(rule.modal);
     if (rule.arrow  !== undefined) mark.dataset.popoverArrow      = String(rule.arrow);
     if (rule.hint   === false)     mark.dataset.popoverHint       = 'false';
+    if (rule.hintStyle !== undefined) mark.dataset.popoverHintStyle = rule.hintStyle;
+    if (rule.color  !== undefined)    mark.dataset.popoverColor     = rule.color;
     if (rule.interval !== undefined) mark.dataset.popoverInterval = String(rule.interval);
     if (rule.offset !== undefined)   mark.dataset.popoverOffset   = String(rule.offset);
     if (rule.showBtn !== undefined)  mark.dataset.popoverShowBtn  = rule.showBtn;
@@ -897,7 +966,6 @@
     return wrap;
   }
 
-  // ── 內容 DOM 建構 ─────────────────────────────────────────────
   function buildContentDOM(html) {
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
@@ -1006,7 +1074,6 @@
     return { stop: () => clearTimeout(timer) };
   }
 
-  // ── Modal / Offcanvas ─────────────────────────────────────────
   const OC_PLACEMENTS = ['start', 'end', 'top', 'bottom'];
 
   function getModalMode(trigger) {
@@ -1200,7 +1267,7 @@
     const theme     = getTheme(themeName);
     const html      = extractContent(trigger);
 
-    trigger.style.setProperty('--xpop-hint-color', theme.borderColor);
+    applyHintColor(trigger, theme);
 
     const { isCarousel, body, progressEl, barEl } = buildContentDOM(html);
 
@@ -1251,7 +1318,6 @@
     panelActiveTrigger = trigger;
   }
 
-  // ── Floating Popover ─────────────────────────────────────────
   function createPopover(trigger) {
     const themeName = ra(trigger, 'popoverTheme',      config.theme);
     const placement = ra(trigger, 'popoverPlacement',  config.placement);
@@ -1264,9 +1330,7 @@
     const cAnim     = ra(trigger, 'popoverCarouselAnim', config.carousel.animation);
     const theme     = getTheme(themeName);
     const html      = extractContent(trigger);
-
     const { isCarousel, body, progressEl, barEl } = buildContentDOM(html);
-
     const pop = document.createElement('div');
     pop.className = 'xpop-container';
     pop.dataset.placement = placement;
@@ -1276,7 +1340,7 @@
     pop.style.setProperty('--xpop-font-size',    fontSize);
     pop.style.setProperty('--xpop-max-width',    maxWidth);
     pop.style.borderStyle = bStyle;
-    trigger.style.setProperty('--xpop-hint-color', theme.borderColor);
+    applyHintColor(trigger, theme);
 
     if (showArrow) {
       const a = document.createElement('div');
@@ -1329,7 +1393,6 @@
     currentPop = currentTrigger = null;
   }
 
-  // ── 事件監聽 ─────────────────────────────────────────────────
   document.addEventListener('click', function (e) {
     const trigger = e.target.closest(
       '[data-popover-title],[data-popover-content],[data-popover-target]'
@@ -1338,7 +1401,6 @@
     if (trigger) {
       e.stopPropagation();
 
-      // ① Modal / Offcanvas（優先）
       const modalMode = getModalMode(trigger);
       if (modalMode) {
         closePop();
@@ -1348,7 +1410,6 @@
         return;
       }
 
-      // ② Panel mode
       const panelEl = getPanelTargetEl(trigger);
       if (panelEl) {
         closePop();
@@ -1356,7 +1417,6 @@
         return;
       }
 
-      // ③ Floating Popover（預設）
       if (currentTrigger === trigger) { closePop(); return; }
       closePop();
       currentTrigger = trigger;
@@ -1382,5 +1442,28 @@
   });
 
   injectPopnoteCSS();
+
+  /*
+   * 掃描所有帶 data-popover-color 或 data-popover-hint-style 的觸發器，
+   * 預先套用 --xpop-hint-color / --xpop-hint-rgb，
+   * 讓 pill / pill-full 在頁面載入時就能正確顯色（不需等到第一次點擊）。
+   */
+  function initTriggerHints() {
+    const sel = '[data-popover-title],[data-popover-content],[data-popover-target]';
+    document.querySelectorAll(sel).forEach(function (el) {
+      const raw = el.dataset.popoverColor;
+      if (!raw) return;
+      const color = PALETTE[raw] || raw;
+      el.style.setProperty('--xpop-hint-color', color);
+      const rgb = hexToRgb(color);
+      if (rgb) el.style.setProperty('--xpop-hint-rgb', rgb);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTriggerHints);
+  } else {
+    initTriggerHints();
+  }
 
 })(window);

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-tracker 展示</title>
+<style>
+  :root {
+    --bg:      #0C0D0C;
+    --shell:   #C6C7BD;
+    --lavender:#C3A5E5;
+    --sky:     #82C8E5;
+    --warning: #E6374B;
+    --salmon:  #E5C3B3;
+    --ocean:   #1CCAE8;
+    --safe:    #27AE60;
+    --teal:    #0DA591;
+    --vanilla: #DBEDD8;
+    --yellow:  #E3D322;
+    --focus:   #D4FFFC;
+    --special: #B3DE73;
+    --info:    #4171BF;
+    --indigo:  #7849C9;
+    --pink:    #FF91D7;
+    --orange:  #EDA109;
+
+    --radius: 6px;
+    --font: 'Segoe UI', 'Noto Sans TC', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 18px; }
+
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-family: var(--font);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── 版面 ── */
+  .page-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  header {
+    border-bottom: 1px solid rgba(198,199,189,0.20);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    color: var(--ocean);
+    letter-spacing: .02em;
+    margin-bottom: 6px;
+  }
+
+  header p { color: rgba(198,199,189,0.78); font-size: 1rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ── 卡片 ── */
+  .card {
+    background: rgba(198,199,189,0.05);
+    border: 1px solid rgba(198,199,189,0.14);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+    color: var(--lavender);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* ── Bootstrap-style alert ── */
+  .alert-area { margin-bottom: 16px; min-height: 44px; }
+
+  .alert {
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn .25s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; } }
+
+  .alert-info    { background: rgba(65,113,191,0.82);  color: #fff; }
+  .alert-success { background: rgba(39,174,96,0.82);   color: #fff; }
+  .alert-warning { background: rgba(237,161,9,0.82);   color: #000; }
+  .alert-danger  { background: rgba(230,55,75,0.82);   color: #fff; }
+
+  /* ── 自製 UI 元件（語意標籤） ── */
+
+  ui-button {
+    display: inline-block;
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: var(--font);
+    font-weight: 600;
+    transition: filter .15s;
+    user-select: none;
+    border: none;
+  }
+  ui-button:hover { filter: brightness(1.15); }
+  ui-button:active { filter: brightness(0.9); }
+
+  ui-button[variant="primary"]  { background: var(--ocean);   color: #000; }
+  ui-button[variant="secondary"]{ background: var(--indigo);  color: #fff; }
+  ui-button[variant="danger"]   { background: var(--warning); color: #fff; }
+  ui-button[variant="success"]  { background: var(--safe);    color: #fff; }
+
+  ui-card {
+    display: block;
+    background: rgba(130,200,229,0.08);
+    border: 1px solid rgba(130,200,229,0.22);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  ui-card:hover { background: rgba(130,200,229,0.14); }
+  ui-card h3 { color: var(--sky); font-size: 1rem; margin-bottom: 8px; }
+  ui-card p  { font-size: 0.9rem; color: rgba(198,199,189,0.82); }
+
+  ui-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: default;
+  }
+  ui-badge[color="lavender"] { background: rgba(195,165,229,0.82); color: #000; }
+  ui-badge[color="teal"]     { background: rgba(13,165,145,0.82);  color: #fff; }
+  ui-badge[color="yellow"]   { background: rgba(227,211,34,0.82);  color: #000; }
+
+  ui-tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  ui-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    background: rgba(195,165,229,0.15);
+    border: 1px solid rgba(195,165,229,0.35);
+    border-radius: 999px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  ui-tag:hover        { background: rgba(195,165,229,0.28); }
+  ui-tag[selected]    { background: rgba(195,165,229,0.78); color: #000; border-color: transparent; }
+
+  /* ── 日誌面板 ── */
+  .log-panel {
+    grid-column: 1 / -1;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(28,202,232,0.25);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+  }
+
+  .log-panel h2 {
+    font-size: 1rem;
+    color: var(--ocean);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .log-panel h2 span.dot {
+    width: 8px; height: 8px;
+    background: var(--safe);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: .3; }
+  }
+
+  #log-list {
+    list-style: none;
+    max-height: 260px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #log-list li {
+    font-size: 0.82rem;
+    font-family: 'Cascadia Code','Consolas',monospace;
+    color: rgba(198,199,189,0.85);
+    padding: 5px 10px;
+    background: rgba(198,199,189,0.04);
+    border-left: 3px solid rgba(28,202,232,0.5);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  #log-list li.action-click      { border-left-color: var(--ocean); }
+  #log-list li.action-page_leave { border-left-color: var(--warning); }
+  #log-list li.action-custom     { border-left-color: var(--lavender); }
+
+  #log-list::-webkit-scrollbar { width: 5px; }
+  #log-list::-webkit-scrollbar-track { background: transparent; }
+  #log-list::-webkit-scrollbar-thumb { background: rgba(28,202,232,0.3); border-radius: 3px; }
+
+  .log-empty { color: rgba(198,199,189,0.40); font-style: italic; font-size: 0.88rem; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  /* ── 原始碼說明 ── */
+  .code-section { grid-column: 1 / -1; }
+
+  .code-block {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(198,199,189,0.12);
+    border-radius: var(--radius);
+    padding: 20px;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: 'Cascadia Code','Consolas',monospace;
+    font-size: 0.85rem;
+    color: var(--vanilla);
+    white-space: pre;
+    line-height: 1.6;
+  }
+
+  .kw  { color: var(--lavender); }
+  .str { color: var(--special); }
+  .cm  { color: rgba(198,199,189,0.45); font-style: italic; }
+  .tag { color: var(--ocean); }
+  .att { color: var(--yellow); }
+
+  /* ── 假 API 攔截說明 ── */
+  .notice {
+    background: rgba(237,161,9,0.12);
+    border: 1px solid rgba(237,161,9,0.35);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    color: var(--yellow);
+    margin-bottom: 28px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .notice svg { flex-shrink: 0; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ★ 元件掛載：api 指向假接收端點，debug 開啟 -->
+<ui-tracker
+  api="/api/behavior-log"
+  flush-interval="4000"
+  batch-size="10"
+  debug>
+</ui-tracker>
+
+<div class="page-wrap">
+
+  <header>
+    <h1>ui-tracker &mdash; AOP 行為追蹤元件</h1>
+    <p>自動攔截 <code>&lt;ui-*&gt;</code> 語意標籤的點擊事件，以及頁面離開事件，批次送往後端 API。</p>
+  </header>
+
+  <div class="notice">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>
+    </svg>
+    展示模式：API 端點 <code>/api/behavior-log</code> 為虛構位址，送出時會觸發 fetch 錯誤並自動重新排隊。
+    實際使用時替換 <code>api</code> 屬性即可。所有事件已同步顯示在下方日誌面板。
+  </div>
+
+  <div class="grid">
+
+    <!-- 按鈕區 -->
+    <div class="card">
+      <h2>ui-button 測試</h2>
+      <div class="alert-area" id="btn-alert"></div>
+      <div class="btn-row">
+        <ui-button id="btn-a" variant="primary"   label="送出">送出</ui-button>
+        <ui-button id="btn-b" variant="secondary" label="取消">取消</ui-button>
+        <ui-button id="btn-c" variant="success"   label="確認">確認</ui-button>
+        <ui-button id="btn-d" variant="danger"    label="刪除">刪除</ui-button>
+      </div>
+    </div>
+
+    <!-- 卡片區 -->
+    <div class="card">
+      <h2>ui-card 測試</h2>
+      <div class="alert-area" id="card-alert"></div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <ui-card id="card-1">
+          <h3>功能模組 A</h3>
+          <p>點擊此卡片，tracker 會記錄元件名稱與點擊位置。</p>
+        </ui-card>
+        <ui-card id="card-2">
+          <h3>功能模組 B</h3>
+          <p>不論點到卡片哪個子元素，皆會正確識別為 ui-card。</p>
+        </ui-card>
+      </div>
+    </div>
+
+    <!-- 標籤區 -->
+    <div class="card">
+      <h2>ui-badge &amp; ui-tag 測試</h2>
+      <div class="alert-area" id="tag-alert"></div>
+      <p style="margin-bottom:14px; font-size:0.9rem; color:rgba(198,199,189,0.78)">Badge（不可選）：</p>
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <ui-badge color="lavender">設計</ui-badge>
+        <ui-badge color="teal">開發</ui-badge>
+        <ui-badge color="yellow">測試</ui-badge>
+      </div>
+      <p style="margin-bottom:10px; font-size:0.9rem; color:rgba(198,199,189,0.78)">Tag（可多選，點擊切換）：</p>
+      <ui-tag-group id="tag-group">
+        <ui-tag label="前端">前端</ui-tag>
+        <ui-tag label="後端">後端</ui-tag>
+        <ui-tag label="資料庫">資料庫</ui-tag>
+        <ui-tag label="DevOps">DevOps</ui-tag>
+        <ui-tag label="AI">AI</ui-tag>
+      </ui-tag-group>
+    </div>
+
+    <!-- 手動追蹤區 -->
+    <div class="card">
+      <h2>手動呼叫 track()</h2>
+      <div class="alert-area" id="manual-alert"></div>
+      <p style="font-size:0.9rem; color:rgba(198,199,189,0.78); margin-bottom:16px;">
+        非 <code>&lt;ui-*&gt;</code> 範圍內，或需要自訂 payload 時，可直接呼叫：<br>
+        <code style="color:var(--special)">window.uiTracker.track(action, payload)</code>
+      </p>
+      <div class="btn-row">
+        <ui-button id="btn-custom" variant="secondary" label="記錄自訂事件">記錄自訂事件</ui-button>
+        <ui-button id="btn-flush"  variant="primary"   label="立即 Flush">立即 Flush</ui-button>
+      </div>
+    </div>
+
+    <!-- 日誌面板 -->
+    <div class="log-panel">
+      <h2><span class="dot"></span>即時事件日誌（僅前端預覽，實際資料送往 API）</h2>
+      <ul id="log-list">
+        <li class="log-empty">尚無事件，請點擊上方元件。</li>
+      </ul>
+    </div>
+
+    <!-- 使用說明 -->
+    <div class="code-section card">
+      <h2>快速整合方式</h2>
+      <div class="code-block">
+<pre><span class="cm">&lt;!-- 1. 引入元件（放在 &lt;/body&gt; 前）--&gt;</span>
+<span class="tag">&lt;script</span> <span class="att">src</span>=<span class="str">"ui-tracker.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- 2. 在頁面任意位置放置元件標籤 --&gt;</span>
+<span class="tag">&lt;ui-tracker</span>
+  <span class="att">api</span>=<span class="str">"/api/behavior-log"</span>
+  <span class="att">flush-interval</span>=<span class="str">"5000"</span>
+  <span class="att">batch-size</span>=<span class="str">"20"</span><span class="tag">&gt;
+&lt;/ui-tracker&gt;</span>
+
+<span class="cm">&lt;!-- 3. 你的 &lt;ui-*&gt; 元件照常撰寫，無需任何修改 --&gt;</span>
+<span class="tag">&lt;ui-button</span> <span class="att">id</span>=<span class="str">"confirm-btn"</span> <span class="att">label</span>=<span class="str">"確認付款"</span><span class="tag">&gt;</span>確認付款<span class="tag">&lt;/ui-button&gt;</span>
+
+<span class="cm">// 4. 手動記錄自訂事件</span>
+<span class="kw">window</span>.uiTracker.track(<span class="str">"form_submit"</span>, {
+  form_id: <span class="str">"checkout"</span>,
+  items: <span class="kw">3</span>,
+});</pre>
+      </div>
+    </div>
+
+    <!-- 後端接收格式說明 -->
+    <div class="code-section card">
+      <h2>後端接收的 JSON 結構</h2>
+      <div class="code-block">
+<pre><span class="cm">// POST /api/behavior-log</span>
+{
+  <span class="str">"reason"</span>: <span class="str">"interval"</span>,        <span class="cm">// interval | batch_full | manual | page_leave</span>
+  <span class="str">"events"</span>: [
+    {
+      <span class="str">"id"</span>:        <span class="str">"uuid-v4"</span>,
+      <span class="str">"session"</span>:   <span class="str">"sessionStorage 中的 sid"</span>,
+      <span class="str">"action"</span>:    <span class="str">"click"</span>,          <span class="cm">// click | page_leave | page_hidden | custom</span>
+      <span class="str">"page"</span>:      <span class="str">"/checkout"</span>,
+      <span class="str">"ts"</span>:        <span class="str">"2026-10-20T08:00:00.000Z"</span>,
+      <span class="str">"ua"</span>:        <span class="str">"Mozilla/5.0 ..."</span>,
+      <span class="cm">// click 專屬</span>
+      <span class="str">"component"</span>: <span class="str">"ui-button"</span>,
+      <span class="str">"target"</span>:    <span class="str">"ui-button#confirm-btn \"確認付款\""</span>,
+      <span class="str">"x"</span>: <span class="kw">320</span>, <span class="str">"y"</span>: <span class="kw">540</span>,
+      <span class="str">"component_id"</span>: <span class="str">"confirm-btn"</span>,
+      <span class="cm">// page_leave / page_hidden 專屬</span>
+      <span class="str">"duration_ms"</span>: <span class="kw">12400</span>,
+      <span class="str">"url"</span>: <span class="str">"https://example.com/checkout"</span>
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+
+  </div><!-- .grid -->
+</div><!-- .page-wrap -->
+
+<script src="ui-tracker.js"></script>
+<script>
+/* ── Demo 互動邏輯 ── */
+
+const logList  = document.getElementById("log-list");
+let   logEmpty = true;
+
+/* 把事件印到前端日誌面板（Demo 用，不影響 tracker 本身） */
+function appendLog(record) {
+  if (logEmpty) {
+    logList.innerHTML = "";
+    logEmpty = false;
+  }
+  const li = document.createElement("li");
+  li.className = `action-${record.action}`;
+  const ts = new Date(record.ts).toLocaleTimeString("zh-Hant");
+  const detail = record.component
+    ? `元件：${record.component}  目標：${record.target}`
+    : record.duration_ms !== undefined
+      ? `停留 ${record.duration_ms} ms`
+      : record.note || "";
+  li.textContent = `[${ts}] ${record.action.padEnd(14)}  ${detail}`;
+  logList.prepend(li);
+  // 最多顯示 60 筆
+  if (logList.children.length > 60) logList.lastElementChild.remove();
+}
+
+/* 攔截 tracker 的 _buildRecord 來同步顯示日誌（AOP hook for demo） */
+const trackerEl = document.querySelector("ui-tracker");
+const origBuild = trackerEl._buildRecord.bind(trackerEl);
+trackerEl._buildRecord = function(action, payload) {
+  const r = origBuild(action, payload);
+  appendLog(r);
+  return r;
+};
+
+/* ── Bootstrap alert 輔助 ── */
+function showAlert(areaId, type, msg, duration = 3000) {
+  const area = document.getElementById(areaId);
+  const div  = document.createElement("div");
+  div.className = `alert alert-${type}`;
+  div.innerHTML = msg;
+  area.innerHTML = "";
+  area.appendChild(div);
+  if (duration) setTimeout(() => div.remove(), duration);
+}
+
+/* ── ui-button 示範 ── */
+document.getElementById("btn-a").addEventListener("click", () =>
+  showAlert("btn-alert", "success", "✓ 已送出"));
+document.getElementById("btn-b").addEventListener("click", () =>
+  showAlert("btn-alert", "warning", "⚠ 操作已取消"));
+document.getElementById("btn-c").addEventListener("click", () =>
+  showAlert("btn-alert", "success", "✓ 確認完成"));
+document.getElementById("btn-d").addEventListener("click", () =>
+  showAlert("btn-alert", "danger", "✗ 已刪除"));
+
+/* ── ui-card 示範 ── */
+document.getElementById("card-1").addEventListener("click", () =>
+  showAlert("card-alert", "info", "已選取：功能模組 A"));
+document.getElementById("card-2").addEventListener("click", () =>
+  showAlert("card-alert", "info", "已選取：功能模組 B"));
+
+/* ── ui-tag 切換 ── */
+document.getElementById("tag-group").addEventListener("click", (e) => {
+  const tag = e.target.closest("ui-tag");
+  if (!tag) return;
+  if (tag.hasAttribute("selected")) {
+    tag.removeAttribute("selected");
+  } else {
+    tag.setAttribute("selected", "");
+  }
+  const selected = [...document.querySelectorAll("ui-tag[selected]")]
+    .map(t => t.getAttribute("label")).join("、");
+  showAlert("tag-alert", "info",
+    selected ? `已選：${selected}` : "尚未選取任何標籤", 4000);
+});
+
+/* ── 手動 track ── */
+document.getElementById("btn-custom").addEventListener("click", () => {
+  window.uiTracker.track("custom", {
+    note: "這是一筆手動記錄的自訂事件",
+    value: Math.random().toFixed(4),
+  });
+  showAlert("manual-alert", "success", "✓ 自訂事件已加入佇列");
+});
+
+document.getElementById("btn-flush").addEventListener("click", () => {
+  window.uiTracker.flush();
+  showAlert("manual-alert", "info", "☁ 已觸發立即 Flush（展示模式下 API 會回傳錯誤並自動重新排隊）");
+});
+</script>
+</body>
+</html>

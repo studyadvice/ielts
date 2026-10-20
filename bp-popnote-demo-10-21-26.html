@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bp-popnote · hint-style & color demo</title>
+
+<!-- Bootstrap 5 -->
+<link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<style>
+:root {
+  --bg:       #0C0D0C;
+  --shell:    #C6C7BD;
+  --area:     #1a1b1a;
+  --card-bg:  #161716;
+  --border:   #2e2f2e;
+  --lavender: #C3A5E5;
+  --sky:      #82C8E5;
+  --ocean:    #1CCAE8;
+  --safe:     #27AE60;
+  --special:  #B3DE73;
+  --yellow:   #E3D322;
+  --salmon:   #E5C3B3;
+  --pink:     #FF91D7;
+  --orange:   #EDA109;
+  --teal:     #0DA591;
+  --focus:    #D4FFFC;
+  --indigo:   #7849C9;
+  --info:     #4171BF;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  color: var(--shell);
+  font-size: 18px;
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+h1, h2, h3 { color: var(--lavender); }
+h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+h2 { font-size: 1.2rem; margin: 2rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { font-size: 1rem; color: var(--sky); margin: 1.4rem 0 0.6rem; }
+
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 1.5rem;
+}
+
+/* 示範段落內間距 */
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-size: 0.78rem;
+  color: rgba(198,199,189,0.82);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  min-width: 100px;
+}
+
+code {
+  background: rgba(195,165,229,0.12);
+  color: var(--lavender);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+/* 屬性對照表 */
+.attr-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.attr-table th, .attr-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.attr-table th { background: rgba(195,165,229,0.12); color: var(--lavender); font-weight: 600; }
+.attr-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* badge 展示用 */
+.badge-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="container-xxl py-4 px-3 px-lg-5">
+
+  <!-- 頁頭 -->
+  <div class="section-card mb-4">
+    <h1><i class="bi bi-layers-fill me-2" style="color:var(--ocean)"></i>bp-popnote · hint-style &amp; color</h1>
+    <p style="color:rgba(198,199,189,0.82); margin:0; font-size:0.92rem;">
+      v2 新功能展示：觸發器樣式（<code>dashed</code> / <code>solid</code> / <code>pill</code> / <code>pill-full</code>）與色彩開放設定
+    </p>
+  </div>
+
+  <!-- ① 觸發器樣式 -->
+  <div class="section-card">
+    <h2><i class="bi bi-palette2 me-2"></i>① 觸發器樣式（data-popover-hint-style）</h2>
+    <p>四種樣式皆可搭配任意 <code>data-popover-color</code> 使用。</p>
+
+    <h3>dashed（預設，不加屬性即為此樣式）</h3>
+    <div class="demo-row">
+      <span class="label">lavender（預設色）</span>
+      <span
+        data-popover-title="dashed 預設"
+        data-popover-content="這是 dashed 底線，不加 hint-style 屬性即為此樣式。顏色預設為 lavender。"
+      >這段文字加了 popnote</span>
+    </div>
+    <div class="demo-row">
+      <span class="label">ocean 色</span>
+      <span
+        data-popover-title="dashed + ocean"
+        data-popover-content="dashed 底線，顏色改為 ocean（#1CCAE8）。"
+        data-popover-color="ocean"
+        data-popover-theme="ocean"
+      >ocean 色 dashed</span>
+    </div>
+
+    <h3>solid</h3>
+    <div class="demo-row">
+      <span class="label">safe 色</span>
+      <span
+        data-popover-title="solid 底線"
+        data-popover-content="data-popover-hint-style=&quot;solid&quot; 讓底線變為實線。"
+        data-popover-hint-style="solid"
+        data-popover-color="safe"
+        data-popover-theme="safe"
+      >solid 底線（safe）</span>
+    </div>
+    <div class="demo-row">
+      <span class="label">salmon 色</span>
+      <span
+        data-popover-title="solid + salmon"
+        data-popover-content="solid 底線，顏色 salmon。"
+        data-popover-hint-style="solid"
+        data-popover-color="salmon"
+        data-popover-theme="salmon"
+      >solid 底線（salmon）</span>
+    </div>
+
+    <h3>pill　<small style="color:rgba(198,199,189,0.7); font-size:0.82rem;">圓角膠囊背景，inline 不撐滿</small></h3>
+    <div class="demo-row">
+      <span class="label">lavender</span>
+      <span
+        data-popover-title="pill 樣式"
+        data-popover-content="data-popover-hint-style=&quot;pill&quot; 套用圓角膠囊底色，inline 顯示。hover 時背景加深。"
+        data-popover-hint-style="pill"
+      >pill lavender</span>
+    </div>
+    <div class="demo-row">
+      <span class="label">ocean</span>
+      <span
+        data-popover-title="pill + ocean"
+        data-popover-content="pill 搭配 ocean 色彩，同時指定 theme 讓彈出框配色一致。"
+        data-popover-hint-style="pill"
+        data-popover-color="ocean"
+        data-popover-theme="ocean"
+      >pill ocean</span>
+    </div>
+    <div class="demo-row">
+      <span class="label">yellow</span>
+      <span
+        data-popover-title="pill + yellow"
+        data-popover-content="pill 搭配 yellow，適合標注重要術語。"
+        data-popover-hint-style="pill"
+        data-popover-color="yellow"
+        data-popover-theme="yellow"
+      >pill yellow</span>
+    </div>
+    <div class="demo-row">
+      <span class="label">special</span>
+      <span
+        data-popover-title="pill + special"
+        data-popover-content="pill 搭配 special（B3DE73）綠色。"
+        data-popover-hint-style="pill"
+        data-popover-color="special"
+        data-popover-theme="special"
+      >pill special</span>
+    </div>
+    <div class="demo-row">
+      <span class="label">自訂 hex</span>
+      <span
+        data-popover-title="pill + 自訂 hex"
+        data-popover-content="data-popover-color 也接受任意 hex，例如 #E6374B（warning 紅）。"
+        data-popover-hint-style="pill"
+        data-popover-color="#E6374B"
+        data-popover-theme="wrong"
+      >pill #E6374B</span>
+    </div>
+
+    <h3>pill-full　<small style="color:rgba(198,199,189,0.7); font-size:0.82rem;">撐滿容器寬度，適合清單項目或行動呼籲</small></h3>
+    <div style="margin-bottom:0.8rem;">
+      <span
+        data-popover-title="pill-full 樣式"
+        data-popover-content="data-popover-hint-style=&quot;pill-full&quot; 會撐滿父容器寬度（width:100%），適合作為可點選的說明列。"
+        data-popover-hint-style="pill-full"
+      >這是 pill-full lavender，點擊展開說明（預設色）</span>
+    </div>
+    <div style="margin-bottom:0.8rem;">
+      <span
+        data-popover-title="pill-full + teal"
+        data-popover-content="pill-full 搭配 teal，以底色強調整行。"
+        data-popover-hint-style="pill-full"
+        data-popover-color="teal"
+        data-popover-theme="teal"
+      >pill-full teal，整行可點擊</span>
+    </div>
+    <div style="margin-bottom:0.8rem;">
+      <span
+        data-popover-title="pill-full + indigo"
+        data-popover-content="pill-full 搭配 indigo，深藍紫調，適合步驟式說明。"
+        data-popover-hint-style="pill-full"
+        data-popover-color="indigo"
+        data-popover-theme="indigo"
+      >pill-full indigo</span>
+    </div>
+    <div>
+      <span
+        data-popover-title="pill-full + pink"
+        data-popover-content="pill-full 搭配 pink，活潑亮眼。"
+        data-popover-hint-style="pill-full"
+        data-popover-color="pink"
+        data-popover-theme="pink"
+      >pill-full pink</span>
+    </div>
+  </div>
+
+  <!-- ② 調色盤 token 對照 -->
+  <div class="section-card">
+    <h2><i class="bi bi-grid-3x2-gap-fill me-2"></i>② 支援的調色盤 token（data-popover-color）</h2>
+    <p>以下所有 token 皆可直接填入 <code>data-popover-color</code>，也可填任意 <code>#RRGGBB</code> hex。</p>
+    <div class="badge-row">
+      <span data-popover-hint-style="pill" data-popover-color="lavender" data-popover-theme="lavender"
+            data-popover-title="lavender" data-popover-content="#C3A5E5">lavender</span>
+      <span data-popover-hint-style="pill" data-popover-color="sky" data-popover-theme="sky"
+            data-popover-title="sky" data-popover-content="#82C8E5">sky</span>
+      <span data-popover-hint-style="pill" data-popover-color="ocean" data-popover-theme="ocean"
+            data-popover-title="ocean" data-popover-content="#1CCAE8">ocean</span>
+      <span data-popover-hint-style="pill" data-popover-color="safe" data-popover-theme="safe"
+            data-popover-title="safe" data-popover-content="#27AE60">safe</span>
+      <span data-popover-hint-style="pill" data-popover-color="special" data-popover-theme="special"
+            data-popover-title="special" data-popover-content="#B3DE73">special</span>
+      <span data-popover-hint-style="pill" data-popover-color="yellow" data-popover-theme="yellow"
+            data-popover-title="yellow" data-popover-content="#E3D322">yellow</span>
+      <span data-popover-hint-style="pill" data-popover-color="salmon" data-popover-theme="salmon"
+            data-popover-title="salmon" data-popover-content="#E5C3B3">salmon</span>
+      <span data-popover-hint-style="pill" data-popover-color="pink" data-popover-theme="pink"
+            data-popover-title="pink" data-popover-content="#FF91D7">pink</span>
+      <span data-popover-hint-style="pill" data-popover-color="orange" data-popover-theme="orange"
+            data-popover-title="orange" data-popover-content="#EDA109">orange</span>
+      <span data-popover-hint-style="pill" data-popover-color="teal" data-popover-theme="teal"
+            data-popover-title="teal" data-popover-content="#0DA591">teal</span>
+      <span data-popover-hint-style="pill" data-popover-color="focus" data-popover-theme="focus"
+            data-popover-title="focus" data-popover-content="#D4FFFC">focus</span>
+      <span data-popover-hint-style="pill" data-popover-color="indigo" data-popover-theme="indigo"
+            data-popover-title="indigo" data-popover-content="#7849C9">indigo</span>
+      <span data-popover-hint-style="pill" data-popover-color="info" data-popover-theme="info"
+            data-popover-title="info" data-popover-content="#4171BF">info</span>
+      <span data-popover-hint-style="pill" data-popover-color="wrong" data-popover-theme="wrong"
+            data-popover-title="wrong" data-popover-content="#E6374B">wrong</span>
+    </div>
+  </div>
+
+  <!-- ③ 行內混排示範 -->
+  <div class="section-card">
+    <h2><i class="bi bi-text-paragraph me-2"></i>③ 行內混排文章示範</h2>
+    <p style="line-height:1.8;">
+      在量子力學中，<span
+        data-popover-title="波函數"
+        data-popover-content="波函數（ψ）是描述量子系統狀態的數學函數，其模的平方代表粒子在某位置出現的機率密度。"
+        data-popover-hint-style="pill"
+        data-popover-color="ocean"
+        data-popover-theme="ocean"
+      >波函數</span>的
+      <span
+        data-popover-title="塌縮"
+        data-popover-content="測量行為使波函數從疊加態瞬間坍縮至某一本徵態，此為量子力學最具爭議的詮釋問題之一。"
+        data-popover-hint-style="pill"
+        data-popover-color="lavender"
+      >塌縮</span>是測量理論的核心難題。
+      <span
+        data-popover-title="薛丁格方程式"
+        data-popover-content="iℏ ∂ψ/∂t = Ĥψ，描述量子態隨時間的演化，是量子力學的基本方程。"
+        data-popover-hint-style="solid"
+        data-popover-color="special"
+        data-popover-theme="special"
+      >薛丁格方程式</span>給出封閉系統的確定性演化，
+      而
+      <span
+        data-popover-title="海森堡不確定原理"
+        data-popover-content="Δx · Δp ≥ ℏ/2，位置與動量的測量精度存在根本的物理下限，並非儀器限制。"
+        data-popover-color="yellow"
+        data-popover-theme="yellow"
+      >海森堡不確定原理</span>（dashed 預設）則設定了測量的根本極限。
+    </p>
+
+    <h3 style="margin-top:1.5rem;">pill-full 作為說明列</h3>
+    <div style="display:flex; flex-direction:column; gap:8px; max-width:500px;">
+      <span
+        data-popover-title="步驟 1：安裝"
+        data-popover-content="執行 npm install bp-popnote 或直接引入 CDN 版本。"
+        data-popover-hint-style="pill-full"
+        data-popover-color="sky"
+        data-popover-theme="sky"
+      ><i class="bi bi-1-circle-fill me-2"></i>安裝 bp-popnote</span>
+      <span
+        data-popover-title="步驟 2：引入"
+        data-popover-content="在 HTML 頁尾加入 &lt;script src=&quot;bp-popnote.js&quot;&gt;&lt;/script&gt;，Bootstrap Icons 需一併引入。"
+        data-popover-hint-style="pill-full"
+        data-popover-color="teal"
+        data-popover-theme="teal"
+      ><i class="bi bi-2-circle-fill me-2"></i>引入腳本</span>
+      <span
+        data-popover-title="步驟 3：標記"
+        data-popover-content="在任意元素加上 data-popover-title 或 data-popover-content，無需 JavaScript 初始化。"
+        data-popover-hint-style="pill-full"
+        data-popover-color="safe"
+        data-popover-theme="safe"
+      ><i class="bi bi-3-circle-fill me-2"></i>加上屬性即完成</span>
+    </div>
+  </div>
+
+  <!-- ④ BpPopnote.annotate 示範 -->
+  <div class="section-card">
+    <h2><i class="bi bi-code-slash me-2"></i>④ annotate API 新增 hintStyle &amp; color 參數</h2>
+    <p id="annotate-target" style="line-height:1.9;">
+      原始碼透過 JavaScript 動態標注：PDO 是 PHP 官方的資料庫抽象層，
+      而 AOP 則是橫切關注點的程式設計典範。
+      使用 BpPopnote.annotate 可以在不修改 HTML 的情況下加入彈出說明。
+    </p>
+    <p style="font-size:0.85rem; color:rgba(198,199,189,0.78);">
+      上段文字中「PDO」「AOP」「BpPopnote.annotate」三個詞是由下方 JS 動態標注的。
+    </p>
+<pre style="background:#111;border:1px solid var(--border);border-radius:8px;padding:16px;font-size:0.82rem;color:var(--special);overflow-x:auto;"><code>BpPopnote.annotate([
+  {
+    text: 'PDO',
+    title: 'PHP Data Objects',
+    content: '統一的 PHP 資料庫存取介面，支援多種資料庫驅動，使用 PDO 可避免直接依賴特定資料庫 API。',
+    theme: 'ocean',
+    hintStyle: 'pill',   // ← 新增
+    color: 'ocean',      // ← 新增
+  },
+  {
+    text: 'AOP',
+    title: 'Aspect-Oriented Programming',
+    content: '面向切面程式設計，將日誌、安全驗證等橫切關注點從業務邏輯中分離，提升模組化程度。',
+    theme: 'special',
+    hintStyle: 'pill',
+    color: 'special',
+  },
+  {
+    text: 'BpPopnote.annotate',
+    title: 'annotate API',
+    content: '動態標注 API，v2 新增 hintStyle（&quot;dashed&quot;/&quot;solid&quot;/&quot;pill&quot;/&quot;pill-full&quot;）與 color 參數。',
+    theme: 'lavender',
+    hintStyle: 'solid',
+    color: 'lavender',
+  },
+]);</code></pre>
+  </div>
+
+  <!-- ⑤ 屬性速查 -->
+  <div class="section-card">
+    <h2><i class="bi bi-table me-2"></i>⑤ 新增屬性速查</h2>
+    <div style="overflow-x:auto;">
+      <table class="attr-table">
+        <thead>
+          <tr>
+            <th>屬性</th>
+            <th>值</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>data-popover-hint-style</code></td>
+            <td><code>dashed</code>（預設）<br><code>solid</code><br><code>pill</code><br><code>pill-full</code></td>
+            <td>觸發器樣式。<code>dashed</code> 為原始虛線底線，<code>solid</code> 為實線底線，<code>pill</code> 為圓角膠囊，<code>pill-full</code> 為撐滿容器寬度的膠囊。</td>
+          </tr>
+          <tr>
+            <td><code>data-popover-color</code></td>
+            <td>調色盤 token 或 <code>#RRGGBB</code></td>
+            <td>覆蓋觸發器的提示色（hint color）。接受 <code>lavender</code>、<code>ocean</code>… 等 token，或任意 hex。此色彩也同步更新 <code>--xpop-hint-color</code> 與 <code>--xpop-hint-rgb</code> CSS 變數，pill / pill-full 背景色由此驅動。</td>
+          </tr>
+          <tr>
+            <td><code>annotate( rule.hintStyle )</code></td>
+            <td>同上</td>
+            <td>annotate API 對應的 JS 規則屬性。</td>
+          </tr>
+          <tr>
+            <td><code>annotate( rule.color )</code></td>
+            <td>同上</td>
+            <td>annotate API 對應的 JS 規則屬性，token 或 hex 均可。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- bp-popnote （同目錄） -->
+<script src="bp-popnote.js"></script>
+
+<script>
+// ④ annotate 示範
+BpPopnote.annotate([
+  {
+    text: 'PDO',
+    within: '#annotate-target',
+    title: 'PHP Data Objects',
+    content: '統一的 PHP 資料庫存取介面，支援多種資料庫驅動，使用 PDO 可避免直接依賴特定資料庫 API。',
+    theme: 'ocean',
+    hintStyle: 'pill',
+    color: 'ocean',
+  },
+  {
+    text: 'AOP',
+    within: '#annotate-target',
+    title: 'Aspect-Oriented Programming',
+    content: '面向切面程式設計，將日誌、安全驗證等橫切關注點從業務邏輯中分離，提升模組化程度。',
+    theme: 'special',
+    hintStyle: 'pill',
+    color: 'special',
+  },
+  {
+    text: 'BpPopnote.annotate',
+    within: '#annotate-target',
+    title: 'annotate API',
+    content: 'v2 新增 hintStyle（"dashed"/"solid"/"pill"/"pill-full"）與 color 參數，讓動態標注也能選擇觸發器外觀與色彩。',
+    theme: 'lavender',
+    hintStyle: 'solid',
+    color: 'lavender',
+  },
+]);
+</script>
+</body>
+</html>
