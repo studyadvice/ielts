@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>step-flow 元件示範 v1.4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: #0C0D0C;
+      color: #C6C7BD;
+      font-family: 'Noto Sans TC', 'Segoe UI', system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .page-wrap { max-width: 1280px; margin: 0 auto; padding: 40px 48px 96px; }
+
+    header { margin-bottom: 48px; }
+    header h1 { font-size: 1.8rem; font-weight: 700; color: #D4FFFC; margin: 0 0 10px; }
+    header p  { color: rgba(198,199,189,0.78); font-size: 1rem; margin: 0; }
+
+    .demo-section { margin-bottom: 72px; }
+    .demo-section > h2 {
+      font-size: 1rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: #C3A5E5;
+      margin: 0 0 6px; padding-bottom: 8px;
+      border-bottom: 1px solid rgba(195,165,229,0.22);
+    }
+    .demo-section > p.desc {
+      font-size: 0.88rem; color: rgba(198,199,189,0.72);
+      margin: 0 0 24px; line-height: 1.6;
+    }
+    code {
+      background: rgba(195,165,229,0.12); padding: 1px 6px;
+      border-radius: 4px; font-size: 0.84em; color: #C3A5E5;
+    }
+
+    .demo-cols { display: flex; gap: 48px; flex-wrap: wrap; align-items: flex-start; }
+    .demo-col  { flex: 1 1 300px; }
+    .demo-col > h3 {
+      font-size: 0.8rem; font-weight: 600; letter-spacing: .06em;
+      color: rgba(198,199,189,0.5); margin: 0 0 14px;
+    }
+
+    .rb { border-radius: 8px; padding: 18px 22px; margin-top: 20px; }
+    .rb h3 { margin: 0 0 6px; font-size: 1rem; }
+    .rb p  { margin: 0; font-size: 0.95rem; }
+    .rb-safe  { background: rgba(39,174,96,0.1);  border: 1.5px solid rgba(39,174,96,0.45);  }
+    .rb-safe  h3 { color: #27AE60; }
+    .rb-teal  { background: rgba(13,165,145,0.1); border: 1.5px solid rgba(13,165,145,0.45); }
+    .rb-teal  h3 { color: #0DA591; }
+    .rb-ocean { background: rgba(28,202,232,0.1); border: 1.5px solid rgba(28,202,232,0.45); }
+    .rb-ocean h3 { color: #1CCAE8; }
+    .rb-warn  { background: rgba(230,55,75,0.08); border: 1.5px solid rgba(230,55,75,0.4);   }
+    .rb-warn  h3 { color: #E6374B; }
+
+    .fw-bold { font-weight: 700; }
+
+    .cpanel {
+      background: rgba(18,20,18,0.96);
+      border: 1px solid rgba(195,165,229,0.16);
+      border-radius: 10px; padding: 20px 26px; margin-top: 48px;
+    }
+    .cpanel + .cpanel { margin-top: 16px; }
+    .cpanel h2 {
+      font-size: 0.95rem; font-weight: 700; color: #C3A5E5;
+      margin: 0 0 12px; letter-spacing: .06em;
+    }
+    pre {
+      margin: 0; font-size: 0.78rem; line-height: 1.5;
+      color: #B3DE73; white-space: pre-wrap; word-break: break-all;
+    }
+
+    footer {
+      margin-top: 56px; padding-top: 18px;
+      border-top: 1px solid rgba(198,199,189,0.1);
+      font-size: 0.82rem; color: rgba(198,199,189,0.4);
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <h1>&lt;step-flow&gt; 元件示範 v1.4</h1>
+    <p>新增：<code>show-step-label</code>（預設隱藏步驟序號）、<code>extra-tab-width</code>（色帶寬度）、縮減所有 padding 預設值</p>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       示範一：show-step-label 對比
+  ═══════════════════════════════════════════ -->
+  <section class="demo-section">
+    <h2>示範一&ensp;show-step-label 顯示對比</h2>
+    <p class="desc">
+      左側 <code>show-step-label="false"</code>（預設，隱藏步驟序號）；
+      右側 <code>show-step-label="true"</code>（顯示「步驟 1、步驟 2…」）。
+    </p>
+    <div class="demo-cols">
+
+      <!-- 隱藏步驟標籤（預設） -->
+      <div class="demo-col">
+        <h3>show-step-label="false"（預設）</h3>
+        <step-flow theme="indigo" default-width="100%"
+                   show-step-label="false" show-reset="true">
+          <flow-step btn-a="方案 A" btn-b="方案 B" target-a="sl1-a" target-b="sl1-b">
+            <p class="fw-bold">請選擇適合的方案：</p>
+          </flow-step>
+          <flow-step id="sl1-a" finish-btn="確認選擇" finish-target="r-sl1-a">
+            <p>方案 A 說明內容。</p>
+          </flow-step>
+          <flow-step id="sl1-b" finish-btn="確認選擇" finish-target="r-sl1-b">
+            <p>方案 B 說明內容。</p>
+          </flow-step>
+        </step-flow>
+        <div id="r-sl1-a" class="rb rb-teal"  style="display:none;"><h3>已選方案 A</h3><p>確認完成。</p></div>
+        <div id="r-sl1-b" class="rb rb-ocean" style="display:none;"><h3>已選方案 B</h3><p>確認完成。</p></div>
+      </div>
+
+      <!-- 顯示步驟標籤 -->
+      <div class="demo-col">
+        <h3>show-step-label="true"</h3>
+        <step-flow theme="indigo" default-width="100%"
+                   show-step-label="true" show-reset="true">
+          <flow-step btn-a="方案 A" btn-b="方案 B" target-a="sl2-a" target-b="sl2-b">
+            <p class="fw-bold">請選擇適合的方案：</p>
+          </flow-step>
+          <flow-step id="sl2-a" finish-btn="確認選擇" finish-target="r-sl2-a">
+            <p>方案 A 說明內容。</p>
+          </flow-step>
+          <flow-step id="sl2-b" finish-btn="確認選擇" finish-target="r-sl2-b">
+            <p>方案 B 說明內容。</p>
+          </flow-step>
+        </step-flow>
+        <div id="r-sl2-a" class="rb rb-teal"  style="display:none;"><h3>已選方案 A</h3><p>確認完成。</p></div>
+        <div id="r-sl2-b" class="rb rb-ocean" style="display:none;"><h3>已選方案 B</h3><p>確認完成。</p></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       示範二：extra-tab-width 對比
+  ═══════════════════════════════════════════ -->
+  <section class="demo-section">
+    <h2>示範二&ensp;extra-tab-width 寬度對比</h2>
+    <p class="desc">
+      左側預設 <code>extra-tab-width="16px"</code>；
+      右側設定 <code>extra-tab-width="32px"</code>，色帶更寬，視覺重量更強。
+    </p>
+    <div class="demo-cols">
+
+      <div class="demo-col">
+        <h3>extra-tab-width="16px"（預設）</h3>
+        <step-flow theme="lavender" default-width="100%" default-radius="6px">
+          <flow-step single-btn="繼續" target-a="tw1-2">
+            <flow-item
+              extra-info-title="申請須知"
+              extra-info="本表單僅限已驗證用戶使用。<br>填寫前請確認電子郵件已驗證。"
+            >
+              <p>請填寫基本申請資料。</p>
+            </flow-item>
+          </flow-step>
+          <flow-step id="tw1-2" finish-btn="送出" finish-target="r-tw1">
+            <flow-item
+              extra-info="送出後無法修改，請確認後再送出。"
+            >
+              <p>確認資料後送出申請。</p>
+            </flow-item>
+          </flow-step>
+        </step-flow>
+        <div id="r-tw1" class="rb rb-safe" style="display:none;"><h3>申請已送出</h3><p>請等待審核通知。</p></div>
+      </div>
+
+      <div class="demo-col">
+        <h3>extra-tab-width="32px"</h3>
+        <step-flow theme="lavender" default-width="100%" default-radius="6px">
+          <flow-step single-btn="繼續" target-a="tw2-2">
+            <flow-item
+              extra-info-title="申請須知"
+              extra-info="本表單僅限已驗證用戶使用。<br>填寫前請確認電子郵件已驗證。"
+              extra-tab-width="32px"
+            >
+              <p>請填寫基本申請資料。</p>
+            </flow-item>
+          </flow-step>
+          <flow-step id="tw2-2" finish-btn="送出" finish-target="r-tw2">
+            <flow-item
+              extra-info="送出後無法修改，請確認後再送出。"
+              extra-tab-width="32px"
+            >
+              <p>確認資料後送出申請。</p>
+            </flow-item>
+          </flow-step>
+        </step-flow>
+        <div id="r-tw2" class="rb rb-safe" style="display:none;"><h3>申請已送出</h3><p>請等待審核通知。</p></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       示範三：縮減 padding 總覽（預設值對比）
+  ═══════════════════════════════════════════ -->
+  <section class="demo-section">
+    <h2>示範三&ensp;預設 padding 縮減對比</h2>
+    <p class="desc">
+      左側使用 v1.3 的舊預設 <code>default-padding="32px 36px 26px"</code>；
+      右側為 v1.4 新預設 <code>default-padding="14px 16px"</code>（未設定屬性時）。
+    </p>
+    <div class="demo-cols">
+
+      <div class="demo-col">
+        <h3>舊預設 32px 36px 26px</h3>
+        <step-flow theme="sky" default-width="100%" default-padding="32px 36px 26px"
+                   show-step-label="true">
+          <flow-step single-btn="繼續" target-a="pad1-2">
+            <p>卡片內距較大的示範。</p>
+          </flow-step>
+          <flow-step id="pad1-2" finish-btn="完成" finish-target="r-pad1">
+            <p>終點步驟。</p>
+          </flow-step>
+        </step-flow>
+        <div id="r-pad1" class="rb rb-ocean" style="display:none;"><h3>完成</h3><p>已確認。</p></div>
+      </div>
+
+      <div class="demo-col">
+        <h3>新預設 14px 16px（v1.4）</h3>
+        <step-flow theme="sky" default-width="100%"
+                   show-step-label="true">
+          <flow-step single-btn="繼續" target-a="pad2-2">
+            <p>卡片內距縮減的示範，適合緊湊介面。</p>
+          </flow-step>
+          <flow-step id="pad2-2" finish-btn="完成" finish-target="r-pad2">
+            <p>終點步驟。</p>
+          </flow-step>
+        </step-flow>
+        <div id="r-pad2" class="rb rb-ocean" style="display:none;"><h3>完成</h3><p>已確認。</p></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       屬性速查
+  ═══════════════════════════════════════════ -->
+  <div class="cpanel">
+    <h2>v1.4 新增屬性</h2>
+    <pre>
+── &lt;step-flow&gt; ───────────────────────────────────────────────
+show-step-label   「步驟 N」序號標籤是否顯示
+                  預設 false（隱藏）→ true | false
+
+default-padding   卡片內距
+                  舊預設 32px 36px 26px → 新預設 14px 16px
+
+── &lt;flow-item&gt; ───────────────────────────────────────────────
+extra-tab-width   右側垂直色帶寬度
+                  預設 16px（例如 24px、2rem）
+                  無 extra-info 時此屬性無效</pre>
+  </div>
+
+  <div class="cpanel">
+    <h2>v1.4 完整屬性速查</h2>
+    <pre>
+── &lt;step-flow&gt; ──────────────────────────────────────────────────────────────
+  theme              色彩主題 token
+  default-width      步驟寬度，預設 min(700px,100%)
+  default-border     卡片邊框，省略顏色補主題色
+  default-padding    卡片內距，預設 14px 16px
+  default-radius     卡片圓角，預設 0
+  show-step-label    步驟序號顯示，預設 false → true | false
+  show-finish        完成按鈕顯示，預設 true  → true | false
+  show-reset         重設按鈕顯示，預設 false → true | false
+  reset-label        重設按鈕文字，預設「重新開始」
+  btn-a-color        第一按鈕色彩（token 或 #hex）
+  btn-b-color        第二按鈕色彩（token 或 #hex）
+  font-label         步驟標籤大小，預設 0.72rem
+  font-body          內文大小，預設 1.125rem
+  font-btn           分支按鈕大小，預設 1rem
+  font-pill          pill / 重設按鈕大小，預設 1rem
+
+── &lt;flow-step&gt; ──────────────────────────────────────────────────────────────
+  id             步驟識別碼（非首個必填）
+  btn-a          第一分支按鈕文字
+  btn-b          第二分支按鈕文字
+  single-btn     單按鈕，搭配 target-a
+  target-a       btn-a / single-btn 目標
+  target-b       btn-b 目標
+  finish-btn     終點完成按鈕文字
+  finish-target  完成按鈕跳至的 div#id
+
+── &lt;flow-item&gt; ──────────────────────────────────────────────────────────────
+  width              覆蓋此步驟卡片寬度
+  border             覆蓋此步驟卡片邊框
+  extra-info         右側色帶 hover 時的 popover 內容（支援 HTML）
+  extra-info-title   popover 標題（純文字）
+  extra-tab-width    右側色帶寬度，預設 16px</pre>
+  </div>
+
+  <footer>
+    &lt;step-flow&gt; v1.4 &nbsp;|&nbsp; 示範頁面建立於 2026-10-20
+  </footer>
+
+</div>
+<script src="step-flow.js"></script>
+</body>
+</html>
