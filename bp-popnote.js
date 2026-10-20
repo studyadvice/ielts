@@ -1,131 +1,5 @@
-// ================================================================
-// bp-popnote.js  v2.1  — 合併版
-// 包含兩個獨立元件：
-//
-//  ① bp-notice  公告 / 廣告 / Sticky Bar                <bp-notice>
-//  ② bp-popnote 浮動氣泡 / Panel / Modal / Offcanvas    data-popover-*
-//
-// ── bp-notice 用法 ────────────────────────────────────────────
-//   <!-- 系統公告 -->
-//   <bp-notice type="announcement" notice-id="maint-0921">
-//     系統將於週日 02:00–04:00 進行維護。
-//   </bp-notice>
-//
-//   <!-- 促銷 + CTA -->
-//   <bp-notice type="promo" color="ocean" dismissible
-//              cta-text="立即報名" cta-href="/register">
-//     雅思衝刺班 4 月開課，限額 12 人！
-//   </bp-notice>
-//
-//   <!-- 底部 Sticky Bar -->
-//   <bp-notice type="sticky" position="bottom" color="teal" dismissible>
-//     今日學習進度：3 / 5
-//   </bp-notice>
-//
-// ── bp-notice 屬性 ────────────────────────────────────────────
-//   type          announcement | promo | sticky（預設 announcement）
-//   position      top | bottom（sticky 用，預設 bottom）
-//   notice-id     字串，關閉後以 localStorage 記憶
-//   dismissible   顯示關閉按鈕
-//   icon          Bootstrap Icons class 覆寫
-//   cta-text / cta-href / cta-target
-//   auto-dismiss  秒數後自動關閉（0 = 不自動）
-//   no-anim       停用動畫
-//
-//   color（16 色 + gold）：
-//     lavender · sky · ocean · safe · special · yellow ·
-//     salmon · pink · orange · vanilla · teal · focus ·
-//     indigo · info · wrong
-//     gold（金箔特殊樣式）
-//     直接色碼（#hex / rgb / var(--x)）
-//
-//     ─── v1 別名（向下相容）───────────────────────────────
-//     accent    → lavender      correct  → safe
-//     wrong     → 紅色 #E6374B  warning  → 黃色 #E3D322（= yellow）
-//     note      → yellow        success  → safe
-//     highlight → special
-//     ─── 注意 ─────────────────────────────────────────────
-//     bp-notice 的 warning = 黃色（舊行為保留）
-//     bp-popnote 的 warning theme = 紅色（另一命名空間，互不影響）
-//
-// ── bp-notice 全域設定 ────────────────────────────────────────
-//   BpNotice.config.stickyOffset = '64px';
-//   BpNotice.config.theme.bg     = '#111';
-//
-// ── bp-notice 事件 ────────────────────────────────────────────
-//   bp:notice-close  → detail: { noticeId }
-//   bp:notice-cta    → detail: { noticeId, href }
-//
-// ── bp-notice 全域 API ────────────────────────────────────────
-//   BpNotice.close(el)              關閉
-//   BpNotice.show(el)               重新顯示（清除記憶）
-//   BpNotice.setContent(el, html)   動態更新內容
-//   BpNotice.getInstance(el)        取得 Widget 實例
-//   BpNotice.init()                 掃描並初始化新增的 <bp-notice>
-//   BpNotice.palette                取得共用調色盤
-//
-// ── bp-popnote 用法 ───────────────────────────────────────────
-//   <span data-popover-content="說明文字">觸發詞</span>
-//   <span data-popover-title="標題" data-popover-content="…">觸發詞</span>
-//   <span data-popover-target="#my-tpl" data-popover-theme="sky">觸發詞</span>
-//
-//   多頁 Carousel（content 內含多個 <section>）：
-//   <span data-popover-content="<section>頁1</section><section>頁2</section>">…</span>
-//
-//   Modal：
-//   <span data-popover-title="…" data-popover-content="…"
-//         data-popover-modal="dialog">開啟 Modal</span>
-//
-//   Offcanvas：
-//   <span data-popover-title="…" data-popover-content="…"
-//         data-popover-modal="end">右側 Offcanvas</span>
-//
-//   Panel 模式（渲染至指定容器）：
-//   <span data-popover-content="…" data-popover-panel="#side-box">觸發詞</span>
-//
-// ── bp-popnote 全域設定 ───────────────────────────────────────
-//   PopoverConfig.set({ theme: 'sky', placement: 'bottom', maxWidth: '400px' });
-//   PopoverConfig.set({ carousel: { animation: 'crossfade', interval: 5000 } });
-//   PopoverConfig.set({ modal: 'dialog', modalSize: 'lg', modalStatic: true });
-//   PopoverConfig.addTheme('brand', { bg:'#100820', titleColor:'#A080FF', borderColor:'#A080FF' });
-//
-// ── bp-popnote show-btn 詳情按鈕 ─────────────────────────────
-//   data-popover-show-btn="詳情"  — 按鈕文字（存在此屬性即顯示按鈕）
-//   data-popover-btn-href="#sec1" — 目標：#錨點 或 完整 URL
-//
-//   範例（書籤跳轉）：
-//   <span data-popover-content="說明"
-//         data-popover-show-btn="詳細說明"
-//         data-popover-btn-href="#grammar-section">觸發詞</span>
-//
-//   範例（外部連結）：
-//   <span data-popover-content="說明"
-//         data-popover-show-btn="前往官網"
-//         data-popover-btn-href="https://example.com">觸發詞</span>
-//
-//   外部網址（https:// 或 //）自動加 target="_blank" rel="noopener noreferrer"。
-//   適用所有模式：Floating、Panel、Modal、Offcanvas。
-//
-// ── bp-popnote 事後標注 API ───────────────────────────────────
-//   BpPopnote.annotate({ text:'特定詞', content:'說明', theme:'ocean', within:'#article' });
-//   BpPopnote.clearAnnotations('#article');
-//
-// ── 共用調色盤（BpNotice.palette）────────────────────────────
-//   lavender #C3A5E5 · sky #82C8E5 · ocean #1CCAE8 · wrong #E6374B
-//   safe #27AE60 · special #B3DE73 · yellow #E3D322 · salmon #E5C3B3
-//   pink #FF91D7 · orange #EDA109 · vanilla #DBEDD8 · teal #0DA591
-//   focus #D4FFFC · indigo #7849C9 · info #2351DB
-//   gold（特殊漸層）
-//
-// 無 Shadow DOM；CSS 注入 <head>
-// ================================================================
-
 (function (G) {
   'use strict';
-
-  // ══════════════════════════════════════════════════════════════
-  //  共用調色盤
-  // ══════════════════════════════════════════════════════════════
 
   var PALETTE = {
     lavender : '#C3A5E5',
@@ -146,10 +20,7 @@
     shell    : '#C6C7BD',
   };
 
-  // ── bp-notice 專屬色彩對照表 ─────────────────────────────────
-  // 保留 v1 naming（warning = 黃色），獨立於 bp-popnote THEMES 的 warning（紅色）
   var NOTICE_COLOR_MAP = {
-    // 16 標準色
     lavender : PALETTE.lavender,
     sky      : PALETTE.sky,
     ocean    : PALETTE.ocean,
@@ -173,11 +44,6 @@
     success  : PALETTE.safe,
     highlight: PALETTE.special,
   };
-
-
-  // ══════════════════════════════════════════════════════════════
-  //  SECTION I — bp-notice
-  // ══════════════════════════════════════════════════════════════
 
   var _noticeCssEl = null;
 
@@ -212,7 +78,6 @@
     var so = BpNoticeConfig.stickyOffset;
 
     var rules = [
-      /* ── 基礎容器 ── */
       '.bpn-box{' +
         'display:flex;align-items:center;gap:10px;' +
         'padding:11px 16px;' +
@@ -239,11 +104,9 @@
       '.bpn-box.closing{opacity:0;transform:translateY(-6px);pointer-events:none;}',
       '.bpn-box.closing-down{opacity:0;transform:translateY(10px);pointer-events:none;}',
 
-      /* ── 子元素 ── */
       '.bpn-icon{flex-shrink:0;font-size:1rem;}',
       '.bpn-content{flex:1;min-width:0;}',
 
-      /* ── CTA ── */
       '.bpn-cta{' +
         'flex-shrink:0;background:' + t.ctaBg + ';color:' + t.ctaText + ';' +
         'border:none;border-radius:5px;padding:5px 14px;' +
@@ -252,7 +115,6 @@
         'transition:opacity .15s;}',
       '.bpn-cta:hover{opacity:.85;color:' + t.ctaText + ';}',
 
-      /* ── 關閉按鈕 ── */
       '.bpn-close{' +
         'flex-shrink:0;background:none;border:none;' +
         'color:' + t.closeColor + ';cursor:pointer;font-size:1rem;' +
@@ -260,7 +122,6 @@
         'transition:color .15s;}',
       '.bpn-close:hover{color:' + t.text + ';}',
 
-      /* ── Sticky ── */
       'bp-notice[type="sticky"]{' +
         'display:block;position:fixed;left:0;right:0;z-index:1040;padding:0 28px;}',
       'bp-notice[type="sticky"][position="top"]{top:' + so + ';}',
@@ -280,7 +141,6 @@
       );
     });
 
-    /* ── 金箔 gold（特殊樣式）── */
     rules.push(
       '.bpn-box[data-color="gold"]{' +
         'background:linear-gradient(150deg,#1A1200 0%,#2A1E00 40%,#1F1600 100%);' +
@@ -305,7 +165,6 @@
     _noticeCssEl.textContent = rules.join('\n');
   }
 
-  // ── 色彩套用 ─────────────────────────────────────────────────
   function applyNoticeColor(box, colorAttr, isSticky) {
     if (!colorAttr) return;
     if (colorAttr === 'gold') {
@@ -315,7 +174,6 @@
     if (Object.prototype.hasOwnProperty.call(NOTICE_COLOR_MAP, colorAttr)) {
       box.setAttribute('data-color', colorAttr);
     } else {
-      // 直接色碼
       box.style.borderLeftColor = colorAttr;
       var icon = box.querySelector('.bpn-icon');
       if (icon) icon.style.color = colorAttr;
@@ -323,7 +181,6 @@
     }
   }
 
-  // ── BpNoticeWidget ───────────────────────────────────────────
   function BpNoticeWidget(el) {
     this.el      = el;
     this._closed = false;
@@ -360,8 +217,7 @@
     el.innerHTML = '';
     var isSticky = this._type === 'sticky';
 
-    /* 外框 */
-    var box = document.createElement('div');
+      var box = document.createElement('div');
     box.className = 'bpn-box';
     if (!this._noAnim) {
       box.classList.add(isSticky && this._position !== 'top' ? 'anim-up' : 'anim');
@@ -369,19 +225,16 @@
     applyNoticeColor(box, this._color, isSticky);
     this._box = box;
 
-    /* 圖示 */
-    var icon = document.createElement('i');
+      var icon = document.createElement('i');
     icon.className = 'bi ' + this._icon + ' bpn-icon';
     box.appendChild(icon);
 
-    /* 內容 */
-    var content = document.createElement('div');
+      var content = document.createElement('div');
     content.className = 'bpn-content';
     content.innerHTML = this._contentHtml;
     box.appendChild(content);
 
-    /* CTA */
-    if (this._ctaText) {
+      if (this._ctaText) {
       var cta = document.createElement('a');
       cta.className   = 'bpn-cta';
       cta.href        = this._ctaHref;
@@ -397,8 +250,7 @@
       box.appendChild(cta);
     }
 
-    /* 關閉按鈕 */
-    if (this._dismissible) {
+      if (this._dismissible) {
       var closeBtn       = document.createElement('button');
       closeBtn.type      = 'button';
       closeBtn.className = 'bpn-close';
@@ -410,8 +262,7 @@
 
     el.appendChild(box);
 
-    /* 自動關閉 */
-    if (this._autoDismiss > 0) {
+      if (this._autoDismiss > 0) {
       setTimeout(function () { self.close(); }, this._autoDismiss * 1000);
     }
   };
@@ -460,16 +311,14 @@
     try { return !!localStorage.getItem('bpn-closed-' + this._noticeId); } catch (e) { return false; }
   };
 
-  // ── 自動初始化 ───────────────────────────────────────────────
-  function initAllNotices() {
+    function initAllNotices() {
     document.querySelectorAll('bp-notice:not([data-bp-init])').forEach(function (el) {
       el.setAttribute('data-bp-init', '1');
       el._bpNotice = new BpNoticeWidget(el);
     });
   }
 
-  // ── 全域 API ─────────────────────────────────────────────────
-  G.BpNotice = {
+    G.BpNotice = {
     config     : BpNoticeConfig,
     palette    : PALETTE,        // 共用調色盤（唯讀參考）
     colorMap   : NOTICE_COLOR_MAP,
@@ -502,11 +351,6 @@
     }
   }
 
-
-  // ══════════════════════════════════════════════════════════════
-  //  SECTION II — bp-popnote
-  // ══════════════════════════════════════════════════════════════
-
   const POPNOTE_CSS = `
     [data-popover-title],
     [data-popover-content],
@@ -521,7 +365,6 @@
       border-bottom: none !important;
     }
 
-    /* ── Floating popup ──────────────────────────────────────── */
     .xpop-container {
       position: fixed;
       z-index: 99999;
@@ -692,7 +535,6 @@
       transition: width linear;
     }
 
-    /* ── Panel wrap ──────────────────────────────────────────── */
     .xpop-panel-wrap {
       border-radius: 8px;
       border-width: 1px;
@@ -740,13 +582,11 @@
       color: var(--xpop-hint-color, #C3A5E5);
     }
 
-    /* 事後標注 mark 元素：重設瀏覽器預設黃色底 */
     mark.bpn-annotated {
       background: none;
       color: inherit;
     }
 
-    /* ── Bootstrap Modal theming ─────────────────────────────── */
     #xpop-bs-modal .modal-content {
       border-width: 1px;
       border-style: solid;
@@ -776,7 +616,6 @@
       overflow-y: auto;
     }
 
-    /* ── Shared close button ─────────────────────────────────── */
     #xpop-bs-modal .btn-close,
     #xpop-bs-offcanvas .btn-close {
       opacity: 0.65;
@@ -826,7 +665,6 @@
     }
   `;
 
-  // ── 主題定義（參照共用調色盤）────────────────────────────────
   const THEMES = {
     dark      : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
     lavender  : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
@@ -867,17 +705,7 @@
     modalStatic : false,
   };
 
-  // ── 全域 API ─────────────────────────────────────────────────
   G.BpPopnote = {
-    /**
-     * 對已存在的文字進行事後標注。
-     * @param {Object|Object[]} rules
-     *   必填 — text: string
-     *   定位 — within, context: { before, after }, occurrence
-     *   popover — title / content / theme / placement / panel /
-     *             modal / label / hint / maxwidth / fontsize /
-     *             arrow / interval / carouselAnim / offset / target
-     */
     annotate(rules) {
       (Array.isArray(rules) ? rules : [rules]).forEach(_annotateRule);
     },
@@ -1001,7 +829,6 @@
     });
   }
 
-  // ── CSS 注入 ─────────────────────────────────────────────────
   function injectPopnoteCSS() {
     if (document.getElementById('bp-popnote-style')) return;
     const s = document.createElement('style');
@@ -1010,7 +837,6 @@
     document.head.appendChild(s);
   }
 
-  // ── 位置計算 ─────────────────────────────────────────────────
   function calcPosition(trigger, pop, placement, offset) {
     const tr = trigger.getBoundingClientRect();
     const pw = pop.offsetWidth, ph = pop.offsetHeight;
@@ -1036,7 +862,6 @@
     return ({ top: 'center bottom', bottom: 'center top', left: 'right center', right: 'left center' })[p] || 'center bottom';
   }
 
-  // ── 內容抽取 ─────────────────────────────────────────────────
   function extractContent(trigger) {
     const targetId = trigger.dataset.popoverTarget || '';
     if (targetId) {
@@ -1051,22 +876,12 @@
     return trigger.dataset.popoverContent || '';
   }
 
-  // ── show-btn 詳情按鈕 ─────────────────────────────────────────
-  /**
-   * 從 trigger 讀取 data-popover-show-btn / data-popover-btn-href，
-   * 建立包裝 div（含 <a> 按鈕）並回傳，無屬性則回傳 null。
-   * @param {Element} trigger
-   * @param {Object}  theme      — getTheme() 結果（用來套 CSS 變數）
-   * @param {boolean} [forModal] — Modal/Offcanvas 內使用較小的 wrap class
-   */
   function buildShowBtnEl(trigger, theme, forModal) {
     const label = trigger.dataset.popoverShowBtn;
     if (!label && label !== '') return null;           // 屬性不存在 → 不顯示
     const btnLabel = label || '詳情';
     const href     = trigger.dataset.popoverBtnHref || '#';
-    // 判斷外部網址（含 http / https / // ）或書籤
     const isExternal = /^(https?:\/\/|\/\/)/.test(href);
-
     const wrap = document.createElement('div');
     wrap.className = forModal ? 'xpop-modal-show-btn-wrap' : 'xpop-show-btn-wrap';
 
@@ -1132,7 +947,6 @@
     return { isCarousel, body, progressEl, barEl };
   }
 
-  // ── Carousel ─────────────────────────────────────────────────
   function buildCarousel(sections, wrap, interval, animType) {
     const track    = wrap.querySelector('.xpop-carousel-track');
     const dotsWrap = wrap.querySelector('.xpop-dots');
@@ -1355,7 +1169,6 @@
     }).show();
   }
 
-  // ── Panel mode ────────────────────────────────────────────────
   function getPanelTargetEl(trigger) {
     const attr = trigger.dataset.popoverPanel;
     if (attr === 'false') return null;
