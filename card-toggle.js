@@ -1,4 +1,4 @@
-const CT_CARD_FS  = ['body','number','question','input','submit','aux','feedback','hintbox','flipnote','info','infobox'];
+const CT_CARD_FS  = ['body','number','question','input','submit','aux','feedback','hintbox','flipnote','info','infobox','branch-btn','branch-label','branch-body'];
 const CT_CARD_PAD = ['input','submit','aux','info','infobox'];
 const CT_GROUP_FS  = ['nav','page','counter','result-score','result-text','retry'];
 const CT_GROUP_PAD = ['nav','page','retry'];
@@ -116,6 +116,13 @@ class CardToggle extends HTMLElement {
                 --ct-fs-result-score: 2.4rem;
                 --ct-fs-result-text:  1.125rem;
                 --ct-fs-retry:        1.125rem;
+                /* 分支翻面專屬字體大小 */
+                --ct-fs-branch-btn:   1.125rem;
+                --ct-fs-branch-label: 1.125rem;
+                --ct-fs-branch-body:  1.125rem;
+                /* number 標記樣式 */
+                --ct-number-weight:   600;
+                --ct-number-opacity:  0.78;
                 /* 各部位 padding（縮小版） */
                 --ct-pad-input:  6px 10px;
                 --ct-pad-submit: 4px 14px;
@@ -822,8 +829,8 @@ class CardToggle extends HTMLElement {
                 border: 2px solid var(--ct-branch-btn-clr, var(--ct-color-special));
                 background: transparent;
                 color: var(--ct-branch-btn-clr, var(--ct-color-special));
-                font-size: var(--ct-fs-submit);
-                font-family: var(--ct-ff-submit, inherit);
+                font-size: var(--ct-fs-branch-btn);
+                font-family: var(--ct-ff-branch-btn, inherit);
                 font-weight: 600;
                 cursor: pointer;
                 line-height: 1.3;
@@ -856,8 +863,8 @@ class CardToggle extends HTMLElement {
             }
             /* 分支翻面：標籤行（答對/答錯標題） */
             .ct-branch-label {
-                font-size: var(--ct-fs-feedback);
-                font-family: var(--ct-ff-feedback, inherit);
+                font-size: var(--ct-fs-branch-label);
+                font-family: var(--ct-ff-branch-label, inherit);
                 font-weight: 700;
                 margin-bottom: 6px;
                 line-height: 1.3;
@@ -866,21 +873,21 @@ class CardToggle extends HTMLElement {
             .ct-branch-label.wrong   { color: var(--ct-color-warning); }
             /* 分支翻面：背面內容本體 */
             .ct-branch-body-content {
-                font-size: var(--ct-fs-feedback);
-                font-family: var(--ct-ff-feedback, inherit);
-                line-height: 1.5;
+                font-size: var(--ct-fs-branch-body);
+                font-family: var(--ct-ff-branch-body, inherit);
+                line-height: var(--ct-lh-branch-body, 1.5);
                 color: var(--ct-color-shell);
             }
             /* 分支翻面：重試按鈕（答錯時顯示） */
             .ct-branch-retry-btn {
                 margin-top: 10px;
-                padding: var(--ct-pad-aux);
+                padding: var(--ct-pad-branch-retry, var(--ct-pad-aux));
                 border: 1px solid var(--ct-color-warning);
                 border-radius: 4px;
                 background: transparent;
                 color: var(--ct-color-warning);
-                font-size: var(--ct-fs-aux);
-                font-family: var(--ct-ff-aux, inherit);
+                font-size: var(--ct-fs-branch-btn);
+                font-family: var(--ct-ff-branch-btn, inherit);
                 cursor: pointer;
                 line-height: 1.3;
                 transition: background 0.18s ease;
@@ -913,17 +920,20 @@ class CardToggle extends HTMLElement {
     }
 
     _addNumber() {
-        const number = this.getAttribute('number');
-        const numberSize = this.getAttribute('number-size') || 'var(--ct-fs-number)';
-        
+        const number  = this.getAttribute('number');
+        /* number-size 保留向下相容；fs-number 屬性由 ctApplyTypography 統一處理 */
+        const numSize = this.getAttribute('number-size') || 'var(--ct-fs-number)';
+        const numWt   = this.getAttribute('number-weight') || 'var(--ct-number-weight)';
+        const numOp   = this.getAttribute('number-opacity') || 'var(--ct-number-opacity)';
+
         const numberSpan = document.createElement('span');
         numberSpan.className = 'ct-number';
         numberSpan.textContent = number + '. ';
-        numberSpan.style.opacity = '0.78';
-        numberSpan.style.fontSize = numberSize;
-        numberSpan.style.fontWeight = '600';
+        numberSpan.style.opacity    = numOp;
+        numberSpan.style.fontSize   = numSize;
+        numberSpan.style.fontWeight = numWt;
         numberSpan.style.marginRight = '4px';
-        
+
         this.insertBefore(numberSpan, this.firstChild);
     }
 
@@ -1667,7 +1677,7 @@ class CardToggle extends HTMLElement {
             <p style="color: var(--ct-color-warning); font-size: var(--ct-fs-feedback);">
                 <i class="bi bi-x-circle-fill"></i> 已達嘗試上限
             </p>
-            <p style="margin-top: 8px;">${errorMessage}</p>
+            <p style="margin-top: 8px; font-size: var(--ct-fs-feedback); font-family: var(--ct-ff-feedback, inherit);">${errorMessage}</p>
         `;
         
         this.innerHTML = finalContent;
