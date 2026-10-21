@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>card-toggle 全功能屬性對照手冊</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+/* ── Reset & Base ───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:#0C0D0C;color:#C6C7BD;
+  font-family:'Segoe UI',system-ui,sans-serif;
+  font-size:18px;line-height:1.5;
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.page{max-width:1320px;margin:0 auto;padding:0 28px 100px}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero{
+  padding:56px 0 44px;
+  border-bottom:1px solid rgba(198,199,189,.12);
+  margin-bottom:56px;
+}
+.hero-badge{
+  display:inline-block;
+  border:1px solid rgba(130,200,229,.35);
+  color:#82C8E5;font-size:.78rem;font-weight:700;
+  letter-spacing:.08em;padding:3px 10px;border-radius:3px;
+  margin-bottom:14px;
+}
+.hero h1{font-size:2.4rem;font-weight:800;color:#C6C7BD;line-height:1.2;margin-bottom:10px}
+.hero h1 span{color:#82C8E5}
+.hero-desc{font-size:1rem;color:rgba(198,199,189,.62);max-width:680px;line-height:1.6}
+
+/* ── TOC ─────────────────────────────────────────────────────── */
+.toc{
+  display:flex;flex-wrap:wrap;gap:8px 16px;
+  padding:20px 0;margin-bottom:48px;
+  border-bottom:1px solid rgba(198,199,189,.10);
+}
+.toc a{
+  font-size:.85rem;color:rgba(198,199,189,.65);text-decoration:none;
+  transition:color .15s;
+}
+.toc a:hover{color:#82C8E5}
+
+/* ── Section structure ──────────────────────────────────────── */
+.chapter{margin-bottom:72px}
+.chapter-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.12em;
+  color:rgba(198,199,189,.38);text-transform:uppercase;
+  margin-bottom:4px;
+}
+.chapter-h2{
+  font-size:1.55rem;font-weight:700;color:#C6C7BD;
+  margin-bottom:8px;padding-bottom:10px;
+  border-bottom:1px solid rgba(198,199,189,.10);
+}
+.section{margin-bottom:48px}
+.section-h3{
+  font-size:1.1rem;font-weight:700;color:#82C8E5;
+  margin-bottom:6px;
+}
+.section-desc{
+  font-size:.95rem;color:rgba(198,199,189,.60);
+  margin-bottom:16px;line-height:1.5;
+}
+
+/* ── Demo + Code two-column ─────────────────────────────────── */
+.dc{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.dc-demo{display:flex;flex-direction:column;gap:10px}
+.dc-code{
+  background:#111210;border:1px solid rgba(198,199,189,.10);
+  border-radius:6px;overflow:hidden;
+}
+.dc-code-label{
+  padding:6px 14px;
+  background:rgba(198,199,189,.06);
+  font-size:.72rem;font-weight:700;letter-spacing:.08em;
+  color:rgba(198,199,189,.45);text-transform:uppercase;
+  border-bottom:1px solid rgba(198,199,189,.08);
+  user-select:none;
+}
+.dc-code pre{
+  padding:14px 16px;overflow-x:auto;
+  font-size:.78rem;line-height:1.55;
+  font-family:'Cascadia Code','Fira Code','Courier New',monospace;
+  color:#C6C7BD;margin:0;
+  white-space:pre;
+}
+/* syntax highlight — minimal */
+.dc-code pre .at{color:#C3A5E5}   /* attribute */
+.dc-code pre .vl{color:#B3DE73}   /* value */
+.dc-code pre .tg{color:#82C8E5}   /* tag */
+.dc-code pre .cm{color:rgba(198,199,189,.38)} /* comment */
+
+/* ── Attr table ─────────────────────────────────────────────── */
+.attr-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:14px}
+.attr-table th{
+  background:rgba(198,199,189,.07);color:#C6C7BD;font-weight:700;
+  padding:9px 12px;text-align:left;
+  border-bottom:1px solid rgba(198,199,189,.12);
+}
+.attr-table td{
+  padding:8px 12px;border-bottom:1px solid rgba(198,199,189,.06);
+  vertical-align:top;line-height:1.4;color:rgba(198,199,189,.82);
+}
+.attr-table td:first-child{
+  font-family:'Cascadia Code','Courier New',monospace;
+  color:#C3A5E5;font-size:.82rem;white-space:nowrap;
+}
+.attr-table td:nth-child(2){
+  font-family:'Cascadia Code','Courier New',monospace;
+  font-size:.80rem;color:#82C8E5;white-space:nowrap;
+}
+.attr-table td.bool{color:#0DA591}
+.tag-bool{
+  display:inline-block;background:rgba(13,165,145,.12);
+  border:1px solid rgba(13,165,145,.30);color:#0DA591;
+  font-size:.68rem;font-weight:700;padding:1px 6px;
+  border-radius:3px;margin-left:4px;vertical-align:middle;
+}
+.tag-grp{
+  display:inline-block;background:rgba(130,200,229,.10);
+  border:1px solid rgba(130,200,229,.25);color:#82C8E5;
+  font-size:.68rem;font-weight:700;padding:1px 6px;
+  border-radius:3px;margin-left:4px;vertical-align:middle;
+}
+
+/* ── Color palette swatches ─────────────────────────────────── */
+.palette{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.swatch{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 12px 5px 8px;
+  border-radius:4px;border:1px solid rgba(198,199,189,.12);
+  font-size:.82rem;font-family:'Cascadia Code','Courier New',monospace;
+}
+.swatch-dot{width:16px;height:16px;border-radius:3px;flex-shrink:0}
+
+/* ── Divider ─────────────────────────────────────────────────── */
+hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
+
+/* ── Hidden templates ───────────────────────────────────────── */
+.tpl{display:none}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media(max-width:900px){
+  .dc{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════════════ HERO ══════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">全功能屬性對照手冊</div>
+  <h1><span>card-toggle</span> &amp; card-toggle-group</h1>
+  <p class="hero-desc">
+    每個屬性均附有可互動的實際效果與對應原始碼。章節依功能分組，
+    可直接操作左欄的元件，右欄顯示對應的最小化寫法。
+  </p>
+</header>
+
+<!-- TOC -->
+<nav class="toc" aria-label="章節目錄">
+  <a href="#ch-basic">基本翻面</a>
+  <a href="#ch-color">色彩系統</a>
+  <a href="#ch-style">外觀樣式</a>
+  <a href="#ch-anim">動畫</a>
+  <a href="#ch-toggle">Toggle 模式</a>
+  <a href="#ch-quiz">Quiz 輸入</a>
+  <a href="#ch-branch">分支翻面</a>
+  <a href="#ch-group">群組 Group</a>
+  <a href="#ch-typo">字體排版屬性</a>
+  <a href="#ch-ref">完整屬性速查</a>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 1 · 基本翻面
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-basic">
+  <div class="chapter-label">Chapter 01</div>
+  <h2 class="chapter-h2">基本翻面 — content / source</h2>
+
+  <!-- 1-1 content 內聯 -->
+  <div class="section">
+    <h3 class="section-h3">content="…" — 直接寫翻面內容</h3>
+    <p class="section-desc">點擊卡片後以 <code>content</code> 屬性的 HTML 字串取代正面內容。最簡單的用法。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle content="<strong style='color:var(--ct-color-safe)'>這是背面！</strong> content 屬性直接寫 HTML。">
+          點擊我 — content 屬性
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">content</span>=<span class="vl">"&lt;strong&gt;背面內容&lt;/strong&gt;"</span>&gt;
+  正面文字
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-2 source -->
+  <div class="section">
+    <h3 class="section-h3">source="id" — 從 DOM 元素讀取翻面內容</h3>
+    <p class="section-desc">翻面後顯示指定元素的 outerHTML，適合複雜排版。元素本身可設為 <code>display:none</code>。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <div id="src-demo-1" class="tpl">
+          <p style="color:var(--ct-color-lavender);font-weight:700"><i class="bi bi-book-fill"></i> 來自 DOM 元素的內容</p>
+          <p style="margin-top:6px">這段文字來自 <code>#src-demo-1</code>，可以包含任意 HTML。</p>
+        </div>
+        <card-toggle source="src-demo-1">
+          點擊我 — source 屬性，讀取 DOM 元素
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+<span class="cm">&lt;!-- 隱藏模板 --&gt;</span>
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"my-back"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;
+  背面複雜內容…
+&lt;/<span class="tg">div</span>&gt;
+
+&lt;<span class="tg">card-toggle</span> <span class="at">source</span>=<span class="vl">"my-back"</span>&gt;
+  正面文字
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 2 · 色彩系統
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-color">
+  <div class="chapter-label">Chapter 02</div>
+  <h2 class="chapter-h2">色彩系統 — color / color-after</h2>
+
+  <div class="section">
+    <h3 class="section-h3">color="…" — 正面左側標示色</h3>
+    <p class="section-desc">所有 palette key 均可用，也接受任意 hex 值。</p>
+    <div class="palette">
+      <div class="swatch"><div class="swatch-dot" style="background:#C3A5E5"></div>lavender</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#82C8E5"></div>sky</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#0DA591"></div>teal</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#27AE60"></div>safe</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#E6374B"></div>warning</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#E5C3B3"></div>salmon</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#1CCAE8"></div>ocean</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#DBEDD8"></div>vanilla</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#E3D322"></div>yellow / attention</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#D4FFFC"></div>focus</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#B3DE73"></div>special</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#4171BF"></div>info</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#7849C9"></div>indigo</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#FF91D7"></div>pink</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#EDA109"></div>orange</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#C6C7BD"></div>shell</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#82C8E5"></div>stone（= sky）</div>
+    </div>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle color="lavender" content="翻面（lavender）">color="lavender"</card-toggle>
+        <card-toggle color="teal" content="翻面（teal）">color="teal"</card-toggle>
+        <card-toggle color="warning" content="翻面（warning）">color="warning"</card-toggle>
+        <card-toggle color="#FF6B35" content="翻面（hex）">color="#FF6B35" — 自訂 hex</card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span> <span class="at">color</span>=<span class="vl">"lavender"</span>
+  <span class="at">content</span>=<span class="vl">"…"</span>&gt;正面&lt;/<span class="tg">card-toggle</span>&gt;
+
+&lt;<span class="tg">card-toggle</span> <span class="at">color</span>=<span class="vl">"#FF6B35"</span>
+  <span class="at">content</span>=<span class="vl">"…"</span>&gt;自訂色&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-h3">color-after="…" — 翻面後切換側邊色</h3>
+    <p class="section-desc">翻面完成後將 <code>color</code> 自動換為指定色票，常與 quiz 答對/答錯搭配。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle color="sky" color-after="safe" content="翻面後側邊線變 safe（綠）">
+          color="sky" → color-after="safe"，翻後變色
+        </card-toggle>
+        <card-toggle color="shell" color-after="warning" content="翻面後側邊線變 warning（紅）">
+          color="shell" → color-after="warning"
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">color</span>=<span class="vl">"sky"</span>
+  <span class="at">color-after</span>=<span class="vl">"safe"</span>
+  <span class="at">content</span>=<span class="vl">"…"</span>&gt;
+  翻面後側邊線換色
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 3 · 外觀樣式
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-style">
+  <div class="chapter-label">Chapter 03</div>
+  <h2 class="chapter-h2">外觀樣式 — size / dashed / skin / number / bar / lines</h2>
+
+  <!-- 3-1 size -->
+  <div class="section">
+    <h3 class="section-h3">size="…" — 卡片內距大小</h3>
+    <p class="section-desc">四個預設尺寸：<code>xsm</code> / <code>sm</code> / 預設 / <code>lg</code> / <code>xlg</code>。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle size="xsm" content="xsm 背面">size="xsm" — 最緊湊</card-toggle>
+        <card-toggle size="sm"  content="sm 背面">size="sm"</card-toggle>
+        <card-toggle           content="預設尺寸背面">預設（無 size 屬性）</card-toggle>
+        <card-toggle size="lg" content="lg 背面">size="lg"</card-toggle>
+        <card-toggle size="xlg" content="xlg 背面">size="xlg" — 最寬鬆</card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span> <span class="at">size</span>=<span class="vl">"xsm"</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">size</span>=<span class="vl">"sm"</span>  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span>             …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">size</span>=<span class="vl">"lg"</span>  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">size</span>=<span class="vl">"xlg"</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-2 dashed -->
+  <div class="section">
+    <h3 class="section-h3">dashed — 虛線邊框</h3>
+    <p class="section-desc">布林屬性。與 <code>color</code> 搭配時，虛線顏色自動跟隨色票。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle dashed content="虛線卡片背面">dashed — 虛線邊框</card-toggle>
+        <card-toggle dashed color="lavender" content="lavender 虛線背面">dashed + color="lavender"</card-toggle>
+        <card-toggle dashed color="teal" content="teal 虛線背面">dashed + color="teal"</card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span> <span class="at">dashed</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+&lt;<span class="tg">card-toggle</span> <span class="at">dashed</span> <span class="at">color</span>=<span class="vl">"lavender"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-3 skin -->
+  <div class="section">
+    <h3 class="section-h3">skin="…" — 背景紋理</h3>
+    <p class="section-desc">五種紋理：<code>grid</code> / <code>ruled</code> / <code>blueprint</code> / <code>split</code> / <code>band</code>。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle skin="grid" content="grid 背面">skin="grid" — 方格線</card-toggle>
+        <card-toggle skin="ruled" content="ruled 背面">skin="ruled" — 橫線</card-toggle>
+        <card-toggle skin="blueprint" content="blueprint 背面">skin="blueprint" — 藍圖格</card-toggle>
+        <card-toggle skin="split" content="split 背面">skin="split" — 上下分色</card-toggle>
+        <card-toggle skin="band" content="band 背面">skin="band" — 頂部色帶</card-toggle>
+        <card-toggle skin="grid" color="sky" content="grid + sky 背面">skin="grid" + color="sky" — 線條跟色</card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"grid"</span>      …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"ruled"</span>     …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"blueprint"</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"split"</span>     …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"band"</span>      …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+<span class="cm">&lt;!-- grid + color 線條跟色 --&gt;</span>
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"grid"</span> <span class="at">color</span>=<span class="vl">"sky"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-4 number -->
+  <div class="section">
+    <h3 class="section-h3">number="…" — 數字標記</h3>
+    <p class="section-desc">在卡片前方插入編號，可自訂大小（<code>number-size</code>）、字重（<code>number-weight</code>）、透明度（<code>number-opacity</code>）。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle number="1" color="sky" content="第一題背面">預設 number 標記</card-toggle>
+        <card-toggle number="2" color="lavender" number-size="1.4rem" number-weight="800" number-opacity="1" content="第二題背面">
+          number-size="1.4rem" weight="800" opacity="1"
+        </card-toggle>
+        <card-toggle number="3" color="teal" number-opacity="0.4" content="第三題背面">
+          number-opacity="0.4" — 更淡
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span> <span class="at">number</span>=<span class="vl">"1"</span> …&gt;預設標記&lt;/<span class="tg">card-toggle</span>&gt;
+
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">number</span>=<span class="vl">"2"</span>
+  <span class="at">number-size</span>=<span class="vl">"1.4rem"</span>
+  <span class="at">number-weight</span>=<span class="vl">"800"</span>
+  <span class="at">number-opacity</span>=<span class="vl">"1"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-5 bar / lines -->
+  <div class="section">
+    <h3 class="section-h3">bar-width / top-line / bottom-line — 線條控制</h3>
+    <p class="section-desc">左側 bar 的寬度與 hover 寬度、上下邊線的粗細與顏色均可個別設定。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle color="ocean" bar-width="6" bar-width-hover="10" content="粗 bar 背面">
+          bar-width="6" bar-width-hover="10"
+        </card-toggle>
+        <card-toggle color="pink" top-line="3" top-line-color="pink" content="頂線背面">
+          top-line="3" top-line-color="pink"
+        </card-toggle>
+        <card-toggle color="special" bottom-line="2" bottom-line-color="special" content="底線背面">
+          bottom-line="2" bottom-line-color="special"
+        </card-toggle>
+        <card-toggle color="lavender" top-line="2" bottom-line="2" content="上下線背面">
+          top-line + bottom-line 同時啟用
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">bar-width</span>=<span class="vl">"6"</span>
+  <span class="at">bar-width-hover</span>=<span class="vl">"10"</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">top-line</span>=<span class="vl">"3"</span>
+  <span class="at">top-line-color</span>=<span class="vl">"pink"</span>
+  <span class="at">bottom-line</span>=<span class="vl">"2"</span>
+  <span class="at">bottom-line-color</span>=<span class="vl">"special"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 4 · 動畫
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-anim">
+  <div class="chapter-label">Chapter 04</div>
+  <h2 class="chapter-h2">動畫 — animation / auto-flip</h2>
+
+  <div class="section">
+    <h3 class="section-h3">animation="…" — 翻面動畫類型</h3>
+    <p class="section-desc">三種過場：<code>fade</code>（預設）/ <code>slide</code> / <code>none</code>。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle animation="fade" color="sky" content="fade 動畫背面">animation="fade"（預設）</card-toggle>
+        <card-toggle animation="slide" color="lavender" content="slide 動畫背面">animation="slide" — 左滑進入</card-toggle>
+        <card-toggle animation="none" color="teal" content="無動畫背面">animation="none" — 瞬間切換</card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span> <span class="at">animation</span>=<span class="vl">"fade"</span>  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">animation</span>=<span class="vl">"slide"</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;<span class="tg">card-toggle</span> <span class="at">animation</span>=<span class="vl">"none"</span>  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-h3">auto-flip="ms" — 定時翻回正面</h3>
+    <p class="section-desc">翻面後倒數指定毫秒自動翻回，底部出現彩色倒數進度條。<code>flip-bar-color</code> 可自訂進度條色。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle color="ocean" auto-flip="2500"
+          content="2.5 秒後自動翻回，觀察底部進度條…">
+          auto-flip="2500" — 點擊後 2.5 秒翻回
+        </card-toggle>
+        <card-toggle color="pink" auto-flip="4000" flip-bar-color="pink"
+          content="4 秒後翻回，進度條顏色 pink">
+          auto-flip="4000" + flip-bar-color="pink"
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">auto-flip</span>=<span class="vl">"2500"</span>
+  <span class="at">content</span>=<span class="vl">"背面…"</span>&gt;
+  點擊後 2.5 秒翻回
+&lt;/<span class="tg">card-toggle</span>&gt;
+
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">auto-flip</span>=<span class="vl">"4000"</span>
+  <span class="at">flip-bar-color</span>=<span class="vl">"pink"</span>
+  <span class="at">content</span>=<span class="vl">"背面…"</span>&gt;
+  自訂進度條色
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 5 · Toggle 模式
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-toggle">
+  <div class="chapter-label">Chapter 05</div>
+  <h2 class="chapter-h2">Toggle 模式 — toggle</h2>
+  <p class="section-desc" style="margin-bottom:20px">
+    加上 <code>toggle</code> 布林屬性後，翻到背面仍可再次點擊翻回正面，背面右下角顯示「點擊翻回」提示。
+  </p>
+  <div class="dc">
+    <div class="dc-demo">
+      <card-toggle toggle color="lavender"
+        content="<strong>這是背面。</strong>點擊任意處可以翻回正面。<div class='ct-toggle-hint'><i class='bi bi-arrow-repeat'></i> 點擊翻回</div>">
+        toggle 模式 — 點擊翻面，再點翻回
+      </card-toggle>
+      <card-toggle toggle color="teal" animation="slide"
+        content="slide 動畫 + toggle，兩面都可以互切。">
+        toggle + animation="slide"
+      </card-toggle>
+      <card-toggle toggle color="orange" auto-flip="3000"
+        content="toggle + auto-flip：3 秒後自動翻回，也可手動點擊翻回。">
+        toggle + auto-flip="3000" — 兩種方式都能翻回
+      </card-toggle>
+    </div>
+    <div class="dc-code">
+      <div class="dc-code-label">HTML</div>
+      <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">toggle</span>
+  <span class="at">color</span>=<span class="vl">"lavender"</span>
+  <span class="at">content</span>=<span class="vl">"背面，點擊翻回"</span>&gt;
+  正面
+&lt;/<span class="tg">card-toggle</span>&gt;
+
+<span class="cm">&lt;!-- toggle + auto-flip 並存 --&gt;</span>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">toggle</span>
+  <span class="at">auto-flip</span>=<span class="vl">"3000"</span>
+  <span class="at">content</span>=<span class="vl">"…"</span>&gt;
+  點擊或等 3 秒翻回
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 6 · Quiz 輸入模式
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-quiz">
+  <div class="chapter-label">Chapter 06</div>
+  <h2 class="chapter-h2">Quiz 輸入模式 — question / answer</h2>
+
+  <!-- 6-1 基本 quiz -->
+  <div class="section">
+    <h3 class="section-h3">基本問答 — question / answer / source</h3>
+    <p class="section-desc">
+      <code>question</code> 觸發輸入框模式，<code>answer</code> 設定正確答案。
+      答對後翻到 <code>source</code> 或 <code>content</code> 指定的背面，答對後可點卡片翻回重試。
+    </p>
+    <div id="quiz-back-1" class="tpl">
+      <p style="color:var(--ct-color-safe);font-weight:700"><i class="bi bi-check-circle-fill"></i> 正確！</p>
+      <p style="margin-top:6px">台灣最高峰是玉山，海拔 3,952 公尺，為東北亞第一高峰。</p>
+    </div>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="sky"
+          question="台灣最高峰的名稱是？"
+          answer="玉山"
+          placeholder="輸入山名…"
+          source="quiz-back-1">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"back"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;答對說明&lt;/<span class="tg">div</span>&gt;
+
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">color</span>=<span class="vl">"sky"</span>
+  <span class="at">question</span>=<span class="vl">"台灣最高峰？"</span>
+  <span class="at">answer</span>=<span class="vl">"玉山"</span>
+  <span class="at">placeholder</span>=<span class="vl">"輸入山名…"</span>
+  <span class="at">source</span>=<span class="vl">"back"</span>&gt;
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-2 max-attempts / success-color / success-message -->
+  <div class="section">
+    <h3 class="section-h3">max-attempts / success-color / error-message</h3>
+    <p class="section-desc">
+      <code>max-attempts</code> 設定最多嘗試次數，超過後鎖定顯示錯誤背面。
+      <code>success-color</code> 自訂答對後側邊線色，<code>case-sensitive</code> 啟用大小寫區分。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="lavender"
+          question="CSS 的全名是？（英文縮寫即可）"
+          answer="CSS"
+          case-sensitive
+          max-attempts="3"
+          error-message="提示：它控制網頁樣式"
+          success-message="CSS = Cascading Style Sheets"
+          success-color="safe">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">question</span>=<span class="vl">"CSS 的全名縮寫？"</span>
+  <span class="at">answer</span>=<span class="vl">"CSS"</span>
+  <span class="at">case-sensitive</span>
+  <span class="at">max-attempts</span>=<span class="vl">"3"</span>
+  <span class="at">error-message</span>=<span class="vl">"提示：控制樣式"</span>
+  <span class="at">success-message</span>=<span class="vl">"CSS = Cascading…"</span>
+  <span class="at">success-color</span>=<span class="vl">"safe"</span>&gt;
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-3 hint -->
+  <div class="section">
+    <h3 class="section-h3">hint / hint-text — 提示按鈕</h3>
+    <p class="section-desc">
+      有 <code>hint</code> 屬性時自動顯示提示按鈕。
+      不設 <code>hint-target</code> 則以 Bootstrap-style alert 顯示在卡片內；
+      設 <code>hint-target="id"</code> 則顯示在外部指定元素。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <div id="hint-area-ext" style="margin-bottom:8px"></div>
+        <card-toggle
+          color="teal"
+          question="HTTP 狀態碼 404 代表？"
+          answer="找不到頁面"
+          hint="這個狀態碼和「找不到」有關"
+          hint-text="需要提示？"
+          success-message="正確！404 = Not Found">
+        </card-toggle>
+        <card-toggle
+          color="ocean"
+          question="JavaScript 的縮寫？"
+          answer="JS"
+          hint="兩個英文字母"
+          hint-target="hint-area-ext"
+          hint-text="外部提示">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+<span class="cm">&lt;!-- 內嵌提示（預設） --&gt;</span>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">hint</span>=<span class="vl">"和找不到有關"</span>
+  <span class="at">hint-text</span>=<span class="vl">"需要提示？"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+<span class="cm">&lt;!-- 外部提示 --&gt;</span>
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"hint-area"</span>&gt;&lt;/<span class="tg">div</span>&gt;
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">hint</span>=<span class="vl">"兩個英文字母"</span>
+  <span class="at">hint-target</span>=<span class="vl">"hint-area"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-4 info / info-source -->
+  <div class="section">
+    <h3 class="section-h3">info / info-source / info-color — 額外資訊面板</h3>
+    <p class="section-desc">
+      點擊「額外資訊」按鈕展開/收合說明面板。
+      <code>info</code> 直接寫 HTML，<code>info-source="id"</code> 讀取 DOM 元素，
+      <code>info-color</code> 自訂面板強調色。
+    </p>
+    <div id="info-src-1" class="tpl">
+      <strong>補充說明：</strong>這段內容來自 <code>#info-src-1</code> DOM 元素，可包含任意 HTML。
+    </div>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="indigo"
+          question="地球公轉週期？"
+          answer="365天"
+          info="地球繞太陽公轉一圈約需 365.25 天，因此每 4 年有一個閏年（366 天）補差。"
+          info-text="補充知識"
+          info-color="indigo"
+          success-message="正確！">
+        </card-toggle>
+        <card-toggle
+          color="lavender"
+          question="DNA 的中文全名？"
+          answer="去氧核糖核酸"
+          info-source="info-src-1"
+          info-color="lavender"
+          success-message="答對！">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">info</span>=<span class="vl">"說明 HTML…"</span>
+  <span class="at">info-text</span>=<span class="vl">"補充知識"</span>
+  <span class="at">info-color</span>=<span class="vl">"indigo"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"info-src"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;…&lt;/<span class="tg">div</span>&gt;
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">info-source</span>=<span class="vl">"info-src"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-5 hide-* -->
+  <div class="section">
+    <h3 class="section-h3">hide-submit / hide-hint / hide-reset / hide-info — 隱藏按鈕</h3>
+    <p class="section-desc">個別隱藏不需要的按鈕，也可搭配自訂按鈕文字屬性。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="special"
+          question="按 Enter 提交（無提交按鈕）"
+          answer="OK"
+          hide-submit
+          hide-reset
+          success-message="答對！隱藏了提交和重置按鈕">
+        </card-toggle>
+        <card-toggle
+          color="salmon"
+          question="自訂按鈕文字展示"
+          answer="demo"
+          hint="答案是 demo"
+          submit-text="確認送出"
+          hint-text="我需要提示"
+          reset-text="清除重來"
+          success-message="答對了！">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+<span class="cm">&lt;!-- 隱藏按鈕 --&gt;</span>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">hide-submit</span> <span class="at">hide-reset</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+<span class="cm">&lt;!-- 自訂按鈕文字 --&gt;</span>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">submit-text</span>=<span class="vl">"確認送出"</span>
+  <span class="at">hint-text</span>=<span class="vl">"我需要提示"</span>
+  <span class="at">reset-text</span>=<span class="vl">"清除重來"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 7 · 分支翻面
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-branch">
+  <div class="chapter-label">Chapter 07</div>
+  <h2 class="chapter-h2">分支翻面 — branch-options / correct-option</h2>
+
+  <!-- 7-1 基本是非 -->
+  <div class="section">
+    <h3 class="section-h3">基本是非題</h3>
+    <p class="section-desc">
+      同時設定 <code>question</code>、<code>branch-options</code>、<code>correct-option</code>
+      即觸發分支翻面模式，顯示選項按鈕取代輸入框。
+      答對/答錯各翻出 <code>branch-correct</code> / <code>branch-wrong</code> 的內容。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="sky"
+          question="光在真空中的速度約為每秒 30 萬公里。"
+          branch-options="對,錯"
+          correct-option="對"
+          branch-correct="<strong style='color:var(--ct-color-safe)'>正確。</strong>光速約 299,792,458 m/s。"
+          branch-wrong="<strong style='color:var(--ct-color-warning)'>錯誤。</strong>光速約 299,792,458 m/s，並非其他數值。">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">question</span>=<span class="vl">"光速約 30 萬 km/s？"</span>
+  <span class="at">branch-options</span>=<span class="vl">"對,錯"</span>
+  <span class="at">correct-option</span>=<span class="vl">"對"</span>
+  <span class="at">branch-correct</span>=<span class="vl">"正確說明…"</span>
+  <span class="at">branch-wrong</span>=<span class="vl">"錯誤說明…"</span>&gt;
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7-2 多選 + retry -->
+  <div class="section">
+    <h3 class="section-h3">多選項 + branch-retry + 自訂標籤</h3>
+    <p class="section-desc">
+      <code>branch-options</code> 支援任意數量，逗號分隔。
+      <code>branch-retry</code> 讓答錯背面出現重試按鈕。
+      <code>branch-correct-label</code> / <code>branch-wrong-label</code> 自訂背面標題。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="lavender"
+          question="下列哪個元素的原子序最小？"
+          branch-options="氦 (He),氫 (H),鋰 (Li),碳 (C)"
+          correct-option="氫 (H)"
+          branch-btn-color="lavender"
+          branch-correct-label="完全正確！"
+          branch-wrong-label="再想想，答案就在週期表第一位"
+          branch-correct="氫（H）原子序為 1，是最輕的元素，也是宇宙中含量最多的元素。"
+          branch-wrong="正確答案是「氫（H）」，原子序 1。氦 2、鋰 3、碳 6。"
+          branch-retry
+          branch-retry-text="↺ 再選一次">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">branch-options</span>=<span class="vl">"氦,氫,鋰,碳"</span>
+  <span class="at">correct-option</span>=<span class="vl">"氫 (H)"</span>
+  <span class="at">branch-btn-color</span>=<span class="vl">"lavender"</span>
+  <span class="at">branch-correct-label</span>=<span class="vl">"完全正確！"</span>
+  <span class="at">branch-wrong-label</span>=<span class="vl">"再想想"</span>
+  <span class="at">branch-correct</span>=<span class="vl">"說明…"</span>
+  <span class="at">branch-wrong</span>=<span class="vl">"說明…"</span>
+  <span class="at">branch-retry</span>
+  <span class="at">branch-retry-text</span>=<span class="vl">"↺ 再選一次"</span>&gt;
+&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7-3 source 版本 + 顏色自訂 -->
+  <div class="section">
+    <h3 class="section-h3">branch-correct-source / branch-wrong-source + 自訂色</h3>
+    <p class="section-desc">
+      背面內容可從 DOM 元素讀取（優先於內聯屬性）。
+      <code>branch-correct-color</code> / <code>branch-wrong-color</code> 自訂答對/錯後的卡片色。
+    </p>
+    <div id="br-ok" class="tpl">
+      <p style="color:var(--ct-color-safe);font-weight:700"><i class="bi bi-check-circle-fill"></i> 答對了！</p>
+      <p style="margin-top:6px">TCP 建立連線時使用三向交握（SYN → SYN-ACK → ACK），確保雙方都準備好傳輸。</p>
+      <p style="margin-top:6px;font-size:.92rem;color:rgba(198,199,189,.60)">延伸：UDP 是無連線協定，速度快但不保證順序與可靠性。</p>
+    </div>
+    <div id="br-ng" class="tpl">
+      <p style="color:var(--ct-color-warning);font-weight:700"><i class="bi bi-x-circle-fill"></i> 答錯了。</p>
+      <p style="margin-top:6px">TCP 是需要連線的協定（connection-oriented）。UDP 才是無連線（connectionless）。</p>
+    </div>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle
+          color="teal"
+          question="TCP 是一種需要事先建立連線的協定。"
+          branch-options="正確,錯誤"
+          correct-option="正確"
+          branch-correct-source="br-ok"
+          branch-wrong-source="br-ng"
+          branch-correct-color="safe"
+          branch-wrong-color="warning"
+          branch-retry
+          animation="slide">
+        </card-toggle>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"br-ok"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;答對內容…&lt;/<span class="tg">div</span>&gt;
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"br-ng"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;答錯內容…&lt;/<span class="tg">div</span>&gt;
+
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">branch-correct-source</span>=<span class="vl">"br-ok"</span>
+  <span class="at">branch-wrong-source</span>=<span class="vl">"br-ng"</span>
+  <span class="at">branch-correct-color</span>=<span class="vl">"safe"</span>
+  <span class="at">branch-wrong-color</span>=<span class="vl">"warning"</span>
+  <span class="at">branch-retry</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 8 · 群組 Group
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-group">
+  <div class="chapter-label">Chapter 08</div>
+  <h2 class="chapter-h2">card-toggle-group</h2>
+
+  <!-- 8-1 stack -->
+  <div class="section">
+    <h3 class="section-h3">mode="stack"（預設）— 垂直堆疊</h3>
+    <p class="section-desc">預設模式，卡片垂直排列，<code>theme</code> 設定主題色。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle-group theme="sky">
+          <card-toggle color="sky" content="A 背面">stack 卡片 A</card-toggle>
+          <card-toggle color="sky" content="B 背面">stack 卡片 B</card-toggle>
+          <card-toggle color="sky" content="C 背面">stack 卡片 C</card-toggle>
+        </card-toggle-group>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle-group</span> <span class="at">theme</span>=<span class="vl">"sky"</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;A&lt;/<span class="tg">card-toggle</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;B&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8-2 grid -->
+  <div class="section">
+    <h3 class="section-h3">mode="grid" / mode="grid:16px" / cols="…" — 格線排列</h3>
+    <p class="section-desc">
+      <code>mode="grid"</code> 預設間距 12px，<code>mode="grid:16px"</code> 自訂間距。
+      <code>cols="2"</code> 強制欄數（否則預設等於卡片數量）。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle-group mode="grid:14px" cols="2" theme="lavender">
+          <card-toggle color="lavender" content="1 背面">格線 1</card-toggle>
+          <card-toggle color="lavender" content="2 背面">格線 2</card-toggle>
+          <card-toggle color="lavender" content="3 背面">格線 3</card-toggle>
+          <card-toggle color="lavender" content="4 背面">格線 4</card-toggle>
+        </card-toggle-group>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle-group</span>
+  <span class="at">mode</span>=<span class="vl">"grid:14px"</span>
+  <span class="at">cols</span>=<span class="vl">"2"</span>
+  <span class="at">theme</span>=<span class="vl">"lavender"</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;1&lt;/<span class="tg">card-toggle</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;2&lt;/<span class="tg">card-toggle</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;3&lt;/<span class="tg">card-toggle</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;4&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8-3 slide 基本 -->
+  <div class="section">
+    <h3 class="section-h3">mode="slide" — 投影片模式</h3>
+    <p class="section-desc">
+      卡片橫向排列，上方顯示計數器（<code>hide-counter</code> 可隱藏），
+      下方有上下頁按鈕（<code>hide-nav-buttons</code> 可隱藏），
+      <code>show-pages</code> 顯示頁碼點陣。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle-group mode="slide" show-pages theme="teal">
+          <card-toggle color="teal" content="第 1 張背面">slide 第 1 張</card-toggle>
+          <card-toggle color="teal" content="第 2 張背面">slide 第 2 張</card-toggle>
+          <card-toggle color="teal" content="第 3 張背面">slide 第 3 張</card-toggle>
+        </card-toggle-group>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle-group</span>
+  <span class="at">mode</span>=<span class="vl">"slide"</span>
+  <span class="at">show-pages</span>
+  <span class="at">theme</span>=<span class="vl">"teal"</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;1&lt;/<span class="tg">card-toggle</span>&gt;
+  &lt;<span class="tg">card-toggle</span> …&gt;2&lt;/<span class="tg">card-toggle</span>&gt;
+&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8-4 lock-nav + show-result + quiz -->
+  <div class="section">
+    <h3 class="section-h3">lock-nav + show-result + show-pages — 完整問答流程</h3>
+    <p class="section-desc">
+      <code>lock-nav</code> 鎖定未答題不能前進；<code>show-result</code> 全部作答後顯示成績畫面；
+      頁碼按鈕自動顯示答對（綠）/ 答錯（橙）狀態色。
+    </p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle-group mode="slide" lock-nav show-pages show-result theme="special">
+          <card-toggle color="sky"
+            question="Python 是直譯型語言。"
+            branch-options="正確,錯誤"
+            correct-option="正確"
+            branch-correct="對！Python 由直譯器逐行執行，不需預先編譯。"
+            branch-wrong="Python 是直譯型（interpreted）語言，不是編譯型。"
+            branch-retry>
+          </card-toggle>
+          <card-toggle color="lavender"
+            question="HTTP 預設通訊埠？"
+            answer="80"
+            success-message="正確！HTTP=80，HTTPS=443。">
+          </card-toggle>
+          <card-toggle color="teal"
+            question="git pull 等同於 fetch + merge。"
+            branch-options="對,錯"
+            correct-option="對"
+            branch-correct="完全正確！git pull = git fetch + git merge。"
+            branch-wrong="git pull 確實等於 fetch 加上 merge。">
+          </card-toggle>
+        </card-toggle-group>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle-group</span>
+  <span class="at">mode</span>=<span class="vl">"slide"</span>
+  <span class="at">lock-nav</span>
+  <span class="at">show-pages</span>
+  <span class="at">show-result</span>
+  <span class="at">theme</span>=<span class="vl">"special"</span>&gt;
+  <span class="cm">&lt;!-- quiz 卡 --&gt;</span>
+  &lt;<span class="tg">card-toggle</span>
+    <span class="at">question</span>=<span class="vl">"…"</span>
+    <span class="at">answer</span>=<span class="vl">"…"</span>&gt;
+  &lt;/<span class="tg">card-toggle</span>&gt;
+  <span class="cm">&lt;!-- branch 卡 --&gt;</span>
+  &lt;<span class="tg">card-toggle</span>
+    <span class="at">question</span>=<span class="vl">"…"</span>
+    <span class="at">branch-options</span>=<span class="vl">"對,錯"</span>
+    <span class="at">correct-option</span>=<span class="vl">"對"</span>
+    <span class="at">branch-correct</span>=<span class="vl">"…"</span>
+    <span class="at">branch-wrong</span>=<span class="vl">"…"</span>&gt;
+  &lt;/<span class="tg">card-toggle</span>&gt;
+&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8-5 show-result + result-source + retry-label -->
+  <div class="section">
+    <h3 class="section-h3">result-source / retry-label — 自訂成績畫面</h3>
+    <p class="section-desc">
+      <code>result-source="id"</code> 在成績畫面加入自訂 HTML 區塊（如鼓勵語或連結）；
+      <code>retry-label</code> 自訂重新作答按鈕文字。
+    </p>
+    <div id="result-custom" class="tpl">
+      <p style="margin:12px 0 0;color:var(--ct-color-sky)">
+        <i class="bi bi-stars"></i> 不錯！繼續保持。
+      </p>
+    </div>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle-group mode="slide" show-result
+          result-source="result-custom"
+          retry-label="↺ 從頭再來" theme="ocean">
+          <card-toggle color="ocean"
+            question="HTML 的全名？"
+            answer="HyperText Markup Language"
+            success-message="正確！">
+          </card-toggle>
+          <card-toggle color="ocean"
+            question="CSS 是縮寫，全名？"
+            answer="Cascading Style Sheets"
+            success-message="正確！">
+          </card-toggle>
+        </card-toggle-group>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"custom-result"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;
+  鼓勵語…
+&lt;/<span class="tg">div</span>&gt;
+
+&lt;<span class="tg">card-toggle-group</span>
+  <span class="at">show-result</span>
+  <span class="at">result-source</span>=<span class="vl">"custom-result"</span>
+  <span class="at">retry-label</span>=<span class="vl">"↺ 從頭再來"</span>&gt;
+  …
+&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8-6 auto-next -->
+  <div class="section">
+    <h3 class="section-h3">auto-next — 答對後自動跳下一題</h3>
+    <p class="section-desc">卡片上加 <code>auto-next</code>，答對 1.5 秒後自動前往下一張。</p>
+    <div class="dc">
+      <div class="dc-demo">
+        <card-toggle-group mode="slide" theme="special">
+          <card-toggle color="special" auto-next
+            question="1 + 1 = ？"
+            answer="2"
+            success-message="正確！1.5 秒後自動進下一題">
+          </card-toggle>
+          <card-toggle color="special" auto-next
+            question="2 × 3 = ？"
+            answer="6"
+            success-message="對！">
+          </card-toggle>
+          <card-toggle color="special"
+            question="最後一題：5 - 2 = ？"
+            answer="3"
+            success-message="全對！">
+          </card-toggle>
+        </card-toggle-group>
+      </div>
+      <div class="dc-code">
+        <div class="dc-code-label">HTML</div>
+        <pre>
+&lt;<span class="tg">card-toggle-group</span> <span class="at">mode</span>=<span class="vl">"slide"</span>&gt;
+  &lt;<span class="tg">card-toggle</span>
+    <span class="at">auto-next</span>
+    <span class="at">question</span>=<span class="vl">"1+1=?"</span>
+    <span class="at">answer</span>=<span class="vl">"2"</span>&gt;
+  &lt;/<span class="tg">card-toggle</span>&gt;
+  …
+&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 9 · 字體排版屬性
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-typo">
+  <div class="chapter-label">Chapter 09</div>
+  <h2 class="chapter-h2">字體排版屬性 — fs-* / ff-* / pad-*</h2>
+  <p class="section-desc" style="margin-bottom:20px">
+    所有部位均可透過 <code>fs-{part}</code>（字體大小）、<code>ff-{part}</code>（字型）、
+    <code>pad-{part}</code>（padding）屬性覆寫，純數字自動加 <code>rem</code>（fs）或 <code>px</code>（pad）。
+    卡片層級屬性影響單張；設在 <code>card-toggle-group</code> 上則對群組內所有卡片生效。
+  </p>
+
+  <div class="dc">
+    <div class="dc-demo">
+      <card-toggle
+        color="lavender"
+        fs-body="1.3"
+        fs-question="1.1"
+        fs-submit="0.95"
+        fs-feedback="1rem"
+        fs-branch-btn="1rem"
+        fs-branch-label="1.1rem"
+        fs-branch-body="0.95rem"
+        question="自訂各部位字體大小"
+        branch-options="選項 A,選項 B,選項 C"
+        correct-option="選項 B"
+        branch-correct="答對背面的字體大小由 fs-branch-body 控制。"
+        branch-wrong="答錯背面的標籤由 fs-branch-label 控制。">
+      </card-toggle>
+
+      <card-toggle
+        color="teal"
+        fs-body="1rem"
+        pad-submit="8 20"
+        pad-aux="6 14"
+        question="自訂 padding — pad-submit / pad-aux"
+        answer="ok"
+        hint="答案是 ok"
+        success-message="正確！">
+      </card-toggle>
+    </div>
+    <div class="dc-code">
+      <div class="dc-code-label">HTML</div>
+      <pre>
+<span class="cm">&lt;!-- 字體大小（純數字 → rem） --&gt;</span>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">fs-body</span>=<span class="vl">"1.3"</span>
+  <span class="at">fs-question</span>=<span class="vl">"1.1"</span>
+  <span class="at">fs-submit</span>=<span class="vl">"0.95"</span>
+  <span class="at">fs-feedback</span>=<span class="vl">"1rem"</span>
+  <span class="at">fs-branch-btn</span>=<span class="vl">"1rem"</span>
+  <span class="at">fs-branch-label</span>=<span class="vl">"1.1rem"</span>
+  <span class="at">fs-branch-body</span>=<span class="vl">"0.95rem"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+<span class="cm">&lt;!-- padding（純數字 → px） --&gt;</span>
+&lt;<span class="tg">card-toggle</span>
+  <span class="at">pad-submit</span>=<span class="vl">"8 20"</span>
+  <span class="at">pad-aux</span>=<span class="vl">"6 14"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
+
+<span class="cm">&lt;!-- group 層級套用（影響所有子卡） --&gt;</span>
+&lt;<span class="tg">card-toggle-group</span>
+  <span class="at">fs-body</span>=<span class="vl">"1.05"</span>
+  <span class="at">fs-nav</span>=<span class="vl">"0.9"</span>
+  <span class="at">fs-counter</span>=<span class="vl">"0.85"</span>
+  <span class="at">fs-result-score</span>=<span class="vl">"3rem"</span>
+  <span class="at">pad-nav</span>=<span class="vl">"6 18"</span>
+  …&gt;…&lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
+    </div>
+  </div>
+
+  <!-- fs 部位總表 -->
+  <h3 class="section-h3" style="margin-top:28px">所有可用的 fs-* / ff-* 部位名稱</h3>
+  <table class="attr-table">
+    <thead><tr><th>part 名稱</th><th>預設值</th><th>對應的元素</th><th>適用層級</th></tr></thead>
+    <tbody>
+      <tr><td>fs-body</td><td>1.125rem</td><td>卡片本文</td><td>card / group</td></tr>
+      <tr><td>fs-number</td><td>1.125rem</td><td>數字標記（number 屬性）</td><td>card / group</td></tr>
+      <tr><td>fs-question</td><td>1em（繼承 body）</td><td>題目文字（.ct-question）</td><td>card / group</td></tr>
+      <tr><td>fs-input</td><td>1.125rem</td><td>答案輸入框</td><td>card / group</td></tr>
+      <tr><td>fs-submit</td><td>1.125rem</td><td>提交按鈕</td><td>card / group</td></tr>
+      <tr><td>fs-aux</td><td>1.125rem</td><td>提示 / 重置按鈕</td><td>card / group</td></tr>
+      <tr><td>fs-feedback</td><td>1.125rem</td><td>答錯訊息 / 答對訊息</td><td>card / group</td></tr>
+      <tr><td>fs-hintbox</td><td>1.125rem</td><td>提示內容框</td><td>card / group</td></tr>
+      <tr><td>fs-flipnote</td><td>1.125rem</td><td>「點擊翻回」提示文字</td><td>card / group</td></tr>
+      <tr><td>fs-info</td><td>1.125rem</td><td>額外資訊按鈕</td><td>card / group</td></tr>
+      <tr><td>fs-infobox</td><td>1.125rem</td><td>額外資訊面板內容</td><td>card / group</td></tr>
+      <tr><td>fs-branch-btn</td><td>1.125rem</td><td>分支選項按鈕 / 重試按鈕</td><td>card / group</td></tr>
+      <tr><td>fs-branch-label</td><td>1.125rem</td><td>分支翻面背面標題</td><td>card / group</td></tr>
+      <tr><td>fs-branch-body</td><td>1.125rem</td><td>分支翻面背面內容本體</td><td>card / group</td></tr>
+      <tr><td>fs-nav</td><td>1.125rem</td><td>上下頁按鈕</td><td>group</td></tr>
+      <tr><td>fs-page</td><td>1.125rem</td><td>頁碼點陣按鈕</td><td>group</td></tr>
+      <tr><td>fs-counter</td><td>1.125rem</td><td>計數器（n / total）</td><td>group</td></tr>
+      <tr><td>fs-result-score</td><td>2.4rem</td><td>成績畫面百分比大字</td><td>group</td></tr>
+      <tr><td>fs-result-text</td><td>1.125rem</td><td>成績畫面說明文字</td><td>group</td></tr>
+      <tr><td>fs-retry</td><td>1.125rem</td><td>重新作答按鈕</td><td>group</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CH 10 · 完整屬性速查
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch-ref">
+  <div class="chapter-label">Chapter 10</div>
+  <h2 class="chapter-h2">完整屬性速查表</h2>
+
+  <h3 class="section-h3" style="margin-bottom:10px">&lt;card-toggle&gt; 屬性</h3>
+  <table class="attr-table">
+    <thead><tr><th>屬性</th><th>類型 / 預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>content</td><td>string</td><td>翻面後顯示的 HTML 字串（最簡用法）</td></tr>
+      <tr><td>source</td><td>id</td><td>翻面後顯示的 DOM 元素 id（outerHTML）</td></tr>
+      <tr><td>color</td><td>palette key / hex</td><td>左側標示色，也控制 hover 光暈、虛線色</td></tr>
+      <tr><td>color-after</td><td>palette key / hex</td><td>翻面後自動切換的側邊色</td></tr>
+      <tr><td>animation</td><td>fade|slide|none</td><td>翻面動畫類型（預設 fade）</td></tr>
+      <tr><td>toggle</td><td class="bool"><span class="tag-bool">布林</span></td><td>啟用後背面可再次點擊翻回正面</td></tr>
+      <tr><td>auto-flip</td><td>ms（數字）</td><td>翻面後 N 毫秒自動翻回，顯示進度條</td></tr>
+      <tr><td>flip-bar-color</td><td>palette key / hex</td><td>auto-flip 進度條顏色（預設跟隨 color）</td></tr>
+      <tr><td>size</td><td>xsm|sm|lg|xlg</td><td>卡片內距大小（預設中等）</td></tr>
+      <tr><td>dashed</td><td class="bool"><span class="tag-bool">布林</span></td><td>虛線邊框，顏色跟隨 color</td></tr>
+      <tr><td>skin</td><td>grid|ruled|blueprint|split|band</td><td>背景紋理</td></tr>
+      <tr><td>number</td><td>string</td><td>在卡片前插入編號文字</td></tr>
+      <tr><td>number-size</td><td>CSS 長度</td><td>number 標記的字體大小（可用 fs-number 替代）</td></tr>
+      <tr><td>number-weight</td><td>數字（預設 600）</td><td>number 標記的 font-weight</td></tr>
+      <tr><td>number-opacity</td><td>0–1（預設 0.78）</td><td>number 標記的透明度</td></tr>
+      <tr><td>bar-width</td><td>px（預設 3）</td><td>左側 bar 寬度</td></tr>
+      <tr><td>bar-width-hover</td><td>px</td><td>hover 時 bar 寬度（預設 bar-width + 2）</td></tr>
+      <tr><td>top-line</td><td>px（空值=2px）</td><td>上邊線條寬度</td></tr>
+      <tr><td>top-line-color</td><td>palette key / hex</td><td>上邊線顏色（預設 color）</td></tr>
+      <tr><td>bottom-line</td><td>px（空值=2px）</td><td>下邊線條寬度</td></tr>
+      <tr><td>bottom-line-color</td><td>palette key / hex</td><td>下邊線顏色（預設 color）</td></tr>
+      <tr><td colspan="3" style="color:rgba(198,199,189,.40);font-size:.82rem;padding-top:10px">── Quiz 輸入模式 ──────────────────────────────</td></tr>
+      <tr><td>question</td><td>string</td><td>題目文字，設定後觸發輸入框模式</td></tr>
+      <tr><td>answer</td><td>string</td><td>正確答案</td></tr>
+      <tr><td>placeholder</td><td>string（預設「請輸入答案」）</td><td>輸入框佔位文字</td></tr>
+      <tr><td>case-sensitive</td><td class="bool"><span class="tag-bool">布林</span></td><td>啟用大小寫區分（同樣適用分支翻面）</td></tr>
+      <tr><td>max-attempts</td><td>數字（預設 999）</td><td>最多嘗試次數，超過顯示錯誤背面</td></tr>
+      <tr><td>success-message</td><td>string</td><td>答對時的背面訊息（優先順序最低）</td></tr>
+      <tr><td>success-source</td><td>id</td><td>答對後背面內容來源 id（優先）</td></tr>
+      <tr><td>success-color</td><td>palette key（預設 safe）</td><td>答對後側邊線色</td></tr>
+      <tr><td>error-message</td><td>string</td><td>答錯或達上限時的訊息</td></tr>
+      <tr><td>hint</td><td>string</td><td>提示內容文字</td></tr>
+      <tr><td>hint-target</td><td>id</td><td>提示顯示在外部元素（未設 → 卡片內 alert）</td></tr>
+      <tr><td>hint-text</td><td>string（預設「提示」）</td><td>提示按鈕文字</td></tr>
+      <tr><td>submit-text</td><td>string（預設「提交答案」）</td><td>提交按鈕文字</td></tr>
+      <tr><td>reset-text</td><td>string（預設「重置」）</td><td>重置按鈕文字</td></tr>
+      <tr><td>hide-submit</td><td class="bool"><span class="tag-bool">布林</span></td><td>隱藏提交按鈕</td></tr>
+      <tr><td>hide-hint</td><td class="bool"><span class="tag-bool">布林</span></td><td>隱藏提示按鈕</td></tr>
+      <tr><td>hide-reset</td><td class="bool"><span class="tag-bool">布林</span></td><td>隱藏重置按鈕</td></tr>
+      <tr><td>info</td><td>HTML string</td><td>額外資訊面板的 HTML 內容（內聯）</td></tr>
+      <tr><td>info-source</td><td>id</td><td>額外資訊來源 id（優先於 info）</td></tr>
+      <tr><td>info-text</td><td>string（預設「額外資訊」）</td><td>資訊按鈕文字</td></tr>
+      <tr><td>info-target</td><td>id</td><td>資訊面板顯示在外部元素</td></tr>
+      <tr><td>info-color</td><td>palette key / hex</td><td>資訊按鈕與面板強調色</td></tr>
+      <tr><td>info-bg</td><td>CSS 色</td><td>資訊面板背景色</td></tr>
+      <tr><td>info-fg</td><td>CSS 色</td><td>資訊面板文字色</td></tr>
+      <tr><td>hide-info</td><td class="bool"><span class="tag-bool">布林</span></td><td>隱藏資訊按鈕</td></tr>
+      <tr><td colspan="3" style="color:rgba(198,199,189,.40);font-size:.82rem;padding-top:10px">── 分支翻面模式 ───────────────────────────────</td></tr>
+      <tr><td>branch-options</td><td>逗號分隔字串（預設「是,否」）</td><td>選項文字清單，設此屬性（搭配 question）觸發分支模式</td></tr>
+      <tr><td>correct-option</td><td>string</td><td>正確答案選項文字（精確比對）</td></tr>
+      <tr><td>branch-btn-color</td><td>palette key / hex</td><td>選項按鈕顏色</td></tr>
+      <tr><td>branch-correct</td><td>HTML string</td><td>答對背面內容（內聯）</td></tr>
+      <tr><td>branch-correct-source</td><td>id</td><td>答對背面內容來源 id（優先）</td></tr>
+      <tr><td>branch-correct-label</td><td>string（預設「答對了！」）</td><td>答對背面標題文字</td></tr>
+      <tr><td>branch-correct-color</td><td>palette key（預設 safe）</td><td>答對後卡片色</td></tr>
+      <tr><td>branch-wrong</td><td>HTML string</td><td>答錯背面內容（內聯）</td></tr>
+      <tr><td>branch-wrong-source</td><td>id</td><td>答錯背面內容來源 id（優先）</td></tr>
+      <tr><td>branch-wrong-label</td><td>string（預設帶入所選選項）</td><td>答錯背面標題文字</td></tr>
+      <tr><td>branch-wrong-color</td><td>palette key（預設 warning）</td><td>答錯後卡片色</td></tr>
+      <tr><td>branch-retry</td><td class="bool"><span class="tag-bool">布林</span></td><td>答錯背面顯示重試按鈕（翻回正面）</td></tr>
+      <tr><td>branch-retry-text</td><td>string（預設「↺ 再試一次」）</td><td>重試按鈕文字</td></tr>
+      <tr><td colspan="3" style="color:rgba(198,199,189,.40);font-size:.82rem;padding-top:10px">── 與 group 整合 ──────────────────────────────</td></tr>
+      <tr><td>auto-next</td><td class="bool"><span class="tag-bool">布林</span></td><td>答對後 1.5 秒自動前往 group 下一張</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="section-h3" style="margin-top:36px;margin-bottom:10px">&lt;card-toggle-group&gt; 屬性</h3>
+  <table class="attr-table">
+    <thead><tr><th>屬性</th><th>類型 / 預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>mode</td><td>stack|slide|grid|grid:gap</td><td>排列模式（預設 stack）。grid 可附帶間距如 grid:16px</td></tr>
+      <tr><td>cols</td><td>數字</td><td>grid 模式的欄數（預設等於卡片數量）</td></tr>
+      <tr><td>theme</td><td>palette key</td><td>群組主題色，影響計數器、頁碼、active 狀態</td></tr>
+      <tr><td>hide-counter</td><td class="bool"><span class="tag-bool">布林</span></td><td>隱藏計數器（slide 模式）</td></tr>
+      <tr><td>hide-nav-buttons</td><td class="bool"><span class="tag-bool">布林</span></td><td>隱藏上下頁按鈕（slide 模式）</td></tr>
+      <tr><td>show-pages</td><td class="bool"><span class="tag-bool">布林</span></td><td>顯示頁碼點陣按鈕（slide 模式）</td></tr>
+      <tr><td>lock-nav</td><td class="bool"><span class="tag-bool">布林</span></td><td>未作答不可前進下一張（slide 模式）</td></tr>
+      <tr><td>show-result</td><td class="bool"><span class="tag-bool">布林</span></td><td>全部作答後顯示成績畫面</td></tr>
+      <tr><td>result-source</td><td>id</td><td>成績畫面追加自訂 HTML 區塊</td></tr>
+      <tr><td>retry-label</td><td>string（預設「↺ 重新作答」）</td><td>成績畫面重新作答按鈕文字</td></tr>
+      <tr><td colspan="3" style="color:rgba(198,199,189,.40);font-size:.82rem;padding-top:10px">── 排版屬性（group 層級影響所有子卡） ──────────</td></tr>
+      <tr><td>fs-nav / ff-nav / pad-nav</td><td>—</td><td>上下頁按鈕字體 / 字型 / padding</td></tr>
+      <tr><td>fs-page / ff-page / pad-page</td><td>—</td><td>頁碼按鈕字體 / 字型 / padding</td></tr>
+      <tr><td>fs-counter / ff-counter</td><td>—</td><td>計數器字體 / 字型</td></tr>
+      <tr><td>fs-result-score / ff-result-score</td><td>—</td><td>成績百分比大字字體 / 字型</td></tr>
+      <tr><td>fs-result-text / ff-result-text</td><td>—</td><td>成績說明文字字體 / 字型</td></tr>
+      <tr><td>fs-retry / ff-retry / pad-retry</td><td>—</td><td>重新作答按鈕字體 / 字型 / padding</td></tr>
+      <tr><td>以及所有 card 層級的 fs-* / ff-* / pad-*</td><td>—</td><td>設在 group 上則對所有子卡生效</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- .page -->
+<script src="card-toggle.js"></script>
+</body>
+</html>
