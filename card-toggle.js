@@ -44,6 +44,8 @@ class CardToggle extends HTMLElement {
         this._isFlipped       = false;
         this._clickBound      = false;
         this._snapshotTaken   = false;
+        /* 分支翻面 */
+        this._branchResult    = null;   // null | 'correct' | 'wrong'
     }
 
     connectedCallback() {
@@ -806,6 +808,86 @@ class CardToggle extends HTMLElement {
             card-toggle[skin="ruled"][color="special"]   { --ct-skin-line: color-mix(in srgb, var(--ct-color-special) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="shell"],
             card-toggle[skin="ruled"][color="shell"]     { --ct-skin-line: color-mix(in srgb, var(--ct-color-shell) 13%, var(--ct-bg-primary)); }
+
+            /* ── 分支翻面：選項按鈕列 ─────────────────────────────────────── */
+            .ct-branch-btns {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 12px;
+            }
+            .ct-branch-btn {
+                padding: 5px 16px;
+                border-radius: 4px;
+                border: 2px solid var(--ct-branch-btn-clr, var(--ct-color-special));
+                background: transparent;
+                color: var(--ct-branch-btn-clr, var(--ct-color-special));
+                font-size: var(--ct-fs-submit);
+                font-family: var(--ct-ff-submit, inherit);
+                font-weight: 600;
+                cursor: pointer;
+                line-height: 1.3;
+                transition: background 0.18s ease, color 0.18s ease;
+            }
+            .ct-branch-btn:hover {
+                background: var(--ct-branch-btn-clr, var(--ct-color-special));
+                color: var(--ct-bg-primary);
+            }
+            .ct-branch-btn.ct-branch-selected {
+                background: var(--ct-branch-btn-clr, var(--ct-color-special));
+                color: var(--ct-bg-primary);
+                pointer-events: none;
+            }
+            /* 分支翻面：背面容器 */
+            .ct-branch-face {
+                animation: ct-fade-in 0.32s ease forwards;
+            }
+            /* 分支翻面：答對背面標記條 */
+            .ct-branch-face.ct-branch-correct {
+                border-left: 3px solid var(--ct-color-safe);
+                padding-left: 10px;
+                margin-top: 4px;
+            }
+            /* 分支翻面：答錯背面標記條 */
+            .ct-branch-face.ct-branch-wrong {
+                border-left: 3px solid var(--ct-color-warning);
+                padding-left: 10px;
+                margin-top: 4px;
+            }
+            /* 分支翻面：標籤行（答對/答錯標題） */
+            .ct-branch-label {
+                font-size: var(--ct-fs-feedback);
+                font-family: var(--ct-ff-feedback, inherit);
+                font-weight: 700;
+                margin-bottom: 6px;
+                line-height: 1.3;
+            }
+            .ct-branch-label.correct { color: var(--ct-color-safe); }
+            .ct-branch-label.wrong   { color: var(--ct-color-warning); }
+            /* 分支翻面：背面內容本體 */
+            .ct-branch-body-content {
+                font-size: var(--ct-fs-feedback);
+                font-family: var(--ct-ff-feedback, inherit);
+                line-height: 1.5;
+                color: var(--ct-color-shell);
+            }
+            /* 分支翻面：重試按鈕（答錯時顯示） */
+            .ct-branch-retry-btn {
+                margin-top: 10px;
+                padding: var(--ct-pad-aux);
+                border: 1px solid var(--ct-color-warning);
+                border-radius: 4px;
+                background: transparent;
+                color: var(--ct-color-warning);
+                font-size: var(--ct-fs-aux);
+                font-family: var(--ct-ff-aux, inherit);
+                cursor: pointer;
+                line-height: 1.3;
+                transition: background 0.18s ease;
+            }
+            .ct-branch-retry-btn:hover {
+                background: color-mix(in srgb, var(--ct-color-warning) 10%, var(--ct-bg-primary));
+            }
         `;
         document.head.appendChild(style);
     }
@@ -851,8 +933,10 @@ class CardToggle extends HTMLElement {
      * 答對翻面後可點擊翻回重試。
      */
     _renderQuizFront() {
-        this.innerHTML     = this._generateQuizContent();
-        this._originalContent = this.innerHTML;   // 快照 = 表單本身
+        /* 分支模式（branch-correct / branch-wrong）直接渲染選項按鈕 */
+        const isBranchMode = this.hasAttribute('branch-correct') || this.hasAttribute('branch-wrong');
+        this.innerHTML        = isBranchMode ? this._generateBranchContent() : this._generateQuizContent();
+        this._originalContent = this.innerHTML;
         this._snapshotTaken   = true;
         this.style.cursor     = 'default';
     }
@@ -991,6 +1075,13 @@ class CardToggle extends HTMLElement {
         const submitText = this.getAttribute('submit-text') || '提交答案';
         const hintText = this.getAttribute('hint-text') || '提示';
         const resetText = this.getAttribute('reset-text') || '重置';
+
+        /* ── 分支翻面模式：有 branch-correct 或 branch-wrong 屬性時
+           改為選項按鈕，不顯示文字輸入框 ── */
+        const isBranchMode = this.hasAttribute('branch-correct') || this.hasAttribute('branch-wrong');
+        if (isBranchMode) {
+            return this._generateBranchContent();
+        }
         
         this._inputId = 'ct-input-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 
@@ -1326,6 +1417,168 @@ class CardToggle extends HTMLElement {
         }
     }
 
+    /* ══════════════════════════════════════════════════════════════
+       分支翻面（Branch Flip）
+       ──────────────────────────────────────────────────────────────
+       屬性說明（均設在 <card-toggle> 上）：
+
+       question="題目文字"          必填，顯示在卡片正面的題目
+       branch-options="A,B,C,D"    選項文字，逗號分隔（預設 "是,否"）
+       correct-option="A"          正確答案選項文字（與選項文字完全比對）
+       branch-btn-color="safe"     選項按鈕顏色（palette key 或 hex，預設 special）
+
+       答對後背面內容（優先順序）：
+         branch-correct="html"       直接寫 HTML
+         branch-correct-source="id"  讀取 DOM 元素的 innerHTML
+
+       答錯後背面內容（優先順序）：
+         branch-wrong="html"         直接寫 HTML
+         branch-wrong-source="id"    讀取 DOM 元素的 innerHTML
+
+       branch-correct-color="safe"   答對後卡片色（預設 safe）
+       branch-wrong-color="warning"  答錯後卡片色（預設 warning）
+       branch-correct-label="答對了！" 答對背面標題文字
+       branch-wrong-label="答錯了"    答錯背面標題文字
+       branch-retry                  布林屬性，答錯時顯示重試按鈕
+       branch-retry-text="再試一次"   重試按鈕文字
+
+       與 auto-next、lock-nav、show-result、card-toggle-group 完全相容。
+    ══════════════════════════════════════════════════════════════ */
+
+    /** 渲染分支翻面正面：題目 + 選項按鈕列 */
+    _generateBranchContent() {
+        const question   = this.getAttribute('question') || '';
+        const optionsRaw = this.getAttribute('branch-options') || '是,否';
+        const btnColor   = this.getAttribute('branch-btn-color');
+        const options    = optionsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+        let html = `<div class="ct-quiz-content">`;
+        html += `<p class="ct-question">${question}</p>`;
+        html += `<div class="ct-branch-btns">`;
+        options.forEach(opt => {
+            html += `<button class="ct-branch-btn"
+                style="${btnColor ? `--ct-branch-btn-clr:${this._resolveColor(btnColor)}` : ''}"
+                onclick="this.closest('card-toggle')._selectBranchOption(this,'${opt.replace(/'/g,"\\'")}')">
+                ${opt}
+            </button>`;
+        });
+        html += `</div></div>`;
+        return html;
+    }
+
+    /**
+     * 使用者點擊選項按鈕後呼叫。
+     * @param {HTMLElement} btnEl  被點擊的按鈕元素
+     * @param {string}      chosen 選項文字
+     */
+    _selectBranchOption(btnEl, chosen) {
+        /* 防止重複點擊 */
+        const btns = this.querySelectorAll('.ct-branch-btn');
+        btns.forEach(b => b.classList.add('ct-branch-selected'));
+        btnEl.classList.add('ct-branch-selected');
+
+        const correctOption = this.getAttribute('correct-option') || '';
+        const caseSensitive = this.hasAttribute('case-sensitive');
+        const isCorrect     = caseSensitive
+            ? chosen === correctOption
+            : chosen.toLowerCase() === correctOption.toLowerCase();
+
+        this._branchResult = isCorrect ? 'correct' : 'wrong';
+
+        const animation = this.getAttribute('animation') || 'fade';
+
+        /* 短暫延遲讓按鈕視覺反饋可見後再翻面 */
+        setTimeout(() => {
+            if (isCorrect) {
+                this._flipBranchCorrect(animation);
+            } else {
+                this._flipBranchWrong(animation, chosen);
+            }
+        }, 260);
+    }
+
+    /** 答對 → 翻面顯示 branch-correct 內容 */
+    _flipBranchCorrect(animation) {
+        const label   = this.getAttribute('branch-correct-label') || '答對了！';
+        const color   = this.getAttribute('branch-correct-color') || 'safe';
+        const canRetry = false;   // 答對不提供重試
+
+        const bodyHTML = this._resolveBranchContent('correct');
+        const face = this._buildBranchFace('correct', label, bodyHTML, canRetry);
+
+        this._replace(face, animation);
+        const delay = (animation === 'fade' || animation === 'slide') ? 320 : 0;
+        setTimeout(() => this.setAttribute('color', color), delay);
+
+        const group = this.closest('card-toggle-group');
+        if (group && group._markAnswered) group._markAnswered(this, 'correct');
+        if (this.hasAttribute('auto-next')) {
+            setTimeout(() => { if (group && group._goNext) group._goNext(); }, 1500);
+        }
+    }
+
+    /** 答錯 → 翻面顯示 branch-wrong 內容 */
+    _flipBranchWrong(animation, chosen) {
+        const label    = this.getAttribute('branch-wrong-label') || `答錯了（你選了「${chosen}」）`;
+        const color    = this.getAttribute('branch-wrong-color') || 'warning';
+        const canRetry = this.hasAttribute('branch-retry');
+
+        const bodyHTML = this._resolveBranchContent('wrong');
+        const face = this._buildBranchFace('wrong', label, bodyHTML, canRetry);
+
+        this._replace(face, animation);
+        const delay = (animation === 'fade' || animation === 'slide') ? 320 : 0;
+        setTimeout(() => this.setAttribute('color', color), delay);
+
+        const group = this.closest('card-toggle-group');
+        if (group && group._markAnswered) group._markAnswered(this, 'wrong');
+    }
+
+    /**
+     * 解析答對/答錯背面內容。
+     * 優先順序：branch-{result}-source → branch-{result} → 空字串
+     */
+    _resolveBranchContent(result /* 'correct' | 'wrong' */) {
+        const sourceId  = this.getAttribute(`branch-${result}-source`);
+        const inlineVal = this.getAttribute(`branch-${result}`);
+        if (sourceId) {
+            const el = document.getElementById(sourceId);
+            if (el) return el.innerHTML;
+        }
+        return inlineVal || '';
+    }
+
+    /**
+     * 組裝分支翻面背面 HTML。
+     * @param {'correct'|'wrong'} result
+     * @param {string} label    標題文字
+     * @param {string} bodyHTML 內容 HTML
+     * @param {boolean} canRetry 是否顯示重試按鈕
+     */
+    _buildBranchFace(result, label, bodyHTML, canRetry) {
+        const retryText  = this.getAttribute('branch-retry-text') || '↺ 再試一次';
+        const retryBtn   = canRetry
+            ? `<button class="ct-branch-retry-btn"
+                onclick="this.closest('card-toggle')._retryBranch()">
+                ${retryText}
+               </button>`
+            : '';
+        return `
+            <div class="ct-branch-face ct-branch-${result}">
+                <div class="ct-branch-label ${result}">${label}</div>
+                <div class="ct-branch-body-content">${bodyHTML}</div>
+                ${retryBtn}
+            </div>`;
+    }
+
+    /** 重試：翻回正面（僅供 branch-retry 使用） */
+    _retryBranch() {
+        this._branchResult = null;
+        this._attempts     = 0;
+        const animation    = this.getAttribute('animation') || 'fade';
+        this._flipBack();
+    }
+
     /**
      * 解析正確答案後要顯示的背面內容。
      * 優先順序：success-source → (quiz 模式) source / content → 預設訊息
@@ -1451,6 +1704,7 @@ class CardToggle extends HTMLElement {
             this._autoFlipTimer = null;
         }
         
+        this._branchResult = null;
         this.innerHTML = this._originalContent;
         this.removeAttribute('replaced');
         this._isFlipped = false;

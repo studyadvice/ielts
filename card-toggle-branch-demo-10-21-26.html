@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>card-toggle 分支翻面 Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #0C0D0C;
+    color: #C6C7BD;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  .pg-header { padding: 44px 0 36px; border-bottom: 1px solid rgba(198,199,189,0.12); margin-bottom: 44px; }
+  .pg-header h1 { font-size: 2rem; font-weight: 800; color: #82C8E5; }
+  .pg-header p  { font-size: 1rem; color: rgba(198,199,189,0.65); margin-top: 6px; }
+
+  .section { margin-bottom: 52px; }
+  .sec-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.10em; color: rgba(198,199,189,0.42); text-transform: uppercase; margin-bottom: 4px; }
+  .sec-h2    { font-size: 1.35rem; font-weight: 700; color: #C6C7BD; margin-bottom: 6px; }
+  .sec-desc  { font-size: 0.95rem; color: rgba(198,199,189,0.58); margin-bottom: 18px; line-height: 1.5; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .chip { font-size: 0.73rem; font-family: 'Courier New', monospace; background: rgba(195,165,229,0.09); border: 1px solid rgba(195,165,229,0.22); color: #C3A5E5; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+  .chip.new { background: rgba(179,222,115,0.10); border-color: rgba(179,222,115,0.28); color: #B3DE73; }
+
+  hr.div { border: none; border-top: 1px solid rgba(198,199,189,0.10); margin: 48px 0; }
+
+  card-toggle { margin-bottom: 12px; }
+  card-toggle-group { display: block; }
+
+  /* 隱藏背面模板 */
+  .tpl { display: none; }
+
+  /* 屬性速查表 */
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 14px; }
+  .ref-table th { background: rgba(198,199,189,0.07); color: #C6C7BD; font-weight: 700; padding: 9px 12px; text-align: left; border-bottom: 1px solid rgba(198,199,189,0.13); }
+  .ref-table td { padding: 8px 12px; border-bottom: 1px solid rgba(198,199,189,0.06); color: rgba(198,199,189,0.80); vertical-align: top; line-height: 1.4; }
+  .ref-table td:first-child { font-family: 'Courier New', monospace; color: #C3A5E5; white-space: nowrap; }
+  .ref-table td:nth-child(2) { font-family: 'Courier New', monospace; font-size: 0.82rem; color: #82C8E5; }
+  .badge-new { display: inline-block; background: rgba(179,222,115,0.12); border: 1px solid rgba(179,222,115,0.28); color: #B3DE73; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 頁首 -->
+  <header class="pg-header">
+    <h1>card-toggle 分支翻面</h1>
+    <p>Branch Flip 擴充 — 答對/答錯各翻出不同內容，與 card-toggle-group 完全相容</p>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════
+       範例 1：最簡單的是非題（branch-correct / branch-wrong 內聯）
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="sec-label">Example 01</div>
+    <h2 class="sec-h2">是非題 — 最簡設定</h2>
+    <p class="sec-desc">
+      只需設定 <code>question</code>、<code>branch-options</code>、<code>correct-option</code>，
+      再給 <code>branch-correct</code> 和 <code>branch-wrong</code> 直接填入 HTML 說明文字即可。
+    </p>
+    <div class="chip-row">
+      <span class="chip new">branch-options="對,錯"</span>
+      <span class="chip new">correct-option="對"</span>
+      <span class="chip new">branch-correct="…"</span>
+      <span class="chip new">branch-wrong="…"</span>
+    </div>
+
+    <card-toggle
+      color="sky"
+      question="光在真空中的速度約為每秒 30 萬公里。"
+      branch-options="對,錯"
+      correct-option="對"
+      branch-correct="<strong style='color:var(--ct-color-safe)'>正確。</strong>光速約 299,792,458 m/s，物理學中常簡化為 3×10⁸ m/s。"
+      branch-wrong="<strong style='color:var(--ct-color-warning)'>錯誤。</strong>光速約 299,792,458 m/s，這是宇宙中已知最快的速度上限。"
+      animation="fade">
+    </card-toggle>
+  </section>
+
+  <hr class="div">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 2：四選一選擇題，答錯可重試
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="sec-label">Example 02</div>
+    <h2 class="sec-h2">四選一 + 答錯可重試</h2>
+    <p class="sec-desc">
+      <code>branch-options</code> 支援多個選項（逗號分隔）。加上 <code>branch-retry</code> 屬性後，
+      答錯背面會出現重試按鈕，翻回正面重新選擇。
+    </p>
+    <div class="chip-row">
+      <span class="chip new">branch-options="A,B,C,D"</span>
+      <span class="chip new">branch-retry</span>
+      <span class="chip new">branch-retry-text="再選一次"</span>
+      <span class="chip">branch-btn-color="lavender"</span>
+    </div>
+
+    <card-toggle
+      color="lavender"
+      question="下列哪一個元素的原子序最小？"
+      branch-options="氦 (He),氫 (H),鋰 (Li),碳 (C)"
+      correct-option="氫 (H)"
+      branch-correct="<p><strong style='color:var(--ct-color-safe)'><i class='bi bi-check-circle-fill'></i> 答對了！</strong></p><p style='margin-top:6px'>氫（H）的原子序為 1，是週期表中最輕也是宇宙中含量最多的元素。</p>"
+      branch-wrong="<p><strong style='color:var(--ct-color-warning)'><i class='bi bi-x-circle-fill'></i> 答錯了。</strong></p><p style='margin-top:6px'>正確答案是「氫（H）」，原子序 1。其他選項：氦 2、鋰 3、碳 6。</p>"
+      branch-btn-color="lavender"
+      branch-retry
+      branch-retry-text="↺ 再選一次"
+      branch-correct-color="safe"
+      branch-wrong-color="warning"
+      animation="slide">
+    </card-toggle>
+  </section>
+
+  <hr class="div">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 3：背面內容來自 DOM 元素（branch-correct-source / branch-wrong-source）
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="sec-label">Example 03</div>
+    <h2 class="sec-h2">背面內容來自 DOM 元素</h2>
+    <p class="sec-desc">
+      <code>branch-correct-source</code> 與 <code>branch-wrong-source</code> 讀取任意元素的 <code>innerHTML</code>，
+      適合放置圖表、程式碼或複雜排版。
+    </p>
+    <div class="chip-row">
+      <span class="chip new">branch-correct-source="tpl-correct-3"</span>
+      <span class="chip new">branch-wrong-source="tpl-wrong-3"</span>
+      <span class="chip">branch-btn-color="teal"</span>
+    </div>
+
+    <!-- 答對背面模板 -->
+    <div id="tpl-correct-3" class="tpl">
+      <p style="color:var(--ct-color-safe);font-weight:700;margin-bottom:8px">
+        <i class="bi bi-check-circle-fill"></i> 完全正確！
+      </p>
+      <p>TCP（傳輸控制協定）是面向連線的協定，透過三向交握（SYN → SYN-ACK → ACK）建立連線，確保資料可靠、有序地傳輸。</p>
+      <p style="margin-top:8px;color:rgba(198,199,189,0.65);font-size:0.92rem">延伸閱讀：UDP 是無連線協定，速度快但不保證傳輸。</p>
+    </div>
+    <!-- 答錯背面模板 -->
+    <div id="tpl-wrong-3" class="tpl">
+      <p style="color:var(--ct-color-warning);font-weight:700;margin-bottom:8px">
+        <i class="bi bi-x-circle-fill"></i> 再想想！
+      </p>
+      <p>TCP 確實需要連線，建立時使用三向交握（Three-Way Handshake）。UDP 才是無連線協定，適合低延遲需求但不保證可靠性。</p>
+    </div>
+
+    <card-toggle
+      color="teal"
+      question="TCP（傳輸控制協定）是一種需要事先建立連線的協定。"
+      branch-options="正確,錯誤"
+      correct-option="正確"
+      branch-correct-source="tpl-correct-3"
+      branch-wrong-source="tpl-wrong-3"
+      branch-btn-color="teal"
+      branch-correct-label="答對了！"
+      branch-wrong-label="答錯了，請參考說明"
+      branch-retry
+      animation="fade">
+    </card-toggle>
+  </section>
+
+  <hr class="div">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 4：搭配 card-toggle-group（slide 模式 + lock-nav + show-result）
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="sec-label">Example 04</div>
+    <h2 class="sec-h2">搭配 card-toggle-group — 完整問答流程</h2>
+    <p class="sec-desc">
+      分支翻面與 <code>card-toggle-group</code> 完全相容：答對計為 correct、答錯計為 wrong，
+      頁碼按鈕顯示答題狀態色，全部作答後出現成績畫面。
+    </p>
+    <div class="chip-row">
+      <span class="chip">mode="slide"</span>
+      <span class="chip">lock-nav</span>
+      <span class="chip">show-pages</span>
+      <span class="chip">show-result</span>
+      <span class="chip new">branch-options + correct-option</span>
+    </div>
+
+    <card-toggle-group mode="slide" lock-nav show-pages show-result theme="special">
+
+      <!-- Q1 -->
+      <card-toggle
+        color="sky"
+        question="Python 是一種編譯型語言。"
+        branch-options="正確,錯誤"
+        correct-option="錯誤"
+        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 對！</p><p style='margin-top:4px'>Python 是直譯型（interpreted）語言，原始碼由直譯器逐行執行，不需預先編譯成機器碼。</p>"
+        branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 不對。</p><p style='margin-top:4px'>Python 是直譯型語言。Java 或 C++ 才是需要編譯的語言。</p>"
+        branch-btn-color="sky"
+        animation="fade">
+      </card-toggle>
+
+      <!-- Q2 -->
+      <card-toggle
+        color="lavender"
+        question="HTTP 的預設通訊埠為何？"
+        branch-options="80,443,8080,22"
+        correct-option="80"
+        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 正確！</p><p style='margin-top:4px'>HTTP 預設使用 Port 80；HTTPS 使用 443；8080 常為替代 HTTP；22 是 SSH。</p>"
+        branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 答錯了。</p><p style='margin-top:4px'>HTTP 預設 Port 為 <strong>80</strong>。HTTPS 才是 443，SSH 是 22，8080 是常見的 HTTP 替代埠。</p>"
+        branch-btn-color="lavender"
+        branch-retry
+        animation="slide">
+      </card-toggle>
+
+      <!-- Q3 -->
+      <card-toggle
+        color="teal"
+        question="SQL 中，下列哪個指令用來新增資料列？"
+        branch-options="INSERT,UPDATE,SELECT,ALTER"
+        correct-option="INSERT"
+        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 完全正確！</p><p style='margin-top:4px'><code>INSERT INTO table VALUES (…)</code> 用於新增資料列。UPDATE 修改現有列，SELECT 查詢，ALTER 修改表格結構。</p>"
+        branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 答錯了。</p><p style='margin-top:4px'>正確答案是 <strong>INSERT</strong>。UPDATE 修改現有列，SELECT 讀取，ALTER 改表格結構。</p>"
+        branch-btn-color="teal"
+        branch-retry
+        animation="fade">
+      </card-toggle>
+
+      <!-- Q4 -->
+      <card-toggle
+        color="special"
+        question="Git 中，將遠端更新合併到本機當前分支的指令是 git pull。"
+        branch-options="對,錯"
+        correct-option="對"
+        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 正確！</p><p style='margin-top:4px'><code>git pull</code> 等同於 <code>git fetch</code> 加上 <code>git merge</code>，會把遠端最新提交合併到目前分支。</p>"
+        branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 再想想。</p><p style='margin-top:4px'><code>git pull</code> 確實是將遠端更新合併到本機分支。<code>git fetch</code> 只下載不合併，<code>git push</code> 是推送到遠端。</p>"
+        branch-btn-color="special"
+        animation="fade">
+      </card-toggle>
+
+    </card-toggle-group>
+  </section>
+
+  <hr class="div">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 5：自訂標籤文字 + branch-btn-color hex 值
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="sec-label">Example 05</div>
+    <h2 class="sec-h2">自訂標籤文字 + hex 顏色按鈕</h2>
+    <p class="sec-desc">
+      <code>branch-correct-label</code>、<code>branch-wrong-label</code> 可自訂背面標題。
+      <code>branch-btn-color</code> 直接接受 hex 色碼（不限 palette key）。
+    </p>
+    <div class="chip-row">
+      <span class="chip new">branch-correct-label="太棒了，完全正確！"</span>
+      <span class="chip new">branch-wrong-label="這次沒選對，來看說明"</span>
+      <span class="chip new">branch-btn-color="#EDA109"</span>
+    </div>
+
+    <card-toggle
+      color="orange"
+      question="台灣面積最大的縣市是哪一個？"
+      branch-options="南投縣,花蓮縣,台東縣,高雄市"
+      correct-option="花蓮縣"
+      branch-correct="花蓮縣面積約 4,628 平方公里，是台灣面積最大的縣市，以壯觀的峽谷地形與豐富自然資源著稱。"
+      branch-wrong="正確答案是「花蓮縣」（約 4,628 km²）。南投縣約 4,106 km² 為第二，台東縣約 3,515 km² 第三，高雄市約 2,952 km²。"
+      branch-correct-label="太棒了，完全正確！"
+      branch-wrong-label="這次沒選對，來看說明"
+      branch-btn-color="#EDA109"
+      branch-retry
+      animation="slide">
+    </card-toggle>
+  </section>
+
+  <hr class="div">
+
+  <!-- ══════════════════════════════════════════════════
+       屬性速查表
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="sec-label">Reference</div>
+    <h2 class="sec-h2">新增屬性速查</h2>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>屬性</th>
+          <th>預設值</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>branch-options <span class="badge-new">NEW</span></td>
+          <td>"是,否"</td>
+          <td>選項文字，逗號分隔，支援任意數量。搭配 <code>question</code> 屬性使用時自動切換為分支翻面模式。</td>
+        </tr>
+        <tr>
+          <td>correct-option <span class="badge-new">NEW</span></td>
+          <td>—</td>
+          <td>正確答案選項文字，與 branch-options 中的某個值完全比對（預設不區分大小寫，加 <code>case-sensitive</code> 屬性則區分）。</td>
+        </tr>
+        <tr>
+          <td>branch-correct <span class="badge-new">NEW</span></td>
+          <td>—</td>
+          <td>答對後翻面顯示的 HTML 內容（內聯）。</td>
+        </tr>
+        <tr>
+          <td>branch-correct-source <span class="badge-new">NEW</span></td>
+          <td>—</td>
+          <td>答對後翻面內容來源的元素 id（讀取其 innerHTML），優先於 branch-correct。</td>
+        </tr>
+        <tr>
+          <td>branch-wrong <span class="badge-new">NEW</span></td>
+          <td>—</td>
+          <td>答錯後翻面顯示的 HTML 內容（內聯）。</td>
+        </tr>
+        <tr>
+          <td>branch-wrong-source <span class="badge-new">NEW</span></td>
+          <td>—</td>
+          <td>答錯後翻面內容來源的元素 id，優先於 branch-wrong。</td>
+        </tr>
+        <tr>
+          <td>branch-correct-label <span class="badge-new">NEW</span></td>
+          <td>"答對了！"</td>
+          <td>答對後翻面的標題文字。</td>
+        </tr>
+        <tr>
+          <td>branch-wrong-label <span class="badge-new">NEW</span></td>
+          <td>"答錯了（你選了「…」）"</td>
+          <td>答錯後翻面的標題文字，預設帶入所選選項。</td>
+        </tr>
+        <tr>
+          <td>branch-correct-color <span class="badge-new">NEW</span></td>
+          <td>"safe"</td>
+          <td>答對後卡片側邊線顏色（palette key 或 hex）。</td>
+        </tr>
+        <tr>
+          <td>branch-wrong-color <span class="badge-new">NEW</span></td>
+          <td>"warning"</td>
+          <td>答錯後卡片側邊線顏色（palette key 或 hex）。</td>
+        </tr>
+        <tr>
+          <td>branch-btn-color <span class="badge-new">NEW</span></td>
+          <td>（繼承 special）</td>
+          <td>選項按鈕的邊框與文字顏色（palette key 或任意 hex）。</td>
+        </tr>
+        <tr>
+          <td>branch-retry <span class="badge-new">NEW</span></td>
+          <td>false（布林屬性）</td>
+          <td>答錯後背面顯示重試按鈕，點擊翻回正面重新作答。</td>
+        </tr>
+        <tr>
+          <td>branch-retry-text <span class="badge-new">NEW</span></td>
+          <td>"↺ 再試一次"</td>
+          <td>重試按鈕文字。</td>
+        </tr>
+        <tr>
+          <td>case-sensitive</td>
+          <td>false（布林屬性）</td>
+          <td>原有屬性，分支模式同樣適用：啟用後比對 correct-option 時區分大小寫。</td>
+        </tr>
+        <tr>
+          <td>animation</td>
+          <td>"fade"</td>
+          <td>原有屬性：fade / slide / none，分支翻面完全沿用。</td>
+        </tr>
+        <tr>
+          <td>auto-next</td>
+          <td>false（布林屬性）</td>
+          <td>原有屬性：答對後 1.5s 自動切換到 group 下一題。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+<script src="card-toggle.js"></script>
+</body>
+</html>
