@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arrow-flow v2.0 Demo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #0C0D0C;
+    --shell:    #C6C7BD;
+    --lavender: #C3A5E5;
+    --sky:      #82C8E5;
+    --teal:     #0DA591;
+    --salmon:   #E5C3B3;
+    --indigo:   #7849C9;
+    --ocean:    #1CCAE8;
+    --safe:     #27AE60;
+    --special:  #B3DE73;
+    --orange:   #EDA109;
+    --yellow:   #E3D322;
+    --warning:  #E6374B;
+    --pink:     #FF91D7;
+  }
+  html, body { background: var(--bg); color: var(--shell); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 18px; }
+
+  .page { max-width: 1400px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* ── 頁首 ── */
+  .pg-header { padding: 48px 0 40px; border-bottom: 1px solid rgba(198,199,189,0.14); margin-bottom: 48px; }
+  .pg-header h1 { font-size: 2.2rem; font-weight: 800; color: var(--sky); letter-spacing: -0.01em; }
+  .pg-header p  { font-size: 1rem; color: rgba(198,199,189,0.70); margin-top: 8px; }
+  .ver-badge { display: inline-block; background: rgba(130,200,229,0.12); border: 1px solid rgba(130,200,229,0.30); color: var(--sky); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px; margin-right: 10px; }
+
+  /* ── 段落標題 ── */
+  .section { margin-bottom: 60px; }
+  .section-title {
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.10em;
+    color: rgba(198,199,189,0.50); text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section-h2 { font-size: 1.45rem; font-weight: 700; color: var(--shell); margin-bottom: 6px; }
+  .section-desc { font-size: 0.95rem; color: rgba(198,199,189,0.60); margin-bottom: 24px; line-height: 1.5; }
+
+  /* ── Attr Chip ── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .chip {
+    font-size: 0.75rem; font-family: 'Courier New', monospace;
+    background: rgba(195,165,229,0.10); border: 1px solid rgba(195,165,229,0.25);
+    color: var(--lavender); padding: 3px 9px; border-radius: 3px; white-space: nowrap;
+  }
+
+  /* ── 完成提示 ── */
+  .done-msg {
+    margin-top: 20px; padding: 14px 20px;
+    background: rgba(39,174,96,0.10); border-left: 3px solid var(--safe);
+    color: var(--safe); font-size: 1rem; font-weight: 600;
+    display: none;
+  }
+
+  /* ── 分隔線 ── */
+  hr.divider { border: none; border-top: 1px solid rgba(198,199,189,0.10); margin: 56px 0; }
+
+  /* ── 屬性速查表 ── */
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 16px; }
+  .ref-table th { background: rgba(198,199,189,0.07); color: var(--shell); font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(198,199,189,0.14); }
+  .ref-table td { padding: 9px 14px; border-bottom: 1px solid rgba(198,199,189,0.06); vertical-align: top; color: rgba(198,199,189,0.80); line-height: 1.4; }
+  .ref-table td:first-child { font-family: 'Courier New', monospace; color: var(--lavender); white-space: nowrap; }
+  .ref-table td:nth-child(2) { color: var(--sky); font-family: 'Courier New', monospace; font-size: 0.82rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 頁首 -->
+  <header class="pg-header">
+    <div>
+      <span class="ver-badge">v2.0</span>
+      <h1>arrow-flow.js</h1>
+    </div>
+    <p>樣式屬性全面彈性化 · 多分支路徑支援 · 合流主流程 · No Shadow DOM</p>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════
+       範例 1：預設樣式（最小設定）
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">Example 01</div>
+    <h2 class="section-h2">預設樣式（最少屬性）</h2>
+    <p class="section-desc">僅設定 <code>theme</code>，其餘全部使用全域預設值。</p>
+    <div class="chip-row">
+      <span class="chip">theme="sky"</span>
+      <span class="chip">reveal="cumulative"</span>
+    </div>
+
+    <arrow-flow theme="sky" reveal="cumulative" on-complete="done-1">
+      <flow-step title="需求確認">收集使用者需求，確認範疇與優先順序。</flow-step>
+      <flow-step title="設計規劃">輸出線框稿與設計規格文件。</flow-step>
+      <flow-step title="開發實作">依規格進行前後端開發。</flow-step>
+      <flow-step title="測試上線">QA 驗收通過後部署至正式環境。</flow-step>
+    </arrow-flow>
+
+    <div class="done-msg" id="done-1">流程完成！</div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 2：完整樣式屬性展示
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">Example 02</div>
+    <h2 class="section-h2">完整樣式屬性展示</h2>
+    <p class="section-desc">header 漸層、左側強調線、箭頭發光、自訂陰影、字距、行高全部開啟。</p>
+    <div class="chip-row">
+      <span class="chip">theme="lavender"</span>
+      <span class="chip">header-gradient="down"</span>
+      <span class="chip">header-accent-line="left"</span>
+      <span class="chip">arrow-glow</span>
+      <span class="chip">box-shadow="0 4px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08)"</span>
+      <span class="chip">border-width="3px"</span>
+      <span class="chip">border-radius="8px"</span>
+      <span class="chip">header-font-size="1rem"</span>
+      <span class="chip">header-letter-spacing="0.06em"</span>
+      <span class="chip">content-line-height="1.45"</span>
+      <span class="chip">arrow-tip="lg"</span>
+      <span class="chip">arrow-style="dashed"</span>
+    </div>
+
+    <arrow-flow
+      theme="lavender"
+      header-gradient="down"
+      header-accent-line="left"
+      arrow-glow
+      box-shadow="0 4px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08)"
+      border-width="3px"
+      border-radius="8px"
+      header-font-size="1rem"
+      header-letter-spacing="0.06em"
+      content-font-size="1.05rem"
+      content-line-height="1.45"
+      arrow-tip="lg"
+      arrow-style="dashed"
+      gap="80px"
+      on-complete="done-2">
+      <flow-step title="原料入庫" header-color="indigo" border-color="indigo">
+        掃描條碼並核對採購單，不符規格者立即退貨。
+      </flow-step>
+      <flow-step title="品質檢驗" header-color="lavender">
+        依 ISO 標準進行抽樣，合格率需達 99.5% 以上。
+      </flow-step>
+      <flow-step title="生產製造">
+        自動化產線介入，人工監控異常警報。
+      </flow-step>
+    </arrow-flow>
+
+    <div class="done-msg" id="done-2">流程完成！</div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 3：top 強調線 + 固定欄寬 + 單次顯示
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">Example 03</div>
+    <h2 class="section-h2">Top 強調線 + 固定欄寬 + 單次顯示模式</h2>
+    <p class="section-desc">
+      <code>header-accent-line="top"</code> 在 header 頂部加橫線。<code>reveal="single"</code> 讓前一步驟淡出。<code>step-width="260px"</code> 固定每欄寬度。
+    </p>
+    <div class="chip-row">
+      <span class="chip">theme="teal"</span>
+      <span class="chip">header-accent-line="top"</span>
+      <span class="chip">header-gradient="up"</span>
+      <span class="chip">reveal="single"</span>
+      <span class="chip">step-width="260px"</span>
+      <span class="chip">border-radius="2px"</span>
+    </div>
+
+    <arrow-flow
+      theme="teal"
+      header-accent-line="top"
+      header-gradient="up"
+      reveal="single"
+      step-width="260px"
+      border-radius="2px"
+      gap="56px"
+      on-complete="done-3">
+      <flow-step title="初始化">環境準備與依賴安裝。</flow-step>
+      <flow-step title="資料遷移">舊資料庫匯出並轉換格式。</flow-step>
+      <flow-step title="服務啟動">執行健康檢查後切換流量。</flow-step>
+      <flow-step title="監控確認">觀察 15 分鐘確認無異常告警。</flow-step>
+    </arrow-flow>
+
+    <div class="done-msg" id="done-3">部署完成！</div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 4：多分支（基本）
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">Example 04</div>
+    <h2 class="section-h2">多分支 — 兩條路徑，無後續合流</h2>
+    <p class="section-desc">
+      選擇分支後，未選的路徑淡化（<code>branch-dim</code>），被選路徑逐步展開。
+    </p>
+    <div class="chip-row">
+      <span class="chip">flow-branch</span>
+      <span class="chip">branch-option label="…" theme="…"</span>
+      <span class="chip">branch-label-theme="orange"</span>
+      <span class="chip">branch-dim="0.22"</span>
+    </div>
+
+    <arrow-flow
+      theme="sky"
+      branch-label-theme="orange"
+      branch-dim="0.22"
+      header-gradient="down"
+      box-shadow="0 2px 12px rgba(0,0,0,.40)"
+      on-complete="done-4">
+      <flow-step title="客戶提出需求">業務收到詢問並建立案件。</flow-step>
+      <flow-branch>
+        <branch-option label="標準產品" theme="teal">
+          <flow-step title="確認型號">核對產品目錄，確認庫存。</flow-step>
+          <flow-step title="開立報價">依標準售價產出報價單。</flow-step>
+          <flow-step title="客戶簽回">獲得書面確認後進入出貨流程。</flow-step>
+        </branch-option>
+        <branch-option label="客製訂單" theme="salmon">
+          <flow-step title="需求訪談" header-color="salmon" border-color="salmon">深入訪談，輸出規格書草案。</flow-step>
+          <flow-step title="工程評估">研發部門評估可行性與成本。</flow-step>
+          <flow-step title="報價審核">業務主管核准後送交客戶。</flow-step>
+          <flow-step title="訂單確認">簽署合約後排程生產。</flow-step>
+        </branch-option>
+      </flow-branch>
+    </arrow-flow>
+
+    <div class="done-msg" id="done-4">銷售流程完成！</div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════
+       範例 5：分支 + 合流（前置 → 分支 → 後置）
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">Example 05</div>
+    <h2 class="section-h2">分支 + 合流 — 完整流程</h2>
+    <p class="section-desc">
+      共同起點步驟 → 多分支 → 分支走完後自動解鎖後續共同步驟，實現「分流再合流」。
+    </p>
+    <div class="chip-row">
+      <span class="chip">前置 flow-step</span>
+      <span class="chip">flow-branch（三選一）</span>
+      <span class="chip">後置 flow-step（合流）</span>
+    </div>
+
+    <arrow-flow
+      theme="special"
+      branch-label-theme="special"
+      branch-dim="0.20"
+      header-gradient="down"
+      header-accent-line="left"
+      arrow-glow
+      border-radius="6px"
+      box-shadow="0 6px 28px rgba(0,0,0,.50),inset 0 1px 0 rgba(255,255,255,.06)"
+      on-complete="done-5">
+
+      <flow-step title="申請受理">
+        收件人員確認申請資料齊全，登錄系統並產生案號。
+      </flow-step>
+
+      <flow-branch>
+        <branch-option label="線上快速審核" theme="sky">
+          <flow-step title="自動比對">系統比對資料庫，30 秒內完成初核。</flow-step>
+          <flow-step title="線上簽核">主管電子簽名後立即生效。</flow-step>
+        </branch-option>
+        <branch-option label="人工審核" theme="orange">
+          <flow-step title="指派審核員">依業務量輪派至可用人員。</flow-step>
+          <flow-step title="實地查核">必要時安排實地訪查（2-5 個工作天）。</flow-step>
+          <flow-step title="委員會決議">超過授權額度案件提交委員會。</flow-step>
+        </branch-option>
+        <branch-option label="補件退回" theme="warning">
+          <flow-step title="通知缺件" header-color="warning" border-color="warning">
+            系統發送 Email／SMS 說明缺件項目及補件期限。
+          </flow-step>
+          <flow-step title="等待補件">申請人於 10 個工作天內補齊資料。</flow-step>
+        </branch-option>
+      </flow-branch>
+
+      <flow-step title="核定結果通知">
+        無論採哪條路徑，最終均發送正式核定函，並更新案件狀態。
+      </flow-step>
+      <flow-step title="結案歸檔">
+        文件數位化後存入電子檔案系統，保存七年。
+      </flow-step>
+    </arrow-flow>
+
+    <div class="done-msg" id="done-5">審核流程全部完成！</div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════
+       屬性速查表
+  ═══════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-title">Reference</div>
+    <h2 class="section-h2">屬性速查表</h2>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>屬性（kebab-case）</th>
+          <th>預設值</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>theme</td><td>"shell"</td><td>主色系，palette key 或任意 hex 值</td></tr>
+        <tr><td>header-color</td><td>同 theme</td><td>header 背景色覆寫（可於 flow-step 個別設定）</td></tr>
+        <tr><td>border-color</td><td>同 theme</td><td>邊框色覆寫</td></tr>
+        <tr><td>arrow-color</td><td>同 theme</td><td>箭頭填色覆寫</td></tr>
+        <tr><td>arrow-tip</td><td>"md"</td><td>箭頭尖端大小：sm / md / lg / xl</td></tr>
+        <tr><td>arrow-style</td><td>"solid"</td><td>箭頭桿樣式：solid / dashed</td></tr>
+        <tr><td>arrow-glow</td><td>false（布林屬性）</td><td>啟用箭頭 SVG drop-shadow 發光效果</td></tr>
+        <tr><td>gap</td><td>"72px"</td><td>箭頭欄寬度，可用任意 CSS 長度單位</td></tr>
+        <tr><td>reveal</td><td>"cumulative"</td><td>步驟顯示模式：cumulative（累積）/ single（單次）</td></tr>
+        <tr><td>animation</td><td>"fade"</td><td>進場動畫：fade / slide / none</td></tr>
+        <tr><td>equal-height</td><td>false（布林屬性）</td><td>強制所有步驟盒子等高</td></tr>
+        <tr><td>current</td><td>0</td><td>初始已展開到第幾個主流程步驟（從 0 起算）</td></tr>
+        <tr><td>step-width</td><td>null（flex:1）</td><td>固定步驟欄寬，如 "240px"</td></tr>
+        <tr><td>box-shadow</td><td>"none"</td><td>盒子 CSS box-shadow，可疊加多層用逗號分隔</td></tr>
+        <tr><td>border-width</td><td>"2.5px"</td><td>邊框粗細</td></tr>
+        <tr><td>border-radius</td><td>"5px"</td><td>盒子圓角大小</td></tr>
+        <tr><td>header-gradient</td><td>"none"</td><td>header 背景漸層方向：down / up / none</td></tr>
+        <tr><td>header-accent-line</td><td>"none"</td><td>header 強調線位置：left / top / none</td></tr>
+        <tr><td>header-font-size</td><td>"1.125rem"</td><td>header 文字大小</td></tr>
+        <tr><td>header-letter-spacing</td><td>"0"</td><td>header 字距（em 單位建議）</td></tr>
+        <tr><td>content-font-size</td><td>"1.125rem"</td><td>內容區文字大小</td></tr>
+        <tr><td>content-line-height</td><td>"1.5"</td><td>內容區行高</td></tr>
+        <tr><td>branch-label-theme</td><td>"teal"</td><td>分支選擇按鈕顏色，palette key 或 hex</td></tr>
+        <tr><td>branch-dim</td><td>"0.80"</td><td>未選中分支路徑的透明度</td></tr>
+        <tr><td>on-complete</td><td>null</td><td>流程全部完成後顯示的元素 id</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+<script src="arrow-flow.js"></script>
+</body>
+</html>
