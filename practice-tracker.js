@@ -1,7 +1,8 @@
 (function (win, doc) {
   'use strict';
 
-  const CSS_ID = '__practice-tracker-v1__';
+  const CSS_ID = '__practice-tracker-v2__';
+  const SHAPES  = new Set(['square', 'circle', 'star', 'diamond', 'hexagon', 'heart']);
 
   const BRAND = {
     bg:       '#0C0D0C',
@@ -24,70 +25,71 @@
   };
 
   const DEFAULTS = {
-    prefix:          'ex-',          // section id 前綴
-    position:        'bottom-right', // bottom-right / bottom-left / top-right / top-left
-    offsetX:         '24px',
-    offsetY:         '24px',
-    panelWidth:      '220px',
-    zIndex:          '999',
-    collapsed:       false,
-    cellSize:        '16px',         // 每格寬高（data-cell-size）
-    cellGap:         '6px',          // 格與格間距（data-cell-gap）
-    cellRadius:      '4px',
-    cellsPerRow:     5,
-    colorDone:       BRAND.safe,
-    colorPending:    '#2a2b2a',
-    colorPanel:      '#1a1b1a',
-    colorText:       BRAND.shell,
-    colorComplete:   BRAND.special,
-    fontSizePanel:   '0.85rem',      // 面板基礎字體（data-font-size-panel）
-    fontSizeTitle:   '0.78rem',      // 標題列文字（data-font-size-title）
-    fontSizeCount:   '0.76rem',      // 進度計數文字（data-font-size-count）
-    fontSizeComplete:'0.80rem',      // 完成主訊息（data-font-size-complete）
-    fontSizeCompleteSub: '0.73rem',  // 完成副訊息（data-font-size-complete-sub）
-    /* ── 其他 ── */
-    title:           '進度',
-    labelDone:       '完成',
-    completeText:    '全部完成',
-    completeSubText: '',
-    animateCell:     true,
-    animateDuration: '0.3s',
-    eventName:       'pt:stage-complete',
-    watchStepper:    true,
-    clickGo:         false,          // 點擊方塊捲動至對應 section（data-click-go）
+    prefix:              'ex-',
+    position:            'bottom-right',
+    offsetX:             '24px',
+    offsetY:             '24px',
+    panelWidth:          '220px',
+    zIndex:              '999',
+    collapsed:           false,
+    cellSize:            '16px',
+    cellGap:             '6px',
+    cellRadius:          '4px',
+    cellsPerRow:         5,
+    cellShape:           'square',      // square | circle | star | diamond | hexagon | heart
+    colorDone:           BRAND.safe,
+    colorPending:        '#2a2b2a',
+    colorPanel:          '#1a1b1a',
+    colorText:           BRAND.shell,
+    colorComplete:       BRAND.special,
+    fontSizePanel:       '0.85rem',
+    fontSizeTitle:       '0.78rem',
+    fontSizeCount:       '0.76rem',
+    fontSizeComplete:    '0.80rem',
+    fontSizeCompleteSub: '0.73rem',
+    title:               '進度',
+    labelDone:           '完成',
+    completeText:        '全部完成',
+    completeSubText:     '',
+    animateCell:         true,
+    animateDuration:     '0.3s',
+    eventName:           'pt:stage-complete',
+    watchStepper:        true,
+    clickGo:             false,
   };
 
   const ATTR_MAP = {
-    'data-prefix':           { key: 'prefix',          type: 'string' },
-    'data-position':         { key: 'position',         type: 'string' },
-    'data-offset-x':         { key: 'offsetX',          type: 'string' },
-    'data-offset-y':         { key: 'offsetY',          type: 'string' },
-    'data-panel-width':      { key: 'panelWidth',       type: 'string' },
-    'data-z-index':          { key: 'zIndex',           type: 'string' },
-    'data-collapsed':        { key: 'collapsed',        type: 'bool'   },
-    'data-cell-size':        { key: 'cellSize',         type: 'string' },
-    'data-cell-gap':         { key: 'cellGap',          type: 'string' },
-    'data-cell-radius':      { key: 'cellRadius',       type: 'string' },
-    'data-cells-per-row':    { key: 'cellsPerRow',      type: 'int'    },
-    'data-color-done':       { key: 'colorDone',        type: 'string' },
-    'data-color-pending':    { key: 'colorPending',     type: 'string' },
-    'data-color-panel':      { key: 'colorPanel',       type: 'string' },
-    'data-color-text':       { key: 'colorText',        type: 'string' },
-    'data-color-complete':   { key: 'colorComplete',    type: 'string' },
-    'data-title':            { key: 'title',            type: 'string' },
-    'data-label-done':       { key: 'labelDone',        type: 'string' },
-    'data-complete-text':    { key: 'completeText',     type: 'string' },
-    'data-complete-sub':     { key: 'completeSubText',  type: 'string' },
-    'data-animate-cell':          { key: 'animateCell',         type: 'bool'   },
-    'data-animate-duration':      { key: 'animateDuration',     type: 'string' },
-    'data-event-name':            { key: 'eventName',           type: 'string' },
-    'data-watch-stepper':         { key: 'watchStepper',        type: 'bool'   },
-    'data-font-size-panel':       { key: 'fontSizePanel',       type: 'string' },
-    'data-font-size-title':       { key: 'fontSizeTitle',       type: 'string' },
-    'data-font-size-count':       { key: 'fontSizeCount',       type: 'string' },
-    'data-font-size-complete':    { key: 'fontSizeComplete',    type: 'string' },
+    'data-prefix':                { key: 'prefix',           type: 'string' },
+    'data-position':              { key: 'position',          type: 'string' },
+    'data-offset-x':              { key: 'offsetX',           type: 'string' },
+    'data-offset-y':              { key: 'offsetY',           type: 'string' },
+    'data-panel-width':           { key: 'panelWidth',        type: 'string' },
+    'data-z-index':               { key: 'zIndex',            type: 'string' },
+    'data-collapsed':             { key: 'collapsed',         type: 'bool'   },
+    'data-cell-size':             { key: 'cellSize',          type: 'string' },
+    'data-cell-gap':              { key: 'cellGap',           type: 'string' },
+    'data-cell-radius':           { key: 'cellRadius',        type: 'string' },
+    'data-cells-per-row':         { key: 'cellsPerRow',       type: 'int'    },
+    'data-cell-shape':            { key: 'cellShape',         type: 'string' },
+    'data-color-done':            { key: 'colorDone',         type: 'string' },
+    'data-color-pending':         { key: 'colorPending',      type: 'string' },
+    'data-color-panel':           { key: 'colorPanel',        type: 'string' },
+    'data-color-text':            { key: 'colorText',         type: 'string' },
+    'data-color-complete':        { key: 'colorComplete',     type: 'string' },
+    'data-title':                 { key: 'title',             type: 'string' },
+    'data-label-done':            { key: 'labelDone',         type: 'string' },
+    'data-complete-text':         { key: 'completeText',      type: 'string' },
+    'data-complete-sub':          { key: 'completeSubText',   type: 'string' },
+    'data-animate-cell':          { key: 'animateCell',       type: 'bool'   },
+    'data-animate-duration':      { key: 'animateDuration',   type: 'string' },
+    'data-event-name':            { key: 'eventName',         type: 'string' },
+    'data-watch-stepper':         { key: 'watchStepper',      type: 'bool'   },
+    'data-font-size-panel':       { key: 'fontSizePanel',     type: 'string' },
+    'data-font-size-title':       { key: 'fontSizeTitle',     type: 'string' },
+    'data-font-size-count':       { key: 'fontSizeCount',     type: 'string' },
+    'data-font-size-complete':    { key: 'fontSizeComplete',  type: 'string' },
     'data-font-size-complete-sub':{ key: 'fontSizeCompleteSub', type: 'string' },
-    'data-click-go':              { key: 'clickGo',             type: 'bool'   },
+    'data-click-go':              { key: 'clickGo',           type: 'bool'   },
   };
 
   function readElementAttrs(el, cfg) {
@@ -102,12 +104,13 @@
     }
   }
 
+  /* ── 樣式注入 ─────────────────────────────────────────────── */
   if (!doc.getElementById(CSS_ID)) {
     const s = doc.createElement('style');
     s.id = CSS_ID;
     s.textContent = `
 practice-tracker,
-pt-header, pt-title, pt-toggle,
+pt-header, pt-title, pt-header-count, pt-toggle,
 pt-body, pt-grid, pt-cell,
 pt-count, pt-complete, pt-complete-sub {
   display: block;
@@ -131,7 +134,6 @@ practice-tracker {
 practice-tracker.pt-complete-state {
   border-color: rgba(179,222,115,0.45);
 }
-
 practice-tracker[data-inline] {
   position: relative;
   top:    auto !important;
@@ -141,22 +143,43 @@ practice-tracker[data-inline] {
   box-shadow: 0 4px 20px rgba(0,0,0,0.45), 0 1px 6px rgba(0,0,0,0.30);
 }
 
+/* ── 標題列 ── */
 pt-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
   padding: 9px 12px 8px;
   border-bottom: 1px solid rgba(198,199,189,0.10);
   cursor: pointer;
   user-select: none;
 }
 pt-title {
+  flex: 1;
   font-size: var(--pt-fs-title, 0.78rem);
   font-weight: 600;
   letter-spacing: 0.05em;
   opacity: 0.8;
   text-transform: uppercase;
 }
+
+/* 收合時顯示的進度數字 */
+pt-header-count {
+  font-size: var(--pt-fs-count, 0.76rem);
+  font-weight: 700;
+  color: var(--pt-done, #27AE60);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  line-height: 1;
+  transition: opacity 0.22s ease;
+}
+practice-tracker.is-collapsed pt-header-count {
+  opacity: 1;
+}
+practice-tracker.pt-complete-state pt-header-count {
+  color: var(--pt-complete-color, #B3DE73);
+}
+
 pt-toggle {
   font-size: 1rem;
   line-height: 1;
@@ -165,9 +188,11 @@ pt-toggle {
   text-align: center;
   transition: opacity 0.2s;
   font-family: monospace;
+  flex-shrink: 0;
 }
 pt-header:hover pt-toggle { opacity: 0.85; }
 
+/* ── 主體 ── */
 pt-body {
   padding: 10px 12px 12px;
   overflow: hidden;
@@ -183,7 +208,12 @@ practice-tracker.is-collapsed pt-body {
   opacity: 0;
   pointer-events: none;
 }
+/* 收合時完成提示也同步隱藏，改由 header-count 傳達狀態 */
+practice-tracker.is-collapsed pt-complete {
+  display: none !important;
+}
 
+/* ── 格子陣列 ── */
 pt-grid {
   display: grid;
   grid-template-columns: repeat(var(--pt-cols, 5), var(--pt-cell, 16px));
@@ -199,29 +229,54 @@ pt-cell {
     background var(--pt-anim, 0.3s) ease,
     transform  var(--pt-anim, 0.3s) cubic-bezier(.34,1.56,.64,1);
 }
-pt-cell.is-done {
-  background: var(--pt-done, #27AE60);
-}
-pt-cell.pt-pop {
-  transform: scale(1.4);
-}
-pt-cell[data-clickable] {
-  cursor: pointer;
-}
+pt-cell.is-done { background: var(--pt-done, #27AE60); }
+pt-cell.pt-pop  { transform: scale(1.4); }
+pt-cell[data-clickable] { cursor: pointer; }
 pt-cell[data-clickable]:hover {
   filter: brightness(1.35);
   transform: scale(1.12);
 }
 
+/* ── 形狀變體（clip-path 路線，is-done class 切換邏輯不變）── */
+pt-cell[data-shape="circle"] {
+  border-radius: 50%;
+}
+pt-cell[data-shape="star"] {
+  border-radius: 0;
+  clip-path: polygon(
+    50%  0%, 61% 35%, 98% 35%,
+    68% 57%, 79% 91%, 50% 70%,
+    21% 91%, 32% 57%,  2% 35%,
+    39% 35%
+  );
+}
+pt-cell[data-shape="diamond"] {
+  border-radius: 0;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+pt-cell[data-shape="hexagon"] {
+  border-radius: 0;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+pt-cell[data-shape="heart"] {
+  border-radius: 0;
+  clip-path: polygon(
+    50% 88%,
+    18% 54%,  6% 38%,  6% 24%,
+    12% 10%, 26%  4%, 40%  8%, 50% 20%,
+    60%  8%, 74%  4%, 88% 10%,
+    94% 24%, 94% 38%, 82% 54%
+  );
+}
+
+/* ── 計數 & 完成 ── */
 pt-count {
   font-size: var(--pt-fs-count, 0.76rem);
   opacity: 0.55;
   margin-top: 2px;
   transition: opacity 0.3s;
 }
-practice-tracker.pt-complete-state pt-count {
-  opacity: 0.3;
-}
+practice-tracker.pt-complete-state pt-count { opacity: 0.3; }
 
 pt-complete {
   display: none;
@@ -232,9 +287,7 @@ pt-complete {
   letter-spacing: 0.02em;
   line-height: 1.5;
 }
-practice-tracker.pt-complete-state pt-complete {
-  display: block;
-}
+practice-tracker.pt-complete-state pt-complete { display: block; }
 pt-complete-sub {
   font-size: var(--pt-fs-complete-sub, 0.73rem);
   font-weight: 400;
@@ -245,6 +298,7 @@ pt-complete-sub {
     doc.head.appendChild(s);
   }
 
+  /* ── 工具函式 ──────────────────────────────────────────────── */
   function applyCSSVars(el, cfg) {
     el.style.setProperty('--pt-width',          cfg.panelWidth);
     el.style.setProperty('--pt-panel-bg',        cfg.colorPanel);
@@ -273,19 +327,13 @@ pt-complete-sub {
     el.style.right  = pos.includes('right')  ? cfg.offsetX : 'auto';
   }
 
-  /* ── 主流程 ──────────────────────────────────────────── */
+  /* ── 主流程 ────────────────────────────────────────────────── */
   function init() {
 
-    /* ① 偵測 HTML 中是否已存在 <practice-tracker> 元素 */
     const hostEl = doc.querySelector('practice-tracker');
-
-    /* ② 建立此次實例的配置（三層優先序）
-     *   DEFAULTS  →  window.PracticeTrackerConfig  →  data-* 屬性（最高）
-     */
-    const cfg = Object.assign({}, DEFAULTS, win.PracticeTrackerConfig || {});
+    const cfg    = Object.assign({}, DEFAULTS, win.PracticeTrackerConfig || {});
     if (hostEl) readElementAttrs(hostEl, cfg);
 
-    /* ③ 收集目標 section */
     const sections = Array.from(
       doc.querySelectorAll(`section[id^="${cfg.prefix}"]`)
     );
@@ -295,40 +343,44 @@ pt-complete-sub {
     const doneSet = new Set();
     const cells   = {};
 
-    /* ④ 取用（或新建）tracker 元素；清空原有子內容 */
     const tracker = hostEl || doc.createElement('practice-tracker');
     if (hostEl) hostEl.innerHTML = '';
 
     applyCSSVars(tracker, cfg);
-
-    /* ⑤ 位置處理
-     *   data-inline 存在  → 保留文件流，不套 fixed 座標
-     *   data-inline 不存在 → 套 position:fixed + offsetX/Y
-     */
     const isInline = hostEl && hostEl.hasAttribute('data-inline');
     if (!isInline) applyPosition(tracker, cfg);
-
     if (cfg.collapsed) tracker.classList.add('is-collapsed');
 
-    /* ⑥ 標題列 */
-    const header   = doc.createElement('pt-header');
-    const titleEl  = doc.createElement('pt-title');
-    const toggleEl = doc.createElement('pt-toggle');
-    titleEl.textContent  = cfg.title;
-    toggleEl.textContent = cfg.collapsed ? '+' : '−';
+    /* ── 標題列 ── */
+    const header        = doc.createElement('pt-header');
+    const titleEl       = doc.createElement('pt-title');
+    const headerCountEl = doc.createElement('pt-header-count');  // 收合時顯示
+    const toggleEl      = doc.createElement('pt-toggle');
+
+    titleEl.textContent       = cfg.title;
+    headerCountEl.textContent = `0 / ${total}`;
+    toggleEl.textContent      = cfg.collapsed ? '+' : '−';
+
     header.appendChild(titleEl);
+    header.appendChild(headerCountEl);
     header.appendChild(toggleEl);
 
-    /* ⑦ 主體 */
+    /* ── 主體 ── */
     const body = doc.createElement('pt-body');
     body.style.maxHeight = '300px';
 
-    /* ⑧ 格子陣列 */
-    const grid = doc.createElement('pt-grid');
+    /* ── 格子 ── */
+    const grid     = doc.createElement('pt-grid');
+    const shapeVal = SHAPES.has((cfg.cellShape || '').toLowerCase())
+      ? cfg.cellShape.toLowerCase()
+      : 'square';
+
     sections.forEach(sec => {
       const cell = doc.createElement('pt-cell');
       cell.setAttribute('data-id', sec.id);
       cell.title = sec.id;
+
+      if (shapeVal !== 'square') cell.setAttribute('data-shape', shapeVal);
 
       if (cfg.clickGo) {
         cell.setAttribute('data-clickable', '');
@@ -341,14 +393,14 @@ pt-complete-sub {
       cells[sec.id] = cell;
     });
 
-    /* ⑨ 進度計數 */
+    /* ── 計數 ── */
     const countEl = doc.createElement('pt-count');
     countEl.textContent = `0 / ${total} ${cfg.labelDone}`;
 
     body.appendChild(grid);
     body.appendChild(countEl);
 
-    /* ⑩ 完成訊息 */
+    /* ── 完成提示 ── */
     const completeEl = doc.createElement('pt-complete');
     completeEl.textContent = cfg.completeText;
     if (cfg.completeSubText) {
@@ -357,28 +409,26 @@ pt-complete-sub {
       completeEl.appendChild(sub);
     }
 
-    /* ⑪ 組裝 */
+    /* ── 組裝 ── */
     tracker.appendChild(header);
     tracker.appendChild(body);
     tracker.appendChild(completeEl);
 
-    /* ⑫ 只在「純 JS 建立」模式下才 append 至 body */
     if (!hostEl) doc.body.appendChild(tracker);
 
-    /* ⑬ 收合切換 */
+    /* ── 收合切換 ── */
     header.addEventListener('click', () => {
       const nowCollapsed = tracker.classList.toggle('is-collapsed');
       toggleEl.textContent = nowCollapsed ? '+' : '−';
       if (!nowCollapsed) body.style.maxHeight = '300px';
     });
 
-    /* ── markDone：標記某階段完成 ─────────────────────── */
+    /* ── markDone ─────────────────────────────────────────── */
     function markDone(sectionId) {
       if (doneSet.has(sectionId)) return;
       if (!cells[sectionId]) return;
 
       doneSet.add(sectionId);
-
       const cell = cells[sectionId];
       cell.classList.add('is-done');
 
@@ -390,24 +440,40 @@ pt-complete-sub {
         );
       }
 
-      countEl.textContent = `${doneSet.size} / ${total} ${cfg.labelDone}`;
-      if (doneSet.size === total) tracker.classList.add('pt-complete-state');
+      const n = doneSet.size;
+      countEl.textContent       = `${n} / ${total} ${cfg.labelDone}`;
+      headerCountEl.textContent = `${n} / ${total}`;
+
+      if (n === total) tracker.classList.add('pt-complete-state');
     }
 
-    /* ⑭ 事件監聽 */
+    /* ── changeShape：執行期動態切換形狀 ─────────────────── */
+    function changeShape(shape) {
+      const s = SHAPES.has((shape || '').toLowerCase())
+        ? shape.toLowerCase()
+        : 'square';
+      Object.values(cells).forEach(cell => {
+        if (s === 'square') {
+          cell.removeAttribute('data-shape');
+        } else {
+          cell.setAttribute('data-shape', s);
+        }
+      });
+    }
+
+    /* ── 事件監聽 ── */
     if (cfg.watchStepper) {
       doc.addEventListener('bps:complete', e => {
         const sec = e.target.closest(`section[id^="${cfg.prefix}"]`);
         if (sec) markDone(sec.id);
       });
     }
-
     doc.addEventListener(cfg.eventName, e => {
       const id = e.detail && e.detail.sectionId;
       if (id) markDone(id);
     });
 
-    win.PracticeTracker = { markDone, total, doneSet, cfg };
+    win.PracticeTracker = { markDone, changeShape, total, doneSet, cfg };
   }
 
   if (doc.readyState === 'loading') {

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>practice-tracker 元件示範</title>
+<style>
+:root {
+  --bg:      #0C0D0C;
+  --shell:   #C6C7BD;
+  --lavender:#C3A5E5;
+  --sky:     #82C8E5;
+  --warning: #E6374B;
+  --salmon:  #E5C3B3;
+  --ocean:   #1CCAE8;
+  --safe:    #27AE60;
+  --teal:    #0DA591;
+  --vanilla: #DBEDD8;
+  --yellow:  #E3D322;
+  --focus:   #D4FFFC;
+  --special: #B3DE73;
+  --info:    #4171BF;
+  --indigo:  #7849C9;
+  --pink:    #FF91D7;
+  --orange:  #EDA109;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 18px; }
+
+body {
+  background: var(--bg);
+  color: var(--shell);
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  line-height: 1.5;
+  padding-bottom: 140px;
+}
+
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ── 頁首 ── */
+.site-header {
+  padding: 36px 0 28px;
+  margin-bottom: 52px;
+  border-bottom: 1px solid rgba(198,199,189,0.10);
+}
+.site-header h1 {
+  font-size: 1.4rem;
+  color: var(--lavender);
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+.site-header p {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: rgba(198,199,189,0.55);
+}
+.badge {
+  display: inline-block;
+  background: rgba(195,165,229,0.14);
+  border: 1px solid rgba(195,165,229,0.30);
+  border-radius: 4px;
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: var(--lavender);
+  margin-left: 10px;
+  vertical-align: middle;
+  letter-spacing: 0.03em;
+}
+
+/* ── 區塊共用 ── */
+.demo-block {
+  margin-bottom: 60px;
+}
+.demo-block h2 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ocean);
+  margin-bottom: 22px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(28,202,232,0.18);
+}
+
+/* ── 形狀一覽 ── */
+.shape-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.shape-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.shape-name {
+  width: 90px;
+  font-size: 0.78rem;
+  font-family: monospace;
+  color: rgba(198,199,189,0.50);
+  flex-shrink: 0;
+}
+.shape-cells {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  /* CSS 變數回退值已在 pt-cell 樣式中定義，此處只覆寫尺寸 */
+  --pt-cell:    22px;
+  --pt-radius:  4px;
+  --pt-pending: #2a2b2a;
+  --pt-done:    #27AE60;
+  --pt-anim:    0s;
+}
+.shape-cells.lg {
+  --pt-cell: 26px;
+}
+.shape-desc {
+  font-size: 0.78rem;
+  color: rgba(198,199,189,0.40);
+  margin-left: 6px;
+}
+
+/* ── 收合說明 ── */
+.callout {
+  background: rgba(65,113,191,0.10);
+  border: 1px solid rgba(65,113,191,0.28);
+  border-radius: 8px;
+  padding: 18px 22px;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--sky);
+}
+.callout strong { color: var(--focus); }
+.callout code {
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 0.80rem;
+  font-family: monospace;
+  color: var(--lavender);
+}
+
+/* ── 形狀切換按鈕 ── */
+.shape-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.shape-btn {
+  padding: 7px 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(198,199,189,0.18);
+  background: rgba(198,199,189,0.05);
+  color: var(--shell);
+  font-size: 0.82rem;
+  font-family: monospace;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  letter-spacing: 0.02em;
+}
+.shape-btn:hover {
+  background: rgba(198,199,189,0.11);
+  border-color: rgba(198,199,189,0.38);
+}
+.shape-btn.active {
+  background: rgba(179,222,115,0.13);
+  border-color: rgba(179,222,115,0.55);
+  color: var(--special);
+}
+.shape-hint {
+  font-size: 0.78rem;
+  color: rgba(198,199,189,0.40);
+}
+
+/* ── 關卡清單 ── */
+.stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.stage-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 20px;
+  background: rgba(198,199,189,0.03);
+  border: 1px solid rgba(198,199,189,0.09);
+  border-radius: 8px;
+  scroll-margin-top: 20px;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.stage-item.done {
+  border-color: rgba(39,174,96,0.32);
+  background: rgba(39,174,96,0.05);
+}
+.stage-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(198,199,189,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-family: monospace;
+  color: rgba(198,199,189,0.55);
+  flex-shrink: 0;
+  transition: background 0.3s, color 0.3s;
+}
+.stage-item.done .stage-num {
+  background: rgba(39,174,96,0.22);
+  color: var(--safe);
+}
+.stage-label {
+  flex: 1;
+  font-size: 0.90rem;
+  transition: color 0.3s, text-decoration 0.1s;
+}
+.stage-item.done .stage-label {
+  color: rgba(198,199,189,0.38);
+  text-decoration: line-through;
+  text-decoration-color: rgba(39,174,96,0.35);
+}
+.done-btn {
+  padding: 6px 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(39,174,96,0.32);
+  background: rgba(39,174,96,0.07);
+  color: var(--safe);
+  font-size: 0.80rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, opacity 0.2s;
+}
+.done-btn:hover:not(:disabled) { background: rgba(39,174,96,0.14); }
+.done-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+/* ── API 速查 ── */
+.api-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.api-table th, .api-table td {
+  text-align: left;
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(198,199,189,0.08);
+  vertical-align: top;
+}
+.api-table thead th {
+  color: rgba(198,199,189,0.50);
+  font-weight: 600;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.api-table td:first-child {
+  font-family: monospace;
+  color: var(--lavender);
+  white-space: nowrap;
+}
+.api-table td:nth-child(2) {
+  color: var(--yellow);
+  font-family: monospace;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.api-table td:last-child {
+  color: rgba(198,199,189,0.62);
+}
+</style>
+</head>
+<body>
+
+<!--
+  practice-tracker 元素；data-cell-shape 設預設形狀為 star。
+  data-click-go="true" 讓格子可點擊捲動至對應 section。
+-->
+<practice-tracker
+  data-title="練習進度"
+  data-cell-shape="star"
+  data-cell-size="20px"
+  data-cell-gap="7px"
+  data-cells-per-row="8"
+  data-panel-width="230px"
+  data-complete-text="全部完成！"
+  data-complete-sub="繼續保持。"
+  data-click-go="true"
+></practice-tracker>
+
+<div class="wrap">
+
+  <!-- 頁首 -->
+  <header class="site-header">
+    <h1>practice-tracker <span class="badge">v2</span></h1>
+    <p>格子形狀 · 收合計數 · 執行期切換形狀 · data-* 屬性配置</p>
+  </header>
+
+  <!-- 1. 形狀一覽 -->
+  <section class="demo-block">
+    <h2>格子形狀一覽（data-cell-shape）</h2>
+    <div class="shape-gallery">
+
+      <div class="shape-row">
+        <span class="shape-name">square</span>
+        <div class="shape-cells">
+          <pt-cell></pt-cell>
+          <pt-cell></pt-cell>
+          <pt-cell></pt-cell>
+          <pt-cell class="is-done"></pt-cell>
+          <pt-cell class="is-done"></pt-cell>
+        </div>
+        <span class="shape-desc">預設值，沿用 border-radius</span>
+      </div>
+
+      <div class="shape-row">
+        <span class="shape-name">circle</span>
+        <div class="shape-cells">
+          <pt-cell data-shape="circle"></pt-cell>
+          <pt-cell data-shape="circle"></pt-cell>
+          <pt-cell data-shape="circle"></pt-cell>
+          <pt-cell data-shape="circle" class="is-done"></pt-cell>
+          <pt-cell data-shape="circle" class="is-done"></pt-cell>
+        </div>
+        <span class="shape-desc">border-radius: 50%</span>
+      </div>
+
+      <div class="shape-row">
+        <span class="shape-name">star</span>
+        <div class="shape-cells lg">
+          <pt-cell data-shape="star"></pt-cell>
+          <pt-cell data-shape="star"></pt-cell>
+          <pt-cell data-shape="star"></pt-cell>
+          <pt-cell data-shape="star" class="is-done"></pt-cell>
+          <pt-cell data-shape="star" class="is-done"></pt-cell>
+        </div>
+        <span class="shape-desc">5 角星（clip-path polygon）</span>
+      </div>
+
+      <div class="shape-row">
+        <span class="shape-name">diamond</span>
+        <div class="shape-cells">
+          <pt-cell data-shape="diamond"></pt-cell>
+          <pt-cell data-shape="diamond"></pt-cell>
+          <pt-cell data-shape="diamond"></pt-cell>
+          <pt-cell data-shape="diamond" class="is-done"></pt-cell>
+          <pt-cell data-shape="diamond" class="is-done"></pt-cell>
+        </div>
+        <span class="shape-desc">菱形（clip-path polygon）</span>
+      </div>
+
+      <div class="shape-row">
+        <span class="shape-name">hexagon</span>
+        <div class="shape-cells">
+          <pt-cell data-shape="hexagon"></pt-cell>
+          <pt-cell data-shape="hexagon"></pt-cell>
+          <pt-cell data-shape="hexagon"></pt-cell>
+          <pt-cell data-shape="hexagon" class="is-done"></pt-cell>
+          <pt-cell data-shape="hexagon" class="is-done"></pt-cell>
+        </div>
+        <span class="shape-desc">六邊形（clip-path polygon）</span>
+      </div>
+
+      <div class="shape-row">
+        <span class="shape-name">heart</span>
+        <div class="shape-cells lg">
+          <pt-cell data-shape="heart"></pt-cell>
+          <pt-cell data-shape="heart"></pt-cell>
+          <pt-cell data-shape="heart"></pt-cell>
+          <pt-cell data-shape="heart" class="is-done"></pt-cell>
+          <pt-cell data-shape="heart" class="is-done"></pt-cell>
+        </div>
+        <span class="shape-desc">愛心（clip-path polygon）</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 2. 收合計數說明 -->
+  <section class="demo-block">
+    <h2>收合時標題行顯示進度（pt-header-count）</h2>
+    <div class="callout">
+      點擊右下角面板標題列可以<strong>收合</strong>面板。收合後，標題右側會立即顯示
+      <code>已完成 / 總計</code>，讓你隨時確認進度而不佔版面。<br>
+      全部完成後計數文字切換為<strong>完成色</strong>（<code>colorComplete</code>）；
+      展開面板後計數隱藏，由格子陣列和完成訊息接管。
+    </div>
+  </section>
+
+  <!-- 3. 即時切換形狀 -->
+  <section class="demo-block">
+    <h2>即時切換追蹤面板形狀（PracticeTracker.changeShape）</h2>
+    <div class="shape-btns" id="shape-btns">
+      <button class="shape-btn active" data-shape="star">star</button>
+      <button class="shape-btn" data-shape="square">square</button>
+      <button class="shape-btn" data-shape="circle">circle</button>
+      <button class="shape-btn" data-shape="diamond">diamond</button>
+      <button class="shape-btn" data-shape="hexagon">hexagon</button>
+      <button class="shape-btn" data-shape="heart">heart</button>
+    </div>
+    <p class="shape-hint">按下後右下角面板的格子形狀立即切換，不重新初始化元件。</p>
+  </section>
+
+  <!-- 4. 關卡清單 -->
+  <section class="demo-block">
+    <h2>練習關卡（點擊「標記完成」推進進度）</h2>
+    <div class="stage-list" id="stage-list"></div>
+  </section>
+
+  <!-- 5. API 速查 -->
+  <section class="demo-block">
+    <h2>公開 API（window.PracticeTracker）</h2>
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>屬性 / 方法</th>
+          <th>型別</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>markDone(sectionId)</td>
+          <td>Function</td>
+          <td>標記指定 section ID 為完成，重複呼叫無副作用。</td>
+        </tr>
+        <tr>
+          <td>changeShape(shape)</td>
+          <td>Function</td>
+          <td>執行期切換所有格子形狀，接受 square / circle / star / diamond / hexagon / heart，無效值回退至 square。</td>
+        </tr>
+        <tr>
+          <td>total</td>
+          <td>Number</td>
+          <td>偵測到的 section 總數（唯讀）。</td>
+        </tr>
+        <tr>
+          <td>doneSet</td>
+          <td>Set&lt;string&gt;</td>
+          <td>目前已完成的 section ID 集合（唯讀）。</td>
+        </tr>
+        <tr>
+          <td>cfg</td>
+          <td>Object</td>
+          <td>解析後的完整配置物件（唯讀）。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div><!-- /.wrap -->
+
+<!-- ex-* sections 就是頁面上可見的關卡區塊，pt 元件據此計數 -->
+<!-- 由下方 JS 動態產生並插入 -->
+
+<script src="practice-tracker.js"></script>
+<script>
+(function () {
+
+  const STAGES = [
+    '準備學習環境，確認依賴套件',
+    '理解 practice-tracker 元件結構',
+    '設定 data-cell-shape 格子形狀',
+    '調整配色與 colorDone / colorComplete',
+    '測試收合行為與標題計數顯示',
+    '驗證 pt-pop 彈出動畫效果',
+    '使用 changeShape() 動態切換形狀',
+    '整合至正式專案並確認完成狀態',
+  ];
+
+  /* ── 產生 ex-* section 及清單列 ── */
+  const stageList = document.getElementById('stage-list');
+
+  STAGES.forEach(function (label, i) {
+    var id = 'ex-' + (i + 1);
+
+    /* 實際 section（practice-tracker 偵測目標） */
+    var sec = document.createElement('section');
+    sec.id = id;
+    sec.className = 'stage-item';
+    sec.setAttribute('scroll-margin-top', '20px');
+
+    var numEl = document.createElement('div');
+    numEl.className = 'stage-num';
+    numEl.textContent = String(i + 1).padStart(2, '0');
+
+    var labelEl = document.createElement('span');
+    labelEl.className = 'stage-label';
+    labelEl.textContent = label;
+
+    var btn = document.createElement('button');
+    btn.className = 'done-btn';
+    btn.textContent = '標記完成';
+    btn.setAttribute('data-id', id);
+    btn.addEventListener('click', function () {
+      if (!window.PracticeTracker) return;
+      window.PracticeTracker.markDone(id);
+      btn.disabled = true;
+      sec.classList.add('done');
+    });
+
+    sec.appendChild(numEl);
+    sec.appendChild(labelEl);
+    sec.appendChild(btn);
+    stageList.appendChild(sec);
+  });
+
+  /* ── 形狀切換按鈕 ── */
+  document.getElementById('shape-btns').addEventListener('click', function (e) {
+    var btn = e.target.closest('.shape-btn');
+    if (!btn) return;
+    var shape = btn.dataset.shape;
+    if (!window.PracticeTracker) return;
+    window.PracticeTracker.changeShape(shape);
+    document.querySelectorAll('.shape-btn').forEach(function (b) {
+      b.classList.toggle('active', b === btn);
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
