@@ -99,39 +99,38 @@ class CardToggle extends HTMLElement {
                 --ct-bar-width-hover: 5px;
                 /* 預設動態顏色變數 */
                 --ct-active-color: var(--ct-color-special);
-                /* 各部位字體大小（最小 1.125rem） */
-                --ct-fs-body:         1.125rem;
-                --ct-fs-number:       1.125rem;
-                --ct-fs-input:        1.125rem;
-                --ct-fs-submit:       1.125rem;
-                --ct-fs-aux:          1.125rem;
-                --ct-fs-feedback:     1.125rem;
-                --ct-fs-hintbox:      1.125rem;
-                --ct-fs-flipnote:     1.125rem;
-                --ct-fs-info:         1.125rem;
-                --ct-fs-infobox:      1.125rem;
-                --ct-fs-nav:          1.125rem;
-                --ct-fs-page:         1.125rem;
-                --ct-fs-counter:      1.125rem;
-                --ct-fs-result-score: 2.4rem;
-                --ct-fs-result-text:  1.125rem;
-                --ct-fs-retry:        1.125rem;
-                /* 分支翻面專屬字體大小 */
-                --ct-fs-branch-btn:   1.125rem;
-                --ct-fs-branch-label: 1.125rem;
-                --ct-fs-branch-body:  1.125rem;
+                
+                --ct-fs-body:         1rem;
+                --ct-fs-number:       1rem;
+                --ct-fs-input:        1rem;
+                --ct-fs-submit:       1rem;
+                --ct-fs-aux:          1rem;
+                --ct-fs-feedback:     1rem;
+                --ct-fs-hintbox:      1rem;
+                --ct-fs-flipnote:     1rem;
+                --ct-fs-info:         1rem;
+                --ct-fs-infobox:      1rem;
+                --ct-fs-nav:          1rem;
+                --ct-fs-page:         1rem;
+                --ct-fs-counter:      1rem;
+                --ct-fs-result-score: 2rem;
+                --ct-fs-result-text:  1rem;
+                --ct-fs-retry:        1rem;
+                --ct-fs-branch-btn:   1rem;
+                --ct-fs-branch-label: 1rem;
+                --ct-fs-branch-body:  1rem;
                 /* number 標記樣式 */
                 --ct-number-weight:   600;
                 --ct-number-opacity:  0.78;
                 /* 各部位 padding（縮小版） */
                 --ct-pad-input:  6px 10px;
-                --ct-pad-submit: 4px 14px;
+                --ct-pad-submit: 4px 12px;
                 --ct-pad-aux:    3px 12px;
                 --ct-pad-info:    3px 12px;
-                --ct-pad-infobox: 8px 14px;
-                --ct-pad-nav:    4px 14px;
+                --ct-pad-infobox: 8px 12px;
+                --ct-pad-nav:    4px 12px;
                 --ct-pad-page:   2px 6px;
-                --ct-pad-retry:  4px 14px;
+                --ct-pad-retry:  4px 12px;
             }
 
             card-toggle {
@@ -139,7 +138,7 @@ class CardToggle extends HTMLElement {
                 position: relative;
                 background-color: var(--ct-bg-secondary);
                 border-radius: 6px;
-                padding: 10px 16px 10px 14px;
+                padding: 8px;
                 cursor: pointer;
                 transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
                 overflow: hidden;
