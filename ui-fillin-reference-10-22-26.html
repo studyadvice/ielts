@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>ui-fillin 全屬性對照手冊</title>
+<style>
+  :root{
+    --bg:#ffffff;--panel:#f4f4f4;--line:#dcdcdc;--text:#1a1a1a;--muted:#666666;--code-bg:#f0f0f0;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font:18px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;max-width:1180px;margin:0 auto;padding:32px 24px 96px}
+  h1{font-size:1.75rem;margin:0 0 8px}
+  h1 + p{color:var(--muted);margin:0 0 32px}
+  h2{font-size:1.25rem;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h3{font-size:1.05rem;margin:0;font-weight:700}
+  .intro{padding:16px;border:1px solid var(--line);border-radius:6px;background:var(--panel);margin-bottom:24px}
+  .intro p{margin:0 0 8px}
+  .intro p:last-child{margin-bottom:0}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px 16px;padding:12px 16px;border:1px solid var(--line);border-radius:6px;margin-bottom:24px;font-size:0.95rem}
+  nav.toc a{color:var(--text)}
+  table.attrs{width:100%;border-collapse:collapse;margin:8px 0 20px;font-size:0.95rem}
+  table.attrs th,table.attrs td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  table.attrs th{background:var(--panel);font-weight:700}
+  table.attrs code{background:var(--code-bg);padding:1px 5px;border-radius:3px}
+  .row{display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:16px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row .meta{padding-right:8px}
+  .row .meta p{margin:4px 0 0;color:var(--muted);font-size:0.92rem}
+  pre{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow:auto;font-size:0.85rem;line-height:1.45;margin:6px 0 0}
+  code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+  .demo{padding:4px}
+  .src{display:none}
+  .tag{display:inline-block;font-size:0.75rem;padding:1px 7px;border:1px solid var(--line);border-radius:999px;color:var(--muted);margin-left:6px}
+</style>
+</head>
+<body>
+
+<h1>ui-fillin 全屬性對照手冊</h1>
+<p>每一項屬性皆為「左側程式碼、右側即時效果」對照，頁面本身採灰階配色，避免干擾元件自身的配色判讀。</p>
+
+<div class="intro">
+  <p><strong>兩種模式：</strong><code>mode="choice"</code>（預設，選擇題挖空）與 <code>mode="text"</code>（文字輸入比對，永遠區分大小寫）。</p>
+  <p><strong>大括號語法：</strong>選擇題 <code>{*正確答案|選項二|選項三}</code>；輸入題 <code>{答案1|答案2}</code>（都算正確，不需星號）。</p>
+</div>
+
+<nav class="toc">
+  <a href="#size">尺寸／排版</a>
+  <a href="#btn">按鈕專屬</a>
+  <a href="#color">顏色</a>
+  <a href="#label">文字標籤</a>
+  <a href="#behave">行為與呈現</a>
+  <a href="#text-mode">文字輸入模式專屬</a>
+  <a href="#full">完整組合範例</a>
+</nav>
+
+<h2 id="size">一、尺寸／排版屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>font-size</code></td><td>數字或 rem</td><td>1.125（18px）</td><td>主要字級，所有子元素按比例換算</td></tr>
+<tr><td><code>line-height</code></td><td>數字</td><td>1.4</td><td>行高，強制不超過 1.5</td></tr>
+<tr><td><code>root-padding</code></td><td>px，1~4 組</td><td>8px</td><td>最外層容器內距</td></tr>
+<tr><td><code>main-padding</code></td><td>px，1~4 組</td><td>8px</td><td>題幹文字區內距</td></tr>
+<tr><td><code>blank-padding</code></td><td>px，1~4 組</td><td>2px 6px</td><td>每個挖空格內距</td></tr>
+<tr><td><code>menu-padding</code></td><td>px，1~4 組</td><td>6px</td><td>選項彈出選單內距</td></tr>
+<tr><td><code>option-padding</code></td><td>px，1~4 組</td><td>4px 10px</td><td>選單內每個選項內距</td></tr>
+<tr><td><code>ans-padding</code></td><td>px，1~4 組</td><td>8px</td><td>文末答案總表區內距</td></tr>
+<tr><td><code>blank-max-width</code></td><td>rem</td><td>20rem</td><td>挖空格最大寬度</td></tr>
+<tr><td><code>menu-max-width</code></td><td>rem</td><td>24rem</td><td>選單最大寬度</td></tr>
+<tr><td><code>menu-max-height</code></td><td>vh</td><td>60vh</td><td>選單最大高度</td></tr>
+<tr><td><code>border-width</code></td><td>px</td><td>2px</td><td>最外層外框粗細</td></tr>
+<tr><td><code>radius</code></td><td>px</td><td>6px</td><td>挖空格／選單圓角</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>預設（緊湊）</h3>
+    <pre><code>&lt;ui-fillin&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-size-1" class="src"><p>台灣最高峰是{*玉山|阿里山|雪山}。</p></div>
+    <ui-fillin><main-box source="s-size-1"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>放大字級 + 加寬內距 + 加粗外框</h3>
+    <pre><code>&lt;ui-fillin
+  font-size="1.4"
+  line-height="1.5"
+  root-padding="20px"
+  main-padding="16px"
+  blank-padding="6px 14px"
+  border-width="3px"
+  radius="12px"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-size-2" class="src"><p>台灣最高峰是{*玉山|阿里山|雪山}。</p></div>
+    <ui-fillin font-size="1.4" line-height="1.5" root-padding="20px" main-padding="16px" blank-padding="6px 14px" border-width="3px" radius="12px">
+      <main-box source="s-size-2"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>縮小選單寬高（題目選項較少時）</h3>
+    <pre><code>&lt;ui-fillin
+  menu-max-width="12rem"
+  menu-max-height="30vh"
+  blank-max-width="8rem"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-size-3" class="src"><p>偶數是{*2|3|5}。</p></div>
+    <ui-fillin menu-max-width="12rem" menu-max-height="30vh" blank-max-width="8rem">
+      <main-box source="s-size-3"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<h2 id="btn">二、按鈕專屬屬性（提交／重做按鈕，獨立於主字級）</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>btn-padding</code></td><td>px，1~4 組</td><td>3px 10px</td><td>按鈕內距，預設刻意比主要內容更精緻小巧</td></tr>
+<tr><td><code>btn-font-size</code></td><td>數字或 rem</td><td>主字級 × 0.8</td><td>按鈕文字大小，與主字級脫鉤</td></tr>
+<tr><td><code>btn-radius</code></td><td>px</td><td>5px</td><td>按鈕圓角</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>預設（精緻小按鈕）</h3>
+    <pre><code>&lt;ui-fillin&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-btn-1" class="src"><p>台灣的首都是{*台北市|高雄市}。</p></div>
+    <ui-fillin><main-box source="s-btn-1"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>放大按鈕</h3>
+    <pre><code>&lt;ui-fillin
+  btn-padding="10px 24px"
+  btn-font-size="1.125"
+  btn-radius="10px"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-btn-2" class="src"><p>台灣的首都是{*台北市|高雄市}。</p></div>
+    <ui-fillin btn-padding="10px 24px" btn-font-size="1.125" btn-radius="10px">
+      <main-box source="s-btn-2"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<h2 id="color">三、顏色屬性（rgba 透明度一律不得低於 0.78）</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>bg-color</code></td><td>#hex／rgba()</td><td>#0C0D0C</td><td>元件底色</td></tr>
+<tr><td><code>text-color</code></td><td>#hex／rgba()</td><td>#C6C7BD</td><td>主要文字色</td></tr>
+<tr><td><code>accent-color</code></td><td>#hex／rgba()</td><td>#C6C7BD</td><td>挖空框／按鈕／強調色</td></tr>
+<tr><td><code>ok-color</code></td><td>#hex／rgba()</td><td>#27AE60</td><td>答對的顏色</td></tr>
+<tr><td><code>bad-color</code></td><td>#hex／rgba()</td><td>#E6374B</td><td>答錯的顏色</td></tr>
+<tr><td><code>line-color</code></td><td>"R,G,B"</td><td>198,199,189</td><td>分隔線／邊框底色（不含透明度）</td></tr>
+<tr><td><code>line-alpha</code></td><td>0.78~1</td><td>0.78</td><td>分隔線透明度，低於 0.78 會自動拉回 0.78</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>預設色票</h3>
+    <pre><code>&lt;ui-fillin&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-color-1" class="src"><p>水的化學式是{*H2O|CO2|O2}。</p></div>
+    <ui-fillin><main-box source="s-color-1"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>自訂 accent／ok／bad 色</h3>
+    <pre><code>&lt;ui-fillin
+  accent-color="#82C8E5"
+  ok-color="#27AE60"
+  bad-color="#E6374B"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-color-2" class="src"><p>水的化學式是{*H2O|CO2|O2}。</p></div>
+    <ui-fillin accent-color="#82C8E5" ok-color="#27AE60" bad-color="#E6374B">
+      <main-box source="s-color-2"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>淺色主題（自訂底色與文字色）</h3>
+    <pre><code>&lt;ui-fillin
+  bg-color="#DBEDD8"
+  text-color="#0C0D0C"
+  accent-color="#1CCAE8"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-color-3" class="src"><p>水的化學式是{*H2O|CO2|O2}。</p></div>
+    <ui-fillin bg-color="#DBEDD8" text-color="#0C0D0C" accent-color="#1CCAE8">
+      <main-box source="s-color-3"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<h2 id="label">四、文字標籤屬性（未設定則使用內建中文）</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>預設值</th></tr>
+<tr><td><code>label-correct</code></td><td>正確</td></tr>
+<tr><td><code>label-incorrect</code></td><td>錯誤</td></tr>
+<tr><td><code>label-unanswered</code></td><td>未作答</td></tr>
+<tr><td><code>label-multi-hint</code></td><td>可複選</td></tr>
+<tr><td><code>label-submit</code></td><td>提交答案</td></tr>
+<tr><td><code>label-reset</code></td><td>重做</td></tr>
+<tr><td><code>label-submitted</code></td><td>已批改，請查看每題的對錯。</td></tr>
+<tr><td><code>label-no-source</code></td><td>找不到題目來源區塊，請檢查 main-box 的 source 屬性。</td></tr>
+<tr><td><code>label-no-blanks</code></td><td>題幹中沒有可用的空格⋯</td></tr>
+<tr><td><code>label-correct-answer-prefix</code></td><td>正確答案：</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>全部改成英文</h3>
+    <pre><code>&lt;ui-fillin
+  label-correct="Correct"
+  label-incorrect="Incorrect"
+  label-unanswered="No answer"
+  label-submit="Submit"
+  label-reset="Reset"
+  label-submitted="Graded."&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-label-1" class="src"><p>HTTP 404 代表 {*找不到頁面|伺服器錯誤}。</p></div>
+    <ui-fillin label-correct="Correct" label-incorrect="Incorrect" label-unanswered="No answer" label-submit="Submit" label-reset="Reset" label-submitted="Graded.">
+      <main-box source="s-label-1"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<h2 id="behave">五、行為與呈現屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>型態</th><th>說明</th></tr>
+<tr><td><code>mode</code></td><td>choice／text</td><td>選擇題或文字輸入比對，預設 choice</td></tr>
+<tr><td><code>option-style</code></td><td>alpha／digit／cjk</td><td>選項代號：A/B/C、1/2/3、甲/乙/丙</td></tr>
+<tr><td><code>random</code></td><td>布林</td><td>來源清單（ul/ol 的 li）隨機排序</td></tr>
+<tr><td><code>reshuffle-on-reset</code></td><td>布林</td><td>搭配 random，重做時重新洗牌</td></tr>
+<tr><td><code>hide-answer-table</code></td><td>布林</td><td>隱藏文末答案總表，只留按鈕</td></tr>
+<tr><td><code>hide-number</code></td><td>布林</td><td>挖空格不顯示題號</td></tr>
+<tr><td><code>no-number-dot</code></td><td>布林</td><td>題號後面不加句點</td></tr>
+<tr><td><code>results-id</code></td><td>字串（元素 id）</td><td>把批改結果額外寫入頁面上指定的區塊</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>option-style="digit"</h3>
+    <pre><code>&lt;ui-fillin option-style="digit"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-b-1" class="src"><p>偶數是{*2|3|5}。</p></div>
+    <ui-fillin option-style="digit"><main-box source="s-b-1"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>option-style="cjk"</h3>
+    <pre><code>&lt;ui-fillin option-style="cjk"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-b-2" class="src"><p>質數是{*7|8|9}。</p></div>
+    <ui-fillin option-style="cjk"><main-box source="s-b-2"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>random + reshuffle-on-reset（每次重做都重新洗牌）</h3>
+    <pre><code>&lt;ui-fillin random reshuffle-on-reset&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-b-3" class="src">
+      <ol>
+        <li>第一題：{*A|B|C}</li>
+        <li>第二題：{*D|E|F}</li>
+        <li>第三題：{*G|H|I}</li>
+      </ol>
+    </div>
+    <ui-fillin random reshuffle-on-reset><main-box source="s-b-3"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>hide-answer-table（只留按鈕，不顯示總表）</h3>
+    <pre><code>&lt;ui-fillin hide-answer-table&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-b-4" class="src"><p>偶數是{*2|3|5}。</p></div>
+    <ui-fillin hide-answer-table><main-box source="s-b-4"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>hide-number + no-number-dot</h3>
+    <pre><code>&lt;ui-fillin hide-number&gt;
+&lt;ui-fillin no-number-dot&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-b-5" class="src"><p>偶數是{*2|3|5}。</p></div>
+    <ui-fillin hide-number><main-box source="s-b-5"></main-box></ui-fillin>
+    <div id="s-b-5b" class="src"><p>偶數是{*2|3|5}。</p></div>
+    <ui-fillin no-number-dot><main-box source="s-b-5b"></main-box></ui-fillin>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>results-id（結果同步寫到頁面上其他區塊）</h3>
+    <pre><code>&lt;ui-fillin results-id="ext-box"&gt;
+⋯
+&lt;div id="ext-box"&gt;&lt;/div&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-b-6" class="src"><p>水的化學式是{*H2O|CO2|O2}。</p></div>
+    <ui-fillin results-id="ext-box"><main-box source="s-b-6"></main-box></ui-fillin>
+    <p style="color:var(--muted);margin:8px 0 2px">外部結果區塊：</p>
+    <div id="ext-box" style="padding:8px;border:1px dashed var(--line);border-radius:6px;min-height:1.6em"></div>
+  </div>
+</div>
+
+<h2 id="text-mode">六、文字輸入模式（mode="text"）專屬屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>型態</th><th>說明</th></tr>
+<tr><td><code>normalize-width</code></td><td>布林</td><td>比對前把全形英數字／全形空白轉半形再比對</td></tr>
+<tr><td><code>show-answer-on-wrong</code></td><td>布林</td><td>答錯時在輸入框旁顯示正確答案</td></tr>
+</table>
+<p style="color:var(--muted)">輸入題語法：<code>{答案}</code> 或 <code>{答案1|答案2}</code>（都算正確，不需星號）。比對永遠區分大小寫，前後空白自動去除。</p>
+
+<div class="row">
+  <div class="meta">
+    <h3>基本輸入題 + 多個可接受答案</h3>
+    <pre><code>&lt;ui-fillin mode="text" show-answer-on-wrong&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-t-1" class="src"><p>HTML 全名是 {HyperText Markup Language}，顏色拼法 {color|colour} 皆可。</p></div>
+    <ui-fillin mode="text" show-answer-on-wrong><main-box source="s-t-1"></main-box></ui-fillin>
+    <p style="color:var(--muted);margin:6px 0 0">注意：大小寫必須完全一致，"html" 不等於 "HTML"。</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>normalize-width（全形半形皆可）</h3>
+    <pre><code>&lt;ui-fillin mode="text" normalize-width hide-answer-table&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-t-2" class="src"><p>今天是西元 {2026} 年。</p></div>
+    <ui-fillin mode="text" normalize-width hide-answer-table><main-box source="s-t-2"></main-box></ui-fillin>
+  </div>
+</div>
+
+<h2 id="full">七、完整組合範例</h2>
+<div class="row">
+  <div class="meta">
+    <h3>多項屬性同時套用</h3>
+    <pre><code>&lt;ui-fillin
+  font-size="1.2"
+  line-height="1.4"
+  root-padding="14px"
+  blank-padding="4px 10px"
+  border-width="1px"
+  radius="10px"
+  btn-padding="6px 18px"
+  btn-font-size="0.95"
+  accent-color="#B3DE73"
+  option-style="digit"
+  hide-answer-table
+  random&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <div id="s-full-1" class="src">
+      <ol>
+        <li>下列何者為質數：{*7|8|9}</li>
+        <li>下列何者為偶數：{*4|5|7}</li>
+      </ol>
+    </div>
+    <ui-fillin
+      font-size="1.2" line-height="1.4" root-padding="14px" blank-padding="4px 10px"
+      border-width="1px" radius="10px" btn-padding="6px 18px" btn-font-size="0.95"
+      accent-color="#B3DE73" option-style="digit" hide-answer-table random>
+      <main-box source="s-full-1"></main-box>
+    </ui-fillin>
+  </div>
+</div>
+
+<script src="ui-fillin.js"></script>
+</body>
+</html>
