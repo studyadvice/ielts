@@ -25,31 +25,24 @@
     borderHoverColor:     '#82C8E5',
     borderActiveColor:    '#C3A5E5',
     numberColor:          '#82C8E5',
-    themeColor:           null,        /* 全域主題色：非 null 時所有數字統一此色 */
+    themeColor:           null,
+
+    accentColors: [
+      '#82C8E5', '#C3A5E5', '#1CCAE8', '#B3DE73', '#E3D322',
+      '#E5C3B3', '#0DA591', '#FF91D7', '#EDA109', '#7849C9'
+    ],
+
+    backgroundColor:      '#0C0D0C',
+    activeBackground:     '#10192a',
     numberBg:             '#0d1b24',
     numberDivider:        '#1c2d38',
     textColor:            '#C6C7BD',
-    backgroundColor:      '#0C0D0C',
-    activeBackground:     '#10192a',
-
-    accentColors: [
-      '#82C8E5',   /* sky */
-      '#C3A5E5',   /* lavender */
-      '#1CCAE8',   /* ocean */
-      '#B3DE73',   /* special */
-      '#E3D322',   /* yellow */
-      '#E5C3B3',   /* salmon */
-      '#0DA591',   /* teal */
-      '#FF91D7',   /* pink */
-      '#EDA109',   /* orange */
-      '#7849C9'    /* indigo */
-    ],
 
     fontSize:             '1.125rem',
     numberFontSize:       '3rem',
-    iconFontSize:         '2.25rem',   /* mode="icon" 圖示尺寸 */
+    iconFontSize:         '2.25rem',
     numberMinWidth:       '84px',
-    gridNumberMinWidth:   '60px',      /* cols 模式下較窄的數字欄（last-span 項目恢復 numberMinWidth） */
+    gridNumberMinWidth:   '60px',
     borderRadius:         '6px',
     borderWidth:          '1px',
     rowGap:               '4px',
@@ -57,7 +50,16 @@
     padV:                 '8px',
     padH:                 '12px',
     numberPad:            '12px 16px',
-    lineGap:              '3px'
+    lineGap:              '3px',
+
+    /* ── FAB 專屬設定 ── */
+    fabSize:              '52px',    /* 按鈕寬高 */
+    fabIconSize:          '1.4rem',  /* 圖示字體大小 */
+    fabLabelSize:         '0.6rem',  /* label 短文字大小 */
+    fabBg:                '#0d1b24', /* 按鈕底色 */
+    fabBorderRadius:      '8px',     /* 按鈕圓角 */
+    fabOffset:            '16px',    /* 距螢幕左 / 右邊緣距離 */
+    fabBottom:            '120px'    /* 距螢幕底部距離 */
   };
 
   var store = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
@@ -66,12 +68,9 @@
     if (value === null || value === undefined) return null;
     var v = String(value).trim();
     if (!v) return null;
-
     var key = v.toLowerCase();
     if (Object.prototype.hasOwnProperty.call(Palette, key)) return Palette[key];
-
     if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('color', v)) return v;
-
     if (global.console && console.warn) {
       console.warn('[NumericList] ' + (attrName || 'color') + '="' + v + '" 無效，可用名稱：' +
         Object.keys(Palette).join(', '));
@@ -84,34 +83,20 @@
     return (
       'ui-list{display:block}' +
 
-      /* ── 預設：直欄（flex-column） ── */
+      /* ── 直欄（預設） ── */
       '.nl-list{' +
         'display:flex;flex-direction:column;' +
         'gap:var(--nl-gap,' + c.rowGap + ');' +
         'list-style:none;margin:0;padding:0' +
       '}' +
 
-      /* ── Grid 模式（cols >= 2） ── */
-      '.nl-list--grid{' +
-        'display:grid;' +
-        'grid-template-columns:repeat(var(--nl-cols,2),1fr)' +
-      '}' +
+      /* ── Grid 模式 ── */
+      '.nl-list--grid{display:grid;grid-template-columns:repeat(var(--nl-cols,2),1fr)}' +
+      '.nl-list--grid .nl-number{min-width:' + c.gridNumberMinWidth + '}' +
+      '.nl-list--grid.nl-list--last-span>.nl-item:last-child{grid-column:1/-1}' +
+      '.nl-list--grid.nl-list--last-span>.nl-item:last-child .nl-number{min-width:' + c.numberMinWidth + '}' +
 
-      /* Grid 模式下數字欄縮窄，避免擠壓內容 */
-      '.nl-list--grid .nl-number{' +
-        'min-width:' + c.gridNumberMinWidth +
-      '}' +
-
-      /* last-span：最後一項撐滿整列 */
-      '.nl-list--grid.nl-list--last-span>.nl-item:last-child{' +
-        'grid-column:1/-1' +
-      '}' +
-
-      /* last-span 時最後一項有完整寬度，數字欄恢復原始寬度 */
-      '.nl-list--grid.nl-list--last-span>.nl-item:last-child .nl-number{' +
-        'min-width:' + c.numberMinWidth +
-      '}' +
-
+      /* ── 共用 item ── */
       '.nl-item{' +
         'display:flex;align-items:stretch;' +
         'border:' + c.borderWidth + ' solid ' + c.borderColor + ';' +
@@ -119,13 +104,8 @@
         'background:' + c.backgroundColor + ';' +
         'transition:border-color .18s ease,background .18s ease' +
       '}' +
-
-      '.nl-item:hover{' +
-        'border-color:var(--nl-hover-color,' + c.borderHoverColor + ')' +
-      '}' +
-
+      '.nl-item:hover{border-color:var(--nl-hover-color,' + c.borderHoverColor + ')}' +
       '.nl-item--clickable{cursor:pointer}' +
-
       '.nl-item--active{' +
         'border-color:var(--nl-active-color,' + c.borderActiveColor + ')!important;' +
         'background:var(--nl-active-bg,' + c.activeBackground + ')' +
@@ -139,22 +119,45 @@
         'border-right:' + c.borderWidth + ' solid ' + c.numberDivider + ';' +
         'flex-shrink:0;line-height:1;user-select:none;font-variant-numeric:tabular-nums' +
       '}' +
-
-      /* icon mode：覆蓋數字尺寸與字重 */
-      '.nl-number--icon{' +
-        'font-size:' + c.iconFontSize + ';' +
-        'font-weight:400;' +
-        'font-variant-numeric:normal' +
-      '}' +
+      '.nl-number--icon{font-size:' + c.iconFontSize + ';font-weight:400;font-variant-numeric:normal}' +
 
       '.nl-content{' +
         'display:flex;flex-direction:column;justify-content:center;' +
         'padding:' + c.padV + ' ' + c.padH + ';gap:' + c.lineGap + ';flex:1;min-width:0;' +
         'font-size:' + c.fontSize + ';color:' + c.textColor + ';line-height:' + c.lineHeight +
       '}' +
-
       '.nl-content p,.nl-content li{margin:0;padding:0}' +
-      '.nl-placeholder{color:#595a57;font-style:italic}'
+      '.nl-placeholder{color:#595a57;font-style:italic}' +
+
+      /* ══════════════════════════════════════════
+         FAB 按鈕樣式
+         hover 色由 JS 以 --nl-fab-hover 注入至
+         每個按鈕，使每顆按鈕獨立顯示 accent 色。
+         ══════════════════════════════════════════ */
+      '.nl-fab-btn{' +
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+        'width:' + c.fabSize + ';min-height:' + c.fabSize + ';' +
+        'background:' + c.fabBg + ';' +
+        'border:' + c.borderWidth + ' solid ' + c.borderColor + ';' +
+        'border-radius:' + c.fabBorderRadius + ';' +
+        'font-size:' + c.fabIconSize + ';font-family:inherit;' +
+        'gap:3px;padding:8px 4px;' +
+        'text-decoration:none;cursor:pointer;' +
+        'transition:border-color .18s ease,background .18s ease,color .18s ease;' +
+        'user-select:none;box-sizing:border-box;' +
+        '-webkit-appearance:none;appearance:none' +
+      '}' +
+
+      '.nl-fab-btn:hover{' +
+        'border-color:var(--nl-fab-hover,' + c.borderHoverColor + ');' +
+        'background:color-mix(in srgb,var(--nl-fab-hover,' + c.borderHoverColor + ') 15%,' + c.backgroundColor + ');' +
+        'color:var(--nl-fab-hover,' + c.borderHoverColor + ')' +
+      '}' +
+
+      '.nl-fab-label{' +
+        'font-size:' + c.fabLabelSize + ';font-weight:700;' +
+        'letter-spacing:0.05em;line-height:1;color:inherit' +
+      '}'
     );
   }
 
@@ -168,7 +171,6 @@
     el.textContent = buildCSS();
   }
 
-  /* width="80%/360px" → width:80%; min-width:360px */
   function applyWidth(el, attr) {
     if (!attr) { el.style.width = '100%'; return; }
     var parts = attr.split('/');
@@ -200,32 +202,27 @@
     }
   }
 
+  /* extractItems 同時服務所有模式；
+     fab 專屬欄位（href / label / linkTarget）在其他模式下為 null，無副作用。 */
   function extractItems(listEl) {
     var items = listEl.querySelectorAll(':scope > list-item');
     return Array.prototype.map.call(items, function (item, i) {
       return {
-        number : item.getAttribute('number') || String(i + 1),
-        accent : item.getAttribute('accent') || null,
-        source : item.getAttribute('source') || null,
-        target : item.getAttribute('target') || null,
-        icon   : item.getAttribute('icon')   || null,
-        html   : item.innerHTML.trim()
+        number    : item.getAttribute('number')      || String(i + 1),
+        accent    : item.getAttribute('accent')      || null,
+        source    : item.getAttribute('source')      || null,
+        target    : item.getAttribute('target')      || null,
+        icon      : item.getAttribute('icon')        || null,
+        href      : item.getAttribute('href')        || null,
+        label     : item.getAttribute('label')       || null,
+        linkTarget: item.getAttribute('link-target') || null,
+        html      : item.innerHTML.trim()
       };
     });
   }
 
   /* ═══════════════════════════════════════════════════════════════════
-   *  建立單一 <li>
-   *
-   *  isIconMode = true 時：
-   *    有 icon 屬性 → 渲染 <i class="bi bi-{name}">，套用 .nl-number--icon
-   *    無 icon 屬性 → 退回顯示數字（原有行為）
-   *
-   *  數字顏色優先序：
-   *    1. list-item 的 accent 屬性
-   *    2. ui-list 的 theme-color 屬性
-   *    3. Config.themeColor（全域）
-   *    4. Config.accentColors 循環
+   *  buildLi：數字 / icon / Grid 模式共用
    * ═══════════════════════════════════════════════════════════════════ */
   function buildLi(data, idx, siblings, listTheme, isIconMode) {
     var accent = resolveColor(data.accent, 'accent')
@@ -242,7 +239,6 @@
     numDiv.className   = 'nl-number';
     numDiv.style.color = accent;
 
-    /* ── 左側標記：圖示 or 數字 ── */
     if (isIconMode && data.icon) {
       numDiv.classList.add('nl-number--icon');
       var iconEl = document.createElement('i');
@@ -266,11 +262,8 @@
 
     if (isClickable) {
       li.addEventListener('click', function () {
-        for (var j = 0; j < siblings.length; j++) {
-          siblings[j].classList.remove('nl-item--active');
-        }
+        for (var j = 0; j < siblings.length; j++) siblings[j].classList.remove('nl-item--active');
         li.classList.add('nl-item--active');
-
         var srcEl = document.getElementById(data.source);
         var tgtEl = document.getElementById(data.target);
         if (srcEl && tgtEl) tgtEl.innerHTML = srcEl.innerHTML;
@@ -281,15 +274,122 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════
-   *  cols 屬性：
-   *    cols="2" → 2 欄 Grid（isGridMode = cols >= 2）
-   *    cols="1" 或無屬性 → 預設直欄 flex 模式
+   *  buildFabBtn：fab 模式專用
    *
-   *  last-span 屬性（boolean）：
-   *    奇數項目時，最後一項橫跨整列。
-   *    cols < 2 或項目數為偶數時無視覺效果，但宣告無副作用。
+   *  href 有值且不以 # 開頭 → <a> 外連結（rel="noopener"）
+   *  href 以 # 開頭          → <button> + JS smooth scroll
+   *  href 無值               → <button>（使用者自行 attach 事件）
+   *
+   *  link-target 屬性對應 <a target="...">，與 source/target 機制不衝突。
+   * ═══════════════════════════════════════════════════════════════════ */
+  function buildFabBtn(data, idx, listTheme) {
+    var accent = resolveColor(data.accent, 'accent')
+      || listTheme
+      || resolveColor(Config.themeColor, 'themeColor')
+      || Config.accentColors[idx % Config.accentColors.length];
+
+    var el;
+    var isExternal = !!(data.href && data.href.charAt(0) !== '#');
+
+    if (isExternal) {
+      el      = document.createElement('a');
+      el.href = data.href;
+      if (data.linkTarget) el.target = data.linkTarget;
+      el.rel  = 'noopener';
+    } else {
+      el      = document.createElement('button');
+      el.type = 'button';
+      if (data.href) {
+        var scrollTarget = data.href;
+        el.addEventListener('click', function () {
+          if (scrollTarget === '#' || scrollTarget === '#top') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            var anchor = document.querySelector(scrollTarget);
+            if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      }
+    }
+
+    el.className = 'nl-fab-btn';
+    el.style.color = accent;
+    el.style.setProperty('--nl-fab-hover', accent);
+
+    if (data.icon) {
+      var iconEl = document.createElement('i');
+      iconEl.className = 'bi bi-' + data.icon;
+      el.appendChild(iconEl);
+    }
+
+    if (data.label) {
+      var labelEl = document.createElement('span');
+      labelEl.className   = 'nl-fab-label';
+      labelEl.textContent = data.label;
+      el.appendChild(labelEl);
+    }
+
+    return el;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+   *  renderFab：<ui-list> 本身作為 fixed 容器
+   *
+   *  position="right"（預設）/ "left"
+   *  offset="16px"  — 距螢幕邊緣
+   *  bottom="120px" — 距螢幕底部
+   * ═══════════════════════════════════════════════════════════════════ */
+  function renderFab(listEl) {
+    var rawItems = listEl.querySelectorAll(':scope > list-item');
+    var itemData;
+
+    if (rawItems.length) {
+      itemData = extractItems(listEl);
+      if (store) store.set(listEl, { fabItems: itemData });
+    } else {
+      var cached = store ? store.get(listEl) : null;
+      if (!cached || !cached.fabItems) return;
+      itemData = cached.fabItems;
+    }
+
+    var theme    = getListTheme(listEl);
+    var pos      = (listEl.getAttribute('position') || 'right').toLowerCase();
+    var offset   = listEl.getAttribute('offset') || Config.fabOffset;
+    var bottom   = listEl.getAttribute('bottom') || Config.fabBottom;
+    var gap      = listEl.getAttribute('gap')    || Config.rowGap;
+
+    /* ui-list 自身轉為 fixed 容器 */
+    listEl.style.position      = 'fixed';
+    listEl.style.display       = 'flex';
+    listEl.style.flexDirection = 'column';
+    listEl.style.zIndex        = '9999';
+    listEl.style.gap           = gap;
+    listEl.style.bottom        = bottom;
+    listEl.style.top           = '';
+    listEl.style.width         = '';
+    listEl.style.left          = (pos === 'left')  ? offset : '';
+    listEl.style.right         = (pos !== 'left')  ? offset : '';
+
+    listEl.innerHTML = '';
+
+    for (var i = 0; i < itemData.length; i++) {
+      listEl.appendChild(buildFabBtn(itemData[i], i, theme));
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+   *  renderUIList：入口，依 mode 分流
+   *
+   *  mode="fab"  → renderFab()（獨立邏輯，不共用 buildLi）
+   *  其餘         → 數字 / icon / Grid 邏輯
    * ═══════════════════════════════════════════════════════════════════ */
   function renderUIList(listEl) {
+    /* fab 走獨立分支 */
+    if (listEl.getAttribute('mode') === 'fab') {
+      renderFab(listEl);
+      return;
+    }
+
     var widthAttr;
     var itemData;
     var isIconMode;
@@ -314,7 +414,7 @@
       widthAttr   = cached.width;
       itemData    = cached.items;
       isIconMode  = cached.iconMode;
-      cols        = cached.cols   || 0;
+      cols        = cached.cols    || 0;
       hasLastSpan = cached.lastSpan || false;
     }
 
@@ -331,13 +431,12 @@
 
     var ol = document.createElement('ol');
     ol.className = 'nl-list' +
-      (isGridMode ? ' nl-list--grid'      : '') +
-      (hasLastSpan ? ' nl-list--last-span' : '');
+      (isGridMode  ? ' nl-list--grid'       : '') +
+      (hasLastSpan ? ' nl-list--last-span'  : '');
 
     if (isGridMode) ol.style.setProperty('--nl-cols', String(cols));
 
     var liEls = [];
-
     for (var i = 0; i < itemData.length; i++) {
       var li = buildLi(itemData[i], i, liEls, theme, isIconMode);
       liEls.push(li);
@@ -356,19 +455,19 @@
    * ═══════════════════════════════════════════════════════════════════ */
   var NumericList = {
     get defaults() { return Object.assign({}, Config); },
-
-    /* 品牌色票（唯讀副本） */
-    get colors() { return Object.assign({}, Palette); },
+    get colors()   { return Object.assign({}, Palette); },
 
     /**
      * 覆蓋全域設定並重建 CSS。
      *
-     * 新增設定項：
-     *   iconFontSize        — icon mode 圖示大小（預設 2.25rem）
-     *   gridNumberMinWidth  — Grid 模式下數字欄最小寬度（預設 60px）
-     *
-     * themeColor 可填品牌色名稱，例如 setup({ themeColor: 'lavender' })。
-     * 恢復循環色：setup({ themeColor: null })
+     * fab 相關設定：
+     *   fabSize          — 按鈕寬高（預設 52px）
+     *   fabIconSize      — 圖示大小（預設 1.4rem）
+     *   fabLabelSize     — label 文字大小（預設 0.6rem）
+     *   fabBg            — 按鈕背景色（預設 #0d1b24）
+     *   fabBorderRadius  — 圓角（預設 8px）
+     *   fabOffset        — 距螢幕邊緣（預設 16px）
+     *   fabBottom        — 距螢幕底部（預設 120px）
      */
     setup: function (opts) {
       if (!opts || typeof opts !== 'object') { injectCSS(); return; }
@@ -381,7 +480,6 @@
       if (opts.numberColor !== undefined) {
         Config.numberColor = resolveColor(opts.numberColor, 'numberColor') || Config.numberColor;
       }
-
       if (opts.numberColor !== undefined && opts.themeColor === undefined) {
         Config.themeColor = Config.numberColor;
       }
