@@ -25,7 +25,7 @@
     borderHoverColor:   '#82C8E5',
     borderActiveColor:  '#C3A5E5',
     numberColor:        '#82C8E5',
-    themeColor:         null,        /* 全域主題色：非 null 時所有數字統一此色，可填品牌色名稱 */
+    themeColor:         null,        /* 全域主題色：非 null 時所有數字統一此色 */
     numberBg:           '#0d1b24',
     numberDivider:      '#1c2d38',
     textColor:          '#C6C7BD',
@@ -47,6 +47,7 @@
 
     fontSize:       '1.125rem',
     numberFontSize: '3rem',
+    iconFontSize:   '2.25rem',   /* mode="icon" 專用：圖示尺寸，可透過 setup() 覆蓋 */
     numberMinWidth: '84px',
     borderRadius:   '6px',
     borderWidth:    '1px',
@@ -116,6 +117,13 @@
         'flex-shrink:0;line-height:1;user-select:none;font-variant-numeric:tabular-nums' +
       '}' +
 
+      /* ── icon mode：覆蓋數字尺寸與字重；圖示不需要 tabular-nums ── */
+      '.nl-number--icon{' +
+        'font-size:' + c.iconFontSize + ';' +
+        'font-weight:400;' +
+        'font-variant-numeric:normal' +
+      '}' +
+
       '.nl-content{' +
         'display:flex;flex-direction:column;justify-content:center;' +
         'padding:' + c.padV + ' ' + c.padH + ';gap:' + c.lineGap + ';flex:1;min-width:0;' +
@@ -145,20 +153,10 @@
     if (parts[1]) el.style.minWidth = parts[1].trim();
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  取得此清單的主題色（theme-color 屬性優先，其次全域 themeColor）
-   * ═══════════════════════════════════════════════════════════════════ */
   function getListTheme(listEl) {
     return resolveColor(listEl.getAttribute('theme-color'), 'theme-color');
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  per-list CSS 自訂屬性
-   *
-   *  hover  顏色：hover 屬性 > theme-color > 全域設定
-   *  active 顏色：active 屬性 > hover 屬性 > theme-color > 全域設定
-   *  active 背景：有 theme-color 或 active 色時，自動以該色混入底色
-   * ═══════════════════════════════════════════════════════════════════ */
   function applyListProps(listEl, theme) {
     var props = ['--nl-gap', '--nl-hover-color', '--nl-active-color', '--nl-active-bg'];
     for (var p = 0; p < props.length; p++) listEl.style.removeProperty(props[p]);
@@ -187,6 +185,7 @@
         accent : item.getAttribute('accent') || null,
         source : item.getAttribute('source') || null,
         target : item.getAttribute('target') || null,
+        icon   : item.getAttribute('icon')   || null,   /* mode="icon" 專用 */
         html   : item.innerHTML.trim()
       };
     });
@@ -195,13 +194,17 @@
   /* ═══════════════════════════════════════════════════════════════════
    *  建立單一 <li>
    *
+   *  isIconMode = true 時：
+   *    有 icon 屬性 → 渲染 <i class="bi bi-{name}">，套用 .nl-number--icon
+   *    無 icon 屬性 → 退回顯示數字（原有行為）
+   *
    *  數字顏色優先序：
-   *    1. list-item 的 accent 屬性（可用品牌色名稱）
+   *    1. list-item 的 accent 屬性
    *    2. ui-list 的 theme-color 屬性
    *    3. Config.themeColor（全域）
    *    4. Config.accentColors 循環
    * ═══════════════════════════════════════════════════════════════════ */
-  function buildLi(data, idx, siblings, listTheme) {
+  function buildLi(data, idx, siblings, listTheme, isIconMode) {
     var accent = resolveColor(data.accent, 'accent')
       || listTheme
       || resolveColor(Config.themeColor, 'themeColor')
@@ -215,7 +218,17 @@
     var numDiv = document.createElement('div');
     numDiv.className   = 'nl-number';
     numDiv.style.color = accent;
-    numDiv.textContent = data.number;
+
+    /* ── 左側標記：圖示 or 數字 ── */
+    if (isIconMode && data.icon) {
+      numDiv.classList.add('nl-number--icon');
+      var iconEl = document.createElement('i');
+      iconEl.className = 'bi bi-' + data.icon;
+      numDiv.appendChild(iconEl);
+    } else {
+      /* 無 icon 屬性（或非 icon mode）：退回顯示數字 */
+      numDiv.textContent = data.number;
+    }
 
     var body = document.createElement('div');
     body.className = 'nl-content';
@@ -248,17 +261,20 @@
   function renderUIList(listEl) {
     var widthAttr;
     var itemData;
+    var isIconMode;
 
     var rawItems = listEl.querySelectorAll(':scope > list-item');
     if (rawItems.length) {
-      widthAttr = listEl.getAttribute('width');
-      itemData  = extractItems(listEl);
-      if (store) store.set(listEl, { width: widthAttr, items: itemData });
+      widthAttr  = listEl.getAttribute('width');
+      isIconMode = listEl.getAttribute('mode') === 'icon';
+      itemData   = extractItems(listEl);
+      if (store) store.set(listEl, { width: widthAttr, items: itemData, iconMode: isIconMode });
     } else {
       var cached = store ? store.get(listEl) : null;
       if (!cached) return;
-      widthAttr = cached.width;
-      itemData  = cached.items;
+      widthAttr  = cached.width;
+      itemData   = cached.items;
+      isIconMode = cached.iconMode;
     }
 
     for (var s = 0; s < itemData.length; s++) {
@@ -268,7 +284,6 @@
       }
     }
 
-    /* theme-color 每次渲染都重新讀取，修改屬性後呼叫 render(el) 即可生效 */
     var theme = getListTheme(listEl);
 
     var ol       = document.createElement('ol');
@@ -276,7 +291,7 @@
     var liEls    = [];
 
     for (var i = 0; i < itemData.length; i++) {
-      var li = buildLi(itemData[i], i, liEls, theme);
+      var li = buildLi(itemData[i], i, liEls, theme, isIconMode);
       liEls.push(li);
       ol.appendChild(li);
     }
@@ -299,6 +314,8 @@
 
     /**
      * 覆蓋全域設定並重建 CSS。
+     * 新增 iconFontSize 可調整 icon mode 圖示大小，例如：
+     *   NumericList.setup({ iconFontSize: '2rem' })
      * themeColor 可填品牌色名稱，例如 setup({ themeColor: 'lavender' })。
      * 恢復循環色：setup({ themeColor: null })
      */
