@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>slider-show 更新示範</title>
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font:18px/1.5 "Noto Sans TC","PingFang TC",system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px}
+  h2{color:#C3A5E5;margin-top:56px}
+  p.note{color:#82C8E5;margin:6px 0 16px}
+</style>
+</head>
+<body>
+
+<h1>slider-show 更新示範</h1>
+
+<h2>1. 進度顯示樣式：progress-style="stepper"（O--O--O--O）</h2>
+<p class="note">搭配 progress-scope="all" 可顯示跨所有 part 的整體進度，預設 "part" 只顯示目前 part 內。</p>
+<slider-show height="220px" progress-style="stepper" auto-show-part-buttons="true">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第 1 部分 - 第 1 張</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第 1 部分 - 第 2 張</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第 1 部分 - 第 3 張</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>第 2 部分 - 第 1 張</p></div></div></div>
+</slider-show>
+
+<h2>2. 三種進度樣式對照：dots／stepper／numbers</h2>
+<p>dots（預設）：</p>
+<slider-show height="140px" progress-style="dots">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 A</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 B</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 C</p></div></div></div>
+</slider-show>
+
+<p>numbers：</p>
+<slider-show height="140px" progress-style="numbers">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 A</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 B</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 C</p></div></div></div>
+</slider-show>
+
+<p>none（不顯示任何進度列）：</p>
+<slider-show height="140px" progress-style="none">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 A</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>投影片 B</p></div></div></div>
+</slider-show>
+
+<h2>3. 起始／結束畫面：五種框架風格</h2>
+<p class="note">用 role="start" / role="end" 標記投影片，再用 start-style / end-style 挑選風格；不標記 role 就完全沒有效果。</p>
+
+<p>gradient-border（漸層外框）：</p>
+<slider-show height="180px" start-style="gradient-border" end-style="gradient-border">
+  <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面：歡迎開始本課程</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>一般內容頁</p></div></div></div>
+  <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾：恭喜完成課程</p></div></div></div>
+</slider-show>
+
+<p>gradient-bg（漸層底色）：</p>
+<slider-show height="180px" start-style="gradient-bg" end-style="gradient-bg">
+  <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面：歡迎開始本課程</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>一般內容頁</p></div></div></div>
+  <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾：恭喜完成課程</p></div></div></div>
+</slider-show>
+
+<p>accent-frame（單色粗外框，不標 style 時的預設值）：</p>
+<slider-show height="180px">
+  <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面：歡迎開始本課程</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>一般內容頁</p></div></div></div>
+  <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾：恭喜完成課程</p></div></div></div>
+</slider-show>
+
+<p>top-bottom-bar（上下橫條）：</p>
+<slider-show height="180px" start-style="top-bottom-bar" end-style="top-bottom-bar">
+  <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面：歡迎開始本課程</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>一般內容頁</p></div></div></div>
+  <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾：恭喜完成課程</p></div></div></div>
+</slider-show>
+
+<p>corner-tag（折角標籤）：</p>
+<slider-show height="180px" start-style="corner-tag" end-style="corner-tag">
+  <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面：歡迎開始本課程</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>一般內容頁</p></div></div></div>
+  <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾：恭喜完成課程</p></div></div></div>
+</slider-show>
+
+<p>自訂顏色（start-colors / end-colors）：</p>
+<slider-show height="180px" start-style="gradient-border" end-style="gradient-border" start-colors="indigo,pink" end-colors="ocean,teal">
+  <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面（indigo → pink）</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>一般內容頁</p></div></div></div>
+  <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾（ocean → teal）</p></div></div></div>
+</slider-show>
+
+<h2>4. 轉場方向修正：上一部分 / 下一部分方向相反</h2>
+<p class="note">點「下一部分」畫面向左滑出；點「上一部分」畫面會向右滑出（方向正確對應直覺）。</p>
+<slider-show height="160px" part-transition="slide" auto-show-part-buttons="true">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第 1 部分</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>第 2 部分</p></div></div></div>
+  <div slide part="3"><div class="slide-content"><div class="slide-main"><p>第 3 部分</p></div></div></div>
+</slider-show>
+
+<h2>5. 填空題（quiz）+ restart 會清空作答</h2>
+<p class="note">填完後按「下一部分」查看結果，再按「重新開始」確認填空內容會被清空。</p>
+<slider-show height="220px" auto-show-part-buttons="true">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>請填空：<quiz>台灣最高峰是 {{玉山}}。</quiz></p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>（結果會顯示在這一頁上方）</p></div></div></div>
+</slider-show>
+
+<script src="slider-show.js"></script>
+</body>
+</html>
