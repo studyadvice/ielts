@@ -21,16 +21,16 @@
   };
 
   var Config = {
-    borderColor:        '#6a6b68',
-    borderHoverColor:   '#82C8E5',
-    borderActiveColor:  '#C3A5E5',
-    numberColor:        '#82C8E5',
-    themeColor:         null,        /* 全域主題色：非 null 時所有數字統一此色 */
-    numberBg:           '#0d1b24',
-    numberDivider:      '#1c2d38',
-    textColor:          '#C6C7BD',
-    backgroundColor:    '#0C0D0C',
-    activeBackground:   '#10192a',
+    borderColor:          '#6a6b68',
+    borderHoverColor:     '#82C8E5',
+    borderActiveColor:    '#C3A5E5',
+    numberColor:          '#82C8E5',
+    themeColor:           null,        /* 全域主題色：非 null 時所有數字統一此色 */
+    numberBg:             '#0d1b24',
+    numberDivider:        '#1c2d38',
+    textColor:            '#C6C7BD',
+    backgroundColor:      '#0C0D0C',
+    activeBackground:     '#10192a',
 
     accentColors: [
       '#82C8E5',   /* sky */
@@ -45,18 +45,19 @@
       '#7849C9'    /* indigo */
     ],
 
-    fontSize:       '1.125rem',
-    numberFontSize: '3rem',
-    iconFontSize:   '2.25rem',   /* mode="icon" 專用：圖示尺寸，可透過 setup() 覆蓋 */
-    numberMinWidth: '84px',
-    borderRadius:   '6px',
-    borderWidth:    '1px',
-    rowGap:         '4px',
-    lineHeight:     1.5,
-    padV:           '8px',
-    padH:           '12px',
-    numberPad:      '12px 16px',
-    lineGap:        '3px'
+    fontSize:             '1.125rem',
+    numberFontSize:       '3rem',
+    iconFontSize:         '2.25rem',   /* mode="icon" 圖示尺寸 */
+    numberMinWidth:       '84px',
+    gridNumberMinWidth:   '60px',      /* cols 模式下較窄的數字欄（last-span 項目恢復 numberMinWidth） */
+    borderRadius:         '6px',
+    borderWidth:          '1px',
+    rowGap:               '4px',
+    lineHeight:           1.5,
+    padV:                 '8px',
+    padH:                 '12px',
+    numberPad:            '12px 16px',
+    lineGap:              '3px'
   };
 
   var store = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
@@ -83,10 +84,32 @@
     return (
       'ui-list{display:block}' +
 
+      /* ── 預設：直欄（flex-column） ── */
       '.nl-list{' +
         'display:flex;flex-direction:column;' +
         'gap:var(--nl-gap,' + c.rowGap + ');' +
         'list-style:none;margin:0;padding:0' +
+      '}' +
+
+      /* ── Grid 模式（cols >= 2） ── */
+      '.nl-list--grid{' +
+        'display:grid;' +
+        'grid-template-columns:repeat(var(--nl-cols,2),1fr)' +
+      '}' +
+
+      /* Grid 模式下數字欄縮窄，避免擠壓內容 */
+      '.nl-list--grid .nl-number{' +
+        'min-width:' + c.gridNumberMinWidth +
+      '}' +
+
+      /* last-span：最後一項撐滿整列 */
+      '.nl-list--grid.nl-list--last-span>.nl-item:last-child{' +
+        'grid-column:1/-1' +
+      '}' +
+
+      /* last-span 時最後一項有完整寬度，數字欄恢復原始寬度 */
+      '.nl-list--grid.nl-list--last-span>.nl-item:last-child .nl-number{' +
+        'min-width:' + c.numberMinWidth +
       '}' +
 
       '.nl-item{' +
@@ -117,7 +140,7 @@
         'flex-shrink:0;line-height:1;user-select:none;font-variant-numeric:tabular-nums' +
       '}' +
 
-      /* ── icon mode：覆蓋數字尺寸與字重；圖示不需要 tabular-nums ── */
+      /* icon mode：覆蓋數字尺寸與字重 */
       '.nl-number--icon{' +
         'font-size:' + c.iconFontSize + ';' +
         'font-weight:400;' +
@@ -185,7 +208,7 @@
         accent : item.getAttribute('accent') || null,
         source : item.getAttribute('source') || null,
         target : item.getAttribute('target') || null,
-        icon   : item.getAttribute('icon')   || null,   /* mode="icon" 專用 */
+        icon   : item.getAttribute('icon')   || null,
         html   : item.innerHTML.trim()
       };
     });
@@ -226,7 +249,6 @@
       iconEl.className = 'bi bi-' + data.icon;
       numDiv.appendChild(iconEl);
     } else {
-      /* 無 icon 屬性（或非 icon mode）：退回顯示數字 */
       numDiv.textContent = data.number;
     }
 
@@ -258,24 +280,45 @@
     return li;
   }
 
+  /* ═══════════════════════════════════════════════════════════════════
+   *  cols 屬性：
+   *    cols="2" → 2 欄 Grid（isGridMode = cols >= 2）
+   *    cols="1" 或無屬性 → 預設直欄 flex 模式
+   *
+   *  last-span 屬性（boolean）：
+   *    奇數項目時，最後一項橫跨整列。
+   *    cols < 2 或項目數為偶數時無視覺效果，但宣告無副作用。
+   * ═══════════════════════════════════════════════════════════════════ */
   function renderUIList(listEl) {
     var widthAttr;
     var itemData;
     var isIconMode;
+    var cols;
+    var hasLastSpan;
 
     var rawItems = listEl.querySelectorAll(':scope > list-item');
     if (rawItems.length) {
-      widthAttr  = listEl.getAttribute('width');
-      isIconMode = listEl.getAttribute('mode') === 'icon';
-      itemData   = extractItems(listEl);
-      if (store) store.set(listEl, { width: widthAttr, items: itemData, iconMode: isIconMode });
+      widthAttr   = listEl.getAttribute('width');
+      isIconMode  = listEl.getAttribute('mode') === 'icon';
+      var colsAttr = listEl.getAttribute('cols');
+      cols        = colsAttr ? Math.max(1, parseInt(colsAttr, 10) || 1) : 0;
+      hasLastSpan = cols >= 2 && listEl.hasAttribute('last-span');
+      itemData    = extractItems(listEl);
+      if (store) store.set(listEl, {
+        width: widthAttr, items: itemData,
+        iconMode: isIconMode, cols: cols, lastSpan: hasLastSpan
+      });
     } else {
       var cached = store ? store.get(listEl) : null;
       if (!cached) return;
-      widthAttr  = cached.width;
-      itemData   = cached.items;
-      isIconMode = cached.iconMode;
+      widthAttr   = cached.width;
+      itemData    = cached.items;
+      isIconMode  = cached.iconMode;
+      cols        = cached.cols   || 0;
+      hasLastSpan = cached.lastSpan || false;
     }
+
+    var isGridMode = cols >= 2;
 
     for (var s = 0; s < itemData.length; s++) {
       if (itemData[s].source) {
@@ -286,9 +329,14 @@
 
     var theme = getListTheme(listEl);
 
-    var ol       = document.createElement('ol');
-    ol.className = 'nl-list';
-    var liEls    = [];
+    var ol = document.createElement('ol');
+    ol.className = 'nl-list' +
+      (isGridMode ? ' nl-list--grid'      : '') +
+      (hasLastSpan ? ' nl-list--last-span' : '');
+
+    if (isGridMode) ol.style.setProperty('--nl-cols', String(cols));
+
+    var liEls = [];
 
     for (var i = 0; i < itemData.length; i++) {
       var li = buildLi(itemData[i], i, liEls, theme, isIconMode);
@@ -314,8 +362,11 @@
 
     /**
      * 覆蓋全域設定並重建 CSS。
-     * 新增 iconFontSize 可調整 icon mode 圖示大小，例如：
-     *   NumericList.setup({ iconFontSize: '2rem' })
+     *
+     * 新增設定項：
+     *   iconFontSize        — icon mode 圖示大小（預設 2.25rem）
+     *   gridNumberMinWidth  — Grid 模式下數字欄最小寬度（預設 60px）
+     *
      * themeColor 可填品牌色名稱，例如 setup({ themeColor: 'lavender' })。
      * 恢復循環色：setup({ themeColor: null })
      */
@@ -324,7 +375,6 @@
 
       Object.assign(Config, opts);
 
-      /* themeColor、numberColor 允許使用品牌色名稱 */
       if (opts.themeColor !== undefined && opts.themeColor !== null) {
         Config.themeColor = resolveColor(opts.themeColor, 'themeColor');
       }

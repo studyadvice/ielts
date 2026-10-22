@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NumericList · mode="icon" Demo</title>
+  <title>NumericList Demo · icon + grid</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     :root { font-size: 18px; }
@@ -17,39 +17,57 @@
       line-height: 1.5;
     }
 
+    /* ── 頁面骨架 ── */
     .page {
-      max-width: 1100px;
+      max-width: 1160px;
       margin: 0 auto;
-      padding: 52px 36px 80px;
+      padding: 52px 36px 96px;
     }
 
-    /* ── 頁頭 ── */
     .page-title {
       font-size: 2rem;
       font-weight: 700;
       color: #82C8E5;
       margin: 0 0 6px;
-      letter-spacing: -0.01em;
     }
     .page-title code {
       background: #0f1d10;
       color: #B3DE73;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       padding: 2px 12px;
       border-radius: 5px;
       font-family: 'Cascadia Code', 'Fira Code', monospace;
     }
     .page-meta {
       color: #484a46;
-      font-size: 0.85rem;
-      margin: 0 0 60px;
+      font-size: 0.82rem;
+      margin: 0 0 16px;
+    }
+
+    /* ── 章節標題 ── */
+    .chapter {
+      margin: 60px 0 32px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1a1b18;
+    }
+    .chapter h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #C3A5E5;
+      margin: 0 0 2px;
+      letter-spacing: 0.02em;
+    }
+    .chapter p {
+      color: #484a46;
+      font-size: 0.82rem;
+      margin: 0;
     }
 
     /* ── 分節 ── */
-    .section { margin-bottom: 60px; }
+    .section { margin-bottom: 52px; }
 
     .section-label {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #7849C9;
@@ -63,19 +81,26 @@
       border: 1px solid #252623;
       border-radius: 6px;
       padding: 14px 18px;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: #B3DE73;
       margin-bottom: 16px;
       white-space: pre;
       overflow-x: auto;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    hr {
-      border: none;
-      border-top: 1px solid #1a1b18;
-      margin: 60px 0;
+    /* ── 徽章 ── */
+    .badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .badge {
+      font-size:0.72rem; padding:2px 10px;
+      border-radius:30px; font-weight:600; letter-spacing:0.03em;
     }
+    .b-icon    { background:rgba(195,165,229,0.13); color:#C3A5E5; border:1px solid rgba(195,165,229,0.32); }
+    .b-num     { background:rgba(130,200,229,0.11); color:#82C8E5; border:1px solid rgba(130,200,229,0.28); }
+    .b-grid    { background:rgba(179,222,115,0.11); color:#B3DE73; border:1px solid rgba(179,222,115,0.28); }
+    .b-span    { background:rgba(237,161,9,0.11);   color:#EDA109; border:1px solid rgba(237,161,9,0.28); }
+    .b-click   { background:rgba(13,165,145,0.11);  color:#0DA591; border:1px solid rgba(13,165,145,0.28); }
+    .b-mix     { background:rgba(227,211,34,0.11);  color:#E3D322; border:1px solid rgba(227,211,34,0.28); }
 
     /* ── source/target 面板 ── */
     .panel-out {
@@ -89,74 +114,45 @@
       font-size: 1rem;
       line-height: 1.5;
     }
-    .panel-out em {
-      color: #484a46;
-      font-style: italic;
-    }
+    .panel-out em { color: #484a46; font-style: italic; }
 
-    /* ── 說明徽章 ── */
-    .badge-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-    .badge {
-      font-size: 0.75rem;
-      padding: 2px 10px;
-      border-radius: 30px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-    }
-    .badge-icon   { background: rgba(195,165,229,0.15); color: #C3A5E5; border: 1px solid rgba(195,165,229,0.35); }
-    .badge-num    { background: rgba(130,200,229,0.12); color: #82C8E5; border: 1px solid rgba(130,200,229,0.32); }
-    .badge-click  { background: rgba(13,165,145,0.12);  color: #0DA591;  border: 1px solid rgba(13,165,145,0.32); }
-    .badge-mixed  { background: rgba(227,211,34,0.12);  color: #E3D322;  border: 1px solid rgba(227,211,34,0.32); }
-
-    /* ── 底部說明表 ── */
-    .api-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
+    /* ── API 表 ── */
+    .api-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
     .api-table th {
-      text-align: left;
-      color: #82C8E5;
-      border-bottom: 1px solid #252623;
-      padding: 8px 12px;
-      font-weight: 600;
+      text-align:left; color:#82C8E5;
+      border-bottom:1px solid #252623; padding:8px 12px; font-weight:600;
     }
-    .api-table td {
-      border-bottom: 1px solid #1a1b18;
-      padding: 9px 12px;
-      vertical-align: top;
-    }
-    .api-table tr:last-child td { border-bottom: none; }
+    .api-table td { border-bottom:1px solid #1a1b18; padding:9px 12px; vertical-align:top; }
+    .api-table tr:last-child td { border-bottom:none; }
     .api-table code {
-      background: #111210;
-      color: #B3DE73;
-      padding: 1px 6px;
-      border-radius: 3px;
-      font-size: 0.82rem;
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      background:#111210; color:#B3DE73;
+      padding:1px 6px; border-radius:3px;
+      font-size:0.8rem; font-family:'Cascadia Code','Fira Code',monospace;
     }
-    .api-table .attr  { color: #C3A5E5; }
-    .api-table .note  { color: #82C8E5; }
+    .api-table .attr { color:#C3A5E5; }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <h1 class="page-title">NumericList &nbsp;<code>mode="icon"</code></h1>
+  <h1 class="page-title">NumericList &nbsp;<code>mode="icon"</code>&nbsp; + &nbsp;<code>cols</code></h1>
   <p class="page-meta">numeric-list.js &nbsp;·&nbsp; Demo 2026-10-22 &nbsp;·&nbsp; 需引用 Bootstrap Icons</p>
 
 
-  <!-- ① 基本 icon mode -->
+  <!-- ════════════════════════════════════
+       CHAPTER A — icon mode
+       ════════════════════════════════════ -->
+  <div class="chapter">
+    <h2>A &nbsp;·&nbsp; mode="icon"</h2>
+    <p>以 Bootstrap Icons 取代左側數字；無 icon 屬性的項目自動退回顯示數字。</p>
+  </div>
+
+  <!-- A-1 基本 icon mode -->
   <div class="section">
-    <div class="section-label">① 基本 icon mode — theme-color="sky"</div>
+    <div class="section-label">A-1 &nbsp;基本 icon mode — theme-color="sky"</div>
     <div class="badge-row">
-      <span class="badge badge-icon">icon mode</span>
-      <span class="badge badge-num">統一主題色</span>
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-num">統一主題色</span>
     </div>
     <div class="section-code">&lt;ui-list mode="icon" theme-color="sky"&gt;
   &lt;list-item icon="rocket-takeoff-fill"&gt;高速部署，一鍵上線&lt;/list-item&gt;
@@ -172,21 +168,19 @@
     </ui-list>
   </div>
 
-  <hr>
-
-  <!-- ② 每項獨立 accent 色 -->
+  <!-- A-2 每項獨立 accent -->
   <div class="section">
-    <div class="section-label">② 每項獨立 accent 色</div>
+    <div class="section-label">A-2 &nbsp;每項獨立 accent 色</div>
     <div class="badge-row">
-      <span class="badge badge-icon">icon mode</span>
-      <span class="badge badge-num">per-item accent</span>
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-num">per-item accent</span>
     </div>
     <div class="section-code">&lt;ui-list mode="icon"&gt;
-  &lt;list-item icon="star-fill"          accent="yellow"&gt;評分 4.9 / 5.0，用戶滿意度排名第一&lt;/list-item&gt;
-  &lt;list-item icon="lightning-charge-fill" accent="orange"&gt;99.99% SLA 可用性保證&lt;/list-item&gt;
-  &lt;list-item icon="award-fill"          accent="lavender"&gt;連續三年獲評最佳開發工具&lt;/list-item&gt;
-  &lt;list-item icon="heart-fill"          accent="pink"&gt;超過 120 萬開發者社群支持&lt;/list-item&gt;
-  &lt;list-item icon="globe2"              accent="teal"&gt;覆蓋全球 60 個資料中心節點&lt;/list-item&gt;
+  &lt;list-item icon="star-fill"             accent="yellow"&gt;評分 4.9 / 5.0&lt;/list-item&gt;
+  &lt;list-item icon="lightning-charge-fill" accent="orange"&gt;99.99% SLA 保證&lt;/list-item&gt;
+  &lt;list-item icon="award-fill"            accent="lavender"&gt;連續三年最佳工具&lt;/list-item&gt;
+  &lt;list-item icon="heart-fill"            accent="pink"&gt;120 萬開發者支持&lt;/list-item&gt;
+  &lt;list-item icon="globe2"               accent="teal"&gt;全球 60 個資料中心&lt;/list-item&gt;
 &lt;/ui-list&gt;</div>
     <ui-list mode="icon">
       <list-item icon="star-fill"             accent="yellow">評分 4.9 / 5.0，用戶滿意度排名第一</list-item>
@@ -197,21 +191,19 @@
     </ui-list>
   </div>
 
-  <hr>
-
-  <!-- ③ 部分無 icon → 退回數字 -->
+  <!-- A-3 部分無 icon → 退回數字 -->
   <div class="section">
-    <div class="section-label">③ 部分項目無 icon 屬性 → 自動退回顯示數字</div>
+    <div class="section-label">A-3 &nbsp;部分項目無 icon 屬性 → 退回顯示數字</div>
     <div class="badge-row">
-      <span class="badge badge-icon">icon mode</span>
-      <span class="badge badge-mixed">混合退回</span>
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-mix">混合退回</span>
     </div>
     <div class="section-code">&lt;ui-list mode="icon" theme-color="teal"&gt;
   &lt;list-item icon="person-plus-fill"&gt;建立帳號&lt;/list-item&gt;
-  &lt;list-item&gt;匯入現有專案（無 icon 屬性，退回數字 2）&lt;/list-item&gt;
-  &lt;list-item icon="envelope-paper-fill"&gt;邀請團隊成員&lt;/list-item&gt;
-  &lt;list-item&gt;設定通知偏好（無 icon 屬性，退回數字 4）&lt;/list-item&gt;
-  &lt;list-item icon="check-circle-fill" accent="safe"&gt;完成設定，開始使用&lt;/list-item&gt;
+  &lt;list-item&gt;匯入專案（無 icon，退回數字 2）&lt;/list-item&gt;
+  &lt;list-item icon="envelope-paper-fill"&gt;邀請成員&lt;/list-item&gt;
+  &lt;list-item&gt;通知偏好（無 icon，退回數字 4）&lt;/list-item&gt;
+  &lt;list-item icon="check-circle-fill" accent="safe"&gt;完成設定&lt;/list-item&gt;
 &lt;/ui-list&gt;</div>
     <ui-list mode="icon" theme-color="teal">
       <list-item icon="person-plus-fill">建立帳號</list-item>
@@ -222,93 +214,260 @@
     </ui-list>
   </div>
 
-  <hr>
 
-  <!-- ④ hover / active 自訂色 -->
+  <!-- ════════════════════════════════════
+       CHAPTER B — Grid (cols)
+       ════════════════════════════════════ -->
+  <div class="chapter">
+    <h2>B &nbsp;·&nbsp; cols Grid 排版</h2>
+    <p>cols="N"（N ≥ 2）啟用 CSS Grid；last-span 讓末尾奇數項撐滿整列。</p>
+  </div>
+
+  <!-- B-1 2欄，偶數項（4項整齊） -->
   <div class="section">
-    <div class="section-label">④ 自訂 hover / active 色</div>
+    <div class="section-label">B-1 &nbsp;cols="2" — 4 項，偶數整齊</div>
     <div class="badge-row">
-      <span class="badge badge-icon">icon mode</span>
-      <span class="badge badge-num">hover + active</span>
+      <span class="badge b-grid">cols="2"</span>
+      <span class="badge b-num">偶數項目</span>
     </div>
-    <div class="section-code">&lt;ui-list mode="icon" hover="salmon" active="warning"&gt;
-  &lt;list-item icon="exclamation-triangle-fill" accent="warning"&gt;重要：執行前請先完整備份資料&lt;/list-item&gt;
-  &lt;list-item icon="x-octagon-fill"           accent="warning"&gt;此操作不可還原，請謹慎確認&lt;/list-item&gt;
-  &lt;list-item icon="info-circle-fill"          accent="salmon"&gt;詳閱服務條款第 7 條後再繼續&lt;/list-item&gt;
+    <div class="section-code">&lt;ui-list cols="2" theme-color="lavender"&gt;
+  &lt;list-item&gt;資料備份與還原&lt;/list-item&gt;
+  &lt;list-item&gt;多因素驗證（MFA）&lt;/list-item&gt;
+  &lt;list-item&gt;細粒度權限控管&lt;/list-item&gt;
+  &lt;list-item&gt;稽核日誌全記錄&lt;/list-item&gt;
 &lt;/ui-list&gt;</div>
-    <ui-list mode="icon" hover="salmon" active="warning">
-      <list-item icon="exclamation-triangle-fill" accent="warning">重要：執行前請先完整備份資料</list-item>
-      <list-item icon="x-octagon-fill"            accent="warning">此操作不可還原，請謹慎確認</list-item>
-      <list-item icon="info-circle-fill"          accent="salmon">詳閱服務條款第 7 條後再繼續</list-item>
+    <ui-list cols="2" theme-color="lavender">
+      <list-item>資料備份與還原</list-item>
+      <list-item>多因素驗證（MFA）</list-item>
+      <list-item>細粒度權限控管</list-item>
+      <list-item>稽核日誌全記錄</list-item>
     </ui-list>
   </div>
 
-  <hr>
-
-  <!-- ⑤ clickable + icon mode -->
+  <!-- B-2 2欄，奇數項（5項，末格空白） -->
   <div class="section">
-    <div class="section-label">⑤ source / target 點擊互動（icon mode）</div>
+    <div class="section-label">B-2 &nbsp;cols="2" — 5 項，末格自然留空</div>
     <div class="badge-row">
-      <span class="badge badge-icon">icon mode</span>
-      <span class="badge badge-click">clickable</span>
+      <span class="badge b-grid">cols="2"</span>
+      <span class="badge b-mix">奇數項目</span>
     </div>
-    <div class="section-code">&lt;ui-list mode="icon" theme-color="indigo"&gt;
-  &lt;list-item icon="cpu-fill"      source="panel-a" target="panel-display"&gt;後端架構&lt;/list-item&gt;
-  &lt;list-item icon="palette-fill"  source="panel-b" target="panel-display"&gt;前端設計&lt;/list-item&gt;
-  &lt;list-item icon="database-fill" source="panel-c" target="panel-display"&gt;資料庫策略&lt;/list-item&gt;
+    <div class="section-code">&lt;ui-list cols="2" theme-color="ocean"&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt; × 5 項
 &lt;/ui-list&gt;</div>
-    <ui-list mode="icon" theme-color="indigo">
-      <list-item icon="cpu-fill"      source="panel-a" target="panel-display">後端架構</list-item>
-      <list-item icon="palette-fill"  source="panel-b" target="panel-display">前端設計</list-item>
-      <list-item icon="database-fill" source="panel-c" target="panel-display">資料庫策略</list-item>
+    <ui-list cols="2" theme-color="ocean">
+      <list-item>自動化 CI/CD 流水線</list-item>
+      <list-item>容器化部署（Docker）</list-item>
+      <list-item>Kubernetes 水平擴展</list-item>
+      <list-item>藍綠部署零停機更新</list-item>
+      <list-item>即時健康監控告警</list-item>
     </ui-list>
-    <div class="panel-out" id="panel-display"><em>← 點擊上方項目顯示詳情</em></div>
+  </div>
 
-    <div id="panel-a" style="display:none">
+  <!-- B-3 2欄，last-span -->
+  <div class="section">
+    <div class="section-label">B-3 &nbsp;cols="2" last-span — 最後一項撐滿整列</div>
+    <div class="badge-row">
+      <span class="badge b-grid">cols="2"</span>
+      <span class="badge b-span">last-span</span>
+    </div>
+    <div class="section-code">&lt;ui-list cols="2" last-span theme-color="ocean"&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt; × 5 項
+&lt;/ui-list&gt;</div>
+    <ui-list cols="2" last-span theme-color="ocean">
+      <list-item>自動化 CI/CD 流水線</list-item>
+      <list-item>容器化部署（Docker）</list-item>
+      <list-item>Kubernetes 水平擴展</list-item>
+      <list-item>藍綠部署零停機更新</list-item>
+      <list-item>即時健康監控告警，異常 30 秒內觸發 PagerDuty 通知，並附帶完整堆疊追蹤。</list-item>
+    </ui-list>
+  </div>
+
+  <!-- B-4 3欄 -->
+  <div class="section">
+    <div class="section-label">B-4 &nbsp;cols="3" — 6 項，3 欄整齊</div>
+    <div class="badge-row">
+      <span class="badge b-grid">cols="3"</span>
+    </div>
+    <div class="section-code">&lt;ui-list cols="3" theme-color="special"&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt; × 6 項
+&lt;/ui-list&gt;</div>
+    <ui-list cols="3" theme-color="special">
+      <list-item>前端開發</list-item>
+      <list-item>後端 API</list-item>
+      <list-item>資料庫設計</list-item>
+      <list-item>DevOps 維運</list-item>
+      <list-item>資安審查</list-item>
+      <list-item>使用者研究</list-item>
+    </ui-list>
+  </div>
+
+  <!-- B-5 3欄，last-span（7項） -->
+  <div class="section">
+    <div class="section-label">B-5 &nbsp;cols="3" last-span — 7 項，最後一項跨 3 欄</div>
+    <div class="badge-row">
+      <span class="badge b-grid">cols="3"</span>
+      <span class="badge b-span">last-span</span>
+    </div>
+    <div class="section-code">&lt;ui-list cols="3" last-span theme-color="yellow"&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt; × 7 項
+&lt;/ui-list&gt;</div>
+    <ui-list cols="3" last-span theme-color="yellow">
+      <list-item>需求訪談</list-item>
+      <list-item>競品分析</list-item>
+      <list-item>資訊架構</list-item>
+      <list-item>原型設計</list-item>
+      <list-item>可用性測試</list-item>
+      <list-item>視覺精修</list-item>
+      <list-item>末項橫跨整列：交付驗收報告，包含 A/B 測試數據、轉換率變化與後續迭代建議。</list-item>
+    </ui-list>
+  </div>
+
+
+  <!-- ════════════════════════════════════
+       CHAPTER C — icon + Grid 組合
+       ════════════════════════════════════ -->
+  <div class="chapter">
+    <h2>C &nbsp;·&nbsp; mode="icon" × cols 組合</h2>
+    <p>兩個屬性互不干涉，可自由疊加。</p>
+  </div>
+
+  <!-- C-1 icon + 2欄 -->
+  <div class="section">
+    <div class="section-label">C-1 &nbsp;mode="icon" + cols="2"</div>
+    <div class="badge-row">
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-grid">cols="2"</span>
+    </div>
+    <div class="section-code">&lt;ui-list mode="icon" cols="2" theme-color="indigo"&gt;
+  &lt;list-item icon="cpu-fill"&gt;高效能運算&lt;/list-item&gt;
+  &lt;list-item icon="hdd-network-fill"&gt;分散式儲存&lt;/list-item&gt;
+  &lt;list-item icon="wifi"&gt;低延遲網路&lt;/list-item&gt;
+  &lt;list-item icon="lock-fill"&gt;零信任安全&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list mode="icon" cols="2" theme-color="indigo">
+      <list-item icon="cpu-fill">高效能運算</list-item>
+      <list-item icon="hdd-network-fill">分散式儲存</list-item>
+      <list-item icon="wifi">低延遲網路</list-item>
+      <list-item icon="lock-fill">零信任安全架構</list-item>
+    </ui-list>
+  </div>
+
+  <!-- C-2 icon + 3欄 + per-item accent -->
+  <div class="section">
+    <div class="section-label">C-2 &nbsp;mode="icon" + cols="3" + per-item accent</div>
+    <div class="badge-row">
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-grid">cols="3"</span>
+      <span class="badge b-num">per-item accent</span>
+    </div>
+    <div class="section-code">&lt;ui-list mode="icon" cols="3"&gt;
+  &lt;list-item icon="bar-chart-fill"  accent="sky"&gt;數據分析&lt;/list-item&gt;
+  &lt;list-item icon="palette2"        accent="pink"&gt;視覺設計&lt;/list-item&gt;
+  &lt;list-item icon="code-slash"      accent="special"&gt;前端開發&lt;/list-item&gt;
+  &lt;list-item icon="server"          accent="orange"&gt;後端工程&lt;/list-item&gt;
+  &lt;list-item icon="shield-shaded"   accent="teal"&gt;資安防護&lt;/list-item&gt;
+  &lt;list-item icon="headset"         accent="lavender"&gt;客戶支援&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list mode="icon" cols="3">
+      <list-item icon="bar-chart-fill"  accent="sky">數據分析</list-item>
+      <list-item icon="palette2"        accent="pink">視覺設計</list-item>
+      <list-item icon="code-slash"      accent="special">前端開發</list-item>
+      <list-item icon="server"          accent="orange">後端工程</list-item>
+      <list-item icon="shield-shaded"   accent="teal">資安防護</list-item>
+      <list-item icon="headset"         accent="lavender">客戶支援</list-item>
+    </ui-list>
+  </div>
+
+  <!-- C-3 icon + 2欄 + last-span + 5項 -->
+  <div class="section">
+    <div class="section-label">C-3 &nbsp;mode="icon" + cols="2" + last-span — 5 項</div>
+    <div class="badge-row">
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-grid">cols="2"</span>
+      <span class="badge b-span">last-span</span>
+    </div>
+    <div class="section-code">&lt;ui-list mode="icon" cols="2" last-span theme-color="salmon"&gt;
+  &lt;list-item icon="1-circle-fill"&gt;...&lt;/list-item&gt; × 5 項
+&lt;/ui-list&gt;</div>
+    <ui-list mode="icon" cols="2" last-span theme-color="salmon">
+      <list-item icon="1-circle-fill">需求確認與範疇定義</list-item>
+      <list-item icon="2-circle-fill">技術選型與架構評估</list-item>
+      <list-item icon="3-circle-fill">迭代開發與每週交付</list-item>
+      <list-item icon="4-circle-fill">驗收測試與效能優化</list-item>
+      <list-item icon="5-circle-fill">上線部署與交接文件（last-span：此項橫跨兩欄，適合放結語或備註）</list-item>
+    </ui-list>
+  </div>
+
+
+  <!-- ════════════════════════════════════
+       CHAPTER D — 點擊互動 × Grid
+       ════════════════════════════════════ -->
+  <div class="chapter">
+    <h2>D &nbsp;·&nbsp; source / target 點擊互動 × Grid</h2>
+    <p>clickable 功能與 Grid 模式完全相容。</p>
+  </div>
+
+  <!-- D-1 icon + 2欄 + clickable -->
+  <div class="section">
+    <div class="section-label">D-1 &nbsp;mode="icon" + cols="2" + clickable</div>
+    <div class="badge-row">
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-grid">cols="2"</span>
+      <span class="badge b-click">clickable</span>
+    </div>
+    <div class="section-code">&lt;ui-list mode="icon" cols="2" last-span theme-color="indigo"&gt;
+  &lt;list-item icon="cpu-fill"      source="g-panel-a" target="g-panel-out"&gt;後端架構&lt;/list-item&gt;
+  &lt;list-item icon="palette-fill"  source="g-panel-b" target="g-panel-out"&gt;前端設計&lt;/list-item&gt;
+  &lt;list-item icon="database-fill" source="g-panel-c" target="g-panel-out"&gt;資料庫策略&lt;/list-item&gt;
+  &lt;list-item icon="cloud-upload-fill" source="g-panel-d" target="g-panel-out"&gt;部署流程&lt;/list-item&gt;
+  &lt;list-item icon="bar-chart-line-fill" source="g-panel-e" target="g-panel-out"&gt;效能監控（last-span）&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list mode="icon" cols="2" last-span theme-color="indigo">
+      <list-item icon="cpu-fill"           source="g-panel-a" target="g-panel-out">後端架構</list-item>
+      <list-item icon="palette-fill"       source="g-panel-b" target="g-panel-out">前端設計</list-item>
+      <list-item icon="database-fill"      source="g-panel-c" target="g-panel-out">資料庫策略</list-item>
+      <list-item icon="cloud-upload-fill"  source="g-panel-d" target="g-panel-out">部署流程</list-item>
+      <list-item icon="bar-chart-line-fill" source="g-panel-e" target="g-panel-out">效能監控（last-span）</list-item>
+    </ui-list>
+    <div class="panel-out" id="g-panel-out"><em>← 點擊上方任一項目顯示詳情</em></div>
+
+    <div id="g-panel-a" style="display:none">
       <strong style="color:#C3A5E5">後端架構</strong><br>
-      採用 Node.js + Fastify，搭配 Redis 快取層，API 平均回應時間低於 50ms。水平擴展透過 Kubernetes 自動完成，峰值流量下無需人工介入。
+      Node.js + Fastify，搭配 Redis 快取層，API 平均回應時間低於 50ms。水平擴展透過 Kubernetes 自動完成。
     </div>
-    <div id="panel-b" style="display:none">
+    <div id="g-panel-b" style="display:none">
       <strong style="color:#C3A5E5">前端設計</strong><br>
-      React 18 + Vite 建構，採用 CSS Modules 避免樣式污染。Lighthouse 效能分數達 98，Core Web Vitals 全綠。
+      React 18 + Vite，採用 CSS Modules 避免樣式污染。Lighthouse 效能分數達 98，Core Web Vitals 全綠。
     </div>
-    <div id="panel-c" style="display:none">
+    <div id="g-panel-c" style="display:none">
       <strong style="color:#C3A5E5">資料庫策略</strong><br>
-      PostgreSQL 主從架構，搭配 TimescaleDB 處理時序資料。每秒可寫入 200,000 筆記錄，讀取查詢 P99 延遲 8ms 以內。
+      PostgreSQL 主從架構，搭配 TimescaleDB 處理時序資料。P99 讀取延遲 8ms 以內，每秒可寫入 200,000 筆。
+    </div>
+    <div id="g-panel-d" style="display:none">
+      <strong style="color:#C3A5E5">部署流程</strong><br>
+      GitHub Actions 自動觸發，藍綠部署策略實現零停機更新。每次上線附帶自動化 Smoke Test 驗證。
+    </div>
+    <div id="g-panel-e" style="display:none">
+      <strong style="color:#C3A5E5">效能監控</strong><br>
+      Grafana + Prometheus 全棧監控，異常 30 秒內觸發 PagerDuty 告警，附帶完整堆疊追蹤與上下文資訊。
     </div>
   </div>
 
-  <hr>
 
-  <!-- ⑥ 對照：傳統數字模式 -->
-  <div class="section">
-    <div class="section-label">⑥ 對照組：傳統數字模式（無 mode 屬性）</div>
-    <div class="badge-row">
-      <span class="badge badge-num">numeric mode</span>
-    </div>
-    <div class="section-code">&lt;!-- 無 mode 屬性，icon 屬性在此模式下被忽略 --&gt;
-&lt;ui-list theme-color="special"&gt;
-  &lt;list-item icon="trophy-fill"&gt;傳統數字模式，icon 屬性不生效&lt;/list-item&gt;
-  &lt;list-item&gt;完全向後相容，現有使用方式零影響&lt;/list-item&gt;
-  &lt;list-item accent="ocean"&gt;accent、theme-color、hover 等屬性行為不變&lt;/list-item&gt;
-&lt;/ui-list&gt;</div>
-    <ui-list theme-color="special">
-      <list-item icon="trophy-fill">傳統數字模式，icon 屬性不生效</list-item>
-      <list-item>完全向後相容，現有使用方式零影響</list-item>
-      <list-item accent="ocean">accent、theme-color、hover 等屬性行為不變</list-item>
-    </ui-list>
+  <!-- ════════════════════════════════════
+       API 速查
+       ════════════════════════════════════ -->
+  <div class="chapter">
+    <h2>E &nbsp;·&nbsp; API 速查</h2>
+    <p>本次新增屬性與設定項。</p>
   </div>
 
-  <hr>
-
-  <!-- API 速查 -->
   <div class="section">
-    <div class="section-label">API 速查</div>
     <table class="api-table">
       <thead>
         <tr>
           <th style="width:22%">屬性 / 設定</th>
-          <th style="width:20%">位置</th>
+          <th style="width:18%">位置</th>
           <th>說明</th>
         </tr>
       </thead>
@@ -321,34 +480,37 @@
         <tr>
           <td class="attr"><code>icon="..."</code></td>
           <td><code>&lt;list-item&gt;</code></td>
-          <td>Bootstrap Icons 圖示名稱，例如 <code>star-fill</code>、<code>cpu-fill</code>。未設定此屬性時，即使在 icon mode 下也退回顯示數字。</td>
+          <td>Bootstrap Icons 名稱，例如 <code>star-fill</code>。未設定時即使在 icon mode 下也退回顯示數字。</td>
         </tr>
         <tr>
-          <td class="note"><code>iconFontSize</code></td>
-          <td><code>NumericList.setup()</code></td>
-          <td>全域調整圖示大小，預設 <code>2.25rem</code>。例如 <code>NumericList.setup({ iconFontSize: '2rem' })</code>。</td>
-        </tr>
-        <tr>
-          <td class="attr"><code>accent="..."</code></td>
-          <td><code>&lt;list-item&gt;</code></td>
-          <td>圖示顏色，與數字模式相同，支援品牌色名稱或任意 CSS 色值。</td>
-        </tr>
-        <tr>
-          <td class="attr"><code>theme-color="..."</code></td>
+          <td class="attr"><code>cols="N"</code></td>
           <td><code>&lt;ui-list&gt;</code></td>
-          <td>整個清單的統一圖示顏色，優先序低於 <code>accent</code>。</td>
+          <td>N ≥ 2 時切換為 CSS Grid N 欄佈局；cols="1" 或不設定則維持預設直欄 flex 模式。</td>
         </tr>
         <tr>
-          <td class="note">其餘屬性</td>
-          <td></td>
-          <td><code>hover</code>、<code>active</code>、<code>gap</code>、<code>width</code>、<code>source</code>、<code>target</code> 行為與數字模式完全相同。</td>
+          <td class="attr"><code>last-span</code></td>
+          <td><code>&lt;ui-list&gt;</code></td>
+          <td>布林屬性。Grid 模式下，最後一個 <code>&lt;list-item&gt;</code> 橫跨整列（<code>grid-column: 1 / -1</code>）。偶數項目無視覺效果但無副作用。</td>
+        </tr>
+        <tr>
+          <td><code>iconFontSize</code></td>
+          <td><code>NumericList.setup()</code></td>
+          <td>全域調整圖示大小，預設 <code>2.25rem</code>。</td>
+        </tr>
+        <tr>
+          <td><code>gridNumberMinWidth</code></td>
+          <td><code>NumericList.setup()</code></td>
+          <td>Grid 模式下數字欄最小寬度，預設 <code>60px</code>（last-span 項目自動恢復至 <code>numberMinWidth</code>）。</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="color:#484a46">其餘屬性</td>
+          <td style="color:#484a46"><code>accent</code>、<code>theme-color</code>、<code>hover</code>、<code>active</code>、<code>gap</code>、<code>width</code>、<code>source</code>、<code>target</code> 行為與直欄模式完全相同，可與 icon / cols 自由組合。</td>
         </tr>
       </tbody>
     </table>
   </div>
 
 </div>
-
 <script src="numeric-list.js"></script>
 </body>
 </html>
