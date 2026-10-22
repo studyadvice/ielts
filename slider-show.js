@@ -25,7 +25,7 @@ class SliderShow extends HTMLElement {
       'finish-btn-bg', 'finish-btn-color',
       'restart-btn-bg', 'restart-btn-color',
       'fontcolor-subtitle', 'fontcolor-main', 'fontcolor-footer',
-      'fill-color',
+      'fill-color', 'bg-color',
       'extra-note-hover-color', 'extra-note-prefix', 'extra-note-postfix',
       'spoiler-mode', 'spoiler-text', 'spoiler-color',
       'quiz-require-complete',
@@ -721,6 +721,9 @@ class SliderShow extends HTMLElement {
       } else if (style === 'stepper') {
         node = document.createElement('div');
         node.className = 'step-dot' + (i === currentIdx ? ' active' : '');
+      } else if (style === 'triangle') {
+        node = document.createElement('div');
+        node.className = 'step-triangle' + (i === currentIdx ? ' active' : '');
       } else {
         node = document.createElement('div');
         node.className = 'dot' + (i === currentIdx ? ' active' : '');
@@ -943,6 +946,8 @@ class SliderShow extends HTMLElement {
     const fontColorMain = this.parseColor(this.getAttribute('fontcolor-main')) || this.parseColor('shell');
     const fontColorFooter = this.parseColor(this.getAttribute('fontcolor-footer')) || this.parseColor('sky');
     const fillColor = this.parseColor(this.getAttribute('fill-color')) || this.parseColor('fill');
+    // bg-color：triangle 進度樣式的「空心」中心挖空色，需與元件所在頁面背景一致才會無縫；預設對應色票 background
+    const bgColor = this.parseColor(this.getAttribute('bg-color')) || this.parseColor('background');
 
     const extraNoteHoverColor = this.parseColor(this.getAttribute('extra-note-hover-color')) || this.parseColor('special');
 
@@ -976,6 +981,7 @@ class SliderShow extends HTMLElement {
     this.style.setProperty('--fontcolor-main', fontColorMain);
     this.style.setProperty('--fontcolor-footer', fontColorFooter);
     this.style.setProperty('--fill-color', fillColor);
+    this.style.setProperty('--bg-color', bgColor);
     this.style.setProperty('--extra-note-hover-color', extraNoteHoverColor);
     this.style.setProperty('--show-arrows', showArrows ? 'flex' : 'none');
     this.style.setProperty('--part-btn-position', nextPartBtnPosition);
@@ -1369,6 +1375,39 @@ class SliderShow extends HTMLElement {
           height: 14px;
           background: var(--active-dot-color, #c6c7bd);
           border-color: var(--active-dot-color, #c6c7bd);
+        }
+
+        /* 三角形進度（空心往右三角形／目前步驟為實心），用邊框技巧畫出不需圖片 */
+        slider-show .step-triangle {
+          width: 0;
+          height: 0;
+          flex: none;
+          cursor: pointer;
+          transition: all 0.25s;
+          border-top: 7px solid transparent;
+          border-bottom: 7px solid transparent;
+          border-left: 10px solid var(--dot-color, rgba(198, 199, 189, 0.82));
+          background: transparent;
+          position: relative;
+        }
+        slider-show .step-triangle::before {
+          content: "";
+          position: absolute;
+          top: -5px;
+          left: -10px;
+          width: 0;
+          height: 0;
+          border-top: 5px solid transparent;
+          border-bottom: 5px solid transparent;
+          border-left: 7px solid var(--bg-color, #0C0D0C);
+        }
+        slider-show .step-triangle.active {
+          border-top: 8px solid transparent;
+          border-bottom: 8px solid transparent;
+          border-left: 12px solid var(--active-dot-color, #c6c7bd);
+        }
+        slider-show .step-triangle.active::before {
+          display: none;
         }
         slider-show .step-line {
           width: 18px;

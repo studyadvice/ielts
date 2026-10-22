@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>slider-show 全屬性對照手冊</title>
+<style>
+  :root{
+    --bg:#ffffff;--panel:#f4f4f4;--line:#dcdcdc;--text:#1a1a1a;--muted:#666666;--code-bg:#f0f0f0;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font:18px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;max-width:1180px;margin:0 auto;padding:32px 24px 96px}
+  h1{font-size:1.75rem;margin:0 0 8px}
+  h1 + p{color:var(--muted);margin:0 0 32px}
+  h2{font-size:1.25rem;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h3{font-size:1.05rem;margin:0;font-weight:700}
+  .intro{padding:16px;border:1px solid var(--line);border-radius:6px;background:var(--panel);margin-bottom:24px}
+  .intro p{margin:0 0 8px}
+  .intro p:last-child{margin-bottom:0}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px 16px;padding:12px 16px;border:1px solid var(--line);border-radius:6px;margin-bottom:24px;font-size:0.95rem}
+  nav.toc a{color:var(--text)}
+  table.attrs{width:100%;border-collapse:collapse;margin:8px 0 20px;font-size:0.92rem}
+  table.attrs th,table.attrs td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  table.attrs th{background:var(--panel);font-weight:700}
+  table.attrs code{background:var(--code-bg);padding:1px 5px;border-radius:3px}
+  .row{display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:16px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row .meta p{margin:4px 0 0;color:var(--muted);font-size:0.92rem}
+  pre{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow:auto;font-size:0.82rem;line-height:1.45;margin:6px 0 0}
+  code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+  .demo{padding:4px;background:#0C0D0C;border-radius:8px}
+  .tag{display:inline-block;font-size:0.75rem;padding:1px 7px;border:1px solid var(--line);border-radius:999px;color:var(--muted);margin-left:6px}
+  /* slider-show 本身是深色元件，demo 區塊特別給深底，其餘頁面保持淺灰避免眼花 */
+</style>
+</head>
+<body>
+
+<h1>slider-show 全屬性對照手冊</h1>
+<p>每一項屬性皆為「左側程式碼、右側即時效果」對照。頁面本身採淺灰配色，demo 區塊單獨給深色底（元件原生背景），避免色彩互相干擾。</p>
+
+<div class="intro">
+  <p><strong>投影片標記：</strong>每張投影片是 <code>&lt;div slide part="N"&gt;</code>，<code>part</code> 相同的投影片歸為同一「部分」。</p>
+  <p><strong>填空題：</strong><code>&lt;quiz&gt;文字 {{答案}} 文字&lt;/quiz&gt;</code>，答對與否比對不分大小寫。</p>
+  <p><strong>起始／結束畫面：</strong>在投影片上加 <code>role="start"</code> 或 <code>role="end"</code>，純作者指定，不自動偵測位置。</p>
+</div>
+
+<nav class="toc">
+  <a href="#basic">基本／尺寸</a>
+  <a href="#progress">進度顯示</a>
+  <a href="#startend">起始／結束畫面</a>
+  <a href="#part">分組按鈕與轉場</a>
+  <a href="#color">顏色</a>
+  <a href="#quiz">填空題（quiz）</a>
+  <a href="#extra">extra-note／spoiler</a>
+  <a href="#events">事件</a>
+  <a href="#full">完整組合範例</a>
+</nav>
+
+<h2 id="basic">一、基本／尺寸屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>height</code></td><td>CSS 長度</td><td>400px</td><td>投影片顯示區高度</td></tr>
+<tr><td><code>theme</code></td><td>色票名稱或 #hex</td><td>shell</td><td>整體主題色（影響箭頭、按鈕等多處預設色）</td></tr>
+<tr><td><code>current-part</code></td><td>數字</td><td>1</td><td>可外部指定目前顯示的部分</td></tr>
+<tr><td><code>loop</code></td><td>布林（字串 "true"）</td><td>false</td><td>投影片是否循環（最後一張的下一張回到第一張）</td></tr>
+<tr><td><code>show-arrows</code></td><td>布林</td><td>true</td><td>是否顯示左右箭頭</td></tr>
+<tr><td><code>arrow-color</code> / <code>arrow-bg</code></td><td>色票或色碼</td><td>theme / 深色底</td><td>箭頭顏色／底色</td></tr>
+<tr><td><code>show-part-indicator</code></td><td>布林</td><td>true</td><td>右上角「Part X / Y」文字指示是否顯示</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>基本用法</h3>
+    <pre><code>&lt;slider-show height="200px"&gt;
+  &lt;div slide part="1"&gt;...&lt;/div&gt;
+  &lt;div slide part="1"&gt;...&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="200px">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第一張</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第二張</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>loop + 自訂主題色</h3>
+    <pre><code>&lt;slider-show height="180px" loop="true" theme="ocean"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="180px" loop="true" theme="ocean">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>可循環瀏覽</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>最後一張</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="progress">二、進度顯示屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>progress-style</code></td><td>dots／stepper／triangle／numbers／none</td><td>dots</td><td>進度顯示樣式</td></tr>
+<tr><td><code>progress-scope</code></td><td>part／all</td><td>part</td><td>只顯示目前部分內，或全部投影片</td></tr>
+<tr><td><code>dot-color</code> / <code>active-dot-color</code></td><td>色票或色碼</td><td>灰／theme</td><td>非目前／目前項目的顏色（dots、stepper、triangle 共用）</td></tr>
+<tr><td><code>bg-color</code></td><td>色票或色碼</td><td>background</td><td>triangle 樣式空心三角形中心的挖空色，需與頁面背景一致才無縫</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta"><h3>dots（預設）</h3><pre><code>&lt;slider-show progress-style="dots"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="140px" progress-style="dots">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>A</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>B</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>C</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>stepper（O--O--O--O）</h3><pre><code>&lt;slider-show progress-style="stepper"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="140px" progress-style="stepper">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>A</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>B</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>C</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>D</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>triangle（空心／空心／實心往右三角形，新增樣式）</h3>
+    <pre><code>&lt;slider-show progress-style="triangle"&gt;</code></pre>
+    <p>目前步驟為實心三角形，其餘為空心。空心三角形中心挖空色預設對應背景色票，若頁面背景不同，用 <code>bg-color</code> 指定成實際頁面背景色即可無縫。</p>
+  </div>
+  <div class="demo">
+    <slider-show height="140px" progress-style="triangle">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>步驟一</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>步驟二</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>步驟三（目前）</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>numbers（全域頁碼）</h3><pre><code>&lt;slider-show progress-style="numbers" progress-scope="all"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="140px" progress-style="numbers" progress-scope="all">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第1部分-A</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第1部分-B</p></div></div></div>
+      <div slide part="2"><div class="slide-content"><div class="slide-main"><p>第2部分-A</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>none（不顯示任何進度列）</h3><pre><code>&lt;slider-show progress-style="none"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="120px" progress-style="none">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>A</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>B</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="startend">三、起始／結束畫面屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>role</code>（寫在投影片上）</td><td>start／end</td><td>（無）</td><td>標記這張是起始／結束畫面</td></tr>
+<tr><td><code>start-style</code> / <code>end-style</code></td><td>gradient-border／gradient-bg／accent-frame／top-bottom-bar／corner-tag／none</td><td>有標 role 則為 accent-frame</td><td>裝飾風格，只動外框／底色，不影響投影片內容</td></tr>
+<tr><td><code>start-colors</code> / <code>end-colors</code></td><td>"色票A,色票B"</td><td>lavender,sky／safe,teal</td><td>漸層或邊框用的兩個顏色</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta"><h3>gradient-border</h3><pre><code>&lt;div slide part="1" role="start"&gt;...&lt;/div&gt;
+&lt;slider-show start-style="gradient-border"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="160px" start-style="gradient-border" end-style="gradient-border">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>gradient-bg</h3><pre><code>&lt;slider-show start-style="gradient-bg" end-style="gradient-bg"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="160px" start-style="gradient-bg" end-style="gradient-bg">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>accent-frame（有標 role 時的預設值）</h3><pre><code>&lt;slider-show&gt;（不指定 start-style／end-style）</code></pre></div>
+  <div class="demo">
+    <slider-show height="160px">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>top-bottom-bar</h3><pre><code>&lt;slider-show start-style="top-bottom-bar" end-style="top-bottom-bar"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="160px" start-style="top-bottom-bar" end-style="top-bottom-bar">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>corner-tag</h3><pre><code>&lt;slider-show start-style="corner-tag" end-style="corner-tag"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="160px" start-style="corner-tag" end-style="corner-tag">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta"><h3>自訂 start-colors／end-colors</h3><pre><code>&lt;slider-show start-style="gradient-border" end-style="gradient-border"
+  start-colors="indigo,pink" end-colors="ocean,teal"&gt;</code></pre></div>
+  <div class="demo">
+    <slider-show height="160px" start-style="gradient-border" end-style="gradient-border" start-colors="indigo,pink" end-colors="ocean,teal">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面（indigo→pink）</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾（ocean→teal）</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="part">四、分組按鈕與轉場屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>auto-show-part-buttons</code></td><td>布林</td><td>false</td><td>自動依位置顯示「上一部分／下一部分／完成／重新開始」按鈕</td></tr>
+<tr><td><code>next-part-btn-text</code> / <code>prev-part-btn-text</code></td><td>字串</td><td>下一部分 → ／← 上一部分</td><td>按鈕文字</td></tr>
+<tr><td><code>finish-btn-text</code> / <code>restart-btn-text</code></td><td>字串</td><td>完成／重新開始</td><td>按鈕文字</td></tr>
+<tr><td><code>show-finish</code> / <code>show-restart</code></td><td>布林</td><td>true</td><td>是否顯示完成／重新開始按鈕</td></tr>
+<tr><td><code>next-part-btn-position</code></td><td>flex justify-content 值</td><td>center</td><td>分組按鈕區的水平排列位置</td></tr>
+<tr><td><code>part-transition</code></td><td>slide／fade／none</td><td>slide</td><td>切換部分時的轉場動畫；slide 會依前進/後退自動給對應方向</td></tr>
+<tr><td><code>part-btn-bg</code> / <code>part-btn-color</code></td><td>色票或色碼</td><td>theme／對比色</td><td>一般分組按鈕顏色</td></tr>
+<tr><td><code>part-btn-font-size</code> / <code>part-btn-padding</code> / <code>part-btn-border-radius</code></td><td>CSS 值</td><td>0.9rem／6px 12px／6px</td><td>按鈕尺寸</td></tr>
+<tr><td><code>finish-btn-bg</code> / <code>finish-btn-color</code></td><td>色票或色碼</td><td>theme／對比色</td><td>完成按鈕顏色</td></tr>
+<tr><td><code>restart-btn-bg</code> / <code>restart-btn-color</code></td><td>色票或色碼</td><td>theme／對比色</td><td>重新開始按鈕顏色</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>auto-show-part-buttons + 轉場方向（上一部分／下一部分方向相反）</h3>
+    <pre><code>&lt;slider-show auto-show-part-buttons="true" part-transition="slide"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="160px" auto-show-part-buttons="true" part-transition="slide">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>第1部分</p></div></div></div>
+      <div slide part="2"><div class="slide-content"><div class="slide-main"><p>第2部分</p></div></div></div>
+      <div slide part="3"><div class="slide-content"><div class="slide-main"><p>第3部分</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>自訂按鈕文字與顏色</h3>
+    <pre><code>&lt;slider-show
+  auto-show-part-buttons="true"
+  next-part-btn-text="繼續 →"
+  finish-btn-text="結束課程"
+  finish-btn-bg="safe"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="160px" auto-show-part-buttons="true" next-part-btn-text="繼續 →" finish-btn-text="結束課程" finish-btn-bg="safe">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>唯一一部分、唯一一張</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="color">五、顏色屬性（統一走色票系統）</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>說明</th></tr>
+<tr><td><code>fontcolor-subtitle</code> / <code>fontcolor-main</code> / <code>fontcolor-footer</code></td><td>對應 <code>.slide-subtitle</code>／<code>.slide-main</code>／<code>.slide-footer</code> 文字色</td></tr>
+<tr><td><code>fill-color</code></td><td>內容卡片、填空格、extra-note 內容框等「填色區塊」的底色</td></tr>
+<tr><td><code>bg-color</code></td><td>triangle 進度樣式空心三角形的挖空色（需與頁面背景一致）</td></tr>
+<tr><td><code>extra-note-hover-color</code></td><td>extra-note 底線觸發文字 hover 時的顏色</td></tr>
+</table>
+<p style="color:var(--muted)">可用色票名稱：background, fill, shell, lavender, sky, warning, salmon, ocean, safe, teal, vanilla, yellow, focus, special, info, indigo, pink, orange（亦可直接填 #hex）。</p>
+
+<div class="row">
+  <div class="meta">
+    <h3>自訂文字色 + 填色區塊色</h3>
+    <pre><code>&lt;slider-show
+  fontcolor-subtitle="pink"
+  fontcolor-main="focus"
+  fontcolor-footer="yellow"
+  fill-color="indigo"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="200px" fontcolor-subtitle="pink" fontcolor-main="focus" fontcolor-footer="yellow" fill-color="indigo">
+      <div slide part="1"><div class="slide-content">
+        <div class="slide-subtitle">副標題</div>
+        <div class="slide-main"><p>主要內容文字</p></div>
+        <div class="slide-footer">頁尾註解</div>
+      </div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="quiz">六、填空題（quiz）相關屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>quiz-require-complete</code></td><td>布林</td><td>true</td><td>是否要求本頁填空全部填完才能切換下一頁／下一部分</td></tr>
+</table>
+<p style="color:var(--muted)">語法：<code>&lt;quiz&gt;文字 {{答案}} 文字&lt;/quiz&gt;</code>，一個 quiz 內可有多個 <code>{{}}</code>。切換到下一張才會顯示上一張的作答結果；按「重新開始」會清空所有已填內容與結果。</p>
+
+<div class="row">
+  <div class="meta">
+    <h3>quiz-require-complete="true"（預設，未填完無法切換）</h3>
+    <pre><code>&lt;slider-show auto-show-part-buttons="true"&gt;
+  &lt;div slide part="1"&gt;&lt;quiz&gt;台灣最高峰是 {{玉山}}。&lt;/quiz&gt;&lt;/div&gt;
+  &lt;div slide part="1"&gt;下一頁&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="220px" auto-show-part-buttons="true">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>請填空：<quiz>台灣最高峰是 {{玉山}}。</quiz></p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>（結果顯示在本頁上方）</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>quiz-require-complete="false"（不填也能切換）</h3>
+    <pre><code>&lt;slider-show quiz-require-complete="false"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="220px" quiz-require-complete="false">
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>選填：<quiz>水的化學式是 {{H2O}}。</quiz></p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>可直接切換到這一頁</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="extra">七、extra-note／spoiler 屬性</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>extra-note-prefix</code> / <code>extra-note-postfix</code></td><td>字串（可含 bi-* 圖示 class）</td><td>（空）</td><td>所有 extra-note 的全域前後綴文字</td></tr>
+<tr><td><code>spoiler-mode</code></td><td>true／full</td><td>（無）</td><td>整頁投影片套用防劇透遮罩</td></tr>
+<tr><td><code>spoiler-text</code></td><td>字串</td><td>點擊查看內容</td><td>遮罩上顯示的文字</td></tr>
+<tr><td><code>spoiler-color</code></td><td>色票或色碼</td><td>theme</td><td>遮罩底色</td></tr>
+</table>
+<p style="color:var(--muted)">個別元素也可以直接寫 <code>spoiler="自訂文字"</code> 屬性單獨套用遮罩，不需要整頁都開啟 <code>spoiler-mode</code>。</p>
+
+<div class="row">
+  <div class="meta">
+    <h3>extra-note（點擊展開補充說明）</h3>
+    <pre><code>&lt;div slide part="1"&gt;
+  正文提到&lt;extra-note target="box1" source="詳細補充內容"&gt;關鍵字&lt;/extra-note&gt;。
+  &lt;div id="box1"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="200px">
+      <div slide part="1"><div class="slide-content"><div class="slide-main">
+        <p>正文提到<extra-note target="box1" source="這是補充說明的詳細內容，點擊文字即可展開。">關鍵字</extra-note>。</p>
+        <div id="box1"></div>
+      </div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>spoiler（個別元素防劇透）</h3>
+    <pre><code>&lt;div spoiler="點擊查看答案"&gt;答案是 42&lt;/div&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="160px">
+      <div slide part="1"><div class="slide-content"><div class="slide-main">
+        <div spoiler="點擊查看答案" style="padding:10px">答案是 42</div>
+      </div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<h2 id="events">八、事件（JavaScript 監聽用，無對應畫面）</h2>
+<table class="attrs">
+<tr><th>事件</th><th>觸發時機</th><th>detail</th></tr>
+<tr><td><code>part-changed</code></td><td>切換部分後</td><td>{ part, total }</td></tr>
+<tr><td><code>finished</code></td><td>按下完成按鈕</td><td>{ part, total }</td></tr>
+<tr><td><code>restarted</code></td><td>重新開始後</td><td>{ part }</td></tr>
+</table>
+<pre><code>document.querySelector('slider-show')
+  .addEventListener('part-changed', (e) => console.log(e.detail));</code></pre>
+
+<h2 id="full">九、完整組合範例</h2>
+<div class="row">
+  <div class="meta">
+    <h3>多項屬性同時套用</h3>
+    <pre><code>&lt;slider-show
+  height="240px"
+  theme="special"
+  progress-style="triangle"
+  auto-show-part-buttons="true"
+  part-transition="slide"
+  start-style="gradient-border"
+  end-style="gradient-border"
+  fontcolor-main="vanilla"
+  quiz-require-complete="true"&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <slider-show height="240px" theme="special" progress-style="triangle" auto-show-part-buttons="true" part-transition="slide" start-style="gradient-border" end-style="gradient-border" fontcolor-main="vanilla" quiz-require-complete="true">
+      <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>歡迎開始</p></div></div></div>
+      <div slide part="1"><div class="slide-content"><div class="slide-main"><p>請填空：<quiz>地球是{{圓形}}的。</quiz></p></div></div></div>
+      <div slide part="2" role="end"><div class="slide-content"><div class="slide-main"><p>恭喜完成！</p></div></div></div>
+    </slider-show>
+  </div>
+</div>
+
+<script src="slider-show.js"></script>
+</body>
+</html>
