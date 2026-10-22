@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NumericList Demo · icon + grid + fab</title>
+  <title>NumericList Demo · icon + grid + fab + ad</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     :root { font-size: 18px; }
@@ -173,7 +173,7 @@
      ══════════════════════ -->
 <div class="page">
 
-  <h1 class="page-title">NumericList &nbsp;<code>icon</code> + <code>cols</code> + <code>fab</code></h1>
+  <h1 class="page-title">NumericList &nbsp;<code>icon</code> + <code>cols</code> + <code>fab</code> + <code>ad</code></h1>
   <p class="page-meta">numeric-list.js &nbsp;·&nbsp; Demo 2026-10-22 &nbsp;·&nbsp; 需引用 Bootstrap Icons</p>
 
 
@@ -347,6 +347,137 @@
     <div id="g-c" style="display:none"><strong style="color:#C3A5E5">資料庫策略</strong><br>PostgreSQL 主從架構，P99 讀取延遲 8ms，每秒可寫入 200,000 筆。</div>
     <div id="g-d" style="display:none"><strong style="color:#C3A5E5">部署流程</strong><br>GitHub Actions 觸發，藍綠部署策略，零停機更新，每次附自動 Smoke Test。</div>
     <div id="g-e" style="display:none"><strong style="color:#C3A5E5">效能監控</strong><br>Grafana + Prometheus，異常 30 秒內觸發 PagerDuty，附帶完整堆疊追蹤。</div>
+  </div>
+
+
+  <!-- ════════════════ D · list-item-ad ════════════════ -->
+  <div class="chapter" id="ch-ad">
+    <h2>D &nbsp;·&nbsp; list-item-ad 廣告列</h2>
+    <p>緊貼相鄰 item（負 margin 抵消 gap）；漸層色由 from / to / dir 控制；href 行為等同原生 &lt;a&gt;。僅支援直欄模式，Grid 模式自動略過。</p>
+  </div>
+
+  <!-- D-1 預設漸層 -->
+  <div class="section">
+    <div class="section-label">D-1 &nbsp;預設漸層（indigo → ocean，135deg）</div>
+    <div class="badge-row"><span class="badge b-num">純展示，無 href</span></div>
+    <div class="section-code">&lt;ui-list&gt;
+  &lt;list-item&gt;一般項目 1&lt;/list-item&gt;
+  &lt;list-item-ad&gt;這是&lt;b&gt;預設漸層&lt;/b&gt;廣告文字，緊貼上下 items&lt;/list-item-ad&gt;
+  &lt;list-item&gt;一般項目 2&lt;/list-item&gt;
+  &lt;list-item&gt;一般項目 3&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list>
+      <list-item>一般項目 1</list-item>
+      <list-item-ad>這是<b>預設漸層</b>廣告文字，緊貼上下 items</list-item-ad>
+      <list-item>一般項目 2</list-item>
+      <list-item>一般項目 3</list-item>
+    </ui-list>
+  </div>
+
+  <!-- D-2 自訂漸層色 -->
+  <div class="section">
+    <div class="section-label">D-2 &nbsp;自訂漸層色與方向（from / to / dir）</div>
+    <div class="badge-row"><span class="badge b-num">Palette 名稱或任意 CSS 色值</span></div>
+    <div class="section-code">&lt;ui-list theme-color="special"&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt;
+  &lt;list-item-ad from="warning" to="orange" dir="90deg"&gt;
+    🔥 限時優惠：&lt;b&gt;前 100 名&lt;/b&gt;享 8 折，今晚 24:00 截止
+  &lt;/list-item-ad&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt;
+  &lt;list-item-ad from="safe" to="teal" dir="120deg"&gt;
+    ✅ 已通過 ISO 27001 認證，資料安全有保障
+  &lt;/list-item-ad&gt;
+  &lt;list-item&gt;...&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list theme-color="special">
+      <list-item>企業方案每月 NT$2,400，5 人起</list-item>
+      <list-item-ad from="warning" to="orange" dir="90deg">🔥 限時優惠：<b>前 100 名</b>享 8 折，今晚 24:00 截止</list-item-ad>
+      <list-item>無限 API 呼叫次數，不限頻寬</list-item>
+      <list-item-ad from="safe" to="teal" dir="120deg">✅ 已通過 ISO 27001 認證，資料安全有保障</list-item-ad>
+      <list-item>7×24 專屬技術支援工程師</list-item>
+    </ui-list>
+  </div>
+
+  <!-- D-3 href 同頁跳書籤 -->
+  <div class="section">
+    <div class="section-label">D-3 &nbsp;href 同頁錨點（原生跳轉，等同 &lt;a href="#..."&gt;）</div>
+    <div class="badge-row"><span class="badge b-click">href 同頁</span></div>
+    <div class="section-code">&lt;list-item-ad from="indigo" to="lavender" href="#ch-fab"&gt;
+  👉 點此跳至 C 章節（FAB 工具列）
+&lt;/list-item-ad&gt;</div>
+    <ui-list>
+      <list-item>點擊下方廣告列，頁面會跳到「C · FAB 工具列」章節</list-item>
+      <list-item-ad from="indigo" to="lavender" href="#ch-fab">👉 點此跳至 C 章節（FAB 工具列）——原生錨點行為，無 JS 攔截</list-item-ad>
+      <list-item>上方廣告 hover 時有 filter brightness 效果，cursor:pointer</list-item>
+    </ui-list>
+  </div>
+
+  <!-- D-4 href 外連結 -->
+  <div class="section">
+    <div class="section-label">D-4 &nbsp;href 外連結（link-target="_blank"）</div>
+    <div class="badge-row"><span class="badge b-click">href 外連</span></div>
+    <div class="section-code">&lt;list-item-ad from="pink" to="lavender" dir="160deg"
+               href="https://icons.getbootstrap.com"
+               link-target="_blank"&gt;
+  🎨 Bootstrap Icons 圖示庫——在新分頁開啟
+&lt;/list-item-ad&gt;</div>
+    <ui-list>
+      <list-item accent="pink">點擊下方廣告列，以新分頁開啟外部連結</list-item>
+      <list-item-ad from="pink" to="lavender" dir="160deg"
+                    href="https://icons.getbootstrap.com"
+                    link-target="_blank">🎨 Bootstrap Icons 圖示庫——在新分頁開啟</list-item-ad>
+      <list-item>rel="noopener" 已自動加入外連的 &lt;a&gt; 元素</list-item>
+    </ui-list>
+  </div>
+
+  <!-- D-5 icon mode + ad -->
+  <div class="section">
+    <div class="section-label">D-5 &nbsp;mode="icon" 與廣告列共存</div>
+    <div class="badge-row">
+      <span class="badge b-icon">icon mode</span>
+      <span class="badge b-num">ad 不佔序號</span>
+    </div>
+    <div class="section-code">&lt;!-- ad 不影響 item 序號（accent 循環、icon 數量皆以 list-item 計算） --&gt;
+&lt;ui-list mode="icon" theme-color="sky"&gt;
+  &lt;list-item icon="shield-lock-fill"&gt;端對端加密&lt;/list-item&gt;
+  &lt;list-item icon="graph-up-arrow"&gt;即時儀表板&lt;/list-item&gt;
+  &lt;list-item-ad from="ocean" to="sky" dir="100deg" href="#top"&gt;
+    ⚡ 限量名額：免費試用 30 天，立即申請 →
+  &lt;/list-item-ad&gt;
+  &lt;list-item icon="people-fill"&gt;無限協作成員&lt;/list-item&gt;
+  &lt;list-item icon="cloud-fill"&gt;自動雲端備份&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list mode="icon" theme-color="sky">
+      <list-item icon="shield-lock-fill">端對端加密，資料零外洩</list-item>
+      <list-item icon="graph-up-arrow">即時儀表板，決策更快速</list-item>
+      <list-item-ad from="ocean" to="sky" dir="100deg" href="#top">⚡ 限量名額：免費試用 30 天，立即申請 →</list-item-ad>
+      <list-item icon="people-fill">無限協作成員，跨時區溝通</list-item>
+      <list-item icon="cloud-fill">自動雲端備份，永不遺失</list-item>
+    </ui-list>
+  </div>
+
+  <!-- D-6 Grid 模式略過廣告 -->
+  <div class="section">
+    <div class="section-label">D-6 &nbsp;Grid 模式（cols="2"）— 廣告自動略過</div>
+    <div class="badge-row">
+      <span class="badge b-grid">cols="2"</span>
+      <span class="badge b-mix">ad 略過</span>
+    </div>
+    <div class="section-code">&lt;!-- list-item-ad 在 Grid 模式下不渲染，item 序號不受影響 --&gt;
+&lt;ui-list cols="2" theme-color="lavender"&gt;
+  &lt;list-item&gt;項目 1&lt;/list-item&gt;
+  &lt;list-item-ad&gt;此廣告在 Grid 模式被略過&lt;/list-item-ad&gt;
+  &lt;list-item&gt;項目 2&lt;/list-item&gt;
+  &lt;list-item&gt;項目 3&lt;/list-item&gt;
+  &lt;list-item&gt;項目 4&lt;/list-item&gt;
+&lt;/ui-list&gt;</div>
+    <ui-list cols="2" theme-color="lavender">
+      <list-item>項目 1</list-item>
+      <list-item-ad from="warning" to="orange">此廣告在 Grid 模式被略過（不佔格）</list-item-ad>
+      <list-item>項目 2</list-item>
+      <list-item>項目 3</list-item>
+      <list-item>項目 4</list-item>
+    </ui-list>
   </div>
 
 

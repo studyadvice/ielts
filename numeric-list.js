@@ -52,14 +52,14 @@
     numberPad:            '12px 16px',
     lineGap:              '3px',
 
-    /* ── FAB 專屬設定 ── */
-    fabSize:              '52px',    /* 按鈕寬高 */
-    fabIconSize:          '1.4rem',  /* 圖示字體大小 */
-    fabLabelSize:         '0.6rem',  /* label 短文字大小 */
-    fabBg:                '#0d1b24', /* 按鈕底色 */
-    fabBorderRadius:      '8px',     /* 按鈕圓角 */
-    fabOffset:            '16px',    /* 距螢幕左 / 右邊緣距離 */
-    fabBottom:            '120px'    /* 距螢幕底部距離 */
+    /* ── FAB 專屬 ── */
+    fabSize:              '52px',
+    fabIconSize:          '1.4rem',
+    fabLabelSize:         '0.6rem',
+    fabBg:                '#0d1b24',
+    fabBorderRadius:      '8px',
+    fabOffset:            '16px',
+    fabBottom:            '120px'
   };
 
   var store = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
@@ -129,11 +129,36 @@
       '.nl-content p,.nl-content li{margin:0;padding:0}' +
       '.nl-placeholder{color:#595a57;font-style:italic}' +
 
-      /* ══════════════════════════════════════════
-         FAB 按鈕樣式
-         hover 色由 JS 以 --nl-fab-hover 注入至
-         每個按鈕，使每顆按鈕獨立顯示 accent 色。
-         ══════════════════════════════════════════ */
+      /* ══════════════════════════════════════════════════
+         list-item-ad 廣告列
+         gap 消除原理（CSS 自訂屬性繼承）：
+           .nl-ad:not(:first-child) → 抵消上方 gap
+           .nl-ad + .nl-item        → 抵消下方 gap
+           .nl-ad + .nl-ad          → 兩廣告相鄰時亦同
+         ══════════════════════════════════════════════════ */
+      '.nl-ad:not(:first-child){' +
+        'margin-top:calc(-1 * var(--nl-gap,' + c.rowGap + '))' +
+      '}' +
+      '.nl-ad + .nl-item,' +
+      '.nl-ad + .nl-ad{' +
+        'margin-top:calc(-1 * var(--nl-gap,' + c.rowGap + '))' +
+      '}' +
+
+      '.nl-ad-inner{' +
+        'display:block;' +
+        'padding:' + c.padV + ' ' + c.padH + ';' +
+        'color:rgba(255,255,255,0.92);' +
+        'font-size:' + c.fontSize + ';' +
+        'line-height:' + c.lineHeight + ';' +
+        'text-decoration:none;' +
+        'text-shadow:0 1px 3px rgba(0,0,0,0.32)' +
+      '}' +
+      '.nl-ad-inner[href]{transition:filter .18s ease}' +
+      '.nl-ad-inner[href]:hover{filter:brightness(1.12) saturate(1.08)}' +
+
+      /* ══════════════════════════════════════════════════
+         FAB
+         ══════════════════════════════════════════════════ */
       '.nl-fab-btn{' +
         'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
         'width:' + c.fabSize + ';min-height:' + c.fabSize + ';' +
@@ -147,13 +172,11 @@
         'user-select:none;box-sizing:border-box;' +
         '-webkit-appearance:none;appearance:none' +
       '}' +
-
       '.nl-fab-btn:hover{' +
         'border-color:var(--nl-fab-hover,' + c.borderHoverColor + ');' +
         'background:color-mix(in srgb,var(--nl-fab-hover,' + c.borderHoverColor + ') 15%,' + c.backgroundColor + ');' +
         'color:var(--nl-fab-hover,' + c.borderHoverColor + ')' +
       '}' +
-
       '.nl-fab-label{' +
         'font-size:' + c.fabLabelSize + ';font-weight:700;' +
         'letter-spacing:0.05em;line-height:1;color:inherit' +
@@ -202,8 +225,42 @@
     }
   }
 
-  /* extractItems 同時服務所有模式；
-     fab 專屬欄位（href / label / linkTarget）在其他模式下為 null，無副作用。 */
+  /* ═══════════════════════════════════════════════════════════════════
+   *  extractNodes：讀取 <list-item> 和 <list-item-ad>，依 DOM 順序
+   *  回傳混合陣列，type 欄位區分兩種節點。
+   *  只用於直欄 / icon / Grid 渲染路徑。
+   * ═══════════════════════════════════════════════════════════════════ */
+  function extractNodes(listEl) {
+    var children = listEl.querySelectorAll(':scope > list-item, :scope > list-item-ad');
+    var seq      = 0;   /* 只計 list-item 的序號，ad 不佔號 */
+
+    return Array.prototype.map.call(children, function (el) {
+      if (el.tagName.toLowerCase() === 'list-item-ad') {
+        return {
+          type      : 'ad',
+          html      : el.innerHTML.trim(),
+          from      : el.getAttribute('from')        || null,
+          to        : el.getAttribute('to')          || null,
+          dir       : el.getAttribute('dir')         || null,
+          href      : el.getAttribute('href')        || null,
+          linkTarget: el.getAttribute('link-target') || null
+        };
+      }
+      /* list-item */
+      var n = seq++;
+      return {
+        type  : 'item',
+        number: el.getAttribute('number') || String(n + 1),
+        accent: el.getAttribute('accent') || null,
+        source: el.getAttribute('source') || null,
+        target: el.getAttribute('target') || null,
+        icon  : el.getAttribute('icon')   || null,
+        html  : el.innerHTML.trim()
+      };
+    });
+  }
+
+  /* ─── extractItems：僅供 fab 模式，只讀 <list-item> ─── */
   function extractItems(listEl) {
     var items = listEl.querySelectorAll(':scope > list-item');
     return Array.prototype.map.call(items, function (item, i) {
@@ -274,13 +331,44 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════
+   *  buildAd：廣告列，僅限直欄模式（Grid 模式略過）
+   *
+   *  href 行為完全等同原生 <a href>：
+   *    同頁錨點 (#id) → 瀏覽器原生跳轉
+   *    外部 URL       → 頁面導航（搭配 link-target="_blank"）
+   *
+   *  漸層預設：indigo (#7849C9) → ocean (#1CCAE8)，方向 135deg
+   *  from / to / dir 屬性可覆蓋，支援 Palette 名稱或任意 CSS 色值。
+   * ═══════════════════════════════════════════════════════════════════ */
+  function buildAd(data) {
+    var fromColor = resolveColor(data.from, 'from') || Palette.indigo;
+    var toColor   = resolveColor(data.to,   'to')   || Palette.ocean;
+    var dir       = data.dir || '135deg';
+
+    var li       = document.createElement('li');
+    li.className = 'nl-ad';
+
+    var inner;
+    if (data.href) {
+      inner      = document.createElement('a');
+      inner.href = data.href;
+      if (data.linkTarget) inner.target = data.linkTarget;
+      /* 外連才加 rel；同頁錨點不需要 */
+      if (data.href.charAt(0) !== '#') inner.rel = 'noopener';
+    } else {
+      inner = document.createElement('div');
+    }
+
+    inner.className        = 'nl-ad-inner';
+    inner.style.background = 'linear-gradient(' + dir + ',' + fromColor + ',' + toColor + ')';
+    inner.innerHTML        = data.html;
+
+    li.appendChild(inner);
+    return li;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
    *  buildFabBtn：fab 模式專用
-   *
-   *  href 有值且不以 # 開頭 → <a> 外連結（rel="noopener"）
-   *  href 以 # 開頭          → <button> + JS smooth scroll
-   *  href 無值               → <button>（使用者自行 attach 事件）
-   *
-   *  link-target 屬性對應 <a target="...">，與 source/target 機制不衝突。
    * ═══════════════════════════════════════════════════════════════════ */
   function buildFabBtn(data, idx, listTheme) {
     var accent = resolveColor(data.accent, 'accent')
@@ -333,11 +421,7 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════
-   *  renderFab：<ui-list> 本身作為 fixed 容器
-   *
-   *  position="right"（預設）/ "left"
-   *  offset="16px"  — 距螢幕邊緣
-   *  bottom="120px" — 距螢幕底部
+   *  renderFab
    * ═══════════════════════════════════════════════════════════════════ */
   function renderFab(listEl) {
     var rawItems = listEl.querySelectorAll(':scope > list-item');
@@ -352,13 +436,12 @@
       itemData = cached.fabItems;
     }
 
-    var theme    = getListTheme(listEl);
-    var pos      = (listEl.getAttribute('position') || 'right').toLowerCase();
-    var offset   = listEl.getAttribute('offset') || Config.fabOffset;
-    var bottom   = listEl.getAttribute('bottom') || Config.fabBottom;
-    var gap      = listEl.getAttribute('gap')    || Config.rowGap;
+    var theme  = getListTheme(listEl);
+    var pos    = (listEl.getAttribute('position') || 'right').toLowerCase();
+    var offset = listEl.getAttribute('offset') || Config.fabOffset;
+    var bottom = listEl.getAttribute('bottom') || Config.fabBottom;
+    var gap    = listEl.getAttribute('gap')    || Config.rowGap;
 
-    /* ui-list 自身轉為 fixed 容器 */
     listEl.style.position      = 'fixed';
     listEl.style.display       = 'flex';
     listEl.style.flexDirection = 'column';
@@ -367,11 +450,10 @@
     listEl.style.bottom        = bottom;
     listEl.style.top           = '';
     listEl.style.width         = '';
-    listEl.style.left          = (pos === 'left')  ? offset : '';
-    listEl.style.right         = (pos !== 'left')  ? offset : '';
+    listEl.style.left          = (pos === 'left') ? offset : '';
+    listEl.style.right         = (pos !== 'left') ? offset : '';
 
     listEl.innerHTML = '';
-
     for (var i = 0; i < itemData.length; i++) {
       listEl.appendChild(buildFabBtn(itemData[i], i, theme));
     }
@@ -380,39 +462,45 @@
   /* ═══════════════════════════════════════════════════════════════════
    *  renderUIList：入口，依 mode 分流
    *
-   *  mode="fab"  → renderFab()（獨立邏輯，不共用 buildLi）
-   *  其餘         → 數字 / icon / Grid 邏輯
+   *  mode="fab"  → renderFab()
+   *  其餘         → 數字 / icon / Grid / ad 混合邏輯
+   *
+   *  list-item-ad 規則：
+   *    ‣ 直欄 / icon 模式：正常渲染 buildAd()
+   *    ‣ Grid 模式（cols >= 2）：略過，不渲染
+   *    ‣ 廣告不佔 item 序號（accent 循環、編號不計廣告）
    * ═══════════════════════════════════════════════════════════════════ */
   function renderUIList(listEl) {
-    /* fab 走獨立分支 */
     if (listEl.getAttribute('mode') === 'fab') {
       renderFab(listEl);
       return;
     }
 
     var widthAttr;
-    var itemData;
+    var nodeData;
     var isIconMode;
     var cols;
     var hasLastSpan;
 
-    var rawItems = listEl.querySelectorAll(':scope > list-item');
-    if (rawItems.length) {
+    /* 偵測是否有原始子節點（含 ad） */
+    var rawNodes = listEl.querySelectorAll(':scope > list-item, :scope > list-item-ad');
+
+    if (rawNodes.length) {
       widthAttr   = listEl.getAttribute('width');
       isIconMode  = listEl.getAttribute('mode') === 'icon';
       var colsAttr = listEl.getAttribute('cols');
       cols        = colsAttr ? Math.max(1, parseInt(colsAttr, 10) || 1) : 0;
       hasLastSpan = cols >= 2 && listEl.hasAttribute('last-span');
-      itemData    = extractItems(listEl);
+      nodeData    = extractNodes(listEl);
       if (store) store.set(listEl, {
-        width: widthAttr, items: itemData,
+        width: widthAttr, items: nodeData,
         iconMode: isIconMode, cols: cols, lastSpan: hasLastSpan
       });
     } else {
       var cached = store ? store.get(listEl) : null;
       if (!cached) return;
       widthAttr   = cached.width;
-      itemData    = cached.items;
+      nodeData    = cached.items;
       isIconMode  = cached.iconMode;
       cols        = cached.cols    || 0;
       hasLastSpan = cached.lastSpan || false;
@@ -420,9 +508,10 @@
 
     var isGridMode = cols >= 2;
 
-    for (var s = 0; s < itemData.length; s++) {
-      if (itemData[s].source) {
-        var srcEl = document.getElementById(itemData[s].source);
+    /* source 元素隱藏（只在 item 節點上） */
+    for (var s = 0; s < nodeData.length; s++) {
+      if (nodeData[s].type === 'item' && nodeData[s].source) {
+        var srcEl = document.getElementById(nodeData[s].source);
         if (srcEl) srcEl.style.display = 'none';
       }
     }
@@ -431,16 +520,28 @@
 
     var ol = document.createElement('ol');
     ol.className = 'nl-list' +
-      (isGridMode  ? ' nl-list--grid'       : '') +
-      (hasLastSpan ? ' nl-list--last-span'  : '');
+      (isGridMode  ? ' nl-list--grid'      : '') +
+      (hasLastSpan ? ' nl-list--last-span' : '');
 
     if (isGridMode) ol.style.setProperty('--nl-cols', String(cols));
 
-    var liEls = [];
-    for (var i = 0; i < itemData.length; i++) {
-      var li = buildLi(itemData[i], i, liEls, theme, isIconMode);
+    var liEls    = [];   /* 只收 nl-item，供 active 互斥使用 */
+    var itemCount = 0;   /* 不計 ad，維持 accent 循環與序號正確 */
+
+    for (var i = 0; i < nodeData.length; i++) {
+      var d = nodeData[i];
+
+      if (d.type === 'ad') {
+        /* Grid 模式略過廣告（欄佔比不可預期） */
+        if (!isGridMode) ol.appendChild(buildAd(d));
+        continue;
+      }
+
+      /* list-item */
+      var li = buildLi(d, itemCount, liEls, theme, isIconMode);
       liEls.push(li);
       ol.appendChild(li);
+      itemCount++;
     }
 
     applyWidth(listEl, widthAttr);
@@ -457,23 +558,9 @@
     get defaults() { return Object.assign({}, Config); },
     get colors()   { return Object.assign({}, Palette); },
 
-    /**
-     * 覆蓋全域設定並重建 CSS。
-     *
-     * fab 相關設定：
-     *   fabSize          — 按鈕寬高（預設 52px）
-     *   fabIconSize      — 圖示大小（預設 1.4rem）
-     *   fabLabelSize     — label 文字大小（預設 0.6rem）
-     *   fabBg            — 按鈕背景色（預設 #0d1b24）
-     *   fabBorderRadius  — 圓角（預設 8px）
-     *   fabOffset        — 距螢幕邊緣（預設 16px）
-     *   fabBottom        — 距螢幕底部（預設 120px）
-     */
     setup: function (opts) {
       if (!opts || typeof opts !== 'object') { injectCSS(); return; }
-
       Object.assign(Config, opts);
-
       if (opts.themeColor !== undefined && opts.themeColor !== null) {
         Config.themeColor = resolveColor(opts.themeColor, 'themeColor');
       }
@@ -483,7 +570,6 @@
       if (opts.numberColor !== undefined && opts.themeColor === undefined) {
         Config.themeColor = Config.numberColor;
       }
-
       var themeChanged = opts.numberColor !== undefined || opts.themeColor !== undefined;
       if (themeChanged && opts.borderHoverColor === undefined) {
         Config.borderHoverColor = Config.themeColor || Config.numberColor;
@@ -491,7 +577,6 @@
       if (themeChanged && opts.borderActiveColor === undefined) {
         Config.borderActiveColor = Config.themeColor || Config.numberColor;
       }
-
       injectCSS();
     },
 
