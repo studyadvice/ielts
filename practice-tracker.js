@@ -3,6 +3,12 @@
 
   const CSS_ID = '__practice-tracker-v2__';
   const SHAPES  = new Set(['square', 'circle', 'star', 'diamond', 'hexagon', 'heart']);
+  const BTN_STYLES = new Set(['solid', 'outline', 'pill', 'ghost', 'block', 'check', 'split']);
+  const BTN_SIZES  = {
+    sm: { fs: '0.875rem', pad: '2px 10px' },
+    md: { fs: '1rem',     pad: '4px 14px' },
+    lg: { fs: '1.25rem',  pad: '6px 20px' },
+  };
 
   const BRAND = {
     bg:       '#0C0D0C',
@@ -57,7 +63,6 @@
     watchStepper:        true,
     clickGo:             false,
 
-    /* ── 片語收藏子區塊（偵測到頁面有 <phrase-chip data-phrase> 才會出現）── */
     phraseBlock:         true,          // 設為 false 可強制關閉，即使頁面有 phrase-chip
     phraseTitle:         '片語收藏',
     phraseLabelDone:      '已收藏',
@@ -69,13 +74,38 @@
     phraseCellShape:     'circle',
     phraseEventName:     'pt:phrase-collected',
 
-    /* ── 收藏清單 offcanvas（第一次收藏才會出現開啟按鈕）── */
     phraseListBtnLabel:  '查看收藏清單',
     phraseListTitle:     '',            // 留空則沿用 phraseTitle
     phraseListPlacement: 'end',         // start | end | top | bottom
     phraseListTheme:     '',            // 留空則沿用 phraseColorDone
     phraseListWidth:     '380px',
     phraseListEmptyText: '尚未收藏任何片語',
+
+    /* 定時 Modal：promoTarget 留空就完全不啟用 */
+    promoTarget:          '',           // 目標 div 的 id，可寫 promo-1 或 #promo-1
+    promoMinutes:         5,            // 載入起算的牆鐘時間（分鐘，可小數，0 表示不限時間）
+    promoMinSections:     4,            // 至少瀏覽幾個 section（0 表示只看累計時間）
+    promoTitle:           '',           // Modal 標題，留空則不顯示標題文字
+    promoButtonLabel:     '我知道了',
+    promoViewRatio:       0.4,          // section 可見比例門檻
+    promoViewSeconds:     2,            // 達到門檻後需連續停留的秒數
+    promoIdleSeconds:     1.5,          // 捲動停止多久後才彈出
+    promoEventName:       'pt:promo-shown',
+    promoClosedEventName: 'pt:promo-closed',
+
+    /* 內建「標記完成」按鈕：只有帶 data-btn* 屬性的 section 才會自動插入 */
+    btn:                  true,         // 設為 false 可整體關閉
+    btnStyle:             'outline',    // solid | outline | pill | ghost | block | check | split
+    btnText:              '標記完成',
+    btnDoneText:          '✓ 已完成',
+    btnSize:              'md',         // sm | md | lg
+    btnFontSize:          '',           // 有填就蓋過 btnSize 的字體
+    btnWidth:             '',           // 例如 160px；留空為內容寬度
+    btnPadding:           '',           // 例如 4px 14px；留空用 btnSize 的緊湊預設
+    btnColor:             'ocean',      // 品牌色名稱或色碼
+    btnAlign:             'start',      // start | center | end
+    btnRadius:            '',
+    btnEventName:         'pt:section-done',
   };
 
   const ATTR_MAP = {
@@ -129,6 +159,32 @@
     'data-phrase-list-theme':      { key: 'phraseListTheme',     type: 'string' },
     'data-phrase-list-width':      { key: 'phraseListWidth',     type: 'string' },
     'data-phrase-list-empty-text': { key: 'phraseListEmptyText', type: 'string' },
+
+    /* ── 定時 Modal 屬性 ── */
+    'data-promo-target':             { key: 'promoTarget',          type: 'string' },
+    'data-promo-minutes':            { key: 'promoMinutes',         type: 'float'  },
+    'data-promo-min-sections':       { key: 'promoMinSections',     type: 'int'    },
+    'data-promo-title':              { key: 'promoTitle',           type: 'string' },
+    'data-promo-button-label':       { key: 'promoButtonLabel',     type: 'string' },
+    'data-promo-view-ratio':         { key: 'promoViewRatio',       type: 'float'  },
+    'data-promo-view-seconds':       { key: 'promoViewSeconds',     type: 'float'  },
+    'data-promo-idle-seconds':       { key: 'promoIdleSeconds',     type: 'float'  },
+    'data-promo-event-name':         { key: 'promoEventName',       type: 'string' },
+    'data-promo-closed-event-name':  { key: 'promoClosedEventName', type: 'string' },
+
+    /* ── 標記完成按鈕屬性（tracker 上是全域預設，section 或 pt-done-btn 上同名屬性可覆蓋）── */
+    'data-btn':                      { key: 'btn',                  type: 'bool'   },
+    'data-btn-style':                { key: 'btnStyle',             type: 'string' },
+    'data-btn-text':                 { key: 'btnText',              type: 'string' },
+    'data-btn-done-text':            { key: 'btnDoneText',          type: 'string' },
+    'data-btn-size':                 { key: 'btnSize',              type: 'string' },
+    'data-btn-font-size':            { key: 'btnFontSize',          type: 'string' },
+    'data-btn-width':                { key: 'btnWidth',             type: 'string' },
+    'data-btn-padding':              { key: 'btnPadding',           type: 'string' },
+    'data-btn-color':                { key: 'btnColor',             type: 'string' },
+    'data-btn-align':                { key: 'btnAlign',             type: 'string' },
+    'data-btn-radius':               { key: 'btnRadius',            type: 'string' },
+    'data-btn-event-name':           { key: 'btnEventName',         type: 'string' },
   };
 
   function readElementAttrs(el, cfg) {
@@ -138,12 +194,12 @@
       switch (meta.type) {
         case 'bool': cfg[meta.key] = (raw !== 'false'); break;
         case 'int':  cfg[meta.key] = parseInt(raw, 10); break;
+        case 'float': cfg[meta.key] = parseFloat(raw); break;
         default:     cfg[meta.key] = raw;
       }
     }
   }
 
-  /* ── 樣式注入 ─────────────────────────────────────────────── */
   if (!doc.getElementById(CSS_ID)) {
     const s = doc.createElement('style');
     s.id = CSS_ID;
@@ -201,7 +257,6 @@ pt-title {
   text-transform: uppercase;
 }
 
-/* 收合時顯示的進度數字（僅反映章節進度，片語收藏不佔用這個欄位） */
 pt-header-count {
   font-size: var(--pt-fs-count, 0.76rem);
   font-weight: 700;
@@ -247,12 +302,10 @@ practice-tracker.is-collapsed pt-body {
   opacity: 0;
   pointer-events: none;
 }
-/* 收合時完成提示也同步隱藏，改由 header-count 傳達狀態 */
 practice-tracker.is-collapsed pt-complete {
   display: none !important;
 }
 
-/* ── 格子陣列 ── */
 pt-grid {
   display: grid;
   grid-template-columns: repeat(var(--pt-cols, 5), var(--pt-cell, 16px));
@@ -308,7 +361,6 @@ pt-cell[data-shape="heart"] {
   );
 }
 
-/* ── 計數 & 完成 ── */
 pt-count {
   font-size: var(--pt-fs-count, 0.76rem);
   opacity: 0.55;
@@ -334,9 +386,6 @@ pt-complete-sub {
   margin-top: 2px;
 }
 
-/* ── 片語收藏子區塊：物理上獨立一塊，不與章節格子混排 ──
-   顏色靠 --pt-done / --pt-pending / --pt-complete-color 在這層重新覆寫，
-   只影響這個子樹底下的 pt-cell / pt-complete，章節格子完全不受影響 */
 pt-phrase-block {
   margin-top: 10px;
   padding-top: 10px;
@@ -404,11 +453,186 @@ pt-phrase-list-btn.is-shown { display: block; }
 }
 .pt-phrase-item-translation { opacity: 0.75; font-size: 0.9rem; }
 .pt-phrase-empty { opacity: 0.6; font-size: 0.9rem; padding: 4px 2px; }
+
+/* ── 定時 Modal（金色代表特殊內容，不在品牌色票內）─── */
+body.pt-promo-open .modal-backdrop { --bs-backdrop-opacity: 0.9; }
+.pt-promo-modal .modal-dialog { max-width: 880px; }
+.pt-promo-modal .modal-content {
+  position: relative;
+  background: #0C0D0C;
+  color: #C6C7BD;
+  border: 2px solid #D4AF37;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 0 0 6px #0C0D0C, 0 0 0 7px #9A7B1F, 0 24px 64px rgba(0,0,0,0.95);
+}
+.pt-promo-bar {
+  height: 8px;
+  background: linear-gradient(90deg, #9A7B1F, #F3E1A0 50%, #9A7B1F);
+}
+.pt-promo-head {
+  position: relative;
+  padding: 28px 72px 4px;
+  text-align: center;
+}
+.pt-promo-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  color: #D4AF37;
+  background: linear-gradient(180deg, #F3E1A0, #D4AF37 60%, #9A7B1F);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.pt-promo-orn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 420px;
+  margin: 14px auto 0;
+  color: #D4AF37;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+.pt-promo-orn::before,
+.pt-promo-orn::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D4AF37);
+}
+.pt-promo-orn::after { transform: scaleX(-1); }
+.pt-promo-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #D4AF37;
+  border-radius: 50%;
+  background: #0C0D0C;
+  color: #D4AF37;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.pt-promo-close:hover { background: #D4AF37; color: #0C0D0C; }
+.pt-promo-modal .pt-promo-body {
+  padding: 20px 48px 12px;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: #C6C7BD;
+}
+.pt-promo-body h1, .pt-promo-body h2, .pt-promo-body h3,
+.pt-promo-body h4, .pt-promo-body h5, .pt-promo-body h6 {
+  color: #F3E1A0;
+  line-height: 1.4;
+}
+.pt-promo-body a { color: #D4AF37; text-decoration: underline; }
+.pt-promo-body a:hover { color: #F3E1A0; }
+.pt-promo-body hr { border-color: #D4AF37; opacity: 1; }
+.pt-promo-body small { font-size: 1.125rem; }
+.pt-promo-body li::marker { color: #D4AF37; }
+.pt-promo-body img {
+  max-width: 100%;
+  border: 1px solid #9A7B1F;
+  border-radius: 8px;
+}
+.pt-promo-foot {
+  padding: 12px 48px 32px;
+  text-align: center;
+}
+.pt-promo-btn {
+  padding: 10px 40px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #F3E1A0, #D4AF37 50%, #9A7B1F);
+  color: #0C0D0C;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+.pt-promo-btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
+
+/* ── 內建標記完成按鈕 ─── */
+pt-done-btn {
+  --ptb-color: var(--ptb-base, #1CCAE8);
+  display: block;
+  box-sizing: border-box;
+  width: var(--ptb-width, fit-content);
+  margin: 16px 0 0;
+  padding: var(--ptb-pad, 4px 14px);
+  font-family: inherit;
+  font-size: var(--ptb-fs, 1rem);
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--ptb-color);
+  background: transparent;
+  border: 1px solid var(--ptb-color);
+  border-radius: var(--ptb-radius, 6px);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease, color 0.2s ease, filter 0.2s ease;
+}
+pt-done-btn[data-align="center"] { margin-left: auto; margin-right: auto; }
+pt-done-btn[data-align="end"]    { margin-left: auto; }
+pt-done-icon  { display: none; }
+pt-done-label { display: inline; }
+pt-done-btn:hover { background: var(--ptb-color); color: #0C0D0C; }
+pt-done-btn.is-done { --ptb-color: #27AE60; cursor: default; pointer-events: none; }
+
+pt-done-btn[data-style="solid"],
+pt-done-btn[data-style="pill"],
+pt-done-btn[data-style="block"] { background: var(--ptb-color); color: #0C0D0C; }
+pt-done-btn[data-style="solid"]:hover,
+pt-done-btn[data-style="pill"]:hover,
+pt-done-btn[data-style="block"]:hover { background: var(--ptb-color); color: #0C0D0C; filter: brightness(1.12); }
+pt-done-btn[data-style="pill"]  { border-radius: var(--ptb-radius, 999px); }
+pt-done-btn[data-style="block"] { width: var(--ptb-width, 100%); }
+
+pt-done-btn[data-style="ghost"] {
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+pt-done-btn[data-style="ghost"]:hover { background: transparent; color: var(--ptb-color); filter: brightness(1.25); }
+
+pt-done-btn[data-style="check"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ptb-width, 2.25em);
+  height: var(--ptb-width, 2.25em);
+  padding: 0;
+  border-radius: var(--ptb-radius, 50%);
+}
+pt-done-btn[data-style="check"] pt-done-icon  { display: block; }
+pt-done-btn[data-style="check"] pt-done-label { display: none; }
+pt-done-btn[data-style="check"].is-done { background: var(--ptb-color); color: #0C0D0C; }
+
+pt-done-btn[data-style="split"] { display: flex; padding: 0; overflow: hidden; }
+pt-done-btn[data-style="split"] pt-done-icon {
+  display: flex;
+  align-items: center;
+  padding: 0 0.7em;
+  background: var(--ptb-color);
+  color: #0C0D0C;
+}
+pt-done-btn[data-style="split"] pt-done-label { padding: var(--ptb-pad, 4px 14px); }
+pt-done-btn[data-style="split"]:hover { background: transparent; color: var(--ptb-color); filter: brightness(1.2); }
     `;
     doc.head.appendChild(s);
   }
 
-  /* ── 工具函式 ──────────────────────────────────────────────── */
   function applyCSSVars(el, cfg) {
     el.style.setProperty('--pt-width',          cfg.panelWidth);
     el.style.setProperty('--pt-panel-bg',        cfg.colorPanel);
@@ -452,6 +676,7 @@ pt-phrase-list-btn.is-shown { display: block; }
     const total   = sections.length;
     const doneSet = new Set();
     const cells   = {};
+    const btnInfo = {};
 
     /* ── 片語收藏偵測：頁面沒有 <phrase-chip data-phrase> 就完全不建立
        這個子區塊，practice-tracker 的介面與行為跟原本一模一樣 ──────── */
@@ -511,11 +736,9 @@ pt-phrase-list-btn.is-shown { display: block; }
     header.appendChild(headerCountEl);
     header.appendChild(toggleEl);
 
-    /* ── 主體 ── */
     const body = doc.createElement('pt-body');
     body.style.maxHeight = '600px';
 
-    /* ── 章節格子 ── */
     const grid     = doc.createElement('pt-grid');
     const shapeVal = SHAPES.has((cfg.cellShape || '').toLowerCase())
       ? cfg.cellShape.toLowerCase()
@@ -539,7 +762,6 @@ pt-phrase-list-btn.is-shown { display: block; }
       cells[sec.id] = cell;
     });
 
-    /* ── 章節計數 ── */
     const countEl = doc.createElement('pt-count');
     countEl.textContent = `0 / ${total} ${cfg.labelDone}`;
 
@@ -652,25 +874,26 @@ pt-phrase-list-btn.is-shown { display: block; }
       doc.body.appendChild(offcanvasEl);
     }
 
-    /* ── 組裝 ── */
     tracker.appendChild(header);
     tracker.appendChild(body);
 
     if (!hostEl) doc.body.appendChild(tracker);
 
-    /* ── 收合切換 ── */
     header.addEventListener('click', () => {
       const nowCollapsed = tracker.classList.toggle('is-collapsed');
       toggleEl.textContent = nowCollapsed ? '+' : '−';
       if (!nowCollapsed) body.style.maxHeight = '600px';
     });
 
-    /* ── markDone：章節完成 ──────────────────────────────────── */
     function markDone(sectionId) {
       if (doneSet.has(sectionId)) return;
       if (!cells[sectionId]) return;
 
       doneSet.add(sectionId);
+      syncDoneBtn(sectionId);
+      if (cfg.btnEventName) {
+        doc.dispatchEvent(new CustomEvent(cfg.btnEventName, { detail: { sectionId } }));
+      }
       const cell = cells[sectionId];
       cell.classList.add('is-done');
 
@@ -751,7 +974,6 @@ pt-phrase-list-btn.is-shown { display: block; }
       if (phraseListBtnEl) phraseListBtnEl.classList.add('is-shown');
     }
 
-    /* ── changeShape：執行期動態切換章節格子形狀 ─────────────── */
     function changeShape(shape) {
       const s = SHAPES.has((shape || '').toLowerCase())
         ? shape.toLowerCase()
@@ -765,7 +987,6 @@ pt-phrase-list-btn.is-shown { display: block; }
       });
     }
 
-    /* ── 事件監聽 ── */
     if (cfg.watchStepper) {
       doc.addEventListener('bps:complete', e => {
         const sec = e.target.closest(`section[id^="${cfg.prefix}"]`);
@@ -783,6 +1004,256 @@ pt-phrase-list-btn.is-shown { display: block; }
       if (detail.phrase) markPhraseCollected(detail.phrase, detail);
     });
 
+    /* ── 內建「標記完成」按鈕 ─────────────────────────────────────
+       自動插入條件：section 上有任何 data-btn* 屬性（data-btn="false" 除外）。
+       想自己決定位置，就在 section 內放 <pt-done-btn></pt-done-btn>。
+       設定優先順序：pt-done-btn 自身屬性 > section 屬性 > tracker 屬性 > 預設。 ── */
+    function syncDoneBtn(id) {
+      const b = btnInfo[id];
+      if (!b) return;
+      b.el.classList.add('is-done');
+      b.label.textContent = b.styleName === 'split'
+        ? b.doneText.replace(/^✓\s*/, '')
+        : b.doneText;
+      if (b.styleName === 'check') b.el.title = b.doneText;
+    }
+
+    if (cfg.btn !== false) {
+      sections.forEach(sec => {
+        if (sec.getAttribute('data-btn') === 'false') return;
+
+        let el = sec.querySelector('pt-done-btn');
+        if (!el) {
+          const marked = Array.from(sec.attributes).some(a => a.name.indexOf('data-btn') === 0);
+          if (!marked) return;
+          el = doc.createElement('pt-done-btn');
+          sec.appendChild(el);
+        }
+
+        const opt = (name, fallback) => {
+          const a = 'data-btn-' + name;
+          if (el.hasAttribute(a)  && el.getAttribute(a)  !== '') return el.getAttribute(a);
+          if (sec.hasAttribute(a) && sec.getAttribute(a) !== '') return sec.getAttribute(a);
+          return fallback;
+        };
+
+        let styleName = String(opt('style', cfg.btnStyle)).toLowerCase();
+        if (!BTN_STYLES.has(styleName)) styleName = 'outline';
+
+        const sz       = BTN_SIZES[String(opt('size', cfg.btnSize)).toLowerCase()] || BTN_SIZES.md;
+        const colorKey = opt('color', cfg.btnColor);
+        const color    = BRAND[colorKey] || colorKey || BRAND.ocean;
+        const align    = String(opt('align', cfg.btnAlign)).toLowerCase();
+        const text     = opt('text', cfg.btnText);
+        const doneText = opt('done-text', cfg.btnDoneText);
+        const width    = opt('width', cfg.btnWidth);
+        const radius   = opt('radius', cfg.btnRadius);
+
+        el.setAttribute('data-style', styleName);
+        el.setAttribute('data-align', ['center', 'end'].includes(align) ? align : 'start');
+        el.style.setProperty('--ptb-base', color);
+        el.style.setProperty('--ptb-fs',   opt('font-size', cfg.btnFontSize) || sz.fs);
+        el.style.setProperty('--ptb-pad',  opt('padding',   cfg.btnPadding)  || sz.pad);
+        if (width)  el.style.setProperty('--ptb-width',  width);
+        if (radius) el.style.setProperty('--ptb-radius', radius);
+        el.tabIndex = 0;
+        el.setAttribute('role', 'button');
+        if (styleName === 'check') el.title = text;
+
+        el.innerHTML = '';
+        const icon  = doc.createElement('pt-done-icon');
+        const label = doc.createElement('pt-done-label');
+        icon.textContent  = '✓';
+        label.textContent = text;
+        el.appendChild(icon);
+        el.appendChild(label);
+
+        btnInfo[sec.id] = { el, label, styleName, doneText };
+
+        const press = () => {
+          if (el.classList.contains('is-done')) return;
+          sec.classList.add('is-done');
+          markDone(sec.id);
+        };
+        el.addEventListener('click', press);
+        el.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); press(); }
+        });
+
+        if (doneSet.has(sec.id)) syncDoneBtn(sec.id);
+      });
+    }
+
+    /* ── 定時 Modal ─────────────────────────────────────────────
+       條件：載入起算滿 N 分鐘（牆鐘時間），且有效瀏覽的 section 數達標，
+       兩者都成立才彈出，整個頁面生命週期只彈一次，不使用任何儲存機制。
+       promoTarget 沒設定或找不到元素時，這整段安靜地什麼都不做。 ───── */
+    const promoId   = String(cfg.promoTarget || '').trim().replace(/^#/, '');
+    const promoSrc  = promoId ? doc.getElementById(promoId) : null;
+    const promoEnabled = !!promoSrc;
+    if (promoId && !promoSrc) {
+      console.warn('[PracticeTracker] 找不到定時 Modal 的目標元素 #' + promoId + '，功能未啟用。');
+    }
+
+    const promoMin  = parseFloat(cfg.promoMinutes);
+    const promoSec  = parseInt(cfg.promoMinSections, 10);
+    const promoNeedMs   = (isNaN(promoMin) ? 5 : Math.max(0, promoMin)) * 60000;
+    const promoNeedSec  = isNaN(promoSec) ? 4 : Math.max(0, promoSec);
+    const promoIdleMs   = Math.max(0, (parseFloat(cfg.promoIdleSeconds) || 0) * 1000);
+    const promoViewed   = new Set();
+    const promoT0       = Date.now();
+    let promoShown      = false;
+    let promoPending    = false;
+    let promoOpen       = false;
+    let promoPollId     = 0;
+    let promoLastScroll = 0;
+
+    function promoMet() {
+      return (Date.now() - promoT0) >= promoNeedMs && promoViewed.size >= promoNeedSec;
+    }
+
+    function promoReady() {
+      return doc.visibilityState === 'visible'
+        && (Date.now() - promoLastScroll) >= promoIdleMs
+        && !doc.querySelector('.modal.show, .offcanvas.show');
+    }
+
+    function openPromo() {
+      if (!promoEnabled || promoOpen) return false;
+      if (!win.bootstrap || !win.bootstrap.Modal) {
+        console.warn('[PracticeTracker] 找不到 Bootstrap Modal，已略過定時 Modal。');
+        promoShown = true;
+        return false;
+      }
+      promoShown = true;
+      promoOpen  = true;
+
+      const modalEl = doc.createElement('div');
+      modalEl.className = 'modal fade pt-promo-modal';
+      modalEl.id = 'pt-promo-' + Math.random().toString(36).slice(2, 9);
+      modalEl.tabIndex = -1;
+      modalEl.innerHTML =
+        '<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">' +
+          '<div class="modal-content">' +
+            '<div class="pt-promo-bar"></div>' +
+            '<div class="pt-promo-head">' +
+              '<button type="button" class="pt-promo-close" data-bs-dismiss="modal">×</button>' +
+              '<div class="pt-promo-orn">◆</div>' +
+            '</div>' +
+            '<div class="modal-body pt-promo-body"></div>' +
+            '<div class="pt-promo-foot">' +
+              '<button type="button" class="pt-promo-btn" data-bs-dismiss="modal"></button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      if (cfg.promoTitle) {
+        const t = doc.createElement('h5');
+        t.className = 'pt-promo-title';
+        t.textContent = cfg.promoTitle;
+        const head = modalEl.querySelector('.pt-promo-head');
+        head.insertBefore(t, head.querySelector('.pt-promo-orn'));
+      }
+
+      const bodyEl = modalEl.querySelector('.pt-promo-body');
+      bodyEl.innerHTML = promoSrc.innerHTML;
+      bodyEl.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+      modalEl.querySelector('.pt-promo-btn').textContent = cfg.promoButtonLabel;
+
+      doc.body.appendChild(modalEl);
+      doc.body.classList.add('pt-promo-open');
+
+      const modal = new win.bootstrap.Modal(modalEl);
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        doc.body.classList.remove('pt-promo-open');
+        promoOpen = false;
+        doc.dispatchEvent(new CustomEvent(cfg.promoClosedEventName, {
+          detail: { targetId: promoId },
+        }));
+        modal.dispose();
+        modalEl.remove();
+      });
+
+      modal.show();
+      doc.dispatchEvent(new CustomEvent(cfg.promoEventName, {
+        detail: {
+          targetId: promoId,
+          viewedSections: Array.from(promoViewed),
+          elapsedSeconds: Math.round((Date.now() - promoT0) / 1000),
+        },
+      }));
+      return true;
+    }
+
+    function promoCheck() {
+      if (!promoEnabled || promoShown || promoPending) return;
+      if (!promoMet()) return;
+      promoPending = true;
+      promoPollId = setInterval(() => {
+        if (promoShown) {
+          clearInterval(promoPollId);
+          promoPending = false;
+          return;
+        }
+        if (!promoReady()) return;
+        clearInterval(promoPollId);
+        promoPending = false;
+        openPromo();
+      }, 500);
+    }
+
+    if (promoEnabled) {
+      if (promoNeedSec > total) {
+        console.warn('[PracticeTracker] 定時 Modal 要求瀏覽 ' + promoNeedSec +
+          ' 個 section，但頁面只有 ' + total + ' 個，條件永遠無法達成。');
+      }
+
+      win.addEventListener('scroll', () => { promoLastScroll = Date.now(); }, { passive: true });
+      doc.addEventListener('visibilitychange', promoCheck);
+
+      if (promoNeedSec > 0) {
+        if ('IntersectionObserver' in win) {
+          const ratioRaw = parseFloat(cfg.promoViewRatio);
+          const ratio    = isNaN(ratioRaw) ? 0.4 : Math.min(1, Math.max(0.05, ratioRaw));
+          const dwellRaw = parseFloat(cfg.promoViewSeconds);
+          const dwellMs  = (isNaN(dwellRaw) ? 2 : Math.max(0, dwellRaw)) * 1000;
+          const dwellTimers = new Map();
+          const thresholds  = [];
+          for (let i = 0; i <= 20; i++) thresholds.push(i / 20);
+
+          /* 兩種達標方式：區塊可見比例夠大，或可見高度已佔視窗高度夠大
+             （後者是為了讓比視窗高很多的長 section 也能被計入） */
+          const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              const id = entry.target.id;
+              if (promoViewed.has(id)) return;
+              const vh = (entry.rootBounds && entry.rootBounds.height) || win.innerHeight;
+              const ok = entry.isIntersecting &&
+                (entry.intersectionRatio >= ratio || entry.intersectionRect.height >= vh * ratio);
+              if (ok && !dwellTimers.has(id)) {
+                dwellTimers.set(id, setTimeout(() => {
+                  dwellTimers.delete(id);
+                  promoViewed.add(id);
+                  io.unobserve(entry.target);
+                  promoCheck();
+                }, dwellMs));
+              } else if (!ok && dwellTimers.has(id)) {
+                clearTimeout(dwellTimers.get(id));
+                dwellTimers.delete(id);
+              }
+            });
+          }, { threshold: thresholds });
+
+          sections.forEach(sec => io.observe(sec));
+        } else {
+          console.warn('[PracticeTracker] 瀏覽器不支援 IntersectionObserver，定時 Modal 無法計算瀏覽的 section。');
+        }
+      }
+
+      setTimeout(promoCheck, promoNeedMs + 50);
+      promoCheck();
+    }
+
     win.PracticeTracker = {
       markDone,
       markPhraseCollected,
@@ -792,6 +1263,18 @@ pt-phrase-list-btn.is-shown { display: block; }
       phraseTotal,
       phraseDoneSet,
       phraseCollectedOrder,
+      showPromo: openPromo,
+      get promoState() {
+        return {
+          enabled:        promoEnabled,
+          shown:          promoShown,
+          viewedSections: promoViewed.size,
+          viewedIds:      Array.from(promoViewed),
+          needSections:   promoNeedSec,
+          elapsedSeconds: Math.round((Date.now() - promoT0) / 1000),
+          needSeconds:    Math.round(promoNeedMs / 1000),
+        };
+      },
       cfg,
     };
   }
