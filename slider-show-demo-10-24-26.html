@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>slider-show 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{font-size:16px}*{box-sizing:border-box}
+body{margin:0;background:#0C0D0C;color:#C6C7BD;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;font-size:1.125rem;line-height:1.5;min-width:1280px}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1800px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:24px 14px;background:#121312;border-right:1px solid #2a2b2a}
+nav.toc .brand{color:#D4AF37;font-weight:700;margin-bottom:12px}
+nav.toc .brand,nav.toc a{font-size:0.75rem;line-height:1.5}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:#C6C7BD;text-decoration:none}
+nav.toc a:hover{background:#1f201f;color:#D4FFFC}
+main{padding:40px 64px 120px;max-width:1300px}
+h1{margin:0 0 8px;color:#1CCAE8;font-size:2.25rem;line-height:1.4}
+.lead{color:#DBEDD8;margin:0 0 32px}
+section.demo{margin:0 0 56px}
+h2{margin:0 0 8px;color:#82C8E5;font-size:1.75rem;line-height:1.4;border-bottom:2px solid #0DA591;padding-bottom:8px}
+.desc{margin:0 0 16px}
+.stage{padding:20px;background:#101110;border:1px solid #2a2b2a;border-radius:8px;margin-bottom:12px;min-height:80px}
+.stage slider-show{margin-bottom:16px}
+.rbtn{font-size:1.125rem;padding:6px 18px;background:transparent;color:#B3DE73;border:1px solid #B3DE73;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.rbtn:hover{background:#B3DE73;color:#0C0D0C}
+details summary{cursor:pointer;color:#E5C3B3;margin-bottom:8px}
+pre{margin:0 0 12px;padding:16px 20px;background:#141514;border-left:4px solid #0DA591;border-radius:6px;overflow-x:auto}
+pre code{color:#D4FFFC;font-family:Consolas,monospace;font-size:1.125rem;line-height:1.5;white-space:pre}
+.alert{font-size:1.125rem}
+
+body slider-show .slide-footer{font-size:1.125rem}
+body slider-show .part-indicator{font-size:1.125rem}
+body slider-show .page-number{font-size:1.125rem;width:auto;min-width:32px;height:32px;padding:0 6px}
+body slider-show .quiz-result-item{font-size:1.125rem}
+body slider-show .prev-btn,body slider-show .next-btn{font-size:1.25rem}
+body .spoiler-mask>div{line-height:1.5 !important;font-size:1.125rem !important}
+body slider-show .next-part-btn,body slider-show .prev-part-btn,body slider-show .finish-btn,body slider-show .restart-btn{box-shadow:none !important}
+body slider-show .quiz-blank:focus{box-shadow:none}</style></head>
+<body><div class="layout"><nav class="toc"><div class="brand">slider-show 範例</div><a href="#d1">1. 基本投影片</a><a href="#d2">2. 四種進度樣式</a><a href="#d3">3. 多部分、分部按鈕、事件</a><a href="#d4">4. 起始與結束畫面</a><a href="#d5">5. 填空題與批改結果</a><a href="#d6">6. 補充說明與防劇透</a><a href="#d7">7. 按鈕與顏色客製</a></nav>
+<main><h1>slider-show 範例</h1>
+<p class="lead">每個範例進入畫面才建立，可按「重新播放」重來。展開原始碼可看到對應 HTML。需與 slider-show.js 放在同一資料夾。</p>
+<section class="demo" id="d1"><h2>1. 基本投影片</h2><p class="desc">三個內建版型 class：subtitle、main、footer。箭頭與進度點可操作。</p><button class="rbtn" data-replay="d1">↻ 重新播放</button><div class="stage" id="stage-d1"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show theme="sky" height="260px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-subtitle"&gt;小標題&lt;/div&gt;&lt;div class="slide-main"&gt;&lt;p&gt;第一頁的主要內容&lt;/p&gt;&lt;/div&gt;&lt;div class="slide-footer"&gt;註腳&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;第二頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;第三頁，可左右循環&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre></details></section>
+<section class="demo" id="d2"><h2>2. 四種進度樣式</h2><p class="desc">依序為 dots、stepper、numbers、triangle。triangle 需 bg-color 與頁面背景相同。</p><button class="rbtn" data-replay="d2">↻ 重新播放</button><div class="stage" id="stage-d2"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show theme="ocean" progress-style="dots" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;dots 第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;dots 第 2 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;dots 第 3 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;
+&lt;slider-show theme="teal" progress-style="stepper" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;stepper 第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;stepper 第 2 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;stepper 第 3 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;
+&lt;slider-show theme="orange" progress-style="numbers" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;numbers 第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;numbers 第 2 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;numbers 第 3 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;
+&lt;slider-show theme="pink" progress-style="triangle" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;triangle 第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;triangle 第 2 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;triangle 第 3 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre></details></section>
+<section class="demo" id="d3"><h2>3. 多部分、分部按鈕、事件</h2><p class="desc">開啟 auto-show-part-buttons 與 progress-scope=&quot;all&quot;，淡入淡出轉場。事件會以 Bootstrap alert 顯示。已知問題：返回上一部分與重新開始，畫面會顯示錯誤的頁（手冊第 16 節）。</p><button class="rbtn" data-replay="d3">↻ 重新播放</button><div id="d3-log"></div><div class="stage" id="stage-d3"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show id="d3-s" theme="lavender" height="200px" auto-show-part-buttons="true"
+             part-transition="fade" progress-style="stepper" progress-scope="all"
+             next-part-btn-text="進入下一部分 →" finish-btn-text="全部完成" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide part="1"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;Part 1 / 第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide part="1"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;Part 1 / 第 2 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide part="2"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;Part 2 / 第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide part="2"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;Part 2 / 第 2 頁，最後一頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre></details></section>
+<section class="demo" id="d4"><h2>4. 起始與結束畫面</h2><p class="desc">role=&quot;start&quot; 用漸層外框，role=&quot;end&quot; 用上下色條。</p><button class="rbtn" data-replay="d4">↻ 重新播放</button><div class="stage" id="stage-d4"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show theme="shell" height="220px" start-style="gradient-border" start-colors="lavender,sky"
+             end-style="top-bottom-bar" end-colors="safe,teal" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide role="start"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-subtitle"&gt;開始&lt;/div&gt;&lt;div class="slide-main"&gt;&lt;p&gt;封面&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;中間的內容&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide role="end"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-subtitle"&gt;結束&lt;/div&gt;&lt;div class="slide-main"&gt;&lt;p&gt;結語&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre></details></section>
+<section class="demo" id="d5"><h2>5. 填空題與批改結果</h2><p class="desc">填完才能按下一頁。第二頁最上方會出現第一頁的批改結果。</p><button class="rbtn" data-replay="d5">↻ 重新播放</button><div class="stage" id="stage-d5"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show theme="special" height="300px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;&lt;quiz&gt;The graph {{shows}} a rise, {{which}} indicates demand.&lt;/quiz&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;看看上方的批改結果&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre></details></section>
+<section class="demo" id="d6"><h2>6. 補充說明與防劇透</h2><p class="desc">點底線文字，補充內容顯示在下方框。「點我看答案」的區塊要點一下才揭曉。需要先載入 Bootstrap Icons 才看得到圖示。</p><button class="rbtn" data-replay="d6">↻ 重新播放</button><div class="stage" id="stage-d6"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show theme="yellow" height="250px" extra-note-prefix="📌 " extra-note-hover-color="pink" part-btn-font-size="1.125rem" part-btn-padding="6px 16px"&gt;
+  &lt;div slide &gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;點這裡看：&lt;extra-note target="d6-box" source="d6-src"&gt;文法重點&lt;/extra-note&gt;&lt;/p&gt;&lt;div spoiler="點我看答案" style="padding:8px 16px"&gt;答案是 which&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;
+&lt;div id="d6-box" style="margin-top:12px"&gt;&lt;/div&gt;
+&lt;div id="d6-src" hidden&gt;&lt;b&gt;which&lt;/b&gt; 可代替前句，導出結果。&lt;/div&gt;</code></pre></details></section>
+<section class="demo" id="d7"><h2>7. 按鈕與顏色客製</h2><p class="desc">loop、隱藏部分指示、自訂按鈕文字與顏色、按鈕靠右。</p><button class="rbtn" data-replay="d7">↻ 重新播放</button><div class="stage" id="stage-d7"></div><details><summary>顯示原始碼</summary><pre><code>&lt;slider-show theme="orange" height="200px" loop="true" show-part-indicator="false"
+             auto-show-part-buttons="true" next-part-btn-position="flex-end"
+             next-part-btn-text="下一組" finish-btn-bg="safe" finish-btn-color="background"
+             arrow-bg="#333333" dot-color="#888888" active-dot-color="yellow"
+             part-btn-font-size="1.125rem" part-btn-padding="8px 20px" part-btn-border-radius="20px"&gt;
+  &lt;div slide part="1"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;循環第 1 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide part="1"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;循環第 2 頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div slide part="2"&gt;&lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;第二組&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre></details></section>
+</main></div>
+<template id="tpl-d1">
+<slider-show theme="sky" height="260px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-subtitle">小標題</div><div class="slide-main"><p>第一頁的主要內容</p></div><div class="slide-footer">註腳</div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>第二頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>第三頁，可左右循環</p></div></div></div>
+</slider-show>
+</template>
+<template id="tpl-d2">
+<slider-show theme="ocean" progress-style="dots" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-main"><p>dots 第 1 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>dots 第 2 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>dots 第 3 頁</p></div></div></div>
+</slider-show>
+<slider-show theme="teal" progress-style="stepper" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-main"><p>stepper 第 1 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>stepper 第 2 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>stepper 第 3 頁</p></div></div></div>
+</slider-show>
+<slider-show theme="orange" progress-style="numbers" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-main"><p>numbers 第 1 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>numbers 第 2 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>numbers 第 3 頁</p></div></div></div>
+</slider-show>
+<slider-show theme="pink" progress-style="triangle" bg-color="#101110" height="90px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-main"><p>triangle 第 1 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>triangle 第 2 頁</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>triangle 第 3 頁</p></div></div></div>
+</slider-show>
+</template>
+<template id="tpl-d3">
+<slider-show id="d3-s" theme="lavender" height="200px" auto-show-part-buttons="true"
+             part-transition="fade" progress-style="stepper" progress-scope="all"
+             next-part-btn-text="進入下一部分 →" finish-btn-text="全部完成" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>Part 1 / 第 1 頁</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>Part 1 / 第 2 頁</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>Part 2 / 第 1 頁</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>Part 2 / 第 2 頁，最後一頁</p></div></div></div>
+</slider-show>
+</template>
+<template id="tpl-d4">
+<slider-show theme="shell" height="220px" start-style="gradient-border" start-colors="lavender,sky"
+             end-style="top-bottom-bar" end-colors="safe,teal" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide role="start"><div class="slide-content"><div class="slide-subtitle">開始</div><div class="slide-main"><p>封面</p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>中間的內容</p></div></div></div>
+  <div slide role="end"><div class="slide-content"><div class="slide-subtitle">結束</div><div class="slide-main"><p>結語</p></div></div></div>
+</slider-show>
+</template>
+<template id="tpl-d5">
+<slider-show theme="special" height="300px" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-main"><p><quiz>The graph {{shows}} a rise, {{which}} indicates demand.</quiz></p></div></div></div>
+  <div slide ><div class="slide-content"><div class="slide-main"><p>看看上方的批改結果</p></div></div></div>
+</slider-show>
+</template>
+<template id="tpl-d6">
+<slider-show theme="yellow" height="250px" extra-note-prefix="📌 " extra-note-hover-color="pink" part-btn-font-size="1.125rem" part-btn-padding="6px 16px">
+  <div slide ><div class="slide-content"><div class="slide-main"><p>點這裡看：<extra-note target="d6-box" source="d6-src">文法重點</extra-note></p><div spoiler="點我看答案" style="padding:8px 16px">答案是 which</div></div></div></div>
+</slider-show>
+<div id="d6-box" style="margin-top:12px"></div>
+<div id="d6-src" hidden><b>which</b> 可代替前句，導出結果。</div>
+</template>
+<template id="tpl-d7">
+<slider-show theme="orange" height="200px" loop="true" show-part-indicator="false"
+             auto-show-part-buttons="true" next-part-btn-position="flex-end"
+             next-part-btn-text="下一組" finish-btn-bg="safe" finish-btn-color="background"
+             arrow-bg="#333333" dot-color="#888888" active-dot-color="yellow"
+             part-btn-font-size="1.125rem" part-btn-padding="8px 20px" part-btn-border-radius="20px">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>循環第 1 頁</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>循環第 2 頁</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>第二組</p></div></div></div>
+</slider-show>
+</template>
+
+<script src="slider-show.js"></script>
+<script>
+(function(){
+  function log(t){document.getElementById('d3-log').innerHTML='<div class="alert alert-info py-2 mb-2">'+t+'</div>';}
+  function render(id){
+    var st=document.getElementById('stage-'+id);st.innerHTML='';
+    st.appendChild(document.getElementById('tpl-'+id).content.cloneNode(true));
+    if(id==='d3'){
+      var s=st.querySelector('slider-show');
+      s.addEventListener('part-changed',function(e){log('part-changed：第 '+e.detail.part+' / '+e.detail.total+' 部分');});
+      s.addEventListener('finished',function(e){log('finished：到達第 '+e.detail.part+' 部分的結尾');});
+      s.addEventListener('restarted',function(){log('restarted');});
+    }
+  }
+  var ids=['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7'],seen={};
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){
+    var id=e.target.id;if(e.isIntersecting&&!seen[id]){seen[id]=1;render(id);}});},{threshold:0.2});
+  ids.forEach(function(id){io.observe(document.getElementById(id));});
+  document.querySelectorAll('[data-replay]').forEach(function(b){b.addEventListener('click',function(){render(b.getAttribute('data-replay'));});});
+})();
+</script></body></html>

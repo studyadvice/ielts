@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>slider-show 使用手冊</title>
+<style>
+:root { font-size: 16px; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #0C0D0C;
+  color: #C6C7BD;
+  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  min-width: 1280px;
+}
+.layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 0; max-width: 1800px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; align-self: start;
+  height: 100vh; overflow-y: auto;
+  padding: 32px 24px;
+  background: #121312;
+  border-right: 1px solid #2a2b2a;
+}
+nav.toc .brand { color: #D4AF37; font-size: 1.25rem; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
+nav.toc .sub { color: #C6C7BD; font-size: 1.125rem; margin-bottom: 20px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 0; }
+nav.toc a { display: block; padding: 6px 12px; border-radius: 6px; color: #C6C7BD; text-decoration: none; font-size: 1.125rem; line-height: 1.5; }
+nav.toc a:hover { background: #1f201f; color: #D4FFFC; }
+main { padding: 40px 64px 120px; max-width: 1300px; }
+h1 { margin: 0 0 8px; color: #1CCAE8; font-size: 2.25rem; line-height: 1.4; }
+.lead { color: #DBEDD8; margin: 0 0 32px; }
+section.doc { margin: 0 0 56px; padding-bottom: 16px; }
+h2 { margin: 0 0 20px; padding-bottom: 8px; color: #82C8E5; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #0DA591; }
+h3 { margin: 32px 0 12px; color: #E5C3B3; font-size: 1.375rem; line-height: 1.4; }
+p, li { font-size: 1.125rem; line-height: 1.5; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 16px; padding-left: 28px; }
+li { margin: 6px 0; }
+code { color: #E3D322; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size: 1.125rem; }
+pre {
+  margin: 0 0 20px; padding: 16px 20px;
+  background: #141514; border-left: 4px solid #0DA591; border-radius: 6px;
+  overflow-x: auto;
+}
+pre code { color: #D4FFFC; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
+.code-title { margin: 16px 0 6px; color: #B3DE73; font-weight: 700; }
+.tbl { overflow-x: auto; margin: 0 0 24px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 14px; text-align: left; vertical-align: top; border: 1px solid #2f302f; font-size: 1.125rem; line-height: 1.5; }
+th { background: #1a1b1a; color: #DBEDD8; }
+td:first-child { white-space: normal; max-width: 340px; overflow-wrap: anywhere; }
+td:last-child { min-width: 360px; }
+th { white-space: normal; }
+tbody tr:nth-child(even) td { background: #111211; }
+.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #4171BF; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
+.note b { color: #D4FFFC; }
+.note-tip  { border-left-color: #27AE60; }
+.note-warn { border-left-color: #EDA109; }
+.note-bug  { border-left-color: #E6374B; }
+.note-bug b { color: #E6374B; }
+.note-info { border-left-color: #4171BF; }
+
+nav.toc { padding: 24px 14px; }
+nav.toc .brand, nav.toc .sub, nav.toc a { font-size: 0.75rem; line-height: 1.5; }
+nav.toc a { padding: 4px 10px; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+<div class="brand">slider-show</div>
+<div class="sub">slider-show.js 使用手冊 2026-10-24</div>
+<ol>
+<li><a href="#overview">0. 這份手冊在講什麼</a></li>
+<li><a href="#quickstart">1. 快速開始</a></li>
+<li><a href="#structure">2. 結構與核心概念</a></li>
+<li><a href="#attrs">3. slider-show 屬性總表</a></li>
+<li><a href="#nav">4. 翻頁與切換部分的精確規則</a></li>
+<li><a href="#progress">5. 進度列</a></li>
+<li><a href="#colors">6. 顏色規則</a></li>
+<li><a href="#startend">7. 起始與結束畫面</a></li>
+<li><a href="#extranote">8. 補充說明 extra-note</a></li>
+<li><a href="#spoiler">9. 防劇透遮罩</a></li>
+<li><a href="#quiz">10. 填空題</a></li>
+<li><a href="#header">11. 更新頁首與標題</a></li>
+<li><a href="#api">12. JS API</a></li>
+<li><a href="#styling">13. 樣式掛鉤與符合 18px 規範的覆寫</a></li>
+<li><a href="#integrate">14. 與 practice-tracker 搭配</a></li>
+<li><a href="#trouble">15. 疑難排解</a></li>
+<li><a href="#limits">16. 已知問題與限制（彙整）</a></li>
+</ol>
+</nav>
+<main>
+<h1>slider-show 使用手冊</h1>
+<p class="lead">涵蓋 slider-show.js 的全部屬性、事件、API 與已知問題。每個行為都已實際執行驗證，搭配 slider-show-demo-10-24-26.html 使用。</p>
+<section class="doc" id="overview">
+<h2>0. 這份手冊在講什麼</h2>
+<p><code>&lt;slider-show&gt;</code> 是一個多功能投影片元件：把一組 <code>[slide]</code> 區塊變成可前後翻頁的簡報，支援分「部分」（part）、進度點與頁碼、起訖畫面裝飾、補充說明（extra-note）、防劇透遮罩、填空題與作答結果，以及同步更新頁面標題。</p>
+<div class="tbl"><table>
+<thead><tr><th>項目</th><th>內容</th></tr></thead>
+<tbody>
+<tr><td>檔案</td><td><code>slider-show.js</code>，獨立 .js，Custom Element，不使用 shadow DOM，樣式由 js 自行注入一次（<code>#slider-show-style</code>）。</td></tr>
+<tr><td>相依</td><td>無必要相依。只有 <code>extra-note-prefix</code> 想用圖示時，才需要自行載入 Bootstrap Icons。</td></tr>
+<tr><td>載入位置</td><td><b>必須在 <code>&lt;slider-show&gt;</code> 之後載入</b>（放在 body 底部）。實測 script 放在元素之前時，元件建立當下讀不到投影片，<code>getTotalParts()</code> 為 0。</td></tr>
+<tr><td>設定方式</td><td>全部用 HTML 屬性，沒有 <code>window.xxxConfig</code>。</td></tr>
+<tr><td>對應版本</td><td>你於 2026-10-24 提供的 slider-show.js（1617 行）。</td></tr>
+<tr><td>示範頁</td><td><code>slider-show-demo-10-24-26.html</code>。</td></tr>
+</tbody></table></div>
+<div class="note note-bug"><b>已知問題</b>：<b>先看第 16 節。</b> 實測有一個嚴重問題：存在多個 part 時，切換 part 後，前一個 part 正在顯示的投影片不會被隱藏。往前走（下一部分）因為後面的投影片在 DOM 較後面、通常不透明，剛好蓋住而看不出來；但<b>返回上一部分與重新開始都會顯示成錯的投影片</b>。</div>
+<div class="note note-tip"><b>提示</b>：本手冊的行為描述，都已在模擬環境與真實 Chromium 中實際執行驗證。只靠讀碼判斷的少數地方會標示「讀碼所得」。</div>
+</section>
+<section class="doc" id="quickstart">
+<h2>1. 快速開始</h2>
+<h3>1.1 最小範例</h3>
+<pre><code>&lt;slider-show theme="sky" height="320px"&gt;
+  &lt;div slide&gt;
+    &lt;div class="slide-content"&gt;
+      &lt;div class="slide-subtitle"&gt;小標&lt;/div&gt;
+      &lt;div class="slide-main"&gt;&lt;p&gt;第一頁&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="slide-footer"&gt;註腳&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div slide&gt;
+    &lt;div class="slide-content"&gt;&lt;div class="slide-main"&gt;&lt;p&gt;第二頁&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/slider-show&gt;
+
+&lt;script src="slider-show.js"&gt;&lt;/script&gt;  &lt;!-- 放在元素之後 --&gt;</code></pre>
+<p>每個帶 <code>slide</code> 屬性的元素就是一頁。沒寫 <code>part</code> 時全部屬於第 1 部分。畫面下方自動長出進度點與左右箭頭，右上角顯示 <code>Part 1 / 1</code>。</p>
+<h3>1.2 分成兩個部分</h3>
+<pre><code>&lt;slider-show auto-show-part-buttons="true" progress-style="stepper"&gt;
+  &lt;div slide part="1"&gt;...&lt;/div&gt;
+  &lt;div slide part="1"&gt;...&lt;/div&gt;
+  &lt;div slide part="2"&gt;...&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre>
+<p><code>auto-show-part-buttons="true"</code> 才會出現「下一部分」「上一部分」「完成」「重新開始」。<b>預設是不顯示的</b>（第 4 節）。</p>
+<h3>1.3 填空題、補充說明、防劇透</h3>
+<pre><code>&lt;div slide&gt;
+  &lt;div class="slide-main"&gt;
+    &lt;p&gt;&lt;quiz&gt;I {{like}} apples.&lt;/quiz&gt;&lt;/p&gt;
+    &lt;p&gt;延伸閱讀：&lt;extra-note target="note-box" source="note-src"&gt;文法重點&lt;/extra-note&gt;&lt;/p&gt;
+    &lt;div spoiler="點擊看答案"&gt;答案：like&lt;/div&gt;
+    &lt;div id="note-box"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="note-src" hidden&gt;&lt;b&gt;I like&lt;/b&gt; 是現在簡單式。&lt;/div&gt;</code></pre>
+</section>
+<section class="doc" id="structure">
+<h2>2. 結構與核心概念</h2>
+<div class="tbl"><table>
+<thead><tr><th>概念</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>投影片 slide</td><td>任何帶 <code>slide</code> 屬性的元素，位置不限（可巢狀）。元件取出它們、清空自己，再放進內部容器 <code>.slides-container</code>。<b>原本放在 <code>&lt;slider-show&gt;</code> 內但不是 <code>[slide]</code> 的內容會被刪除。</b></td></tr>
+<tr><td>部分 part</td><td><code>part="N"</code> 把投影片分組，沒寫或寫 0 都視為 1。一次只顯示「目前部分」中的「目前這一頁」。</td></tr>
+<tr><td>顯示位置</td><td>投影片是絕對定位、寬高 100%，大小由 <code>height</code> 屬性決定的容器控制，超出會被裁切，沒有捲軸。</td></tr>
+<tr><td>進度與按鈕</td><td>投影片區下方依序是：進度列、左右箭頭、分部按鈕列。這三列不計入 <code>height</code>。</td></tr>
+</tbody></table></div>
+<h3>2.1 內建的版型 class（選用）</h3>
+<p>元件提供四個樣式 class，供投影片內容使用。不用也行，自己寫版面即可。</p>
+<div class="tbl"><table>
+<thead><tr><th>class</th><th>預設樣式</th></tr></thead>
+<tbody>
+<tr><td><code>.slide-content</code></td><td>外框：直向 flex、間距 12px、內距 16px、背景 <code>fill-color</code>、圓角 8px、高度 100%。</td></tr>
+<tr><td><code>.slide-subtitle</code></td><td>1.2rem，顏色 <code>fontcolor-subtitle</code>，下方 2px 分隔線。</td></tr>
+<tr><td><code>.slide-main</code></td><td>1.5rem，顏色 <code>fontcolor-main</code>，行距 1.5，撐滿剩餘高度，內容水平垂直置中。</td></tr>
+<tr><td><code>.slide-footer</code></td><td>0.9rem，顏色 <code>fontcolor-footer</code>，上方 1px 分隔線。</td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：元件在切換時會把投影片的行內 <code>display</code> 設為空字串（顯示）或 <code>none</code>（隱藏）。<b>不要把 <code>display:flex</code> 這類排版寫在投影片本身的 style 上</b>，顯示時會被清掉。請寫在內層元素（例如 <code>.slide-content</code>）。</div>
+<div class="note note-info"><b>說明</b>：投影片之間不會自動取得焦點、也沒有鍵盤或觸控滑動支援，只能點箭頭、進度點、頁碼與按鈕，或用程式控制。</div>
+</section>
+<section class="doc" id="attrs">
+<h2>3. slider-show 屬性總表</h2>
+<p>布林屬性請<b>明確寫字串</b>：多數判斷是比對 <code>"true"</code> 或 <code>"false"</code>，只寫屬性名稱（空值）不會被當成 true。例外見各列說明。</p>
+<h3>3.1 版面與主題</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>height</code></td><td><code>400px</code></td><td>投影片區高度，任何 CSS 長度。只含投影片區，不含下方的進度列與按鈕。</td></tr>
+<tr><td><code>theme</code></td><td><code>shell</code></td><td>主色，影響箭頭、進度點、分部按鈕底色、頁碼啟用色、補充說明底線、填空底線、防劇透遮罩、右上角部分指示。接受色票名稱或 CSS 色碼，詳見第 6 節。</td></tr>
+<tr><td><code>bg-color</code></td><td><code>background</code>（#0C0D0C）</td><td>只用於 <code>triangle</code> 進度樣式的空心挖空色，需與頁面背景相同。</td></tr>
+<tr><td><code>fill-color</code></td><td><code>fill</code>（#1A1B1A）</td><td><code>.slide-content</code>、補充說明框、填空框、頁碼按鈕的底色。</td></tr>
+<tr><td><code>fontcolor-subtitle</code></td><td><code>lavender</code></td><td><code>.slide-subtitle</code> 文字色。</td></tr>
+<tr><td><code>fontcolor-main</code></td><td><code>shell</code></td><td><code>.slide-main</code> 文字色。</td></tr>
+<tr><td><code>fontcolor-footer</code></td><td><code>sky</code></td><td><code>.slide-footer</code> 文字色。</td></tr>
+<tr><td><code>current-part</code></td><td>無</td><td>指定目前部分。載入時當起始部分；執行期修改會立即切換並回到該部分第 1 頁，<b>無轉場、不發事件</b>。</td></tr>
+</tbody></table></div>
+<h3>3.2 導覽與進度</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>loop</code></td><td>關</td><td>設為 <code>true</code>：在<b>同一部分內</b>，最後一頁按下一頁回第一頁，第一頁按上一頁到最後一頁。不會跨部分。</td></tr>
+<tr><td><code>show-arrows</code></td><td><code>true</code></td><td>設為 <code>false</code> 隱藏左右箭頭。</td></tr>
+<tr><td><code>arrow-color</code></td><td>同 theme</td><td>箭頭文字色。</td></tr>
+<tr><td><code>arrow-bg</code></td><td><code>rgba(26,27,26,0.88)</code></td><td>箭頭圓鈕底色。</td></tr>
+<tr><td><code>progress-style</code></td><td><code>dots</code></td><td><code>dots</code>、<code>stepper</code>、<code>numbers</code>、<code>triangle</code>、<code>none</code>。其他任何值視為 <code>dots</code>。</td></tr>
+<tr><td><code>progress-scope</code></td><td><code>part</code></td><td><code>part</code>：只列目前部分的頁；<code>all</code>：列出所有頁，點擊可跨部分跳轉。</td></tr>
+<tr><td><code>show-dots</code></td><td><code>true</code></td><td>舊屬性。<code>false</code> 等同 <code>progress-style="none"</code>（<code>progress-style</code> 有寫時以它為準）。</td></tr>
+<tr><td><code>show-page-numbers</code></td><td>關</td><td>舊屬性。<code>true</code> 等同 <code>numbers</code>。</td></tr>
+<tr><td><code>dot-color</code></td><td><code>rgba(198,199,189,0.82)</code></td><td>一般進度點的顏色，也是 stepper 的圓圈邊框、連接線與 triangle 外框色。</td></tr>
+<tr><td><code>active-dot-color</code></td><td>同 theme</td><td>目前頁的進度點顏色（dots、stepper、triangle）。</td></tr>
+<tr><td><code>show-part-indicator</code></td><td><code>true</code></td><td>設為 <code>false</code> 隱藏右上角的 <code>Part x / y</code>。只有 1 個部分時也會顯示。</td></tr>
+</tbody></table></div>
+<h3>3.3 分部按鈕與轉場</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>auto-show-part-buttons</code></td><td><code>false</code></td><td>設為 <code>true</code> 才會依位置自動顯示上一部分、下一部分、完成、重新開始。<b>預設全部隱藏。</b></td></tr>
+<tr><td><code>part-transition</code></td><td><code>slide</code></td><td><code>slide</code>、<code>fade</code>，其他任何值（例如 <code>none</code>）為無轉場。只用於切換部分與重新開始，一般翻頁沒有動畫。</td></tr>
+<tr><td><code>next-part-btn-text</code></td><td><code>下一部分 →</code></td><td>按鈕文字，以 HTML 寫入。</td></tr>
+<tr><td><code>prev-part-btn-text</code></td><td><code>← 上一部分</code></td><td></td></tr>
+<tr><td><code>finish-btn-text</code></td><td><code>完成</code></td><td></td></tr>
+<tr><td><code>restart-btn-text</code></td><td><code>重新開始</code></td><td></td></tr>
+<tr><td><code>next-part-btn-position</code></td><td><code>center</code></td><td>四顆按鈕所在列的 <code>justify-content</code>，可填 <code>flex-start</code>、<code>center</code>、<code>flex-end</code>、<code>space-between</code> 等。</td></tr>
+<tr><td><code>show-finish</code></td><td><code>true</code></td><td><code>false</code> 在最後一部分最後一頁不顯示完成鈕。</td></tr>
+<tr><td><code>show-restart</code></td><td><code>true</code></td><td><code>false</code> 在最後一頁不顯示重新開始鈕。</td></tr>
+<tr><td><code>part-btn-bg</code></td><td>同 theme</td><td>四顆按鈕的底色。</td></tr>
+<tr><td><code>part-btn-color</code></td><td>依 theme 自動黑或淺</td><td>四顆按鈕的文字色。</td></tr>
+<tr><td><code>part-btn-font-size</code></td><td><code>0.9rem</code></td><td></td></tr>
+<tr><td><code>part-btn-padding</code></td><td><code>6px 12px</code></td><td></td></tr>
+<tr><td><code>part-btn-border-radius</code></td><td><code>6px</code></td><td></td></tr>
+<tr><td><code>finish-btn-bg</code>、<code>finish-btn-color</code></td><td>同上方的 part-btn 預設，即 theme</td><td>單獨覆寫完成鈕。</td></tr>
+<tr><td><code>restart-btn-bg</code>、<code>restart-btn-color</code></td><td>同上</td><td>單獨覆寫重新開始鈕。</td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：完成鈕與重新開始鈕的預設色<b>不是</b>綠色與藍色，而是跟 theme 相同。程式碼 CSS 裡的綠、藍只是備援，永遠不會用到。要不同顏色請寫 <code>finish-btn-bg</code> 等屬性。</div>
+<h3>3.4 起訖畫面</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>start-style</code></td><td>有 <code>role="start"</code> 的投影片時為 <code>accent-frame</code>，否則 <code>none</code></td><td><code>gradient-border</code>、<code>gradient-bg</code>、<code>accent-frame</code>、<code>top-bottom-bar</code>、<code>corner-tag</code>、<code>none</code>。</td></tr>
+<tr><td><code>end-style</code></td><td>同上，對應 <code>role="end"</code></td><td>同上。</td></tr>
+<tr><td><code>start-colors</code></td><td><code>lavender,sky</code></td><td>「A,B」兩色，色票名稱或色碼，<b>不要用 rgba() 等含逗號的寫法</b>。</td></tr>
+<tr><td><code>end-colors</code></td><td><code>safe,teal</code></td><td>同上。</td></tr>
+</tbody></table></div>
+<h3>3.5 頁首與標題同步</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>update-header</code></td><td>關</td><td><code>true</code>：翻頁時把頁面中第一個符合 <code>header h1, header .title</code> 的元素文字改為 <code>header-template</code> 的結果。</td></tr>
+<tr><td><code>update-title</code></td><td>關</td><td><code>true</code>：同步改 <code>document.title</code>。</td></tr>
+<tr><td><code>header-template</code></td><td><code>Part {part} - Slide {slide}</code></td><td>佔位符 <code>{part}</code>、<code>{slide}</code>、<code>{total}</code>。</td></tr>
+<tr><td><code>title-template</code></td><td><code>Slide {slide} of {total}</code></td><td>同上。</td></tr>
+</tbody></table></div>
+<h3>3.6 補充說明、防劇透、填空</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>extra-note-hover-color</code></td><td><code>special</code></td><td>補充說明連結滑過時的顏色。</td></tr>
+<tr><td><code>extra-note-prefix</code></td><td>空</td><td>所有補充說明連結前面加的文字，可含 Bootstrap Icons 的 <code>bi-xxx</code> 類別名稱。</td></tr>
+<tr><td><code>extra-note-postfix</code></td><td>空</td><td>連結後面加的文字，原樣加入。</td></tr>
+<tr><td><code>spoiler-mode</code></td><td>關</td><td><code>true</code> 或 <code>full</code>：每一頁都先蓋上遮罩。</td></tr>
+<tr><td><code>spoiler-text</code></td><td><code>點擊查看內容</code></td><td>遮罩文字，以 HTML 寫入。</td></tr>
+<tr><td><code>spoiler-color</code></td><td>同 theme</td><td>遮罩底色。</td></tr>
+<tr><td><code>quiz-require-complete</code></td><td><code>true</code></td><td>預設填空沒填完不能按下一頁。設為 <code>false</code> 取消限制。</td></tr>
+</tbody></table></div>
+<h3>3.7 寫在投影片與內容上的屬性</h3>
+<div class="tbl"><table>
+<thead><tr><th>位置</th><th>屬性</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td>投影片</td><td><code>slide</code></td><td>標記這是一頁（值不重要）。</td></tr>
+<tr><td>投影片</td><td><code>part</code></td><td>所屬部分，正整數。</td></tr>
+<tr><td>投影片</td><td><code>role</code></td><td><code>start</code> 或 <code>end</code>，啟用起訖畫面裝飾。</td></tr>
+<tr><td>任何元素</td><td><code>spoiler</code></td><td>加遮罩。屬性值為遮罩文字，空值用全域 <code>spoiler-text</code>。</td></tr>
+<tr><td><code>&lt;extra-note&gt;</code></td><td><code>target</code>、<code>source</code>、<code>prefix</code>、<code>postfix</code></td><td>第 8 節。</td></tr>
+<tr><td><code>&lt;quiz&gt;</code></td><td><code>classname</code></td><td>填空容器額外 class，第 10 節。</td></tr>
+</tbody></table></div>
+<div class="note note-info"><b>說明</b>：執行期修改除了 <code>current-part</code> 以外的任何已列屬性，元件會整個重畫（重建按鈕與進度列），但<b>保留目前所在的部分與頁數</b>，投影片與填空內容也不會遺失。<code>spoiler-mode</code>、<code>extra-note-*</code> 屬於載入時一次性處理，載入後再改不會重新套用。</div>
+</section>
+<section class="doc" id="nav">
+<h2>4. 翻頁與切換部分的精確規則</h2>
+<h3>4.1 一般翻頁</h3>
+<ul>
+<li>左右箭頭、進度點、頁碼都只在<b>目前部分</b>內移動（<code>progress-scope="all"</code> 的點擊可跨部分）。</li>
+<li>第一頁的上一頁鈕為停用；<code>loop="true"</code> 時不停用。</li>
+<li><b>最後一頁的下一頁鈕不會停用</b>（實測永遠是可按狀態），按了沒有作用。這是現況，不是設定問題。</li>
+<li>翻頁沒有轉場動畫，也不發事件。</li>
+</ul>
+<h3>4.2 分部按鈕何時出現（<code>auto-show-part-buttons="true"</code>）</h3>
+<div class="tbl"><table>
+<thead><tr><th>按鈕</th><th>顯示條件</th></tr></thead>
+<tbody>
+<tr><td>下一部分</td><td>目前是該部分最後一頁，且不是最後一個部分。</td></tr>
+<tr><td>完成</td><td>目前是最後一部分的最後一頁，且 <code>show-finish</code> 不是 <code>false</code>。</td></tr>
+<tr><td>重新開始</td><td>同上，且 <code>show-restart</code> 不是 <code>false</code>。完成與重新開始會同時出現。</td></tr>
+<tr><td>上一部分</td><td>目前是該部分第一頁，且不是第一個部分。</td></tr>
+</tbody></table></div>
+<p>沒開 <code>auto-show-part-buttons</code> 時，四顆按鈕全部隱藏，部分之間只能靠 <code>progress-scope="all"</code> 的進度列、程式呼叫 <code>nextPart()</code>，或修改 <code>current-part</code> 屬性。</p>
+<h3>4.3 轉場</h3>
+<ul>
+<li><code>slide</code>：目前內容向左滑出 0.5 秒，換完後新內容從右滑入 0.5 秒。返回與重新開始方向相反。</li>
+<li><code>fade</code>：淡出 0.5 秒再淡入 0.5 秒。</li>
+<li>其他值：立即切換。</li>
+<li>轉場進行中（約 1 秒），所有翻頁、切換部分的操作都被忽略。</li>
+</ul>
+<h3>4.4 事件</h3>
+<div class="tbl"><table>
+<thead><tr><th>事件</th><th>觸發時機</th><th>detail</th></tr></thead>
+<tbody>
+<tr><td><code>part-changed</code></td><td><code>nextPart()</code> 或 <code>prevPart()</code> 切換完成後</td><td><code>{ part, total }</code></td></tr>
+<tr><td><code>restarted</code></td><td>重新開始切換完成後</td><td><code>{ part }</code>（一定是 1）</td></tr>
+<tr><td><code>finished</code></td><td>按下完成鈕</td><td><code>{ part, total }</code></td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：三個事件都<b>不冒泡</b>，必須綁在 <code>&lt;slider-show&gt;</code> 元素本身。進度列跳轉、<code>current-part</code> 修改、一般翻頁都不發事件。重新開始只發 <code>restarted</code>，不發 <code>part-changed</code>。</div>
+</section>
+<section class="doc" id="progress">
+<h2>5. 進度列</h2>
+<div class="tbl"><table>
+<thead><tr><th>progress-style</th><th>外觀</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>dots</code></td><td>圓點，目前頁為拉長的膠囊</td><td>預設。</td></tr>
+<tr><td><code>stepper</code></td><td>空心圓加連接線，目前頁為實心放大圓</td><td>適合步驟感。</td></tr>
+<tr><td><code>numbers</code></td><td>小方塊數字按鈕</td><td>目前頁填滿主色。</td></tr>
+<tr><td><code>triangle</code></td><td>向右的空心三角形，目前頁為實心</td><td>用邊框畫成，空心中心用 <code>bg-color</code> 挖空，所以頁面背景不是 #0C0D0C 時要設 <code>bg-color</code>。</td></tr>
+<tr><td><code>none</code></td><td>不顯示</td><td></td></tr>
+</tbody></table></div>
+<ul>
+<li>進度項目可點擊跳頁，所有樣式都一樣。</li>
+<li><code>progress-scope="all"</code> 時，項目是頁面上<b>全部</b>投影片，目前頁依序號計算。跳到其他部分時沒有轉場，也不發事件。</li>
+<li><code>progress-scope="all"</code> 需要 DOM 中的投影片依 part 由小到大排列。實測 DOM 順序為 part 2 再 part 1 時，點第 1 個項目會跳到 part 1 的投影片，與畫面上的順序不一致。</li>
+<li>進度點項目很多時會自動換行，置中排列。</li>
+</ul>
+</section>
+<section class="doc" id="colors">
+<h2>6. 顏色規則</h2>
+<p>所有顏色屬性都接受<b>色票名稱</b>（不分大小寫）或任何 CSS 色碼。</p>
+<div class="tbl"><table>
+<thead><tr><th>名稱</th><th>色碼</th><th>名稱</th><th>色碼</th></tr></thead>
+<tbody>
+<tr><td><code>background</code></td><td><code>#0C0D0C</code></td><td><code>fill</code></td><td><code>#1A1B1A</code></td></tr>
+<tr><td><code>shell</code></td><td><code>#C6C7BD</code></td><td><code>lavender</code></td><td><code>#C3A5E5</code></td></tr>
+<tr><td><code>sky</code></td><td><code>#82C8E5</code></td><td><code>warning</code></td><td><code>#E6374B</code></td></tr>
+<tr><td><code>salmon</code></td><td><code>#E5C3B3</code></td><td><code>ocean</code></td><td><code>#1CCAE8</code></td></tr>
+<tr><td><code>safe</code></td><td><code>#27AE60</code></td><td><code>teal</code></td><td><code>#0DA591</code></td></tr>
+<tr><td><code>vanilla</code></td><td><code>#DBEDD8</code></td><td><code>yellow</code></td><td><code>#E3D322</code></td></tr>
+<tr><td><code>focus</code></td><td><code>#D4FFFC</code></td><td><code>special</code></td><td><code>#B3DE73</code></td></tr>
+<tr><td><code>info</code></td><td><code>#4171BF</code></td><td><code>indigo</code></td><td><code>#7849C9</code></td></tr>
+<tr><td><code>pink</code></td><td><code>#FF91D7</code></td><td><code>orange</code></td><td><code>#EDA109</code></td></tr>
+</tbody></table></div>
+<ul>
+<li><b>自動對比色只認 6 碼十六進位與色票名稱。</b> 按鈕文字色（<code>part-btn-color</code> 沒寫時）會依 theme 亮度挑黑或淺色。實測 <code>theme="red"</code>、<code>#fc0</code>（3 碼）、<code>#336699</code> 都因為算不出亮度而一律用淺色文字 <code>#C6C7BD</code>；<code>sky</code>、<code>shell</code> 等亮色則用深色文字。</li>
+<li><code>theme="teal-outline"</code> 之類的 <code>-outline</code> 結尾只會被去掉，<b>沒有任何外框樣式</b>，等於 <code>teal</code>。</li>
+<li>寫了不存在的色票名稱（例如 <code>foo</code>）會原樣當作 CSS 色值，瀏覽器不認得就無效。</li>
+<li>元件把顏色寫成 CSS 變數放在自己身上：<code>--theme-color</code>、<code>--arrow-color</code>、<code>--arrow-bg</code>、<code>--dot-color</code>、<code>--active-dot-color</code>、<code>--part-btn-*</code>、<code>--finish-btn-*</code>、<code>--restart-btn-*</code>、<code>--fontcolor-*</code>、<code>--fill-color</code>、<code>--bg-color</code>、<code>--extra-note-hover-color</code>、<code>--start-color-a/b</code>、<code>--end-color-a/b</code>。屬性每次重畫時會重寫這些變數，所以直接改變數不會持久，請改屬性。</li>
+</ul>
+</section>
+<section class="doc" id="startend">
+<h2>7. 起始與結束畫面</h2>
+<p>起訖裝飾只作用於標了 <code>role="start"</code> 或 <code>role="end"</code> 的投影片，與它在序列中的位置無關。</p>
+<div class="tbl"><table>
+<thead><tr><th>樣式</th><th>做法</th><th>用到的顏色</th></tr></thead>
+<tbody>
+<tr><td><code>accent-frame</code></td><td>6px 實線外框（有 role 時預設）</td><td>只用 A 色</td></tr>
+<tr><td><code>gradient-border</code></td><td>6px 漸層外框（135 度）</td><td>A 到 B</td></tr>
+<tr><td><code>top-bottom-bar</code></td><td>上 8px、下 8px 色條</td><td>上 A、下 B</td></tr>
+<tr><td><code>corner-tag</code></td><td>左上角直角三角形標籤</td><td>只用 A 色</td></tr>
+<tr><td><code>gradient-bg</code></td><td>投影片本身的漸層底色</td><td>A 到 B</td></tr>
+</tbody></table></div>
+<pre><code>&lt;slider-show start-style="gradient-border" start-colors="lavender,sky"
+             end-style="top-bottom-bar" end-colors="safe,teal"&gt;
+  &lt;div slide role="start"&gt;封面&lt;/div&gt;
+  &lt;div slide&gt;內容&lt;/div&gt;
+  &lt;div slide role="end"&gt;結語&lt;/div&gt;
+&lt;/slider-show&gt;</code></pre>
+<div class="note note-warn"><b>注意</b>：<code>gradient-bg</code> 畫在投影片本身，若投影片內有 <code>.slide-content</code>（它有不透明的 <code>fill-color</code> 底色）就會把漸層完全蓋住（讀碼所得，未實測）。請搭配不含 <code>.slide-content</code> 的投影片使用。</div>
+<div class="note note-info"><b>說明</b>：寫了 <code>start-style</code> 但沒有 <code>role="start"</code> 的投影片，不會有任何效果。起訖兩組顏色與樣式互相獨立。</div>
+</section>
+<section class="doc" id="extranote">
+<h2>8. 補充說明 extra-note</h2>
+<p>在投影片文字中用 <code>&lt;extra-note&gt;</code> 做一個可點擊的底線文字，點擊後把指定內容放進頁面上另一個元素。</p>
+<pre><code>&lt;p&gt;這裡有 &lt;extra-note target="box" source="src1"&gt;補充&lt;/extra-note&gt;。&lt;/p&gt;
+&lt;p&gt;也可以直接給文字：&lt;extra-note target="box" source="直接文字 &lt;b&gt;可含 HTML&lt;/b&gt;"&gt;另一個&lt;/extra-note&gt;&lt;/p&gt;
+&lt;div id="box"&gt;&lt;/div&gt;
+&lt;div id="src1" hidden&gt;來源區塊的內容&lt;/div&gt;</code></pre>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>target</code></td><td><b>必填</b>。要顯示內容的元素 id，可以在 <code>&lt;slider-show&gt;</code> 內外任何位置。</td></tr>
+<tr><td><code>source</code></td><td><b>必填</b>。優先當成元素 id，找到就複製該元素的 innerHTML；找不到就把這串文字本身當 HTML。</td></tr>
+<tr><td><code>prefix</code></td><td>連結前綴，有寫（含空字串）就覆蓋全域 <code>extra-note-prefix</code>。含 <code>bi-xxx</code> 時自動轉成 <code>&lt;i class="bi bi-xxx"&gt;&lt;/i&gt;</code>。</td></tr>
+<tr><td><code>postfix</code></td><td>連結後綴，同上，覆蓋全域。</td></tr>
+</tbody></table></div>
+<ul>
+<li>點擊時 <b>target 原有的全部內容會被清掉</b>，換成 <code>.extra-note-content</code> 方塊，並淡入。再點另一個補充說明會直接取代。</li>
+<li>連結樣式：底線 2px，顏色 theme，滑過變 <code>extra-note-hover-color</code> 並加粗到 3px。內容方塊左邊 3px 主色線。</li>
+<li><code>target</code> 或 <code>source</code>（兩者缺一）沒寫，console 會警告，該標籤保留原狀，不會轉成連結。找不到 target 時點擊只有警告。</li>
+<li>連結是載入時一次性轉換。之後才加進去的 <code>&lt;extra-note&gt;</code> 不會被處理。</li>
+<li>從 id 複製 innerHTML，若內容含有 id 會造成頁面上 id 重複。</li>
+<li><code>bi-</code> 圖示需要自行載入 Bootstrap Icons，元件不會載入。</li>
+</ul>
+</section>
+<section class="doc" id="spoiler">
+<h2>9. 防劇透遮罩</h2>
+<pre><code>&lt;slider-show spoiler-mode="true" spoiler-text="點擊看這一頁"&gt;...&lt;/slider-show&gt;
+
+&lt;div slide&gt;
+  &lt;p&gt;問題&lt;/p&gt;
+  &lt;div spoiler="點我看答案"&gt;答案內容&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<ul>
+<li><code>spoiler-mode="true"</code> 或 <code>"full"</code>：每一頁都蓋上整頁遮罩。其他值無效。</li>
+<li><code>spoiler</code> 屬性：該元素被遮罩蓋住，屬性值是遮罩文字，空值用全域 <code>spoiler-text</code>。</li>
+<li>遮罩底色是 <code>spoiler-color</code>（預設 theme），文字色自動依亮度選深或淺。實測 theme 為 orange 時，遮罩文字是深色。</li>
+<li>點擊後遮罩淡出 0.3 秒並移除，<b>之後不會再出現</b>。重新開始、離開再回來都不會重新蓋上。</li>
+<li>遮罩是絕對定位蓋滿元素，所以被遮罩的元素會被設為 <code>position:relative</code>。<b>請用 <code>div</code> 或 <code>inline-block</code></b>，行內文字元素的遮罩尺寸會跟著文字行，效果不佳（讀碼所得）。</li>
+<li><code>spoiler-text</code> 與遮罩文字以 HTML 寫入。</li>
+</ul>
+</section>
+<section class="doc" id="quiz">
+<h2>10. 填空題</h2>
+<pre><code>&lt;div slide&gt;&lt;p&gt;&lt;quiz&gt;The graph {{shows}} a rise, {{which}} indicates demand.&lt;/quiz&gt;&lt;/p&gt;&lt;/div&gt;
+&lt;div slide&gt;&lt;p&gt;下一頁會在最上面顯示上一頁的批改結果。&lt;/p&gt;&lt;/div&gt;</code></pre>
+<h3>10.1 規則</h3>
+<ul>
+<li><code>{{答案}}</code> 是填空位置，每個 <code>&lt;quiz&gt;</code> 可有多個。沒有任何 <code>{{}}</code> 的 <code>&lt;quiz&gt;</code> 不處理。</li>
+<li>填空框是 <code>contenteditable</code> 的行內方塊，預設寬度至少 3em，底線用 theme 色。</li>
+<li><b><code>&lt;quiz&gt;</code> 內部的標籤會被丟掉</b>，只取文字（實測 <code>A &lt;b&gt;bold&lt;/b&gt; {{z}}</code> 變成 <code>A bold</code> 加一個空格）。粗體等格式請寫在 <code>&lt;quiz&gt;</code> 外面。</li>
+<li><code>classname</code> 屬性加到容器 <code>.quiz-container</code> 上。</li>
+<li>判定：作答與答案都 <code>trim</code> 後<b>不分大小寫</b>完全相同才算對（實測 <code>LIKE</code> 對 <code>like</code> 為正確）。不支援多個可接受答案、也不去除中間多餘空白。</li>
+</ul>
+<h3>10.2 作答限制（quiz-require-complete）</h3>
+<ul>
+<li>預設 <code>true</code>：目前這一頁有填空框沒填完時，<b>下一頁鈕與下一部分鈕停用</b>，填完（每格非空白）立即啟用。</li>
+<li>只檢查目前這一頁。沒有填空的頁不受限。</li>
+<li>只擋這兩顆按鈕。進度點、頁碼、上一頁鈕、<code>nextSlide()</code> 等程式呼叫都不受限。</li>
+<li><code>quiz-require-complete="false"</code> 完全不限制。</li>
+</ul>
+<h3>10.3 批改結果的顯示</h3>
+<ul>
+<li>翻到下一頁時，元件把<b>上一頁</b>所有填空的結果，放在新頁面最上方的 <code>.quiz-results-auto</code> 區塊（高度最多 350px，超過可捲動）。</li>
+<li>每格一行：✓ 或 ✗、第幾空、你的答案、正確答案。未填顯示 <code>(未填)</code>。答對的左邊綠線，答錯紅線。</li>
+<li><b>結果只在同一部分內的下一頁顯示。</b> 一個部分的最後一頁若有填空，結果永遠不會出現，因為後面沒有同部分的下一頁。需要批改時，請在該部分最後再放一頁。</li>
+<li>翻回前一頁再回來，結果仍會重新顯示。</li>
+<li>重新開始會清空所有填空框與已顯示的結果。</li>
+<li>作答文字以 HTML 方式放進結果區（<code>innerHTML</code>），非自己控制的輸入請小心。</li>
+</ul>
+</section>
+<section class="doc" id="header">
+<h2>11. 更新頁首與標題</h2>
+<pre><code>&lt;header&gt;&lt;h1&gt;初始標題&lt;/h1&gt;&lt;/header&gt;
+&lt;slider-show update-header="true" update-title="true"
+             header-template="第 {part} 部分，第 {slide} 頁，共 {total} 頁"
+             title-template="{slide} / {total}"&gt;...&lt;/slider-show&gt;</code></pre>
+<ul>
+<li><code>{part}</code> 目前部分、<code>{slide}</code> 目前部分內第幾頁（從 1 起）、<code>{total}</code> <b>目前部分</b>的頁數，不是全部頁數。</li>
+<li>每個佔位符在樣板中<b>只替換第一次出現</b>。實測樣板 <code>{slide}-{slide}</code> 結果是 <code>2-{slide}</code>。</li>
+<li>頁首元素是頁面上第一個符合 <code>header h1, header .title</code> 的元素，用 <code>textContent</code> 取代。</li>
+<li>只有在 <code>updateDisplay</code> 時更新（翻頁、切換部分、重畫）。載入完成後的第一次顯示也會更新。</li>
+</ul>
+</section>
+<section class="doc" id="api">
+<h2>12. JS API</h2>
+<div class="tbl"><table>
+<thead><tr><th>成員</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>nextSlide()</code>、<code>prevSlide()</code></td><td>同一部分內翻頁，受 <code>loop</code> 影響，轉場中忽略。<b>不受填空限制。</b></td></tr>
+<tr><td><code>nextPart()</code>、<code>prevPart()</code></td><td>依 <code>part-transition</code> 轉場切換，到第 1 頁。發 <code>part-changed</code>。</td></tr>
+<tr><td><code>restart()</code></td><td>回第 1 部分第 1 頁並清空填空，發 <code>restarted</code>。</td></tr>
+<tr><td><code>jumpToGlobalSlide(i)</code></td><td>依「全部投影片、依 part 排序」的序號（從 0）跳轉，無轉場。</td></tr>
+<tr><td><code>getGlobalSlideIndex()</code></td><td>目前頁的全域序號。</td></tr>
+<tr><td><code>getTotalParts()</code></td><td>部分的數量（實際有幾個不同的 part 值）。</td></tr>
+<tr><td><code>getCurrentPartSlides()</code></td><td>目前部分的投影片陣列。</td></tr>
+<tr><td><code>isFirstSlideInPart()</code>、<code>isLastSlideInPart()</code>、<code>isFirstPart()</code>、<code>isLastPart()</code></td><td>位置判斷。</td></tr>
+<tr><td><code>updateDisplay()</code></td><td>依目前狀態重畫畫面。</td></tr>
+<tr><td><code>checkQuizCompletion()</code></td><td>重新檢查目前頁的填空是否完成並啟用或停用下一頁鈕，回傳布林。</td></tr>
+<tr><td><code>clearAllQuizzes()</code></td><td>清空所有填空框與結果。</td></tr>
+<tr><td><code>currentPart</code>、<code>currentSlideInPart</code></td><td>目前狀態（從 1 與從 0 起算）。可讀，直接寫入後需自行呼叫 <code>updateDisplay()</code>。</td></tr>
+</tbody></table></div>
+<pre><code>const s = document.querySelector('slider-show');
+s.addEventListener('finished', e =&gt; console.log('完成', e.detail));
+s.addEventListener('part-changed', e =&gt; console.log('現在在第', e.detail.part, '部分'));
+s.nextPart();
+s.setAttribute('current-part', '2');   // 立即切換，無轉場、無事件</code></pre>
+</section>
+<section class="doc" id="styling">
+<h2>13. 樣式掛鉤與符合 18px 規範的覆寫</h2>
+<div class="tbl"><table>
+<thead><tr><th>範圍</th><th>選擇器</th></tr></thead>
+<tbody>
+<tr><td>外層</td><td><code>slider-show</code>、<code>.slider-wrapper</code>、<code>.slides-container</code>、<code>[slide]</code>、<code>.active-slide</code></td></tr>
+<tr><td>版型</td><td><code>.slide-content</code>、<code>.slide-subtitle</code>、<code>.slide-main</code>、<code>.slide-footer</code></td></tr>
+<tr><td>進度</td><td><code>.progress-track</code>、<code>.dot</code>、<code>.step-dot</code>、<code>.step-line</code>、<code>.step-triangle</code>、<code>.page-number</code>（目前頁皆有 <code>.active</code>）</td></tr>
+<tr><td>控制</td><td><code>.controls</code>、<code>.prev-btn</code>、<code>.next-btn</code>、<code>.part-buttons</code>、<code>.prev-part-btn</code>、<code>.next-part-btn</code>、<code>.finish-btn</code>、<code>.restart-btn</code>、<code>.part-indicator</code></td></tr>
+<tr><td>補充說明</td><td><code>.extra-note-trigger</code>、<code>.extra-note-content</code>（<code>.show</code> 為淡入狀態）。<b>這兩個不限定在 slider-show 內</b>。</td></tr>
+<tr><td>防劇透</td><td><code>.spoiler-mask</code>、<code>.spoiler-masked</code></td></tr>
+<tr><td>填空</td><td><code>.quiz-container</code>、<code>.quiz-blank</code>、<code>.quiz-results-auto</code>、<code>.quiz-result-item</code>（<code>.correct</code>、<code>.incorrect</code>）、<code>.quiz-result-icon</code>、<code>.quiz-result-label</code>、<code>.quiz-result-user</code>、<code>.quiz-result-correct</code></td></tr>
+</tbody></table></div>
+<p>注入樣式在你的樣式之後，同權重時元件會贏。覆寫時請在選擇器前面加 <code>body</code>，或用 <code>!important</code>。</p>
+<h3>13.1 不符合 18px、行距與透明度規範的地方</h3>
+<div class="tbl"><table>
+<thead><tr><th>項目</th><th>現況</th><th>處理</th></tr></thead>
+<tbody>
+<tr><td><code>.slide-footer</code></td><td>0.9rem</td><td>CSS 覆寫</td></tr>
+<tr><td><code>.page-number</code></td><td>0.65rem，18px 方塊</td><td>CSS 覆寫（連同尺寸）</td></tr>
+<tr><td><code>.part-indicator</code></td><td>0.85rem</td><td>CSS 覆寫</td></tr>
+<tr><td>分部按鈕</td><td>0.9rem</td><td>屬性 <code>part-btn-font-size="1.125rem"</code></td></tr>
+<tr><td><code>.quiz-result-item</code></td><td>0.95rem</td><td>CSS 覆寫</td></tr>
+<tr><td>防劇透遮罩文字</td><td>行距 1.6、1.2rem，都是行內 style</td><td>需 <code>!important</code> 覆寫</td></tr>
+<tr><td>按鈕與填空框的陰影</td><td>rgba 透明度 0.2、0.3</td><td>覆寫為無陰影</td></tr>
+</tbody></table></div>
+<div class="code-title">覆寫範本（示範頁已使用）</div>
+<pre><code>/* 行距與字體：元件有多處小於 1.125rem，逐一拉回 */
+body slider-show .slide-footer        { font-size: 1.125rem; }
+body slider-show .part-indicator      { font-size: 1.125rem; }
+body slider-show .page-number         { font-size: 1.125rem; width: auto; min-width: 32px; height: 32px; padding: 0 6px; }
+body slider-show .quiz-result-item    { font-size: 1.125rem; }
+body slider-show .prev-btn,
+body slider-show .next-btn            { font-size: 1.25rem; }
+body .spoiler-mask &gt; div              { line-height: 1.5 !important; font-size: 1.125rem !important; }
+/* 低透明度陰影改為無陰影 */
+body slider-show .next-part-btn,
+body slider-show .prev-part-btn,
+body slider-show .finish-btn,
+body slider-show .restart-btn         { box-shadow: none !important; }
+body slider-show .quiz-blank:focus    { box-shadow: none; }</code></pre>
+<div class="code-title">搭配的屬性</div>
+<pre><code>&lt;slider-show part-btn-font-size="1.125rem" part-btn-padding="6px 16px" ...&gt;</code></pre>
+<div class="note note-info"><b>說明</b>：元件的行距（<code>.slide-main</code> 1.5、補充說明 1.5）本來就在 1.5 以內。其餘文字的行距繼承頁面。</div>
+</section>
+<section class="doc" id="integrate">
+<h2>14. 與 practice-tracker 搭配</h2>
+<p>slider-show 的 <code>finished</code> 事件可以用來標記 section 完成。事件不冒泡，要綁在元素上。</p>
+<pre><code>document.querySelector('#my-slider').addEventListener('finished', () =&gt; {
+  if (window.PracticeTracker) PracticeTracker.markDone('ex-slider');
+});</code></pre>
+<p>若不使用完成鈕（<code>show-finish="false"</code>），可改在 <code>part-changed</code> 判斷 <code>e.detail.part === e.detail.total</code>，但這個條件只代表「到達最後一部分」，不代表看完最後一頁。</p>
+</section>
+<section class="doc" id="trouble">
+<h2>15. 疑難排解</h2>
+<div class="tbl"><table>
+<thead><tr><th>症狀</th><th>最可能的原因</th><th>怎麼處理</th></tr></thead>
+<tbody>
+<tr><td>畫面完全空白，右上角顯示 Part 1 / 0</td><td>script 放在 <code>&lt;slider-show&gt;</code> 之前</td><td>改放 body 底部。</td></tr>
+<tr><td>沒看到下一部分按鈕</td><td>沒開 <code>auto-show-part-buttons</code>，或還沒到該部分最後一頁</td><td>加 <code>auto-show-part-buttons="true"</code>。</td></tr>
+<tr><td>返回上一部分顯示成錯的頁</td><td>已知問題 1（第 16 節）</td><td>目前只能避免使用返回與重新開始。</td></tr>
+<tr><td>最後一部分出現空白頁</td><td><code>part</code> 不連續（例如 1、3）</td><td>改成 1、2、3，連續不跳號。</td></tr>
+<tr><td>填空沒批改結果</td><td>該頁是這個部分的最後一頁</td><td>後面加一頁。</td></tr>
+<tr><td>不能翻到下一頁</td><td>填空沒填完</td><td>填完，或加 <code>quiz-require-complete="false"</code>。</td></tr>
+<tr><td>投影片內容跑版，flex 排版失效</td><td>把 <code>display:flex</code> 寫在 <code>[slide]</code> 本身</td><td>改寫在內層元素。</td></tr>
+<tr><td>內容被切掉</td><td>超過 <code>height</code> 設定，沒有捲軸</td><td>加大 <code>height</code> 或減少內容。</td></tr>
+<tr><td>補充說明點了沒反應</td><td><code>target</code> 的 id 不存在，或 <code>source</code> 缺漏</td><td>看 console 警告。</td></tr>
+<tr><td>按鈕文字看不清楚</td><td>自動對比色只認 6 碼十六進位與色票名稱</td><td>明確寫 <code>part-btn-color</code>。</td></tr>
+<tr><td>進度列在 <code>progress-scope="all"</code> 時順序怪</td><td>DOM 中投影片沒依 part 排序</td><td>依 part 由小到大寫。</td></tr>
+<tr><td>防劇透遮罩不再出現</td><td>遮罩點過就移除，不會復原</td><td>重新整理頁面，或自行重建。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="limits">
+<h2>16. 已知問題與限制（彙整）</h2>
+<p>以下皆為實測結果。我沒有修改你的 slider-show.js。</p>
+<div class="tbl"><table>
+<thead><tr><th>編號</th><th>問題</th><th>影響</th><th>暫時的做法</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>切換部分時，<b>前一個部分正在顯示的投影片不會被隱藏</b>（<code>updateDisplay</code> 只處理目前部分的投影片）。真實 Chromium 實測：part 1 第 2 頁，進到 part 2 後，兩頁同時為 <code>display:block</code>；再返回 part 1，畫面最上層是 part 2 的頁面。</td><td>返回上一部分、重新開始、<code>progress-scope="all"</code> 往前跳轉，都會顯示錯誤的頁。往後走因為較後面的頁蓋在上面，只要投影片不透明就看不出來；透明投影片會文字重疊。</td><td>避免使用返回與重新開始；投影片一律用不透明的 <code>.slide-content</code>。徹底解法是修改 js，在 <code>updateDisplay</code> 先隱藏所有非目前部分的投影片。</td></tr>
+<tr><td>2</td><td>最後一頁的下一頁鈕不會停用。原因：<code>updateDisplay</code> 結尾呼叫 <code>checkQuizCompletion</code>，沒有填空時會把下一頁鈕強制啟用。</td><td>按了沒反應。</td><td>知道即可。</td></tr>
+<tr><td>3</td><td><code>part</code> 必須從 1 起連續。部分數量以「不同 part 值的數量」計算。實測只有 part 1 與 3 時，下一部分會進入 part 2，內容為空，並顯示完成鈕。</td><td>出現空白頁。</td><td>part 連續編號。</td></tr>
+<tr><td>4</td><td><code>part="0"</code> 被視為 1。</td><td></td><td></td></tr>
+<tr><td>5</td><td><code>auto-show-part-buttons</code> 預設關閉，四顆分部按鈕預設全部不顯示。</td><td>多部分簡報預設無法換部分。</td><td>開啟屬性。</td></tr>
+<tr><td>6</td><td>填空批改結果只顯示在同部分的下一頁。</td><td>部分最後一頁的填空永遠沒批改。</td><td>補一頁。</td></tr>
+<tr><td>7</td><td><code>&lt;quiz&gt;</code> 取 <code>textContent</code>，內部標籤被丟掉。</td><td>填空題內無法有格式。</td><td>格式寫在 <code>&lt;quiz&gt;</code> 外。</td></tr>
+<tr><td>8</td><td>填空限制只擋下一頁鈕與下一部分鈕。</td><td>可用進度點繞過。</td><td>需要嚴格限制時，把 <code>progress-style</code> 設 <code>none</code>。</td></tr>
+<tr><td>9</td><td>作答內容、遮罩文字、按鈕文字等以 <code>innerHTML</code> 寫入。</td><td>含 HTML 的輸入會被解析。</td><td>只放自己撰寫的內容。</td></tr>
+<tr><td>10</td><td>投影片本身的行內 <code>display</code> 會被覆寫。</td><td>flex 排版失效。</td><td>排版寫內層。</td></tr>
+<tr><td>11</td><td>script 必須放在元素之後；載入後新增的投影片不會被辨識。</td><td></td><td>載入前把投影片寫好。</td></tr>
+<tr><td>12</td><td><code>-outline</code> 後綴沒有任何效果；自動對比色只認 6 碼十六進位與色票名稱。</td><td></td><td>明確寫色票名稱與色碼。</td></tr>
+<tr><td>13</td><td>事件不冒泡；沒有「翻頁」事件。</td><td>外部無法追蹤每一頁。</td><td>需要時以程式讀 <code>currentSlideInPart</code>。</td></tr>
+<tr><td>14</td><td><code>{part}</code> 等佔位符只換第一個。</td><td></td><td>每個只用一次。</td></tr>
+<tr><td>15</td><td>防劇透遮罩只會出現一次。</td><td>重看不會重新遮罩。</td><td>重新整理頁面。</td></tr>
+<tr><td>16</td><td>沒有鍵盤與觸控滑動；沒有任何無障礙處理。</td><td></td><td>依你的規範不處理。</td></tr>
+<tr><td>17</td><td>多處字體小於 18px。</td><td>與規範不符。</td><td>第 13 節覆寫範本。</td></tr>
+<tr><td>18</td><td><code>gradient-bg</code> 可能被 <code>.slide-content</code> 蓋住（讀碼所得）。</td><td></td><td>搭配沒有 <code>.slide-content</code> 的投影片。</td></tr>
+</tbody></table></div>
+</section>
+</main>
+</div>
+</body>
+</html>
