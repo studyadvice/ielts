@@ -18,7 +18,7 @@
     yellow:   '#E3D322',
     focus:    '#D4FFFC',
     special:  '#B3DE73',
-    info:     '#2351DB',
+    info:     '#4171BF',
     indigo:   '#7849C9',
     pink:     '#FF91D7',
     orange:   '#EDA109',
@@ -56,6 +56,26 @@
     eventName:           'pt:stage-complete',
     watchStepper:        true,
     clickGo:             false,
+
+    /* ── 片語收藏子區塊（偵測到頁面有 <phrase-chip data-phrase> 才會出現）── */
+    phraseBlock:         true,          // 設為 false 可強制關閉，即使頁面有 phrase-chip
+    phraseTitle:         '片語收藏',
+    phraseLabelDone:      '已收藏',
+    phraseCompleteText:  '片語獵人認證！',
+    phraseCompleteSub:   '',
+    phraseColorDone:     BRAND.pink,
+    phraseColorPending:  '',            // 留空則沿用 colorPending
+    phraseColorComplete: BRAND.special,
+    phraseCellShape:     'circle',
+    phraseEventName:     'pt:phrase-collected',
+
+    /* ── 收藏清單 offcanvas（第一次收藏才會出現開啟按鈕）── */
+    phraseListBtnLabel:  '查看收藏清單',
+    phraseListTitle:     '',            // 留空則沿用 phraseTitle
+    phraseListPlacement: 'end',         // start | end | top | bottom
+    phraseListTheme:     '',            // 留空則沿用 phraseColorDone
+    phraseListWidth:     '380px',
+    phraseListEmptyText: '尚未收藏任何片語',
   };
 
   const ATTR_MAP = {
@@ -90,6 +110,25 @@
     'data-font-size-complete':    { key: 'fontSizeComplete',  type: 'string' },
     'data-font-size-complete-sub':{ key: 'fontSizeCompleteSub', type: 'string' },
     'data-click-go':              { key: 'clickGo',           type: 'bool'   },
+
+    /* ── 片語收藏子區塊屬性 ── */
+    'data-phrase-block':          { key: 'phraseBlock',         type: 'bool'   },
+    'data-phrase-title':          { key: 'phraseTitle',         type: 'string' },
+    'data-phrase-label-done':     { key: 'phraseLabelDone',     type: 'string' },
+    'data-phrase-complete-text':  { key: 'phraseCompleteText',  type: 'string' },
+    'data-phrase-complete-sub':   { key: 'phraseCompleteSub',   type: 'string' },
+    'data-phrase-color-done':     { key: 'phraseColorDone',     type: 'string' },
+    'data-phrase-color-pending':  { key: 'phraseColorPending',  type: 'string' },
+    'data-phrase-color-complete': { key: 'phraseColorComplete', type: 'string' },
+    'data-phrase-cell-shape':     { key: 'phraseCellShape',     type: 'string' },
+    'data-phrase-event-name':     { key: 'phraseEventName',     type: 'string' },
+
+    'data-phrase-list-btn-label':  { key: 'phraseListBtnLabel',  type: 'string' },
+    'data-phrase-list-title':      { key: 'phraseListTitle',     type: 'string' },
+    'data-phrase-list-placement':  { key: 'phraseListPlacement', type: 'string' },
+    'data-phrase-list-theme':      { key: 'phraseListTheme',     type: 'string' },
+    'data-phrase-list-width':      { key: 'phraseListWidth',     type: 'string' },
+    'data-phrase-list-empty-text': { key: 'phraseListEmptyText', type: 'string' },
   };
 
   function readElementAttrs(el, cfg) {
@@ -111,7 +150,7 @@
     s.textContent = `
 practice-tracker,
 pt-header, pt-title, pt-header-count, pt-toggle,
-pt-body, pt-grid, pt-cell,
+pt-body, pt-grid, pt-cell, pt-phrase-block,
 pt-count, pt-complete, pt-complete-sub {
   display: block;
   box-sizing: border-box;
@@ -162,7 +201,7 @@ pt-title {
   text-transform: uppercase;
 }
 
-/* 收合時顯示的進度數字 */
+/* 收合時顯示的進度數字（僅反映章節進度，片語收藏不佔用這個欄位） */
 pt-header-count {
   font-size: var(--pt-fs-count, 0.76rem);
   font-weight: 700;
@@ -294,6 +333,77 @@ pt-complete-sub {
   opacity: 0.7;
   margin-top: 2px;
 }
+
+/* ── 片語收藏子區塊：物理上獨立一塊，不與章節格子混排 ──
+   顏色靠 --pt-done / --pt-pending / --pt-complete-color 在這層重新覆寫，
+   只影響這個子樹底下的 pt-cell / pt-complete，章節格子完全不受影響 */
+pt-phrase-block {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #2a2b2a;
+}
+pt-phrase-block pt-title {
+  margin-bottom: 6px;
+  text-transform: none;
+}
+pt-phrase-block pt-complete {
+  padding: 0;
+  margin-top: 4px;
+}
+pt-phrase-list-btn {
+  display: none;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: var(--pt-fs-count, 0.76rem);
+  padding: 7px 10px;
+  border-radius: 6px;
+  margin-top: 8px;
+  color: #0C0D0C;
+  transition: filter 0.2s ease;
+}
+pt-phrase-list-btn:hover { filter: brightness(1.15); }
+pt-phrase-list-btn.is-shown { display: block; }
+
+/* ── 收藏清單 offcanvas（附掛在 body，樣式自成一套、不依賴其他元件）─── */
+.pt-phrase-offcanvas {
+  background: #141514 !important;
+  color: #C6C7BD !important;
+}
+.pt-phrase-offcanvas .offcanvas-header {
+  color: #0C0D0C;
+}
+.pt-phrase-offcanvas .offcanvas-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.pt-phrase-offcanvas .offcanvas-body {
+  padding: 14px;
+}
+.pt-phrase-item {
+  border-left: 4px solid var(--pli-accent, #1CCAE8);
+  background: #1a1b1a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.pt-phrase-item-title {
+  font-weight: 700;
+  color: var(--pli-accent, #1CCAE8);
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+.pt-phrase-item-example { margin-bottom: 4px; }
+.pt-phrase-item-example mark {
+  background: var(--pli-accent, #1CCAE8);
+  color: #0C0D0C;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+.pt-phrase-item-translation { opacity: 0.75; font-size: 0.9rem; }
+.pt-phrase-empty { opacity: 0.6; font-size: 0.9rem; padding: 4px 2px; }
     `;
     doc.head.appendChild(s);
   }
@@ -343,6 +453,42 @@ pt-complete-sub {
     const doneSet = new Set();
     const cells   = {};
 
+    /* ── 片語收藏偵測：頁面沒有 <phrase-chip data-phrase> 就完全不建立
+       這個子區塊，practice-tracker 的介面與行為跟原本一模一樣 ──────── */
+    const phraseChipEls = Array.from(doc.querySelectorAll('phrase-chip[data-phrase]'));
+
+    /* 一個 phrase-chip 若帶 data-disable-collect="true"，代表它是純字典模式，
+       永遠不會觸發收藏事件。只有在同一個片語「所有」實例都是這種模式時，
+       才把它整個排除在總數之外；只要還有一個可收藏的實例，就照常計入 */
+    function isCollectible(el) {
+      if (!el.hasAttribute('data-disable-collect')) return true;
+      return el.getAttribute('data-disable-collect') === 'false';
+    }
+
+    const phraseCollectible = new Map(); // phrase -> 是否至少有一個可收藏的實例
+    phraseChipEls.forEach(el => {
+      const p = (el.getAttribute('data-phrase') || '').trim();
+      if (!p) return;
+      if (!phraseCollectible.has(p)) phraseCollectible.set(p, false);
+      if (isCollectible(el)) phraseCollectible.set(p, true);
+    });
+
+    const phraseSet = new Set(
+      Array.from(phraseCollectible.entries())
+        .filter(([, collectible]) => collectible)
+        .map(([phrase]) => phrase)
+    );
+    const phraseEnabled = cfg.phraseBlock !== false && phraseSet.size > 0;
+    const phraseTotal   = phraseSet.size;
+    const phraseDoneSet = new Set();
+    const phraseCells   = {};
+    let phraseBlockEl   = null;
+    let phraseCountEl   = null;
+    let phraseCompleteEl = null;
+    let phraseListBtnEl  = null;
+    let phraseOffcanvasBodyEl = null;
+    const phraseCollectedOrder = []; // 依收藏先後順序，供清單渲染
+
     const tracker = hostEl || doc.createElement('practice-tracker');
     if (hostEl) hostEl.innerHTML = '';
 
@@ -354,7 +500,7 @@ pt-complete-sub {
     /* ── 標題列 ── */
     const header        = doc.createElement('pt-header');
     const titleEl       = doc.createElement('pt-title');
-    const headerCountEl = doc.createElement('pt-header-count');  // 收合時顯示
+    const headerCountEl = doc.createElement('pt-header-count');  // 收合時顯示（只反映章節進度）
     const toggleEl      = doc.createElement('pt-toggle');
 
     titleEl.textContent       = cfg.title;
@@ -367,9 +513,9 @@ pt-complete-sub {
 
     /* ── 主體 ── */
     const body = doc.createElement('pt-body');
-    body.style.maxHeight = '300px';
+    body.style.maxHeight = '600px';
 
-    /* ── 格子 ── */
+    /* ── 章節格子 ── */
     const grid     = doc.createElement('pt-grid');
     const shapeVal = SHAPES.has((cfg.cellShape || '').toLowerCase())
       ? cfg.cellShape.toLowerCase()
@@ -393,14 +539,14 @@ pt-complete-sub {
       cells[sec.id] = cell;
     });
 
-    /* ── 計數 ── */
+    /* ── 章節計數 ── */
     const countEl = doc.createElement('pt-count');
     countEl.textContent = `0 / ${total} ${cfg.labelDone}`;
 
     body.appendChild(grid);
     body.appendChild(countEl);
 
-    /* ── 完成提示 ── */
+    /* ── 章節完成提示 ── */
     const completeEl = doc.createElement('pt-complete');
     completeEl.textContent = cfg.completeText;
     if (cfg.completeSubText) {
@@ -408,11 +554,107 @@ pt-complete-sub {
       sub.textContent = cfg.completeSubText;
       completeEl.appendChild(sub);
     }
+    body.appendChild(completeEl);
+
+    /* ── 片語收藏子區塊：物理獨立、顏色獨立覆寫、完成文案獨立 ──────── */
+    if (phraseEnabled) {
+      phraseBlockEl = doc.createElement('pt-phrase-block');
+      phraseBlockEl.style.setProperty('--pt-done',           cfg.phraseColorDone);
+      phraseBlockEl.style.setProperty('--pt-pending',        cfg.phraseColorPending || cfg.colorPending);
+      phraseBlockEl.style.setProperty('--pt-complete-color', cfg.phraseColorComplete);
+
+      const pTitle = doc.createElement('pt-title');
+      pTitle.textContent = cfg.phraseTitle;
+
+      const pShapeVal = SHAPES.has((cfg.phraseCellShape || '').toLowerCase())
+        ? cfg.phraseCellShape.toLowerCase()
+        : 'circle';
+
+      const pGrid = doc.createElement('pt-grid');
+      Array.from(phraseSet).forEach(phrase => {
+        const cell = doc.createElement('pt-cell');
+        cell.setAttribute('data-phrase', phrase);
+        cell.title = phrase;
+        if (pShapeVal !== 'square') cell.setAttribute('data-shape', pShapeVal);
+        pGrid.appendChild(cell);
+        phraseCells[phrase] = cell;
+      });
+
+      phraseCountEl = doc.createElement('pt-count');
+      phraseCountEl.textContent = `0 / ${phraseTotal} ${cfg.phraseLabelDone}`;
+
+      phraseCompleteEl = doc.createElement('pt-complete');
+      phraseCompleteEl.textContent = cfg.phraseCompleteText;
+      if (cfg.phraseCompleteSub) {
+        const pSub = doc.createElement('pt-complete-sub');
+        pSub.textContent = cfg.phraseCompleteSub;
+        phraseCompleteEl.appendChild(pSub);
+      }
+
+      /* ── 收藏清單開啟按鈕：收藏 0 個時隱藏，收到第一個才淡入常駐 ── */
+      const listThemeHex = BRAND[cfg.phraseListTheme] || cfg.phraseColorDone;
+      phraseListBtnEl = doc.createElement('pt-phrase-list-btn');
+      phraseListBtnEl.textContent = cfg.phraseListBtnLabel;
+      phraseListBtnEl.style.background = listThemeHex;
+
+      const offcanvasId = 'pt-phrase-list-' + Math.random().toString(36).slice(2, 9);
+      phraseListBtnEl.setAttribute('data-bs-toggle', 'offcanvas');
+      phraseListBtnEl.setAttribute('data-bs-target', `#${offcanvasId}`);
+
+      phraseBlockEl.appendChild(pTitle);
+      phraseBlockEl.appendChild(pGrid);
+      phraseBlockEl.appendChild(phraseCountEl);
+      phraseBlockEl.appendChild(phraseListBtnEl);
+      phraseBlockEl.appendChild(phraseCompleteEl);
+
+      body.appendChild(phraseBlockEl);
+
+      /* ── 收藏清單 offcanvas：獨立掛在 body，避免被 tracker 的
+         overflow:hidden 裁切，也不受面板收合狀態影響 ─────────────── */
+      const placement = ['start', 'end', 'top', 'bottom'].includes(cfg.phraseListPlacement)
+        ? cfg.phraseListPlacement
+        : 'end';
+
+      const offcanvasEl = doc.createElement('div');
+      offcanvasEl.className = `offcanvas offcanvas-${placement} pt-phrase-offcanvas`;
+      offcanvasEl.id = offcanvasId;
+      offcanvasEl.tabIndex = -1;
+      if (placement === 'start' || placement === 'end') {
+        offcanvasEl.style.width = cfg.phraseListWidth;
+      }
+
+      const ocHeader = doc.createElement('div');
+      ocHeader.className = 'offcanvas-header';
+      ocHeader.style.background = listThemeHex;
+
+      const ocTitle = doc.createElement('h5');
+      ocTitle.className = 'offcanvas-title';
+      ocTitle.textContent = cfg.phraseListTitle || cfg.phraseTitle;
+
+      const ocClose = doc.createElement('button');
+      ocClose.type = 'button';
+      ocClose.className = 'btn-close';
+      ocClose.setAttribute('data-bs-dismiss', 'offcanvas');
+
+      ocHeader.appendChild(ocTitle);
+      ocHeader.appendChild(ocClose);
+
+      phraseOffcanvasBodyEl = doc.createElement('div');
+      phraseOffcanvasBodyEl.className = 'offcanvas-body';
+
+      const emptyEl = doc.createElement('div');
+      emptyEl.className = 'pt-phrase-empty';
+      emptyEl.textContent = cfg.phraseListEmptyText;
+      phraseOffcanvasBodyEl.appendChild(emptyEl);
+
+      offcanvasEl.appendChild(ocHeader);
+      offcanvasEl.appendChild(phraseOffcanvasBodyEl);
+      doc.body.appendChild(offcanvasEl);
+    }
 
     /* ── 組裝 ── */
     tracker.appendChild(header);
     tracker.appendChild(body);
-    tracker.appendChild(completeEl);
 
     if (!hostEl) doc.body.appendChild(tracker);
 
@@ -420,10 +662,10 @@ pt-complete-sub {
     header.addEventListener('click', () => {
       const nowCollapsed = tracker.classList.toggle('is-collapsed');
       toggleEl.textContent = nowCollapsed ? '+' : '−';
-      if (!nowCollapsed) body.style.maxHeight = '300px';
+      if (!nowCollapsed) body.style.maxHeight = '600px';
     });
 
-    /* ── markDone ─────────────────────────────────────────── */
+    /* ── markDone：章節完成 ──────────────────────────────────── */
     function markDone(sectionId) {
       if (doneSet.has(sectionId)) return;
       if (!cells[sectionId]) return;
@@ -447,7 +689,69 @@ pt-complete-sub {
       if (n === total) tracker.classList.add('pt-complete-state');
     }
 
-    /* ── changeShape：執行期動態切換形狀 ─────────────────── */
+    /* ── markPhraseCollected：片語收藏（沒有片語區塊時安靜地什麼都不做）─
+       meta 可帶 { theme, exampleHTML, translationText }，用來渲染收藏清單；
+       不傳就只在清單顯示片語本身，不中斷既有流程 */
+    function markPhraseCollected(phrase, meta) {
+      if (!phraseEnabled) return;
+      const key = (phrase || '').trim();
+      if (!key || phraseDoneSet.has(key) || !phraseCells[key]) return;
+
+      phraseDoneSet.add(key);
+      const cell = phraseCells[key];
+      cell.classList.add('is-done');
+
+      if (cfg.animateCell) {
+        cell.classList.add('pt-pop');
+        setTimeout(
+          () => cell.classList.remove('pt-pop'),
+          parseFloat(cfg.animateDuration) * 1000 + 50
+        );
+      }
+
+      const n = phraseDoneSet.size;
+      phraseCountEl.textContent = `${n} / ${phraseTotal} ${cfg.phraseLabelDone}`;
+
+      if (n === phraseTotal) phraseBlockEl.classList.add('pt-complete-state');
+
+      /* ── 收藏清單：第一筆收藏時清掉「尚未收藏」提示，之後依序往下疊加 ── */
+      phraseCollectedOrder.push(key);
+      if (phraseOffcanvasBodyEl) {
+        if (n === 1) phraseOffcanvasBodyEl.innerHTML = '';
+
+        const m = meta || {};
+        const accentHex = BRAND[m.theme] || cfg.phraseColorDone;
+
+        const item = doc.createElement('div');
+        item.className = 'pt-phrase-item';
+        item.style.setProperty('--pli-accent', accentHex);
+
+        const titleEl = doc.createElement('div');
+        titleEl.className = 'pt-phrase-item-title';
+        titleEl.textContent = key;
+        item.appendChild(titleEl);
+
+        if (m.exampleHTML) {
+          const exEl = doc.createElement('div');
+          exEl.className = 'pt-phrase-item-example';
+          exEl.innerHTML = m.exampleHTML;
+          item.appendChild(exEl);
+        }
+
+        if (m.translationText) {
+          const trEl = doc.createElement('div');
+          trEl.className = 'pt-phrase-item-translation';
+          trEl.textContent = m.translationText;
+          item.appendChild(trEl);
+        }
+
+        phraseOffcanvasBodyEl.appendChild(item);
+      }
+
+      if (phraseListBtnEl) phraseListBtnEl.classList.add('is-shown');
+    }
+
+    /* ── changeShape：執行期動態切換章節格子形狀 ─────────────── */
     function changeShape(shape) {
       const s = SHAPES.has((shape || '').toLowerCase())
         ? shape.toLowerCase()
@@ -473,7 +777,23 @@ pt-complete-sub {
       if (id) markDone(id);
     });
 
-    win.PracticeTracker = { markDone, changeShape, total, doneSet, cfg };
+    /* phrase-chip.js 收藏事件：沒有片語區塊時，監聽器仍掛著但不會做任何事 */
+    doc.addEventListener(cfg.phraseEventName, e => {
+      const detail = e.detail || {};
+      if (detail.phrase) markPhraseCollected(detail.phrase, detail);
+    });
+
+    win.PracticeTracker = {
+      markDone,
+      markPhraseCollected,
+      changeShape,
+      total,
+      doneSet,
+      phraseTotal,
+      phraseDoneSet,
+      phraseCollectedOrder,
+      cfg,
+    };
   }
 
   if (doc.readyState === 'loading') {
