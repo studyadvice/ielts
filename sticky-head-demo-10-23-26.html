@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sticky-head 元件示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+:root {
+	font-size: 16px;
+	--bg: #0C0D0C;
+	--shell: #C6C7BD;
+	--ocean: #1CCAE8;
+	--sky: #82C8E5;
+	--vanilla: #DBEDD8;
+	--yellow: #E3D322;
+	--special: #B3DE73;
+	--salmon: #E5C3B3;
+	--lavender: #C3A5E5;
+	--orange: #EDA109;
+	--safe: #27AE60;
+}
+html { scroll-behavior: smooth; }
+body {
+	font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', system-ui;
+	background-color: var(--bg);
+	color: var(--shell);
+	font-size: 1.125rem;
+	line-height: 1.5;
+	min-width: 966px;
+	padding: 0 32px 160px;
+}
+h1 { font-size: 2.25rem; line-height: 1.3; }
+h2 { font-size: 1.75rem; line-height: 1.3; }
+h3 { font-size: 1.375rem; line-height: 1.4; }
+.page-head {
+	padding: 40px 0 24px;
+	border-bottom: 1px solid rgba(198, 199, 189, 0.82);
+	margin-bottom: 32px;
+}
+.lead-note {
+	color: var(--vanilla);
+	font-size: 1.125rem;
+	line-height: 1.5;
+}
+.demo-sec {
+	border-left: 2px dotted rgba(198, 199, 189, 0.82);
+	margin-bottom: 72px;
+	padding-bottom: 8px;
+}
+.demo-body { padding: 16px 24px 24px; }
+.tag-note {
+	display: inline-block;
+	padding: 3px 12px;
+	border-radius: 999px;
+	border: 1px solid rgba(130, 200, 229, 0.86);
+	color: var(--sky);
+	font-size: 1rem;
+	line-height: 1.4;
+	margin-bottom: 12px;
+}
+.qline {
+	border: 1px solid rgba(219, 237, 216, 0.86);
+	color: var(--vanilla);
+	padding: 6px 14px;
+	display: inline-block;
+	margin-bottom: 12px;
+}
+.hl { color: var(--ocean); }
+.filler { color: rgba(198, 199, 189, 0.88); }
+.code-box {
+	background-color: rgba(198, 199, 189, 0.1);
+	border: 1px solid rgba(198, 199, 189, 0.8);
+	padding: 16px 20px;
+	margin: 16px 0;
+	font-family: 'SFMono-Regular', Consolas, monospace;
+	font-size: 1rem;
+	line-height: 1.5;
+	white-space: pre;
+	overflow-x: auto;
+	color: var(--special);
+}
+table.attr-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 1.0625rem;
+	line-height: 1.5;
+}
+table.attr-table th,
+table.attr-table td {
+	border: 1px solid rgba(198, 199, 189, 0.8);
+	padding: 8px 14px;
+	vertical-align: top;
+	text-align: left;
+}
+table.attr-table th { color: var(--ocean); }
+table.attr-table code { color: var(--yellow); }
+#event-log {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	width: 320px;
+	max-height: 220px;
+	overflow-y: auto;
+	background-color: rgba(12, 13, 12, 0.92);
+	border: 1px solid rgba(28, 202, 232, 0.86);
+	color: var(--shell);
+	padding: 12px 16px;
+	font-size: 1rem;
+	line-height: 1.5;
+	z-index: 200;
+}
+#event-log b { color: var(--ocean); }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+	<h1>&lt;sticky-head&gt; 章節吸頂標題列</h1>
+	<p class="lead-note">
+		捲動時 section 標題自動吸頂、縮小字級、換上半透明底色，並顯示章節標籤、回頂鈕與本節閱讀進度。<br>
+		下方六個 section 示範不同參數組合，右下角會即時記錄吸頂事件。<br>
+		<span style="color: var(--special);">v1.1.0：外框高度鎖定，縮放只發生在內層，捲動期間文件總高度固定不變，閃爍問題已排除。</span>
+	</p>
+</div>
+
+<!-- 1. 預設 -->
+<section id="sec-basic" class="demo-sec">
+	<sticky-head label="Lesson 1" top-btn="回本節">
+		<h2><i class="bi bi-nut-fill"></i> 預設樣式：ocean 強調色</h2>
+	</sticky-head>
+	<div class="demo-body">
+		<span class="tag-note">IELTS Speaking Part 1</span><br>
+		<span class="qline">How often do you exercise?</span>
+		<p>
+			Every day, rain or shine, I hit the gym <span class="hl">a few blocks away from my condo</span> to keep my waistline in check and stay in shape. Maintaining this habit is tough, but I can feel that I've been making progress day by day.
+		</p>
+		<p class="filler">
+			每天，無論晴雨，我都會去離公寓幾個街區遠的健身房鍛鍊，以保持身材、控制腰圍。堅持這個習慣很難，但我能感覺到自己每天都在進步。
+		</p>
+		<div class="code-box">&lt;section id="sec-basic"&gt;
+  &lt;sticky-head label="Lesson 1" top-btn="回本節"&gt;
+    &lt;h2&gt;預設樣式&lt;/h2&gt;
+  &lt;/sticky-head&gt;
+  ...
+&lt;/section&gt;</div>
+		<p class="filler">
+			請注意，<code>&lt;sticky-head&gt;</code> 必須是該 section 的直接子元素，吸頂範圍才會被 section 的高度限制住。當下一個 section 進場時，前一個標題列會被自然頂出畫面，不會互相重疊。
+		</p>
+		<p class="filler">
+			往下捲動即可看到標題縮成 1.125rem、底色轉為 rgba 0.88 的深色、底部出現進度條。進度條反映的是「目前讀到這一節的幾成」，不是整頁進度。
+		</p>
+		<p class="filler">
+			填充內容：I particularly love freshly made deli food because it's both wholesome and hassle-free. In fact, a small family-run deli a few blocks away from my condo serves a smoked salmon salad that's my ultimate comfort food when I don't feel like cooking.
+		</p>
+		<p class="filler">
+			填充內容：To be completely honest, I'm often so tied up with work that I don't really do much recycling at home. On the flip side, my office has a dedicated team that handles waste sorting.
+		</p>
+		<p class="filler">
+			填充內容：I usually commute by public transport because it's relatively convenient and saves me the hassle of finding a parking space. I can also make good use of my travel time by listening to podcasts.
+		</p>
+	</div>
+</section>
+
+<!-- 2. 換色 -->
+<section id="sec-color" class="demo-sec">
+	<sticky-head accent="yellow" color="vanilla" label="Lesson 2" top-btn="回本節" bar-height="5px">
+		<h2><i class="bi bi-nut-fill"></i> 換強調色與文字色</h2>
+	</sticky-head>
+	<div class="demo-body">
+		<p>
+			<code>accent</code> 控制邊框、chip、按鈕與進度條；<code>color</code> 控制標題文字。兩者都吃配色名稱，也可直接給 hex 值。
+		</p>
+		<div class="code-box">&lt;sticky-head accent="yellow" color="vanilla" bar-height="5px"&gt;</div>
+		<p class="filler">
+			填充內容：A lot of bustling places I've visited don't stay in my memory, but a local traditional market in Bangkok is very different. The moment I stepped in, I was hit by the smell of grilled seafood and the sound of vendors calling out their prices.
+		</p>
+		<p class="filler">
+			填充內容：My sister and I share an apartment in a high-rise building in the city center, which gives us easy access to public transportation.
+		</p>
+		<p class="filler">
+			填充內容：Older generations often give the younger ones red envelopes containing money, which symbolizes passing down good luck and blessings.
+		</p>
+		<p class="filler">
+			填充內容：Social media platforms provide an endless stream of interesting videos and articles, which is why I never feel bored during my daily commute.
+		</p>
+	</div>
+</section>
+
+<!-- 3. 有頂部偏移 -->
+<section id="sec-offset" class="demo-sec">
+	<sticky-head accent="special" top="56px" label="top=56px" top-btn="回本節">
+		<h2><i class="bi bi-nut-fill"></i> 頁面已有固定導覽列時：top 偏移</h2>
+	</sticky-head>
+	<div class="demo-body">
+		<p>
+			如果你的頁面頂部已經有一條固定工具列，給 <code>top</code> 一個等於工具列高度的值，吸頂位置就會往下讓開。哨兵判斷與進度計算都會跟著這個偏移走。
+		</p>
+		<div class="code-box">&lt;sticky-head top="56px" accent="special"&gt;</div>
+		<p class="filler">
+			填充內容：I'd say I prefer eating at home because it's more budget-friendly and gives me greater control over what I eat. That said, I'm always up for eating out when I'm too worn out to cook.
+		</p>
+		<p class="filler">
+			填充內容：I'm not really into shopping for the sake of it, but I do enjoy browsing online stores when I need something specific.
+		</p>
+		<p class="filler">
+			填充內容：Having some savings gives me peace of mind because I know I can cope with unexpected expenses without having to rely on others.
+		</p>
+		<p class="filler">
+			填充內容：I usually feel drained in the late afternoon, especially after spending hours staring at a computer screen and sitting through back-to-back meetings.
+		</p>
+	</div>
+</section>
+
+<!-- 4. 自動隱藏 -->
+<section id="sec-autohide" class="demo-sec">
+	<sticky-head accent="salmon" auto-hide label="auto-hide" top-btn="回本節">
+		<h2><i class="bi bi-nut-fill"></i> 向下捲動時自動收起</h2>
+	</sticky-head>
+	<div class="demo-body">
+		<p>
+			加上 <code>auto-hide</code> 後，向下捲動時標題列會滑出畫面，向上捲動立刻滑回來。適合內容很長、希望閱讀時完全不受干擾的精讀章節。
+		</p>
+		<div class="code-box">&lt;sticky-head accent="salmon" auto-hide&gt;</div>
+		<p class="filler">
+			填充內容：Not as often as I'd like to. Since I work full-time in Taipei, my weekdays are usually packed with meetings, deadlines, and commuting. By the time Friday rolls around, I'm often too exhausted to make elaborate plans.
+		</p>
+		<p class="filler">
+			填充內容：Still, I try to meet up with my friends for dinner or grab a drink after work whenever our schedules line up. We usually catch up on what's been going on in our lives, complain about work a little, and share a few laughs.
+		</p>
+		<p class="filler">
+			填充內容：It's a simple way to let off steam and take my mind off work for a while.
+		</p>
+		<p class="filler">
+			填充內容：I was making good progress on the report in the morning, but I ran out of steam after lunch.
+		</p>
+		<p class="filler">
+			填充內容：I used to push myself too hard at work and often ended up feeling completely worn out by Friday.
+		</p>
+	</div>
+</section>
+
+<!-- 5. 無進度條、無陰影、極簡 -->
+<section id="sec-minimal" class="demo-sec">
+	<sticky-head accent="lavender" progress="false" shadow="false" opacity="0.82"
+		size="1.5rem" size-stuck="1.125rem" padding="12px 20px" padding-stuck="6px 20px">
+		<h2><i class="bi bi-nut-fill"></i> 極簡版：關掉進度條與陰影</h2>
+	</sticky-head>
+	<div class="demo-body">
+		<p>
+			沒有 <code>label</code> 與 <code>top-btn</code> 時右側區塊自動省略。<code>opacity</code> 最低只會套用到 0.78，低於此值會被自動提高。
+		</p>
+		<div class="code-box">&lt;sticky-head accent="lavender" progress="false" shadow="false"
+  opacity="0.82" size="1.5rem" size-stuck="1.125rem"
+  padding="12px 20px" padding-stuck="6px 20px"&gt;</div>
+		<p class="filler">
+			填充內容：I haven't seen my university friends in ages, so we're planning to catch up with each other over dinner this Friday.
+		</p>
+		<p class="filler">
+			填充內容：After several days of back-to-back meetings, I need the weekend to recharge my batteries before tackling another busy week.
+		</p>
+		<p class="filler">
+			填充內容：I try to leave home early in the morning to avoid getting stuck in traffic during rush hour.
+		</p>
+	</div>
+</section>
+
+<!-- 6. 屬性總表 -->
+<section id="sec-api" class="demo-sec">
+	<sticky-head accent="sky" label="API" top-btn="回本節">
+		<h2><i class="bi bi-nut-fill"></i> 屬性與事件總表</h2>
+	</sticky-head>
+	<div class="demo-body">
+		<table class="attr-table">
+			<thead>
+				<tr><th style="width: 160px;">屬性</th><th style="width: 150px;">預設值</th><th>說明</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><code>top</code></td><td>0px</td><td>吸頂位置的頂部偏移，支援 px 與 rem</td></tr>
+				<tr><td><code>accent</code></td><td>ocean</td><td>強調色，套用於下框線、chip、按鈕、進度條</td></tr>
+				<tr><td><code>color</code></td><td>shell</td><td>標題文字色</td></tr>
+				<tr><td><code>bg</code></td><td>#0C0D0C</td><td>吸頂後的底色（未吸頂時為透明）</td></tr>
+				<tr><td><code>opacity</code></td><td>0.88</td><td>底色透明度，低於 0.78 會被自動提高</td></tr>
+				<tr><td><code>size</code></td><td>1.75rem</td><td>未吸頂時的字級</td></tr>
+				<tr><td><code>size-stuck</code></td><td>1.125rem</td><td>吸頂後的字級</td></tr>
+				<tr><td><code>padding</code></td><td>16px 20px</td><td>未吸頂時的內距</td></tr>
+				<tr><td><code>padding-stuck</code></td><td>8px 20px</td><td>吸頂後的內距</td></tr>
+				<tr><td><code>label</code></td><td>無</td><td>吸頂後顯示的章節 chip 文字</td></tr>
+				<tr><td><code>top-btn</code></td><td>無</td><td>回到本節頂端的按鈕文字</td></tr>
+				<tr><td><code>progress</code></td><td>true</td><td>是否顯示本節閱讀進度條</td></tr>
+				<tr><td><code>bar-height</code></td><td>3px</td><td>進度條高度</td></tr>
+				<tr><td><code>shadow</code></td><td>true</td><td>吸頂後是否加投影</td></tr>
+				<tr><td><code>blur</code></td><td>6</td><td>背景模糊強度，單位 px。設 0 可完全關閉並省下合成圖層</td></tr>
+				<tr><td><code>auto-hide</code></td><td>false</td><td>向下捲動時收起、向上捲動時出現</td></tr>
+				<tr><td><code>scope</code></td><td>最近的 section</td><td>進度計算依據的容器選擇器</td></tr>
+				<tr><td><code>z</code></td><td>60</td><td>z-index</td></tr>
+			</tbody>
+		</table>
+
+		<h3 class="mt-4">事件與方法</h3>
+		<div class="code-box">// 事件（會冒泡）
+el.addEventListener('sticky-head:stuck',   e =&gt; { ... });
+el.addEventListener('sticky-head:unstuck', e =&gt; { ... });
+
+// 實例方法與屬性
+el.isStuck            // boolean
+el.progress           // 0 ~ 1
+el.scrollToSection()  // 平滑捲回本節頂端
+el.refresh()          // 重讀屬性並重新量測
+
+// 全域
+StickyHead.refresh()  // 全頁重新量測（動態插入內容後呼叫）
+StickyHead.all()      // 取得所有實例</div>
+
+		<h3 class="mt-4">整合到現有頁面</h3>
+		<p class="filler">
+			把原本寫在 section 內的標題區包起來即可，不需要改動其他結構：
+		</p>
+		<div class="code-box">&lt;section id="ielts-ex-vocabulary"&gt;
+  &lt;sticky-head label="Lesson 1" top-btn="回本節" accent="ocean"&gt;
+    &lt;div class="fs-1"&gt;&lt;i class="bi bi-nut-fill"&gt;&lt;/i&gt; 從優質範例擴大詞彙資源&lt;/div&gt;
+  &lt;/sticky-head&gt;
+  &lt;div class="mx-3 px-3"&gt; ... &lt;/div&gt;
+&lt;/section&gt;</div>
+		<p class="filler">
+			注意事項：<code>position: sticky</code> 會被任何設了 <code>overflow: hidden / auto / scroll</code> 的祖先元素破壞。元件在初始化時會往上逐層檢查並在主控台提出警告。
+		</p>
+
+		<h3 class="mt-4">v1.1.0 為什麼不再閃爍</h3>
+		<p class="filler">
+			v1.0.0 把 <code>font-size</code> 與 <code>padding</code> 的過場動畫做在外框上，等於標題列的高度在 0.22 秒內逐格改變，整份文件的高度跟著連續抖動。瀏覽器為了讓畫面穩定會反向補償捲動位置（scroll anchoring），每次 1 到 4 px；而 <code>auto-hide</code> 的方向判斷只看 <code>pageYOffset</code> 的增減，就把這個補償誤判成「向上捲」，標題列被放回來後高度又變一次，循環因此閉合。
+		</p>
+		<p class="filler">
+			v1.1.0 的三項修正：外框高度在初始化時量測並鎖定成固定值，所有尺寸變化都移到內層的 <code>.sh-bar</code>，文件總高度自始至終不變；捲動方向改用累積位移搭配 10 px 門檻與 240 ms 冷卻，瀏覽器的小幅補償不足以越過門檻；外框與哨兵都加上 <code>overflow-anchor: none</code>，<code>backdrop-filter</code> 的合成圖層改為常駐，吸頂瞬間不再新建或銷毀圖層，進度條也改為逐格直接設定寬度而不做 transition。
+		</p>
+		<p class="filler">
+			另外修正一個同樣會造成視覺混亂的問題：v1.0.0 只靠 <code>IntersectionObserver</code> 的狀態轉換判定吸頂，而 IO 僅在「相交與否改變」時觸發。用錨點連結或目錄一次跳過整個 section 時，哨兵全程維持不相交，回呼根本不會執行，標題列會卡在頂端卻沒有底色，文字和內文疊在一起。v1.1.0 改為每格直接以哨兵位置判定（含 2 px 遲滯），IO 只留作輔助觸發，並補上 <code>hashchange</code> 監聽。
+		</p>
+		<p class="filler">
+			實測結果：同一份示範頁從頭捲到底，<code>documentElement.scrollHeight</code> 由 17 種不同數值收斂成單一數值，狀態切換次數由 19 次降為 7 次（每節各一次，為正確值），<code>pageYOffset</code> 的非預期下降由 8 次降為 0 次；跳躍捲動到頁尾時，六個 section 的吸頂狀態由「僅 1 個正確」變為全部正確。
+		</p>
+		<p class="filler">
+			填充內容：To be completely honest, I'm often so tied up with work that I don't really do much recycling at home.
+		</p>
+		<p class="filler">
+			填充內容：Some shopping websites keep track of the products users view and use that information to recommend similar items.
+		</p>
+		<p class="filler">
+			填充內容：Constant notifications can get in the way of my concentration when I'm trying to finish an important task.
+		</p>
+	</div>
+</section>
+
+<div id="event-log"><b>事件記錄</b><br>捲動頁面後開始記錄</div>
+
+<script src="sticky-head.js"></script>
+<script>
+(function () {
+	var box = document.getElementById('event-log');
+	var lines = [];
+	function log(type, el) {
+		var name = el.getAttribute('label') || (el.closest('section') ? el.closest('section').id : 'sticky-head');
+		lines.unshift('<b>' + type + '</b>　' + name);
+		if (lines.length > 8) lines.pop();
+		box.innerHTML = '<b>事件記錄</b><br>' + lines.join('<br>');
+	}
+	document.addEventListener('sticky-head:stuck', function (e) { log('吸頂', e.target); });
+	document.addEventListener('sticky-head:unstuck', function (e) { log('釋放', e.target); });
+})();
+</script>
+</body>
+</html>
