@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>ui-inputs 全屬性對照手冊</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --bg:#0C0D0C;
+    --panel:#1A1B1A;
+    --text:#C6C7BD;
+    --muted:#8A8C84;
+    --line:rgba(198,199,189,0.22);
+    --code-bg:#000000;
+    --code-text:#C6C7BD;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-size:0.98rem;
+    line-height:1.5;
+    font-family:"Noto Sans TC","PingFang TC",system-ui,sans-serif;
+    max-width:1280px;
+    margin:0 auto;
+    padding:32px 24px 120px;
+  }
+  h1{ margin:0 0 6px; }
+  h1 + p{ color:var(--muted); max-width:760px; }
+  h2{ margin-top:52px; padding-bottom:8px; border-bottom:2px solid var(--line); }
+  h3{ margin:0 0 4px; font-size:1.02rem; }
+  nav.toc{
+    display:flex; flex-wrap:wrap; gap:8px 16px;
+    padding:12px 16px; border:1px solid var(--line); border-radius:8px;
+    margin-bottom:28px; font-size:0.92rem; background:var(--panel);
+  }
+  nav.toc a{ color:var(--text); text-decoration:none; }
+  nav.toc a:hover{ text-decoration:underline; }
+  table.attrs{ width:100%; border-collapse:collapse; margin:10px 0 22px; font-size:0.9rem; }
+  table.attrs th, table.attrs td{ border:1px solid var(--line); padding:6px 10px; text-align:left; vertical-align:top; }
+  table.attrs th{ background:var(--panel); font-weight:700; }
+  table.attrs code{ background:var(--code-bg); color:#82C8E5; padding:1px 5px; border-radius:3px; font-size:0.85em; }
+  .row{
+    display:grid; grid-template-columns: minmax(280px,440px) 1fr;
+    gap:18px; align-items:start; padding:18px 0; border-bottom:1px solid var(--line);
+  }
+  .row:last-child{ border-bottom:0; }
+  .row .meta p{ margin:6px 0 0; color:var(--muted); font-size:0.88rem; }
+  .row .demo{ padding:6px; background:var(--panel); border-radius:8px; display:flex; align-items:center; min-height:48px; }
+  pre{
+    background:var(--code-bg); color:var(--code-text); border-radius:8px;
+    padding:12px 14px; overflow:auto; font-size:0.82rem; line-height:1.5; margin:4px 0 0;
+  }
+  code{ font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace; }
+  .src{ display:none; }
+  .tag{
+    display:inline-block; font-size:0.72rem; padding:1px 8px; border:1px solid var(--line);
+    border-radius:999px; color:var(--muted); margin-left:6px;
+  }
+  .section-intro{ color:var(--muted); max-width:820px; margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<h1>ui-inputs 全屬性對照手冊</h1>
+<p>涵蓋 <code>&lt;ui-otp&gt;</code> 與 <code>&lt;ui-blank&gt;</code> 兩個元件的完整屬性，每一項皆為「左側程式碼、右側即時效果」對照。頁面本身採深色中性配色，避免干擾元件自身的配色判讀。</p>
+
+<nav class="toc">
+  <a href="#otp-basic">ui-otp／數量與分組</a>
+  <a href="#otp-content">ui-otp／內容限制</a>
+  <a href="#otp-size">ui-otp／尺寸外觀</a>
+  <a href="#otp-color">ui-otp／顏色</a>
+  <a href="#otp-ring">ui-otp／Focus ring</a>
+  <a href="#otp-valid">ui-otp／驗證</a>
+  <a href="#otp-label">ui-otp／文字標籤</a>
+  <a href="#otp-full">ui-otp／完整組合</a>
+  <a href="#otp-gen-basic">ui-otp generate／格式與字元集</a>
+  <a href="#otp-gen-copy">ui-otp generate／複製按鈕</a>
+  <a href="#otp-gen-check">ui-otp generate／後端查重</a>
+  <a href="#blank-content">ui-blank／內容比對</a>
+  <a href="#blank-button">ui-blank／按鈕</a>
+  <a href="#blank-size">ui-blank／尺寸外觀</a>
+  <a href="#blank-ring">ui-blank／Focus ring</a>
+  <a href="#blank-valid">ui-blank／驗證</a>
+  <a href="#blank-message">ui-blank／訊息</a>
+  <a href="#blank-full">ui-blank／完整組合</a>
+</nav>
+
+<h1 id="otp-top">一、ui-otp</h1>
+<p class="section-intro">單一 input 版 OTP 輸入／驗證元件。畫面上每一格是展示用 <code>div</code>，背後有一個透明的真正 <code>input</code> 接收鍵盤輸入。</p>
+
+<h2 id="otp-basic">1. 數量與分組</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>length</code></td><td>數字</td><td>6</td><td>總格數</td></tr>
+<tr><td><code>groups</code></td><td>逗號分隔的數字，總和須等於 length</td><td>（無，單一整組）</td><td>分組，例如 <code>"3,3"</code></td></tr>
+<tr><td><code>separator</code></td><td>任意字元</td><td><code>-</code></td><td>分組之間的分隔符號</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>length="8"</h3>
+    <pre><code>&lt;ui-otp length="8"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="8" accent-color="sky"></ui-otp></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>groups="2,3,3" + separator="·"</h3>
+    <pre><code>&lt;ui-otp length="8" groups="2,3,3" separator="·"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="8" groups="2,3,3" separator="·" accent-color="lavender"></ui-otp></div>
+</div>
+
+<h2 id="otp-content">2. 內容限制</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>type</code></td><td><code>numeric</code> / <code>alpha</code> / <code>alnum</code> / <code>any</code></td><td>numeric</td><td>決定過濾規則與 inputmode</td></tr>
+<tr><td><code>case</code></td><td><code>upper</code> / <code>lower</code></td><td>（不轉換）</td><td>type 非 numeric 時可強制大小寫</td></tr>
+<tr><td><code>mask</code></td><td>布林屬性</td><td>關</td><td>顯示圓點取代實際字元</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>type="alnum" case="upper"</h3>
+    <pre><code>&lt;ui-otp length="6" type="alnum" case="upper"&gt;&lt;/ui-otp&gt;</code></pre>
+    <p>英數混合，自動轉大寫。</p>
+  </div>
+  <div class="demo"><ui-otp length="6" type="alnum" case="upper" accent-color="special"></ui-otp></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>mask</h3>
+    <pre><code>&lt;ui-otp length="6" mask&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="6" mask accent-color="teal"></ui-otp></div>
+</div>
+
+<h2 id="otp-size">3. 尺寸外觀</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>cell-size</code></td><td>px</td><td>48px</td><td>單格寬高（正方形）</td></tr>
+<tr><td><code>gap</code></td><td>px</td><td>10px</td><td>格子間距</td></tr>
+<tr><td><code>font-size</code></td><td>rem</td><td>1.25rem</td><td>格內字級</td></tr>
+<tr><td><code>radius</code></td><td>px</td><td>8px</td><td>格子圓角</td></tr>
+<tr><td><code>border-width</code></td><td>px</td><td>1px</td><td>格子外框粗細</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>大尺寸格子</h3>
+    <pre><code>&lt;ui-otp length="4" cell-size="64px" gap="14px"
+  font-size="1.6rem" radius="14px" border-width="2px"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="4" cell-size="64px" gap="14px" font-size="1.6rem" radius="14px" border-width="2px" accent-color="orange"></ui-otp></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>緊湊小尺寸</h3>
+    <pre><code>&lt;ui-otp length="6" cell-size="34px" gap="6px"
+  font-size="0.95rem" radius="4px"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="6" cell-size="34px" gap="6px" font-size="0.95rem" radius="4px" accent-color="pink"></ui-otp></div>
+</div>
+
+<h2 id="otp-color">4. 顏色（統一走色票系統）</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>說明</th></tr>
+<tr><td><code>border-color</code></td><td>格子預設外框色</td></tr>
+<tr><td><code>bg-color</code></td><td>格子底色</td></tr>
+<tr><td><code>text-color</code></td><td>格內文字色</td></tr>
+<tr><td><code>accent-color</code></td><td>作用中格子的外框色，也是 focus ring 的預設色來源</td></tr>
+<tr><td><code>error-color</code></td><td>驗證失敗時的外框與訊息色</td></tr>
+<tr><td><code>valid-color</code></td><td>驗證成功時的外框與訊息色</td></tr>
+</table>
+<p class="section-intro">可用色票名稱：background, shell, lavender, sky, warning, salmon, ocean, safe, teal, vanilla, yellow, focus, special, info, indigo, pink, orange（亦可直接填 hex／rgba）。</p>
+
+<div class="row">
+  <div class="meta">
+    <h3>自訂底色與文字色</h3>
+    <pre><code>&lt;ui-otp length="6" bg-color="indigo" text-color="focus"
+  border-color="rgba(255,255,255,.3)" accent-color="pink"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="6" bg-color="indigo" text-color="focus" border-color="rgba(255,255,255,.3)" accent-color="pink"></ui-otp></div>
+</div>
+
+<h2 id="otp-ring">5. Focus ring</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>focus-ring-width</code></td><td>px</td><td>3px</td><td>聚焦格子外圍光暈粗細</td></tr>
+<tr><td><code>focus-ring-color</code></td><td>色票／hex</td><td>跟隨 accent-color</td><td>光暈顏色（hex 會自動換算半透明版本）</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>粗、顯眼的 focus ring</h3>
+    <pre><code>&lt;ui-otp length="6" accent-color="warning"
+  focus-ring-width="6px" focus-ring-color="warning"&gt;&lt;/ui-otp&gt;</code></pre>
+    <p>點擊任一格聚焦即可看到效果。</p>
+  </div>
+  <div class="demo"><ui-otp length="6" accent-color="warning" focus-ring-width="6px" focus-ring-color="warning"></ui-otp></div>
+</div>
+
+<h2 id="otp-valid">6. 驗證</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>expected-value</code></td><td>字串</td><td>（無）</td><td>有給就走前端比對模式</td></tr>
+<tr><td><code>clear-on-invalid</code></td><td>布林屬性</td><td>關</td><td>驗證失敗後自動清空重輸</td></tr>
+<tr><td><code>clear-delay</code></td><td>毫秒</td><td>700</td><td>清空前的延遲時間</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>expected-value="654321"</h3>
+    <pre><code>&lt;ui-otp length="6" expected-value="654321"
+  valid-color="safe" error-color="warning"&gt;&lt;/ui-otp&gt;</code></pre>
+    <p>填滿 6 碼即自動比對。</p>
+  </div>
+  <div class="demo"><ui-otp length="6" expected-value="654321" valid-color="safe" error-color="warning"></ui-otp></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>clear-on-invalid + clear-delay="1200"</h3>
+    <pre><code>&lt;ui-otp length="6" expected-value="111111"
+  clear-on-invalid clear-delay="1200"&gt;&lt;/ui-otp&gt;</code></pre>
+    <p>答錯 1.2 秒後自動清空（比預設的 700ms 慢）。</p>
+  </div>
+  <div class="demo"><ui-otp length="6" expected-value="111111" clear-on-invalid clear-delay="1200" accent-color="ocean"></ui-otp></div>
+</div>
+
+<h2 id="otp-label">7. 文字標籤與行為</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>說明</th></tr>
+<tr><td><code>label-invalid</code></td><td>驗證失敗訊息文字</td></tr>
+<tr><td><code>label-valid</code></td><td>驗證成功訊息文字（留空則不顯示）</td></tr>
+<tr><td><code>show-message</code></td><td><code>"false"</code> 關閉訊息顯示，其餘值視為開啟</td></tr>
+<tr><td><code>disabled</code></td><td>布林屬性，鎖定整個元件</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>自訂訊息文字</h3>
+    <pre><code>&lt;ui-otp length="4" expected-value="9999"
+  label-invalid="碼不對，再試一次"
+  label-valid="OK，驗證通過"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="4" expected-value="9999" label-invalid="碼不對，再試一次" label-valid="OK，驗證通過" accent-color="yellow"></ui-otp></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>disabled</h3>
+    <pre><code>&lt;ui-otp length="6" disabled&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp length="6" disabled></ui-otp></div>
+</div>
+
+<h2 id="otp-full">8. 完整組合範例</h2>
+<div class="row">
+  <div class="meta">
+    <h3>多屬性同時套用</h3>
+    <pre><code>&lt;ui-otp
+  length="6" groups="3,3" separator="-"
+  cell-size="52px" gap="10px" font-size="1.3rem" radius="10px"
+  accent-color="teal" valid-color="safe" error-color="warning"
+  focus-ring-width="4px"
+  expected-value="246810" clear-on-invalid clear-delay="900"
+  label-invalid="驗證碼錯誤" label-valid="驗證成功"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <ui-otp length="6" groups="3,3" separator="-" cell-size="52px" gap="10px" font-size="1.3rem" radius="10px" accent-color="teal" valid-color="safe" error-color="warning" focus-ring-width="4px" expected-value="246810" clear-on-invalid clear-delay="900" label-invalid="驗證碼錯誤" label-valid="驗證成功"></ui-otp>
+  </div>
+</div>
+
+<h1 id="otp-gen-top" style="margin-top:72px;">一之二、ui-otp mode="generate"</h1>
+<p class="section-intro">同一個 <code>&lt;ui-otp&gt;</code> 標籤加上 <code>mode="generate"</code>，連結到畫面即自動隨機產生一組碼（唯讀展示），旁邊附複製到剪貼簿按鈕。尺寸／顏色／focus ring 等外觀屬性與 <code>mode="input"</code> 完全共用，這裡只列生成模式新增的屬性。</p>
+
+<h2 id="otp-gen-basic">9. 格式與字元集</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>mode</code></td><td><code>input</code> / <code>generate</code></td><td>input</td><td>切換輸入驗證／生成展示</td></tr>
+<tr><td><code>length</code></td><td>數字</td><td>16（generate 模式預設值跟 input 的 6 不同）</td><td>生成碼的總長度，沒有 format 時生效</td></tr>
+<tr><td><code>groups</code> / <code>separator</code></td><td>同 input 模式</td><td>（無）/ <code>-</code></td><td>分組與分隔符號</td></tr>
+<tr><td><code>format</code></td><td>版型字串，<code>O</code> 代表一個字元格</td><td>（無）</td><td>有給就優先於 length/groups，例如 <code>"OOOO-OOOOO-OOOOOO"</code></td></tr>
+<tr><td><code>type</code></td><td><code>numeric</code> / <code>alpha</code> / <code>alnum</code> / <code>any</code></td><td>numeric</td><td>字元池；<code>any</code> 會退回英數混合</td></tr>
+<tr><td><code>case</code></td><td><code>upper</code> / <code>lower</code></td><td>（混合大小寫）</td><td>type 含英文字母時可指定只用大寫或小寫</td></tr>
+<tr><td><code>exclude-ambiguous</code></td><td><code>"false"</code> 關閉；其餘視為開啟</td><td>開</td><td>排除 0/O、1/I/l 這類容易看錯的字元</td></tr>
+<tr><td><code>auto-generate</code></td><td><code>"false"</code> 關閉；其餘視為開啟</td><td>開</td><td>關閉後不會自動產生，需自行呼叫 <code>el.generate()</code></td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>format 版型 + alnum 字元集</h3>
+    <pre><code>&lt;ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO"
+  type="alnum" accent-color="lavender"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO" type="alnum" accent-color="lavender"></ui-otp></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>length="20" + groups + 關閉 exclude-ambiguous</h3>
+    <pre><code>&lt;ui-otp mode="generate" length="20" groups="5,5,5,5"
+  exclude-ambiguous="false" accent-color="orange"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp mode="generate" length="20" groups="5,5,5,5" exclude-ambiguous="false" accent-color="orange" cell-size="36px" font-size="1rem"></ui-otp></div>
+</div>
+
+<h2 id="otp-gen-copy">10. 複製按鈕</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>copy-icon</code></td><td>Bootstrap Icons class</td><td><code>bi-clipboard</code></td><td>平時顯示的圖示</td></tr>
+<tr><td><code>copy-icon-success</code></td><td>Bootstrap Icons class</td><td><code>bi-clipboard-check</code></td><td>複製成功後短暫顯示的圖示</td></tr>
+<tr><td><code>copy-text</code></td><td>字串</td><td>（無，純圖示）</td><td>按鈕文字</td></tr>
+<tr><td><code>copy-position</code></td><td><code>left</code> / <code>right</code></td><td>right</td><td>按鈕相對於格子的位置</td></tr>
+<tr><td><code>copy-feedback-duration</code></td><td>毫秒</td><td>1500</td><td>成功圖示停留多久後變回原圖示</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>按鈕在左側 + 自訂文字與圖示</h3>
+    <pre><code>&lt;ui-otp mode="generate" length="10" groups="5,5"
+  copy-position="left" copy-text="複製"
+  copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill"
+  accent-color="special"&gt;&lt;/ui-otp&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-otp mode="generate" length="10" groups="5,5" copy-position="left" copy-text="複製" copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill" accent-color="special"></ui-otp></div>
+</div>
+
+<h2 id="otp-gen-check">11. 後端查重（check-url，generate／input 共用）</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>check-url</code></td><td>網址</td><td>（無）</td><td>後端驗證端點；有給就會自動呼叫</td></tr>
+<tr><td><code>check-method</code></td><td><code>GET</code> / <code>POST</code></td><td>POST</td><td>HTTP 方法</td></tr>
+<tr><td><code>check-param</code></td><td>字串</td><td><code>code</code></td><td>送出碼時使用的參數名稱</td></tr>
+<tr><td><code>check-field</code></td><td>字串</td><td><code>exists</code></td><td>回傳 JSON 中「是否存在」布林欄位的名稱</td></tr>
+<tr><td><code>check-max-retries</code></td><td>數字</td><td>5</td><td>generate 模式下，重複就重骰的次數上限</td></tr>
+</table>
+<p class="section-intro">PHP 端點範例：收到 <code>POST</code> 的 <code>code</code> 參數、查資料庫後 <code>echo json_encode(['exists' =&gt; $found]);</code> 即可直接搭配使用。generate 模式下撞號會自動重骰，直到抽到沒用過的碼，或達到 <code>check-max-retries</code> 次數上限為止（此時會 dispatch <code>otp-check-exhausted</code> 事件）；input 模式則是把查詢結果當作驗證結果（存在＝<code>valid</code>）。</p>
+
+<div class="row">
+  <div class="meta">
+    <h3>generate 模式自動查重（下方用假 fetch 模擬後端）</h3>
+    <pre><code>&lt;ui-otp mode="generate" length="6" type="numeric"
+  check-url="/your/check_code.php"
+  check-max-retries="5" accent-color="teal"&gt;&lt;/ui-otp&gt;</code></pre>
+    <p>實際使用時把 <code>check-url</code> 換成你自己的 PHP 端點即可，這裡的假後端只是讓示範頁能獨立運作。</p>
+  </div>
+  <div class="demo"><ui-otp id="refCheckGen" mode="generate" length="6" type="numeric" check-url="/fake/ref_check.php" check-max-retries="5" accent-color="teal"></ui-otp></div>
+</div>
+
+<script>
+  // 僅供這個對照手冊頁面展示用的假後端：前兩次回報「已存在」，第三次才放行
+  (function () {
+    const realFetch = window.fetch;
+    let count = 0;
+    window.fetch = function (url, options) {
+      if (typeof url === 'string' && url.indexOf('/fake/ref_check.php') !== -1) {
+        count++;
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ exists: count <= 2 }) });
+      }
+      return realFetch.apply(this, arguments);
+    };
+  })();
+</script>
+
+<h1 id="blank-top" style="margin-top:72px;">二、ui-blank</h1>
+<p class="section-intro">單行輸入填充題元件，永遠區分大小寫，送出鈕可用 Bootstrap Icons。</p>
+
+<h2 id="blank-content">1. 內容比對</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>expected-value</code></td><td>字串，多個答案用 <code>|</code> 分隔</td><td>（無）</td><td>有給就走前端比對模式，永遠區分大小寫</td></tr>
+<tr><td><code>trim-whitespace</code></td><td><code>"false"</code> 關閉；其餘視為開啟</td><td>開</td><td>比對前去除頭尾空白（不影響畫面顯示）</td></tr>
+<tr><td><code>normalize-width</code></td><td>布林屬性</td><td>關</td><td>比對前把全形數字／字母／符號轉半形</td></tr>
+<tr><td><code>placeholder</code></td><td>字串</td><td>（無）</td><td>輸入框提示文字</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>多個可接受答案</h3>
+    <pre><code>&lt;ui-blank expected-value="cat|Cat"
+  placeholder="輸入 cat 或 Cat"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="cat|Cat" placeholder="輸入 cat 或 Cat" button-icon="bi-send" accent-color="sky"></ui-blank></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>normalize-width</h3>
+    <pre><code>&lt;ui-blank expected-value="2024" normalize-width
+  placeholder="可用全形輸入法打數字"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="2024" normalize-width placeholder="可用全形輸入法打數字" button-icon="bi-send" accent-color="lavender"></ui-blank></div>
+</div>
+
+<h2 id="blank-button">2. 送出按鈕</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>button-icon</code></td><td>Bootstrap Icons class（如 <code>bi-send</code>）</td><td>（無）</td><td>圖示固定不隨驗證結果變化</td></tr>
+<tr><td><code>button-text</code></td><td>字串</td><td>（無，兩者都空則顯示「送出」）</td><td>按鈕文字</td></tr>
+<tr><td><code>button-position</code></td><td><code>icon-left</code> / <code>icon-right</code></td><td>icon-right</td><td>圖示相對文字的位置</td></tr>
+<tr><td><code>disable-enter-submit</code></td><td>布林屬性</td><td>關（Enter 預設會送出）</td><td>加上此屬性後 Enter 鍵不會觸發送出</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>icon-left + 按鈕文字</h3>
+    <pre><code>&lt;ui-blank expected-value="go"
+  button-icon="bi-arrow-right-circle" button-text="送出"
+  button-position="icon-left"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="go" button-icon="bi-arrow-right-circle" button-text="送出" button-position="icon-left" accent-color="special"></ui-blank></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>disable-enter-submit</h3>
+    <pre><code>&lt;ui-blank expected-value="go" disable-enter-submit
+  button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+    <p>按 Enter 不會送出，必須點按鈕。</p>
+  </div>
+  <div class="demo"><ui-blank expected-value="go" disable-enter-submit button-icon="bi-send" accent-color="teal"></ui-blank></div>
+</div>
+
+<h2 id="blank-size">3. 尺寸外觀</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>width</code></td><td>px／%／ch</td><td>220px</td><td>輸入框寬度</td></tr>
+<tr><td><code>font-size</code></td><td>rem</td><td>0.95rem</td><td>輸入框字級</td></tr>
+<tr><td><code>padding</code></td><td>px</td><td>5px 10px</td><td>輸入框內距</td></tr>
+<tr><td><code>radius</code></td><td>px</td><td>6px</td><td>整體圓角（輸入框與按鈕外側）</td></tr>
+<tr><td><code>border-width</code></td><td>px</td><td>1px</td><td>外框粗細</td></tr>
+<tr><td><code>btn-padding</code></td><td>px</td><td>5px 12px</td><td>按鈕內距</td></tr>
+<tr><td><code>btn-font-size</code></td><td>rem</td><td>0.95rem</td><td>按鈕字級</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>加大版</h3>
+    <pre><code>&lt;ui-blank expected-value="big" width="320px"
+  font-size="1.1rem" padding="10px 14px" radius="10px"
+  btn-padding="10px 18px" btn-font-size="1.1rem"
+  button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="big" width="320px" font-size="1.1rem" padding="10px 14px" radius="10px" btn-padding="10px 18px" btn-font-size="1.1rem" button-icon="bi-send" accent-color="orange"></ui-blank></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>窄版（ch 單位）</h3>
+    <pre><code>&lt;ui-blank expected-value="ok" width="10ch"
+  button-icon="bi-check2"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="ok" width="10ch" button-icon="bi-check2" accent-color="pink"></ui-blank></div>
+</div>
+
+<h2 id="blank-ring">4. 顏色與 Focus ring</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>說明</th></tr>
+<tr><td><code>border-color</code> / <code>bg-color</code> / <code>text-color</code></td><td>輸入框外框／底色／文字色</td></tr>
+<tr><td><code>btn-bg</code> / <code>btn-color</code></td><td>按鈕底色／文字色，未設定時跟隨 accent-color</td></tr>
+<tr><td><code>accent-color</code></td><td>按鈕預設底色，也是 focus ring 的預設色來源</td></tr>
+<tr><td><code>focus-ring-width</code> / <code>focus-ring-color</code></td><td>聚焦時整個輸入列的外圍光暈</td></tr>
+<tr><td><code>valid-color</code> / <code>error-color</code></td><td>驗證成功／失敗時的外框與訊息色</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>自訂按鈕配色 + 粗 focus ring</h3>
+    <pre><code>&lt;ui-blank expected-value="hi"
+  btn-bg="indigo" btn-color="focus"
+  focus-ring-width="5px" focus-ring-color="indigo"
+  button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="hi" btn-bg="indigo" btn-color="focus" focus-ring-width="5px" focus-ring-color="indigo" button-icon="bi-send"></ui-blank></div>
+</div>
+
+<h2 id="blank-valid">5. 驗證行為</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>clear-on-invalid</code></td><td>布林屬性</td><td>關</td><td>驗證失敗後自動清空重輸</td></tr>
+<tr><td><code>clear-delay</code></td><td>毫秒</td><td>700</td><td>清空前的延遲時間</td></tr>
+<tr><td><code>disabled</code></td><td>布林屬性</td><td>關</td><td>鎖定輸入框與按鈕</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>clear-on-invalid，延遲 1.5 秒</h3>
+    <pre><code>&lt;ui-blank expected-value="dog" clear-on-invalid
+  clear-delay="1500" button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="dog" clear-on-invalid clear-delay="1500" button-icon="bi-send" accent-color="warning"></ui-blank></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>disabled</h3>
+    <pre><code>&lt;ui-blank disabled placeholder="已鎖定"
+  button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank disabled placeholder="已鎖定" button-icon="bi-send"></ui-blank></div>
+</div>
+
+<h2 id="blank-message">6. 訊息顯示</h2>
+<table class="attrs">
+<tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
+<tr><td><code>label-invalid</code></td><td>字串</td><td>「答案不正確，請重新輸入。」</td><td>驗證失敗訊息</td></tr>
+<tr><td><code>label-valid</code></td><td>字串</td><td>（無，留空不顯示）</td><td>驗證成功訊息</td></tr>
+<tr><td><code>show-message</code></td><td><code>"false"</code> 關閉；其餘視為開啟</td><td>開</td><td>是否顯示訊息</td></tr>
+<tr><td><code>message-style</code></td><td><code>plain</code> / <code>bordered</code> / <code>filled</code> / <code>accent-bar</code> / <code>icon-banner</code></td><td>plain</td><td>內建訊息區塊的呈現樣式（見下方五種示範）</td></tr>
+<tr><td><code>message-font-size</code></td><td>rem</td><td>0.85rem</td><td>訊息字級</td></tr>
+<tr><td><code>message-padding</code></td><td>px</td><td>依樣式而異</td><td>訊息內距，設定後覆蓋各樣式的預設值</td></tr>
+<tr><td><code>message-radius</code></td><td>px</td><td>6px</td><td>bordered／filled／icon-banner 的圓角</td></tr>
+<tr><td><code>message-icon-valid</code></td><td>Bootstrap Icons class</td><td><code>bi-check-circle</code></td><td>icon-banner 樣式成功時的圖示</td></tr>
+<tr><td><code>message-icon-invalid</code></td><td>Bootstrap Icons class</td><td><code>bi-x-circle</code></td><td>icon-banner 樣式失敗時的圖示</td></tr>
+<tr><td><code>message-target</code></td><td>頁面上某個元素的 id</td><td>（無，用內建區塊）</td><td>指定後把純文字訊息改顯示在該 div，不套用 message-style</td></tr>
+</table>
+
+<div class="row">
+  <div class="meta">
+    <h3>message-style="bordered"</h3>
+    <pre><code>&lt;ui-blank expected-value="ok" message-style="bordered"
+  label-valid="答對了！" label-invalid="不對喔"
+  button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="ok" message-style="bordered" label-valid="答對了！" label-invalid="不對喔" button-icon="bi-send" accent-color="sky"></ui-blank></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>message-style="icon-banner" + 自訂圖示</h3>
+    <pre><code>&lt;ui-blank expected-value="ok" message-style="icon-banner"
+  message-icon-valid="bi-emoji-smile"
+  message-icon-invalid="bi-emoji-frown"
+  label-valid="太棒了！" label-invalid="再想想"
+  button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo"><ui-blank expected-value="ok" message-style="icon-banner" message-icon-valid="bi-emoji-smile" message-icon-invalid="bi-emoji-frown" label-valid="太棒了！" label-invalid="再想想" button-icon="bi-send" accent-color="lavender"></ui-blank></div>
+</div>
+
+<div class="row">
+  <div class="meta">
+    <h3>message-target（顯示在外部 div，不套樣式）</h3>
+    <pre><code>&lt;ui-blank expected-value="ok" message-target="refMsgBox"
+  label-valid="答對了！" button-icon="bi-send"&gt;&lt;/ui-blank&gt;
+&lt;div id="refMsgBox" style="font-weight:700;margin-top:6px;"&gt;&lt;/div&gt;</code></pre>
+  </div>
+  <div class="demo" style="flex-direction:column;align-items:flex-start;gap:6px;">
+    <ui-blank expected-value="ok" message-target="refMsgBox" label-valid="答對了！" button-icon="bi-send" accent-color="teal"></ui-blank>
+    <div id="refMsgBox" style="font-weight:700;"></div>
+  </div>
+</div>
+
+<h2 id="blank-full">7. 完整組合範例</h2>
+<div class="row">
+  <div class="meta">
+    <h3>多屬性同時套用</h3>
+    <pre><code>&lt;ui-blank
+  expected-value="apple|Apple" trim-whitespace normalize-width
+  width="260px" font-size="1rem" padding="8px 12px" radius="8px"
+  accent-color="teal" valid-color="safe" error-color="warning"
+  focus-ring-width="4px"
+  button-icon="bi-send" button-text="確認" button-position="icon-left"
+  clear-on-invalid clear-delay="900"
+  message-style="filled"
+  label-valid="答對了！" label-invalid="再檢查一次"&gt;&lt;/ui-blank&gt;</code></pre>
+  </div>
+  <div class="demo">
+    <ui-blank expected-value="apple|Apple" trim-whitespace normalize-width width="260px" font-size="1rem" padding="8px 12px" radius="8px" accent-color="teal" valid-color="safe" error-color="warning" focus-ring-width="4px" button-icon="bi-send" button-text="確認" button-position="icon-left" clear-on-invalid clear-delay="900" message-style="filled" label-valid="答對了！" label-invalid="再檢查一次"></ui-blank>
+  </div>
+</div>
+
+<script src="ui-inputs.js"></script>
+</body>
+</html>
