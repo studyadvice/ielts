@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>info-region 使用手冊</title>
+<style>
+:root { font-size: 16px; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #0C0D0C;
+  color: #C6C7BD;
+  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  min-width: 1280px;
+}
+.layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 0; max-width: 1800px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; align-self: start;
+  height: 100vh; overflow-y: auto;
+  padding: 32px 24px;
+  background: #121312;
+  border-right: 1px solid #2a2b2a;
+}
+nav.toc .brand { color: #D4AF37; font-size: 1.25rem; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
+nav.toc .sub { color: #C6C7BD; font-size: 1.125rem; margin-bottom: 20px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 0; }
+nav.toc a { display: block; padding: 6px 12px; border-radius: 6px; color: #C6C7BD; text-decoration: none; font-size: 1.125rem; line-height: 1.5; }
+nav.toc a:hover { background: #1f201f; color: #D4FFFC; }
+main { padding: 40px 64px 120px; max-width: 1300px; }
+h1 { margin: 0 0 8px; color: #1CCAE8; font-size: 2.25rem; line-height: 1.4; }
+.lead { color: #DBEDD8; margin: 0 0 32px; }
+section.doc { margin: 0 0 56px; padding-bottom: 16px; }
+h2 { margin: 0 0 20px; padding-bottom: 8px; color: #82C8E5; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #0DA591; }
+h3 { margin: 32px 0 12px; color: #E5C3B3; font-size: 1.375rem; line-height: 1.4; }
+p, li { font-size: 1.125rem; line-height: 1.5; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 16px; padding-left: 28px; }
+li { margin: 6px 0; }
+code { color: #E3D322; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size: 1.125rem; }
+pre {
+  margin: 0 0 20px; padding: 16px 20px;
+  background: #141514; border-left: 4px solid #0DA591; border-radius: 6px;
+  overflow-x: auto;
+}
+pre code { color: #D4FFFC; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
+.code-title { margin: 16px 0 6px; color: #B3DE73; font-weight: 700; }
+.tbl { overflow-x: auto; margin: 0 0 24px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 14px; text-align: left; vertical-align: top; border: 1px solid #2f302f; font-size: 1.125rem; line-height: 1.5; }
+th { background: #1a1b1a; color: #DBEDD8; }
+td:first-child { white-space: normal; max-width: 340px; overflow-wrap: anywhere; }
+td:last-child { min-width: 360px; }
+th { white-space: normal; }
+tbody tr:nth-child(even) td { background: #111211; }
+.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #4171BF; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
+.note b { color: #D4FFFC; }
+.note-tip  { border-left-color: #27AE60; }
+.note-warn { border-left-color: #EDA109; }
+.note-bug  { border-left-color: #E6374B; }
+.note-bug b { color: #E6374B; }
+.note-info { border-left-color: #4171BF; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+<div class="brand">info-region</div>
+<div class="sub">info-region.js 使用手冊 2026-10-24</div>
+<ol>
+<li><a href="#overview">0. 這份手冊在講什麼</a></li>
+<li><a href="#quickstart">1. 快速開始</a></li>
+<li><a href="#concept">2. 核心觀念：啟用與推進的決策順序</a></li>
+<li><a href="#region-attrs">3. info-region 屬性總表</a></li>
+<li><a href="#advance">4. 三種推進方式詳解</a></li>
+<li><a href="#border">5. 邊框系統</a></li>
+<li><a href="#gold">6. 金箔特別版：ir-gold</a></li>
+<li><a href="#quiz">7. 測驗模式</a></li>
+<li><a href="#group">8. info-region-group 群組</a></li>
+<li><a href="#scoring">9. 群組進度條與計分板的精確規則</a></li>
+<li><a href="#config">10. 全域設定 InfoRegionConfig</a></li>
+<li><a href="#api">11. JS API 總表</a></li>
+<li><a href="#colors">12. 色票</a></li>
+<li><a href="#styling">13. 樣式掛鉤與符合 18px 規範的覆寫範本</a></li>
+<li><a href="#integrate">14. 與 practice-tracker 搭配，以及你第一課頁面的實例</a></li>
+<li><a href="#troubleshoot">15. 疑難排解</a></li>
+<li><a href="#limits">16. 已知問題與限制（彙整）</a></li>
+</ol>
+</nav>
+<main>
+<h1>info-region 使用手冊</h1>
+<p class="lead">涵蓋 info-region.js 的全部標籤、屬性、設定與 API。每個行為都已實際執行驗證，搭配 info-region-demo-10-24-26.html 食用最佳。</p>
+<section class="doc" id="overview">
+<h2>0. 這份手冊在講什麼</h2>
+<p>info-region.js 提供一組「逐步揭露內容」的元件：區塊一開始是隱藏的，被啟用後以動畫展開，並可依設定自動、倒數、手動或透過測驗答題，接著啟用下一個區塊。它也能把多個區塊放進群組，加上進度條、計分板與「開始、重設」按鈕。</p>
+<div class="tbl"><table>
+<thead><tr><th>標籤</th><th>角色</th></tr></thead>
+<tbody>
+<tr><td><code>&lt;info-region&gt;</code></td><td>單一區塊。可顯示說明文字、當作測驗題、當作倒數或手動繼續的節點。</td></tr>
+<tr><td><code>&lt;info-region-group&gt;</code></td><td>群組容器。提供開始與重設按鈕、橫向排版、逐一顯示、全域進度條、計分板。</td></tr>
+<tr><td><code>&lt;ir-choices&gt;</code></td><td>測驗選項的容器，純語意標籤。</td></tr>
+<tr><td><code>&lt;ir-choice&gt;</code></td><td>單一測驗選項，以 <code>value</code> 屬性對應答案。</td></tr>
+</tbody></table></div>
+<div class="tbl"><table>
+<thead><tr><th>項目</th><th>內容</th></tr></thead>
+<tbody>
+<tr><td>檔案</td><td><code>info-region.js</code>，獨立 .js，使用 Custom Elements，不使用 shadow DOM，樣式由 js 自行注入。</td></tr>
+<tr><td>相依</td><td>無。不需要 Bootstrap 或任何函式庫。</td></tr>
+<tr><td>載入位置</td><td>放在頁面底部（<code>&lt;/body&gt;</code> 之前）。群組在建立時會去找自己的子區塊，放在 head 載入可能讓群組在子區塊還沒解析完時就開始建構。</td></tr>
+<tr><td>全域設定</td><td><code>window.InfoRegionConfig</code> 必須在 info-region.js <b>之前</b>定義，載入後再改無效（第 10 節）。</td></tr>
+<tr><td>示範頁</td><td><code>info-region-demo-10-24-26.html</code>，與本手冊各章對應，每個範例旁都附原始碼。</td></tr>
+<tr><td>本手冊對應版本</td><td>你於 2026-10-24 提供的 info-region.js（1218 行）。</td></tr>
+</tbody></table></div>
+<div class="note note-tip"><b>提示</b>：本手冊所有「行為」描述，都已在模擬環境中實際執行驗證，並非只讀程式碼推測。少數只靠讀碼判斷、未實測的地方，會明確標示「讀碼所得」。</div>
+</section>
+<section class="doc" id="quickstart">
+<h2>1. 快速開始</h2>
+<h3>1.1 自動揭露：三個區塊依序出現</h3>
+<pre><code>&lt;info-region id="a" active="true" next="b"&gt;
+  &lt;h5&gt;第一步&lt;/h5&gt;
+  &lt;p&gt;這個區塊一載入就展開。&lt;/p&gt;
+&lt;/info-region&gt;
+
+&lt;info-region id="b" next="c" color="ocean"&gt;
+  &lt;p&gt;0.5 秒後自動展開，因為 a 指定了 next="b"。&lt;/p&gt;
+&lt;/info-region&gt;
+
+&lt;info-region id="c" color="teal"&gt;
+  &lt;p&gt;最後一個，沒有 next，鏈到此結束。&lt;/p&gt;
+&lt;/info-region&gt;
+
+&lt;script src="info-region.js"&gt;&lt;/script&gt;</code></pre>
+<p>只有第一個區塊寫 <code>active="true"</code>，其餘由 <code>next</code> 串起來。每個區塊的左邊框顏色由 <code>color</code> 決定，沒寫則是預設的 sky。</p>
+<h3>1.2 手動繼續</h3>
+<pre><code>&lt;info-region id="m1" active="true" manual next="m2"&gt;
+  &lt;p&gt;讀完按按鈕才會出現下一段。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="m2"&gt;
+  &lt;p&gt;下一段。&lt;/p&gt;
+&lt;/info-region&gt;</code></pre>
+<h3>1.3 選擇題</h3>
+<pre><code>&lt;info-region id="q1" quiz answer="c" active="true"
+             correct-next="q1-ok" explain="逗號加 which 可以接結果。"&gt;
+  &lt;p&gt;Traffic is bad, ________ I leave home early.&lt;/p&gt;
+  &lt;ir-choices layout="column"&gt;
+    &lt;ir-choice value="a"&gt;except for&lt;/ir-choice&gt;
+    &lt;ir-choice value="b"&gt;as a result&lt;/ir-choice&gt;
+    &lt;ir-choice value="c"&gt;which is why&lt;/ir-choice&gt;
+  &lt;/ir-choices&gt;
+&lt;/info-region&gt;
+&lt;info-region id="q1-ok" color="safe"&gt;&lt;p&gt;答對後出現的補充說明。&lt;/p&gt;&lt;/info-region&gt;</code></pre>
+<h3>1.4 群組：開始與重設按鈕，加上進度條</h3>
+<pre><code>&lt;info-region-group global-progress show-percent cascade-interval="600"&gt;
+  &lt;info-region&gt;第一段&lt;/info-region&gt;
+  &lt;info-region&gt;第二段&lt;/info-region&gt;
+  &lt;info-region&gt;第三段&lt;/info-region&gt;
+&lt;/info-region-group&gt;</code></pre>
+<p>群組會在最上方自動長出「開始、重設」按鈕。按開始後，每隔 600 毫秒顯示一段，進度條同步前進。</p>
+</section>
+<section class="doc" id="concept">
+<h2>2. 核心觀念：啟用與推進的決策順序</h2>
+<p>一個區塊有兩種狀態：<b>隱藏</b>（高度為 0、透明、不佔位置）與<b>啟用</b>（<code>active="true"</code>，展開並可互動）。區塊被啟用的那一刻，元件依下表由上往下判斷「接下來做什麼」，<b>命中第一個就停止</b>，下面的都不看。</p>
+<div class="tbl"><table>
+<thead><tr><th>順序</th><th>條件</th><th>行為</th><th>詳見</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>區塊有 <code>quiz</code> 屬性</td><td>進入測驗模式。此區塊的 <code>next</code>、<code>countdown</code>、<code>manual</code> 全部被忽略，由答題結果決定下一個區塊。</td><td>第 7 節</td></tr>
+<tr><td>2</td><td>區塊有 <code>manual</code> 且有 <code>next</code></td><td>在區塊底部插入手動按鈕，按下才啟用 next。</td><td>第 4 節</td></tr>
+<tr><td>3</td><td>區塊所在群組有 <code>global-progress</code>，或群組的 <code>cascade-interval</code> 大於 0</td><td>什麼都不做。這種群組的推進交給群組本身（逐一顯示）、測驗或手動按鈕。</td><td>第 8 節</td></tr>
+<tr><td>4</td><td>區塊有 <code>countdown</code></td><td>顯示倒數條，時間到後啟用 next。</td><td>第 4 節</td></tr>
+<tr><td>5</td><td>以上都不是</td><td>等 <code>next-interval</code> 毫秒後啟用 next。</td><td>第 4 節</td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：第 3 條最容易踩雷：在有 <code>global-progress</code> 的群組裡，區塊的 <code>next</code> 與 <code>countdown</code> 不會推進（實測：只有第一個區塊亮起，進度停在 33%）。這種群組請搭配 <code>cascade-interval</code>、<code>manual</code> 或 <code>quiz</code>，或用程式呼叫 <code>activate()</code>。</div>
+<h3>啟用的幾個細節</h3>
+<ul>
+<li>只有 <code>active</code> 屬性的值恰好是字串 <code>true</code> 才算啟用，<code>active="false"</code> 或其他值不會啟用。</li>
+<li>對已經啟用的區塊再次 <code>setAttribute("active", "true")</code> 或呼叫 <code>activate()</code>，不會有任何作用。要重新播放，先 <code>reset()</code> 再 <code>activate()</code>。</li>
+<li>隱藏的區塊在垂直排列時完全不佔空間；啟用後才佔位並加上 <code>margin-bottom</code>。在橫向群組中則始終佔位（透明），版面不會跳動。</li>
+<li>啟用狀態下區塊最大高度為 4000px，更長的內容會被裁切。</li>
+<li>寫在 HTML 裡一開始就 <code>active="true"</code> 的區塊，啟動流程實測會執行兩次（一次在元件升級時、一次在連接到頁面後的下一個動畫影格）。元件對各流程都有防重複處理，結果不受影響，知道即可。</li>
+</ul>
+</section>
+<section class="doc" id="region-attrs">
+<h2>3. info-region 屬性總表</h2>
+<p>全部寫在 <code>&lt;info-region&gt;</code> 標籤上。布林屬性只要寫出屬性名稱即可（例如 <code>manual</code>、<code>quiz</code>、<code>show-retry</code>）。數值類屬性寫整數，單位固定，不要加單位文字。</p>
+<h3>3.1 基本與外觀</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>無</td><td>強烈建議每個區塊都寫。<code>next</code> 指向它、測驗計分都靠 id。</td></tr>
+<tr><td><code>active</code></td><td>無</td><td>值為 <code>true</code> 時啟用。通常只有第一個區塊寫，其餘由推進機制啟用。</td></tr>
+<tr><td><code>color</code></td><td><code>sky</code></td><td>色票名稱（第 12 節）。決定邊框顏色，也是倒數條與各種按鈕的預設顏色。不認得的名稱，邊框退回 sky，按鈕則沒有配色。可動態修改，啟用中修改會立即生效。</td></tr>
+<tr><td><code>class="ir-gold"</code></td><td>無</td><td>金箔特別版外觀，用於開場或結尾，見第 6 節。</td></tr>
+<tr><td><code>border-width</code></td><td>見第 5 節</td><td>四邊邊框寬度（整數 px）。</td></tr>
+<tr><td><code>border-top-width</code>、<code>border-right-width</code>、<code>border-bottom-width</code>、<code>border-left-width</code></td><td>見第 5 節</td><td>單邊寬度，優先於 <code>border-width</code>。</td></tr>
+<tr><td><code>border-style</code></td><td><code>solid</code></td><td>四邊邊框樣式。</td></tr>
+<tr><td><code>border-top-style</code>、<code>border-right-style</code>、<code>border-bottom-style</code>、<code>border-left-style</code></td><td>見第 5 節</td><td>單邊樣式，優先於 <code>border-style</code>。</td></tr>
+</tbody></table></div>
+<h3>3.2 自動、倒數、手動推進</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>next</code></td><td>無</td><td>下一個要啟用的區塊 id。找不到該 id 時 console 會警告。</td></tr>
+<tr><td><code>next-interval</code></td><td><code>500</code></td><td>自動模式下，等多少毫秒後啟用 next。<b>寫 0 無效，會退回 500</b>，要近乎即時請寫 <code>1</code>。</td></tr>
+<tr><td><code>countdown</code></td><td>無</td><td>倒數毫秒數。只寫屬性名稱（空值）或寫 0 時為 <code>2000</code>。啟用後顯示一條逐漸縮短的進度條，歸零時啟用 next。沒有 <code>next</code> 時只有倒數條，不會跳轉。</td></tr>
+<tr><td><code>countdown-position</code></td><td><code>bottom</code></td><td>倒數條位置：<code>top</code> 或 <code>bottom</code>。</td></tr>
+<tr><td><code>countdown-height</code></td><td><code>3</code></td><td>倒數條高度（整數 px）。</td></tr>
+<tr><td><code>countdown-color</code></td><td>同 <code>color</code></td><td>倒數條顏色（色票名稱）。</td></tr>
+<tr><td><code>manual</code></td><td>無</td><td>手動模式。<b>必須同時有 <code>next</code></b>，只寫 <code>manual</code> 沒有 <code>next</code> 時不會出現按鈕，區塊也不會推進。</td></tr>
+<tr><td><code>manual-label</code></td><td><code>▶ 下一步</code></td><td>按鈕文字。</td></tr>
+<tr><td><code>manual-color</code></td><td>同 <code>color</code></td><td>按鈕顏色（色票名稱）。</td></tr>
+<tr><td><code>manual-align</code></td><td><code>right</code></td><td>按鈕位置：<code>left</code>、<code>center</code>、<code>right</code>。</td></tr>
+</tbody></table></div>
+<h3>3.3 測驗模式</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>quiz</code></td><td>無</td><td>把這個區塊變成選擇題。區塊內需要有 <code>&lt;ir-choices&gt;</code>。</td></tr>
+<tr><td><code>answer</code></td><td>無</td><td>正確選項的 <code>value</code>。比對時忽略大小寫與前後空白。</td></tr>
+<tr><td><code>correct-next</code></td><td>無</td><td>答對後啟用的區塊 id。</td></tr>
+<tr><td><code>wrong-next</code></td><td>無</td><td>答錯後啟用的區塊 id。<b>沒寫時，答錯就是終點，不會推進。</b></td></tr>
+<tr><td><code>quiz-next-delay</code></td><td>實際為 0</td><td>答題後等多少毫秒再啟用下一個區塊。<b>程式碼本意預設 1200，但實測未寫此屬性時是 0（立即）</b>，見第 16 節。建議永遠明確寫出。</td></tr>
+<tr><td><code>manual-next</code></td><td>無</td><td>答題後不自動跳，改顯示「繼續」按鈕，按下才啟用下一個區塊。</td></tr>
+<tr><td><code>quiz-next-label</code></td><td><code>繼續 ▶</code></td><td>繼續按鈕文字，只在 <code>manual-next</code> 時使用。</td></tr>
+<tr><td><code>manual-align</code></td><td><code>right</code></td><td>繼續按鈕的位置，與手動推進共用此屬性。</td></tr>
+<tr><td><code>explain</code></td><td>空</td><td>答題後顯示的解說，<b>接受 HTML</b>（<code>&lt;b&gt;</code>、<code>&lt;i&gt;</code>、<code>&lt;u&gt;</code>、<code>&lt;code&gt;</code>、<code>&lt;small&gt;</code>、<code>&lt;br&gt;</code>、<code>&lt;span&gt;</code> 都有樣式）。</td></tr>
+<tr><td><code>correct-msg</code></td><td><code>✓ 答對了！</code></td><td>答對時解說框開頭的訊息，接受 HTML。</td></tr>
+<tr><td><code>wrong-msg</code></td><td><code>✗ 答錯了。</code></td><td>答錯時的訊息，接受 HTML。</td></tr>
+<tr><td><code>show-retry</code></td><td>無</td><td>答題後顯示「重試」按鈕，答對也顯示。</td></tr>
+<tr><td><code>retry-label</code></td><td><code>↺ 重試</code></td><td>重試按鈕文字。</td></tr>
+<tr><td><code>retry-color</code></td><td><code>warning</code></td><td>重試按鈕顏色（色票名稱）。</td></tr>
+<tr><td><code>quiz-label</code></td><td>無</td><td>區塊上方的小標籤，例如「IELTS Speaking Part 1」。</td></tr>
+<tr><td><code>quiz-item</code></td><td>無</td><td>標記這是「題目型」區塊，讓群組的進度條只統計題目，詳見第 9 節。</td></tr>
+<tr><td><code>choice-font-size</code></td><td><code>0.95rem</code></td><td>選項字體。<b>請寫不帶單位的數字或 rem</b>，見第 7 節的單位警告。</td></tr>
+<tr><td><code>choice-padding</code></td><td><code>10px 14px</code></td><td>選項內距，原樣套用，需自己寫單位。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="advance">
+<h2>4. 三種推進方式詳解</h2>
+<h3>4.1 自動：next 加 next-interval</h3>
+<pre><code>&lt;info-region id="a" active="true" next="b"&gt;A&lt;/info-region&gt;
+&lt;info-region id="b" next="c" next-interval="1200"&gt;B&lt;/info-region&gt;
+&lt;info-region id="c"&gt;C&lt;/info-region&gt;</code></pre>
+<p>a 啟用後等預設的 500 毫秒啟用 b，b 再等 1200 毫秒啟用 c。實測時間間隔與設定值吻合。預設值可用 <code>InfoRegionConfig.defaultInterval</code> 全站修改。</p>
+<div class="note note-warn"><b>注意</b>：<code>next-interval="0"</code> 不會變成立即，而是退回預設的 500 毫秒（實測 b 到 c 相隔 503 毫秒）。原因是程式用「值為 0 就視為沒寫」來判斷。要近乎立即請寫 <code>1</code>。<code>countdown="0"</code> 同理，會變成 2000。</div>
+<h3>4.2 倒數：countdown</h3>
+<pre><code>&lt;info-region id="a" active="true" countdown="3000" countdown-position="top"
+             countdown-color="yellow" next="b"&gt;先讀這一段，3 秒後自動下一段&lt;/info-region&gt;
+&lt;info-region id="b" countdown next="c"&gt;只寫 countdown 就是 2 秒&lt;/info-region&gt;
+&lt;info-region id="c"&gt;結束&lt;/info-region&gt;</code></pre>
+<ul>
+<li>倒數條是區塊內的一個絕對定位的細條，從滿寬線性縮短到 0，時間到才啟用 next。</li>
+<li>條的顏色預設跟區塊的 <code>color</code>，可用 <code>countdown-color</code> 改。</li>
+<li><code>countdown</code> 只在自動鏈中有效。區塊若同時有 <code>manual</code>，手動優先（見第 2 節）。</li>
+</ul>
+<h3>4.3 手動：manual</h3>
+<pre><code>&lt;info-region id="a" active="true" manual next="b"
+             manual-label="我讀完了" manual-color="special" manual-align="center"&gt;
+  內容
+&lt;/info-region&gt;
+&lt;info-region id="b"&gt;下一段&lt;/info-region&gt;</code></pre>
+<ul>
+<li>按下按鈕後，按鈕先播放約 0.18 秒的離場動畫，動畫結束才啟用 next。按鈕之後會移除，不會重複出現。</li>
+<li>按鈕固定字體是 0.85rem，內距 <code>6px 16px</code>，這是元件寫死的值，要改請用第 13 節的樣式覆寫。</li>
+<li><code>manual</code> 沒有搭配 <code>next</code> 時，沒有按鈕。這不是錯誤提示，而是靜默地什麼都不做。</li>
+</ul>
+<h3>4.4 用程式推進</h3>
+<pre><code>InfoRegion.activate('b');          // 啟用 id 為 b 的區塊
+document.getElementById('b').activate();   // 同上
+document.getElementById('b').reset();      // 還原成隱藏</code></pre>
+<p>其他推進方式都沒有觸發時，可以靠這個。例如在 <code>global-progress</code> 群組中，由你自己的按鈕或事件決定何時顯示下一段。</p>
+</section>
+<section class="doc" id="border">
+<h2>5. 邊框系統</h2>
+<p>預設只有<b>左邊</b>有一條 4px 的實線，顏色是該區塊的 <code>color</code>；其他三邊寬度為 0（不顯示）。每一邊的寬度與樣式可獨立設定，顏色一律跟 <code>color</code>。</p>
+<h3>5.1 寬度的決定順序（每一邊各自判斷）</h3>
+<ol>
+<li>該邊的屬性，例如 <code>border-top-width</code>。</li>
+<li><code>border-width</code> 屬性（四邊共用）。</li>
+<li>全域設定 <code>InfoRegionConfig.borderTopWidth</code> 等單邊設定。</li>
+<li>全域設定 <code>InfoRegionConfig.borderAllWidth</code>。</li>
+<li>以上都沒有時：左邊用 <code>InfoRegionConfig.borderWidth</code>（預設 4），其他邊為 0。</li>
+</ol>
+<p>寬度會用 parseInt 轉成整數（<code>2px</code> 也會被解讀為 2），結果小於等於 0 的那一邊不顯示。樣式的順序相同：單邊屬性、<code>border-style</code>、全域單邊樣式、全域 <code>borderStyle</code>、最後是 <code>solid</code>。</p>
+<h3>5.2 範例與實測結果</h3>
+<div class="tbl"><table>
+<thead><tr><th>寫法</th><th>結果</th></tr></thead>
+<tbody>
+<tr><td><code>color="orange"</code></td><td>只有左邊 4px 實線，橘色。</td></tr>
+<tr><td><code>border-width="2" border-style="dashed"</code></td><td>四邊都是 2px 虛線，顏色是預設的 sky。</td></tr>
+<tr><td><code>border-top-width="3"</code></td><td>左邊 4px（預設）加上方 3px，其餘 0。</td></tr>
+<tr><td><code>border-width="0"</code></td><td>四邊全部沒有邊框。</td></tr>
+<tr><td><code>border-width="0" border-top-width="6"</code></td><td>只有上邊 6px。單邊屬性優先於全邊屬性。</td></tr>
+</tbody></table></div>
+<div class="note note-info"><b>說明</b>：邊框在區塊被啟用時套用；啟用中修改 <code>color</code> 或任何 <code>border-*</code> 屬性，會立即重新套用。圓角由全域設定 <code>borderRadius</code>（預設 <code>0 6px 6px 0</code>）決定，沒有單一區塊的屬性可以改，要個別調整請在該區塊加 <code>style="border-radius: ..."</code>。</div>
+<div class="note note-warn"><b>注意</b>：<code>ir-gold</code> 區塊用 <code>!important</code> 強制四邊邊框與圓角，邊框屬性對它無效。</div>
+</section>
+<section class="doc" id="gold">
+<h2>6. 金箔特別版：ir-gold</h2>
+<p>在 <code>&lt;info-region&gt;</code> 加上 <code>class="ir-gold"</code>，啟用後會呈現深金色漸層背景、金色邊框、淡金色文字，以及一道緩慢掃過的光。設計用意是用在步驟序列的<b>第一步（開場）或最後一步（結尾）</b>，與中間的普通步驟明顯區隔。</p>
+<pre><code>&lt;info-region id="end" class="ir-gold"&gt;
+  &lt;h5&gt;結尾&lt;/h5&gt;
+  &lt;p&gt;這是整段說明的收尾。&lt;/p&gt;
+&lt;/info-region&gt;</code></pre>
+<ul>
+<li>金色（<code>#C9973F</code>）是元件寫死的，<code>color</code> 屬性對 ir-gold 區塊的邊框與背景無效。</li>
+<li>掃光是裝飾性的低不透明度動畫，區塊內其他內容會自動疊在掃光之上，不影響閱讀。</li>
+<li>倒數條仍會正常顯示在 ir-gold 區塊中。</li>
+</ul>
+<div class="note note-tip"><b>提示</b>：收尾區塊用 ir-gold，還有一個實用的副作用：它能被前一題的 <code>correct-next</code> 啟用，剛好觸發群組進度條更新到 100%，見第 9 節。</div>
+</section>
+<section class="doc" id="quiz">
+<h2>7. 測驗模式</h2>
+<h3>7.1 結構</h3>
+<pre><code>&lt;info-region id="q1" quiz answer="c" active="true" color="sky"
+             quiz-label="IELTS Speaking Part 1"
+             correct-next="q1-ok" wrong-next="q1-ok" quiz-next-delay="800"
+             explain="補述用法的 &lt;b&gt;which&lt;/b&gt; 可以代替前句，導出原因。"
+             show-retry&gt;
+  &lt;p&gt;Traffic around my area can be pretty bad, ________ I tend to leave home early.&lt;/p&gt;
+  &lt;ir-choices layout="column"&gt;
+    &lt;ir-choice value="a"&gt;except for&lt;/ir-choice&gt;
+    &lt;ir-choice value="b"&gt;as a result&lt;/ir-choice&gt;
+    &lt;ir-choice value="c"&gt;which is why&lt;/ir-choice&gt;
+  &lt;/ir-choices&gt;
+&lt;/info-region&gt;</code></pre>
+<ul>
+<li><code>&lt;ir-choices&gt;</code> 預設兩欄排列，加 <code>layout="column"</code> 變成單欄。</li>
+<li>每個 <code>&lt;ir-choice&gt;</code> 的 <code>value</code> 對應 <code>answer</code>。選項前會自動插入字母圈 A、B、C……最多 16 個（到 P），超過則改為數字。</li>
+<li>選項自動具有 <code>role="button"</code> 與 <code>tabindex="0"</code>，可用鍵盤 Tab 聚焦，Enter 或空白鍵作答。</li>
+</ul>
+<h3>7.2 答題後發生的事</h3>
+<ol>
+<li>所有選項被鎖定（加上 <code>disabled</code> 屬性），不能再選。</li>
+<li>被點選的選項標上狀態：答對為 <code>state="correct"</code>（綠）、答錯為 <code>state="wrong"</code>（紅）。</li>
+<li>答錯時，正確選項標上 <code>state="reveal"</code>（淡綠），讓使用者看到正解。</li>
+<li>在區塊底部淡入解說框：開頭是 <code>correct-msg</code> 或 <code>wrong-msg</code>，接一個全形空格，再接 <code>explain</code> 的內容。</li>
+<li>若有 <code>show-retry</code>，同時顯示重試按鈕。</li>
+<li>若所在群組有計分，通知群組記錄結果（第 9 節）。</li>
+<li>決定下一步：答對看 <code>correct-next</code>，答錯看 <code>wrong-next</code>。有 id 時：沒有 <code>manual-next</code> 就等 <code>quiz-next-delay</code> 毫秒後自動啟用；有 <code>manual-next</code> 就顯示繼續按鈕。<b>該 id 沒寫時，這題就是終點，不推進。</b></li>
+</ol>
+<h3>7.3 重試</h3>
+<ul>
+<li>按下重試後，選項、解說框、按鈕列全部還原，可以重新作答，同一個區塊原地重來。</li>
+<li>若同時設了自動跳題，下一個區塊仍然會在延遲後出現，不會因為重試而取消。所以 <code>show-retry</code> 搭配自動跳題時，重試對「已經出現的下一個區塊」沒有影響。要強迫使用者答對才能繼續，請讓 <code>wrong-next</code> 不寫、只寫 <code>correct-next</code>。</li>
+<li>重試不會取消已記錄的分數。計分規則見第 9 節。</li>
+</ul>
+<h3>7.4 <code>ir-choice</code> 的字體與內距</h3>
+<p>選項的字體與內距可以在三個位置設定，優先順序：<b><code>&lt;ir-choice&gt;</code> 自己的屬性 大於 所在 <code>&lt;info-region&gt;</code> 的屬性 大於 <code>InfoRegionConfig.choiceFontSize</code> 與 <code>choicePadding</code></b>。</p>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>單位處理</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>choice-font-size</code></td><td>純數字自動補 <code>rem</code>；已有單位則原樣使用</td><td>同時決定字母圈的大小：圈的直徑約為字體的 23.2 倍 px 值（字體 1rem 時約 23px），字母字體約為選項字體的 0.79 倍。</td></tr>
+<tr><td><code>choice-padding</code></td><td>原樣套用，需自己寫單位</td><td>例如 <code>4px 8px</code>。</td></tr>
+</tbody></table></div>
+<div class="note note-bug"><b>已知問題</b>：<b><code>choice-font-size</code> 請只用不帶單位的數字或 rem。</b> 字母圈的尺寸是把數字當成 rem 去換算的，不看單位。我實測 <code>choice-font-size="16px"</code> 時，選項文字是 16px，但字母圈被撐成 371px 寬，版面完全跑掉。<code>0.8rem</code>、<code>1.2</code>、<code>1.125rem</code> 都正常。</div>
+<h3>7.5 顏色對測驗的影響</h3>
+<ul>
+<li>區塊的 <code>color</code> 決定左邊框顏色，以及「繼續」按鈕的顏色。</li>
+<li>答對綠色（<code>safe</code>）與答錯紅色（<code>warning</code>）是寫死的，不受 <code>color</code> 影響。</li>
+<li>重試按鈕顏色用 <code>retry-color</code>，預設紅色。</li>
+</ul>
+</section>
+<section class="doc" id="group">
+<h2>8. info-region-group 群組</h2>
+<p>把多個 <code>&lt;info-region&gt;</code> 放進群組，就能一起控制：開始與重設按鈕、橫向排版、逐一顯示、全域進度條、計分板。群組會找出自己內部<b>所有層級</b>的 <code>&lt;info-region&gt;</code>，順序就是文件順序。</p>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>layout</code></td><td>垂直</td><td>設為 <code>horizontal</code> 變成橫向排列、可換行。橫向模式下，隱藏的區塊也會佔位（透明），版面不會跳動。</td></tr>
+<tr><td><code>cols-per-row</code></td><td><code>4</code></td><td>橫向時每列幾欄。每欄最小寬度為 <code>floor(100 / 欄數) - 1</code> %。</td></tr>
+<tr><td><code>gutter-size</code></td><td><code>16px</code></td><td>橫向間距的預設值。</td></tr>
+<tr><td><code>row-gap</code></td><td>同 <code>gutter-size</code></td><td>橫向時的間距。<b>實際上同時套用到列距與欄距</b>，所以 <code>gutter-size</code> 只是 <code>row-gap</code> 沒寫時的備援。實測 <code>row-gap="30px"</code> 時 gap 就是 30px，<code>gutter-size</code> 被忽略。</td></tr>
+<tr><td><code>show-controls</code></td><td>顯示</td><td>設為 <code>false</code> 時不產生開始與重設按鈕。</td></tr>
+<tr><td><code>start-label</code>、<code>reset-label</code></td><td><code>▶ 開始</code>、<code>↺ 重設</code></td><td>兩個按鈕的文字。</td></tr>
+<tr><td><code>start-color</code>、<code>reset-color</code></td><td><code>sky</code>、<code>warning</code></td><td>兩個按鈕的顏色（色票名稱）。</td></tr>
+<tr><td><code>auto-start</code></td><td>無</td><td>群組建立後自動執行「開始」。</td></tr>
+<tr><td><code>cascade-interval</code></td><td><code>0</code></td><td>大於 0 時，按開始後每隔這麼多毫秒顯示一個區塊（逐一顯示），第 i 個區塊在 <code>i × 間隔</code> 毫秒時啟用。</td></tr>
+<tr><td><code>global-progress</code></td><td>無</td><td>加入全域進度條，規則見第 9 節。注意第 2 節的警告：此群組內的 <code>next</code>、<code>countdown</code> 不推進。</td></tr>
+<tr><td><code>progress-position</code></td><td><code>bottom</code></td><td>進度條位置：<code>top</code>（在控制列之後）或 <code>bottom</code>（群組最後）。</td></tr>
+<tr><td><code>progress-height</code></td><td><code>4</code></td><td>進度條高度（整數 px）。</td></tr>
+<tr><td><code>progress-color</code></td><td><code>sky</code></td><td>進度條顏色。注意預設是全域 <code>defaultColor</code>，不是區塊的 <code>color</code>。</td></tr>
+<tr><td><code>show-percent</code></td><td>無</td><td>在進度條旁顯示百分比，進度大於 0 才浮現。</td></tr>
+<tr><td><code>show-score</code></td><td>無</td><td>顯示計分板（答對、答錯、總題數），規則見第 9 節。</td></tr>
+</tbody></table></div>
+<h3>8.1 控制列按鈕的尺寸</h3>
+<p>開始與重設按鈕各自有一組尺寸屬性，也有兩顆共用的屬性。每個尺寸的解析順序：<b>自己的屬性 大於 全域自己的設定 大於 共用屬性 大於 全域共用設定</b>。</p>
+<div class="tbl"><table>
+<thead><tr><th>要設定的</th><th>開始按鈕</th><th>重設按鈕</th><th>共用（兩顆）</th></tr></thead>
+<tbody>
+<tr><td>寬度（純數字補 <code>px</code>）</td><td><code>start-width</code></td><td><code>reset-width</code></td><td><code>btn-width</code></td></tr>
+<tr><td>高度（純數字補 <code>px</code>）</td><td><code>start-height</code></td><td><code>reset-height</code></td><td><code>btn-height</code></td></tr>
+<tr><td>字體（純數字補 <code>rem</code>）</td><td><code>start-font-size</code></td><td><code>reset-font-size</code></td><td><code>btn-font-size</code></td></tr>
+<tr><td>內距（原樣套用）</td><td><code>start-padding</code></td><td><code>reset-padding</code></td><td><code>btn-padding</code></td></tr>
+</tbody></table></div>
+<p>對應的全域設定鍵是 <code>startBtnWidth</code>、<code>resetBtnFontSize</code>、<code>btnPadding</code> 這類駝峰名稱。實測：<code>btn-width="120"</code> 加 <code>start-width="200px"</code> 時，開始按鈕 200px、重設按鈕 120px。</p>
+<h3>8.2 開始與重設</h3>
+<ul>
+<li><b>開始</b>：先重設整個群組（清空分數、所有區塊還原隱藏、進度條歸零），然後啟用第一個區塊；若有 <code>cascade-interval</code>，則改成依序啟用全部。</li>
+<li><b>重設</b>：清空分數與答題記錄、還原所有區塊、進度條歸零、百分比歸零並淡出。</li>
+<li>群組內的區塊不會在載入時自動展開，除非該區塊自己寫了 <code>active="true"</code>，或群組有 <code>auto-start</code>。</li>
+</ul>
+<h3>8.3 程式控制</h3>
+<pre><code>const g = document.querySelector('info-region-group');
+g.start();   // 等同按下開始
+g.reset();   // 等同按下重設</code></pre>
+</section>
+<section class="doc" id="scoring">
+<h2>9. 群組進度條與計分板的精確規則</h2>
+<h3>9.1 進度條（global-progress）</h3>
+<div class="tbl"><table>
+<thead><tr><th>群組內容</th><th>進度的算法</th></tr></thead>
+<tbody>
+<tr><td>沒有任何 <code>quiz-item</code> 區塊</td><td>已啟用的區塊數 除以 群組內全部區塊數。</td></tr>
+<tr><td>有 <code>quiz-item</code> 區塊</td><td>只統計帶 <code>quiz-item</code> 的區塊：<b>已答對的題數 除以 quiz-item 區塊總數</b>。答錯重試不會讓進度倒退，答對後也不會因再重試而扣回。</td></tr>
+</tbody></table></div>
+<div class="note note-bug"><b>已知問題</b>：<b>進度條只在某個區塊的 <code>active</code> 屬性被寫入時才會重新計算，答題本身不會觸發。</b> 我實測：兩題的群組，第二題（最後一題）答對後沒有任何區塊再被啟用，進度條停在 50%。解法是讓最後一題的 <code>correct-next</code> 指向一個收尾區塊（例如 <code>ir-gold</code> 的結語），啟用它的那一刻就會更新，實測達到 100%。收尾區塊不要加 <code>quiz-item</code>，否則會被算進題數。</div>
+<ul>
+<li>進度條與百分比的動畫時間由 <code>InfoRegionConfig.progressTransition</code>（預設 400 毫秒）控制。</li>
+<li>進度條的監看範圍是群組建立時就存在的區塊，之後動態加入的區塊不會被監看。</li>
+</ul>
+<h3>9.2 計分板（show-score）</h3>
+<div class="tbl"><table>
+<thead><tr><th>欄位</th><th>規則</th></tr></thead>
+<tbody>
+<tr><td>答對</td><td>答對的題數，<b>每一題最多算一次</b>，即使重試再答對也不會重複加。</td></tr>
+<tr><td>答錯</td><td>一題在「尚未答對」之前，每答錯一次就加 1（包含重試後再錯）。一題一旦答對，之後再答錯不會增加。</td></tr>
+<tr><td>總題數</td><td><b>答對加答錯的總和，也就是作答次數，並不是題目的數量。</b></td></tr>
+</tbody></table></div>
+<p>實測範例（兩題，皆有重試）：第一題先答錯，計分板為 0 / 1 / 1；重試後答對為 1 / 1 / 2；第二題答對為 2 / 1 / 3。</p>
+<div class="note note-warn"><b>注意</b>：<b>群組內的測驗區塊一定要有各自不同的 id。</b> 計分以 id 去重，沒有 id 的區塊都被當成同一個空字串 id。實測兩題都沒寫 id、都答對，答對只算 1。測驗區塊不在群組內時，沒有計分也沒有進度。</div>
+<div class="note note-info"><b>說明</b>：<code>InfoRegion.resetAll()</code> 只重設區塊，<b>不會</b>清空群組的計分與進度。要完整重來，請用群組的 <code>reset()</code> 或 <code>start()</code>，或按群組的重設按鈕。</div>
+</section>
+<section class="doc" id="config">
+<h2>10. 全域設定 InfoRegionConfig</h2>
+<p>在載入 info-region.js 之前，先定義 <code>window.InfoRegionConfig</code>，只需要寫想改的鍵，其餘用預設值（內部以 <code>Object.assign</code> 合併）。<b>拼錯的鍵會被靜默忽略</b>，不會報錯。</p>
+<pre><code>&lt;script&gt;
+  window.InfoRegionConfig = {
+    defaultColor: 'ocean',
+    defaultInterval: 800,
+    fontSize: '1.125rem'
+  };
+&lt;/script&gt;
+&lt;script src="info-region.js"&gt;&lt;/script&gt;</code></pre>
+<div class="note note-warn"><b>注意</b>：標示「樣式」的設定，會在<b>第一個</b> <code>&lt;info-region&gt;</code> 或 <code>&lt;info-region-group&gt;</code> 連接到頁面時，被寫進注入的 <code>&lt;style&gt;</code> 裡固化。之後再修改 <code>InfoRegionConfig</code>，已注入的樣式不會更新。標示「執行期」的設定，每次用到時才讀取，之後修改仍然有效。</div>
+<div class="tbl"><table>
+<thead><tr><th>設定鍵</th><th>預設值</th><th>生效時機</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>defaultColor</code></td><td><code>sky</code></td><td>樣式與執行期</td><td>沒寫 <code>color</code> 時使用的色票名稱。</td></tr>
+<tr><td><code>animDuration</code></td><td><code>500</code></td><td>樣式</td><td>垂直展開動畫毫秒數。</td></tr>
+<tr><td><code>horizontalAnimDur</code></td><td><code>380</code></td><td>樣式</td><td>橫向群組的展開動畫毫秒數。</td></tr>
+<tr><td><code>defaultInterval</code></td><td><code>500</code></td><td>執行期</td><td>自動推進的預設間隔毫秒。</td></tr>
+<tr><td><code>borderWidth</code></td><td><code>4</code></td><td>樣式與執行期</td><td>左邊框寬度（整數 px）。</td></tr>
+<tr><td><code>borderAllWidth</code></td><td><code>null</code></td><td>執行期</td><td>四邊共用的寬度，優先於 <code>borderWidth</code> 對左邊的作用。</td></tr>
+<tr><td><code>borderTopWidth</code>、<code>borderRightWidth</code>、<code>borderBottomWidth</code>、<code>borderLeftWidth</code></td><td><code>null</code></td><td>執行期</td><td>單邊寬度。</td></tr>
+<tr><td><code>borderStyle</code></td><td><code>solid</code></td><td>執行期</td><td>四邊共用樣式。</td></tr>
+<tr><td><code>borderTopStyle</code>、<code>borderRightStyle</code>、<code>borderBottomStyle</code>、<code>borderLeftStyle</code></td><td><code>null</code></td><td>執行期</td><td>單邊樣式。</td></tr>
+<tr><td><code>borderRadius</code></td><td><code>0 6px 6px 0</code></td><td>樣式</td><td>區塊圓角。</td></tr>
+<tr><td><code>bgColor</code></td><td><code>#333333</code></td><td>樣式</td><td>啟用後的背景色。</td></tr>
+<tr><td><code>textColor</code></td><td><code>#C6C7BD</code></td><td>樣式</td><td>文字顏色。</td></tr>
+<tr><td><code>fontSize</code></td><td><code>1rem</code></td><td>樣式</td><td>區塊字體。</td></tr>
+<tr><td><code>padding</code></td><td><code>14px 18px 20px 20px</code></td><td>樣式</td><td>區塊內距。</td></tr>
+<tr><td><code>marginBottom</code></td><td><code>10px</code></td><td>樣式</td><td>啟用後的下方間距（橫向群組為 0）。</td></tr>
+<tr><td><code>countdownHeight</code></td><td><code>3</code></td><td>執行期</td><td>倒數條高度。</td></tr>
+<tr><td><code>countdownPosition</code></td><td><code>bottom</code></td><td>執行期</td><td>倒數條位置。</td></tr>
+<tr><td><code>progressHeight</code></td><td><code>4</code></td><td>執行期</td><td>群組進度條高度。</td></tr>
+<tr><td><code>progressPosition</code></td><td><code>bottom</code></td><td>執行期</td><td>群組進度條位置。</td></tr>
+<tr><td><code>progressTransition</code></td><td><code>400</code></td><td>執行期</td><td>進度條動畫毫秒。</td></tr>
+<tr><td><code>manualLabel</code></td><td><code>▶ 下一步</code></td><td>執行期</td><td>手動按鈕文字。</td></tr>
+<tr><td><code>manualAlign</code></td><td><code>right</code></td><td>執行期</td><td>手動按鈕與繼續按鈕位置。</td></tr>
+<tr><td><code>cascadeInterval</code></td><td><code>0</code></td><td>執行期</td><td>逐一顯示的預設間隔。<b>請改用群組的 <code>cascade-interval</code> 屬性</b>，見下方說明。</td></tr>
+<tr><td><code>colsPerRow</code></td><td><code>4</code></td><td>執行期</td><td>橫向群組每列欄數。</td></tr>
+<tr><td><code>btnWidth</code>、<code>btnHeight</code>、<code>btnFontSize</code>、<code>btnPadding</code></td><td><code>null</code></td><td>執行期</td><td>控制列兩顆按鈕共用的尺寸。</td></tr>
+<tr><td><code>startBtnWidth</code>、<code>startBtnHeight</code>、<code>startBtnFontSize</code>、<code>startBtnPadding</code></td><td><code>null</code></td><td>執行期</td><td>只作用於開始按鈕。</td></tr>
+<tr><td><code>resetBtnWidth</code>、<code>resetBtnHeight</code>、<code>resetBtnFontSize</code>、<code>resetBtnPadding</code></td><td><code>null</code></td><td>執行期</td><td>只作用於重設按鈕。</td></tr>
+<tr><td><code>choiceFontSize</code></td><td><code>null</code></td><td>樣式與執行期</td><td>測驗選項字體，空值時為 0.95rem。同樣要避免 px 單位。</td></tr>
+<tr><td><code>choicePadding</code></td><td><code>null</code></td><td>樣式與執行期</td><td>測驗選項內距，空值時為 <code>10px 14px</code>。</td></tr>
+</tbody></table></div>
+<div class="note note-info"><b>說明</b>：<code>cascadeInterval</code>（讀碼所得，未實測）：群組的「開始」按鈕會讀它，但區塊啟用時判斷「是否交給群組推進」只看群組的 <code>cascade-interval</code> <b>屬性</b>。只靠全域設定時，區塊自己的 <code>next</code> 與 <code>countdown</code> 仍會一併執行。為避免行為混淆，請一律用屬性。</div>
+<div class="note note-tip"><b>提示</b>：<code>InfoRegion.config</code> 會回傳目前生效設定的複本，除錯時可以在 console 查看。</div>
+</section>
+<section class="doc" id="api">
+<h2>11. JS API 總表</h2>
+<div class="tbl"><table>
+<thead><tr><th>API</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>InfoRegion.activate(id)</code></td><td>啟用指定 id 的區塊。id 不存在或不是 info-region 時 console 警告。</td></tr>
+<tr><td><code>InfoRegion.resetAll(selector)</code></td><td>重設符合選擇器的所有 <code>&lt;info-region&gt;</code>，選擇器預設是 <code>info-region</code>，可傳 <code>#demo1 info-region</code> 限縮範圍。<b>只重設區塊，不重設群組的計分與進度。</b></td></tr>
+<tr><td><code>InfoRegion.colors</code></td><td>所有色票名稱的陣列（含系統用的 bg、region）。</td></tr>
+<tr><td><code>InfoRegion.config</code></td><td>目前設定的複本。</td></tr>
+<tr><td><code>區塊.activate()</code></td><td>啟用該區塊。已啟用時無作用。</td></tr>
+<tr><td><code>區塊.reset()</code></td><td>還原成隱藏：移除 <code>active</code>、清除邊框樣式、移除倒數條與手動按鈕，測驗區塊同時還原選項狀態並移除解說框與按鈕列。測驗的題號標籤與字母圈會保留（避免重複插入）。</td></tr>
+<tr><td><code>群組.start()</code></td><td>重設並開始。</td></tr>
+<tr><td><code>群組.reset()</code></td><td>清空分數、重設所有區塊、進度條歸零。</td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：<b>此元件不發出任何自訂事件。</b> 區塊展開、答題、群組完成，頁面都收不到通知。要與其他元件串接，請用 MutationObserver 觀察區塊的 <code>active</code> 屬性，做法見第 14 節。</div>
+</section>
+<section class="doc" id="colors">
+<h2>12. 色票</h2>
+<p>下列名稱可用於 <code>color</code>、<code>manual-color</code>、<code>countdown-color</code>、<code>retry-color</code>、<code>start-color</code>、<code>reset-color</code>、<code>progress-color</code>。按鈕會得到 <code>.ir-btn--名稱</code> 的配色 class，內容為該色的邊框與文字、滑過時淡淡填底。</p>
+<div class="tbl"><table>
+<thead><tr><th>名稱</th><th>色碼</th><th>名稱</th><th>色碼</th></tr></thead>
+<tbody>
+<tr><td><code>shell</code></td><td><code>#C6C7BD</code></td><td><code>lavender</code></td><td><code>#C3A5E5</code></td></tr>
+<tr><td><code>sky</code>（預設）</td><td><code>#82C8E5</code></td><td><code>warning</code></td><td><code>#E6374B</code></td></tr>
+<tr><td><code>salmon</code></td><td><code>#E5C3B3</code></td><td><code>ocean</code></td><td><code>#1CCAE8</code></td></tr>
+<tr><td><code>safe</code></td><td><code>#27AE60</code></td><td><code>teal</code></td><td><code>#0DA591</code></td></tr>
+<tr><td><code>vanilla</code></td><td><code>#DBEDD8</code></td><td><code>yellow</code></td><td><code>#E3D322</code></td></tr>
+<tr><td><code>focus</code></td><td><code>#D4FFFC</code></td><td><code>info</code></td><td><code>#2351DB</code></td></tr>
+<tr><td><code>indigo</code></td><td><code>#7849C9</code></td><td><code>pink</code></td><td><code>#FF91D7</code></td></tr>
+<tr><td><code>orange</code></td><td><code>#EDA109</code></td><td><code>special</code></td><td><code>#B3DE73</code></td></tr>
+<tr><td><code>stone</code></td><td><code>#82C8E5</code>（與 sky 相同）</td><td><code>gold</code></td><td><code>#C9973F</code></td></tr>
+<tr><td><code>bg</code>（系統用）</td><td><code>#0C0D0C</code></td><td><code>region</code>（系統用）</td><td><code>#333333</code></td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：這個元件的色票與你其他元件（practice-tracker、phrase-chip）<b>不完全相同</b>：<code>info</code> 在這裡是 <code>#2351DB</code>，其他是 <code>#4171BF</code>；這裡多了 <code>stone</code>、<code>gold</code>、<code>region</code>。同一個名稱在不同元件顏色可能不同。</div>
+<div class="note note-info"><b>說明</b>：<code>bg</code> 與 <code>region</code> 是元件內部使用的底色，不會產生按鈕配色 class，不建議當作 <code>color</code> 使用。不認得的名稱：邊框退回 sky、倒數條退回 sky、按鈕沒有配色（呈現預設灰色）。</div>
+</section>
+<section class="doc" id="styling">
+<h2>13. 樣式掛鉤與符合 18px 規範的覆寫範本</h2>
+<h3>13.1 可覆寫的標籤與 class</h3>
+<p>樣式以 <code>&lt;style id="info-region-styles"&gt;</code> 注入，沒有 shadow DOM，頁面 CSS 可直接覆寫。因為注入的樣式在你的 <code>&lt;style&gt;</code> 之後，同樣權重時元件會贏，所以覆寫時請在選擇器前加 <code>body</code>，或加 <code>!important</code>。</p>
+<div class="tbl"><table>
+<thead><tr><th>範圍</th><th>元素與 class</th></tr></thead>
+<tbody>
+<tr><td>區塊</td><td><code>info-region</code>（啟用時有 <code>[active="true"]</code>，並有 <code>[color="..."]</code>）、<code>info-region.ir-gold</code></td></tr>
+<tr><td>群組</td><td><code>info-region-group</code>（橫向為 <code>[layout="horizontal"]</code>）、<code>.ir-controls</code>、<code>.ir-col</code></td></tr>
+<tr><td>按鈕</td><td><code>.ir-btn</code>（顏色變體 <code>.ir-btn--名稱</code>）、<code>.ir-manual-wrap</code>、<code>.ir-manual-btn</code></td></tr>
+<tr><td>倒數條</td><td><code>.ir-countdown-bar</code></td></tr>
+<tr><td>進度條</td><td><code>.ir-global-progress-wrap</code>、<code>.ir-global-progress-track</code>、<code>.ir-global-progress-bar</code>、<code>.ir-global-percent</code></td></tr>
+<tr><td>測驗</td><td><code>ir-choices</code>、<code>ir-choice</code>（狀態屬性 <code>[state="correct|wrong|reveal"]</code>、<code>[disabled]</code>）、<code>.ir-choice-key</code>、<code>.ir-quiz-label</code>、<code>.ir-quiz-explain</code>（<code>.is-visible</code>、<code>.is-correct</code>、<code>.is-wrong</code>）、<code>.ir-quiz-next-wrap</code>、<code>.ir-quiz-retry-wrap</code></td></tr>
+<tr><td>計分板</td><td><code>.ir-quiz-scoreboard</code>、<code>.ir-quiz-score-item</code>、<code>.ir-quiz-score-val</code>、<code>.ir-quiz-score-lbl</code>、<code>.ir-quiz-score-divider</code></td></tr>
+<tr><td>CSS 變數</td><td><code>--ir-col-min</code>、<code>--ir-row-gap</code>（橫向群組，由元件寫在群組的 style 上）</td></tr>
+</tbody></table></div>
+<h3>13.2 不符合 18px 與行距規範的地方，以及覆寫範本</h3>
+<p>元件有幾處寫死的值，沒有設定鍵可改：行距固定 1.75、多個元素字體小於 1rem、多處半透明顏色的透明度低於 0.78。下面是把行距與字體拉回規範的範本，示範頁也是用這一份：</p>
+<div class="code-title">先用設定鍵處理能處理的</div>
+<pre><code>&lt;script&gt;
+  /* 必須在 info-region.js 之前定義 */
+  window.InfoRegionConfig = {
+    fontSize:       '1.125rem',   /* 區塊內文 */
+    choiceFontSize: '1.125rem',   /* 測驗選項 */
+    btnFontSize:    '1.125rem',   /* 群組的開始、重設按鈕 */
+    btnPadding:     '8px 20px'
+  };
+&lt;/script&gt;</code></pre>
+<div class="code-title">再用 CSS 覆寫寫死的值</div>
+<pre><code>/* 行距：元件固定為 1.75，沒有設定鍵 */
+body info-region { line-height: 1.5; }
+body ir-choice   { line-height: 1.5; }
+
+/* 元件內寫死、小於 1rem 的字體，逐一拉回 1.125rem */
+body .ir-btn                          { font-size: 1.125rem; }
+body .ir-manual-btn                   { font-size: 1.125rem; padding: 6px 18px; }
+body .ir-quiz-retry-wrap .ir-btn      { font-size: 1.125rem; padding: 4px 14px; }
+body .ir-quiz-explain                 { font-size: 1.125rem; }
+body .ir-quiz-label                   { font-size: 1.125rem; }
+body .ir-quiz-scoreboard              { font-size: 1.125rem; }
+body .ir-quiz-score-lbl               { font-size: 1.125rem; }
+body .ir-global-percent               { font-size: 1.125rem; }
+body .ir-choice-key                   { font-size: 1.125rem !important; }</code></pre>
+<div class="note note-warn"><b>注意</b>：範本<b>只處理行距與字體</b>。元件內部有不少 <code>rgba</code> 半透明顏色低於 0.78（例如選項邊框與底色、解說框底色、計分板外框、金箔掃光），涵蓋面太廣，範本沒有逐一覆寫。若你的規範必須全數符合，需要另外針對這些選擇器補寫，或直接修改 info-region.js。</div>
+</section>
+<section class="doc" id="integrate">
+<h2>14. 與 practice-tracker 搭配，以及你第一課頁面的實例</h2>
+<h3>14.1 完成通知</h3>
+<p>info-region 不發事件，所以要讓 practice-tracker 知道「某段已讀完或測驗完成」，用 MutationObserver 觀察<b>最後一個區塊</b>的 <code>active</code> 屬性，等它被啟用就呼叫 <code>markDone</code>。</p>
+<div class="code-title">最後一個區塊被啟用，就標記 section 完成</div>
+<pre><code>const last = document.getElementById('q-final');
+new MutationObserver(() =&gt; {
+  if (last.getAttribute('active') === 'true' &amp;&amp; window.PracticeTracker) {
+    window.PracticeTracker.markDone('ex-quiz');
+  }
+}).observe(last, { attributes: true, attributeFilter: ['active'] });</code></pre>
+<p>若 section 本身有內建的標記完成按鈕（practice-tracker 的 <code>data-btn-text</code>），也可以不用上面的程式，讓使用者自己按。</p>
+<h3>14.2 你第一課頁面的測驗，逐項拆解</h3>
+<pre><code>&lt;info-region id="s1-q1" quiz answer="c" correct-next="s1-q1-done" active="true" color="sky"
+    quiz-label="IELTS Speaking Part 1" border-width="1px" border-style="dashed"
+    choice-font-size="0.8rem" choice-padding="5px"
+    explain="補述用法的主格關代which代替前句(結果)，導出原因" show-retry&gt;
+  ...
+  &lt;ir-choices layout="column"&gt;
+    &lt;ir-choice value="a"&gt;except for&lt;/ir-choice&gt;
+    &lt;ir-choice value="b"&gt;as a result&lt;/ir-choice&gt;
+    &lt;ir-choice value="c"&gt;which is why&lt;/ir-choice&gt;
+  &lt;/ir-choices&gt;
+&lt;/info-region&gt;
+
+&lt;info-region id="s1-q1-done" color="safe" next="s1-q1-extra1" manual&gt;
+  逗號 + which 經常接下列動詞：shows, indicates, represents, symbolizes
+&lt;/info-region&gt;
+&lt;info-region id="s1-q1-extra1" color="special"&gt; ...例句... &lt;/info-region&gt;</code></pre>
+<div class="tbl"><table>
+<thead><tr><th>寫法</th><th>實際效果</th></tr></thead>
+<tbody>
+<tr><td><code>quiz answer="c"</code></td><td>測驗模式，正確答案是 value 為 c 的選項。</td></tr>
+<tr><td><code>correct-next="s1-q1-done"</code>，沒有 <code>wrong-next</code></td><td>答對才啟用 s1-q1-done；答錯則停在這題。因為有 <code>show-retry</code>，使用者可以重試，這個組合是合理的。</td></tr>
+<tr><td>沒有 <code>quiz-next-delay</code></td><td>答對後下一個區塊<b>立即</b>出現（實際延遲為 0，見第 16 節）。若想要停頓讓使用者先看解說，加上 <code>quiz-next-delay="1200"</code>。</td></tr>
+<tr><td><code>border-width="1px" border-style="dashed"</code></td><td>四邊 1px 虛線（<code>1px</code> 會被解讀為 1）。</td></tr>
+<tr><td><code>choice-font-size="0.8rem"</code></td><td>單位是 rem，所以字母圈正常縮小，沒有 px 問題。</td></tr>
+<tr><td><code>s1-q1-done</code> 的 <code>manual next="s1-q1-extra1"</code></td><td>顯示「▶ 下一步」按鈕，按了才出現延伸例句。</td></tr>
+<tr><td><code>s1-q1-done</code> 的 <code>color="safe"</code></td><td>綠色邊框；按鈕也是綠色。</td></tr>
+</tbody></table></div>
+<div class="note note-tip"><b>提示</b>：你的頁面把兩欄的內容分別放在兩個 <code>&lt;div class="col"&gt;</code>，區塊之間用 <code>next</code> 跨欄串連，沒有問題。<code>next</code> 只認 id，與區塊在 DOM 的位置無關。</div>
+</section>
+<section class="doc" id="troubleshoot">
+<h2>15. 疑難排解</h2>
+<div class="tbl"><table>
+<thead><tr><th>症狀</th><th>最可能的原因</th><th>怎麼處理</th></tr></thead>
+<tbody>
+<tr><td>整頁什麼都沒出現</td><td>所有區塊都是隱藏狀態，沒有任何一個被啟用。</td><td>第一個區塊加 <code>active="true"</code>；或用群組的開始按鈕、<code>auto-start</code>；或程式呼叫 <code>activate()</code>。</td></tr>
+<tr><td>第一個區塊出現，後面都沒跟著出現</td><td>1) 漏寫 <code>next</code>；2) <code>next</code> 的 id 拼錯（console 有警告）；3) 區塊在 <code>global-progress</code> 或 <code>cascade-interval</code> 的群組裡，next 鏈被停用。</td><td>檢查 id；<code>global-progress</code> 群組請改用 <code>cascade-interval</code>、<code>manual</code>、<code>quiz</code>。</td></tr>
+<tr><td><code>manual</code> 區塊沒有按鈕</td><td>沒有寫 <code>next</code>。</td><td>加上 <code>next</code>。</td></tr>
+<tr><td>答錯之後整個流程停住</td><td>沒寫 <code>wrong-next</code>，答錯就是終點。</td><td>寫 <code>wrong-next</code>（可與 <code>correct-next</code> 相同），或用 <code>show-retry</code> 讓使用者重試。</td></tr>
+<tr><td>答對後下一題太快出現，來不及看解說</td><td>沒寫 <code>quiz-next-delay</code>，實際延遲為 0。</td><td>加 <code>quiz-next-delay="1500"</code>。</td></tr>
+<tr><td>選項前的字母圈大得離譜</td><td><code>choice-font-size</code> 用了 px 單位。</td><td>改成不帶單位的數字或 rem。</td></tr>
+<tr><td><code>next-interval="0"</code> 還是等了半秒</td><td>0 被視為沒寫，退回預設。</td><td>改寫 <code>1</code>。</td></tr>
+<tr><td>進度條停在 50%、答完最後一題不到 100%</td><td>最後一題答完後沒有任何區塊被啟用，進度條沒機會更新。</td><td>最後一題的 <code>correct-next</code> 指向收尾區塊。</td></tr>
+<tr><td>計分板的「總題數」數字比題目數多</td><td>總題數是作答次數（答對加答錯，含重試）。</td><td>這是設計如此，見第 9 節。</td></tr>
+<tr><td>兩題都答對，答對只算 1</td><td>測驗區塊沒有寫 id。</td><td>每題寫不同的 id。</td></tr>
+<tr><td>改了 <code>InfoRegionConfig</code> 沒效果</td><td>在 info-region.js 載入之後才設定；或改的是「樣式」類設定而元件已注入樣式。</td><td>把設定放在 js 之前；改完重新整理頁面。</td></tr>
+<tr><td><code>color</code> 寫了但邊框是藍色</td><td>色票名稱拼錯，邊框退回 sky。</td><td>對照第 12 節的名稱表。</td></tr>
+<tr><td>行距太鬆、部分字太小</td><td>元件寫死行距 1.75 與多處小字體。</td><td>使用第 13 節的覆寫範本。</td></tr>
+<tr><td>重設後群組的計分沒歸零</td><td>用的是 <code>InfoRegion.resetAll()</code>，它不處理群組。</td><td>改用群組的 <code>reset()</code>、<code>start()</code> 或重設按鈕。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="limits">
+<h2>16. 已知問題與限制（彙整）</h2>
+<p>以下都是我實際執行驗證過的行為，沒有一項是猜測。這些是元件現有的狀態，我沒有修改你的 info-region.js。</p>
+<div class="tbl"><table>
+<thead><tr><th>編號</th><th>問題</th><th>影響</th><th>暫時的做法</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>quiz-next-delay</code> 沒寫時，程式碼本意是 1200 毫秒，實際變成 0。原因：未寫屬性時 parseInt 得到 NaN，而 <code>??</code> 不會處理 NaN。</td><td>答題後下一個區塊立即出現。</td><td>永遠明確寫出 <code>quiz-next-delay</code>。</td></tr>
+<tr><td>2</td><td><code>next-interval="0"</code> 與 <code>countdown="0"</code> 會退回預設值（500 與 2000）。</td><td>無法用 0 表示立即。</td><td><code>next-interval</code> 寫 1。</td></tr>
+<tr><td>3</td><td>群組進度條只在區塊 <code>active</code> 被寫入時更新，答題不會觸發。</td><td>最後一題答對後，進度條停在上一次的數值。</td><td>最後一題的 <code>correct-next</code> 指向收尾區塊。</td></tr>
+<tr><td>4</td><td>計分板「總題數」實為作答次數。</td><td>數字比題目數多。</td><td>知道即可，或另做自己的題數顯示。</td></tr>
+<tr><td>5</td><td>計分以 id 去重，沒有 id 的測驗區塊互相衝突。</td><td>答對題數少算。</td><td>每個測驗區塊都寫 id。</td></tr>
+<tr><td>6</td><td><code>choice-font-size</code> 用 px 單位時，字母圈被當成 rem 換算。</td><td>字母圈變成數百 px。</td><td>只用數字或 rem。</td></tr>
+<tr><td>7</td><td><code>global-progress</code> 群組內，區塊的 <code>next</code> 與 <code>countdown</code> 被停用。</td><td>只有第一個區塊亮起。</td><td>改用 <code>cascade-interval</code>、<code>manual</code>、<code>quiz</code>，或程式啟用。</td></tr>
+<tr><td>8</td><td>初始 <code>active="true"</code> 的區塊，啟動流程執行兩次。</td><td>無實際影響，各流程有防重複。</td><td>知道即可。</td></tr>
+<tr><td>9</td><td>不發出任何自訂事件。</td><td>無法被其他元件通知。</td><td>用 MutationObserver 觀察 <code>active</code>。</td></tr>
+<tr><td>10</td><td>行距固定 1.75；多處字體小於 1rem；多處 <code>rgba</code> 透明度低於 0.78。</td><td>與你的版面規範不符。</td><td>第 13 節的覆寫範本處理行距與字體。</td></tr>
+<tr><td>11</td><td><code>InfoRegion.resetAll()</code> 不重設群組計分與進度。</td><td>重設不完整。</td><td>用群組的 <code>reset()</code>。</td></tr>
+<tr><td>12</td><td>啟用狀態下區塊最大高度 4000px。</td><td>超長內容被裁切。</td><td>拆成多個區塊。</td></tr>
+<tr><td>13</td><td><code>explain</code>、<code>correct-msg</code>、<code>wrong-msg</code> 以 innerHTML 寫入。</td><td>內容中的 HTML 會被執行解析。</td><td>只放自己撰寫的內容，不要放使用者輸入。</td></tr>
+<tr><td>14</td><td><code>cascadeInterval</code> 全域設定只被「開始」按鈕讀取，區塊判斷只看屬性（讀碼所得）。</td><td>只靠全域設定時，next 鏈與逐一顯示同時運作。</td><td>一律用 <code>cascade-interval</code> 屬性。</td></tr>
+</tbody></table></div>
+</section>
+</main>
+</div>
+</body>
+</html>

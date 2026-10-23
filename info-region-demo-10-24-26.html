@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>info-region 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<style>
+:root{font-size:16px}
+*{box-sizing:border-box}
+body{margin:0;background:#0C0D0C;color:#C6C7BD;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;font-size:1.125rem;line-height:1.5;min-width:1280px}
+.layout{display:grid;grid-template-columns:300px minmax(0,1fr);max-width:1800px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:32px 20px;background:#121312;border-right:1px solid #2a2b2a}
+nav.toc .brand{color:#D4AF37;font-size:1.25rem;font-weight:700;margin-bottom:16px}
+nav.toc a{display:block;padding:6px 12px;border-radius:6px;color:#C6C7BD;text-decoration:none}
+nav.toc a:hover{background:#1f201f;color:#D4FFFC}
+main{padding:40px 64px 120px;max-width:1400px}
+h1{margin:0 0 8px;color:#1CCAE8;font-size:2.25rem;line-height:1.4}
+.lead{color:#DBEDD8;margin:0 0 32px}
+section.demo{margin:0 0 56px}
+h2{margin:0 0 8px;color:#82C8E5;font-size:1.75rem;line-height:1.4;border-bottom:2px solid #0DA591;padding-bottom:8px}
+.desc{margin:0 0 16px}
+.stage{padding:20px;background:#101110;border:1px solid #2a2b2a;border-radius:8px;margin-bottom:12px;min-height:80px}
+.bar{display:flex;gap:12px;margin-bottom:12px}
+.rbtn{font-size:1.125rem;padding:6px 18px;background:transparent;color:#B3DE73;border:1px solid #B3DE73;border-radius:6px;cursor:pointer}
+.rbtn:hover{background:rgba(179,222,115,.85);color:#0C0D0C}
+details summary{cursor:pointer;color:#E5C3B3;margin-bottom:8px}
+pre{margin:0 0 12px;padding:16px 20px;background:#141514;border-left:4px solid #0DA591;border-radius:6px;overflow-x:auto}
+pre code{color:#D4FFFC;font-family:Consolas,monospace;font-size:1.125rem;line-height:1.5;white-space:pre}
+.alert{font-size:1.125rem}
+
+/* 行距：元件固定為 1.75，沒有設定鍵 */
+body info-region { line-height: 1.5; }
+body ir-choice   { line-height: 1.5; }
+
+/* 元件內寫死、小於 1rem 的字體，逐一拉回 1.125rem */
+body .ir-btn                          { font-size: 1.125rem; }
+body .ir-manual-btn                   { font-size: 1.125rem; padding: 6px 18px; }
+body .ir-quiz-retry-wrap .ir-btn      { font-size: 1.125rem; padding: 4px 14px; }
+body .ir-quiz-explain                 { font-size: 1.125rem; }
+body .ir-quiz-label                   { font-size: 1.125rem; }
+body .ir-quiz-scoreboard              { font-size: 1.125rem; }
+body .ir-quiz-score-lbl               { font-size: 1.125rem; }
+body .ir-global-percent               { font-size: 1.125rem; }
+body .ir-choice-key                   { font-size: 1.125rem !important; }</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc"><div class="brand">info-region 範例</div><a href="#d1">1. 自動揭露鏈</a><a href="#d2">2. 倒數</a><a href="#d3">3. 手動繼續</a><a href="#d4">4. 色票與邊框</a><a href="#d5">5. 單題測驗</a><a href="#d6">6. 測驗群組：進度、百分比、計分板</a><a href="#d7">7. 橫向群組：逐一顯示</a><a href="#d8">8. 控制列按鈕尺寸</a><a href="#d9">9. 程式控制 API</a></nav>
+<main>
+<h1>info-region 範例</h1>
+<p class="lead">每個範例進入畫面時才開始播放，可按「重新播放」重來。展開「顯示原始碼」即可看到對應的 HTML。需與 info-region.js 放在同一資料夾。</p>
+<section class="demo" id="d1">
+<h2>1. 自動揭露鏈</h2><p class="desc">只有 a 寫 active，其餘由 next 串起。b 的 next-interval 為 1200，最後一個是 ir-gold 收尾。</p>
+<div class="bar"><button class="rbtn" data-replay="d1">↻ 重新播放</button></div>
+<div class="stage" id="stage-d1"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d1-a" active="true" next="d1-b" color="sky"&gt;
+  &lt;h5&gt;第一步&lt;/h5&gt;&lt;p&gt;載入就展開，0.5 秒後自動帶出下一段。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d1-b" next="d1-c" next-interval="1200" color="ocean"&gt;
+  &lt;p&gt;等了 1.2 秒才帶出最後一段。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d1-c" class="ir-gold"&gt;
+  &lt;h5&gt;結尾&lt;/h5&gt;&lt;p&gt;金箔特別版，用在序列的最後。&lt;/p&gt;
+&lt;/info-region&gt;</code></pre></details>
+</section>
+<section class="demo" id="d2">
+<h2>2. 倒數</h2><p class="desc">顯示倒數條，歸零後啟用 next。上方黃色 3 秒，下方只寫 countdown 為 2 秒。</p>
+<div class="bar"><button class="rbtn" data-replay="d2">↻ 重新播放</button></div>
+<div class="stage" id="stage-d2"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d2-a" active="true" countdown="3000" countdown-position="top"
+             countdown-color="yellow" countdown-height="5" next="d2-b" color="orange"&gt;
+  &lt;p&gt;先讀這一段，3 秒後自動下一段。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d2-b" countdown next="d2-c" color="teal"&gt;
+  &lt;p&gt;只寫 countdown，預設 2 秒。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d2-c" color="safe"&gt;&lt;p&gt;倒數結束。&lt;/p&gt;&lt;/info-region&gt;</code></pre></details>
+</section>
+<section class="demo" id="d3">
+<h2>3. 手動繼續</h2><p class="desc">按鈕文字、顏色、位置可自訂。按下後按鈕消失，下一段出現。</p>
+<div class="bar"><button class="rbtn" data-replay="d3">↻ 重新播放</button></div>
+<div class="stage" id="stage-d3"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d3-a" active="true" manual next="d3-b" manual-label="我讀完了"
+             manual-color="special" manual-align="center" color="special"&gt;
+  &lt;p&gt;讀完請按下方按鈕。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d3-b" manual next="d3-c" manual-align="left" color="lavender"&gt;
+  &lt;p&gt;預設標籤是「▶ 下一步」，這裡靠左。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d3-c" color="pink"&gt;&lt;p&gt;完成。&lt;/p&gt;&lt;/info-region&gt;</code></pre></details>
+</section>
+<section class="demo" id="d4">
+<h2>4. 色票與邊框</h2><p class="desc">橫向群組把全部色票排成格子，後面三個示範邊框寫法。</p>
+<div class="bar"><button class="rbtn" data-replay="d4">↻ 重新播放</button></div>
+<div class="stage" id="stage-d4"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group layout="horizontal" cols-per-row="4" row-gap="12px" show-controls="false" cascade-interval="80" auto-start&gt;
+  &lt;info-region color="shell"&gt;&lt;p&gt;shell&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="lavender"&gt;&lt;p&gt;lavender&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="sky"&gt;&lt;p&gt;sky&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="warning"&gt;&lt;p&gt;warning&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="salmon"&gt;&lt;p&gt;salmon&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="ocean"&gt;&lt;p&gt;ocean&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="safe"&gt;&lt;p&gt;safe&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="teal"&gt;&lt;p&gt;teal&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="vanilla"&gt;&lt;p&gt;vanilla&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="yellow"&gt;&lt;p&gt;yellow&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="focus"&gt;&lt;p&gt;focus&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="info"&gt;&lt;p&gt;info&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="indigo"&gt;&lt;p&gt;indigo&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="pink"&gt;&lt;p&gt;pink&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="orange"&gt;&lt;p&gt;orange&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="special"&gt;&lt;p&gt;special&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="stone"&gt;&lt;p&gt;stone&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="gold"&gt;&lt;p&gt;gold&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="orange" border-width="2" border-style="dashed"&gt;&lt;p&gt;四邊 2px 虛線&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="teal" border-width="0" border-top-width="6"&gt;&lt;p&gt;只有上邊 6px&lt;/p&gt;&lt;/info-region&gt;
+&lt;/info-region-group&gt;</code></pre></details>
+</section>
+<section class="demo" id="d5">
+<h2>5. 單題測驗</h2><p class="desc">explain 接受 HTML，show-retry 可重試，答對後 800 毫秒出現說明。選項為 layout=&quot;column&quot;。</p>
+<div class="bar"><button class="rbtn" data-replay="d5">↻ 重新播放</button></div>
+<div class="stage" id="stage-d5"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d5-q" quiz answer="c" active="true" color="sky"
+             quiz-label="IELTS Speaking Part 1"
+             correct-next="d5-ok" quiz-next-delay="800" show-retry
+             explain="補述用法的 &lt;b&gt;which&lt;/b&gt; 可以代替前句，導出原因。"&gt;
+  &lt;p&gt;Traffic around my area can be pretty bad, ________ I tend to leave home early.&lt;/p&gt;
+  &lt;ir-choices layout="column"&gt;
+    &lt;ir-choice value="a"&gt;except for&lt;/ir-choice&gt;
+    &lt;ir-choice value="b"&gt;as a result&lt;/ir-choice&gt;
+    &lt;ir-choice value="c"&gt;which is why&lt;/ir-choice&gt;
+  &lt;/ir-choices&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d5-ok" color="safe" manual next="d5-more" manual-label="再看一個例句"&gt;
+  &lt;p&gt;逗號加 which 經常接：shows, indicates, represents。&lt;/p&gt;
+&lt;/info-region&gt;
+&lt;info-region id="d5-more" color="special"&gt;
+  &lt;p&gt;The graph shows a sharp rise, &lt;b&gt;which indicates&lt;/b&gt; growing demand.&lt;/p&gt;
+&lt;/info-region&gt;</code></pre></details>
+</section>
+<section class="demo" id="d6">
+<h2>6. 測驗群組：進度、百分比、計分板</h2><p class="desc">兩題加一個 ir-gold 收尾。收尾區塊被啟用時進度條才會更新到 100%，且它沒有 quiz-item。</p>
+<div class="bar"><button class="rbtn" data-replay="d6">↻ 重新播放</button></div>
+<div class="stage" id="stage-d6"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group global-progress show-percent show-score auto-start
+                   progress-color="teal" progress-height="6"&gt;
+  &lt;info-region id="d6-q1" quiz quiz-item answer="b" color="sky" show-retry
+               correct-next="d6-q2" wrong-next="d6-q2" quiz-next-delay="1000"
+               explain="in spite of 後面接名詞或動名詞。"&gt;
+    &lt;p&gt;_____ the rain, we went out.&lt;/p&gt;
+    &lt;ir-choices&gt;
+      &lt;ir-choice value="a"&gt;Although&lt;/ir-choice&gt;
+      &lt;ir-choice value="b"&gt;In spite of&lt;/ir-choice&gt;
+      &lt;ir-choice value="c"&gt;Because&lt;/ir-choice&gt;
+    &lt;/ir-choices&gt;
+  &lt;/info-region&gt;
+  &lt;info-region id="d6-q2" quiz quiz-item answer="a" color="ocean" show-retry
+               correct-next="d6-end" wrong-next="d6-end" quiz-next-delay="1000"
+               explain="due to 後面接名詞。"&gt;
+    &lt;p&gt;The flight was cancelled _____ bad weather.&lt;/p&gt;
+    &lt;ir-choices&gt;
+      &lt;ir-choice value="a"&gt;due to&lt;/ir-choice&gt;
+      &lt;ir-choice value="b"&gt;so that&lt;/ir-choice&gt;
+      &lt;ir-choice value="c"&gt;whereas&lt;/ir-choice&gt;
+    &lt;/ir-choices&gt;
+  &lt;/info-region&gt;
+  &lt;info-region id="d6-end" class="ir-gold"&gt;
+    &lt;h5&gt;練習完成&lt;/h5&gt;&lt;p&gt;進度條應已達 100%。&lt;/p&gt;
+  &lt;/info-region&gt;
+&lt;/info-region-group&gt;</code></pre></details>
+</section>
+<section class="demo" id="d7">
+<h2>7. 橫向群組：逐一顯示</h2><p class="desc">cascade-interval 為 500，進度條放在上方。載入後按「播放」開始，「清空」還原。</p>
+<div class="bar"><button class="rbtn" data-replay="d7">↻ 重新播放</button></div>
+<div class="stage" id="stage-d7"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group layout="horizontal" cols-per-row="3" cascade-interval="500"
+                   global-progress progress-position="top" show-percent
+                   start-label="▶ 播放" reset-label="↺ 清空" start-color="special"&gt;
+  &lt;info-region color="sky"&gt;&lt;p&gt;第一格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="ocean"&gt;&lt;p&gt;第二格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="teal"&gt;&lt;p&gt;第三格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="lavender"&gt;&lt;p&gt;第四格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="pink"&gt;&lt;p&gt;第五格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="orange"&gt;&lt;p&gt;第六格&lt;/p&gt;&lt;/info-region&gt;
+&lt;/info-region-group&gt;</code></pre></details>
+</section>
+<section class="demo" id="d8">
+<h2>8. 控制列按鈕尺寸</h2><p class="desc">btn-width 兩顆共用，start-width 只改開始按鈕（優先於共用值）。</p>
+<div class="bar"><button class="rbtn" data-replay="d8">↻ 重新播放</button></div>
+<div class="stage" id="stage-d8"></div>
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group cascade-interval="400" btn-width="140" start-width="220px"
+                   start-font-size="1.25" start-color="safe" reset-color="warning"&gt;
+  &lt;info-region color="safe"&gt;&lt;p&gt;內容 A&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="info"&gt;&lt;p&gt;內容 B&lt;/p&gt;&lt;/info-region&gt;
+&lt;/info-region-group&gt;</code></pre></details>
+</section>
+<section class="demo" id="d9">
+<h2>9. 程式控制 API</h2>
+<p class="desc">InfoRegion.activate(id) 啟用指定區塊，InfoRegion.resetAll(selector) 重設範圍內的所有區塊。</p>
+<div class="bar">
+<button class="rbtn" id="b-a">activate A</button>
+<button class="rbtn" id="b-b">activate B</button>
+<button class="rbtn" id="b-r">resetAll</button>
+</div>
+<div id="d9-alert"></div>
+<div class="stage" id="stage-d9"><info-region id="d9-a" color="sky"><p>區塊 A，由按鈕啟用。</p></info-region>
+<info-region id="d9-b" color="lavender"><p>區塊 B，由按鈕啟用。</p></info-region></div>
+<details><summary>顯示原始碼</summary><pre><code>InfoRegion.activate(&#x27;d9-a&#x27;);
+InfoRegion.activate(&#x27;d9-b&#x27;);
+InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
+</section>
+</main>
+</div>
+<template id="tpl-d1">
+<info-region id="d1-a" active="true" next="d1-b" color="sky">
+  <h5>第一步</h5><p>載入就展開，0.5 秒後自動帶出下一段。</p>
+</info-region>
+<info-region id="d1-b" next="d1-c" next-interval="1200" color="ocean">
+  <p>等了 1.2 秒才帶出最後一段。</p>
+</info-region>
+<info-region id="d1-c" class="ir-gold">
+  <h5>結尾</h5><p>金箔特別版，用在序列的最後。</p>
+</info-region>
+</template>
+<template id="tpl-d2">
+<info-region id="d2-a" active="true" countdown="3000" countdown-position="top"
+             countdown-color="yellow" countdown-height="5" next="d2-b" color="orange">
+  <p>先讀這一段，3 秒後自動下一段。</p>
+</info-region>
+<info-region id="d2-b" countdown next="d2-c" color="teal">
+  <p>只寫 countdown，預設 2 秒。</p>
+</info-region>
+<info-region id="d2-c" color="safe"><p>倒數結束。</p></info-region>
+</template>
+<template id="tpl-d3">
+<info-region id="d3-a" active="true" manual next="d3-b" manual-label="我讀完了"
+             manual-color="special" manual-align="center" color="special">
+  <p>讀完請按下方按鈕。</p>
+</info-region>
+<info-region id="d3-b" manual next="d3-c" manual-align="left" color="lavender">
+  <p>預設標籤是「▶ 下一步」，這裡靠左。</p>
+</info-region>
+<info-region id="d3-c" color="pink"><p>完成。</p></info-region>
+</template>
+<template id="tpl-d4">
+<info-region-group layout="horizontal" cols-per-row="4" row-gap="12px" show-controls="false" cascade-interval="80" auto-start>
+  <info-region color="shell"><p>shell</p></info-region>
+  <info-region color="lavender"><p>lavender</p></info-region>
+  <info-region color="sky"><p>sky</p></info-region>
+  <info-region color="warning"><p>warning</p></info-region>
+  <info-region color="salmon"><p>salmon</p></info-region>
+  <info-region color="ocean"><p>ocean</p></info-region>
+  <info-region color="safe"><p>safe</p></info-region>
+  <info-region color="teal"><p>teal</p></info-region>
+  <info-region color="vanilla"><p>vanilla</p></info-region>
+  <info-region color="yellow"><p>yellow</p></info-region>
+  <info-region color="focus"><p>focus</p></info-region>
+  <info-region color="info"><p>info</p></info-region>
+  <info-region color="indigo"><p>indigo</p></info-region>
+  <info-region color="pink"><p>pink</p></info-region>
+  <info-region color="orange"><p>orange</p></info-region>
+  <info-region color="special"><p>special</p></info-region>
+  <info-region color="stone"><p>stone</p></info-region>
+  <info-region color="gold"><p>gold</p></info-region>
+  <info-region color="orange" border-width="2" border-style="dashed"><p>四邊 2px 虛線</p></info-region>
+  <info-region color="teal" border-width="0" border-top-width="6"><p>只有上邊 6px</p></info-region>
+</info-region-group>
+</template>
+<template id="tpl-d5">
+<info-region id="d5-q" quiz answer="c" active="true" color="sky"
+             quiz-label="IELTS Speaking Part 1"
+             correct-next="d5-ok" quiz-next-delay="800" show-retry
+             explain="補述用法的 <b>which</b> 可以代替前句，導出原因。">
+  <p>Traffic around my area can be pretty bad, ________ I tend to leave home early.</p>
+  <ir-choices layout="column">
+    <ir-choice value="a">except for</ir-choice>
+    <ir-choice value="b">as a result</ir-choice>
+    <ir-choice value="c">which is why</ir-choice>
+  </ir-choices>
+</info-region>
+<info-region id="d5-ok" color="safe" manual next="d5-more" manual-label="再看一個例句">
+  <p>逗號加 which 經常接：shows, indicates, represents。</p>
+</info-region>
+<info-region id="d5-more" color="special">
+  <p>The graph shows a sharp rise, <b>which indicates</b> growing demand.</p>
+</info-region>
+</template>
+<template id="tpl-d6">
+<info-region-group global-progress show-percent show-score auto-start
+                   progress-color="teal" progress-height="6">
+  <info-region id="d6-q1" quiz quiz-item answer="b" color="sky" show-retry
+               correct-next="d6-q2" wrong-next="d6-q2" quiz-next-delay="1000"
+               explain="in spite of 後面接名詞或動名詞。">
+    <p>_____ the rain, we went out.</p>
+    <ir-choices>
+      <ir-choice value="a">Although</ir-choice>
+      <ir-choice value="b">In spite of</ir-choice>
+      <ir-choice value="c">Because</ir-choice>
+    </ir-choices>
+  </info-region>
+  <info-region id="d6-q2" quiz quiz-item answer="a" color="ocean" show-retry
+               correct-next="d6-end" wrong-next="d6-end" quiz-next-delay="1000"
+               explain="due to 後面接名詞。">
+    <p>The flight was cancelled _____ bad weather.</p>
+    <ir-choices>
+      <ir-choice value="a">due to</ir-choice>
+      <ir-choice value="b">so that</ir-choice>
+      <ir-choice value="c">whereas</ir-choice>
+    </ir-choices>
+  </info-region>
+  <info-region id="d6-end" class="ir-gold">
+    <h5>練習完成</h5><p>進度條應已達 100%。</p>
+  </info-region>
+</info-region-group>
+</template>
+<template id="tpl-d7">
+<info-region-group layout="horizontal" cols-per-row="3" cascade-interval="500"
+                   global-progress progress-position="top" show-percent
+                   start-label="▶ 播放" reset-label="↺ 清空" start-color="special">
+  <info-region color="sky"><p>第一格</p></info-region>
+  <info-region color="ocean"><p>第二格</p></info-region>
+  <info-region color="teal"><p>第三格</p></info-region>
+  <info-region color="lavender"><p>第四格</p></info-region>
+  <info-region color="pink"><p>第五格</p></info-region>
+  <info-region color="orange"><p>第六格</p></info-region>
+</info-region-group>
+</template>
+<template id="tpl-d8">
+<info-region-group cascade-interval="400" btn-width="140" start-width="220px"
+                   start-font-size="1.25" start-color="safe" reset-color="warning">
+  <info-region color="safe"><p>內容 A</p></info-region>
+  <info-region color="info"><p>內容 B</p></info-region>
+</info-region-group>
+</template>
+
+<script>
+  /* 必須在 info-region.js 之前定義 */
+  window.InfoRegionConfig = {
+    fontSize:       '1.125rem',   /* 區塊內文 */
+    choiceFontSize: '1.125rem',   /* 測驗選項 */
+    btnFontSize:    '1.125rem',   /* 群組的開始、重設按鈕 */
+    btnPadding:     '8px 20px'
+  };
+</script>
+<script src="info-region.js"></script>
+<script>
+(function(){
+  function render(id){
+    var st=document.getElementById('stage-'+id), tp=document.getElementById('tpl-'+id);
+    st.innerHTML='';
+    st.appendChild(tp.content.cloneNode(true));
+  }
+  var ids=['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8'], seen={};
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var id=e.target.getAttribute('data-id');
+      if(e.isIntersecting && !seen[id]){seen[id]=1;render(id);}
+    });
+  },{threshold:0.3});
+  ids.forEach(function(id){io.observe(document.getElementById(id));
+    document.getElementById(id).setAttribute('data-id',id);});
+  document.querySelectorAll('[data-replay]').forEach(function(b){
+    b.addEventListener('click',function(){render(b.getAttribute('data-replay'));});
+  });
+  function note(t){
+    document.getElementById('d9-alert').innerHTML='<div class="alert alert-info py-2 mb-2">'+t+'</div>';
+  }
+  document.getElementById('b-a').onclick=function(){InfoRegion.activate('d9-a');note('已呼叫 InfoRegion.activate("d9-a")。');};
+  document.getElementById('b-b').onclick=function(){InfoRegion.activate('d9-b');note('已呼叫 InfoRegion.activate("d9-b")。');};
+  document.getElementById('b-r').onclick=function(){InfoRegion.resetAll('#stage-d9 info-region');note('已呼叫 InfoRegion.resetAll("#stage-d9 info-region")。');};
+})();
+</script>
+</body>
+</html>
