@@ -65,12 +65,208 @@
     'data-position':         { key: 'position',        type: 'string' },
   };
 
-  function readElementAttrs(el, cfg) {
-    for (const [attr, meta] of Object.entries(ATTR_MAP)) {
+  /* 通用屬性讀取：phrase-chip、phrase-upgrade 共用同一套小工具 */
+  function readAttrsWith(el, cfg, map) {
+    for (const [attr, meta] of Object.entries(map)) {
       if (!el.hasAttribute(attr)) continue;
       const raw = el.getAttribute(attr);
-      cfg[meta.key] = meta.type === 'bool' ? (raw !== 'false') : raw;
+      if (meta.type === 'bool') cfg[meta.key] = (raw !== 'false');
+      else if (meta.type === 'int') cfg[meta.key] = parseInt(raw, 10);
+      else cfg[meta.key] = raw;
     }
+  }
+  function readElementAttrs(el, cfg) { readAttrsWith(el, cfg, ATTR_MAP); }
+
+  /* ══════════════════════════════════════════════════════════════
+     phrase-upgrade：漸進升級動畫元件（多階段、單向前進、不附解釋彈窗）
+     ══════════════════════════════════════════════════════════════ */
+  const DEFAULTS_UPGRADE = {
+    anim:            'strike-fade',  // crossfade | slide-up | flip | strike-fade | typewriter
+    animDuration:    '0.9s',         // crossfade / slide-up / flip / strike-fade 都吃這個；可用 data-anim-duration 覆蓋
+    theme:           'ocean',
+    typewriterSpeed: 55,             // 每個字元的間隔（毫秒），僅 typewriter 用；可用 data-typewriter-speed 覆蓋
+    hideHint:        false,
+    hintIcon:        'arrow-repeat',
+  };
+
+  const ATTR_MAP_UPGRADE = {
+    'data-anim':             { key: 'anim',            type: 'string' },
+    'data-anim-duration':    { key: 'animDuration',    type: 'string' },
+    'data-theme':            { key: 'theme',           type: 'string' },
+    'data-typewriter-speed': { key: 'typewriterSpeed', type: 'int'    },
+    'data-hide-hint':        { key: 'hideHint',        type: 'bool'   },
+    'data-hint-icon':        { key: 'hintIcon',        type: 'string' },
+  };
+
+  function parseMs(duration) {
+    const n = parseFloat(duration);
+    if (isNaN(n)) return 450;
+    return String(duration).indexOf('ms') !== -1 ? n : n * 1000;
+  }
+
+  /* 有 text-color 就覆蓋成該顏色（支援 BRAND 色票名稱或任意 CSS 色票字串），
+     沒有就清掉 inline 覆蓋，讓文字色退回 phrase-upgrade 整體的 --pu-accent */
+  function applyStageColor(wordEl, colorKey) {
+    if (colorKey) wordEl.style.color = BRAND[colorKey] || colorKey;
+    else wordEl.style.removeProperty('color');
+  }
+
+  function crossfadeSwap(wordEl, newText, durationMs, cb, newColor) {
+    const half = durationMs / 2;
+    wordEl.style.transition = `opacity ${half}ms ease`;
+    wordEl.style.opacity = '0';
+    setTimeout(() => {
+      wordEl.textContent = newText;
+      applyStageColor(wordEl, newColor);
+      void wordEl.offsetWidth;
+      wordEl.style.opacity = '1';
+      setTimeout(cb, half);
+    }, half);
+  }
+
+  function slideSwap(wordEl, newText, durationMs, cb, newColor) {
+    const half = durationMs / 2;
+    wordEl.style.transition = `transform ${half}ms ease, opacity ${half}ms ease`;
+    wordEl.style.transform = 'translateY(-10px)';
+    wordEl.style.opacity = '0';
+    setTimeout(() => {
+      wordEl.textContent = newText;
+      applyStageColor(wordEl, newColor);
+      wordEl.style.transition = 'none';
+      wordEl.style.transform = 'translateY(10px)';
+      wordEl.style.opacity = '0';
+      void wordEl.offsetWidth;
+      wordEl.style.transition = `transform ${half}ms ease, opacity ${half}ms ease`;
+      wordEl.style.transform = 'translateY(0)';
+      wordEl.style.opacity = '1';
+      setTimeout(cb, half);
+    }, half);
+  }
+
+  function flipSwap(wordEl, newText, durationMs, cb, newColor) {
+    const half = durationMs / 2;
+    wordEl.style.transition = `transform ${half}ms ease`;
+    wordEl.style.transform = 'rotateX(90deg)';
+    setTimeout(() => {
+      wordEl.textContent = newText;
+      applyStageColor(wordEl, newColor);
+      wordEl.style.transition = 'none';
+      wordEl.style.transform = 'rotateX(-90deg)';
+      void wordEl.offsetWidth;
+      wordEl.style.transition = `transform ${half}ms ease`;
+      wordEl.style.transform = 'rotateX(0deg)';
+      setTimeout(cb, half);
+    }, half);
+  }
+
+  function strikeFadeSwap(wordEl, newText, durationMs, cb, newColor) {
+    const strikeDur = Math.round(durationMs * 0.5);
+    const pauseDur  = Math.round(durationMs * 0.25);
+    const fadeDur   = Math.round(durationMs * 0.5);
+
+    wordEl.style.setProperty('--pu-strike', `${strikeDur}ms`);
+    wordEl.classList.add('is-struck');
+
+    setTimeout(() => {
+      wordEl.style.transition = `opacity ${fadeDur}ms ease`;
+      wordEl.style.opacity = '0';
+      setTimeout(() => {
+        wordEl.textContent = newText;
+        applyStageColor(wordEl, newColor);
+        wordEl.classList.remove('is-struck');
+        void wordEl.offsetWidth;
+        wordEl.style.opacity = '1';
+        setTimeout(cb, fadeDur);
+      }, fadeDur);
+    }, strikeDur + pauseDur);
+  }
+
+  function typewriterSwap(wordEl, newText, speedMs, cb, newColor) {
+    const oldText = wordEl.textContent;
+    let i = oldText.length;
+    const deleteTimer = setInterval(() => {
+      i--;
+      wordEl.textContent = oldText.slice(0, Math.max(i, 0));
+      if (i <= 0) {
+        clearInterval(deleteTimer);
+        applyStageColor(wordEl, newColor);
+        let j = 0;
+        const typeTimer = setInterval(() => {
+          j++;
+          wordEl.textContent = newText.slice(0, j);
+          if (j >= newText.length) {
+            clearInterval(typeTimer);
+            cb();
+          }
+        }, speedMs);
+      }
+    }, speedMs);
+  }
+
+  function initUpgrade(el) {
+    if (el.__puInit) return;
+    el.__puInit = true;
+
+    const cfg = Object.assign({}, DEFAULTS_UPGRADE, win.PhraseChipConfig || {});
+    readAttrsWith(el, cfg, ATTR_MAP_UPGRADE);
+
+    /* 取出所有 <phrase-stage>，至少要兩階段才有「升級」的意義。
+       每個 stage 可以用 text-color 覆蓋自己的文字顏色（接受 BRAND 色票名稱，
+       例如 shell、salmon，或任意 CSS 色票字串），不覆蓋就沿用 data-theme */
+    const stages = Array.from(el.querySelectorAll('phrase-stage'))
+      .map(s => ({
+        text:  s.textContent.trim(),
+        color: s.getAttribute('text-color') || '',
+      }))
+      .filter(s => s.text);
+    if (stages.length < 2) return;
+
+    el.innerHTML = '';
+    el.classList.add('pu-ready');
+
+    const accentHex = BRAND[cfg.theme] || BRAND.ocean;
+    el.style.setProperty('--pu-accent', accentHex);
+
+    const textWrap = doc.createElement('pu-text');
+    const wordEl   = doc.createElement('pu-word');
+    wordEl.textContent = stages[0].text;
+    applyStageColor(wordEl, stages[0].color);
+    textWrap.appendChild(wordEl);
+    el.appendChild(textWrap);
+
+    const hint = doc.createElement('pu-hint');
+    hint.innerHTML = `<i class="bi bi-${cfg.hintIcon}"></i>`;
+    if (cfg.hideHint) hint.style.display = 'none';
+    el.appendChild(hint);
+
+    let index = 0;
+    const durationMs = parseMs(cfg.animDuration);
+
+    function advance() {
+      if (index >= stages.length - 1) return;
+      el.classList.add('is-animating');
+      const next = stages[index + 1];
+
+      const done = () => {
+        index++;
+        el.classList.remove('is-animating');
+        if (index >= stages.length - 1) el.classList.add('is-final');
+      };
+
+      switch (cfg.anim) {
+        case 'crossfade':  crossfadeSwap(wordEl, next.text, durationMs, done, next.color); break;
+        case 'slide-up':   slideSwap(wordEl, next.text, durationMs, done, next.color); break;
+        case 'flip':        flipSwap(wordEl, next.text, durationMs, done, next.color); break;
+        case 'typewriter':  typewriterSwap(wordEl, next.text, cfg.typewriterSpeed, done, next.color); break;
+        case 'strike-fade':
+        default:             strikeFadeSwap(wordEl, next.text, durationMs, done, next.color); break;
+      }
+    }
+
+    el.addEventListener('click', () => {
+      if (el.classList.contains('is-animating') || el.classList.contains('is-final')) return;
+      advance();
+    });
   }
 
   /* ── 樣式注入（全元件共用一份，顏色走 CSS variable 個別覆寫）──────── */
@@ -201,6 +397,56 @@ pc-collected-badge {
   font-weight: 700;
   color: #27AE60;
   padding: 7px 0;
+}
+
+/* ── phrase-upgrade：漸進升級動畫 ───────────────────────────────── */
+phrase-upgrade {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  perspective: 500px;
+}
+phrase-upgrade.is-final { cursor: default; }
+pu-text { display: inline-block; }
+pu-word {
+  display: inline-block;
+  position: relative;
+  font-weight: 600;
+  color: var(--pu-accent, #1CCAE8);
+  border-bottom: 2px dashed var(--pu-accent, #1CCAE8);
+}
+phrase-upgrade.is-final pu-word { border-bottom-style: solid; }
+pu-word::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 2px;
+  background: var(--pu-accent, #1CCAE8);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--pu-strike, 300ms) ease;
+}
+pu-word.is-struck::after { transform: scaleX(1); }
+pu-hint {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  font-size: 0.8em;
+  color: var(--pu-accent, #1CCAE8);
+  opacity: 0.6;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+  animation: pu-hint-pulse 1.6s ease-in-out infinite;
+}
+/* hover 時放大圖示：脈動動畫只動 opacity，transform 留給 hover 專用，
+   避免兩者互搶同一個屬性而互相蓋掉 */
+pu-hint:hover {
+  transform: scale(1.5);
+}
+phrase-upgrade.is-final pu-hint { display: none; }
+@keyframes pu-hint-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
 }
     `;
     doc.head.appendChild(s);
@@ -444,6 +690,7 @@ pc-collected-badge {
 
   function init() {
     doc.querySelectorAll('phrase-chip[data-phrase]').forEach(initChip);
+    doc.querySelectorAll('phrase-upgrade').forEach(initUpgrade);
   }
 
   /* 對外 API：供其他元件（例如 practice-tracker）查詢，非必要、純輔助 */

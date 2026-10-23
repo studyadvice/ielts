@@ -117,6 +117,68 @@
   <button type="button" class="btn btn-sm btn-info btn-done" onclick="handleDone('demo-vocab-3', this)">標記完成</button>
 </section>
 
+<section id="demo-upgrade">
+  <h2>第四段：phrase-upgrade 漸進升級動畫</h2>
+  <div class="passage">
+    Every day, rain or shine, I hit the gym
+    <phrase-upgrade data-anim="strike-fade" data-theme="yellow" data-anim-duration="1.2s">
+      <phrase-stage text-color="shell">near my office</phrase-stage>
+      <phrase-stage text-color="salmon">a few blocks away from my office</phrase-stage>
+      <phrase-stage text-color="special">just a five-minute walk from my office</phrase-stage>
+    </phrase-upgrade>
+    to keep my waistline in check.
+  </div>
+  <div class="attr-note">點擊上面那個詞兩次，會依序升級：near my office → a few blocks away from my office → just a five-minute walk from my office，到最後一階段就不能再點了（單向前進，不能點回去）。三個階段各自用 <code>text-color</code> 覆蓋了不同文字顏色（shell、salmon、special），但底線顏色固定是 <code>data-theme="yellow"</code>，不隨階段改變。這裡額外用 <code>data-anim-duration="1.2s"</code> 放慢速度；滑鼠移到右側那個旋轉圖示上也會放大。</div>
+
+  <h3 style="font-size:1.05rem; color:#C3A5E5; margin-top:28px;">五種內建動畫比較（各自獨立，點了只會動自己）</h3>
+  <div class="demo-row">
+    <div>strike-fade（預設）：I do
+      <phrase-upgrade data-anim="strike-fade" data-theme="ocean">
+        <phrase-stage>exercise</phrase-stage>
+        <phrase-stage>weight training</phrase-stage>
+      </phrase-upgrade>
+      every day.
+    </div>
+  </div>
+  <div class="demo-row">
+    <div>crossfade：It's
+      <phrase-upgrade data-anim="crossfade" data-theme="sky">
+        <phrase-stage>near my office</phrase-stage>
+        <phrase-stage>just two blocks from my office</phrase-stage>
+      </phrase-upgrade>
+      .
+    </div>
+  </div>
+  <div class="demo-row">
+    <div>slide-up：I usually go there
+      <phrase-upgrade data-anim="slide-up" data-theme="special">
+        <phrase-stage>a lot</phrase-stage>
+        <phrase-stage>two or three times a week</phrase-stage>
+      </phrase-upgrade>
+      .
+    </div>
+  </div>
+  <div class="demo-row">
+    <div>flip：The market was
+      <phrase-upgrade data-anim="flip" data-theme="indigo">
+        <phrase-stage>crowded</phrase-stage>
+        <phrase-stage>packed with vendors and tourists</phrase-stage>
+      </phrase-upgrade>
+      .
+    </div>
+  </div>
+  <div class="demo-row">
+    <div>typewriter：I need some time to
+      <phrase-upgrade data-anim="typewriter" data-theme="teal" data-typewriter-speed="60">
+        <phrase-stage>relax</phrase-stage>
+        <phrase-stage>recharge my batteries</phrase-stage>
+      </phrase-upgrade>
+      .
+    </div>
+  </div>
+  <button type="button" class="btn btn-sm btn-info btn-done" onclick="handleDone('demo-upgrade', this)">標記完成</button>
+</section>
+
 <practice-tracker
   data-prefix="demo-"
   data-title="章節進度 Demo"
@@ -133,7 +195,7 @@
   data-phrase-list-btn-label="查看收藏清單"
   data-phrase-list-placement="end"
   data-phrase-list-theme="pink"
-  data-phrase-list-width="560px"
+  data-phrase-list-width="360px"
 ></practice-tracker>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
