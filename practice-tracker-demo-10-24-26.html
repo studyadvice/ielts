@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>practice-tracker 定時 Modal 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+:root { font-size: 16px; }
+html { scroll-behavior: smooth; }
+body {
+  background: #0C0D0C;
+  color: #C6C7BD;
+  font-family: 'Noto Sans TC', 'PingFang TC', system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  min-width: 1200px;
+  padding: 24px 32px 120px;
+}
+h1 { color: #1CCAE8; font-size: 2rem; line-height: 1.4; margin-bottom: 8px; }
+h2 { color: #82C8E5; font-size: 1.5rem; line-height: 1.4; margin-bottom: 16px; }
+p, li { font-size: 1.125rem; line-height: 1.5; }
+code { color: #E3D322; font-size: 1.125rem; }
+
+.demo-wrap { max-width: 1400px; margin: 0 auto; }
+
+.demo-status {
+  position: sticky;
+  top: 16px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 16px 0 24px;
+  padding: 14px 24px;
+  background: #1a1b1a;
+  border: 1px solid #C6C7BD;
+  border-radius: 10px;
+}
+.demo-status b { color: #D4FFFC; }
+.demo-status .demo-gold { color: #D4AF37; font-weight: 700; }
+
+.demo-alerts { min-height: 8px; margin-bottom: 16px; }
+.demo-alerts .alert { font-size: 1.125rem; line-height: 1.5; margin-bottom: 8px; }
+
+.demo-section {
+  min-height: 85vh;
+  margin: 0 0 24px;
+  padding: 24px 32px;
+  background: #141514;
+  border-left: 4px solid #0DA591;
+  border-radius: 6px;
+}
+.demo-btn {
+  padding: 8px 20px;
+  border: 1px solid #1CCAE8;
+  border-radius: 6px;
+  background: transparent;
+  color: #1CCAE8;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.demo-btn:hover { background: #1CCAE8; color: #0C0D0C; }
+.demo-btn:disabled { border-color: #27AE60; color: #27AE60; background: transparent; cursor: default; }
+.demo-btn-gold { border-color: #D4AF37; color: #D4AF37; }
+.demo-btn-gold:hover { background: #D4AF37; color: #0C0D0C; }
+</style>
+</head>
+<body>
+<div class="demo-wrap">
+
+  <h1>practice-tracker 定時 Modal 示範</h1>
+  <p>本頁設定：載入後滿 0.5 分鐘（30 秒），且至少有效瀏覽 4 個 section，才會彈出一次 Modal。每個 section 底部示範一種內建的標記完成按鈕樣式。</p>
+
+  <div class="demo-status">
+    <span>已瀏覽：<b id="st-sec">0</b> / <b id="st-need-sec">0</b> 個 section</span>
+    <span>已過時間：<b id="st-time">0</b> / <b id="st-need-time">0</b> 秒</span>
+    <span>狀態：<span id="st-state" class="demo-gold">等待中</span></span>
+    <button type="button" class="demo-btn demo-btn-gold ms-auto" id="btn-show">立即顯示 Modal</button>
+  </div>
+
+  <div class="demo-alerts" id="demo-alerts"></div>
+
+  <section id="demo-s1" class="demo-section" data-btn-style="solid" data-btn-text="標記完成">
+    <h2>第一段：有效瀏覽的判定</h2>
+    <p>section 的可見面積達到門檻（預設 40%），或可見高度佔視窗高度的 40% 以上，且連續停留 2 秒，才算一次有效瀏覽。快速捲過不會被計入。</p>
+  </section>
+
+  <section id="demo-s2" class="demo-section" data-btn-style="outline" data-btn-text="標記完成" data-btn-color="teal">
+    <h2>第二段：牆鐘時間</h2>
+    <p>時間從頁面載入那一刻起算，切換分頁也照常累積。分頁切回來時會立刻重新檢查條件。</p>
+  </section>
+
+  <section id="demo-s3" class="demo-section" data-btn-style="pill" data-btn-text="我讀完了" data-btn-color="special" data-btn-size="lg">
+    <h2>第三段：不打斷閱讀</h2>
+    <p>條件達成後，會等到捲動停止約 1.5 秒才彈出。若有其他 Modal 或 offcanvas 正開著，則延後到關閉之後。</p>
+  </section>
+
+  <section id="demo-s4" class="demo-section" data-btn-style="ghost" data-btn-text="標記完成" data-btn-color="sky" data-btn-align="end">
+    <h2>第四段：只顯示一次</h2>
+    <p>不使用 sessionStorage 或 localStorage。同一次載入只會自動彈出一次，重新整理頁面後會重新計算。</p>
+  </section>
+
+  <section id="demo-s5" class="demo-section" data-btn-style="block" data-btn-text="完成這一段" data-btn-color="lavender">
+    <h2>第五段：只看累計時間</h2>
+    <p>把 <code>data-promo-min-sections</code> 設為 0，就不再要求瀏覽 section 數量，只看累計時間，適合 section 很少的頁面。</p>
+  </section>
+
+  <section id="demo-s6" class="demo-section" data-btn-style="split" data-btn-text="標記完成" data-btn-color="yellow" data-btn-size="sm">
+    <h2>第六段：事件</h2>
+    <p>顯示與關閉時會各發出一次事件：<code>pt:promo-shown</code> 與 <code>pt:promo-closed</code>，可以串接自己的統計。</p>
+  </section>
+
+  <section id="demo-s7" class="demo-section" data-btn-done-text="✓ 完成">
+    <h2>第七段：自己決定位置</h2>
+    <p>在 section 內放一個 <code>&lt;pt-done-btn&gt;</code>，按鈕就出現在那個位置，不會再插入到結尾。這裡示範 check 樣式與自訂寬度。</p>
+    <pt-done-btn data-btn-style="check" data-btn-text="標記完成" data-btn-color="pink" data-btn-width="48px"></pt-done-btn>
+  </section>
+
+</div>
+
+<!-- 定時 Modal 的內容：原 div 保持隱藏，Modal 開啟時複製其內容 -->
+<div id="promo-1" style="display: none;">
+  <h4>限時公告</h4>
+  <p>你已經讀了一段時間，辛苦了。這個區塊的內容完全由頁面上的 <code>#promo-1</code> 決定，可以放廣告、公告或任何重要訊息。</p>
+  <ul>
+    <li>支援標題、段落、清單與圖片</li>
+    <li>連結會以金色呈現，例如 <a href="#">了解更多</a></li>
+  </ul>
+  <hr>
+  <p>按下方按鈕或右上角的叉叉即可關閉。</p>
+</div>
+
+<practice-tracker
+  data-prefix="demo-"
+  data-collapsed
+  data-click-go="true"
+  data-title="學習進度"
+  data-panel-width="360px"
+  data-cells-per-row="7"
+  data-cell-size="32px"
+  data-font-size-panel="1.125rem"
+  data-font-size-title="1.125rem"
+  data-font-size-count="1.125rem"
+  data-font-size-complete="1.125rem"
+  data-font-size-complete-sub="1.125rem"
+  data-promo-target="promo-1"
+  data-promo-minutes="0.5"
+  data-promo-min-sections="4"
+  data-promo-title="特別公告"
+  data-promo-button-label="我知道了"
+></practice-tracker>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="practice-tracker.js"></script>
+<script>
+  function showAlert(type, text) {
+    const box = document.getElementById('demo-alerts');
+    const el = document.createElement('div');
+    el.className = 'alert alert-' + type + ' alert-dismissible fade show';
+    el.innerHTML = '<span></span><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    el.firstChild.textContent = text;
+    box.appendChild(el);
+  }
+
+  function refreshStatus() {
+    const pt = window.PracticeTracker;
+    if (!pt) return;
+    const st = pt.promoState;
+    document.getElementById('st-sec').textContent = st.viewedSections;
+    document.getElementById('st-need-sec').textContent = st.needSections;
+    document.getElementById('st-time').textContent = st.elapsedSeconds;
+    document.getElementById('st-need-time').textContent = st.needSeconds;
+    document.getElementById('st-state').textContent = st.shown ? '已顯示' : '等待中';
+  }
+
+  setInterval(refreshStatus, 500);
+
+  document.getElementById('btn-show').addEventListener('click', () => {
+    if (window.PracticeTracker) window.PracticeTracker.showPromo();
+  });
+
+  document.addEventListener('pt:promo-shown', e => {
+    showAlert('success', 'Modal 已顯示，當時已瀏覽 ' + e.detail.viewedSections.length + ' 個 section，經過 ' + e.detail.elapsedSeconds + ' 秒。');
+    refreshStatus();
+  });
+  document.addEventListener('pt:section-done', e => {
+    showAlert('success', '已標記完成：' + e.detail.sectionId);
+  });
+  document.addEventListener('pt:promo-closed', () => {
+    showAlert('info', 'Modal 已關閉。');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>practice-tracker 使用手冊</title>
+<style>
+:root { font-size: 16px; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #0C0D0C;
+  color: #C6C7BD;
+  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  min-width: 1280px;
+}
+.layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 0; max-width: 1800px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; align-self: start;
+  height: 100vh; overflow-y: auto;
+  padding: 32px 24px;
+  background: #121312;
+  border-right: 1px solid #2a2b2a;
+}
+nav.toc .brand { color: #D4AF37; font-size: 1.25rem; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
+nav.toc .sub { color: #C6C7BD; font-size: 1.125rem; margin-bottom: 20px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 0; }
+nav.toc a { display: block; padding: 6px 12px; border-radius: 6px; color: #C6C7BD; text-decoration: none; font-size: 1.125rem; line-height: 1.5; }
+nav.toc a:hover { background: #1f201f; color: #D4FFFC; }
+main { padding: 40px 64px 120px; max-width: 1300px; }
+h1 { margin: 0 0 8px; color: #1CCAE8; font-size: 2.25rem; line-height: 1.4; }
+.lead { color: #DBEDD8; margin: 0 0 32px; }
+section.doc { margin: 0 0 56px; padding-bottom: 16px; }
+h2 { margin: 0 0 20px; padding-bottom: 8px; color: #82C8E5; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #0DA591; }
+h3 { margin: 32px 0 12px; color: #E5C3B3; font-size: 1.375rem; line-height: 1.4; }
+p, li { font-size: 1.125rem; line-height: 1.5; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 16px; padding-left: 28px; }
+li { margin: 6px 0; }
+code { color: #E3D322; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size: 1.125rem; }
+pre {
+  margin: 0 0 20px; padding: 16px 20px;
+  background: #141514; border-left: 4px solid #0DA591; border-radius: 6px;
+  overflow-x: auto;
+}
+pre code { color: #D4FFFC; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
+.code-title { margin: 16px 0 6px; color: #B3DE73; font-weight: 700; }
+.tbl { overflow-x: auto; margin: 0 0 24px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 14px; text-align: left; vertical-align: top; border: 1px solid #2f302f; font-size: 1.125rem; line-height: 1.5; }
+th { background: #1a1b1a; color: #DBEDD8; white-space: nowrap; }
+td:first-child { white-space: nowrap; }
+tbody tr:nth-child(even) td { background: #111211; }
+.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #4171BF; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
+.note b { color: #D4FFFC; }
+.note-tip  { border-left-color: #27AE60; }
+.note-warn { border-left-color: #EDA109; }
+.note-bug  { border-left-color: #E6374B; }
+.note-bug b { color: #E6374B; }
+.note-info { border-left-color: #4171BF; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+<div class="brand">practice-tracker</div>
+<div class="sub">使用手冊 2026-10-24</div>
+<ol>
+<li><a href="#overview">0. 這份手冊在講什麼</a></li>
+<li><a href="#quickstart">1. 快速開始</a></li>
+<li><a href="#config">2. 設定的三個來源與優先順序</a></li>
+<li><a href="#panel-attrs">3. 面板屬性總表</a></li>
+<li><a href="#mark-done">4. 標記 section 完成的四種方式</a></li>
+<li><a href="#buttons">5. 內建「標記完成」按鈕</a></li>
+<li><a href="#phrase-block">6. 片語收藏區塊（tracker 這一側）</a></li>
+<li><a href="#phrase-chip">7. phrase-chip.js：`&lt;phrase-chip&gt;` 片語標籤</a></li>
+<li><a href="#phrase-upgrade">8. phrase-chip.js：`&lt;phrase-upgrade&gt;` 漸進升級文字</a></li>
+<li><a href="#promo">9. 定時 Modal（廣告或重要訊息）</a></li>
+<li><a href="#events-api">10. 事件與 JS API 總表</a></li>
+<li><a href="#styling">11. 色票與樣式掛鉤</a></li>
+<li><a href="#full-example">12. 完整範例頁（可整份複製）</a></li>
+<li><a href="#troubleshoot">13. 疑難排解</a></li>
+<li><a href="#limits">14. 已知問題與限制</a></li>
+</ol>
+</nav>
+<main>
+<h1>practice-tracker 使用手冊</h1>
+<p class="lead">涵蓋 practice-tracker.js 的全部屬性與功能，並搭配 phrase-chip.js。忘記怎麼用的時候，從目錄找到對應章節即可。</p>
+<section class="doc" id="overview">
+<h2>0. 這份手冊在講什麼</h2>
+<p>practice-tracker.js 是一個「學習進度面板」元件：自動把頁面上 id 帶有指定前綴的 section 變成一個個進度格子，使用者完成一段就點亮一格。它還附帶三個可選功能：內建的「標記完成」按鈕、片語收藏區塊（搭配 phrase-chip.js）、以及定時彈出的金色 Modal。</p>
+<p>phrase-chip.js 是另一支獨立的檔案，提供兩個元件：<code>&lt;phrase-chip&gt;</code>（可點擊的片語標籤，彈出解釋卡並可收藏）與 <code>&lt;phrase-upgrade&gt;</code>（點擊後逐階段升級的動畫文字）。兩支檔案透過 <code>pt:phrase-collected</code> 事件溝通，彼此不直接相依。</p>
+<div class="tbl"><table>
+<thead><tr><th>項目</th><th>內容</th></tr></thead>
+<tbody>
+<tr><td>檔案</td><td><code>practice-tracker.js</code>、<code>phrase-chip.js</code>，兩者都是獨立 .js，不使用 shadow DOM，樣式由 js 自行注入。</td></tr>
+<tr><td>必要相依</td><td>無。只有進度格子與完成按鈕時，不需要任何其他函式庫。</td></tr>
+<tr><td>選用相依</td><td><b>Bootstrap 5 的 JS bundle</b>：片語收藏清單（offcanvas）與定時 Modal 需要。<b>Bootstrap Icons 的 CSS</b>：phrase-chip 的圖示需要。</td></tr>
+<tr><td>載入順序</td><td>兩支檔案誰先載入都可以，也不必等 Bootstrap 先載入。Bootstrap 只在使用者點擊或 Modal 彈出的當下才會被呼叫。</td></tr>
+<tr><td>本手冊對應版本</td><td>2026-10-24 版，已包含定時 Modal 與內建標記完成按鈕。</td></tr>
+</tbody></table></div>
+<div class="note note-tip"><b>提示</b>：這份手冊的「設定鍵」欄，是給 <code>window.PracticeTrackerConfig</code> 用的駝峰命名；「HTML 屬性」欄是寫在標籤上的版本。兩者設定的是同一件事。</div>
+</section>
+<section class="doc" id="quickstart">
+<h2>1. 快速開始</h2>
+<p>最小可用版本只需要三件事：幾個 id 帶前綴的 section、一個 <code>&lt;practice-tracker&gt;</code> 標籤、載入 js。</p>
+<div class="code-title">最小範例</div>
+<pre><code>&lt;section id="ex-intro"&gt;...&lt;/section&gt;
+&lt;section id="ex-part1"&gt;...&lt;/section&gt;
+&lt;section id="ex-part2"&gt;...&lt;/section&gt;
+
+&lt;practice-tracker data-prefix="ex-" data-click-go="true"&gt;&lt;/practice-tracker&gt;
+
+&lt;script src="practice-tracker.js"&gt;&lt;/script&gt;</code></pre>
+<p>載入後，畫面右下角會出現面板，裡面有 3 個格子。要點亮格子，必須有人呼叫「標記完成」，方式有四種，見第 4 節。最省事的是第 5 節的內建按鈕：</p>
+<div class="code-title">在 section 加一個屬性，就自動長出按鈕</div>
+<pre><code>&lt;section id="ex-intro" data-btn-text="標記完成"&gt;...&lt;/section&gt;</code></pre>
+<h3>元件做了什麼（執行順序）</h3>
+<ol>
+<li>等到 DOMContentLoaded（若頁面已載入完成則立刻執行）。</li>
+<li>讀取設定：預設值，被 <code>window.PracticeTrackerConfig</code> 覆蓋，再被 <code>&lt;practice-tracker&gt;</code> 上的屬性覆蓋。</li>
+<li>用 <code>section[id^="前綴"]</code> 找出所有要追蹤的 section，依文件順序各建立一個格子。找不到任何一個時直接結束，什麼都不建立。</li>
+<li>掃描頁面上的 <code>phrase-chip[data-phrase]</code>，若有可收藏的片語，建立片語收藏區塊與收藏清單。</li>
+<li>清空 <code>&lt;practice-tracker&gt;</code> 原本的內容，重建標題列、格子、計數。</li>
+<li>為帶有 <code>data-btn*</code> 屬性的 section（或內含 <code>&lt;pt-done-btn&gt;</code> 的 section）建立標記完成按鈕。</li>
+<li>若設定了 <code>data-promo-target</code>，開始計時並監看 section 瀏覽。</li>
+<li>建立 <code>window.PracticeTracker</code>，並開始監聽三種外部事件。</li>
+</ol>
+<div class="note note-warn"><b>注意</b>：頁面上有多個 <code>&lt;practice-tracker&gt;</code> 時，只有第一個會被使用。若頁面上完全沒有這個標籤，元件會自己建一個附到 body 底部，此時設定只能靠 <code>window.PracticeTrackerConfig</code>。</div>
+</section>
+<section class="doc" id="config">
+<h2>2. 設定的三個來源與優先順序</h2>
+<p>由低到高：<b>內建預設值</b> 小於 <b><code>window.PracticeTrackerConfig</code></b> 小於 <b>標籤上的 data 屬性</b>。同一個設定出現在多處時，優先順序高的贏。</p>
+<div class="code-title">全站預設 + 單頁覆蓋</div>
+<pre><code>&lt;script&gt;
+  /* 必須在 practice-tracker.js 之前定義 */
+  window.PracticeTrackerConfig = {
+    prefix: 'ex-',
+    cellShape: 'circle',
+    btnStyle: 'pill'
+  };
+&lt;/script&gt;
+&lt;script src="practice-tracker.js"&gt;&lt;/script&gt;
+
+&lt;!-- 標籤上的屬性優先：這個頁面的格子會是 star，不是 circle --&gt;
+&lt;practice-tracker data-cell-shape="star"&gt;&lt;/practice-tracker&gt;</code></pre>
+<h3>屬性值的解讀規則</h3>
+<div class="tbl"><table>
+<thead><tr><th>型別</th><th>規則</th><th>範例</th></tr></thead>
+<tbody>
+<tr><td>string</td><td>原樣使用。</td><td><code>data-title="第一課進度"</code></td></tr>
+<tr><td>bool</td><td>只有值恰好等於字串 <code>false</code> 才算 false，其餘一律算 true，包含沒有值的寫法。</td><td><code>data-collapsed</code> 為 true；<code>data-collapsed="false"</code> 為 false；<code>data-collapsed="0"</code> 仍為 true。</td></tr>
+<tr><td>int</td><td>用 parseInt 轉整數。</td><td><code>data-cells-per-row="10"</code></td></tr>
+<tr><td>float</td><td>用 parseFloat 轉小數，用於定時 Modal 的時間與比例。</td><td><code>data-promo-minutes="0.5"</code></td></tr>
+</tbody></table></div>
+<div class="note note-info"><b>說明</b>：<code>data-inline</code> 是唯一不在設定表內的屬性，元件用 <code>hasAttribute</code> 直接判斷，不看值，所以也沒有對應的設定鍵。</div>
+</section>
+<section class="doc" id="panel-attrs">
+<h2>3. 面板屬性總表</h2>
+<p>以下全部寫在 <code>&lt;practice-tracker&gt;</code> 標籤上。顏色類屬性只接受 CSS 色碼（例如 <code>#27AE60</code>），<b>不接受</b>色票名稱；這與第 5 節按鈕的顏色屬性不同，請留意。</p>
+<h3>3.1 基本與位置</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-prefix</code></td><td><code>prefix</code></td><td><code>ex-</code></td><td>要追蹤的 section 的 id 前綴。只有 id 以此開頭的 section 會成為格子。</td></tr>
+<tr><td><code>data-position</code></td><td><code>position</code></td><td><code>bottom-right</code></td><td>字串中含 top、bottom、left、right 即可，例如 <code>top-left</code>、<code>bottom-left</code>。</td></tr>
+<tr><td><code>data-offset-x</code></td><td><code>offsetX</code></td><td><code>24px</code></td><td>離左側或右側的距離。</td></tr>
+<tr><td><code>data-offset-y</code></td><td><code>offsetY</code></td><td><code>24px</code></td><td>離上方或下方的距離。</td></tr>
+<tr><td><code>data-inline</code></td><td>無</td><td>無</td><td>有這個屬性（不論值）時，面板改成 relative，嵌在文件流中，忽略 position 與 offset。</td></tr>
+<tr><td><code>data-z-index</code></td><td><code>zIndex</code></td><td><code>999</code></td><td>面板層級。低於 Bootstrap 的 offcanvas（1045）與 modal（1055），所以彈窗一定蓋過面板。</td></tr>
+<tr><td><code>data-panel-width</code></td><td><code>panelWidth</code></td><td><code>220px</code></td><td>面板寬度。格子較多時請加寬，例如每列 10 格、格子 28px 時用 360px。</td></tr>
+<tr><td><code>data-collapsed</code></td><td><code>collapsed</code></td><td>false</td><td>一開始就收合。收合時標題列右側會顯示「已完成數 / 總數」。</td></tr>
+<tr><td><code>data-click-go</code></td><td><code>clickGo</code></td><td>false</td><td>設為 true 時，格子可點擊，平滑捲動到對應的 section。</td></tr>
+</tbody></table></div>
+<h3>3.2 格子外觀</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-cell-size</code></td><td><code>cellSize</code></td><td><code>16px</code></td><td>每個格子的邊長。片語收藏區塊的格子沿用此值。</td></tr>
+<tr><td><code>data-cell-gap</code></td><td><code>cellGap</code></td><td><code>6px</code></td><td>格子間距，也沿用於片語區塊。</td></tr>
+<tr><td><code>data-cell-radius</code></td><td><code>cellRadius</code></td><td><code>4px</code></td><td>圓角，只對 square 形狀有效。其他形狀由形狀本身決定。</td></tr>
+<tr><td><code>data-cells-per-row</code></td><td><code>cellsPerRow</code></td><td><code>5</code></td><td>每列幾格（整數），也決定片語區塊每列幾格。</td></tr>
+<tr><td><code>data-cell-shape</code></td><td><code>cellShape</code></td><td><code>square</code></td><td>可用值：square、circle、star、diamond、hexagon、heart。不合法的值退回 square。</td></tr>
+</tbody></table></div>
+<h3>3.3 顏色（CSS 色碼）</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-color-done</code></td><td><code>colorDone</code></td><td><code>#27AE60</code></td><td>已完成格子的顏色，也是收合時標題列計數的顏色。</td></tr>
+<tr><td><code>data-color-pending</code></td><td><code>colorPending</code></td><td><code>#2a2b2a</code></td><td>未完成格子的顏色。</td></tr>
+<tr><td><code>data-color-panel</code></td><td><code>colorPanel</code></td><td><code>#1a1b1a</code></td><td>面板背景。</td></tr>
+<tr><td><code>data-color-text</code></td><td><code>colorText</code></td><td><code>#C6C7BD</code></td><td>面板文字顏色。</td></tr>
+<tr><td><code>data-color-complete</code></td><td><code>colorComplete</code></td><td><code>#B3DE73</code></td><td>全部完成時，「完成提示」的文字顏色。</td></tr>
+</tbody></table></div>
+<h3>3.4 字體大小</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-font-size-panel</code></td><td><code>fontSizePanel</code></td><td><code>0.85rem</code></td><td>面板基準字體。</td></tr>
+<tr><td><code>data-font-size-title</code></td><td><code>fontSizeTitle</code></td><td><code>0.78rem</code></td><td>面板標題。</td></tr>
+<tr><td><code>data-font-size-count</code></td><td><code>fontSizeCount</code></td><td><code>0.76rem</code></td><td>計數文字，也用於收合時標題列的計數與「查看收藏清單」按鈕。</td></tr>
+<tr><td><code>data-font-size-complete</code></td><td><code>fontSizeComplete</code></td><td><code>0.80rem</code></td><td>完成提示主文字。</td></tr>
+<tr><td><code>data-font-size-complete-sub</code></td><td><code>fontSizeCompleteSub</code></td><td><code>0.73rem</code></td><td>完成提示副文字。</td></tr>
+</tbody></table></div>
+<div class="note note-tip"><b>提示</b>：預設字體都小於 1rem。如果你的頁面規範最小 18px，要在每個頁面把這五個屬性全部設成 <code>1.125rem</code>，demo 頁就是這樣做的。</div>
+<h3>3.5 文字</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-title</code></td><td><code>title</code></td><td><code>進度</code></td><td>面板標題。</td></tr>
+<tr><td><code>data-label-done</code></td><td><code>labelDone</code></td><td><code>完成</code></td><td>計數的後綴，顯示成「3 / 8 完成」。</td></tr>
+<tr><td><code>data-complete-text</code></td><td><code>completeText</code></td><td><code>全部完成</code></td><td>所有 section 完成後顯示的文字。</td></tr>
+<tr><td><code>data-complete-sub</code></td><td><code>completeSubText</code></td><td>空</td><td>完成提示下方的副文字，留空則不顯示。</td></tr>
+</tbody></table></div>
+<h3>3.6 動畫與事件</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-animate-cell</code></td><td><code>animateCell</code></td><td>true</td><td>格子點亮時是否有放大再縮回的動畫。</td></tr>
+<tr><td><code>data-animate-duration</code></td><td><code>animateDuration</code></td><td><code>0.3s</code></td><td>動畫時間，也是格子顏色轉換的時間。</td></tr>
+<tr><td><code>data-event-name</code></td><td><code>eventName</code></td><td><code>pt:stage-complete</code></td><td>「從外部通知某 section 已完成」所監聽的事件名稱，見第 4 節。注意：phrase-chip 上也有同名屬性，意義不同，見第 7 節。</td></tr>
+<tr><td><code>data-watch-stepper</code></td><td><code>watchStepper</code></td><td>true</td><td>是否監聽 bp-stepper 的 <code>bps:complete</code> 事件，自動標記該元件所在的 section 完成。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="mark-done">
+<h2>4. 標記 section 完成的四種方式</h2>
+<p>格子只有一種點亮方式：呼叫內部的 <code>markDone(sectionId)</code>。它是冪等的，同一個 section 重複標記不會有任何作用，也不會重複發出事件。以下四種入口最終都會走到它。</p>
+<div class="tbl"><table>
+<thead><tr><th>方式</th><th>寫法</th><th>適合情境</th></tr></thead>
+<tbody>
+<tr><td>內建按鈕</td><td>section 加 <code>data-btn-text</code> 等屬性</td><td>最省事，不必自己寫按鈕與函式。第 5 節詳述。</td></tr>
+<tr><td>呼叫 API</td><td><code>PracticeTracker.markDone("ex-intro")</code></td><td>自己的按鈕、測驗答對、影片播完等任何自訂時機。</td></tr>
+<tr><td>自訂事件</td><td><code>document.dispatchEvent(new CustomEvent("pt:stage-complete", {detail:{sectionId:"ex-intro"}}))</code></td><td>元件之間鬆耦合，不想直接依賴 <code>window.PracticeTracker</code> 時。事件名稱可用 <code>data-event-name</code> 改。</td></tr>
+<tr><td>bp-stepper</td><td>自動，不需寫任何東西</td><td>bp-stepper 完成時發出 <code>bps:complete</code>，tracker 找到該元件最近的、id 帶前綴的 section，標記它完成。可用 <code>data-watch-stepper="false"</code> 關閉。</td></tr>
+</tbody></table></div>
+<div class="code-title">舊式手寫按鈕的寫法（仍然可用）</div>
+<pre><code>function handleDone(sectionId, btn) {
+  if (window.PracticeTracker) window.PracticeTracker.markDone(sectionId);
+  btn.disabled = true;
+}</code></pre>
+<div class="note note-warn"><b>注意</b>：沒有任何符合前綴的 section 時，<code>window.PracticeTracker</code> 根本不會存在。呼叫前一定要先檢查，例如 <code>if (window.PracticeTracker)</code>，否則會丟出例外。</div>
+<div class="note note-info"><b>說明</b>：只有透過內建按鈕完成時，section 才會被加上 <code>is-done</code> class。用 API、事件或 bp-stepper 完成時不會加。若你的樣式依賴這個 class，請注意這個差異。</div>
+</section>
+<section class="doc" id="buttons">
+<h2>5. 內建「標記完成」按鈕</h2>
+<p>讓元件替你長出按鈕，不必再手寫 <code>&lt;button&gt;</code> 與 <code>handleDone</code>。按下後行為與舊寫法一致：點亮格子、按鈕變成已完成並停用、section 加上 <code>is-done</code>。</p>
+<h3>5.1 按鈕什麼時候會出現</h3>
+<div class="tbl"><table>
+<thead><tr><th>情況</th><th>結果</th></tr></thead>
+<tbody>
+<tr><td>section 上有任何以 <code>data-btn</code> 開頭的屬性（如 <code>data-btn-text</code>、<code>data-btn-style</code>、<code>data-btn="true"</code>）</td><td>在 section 結尾自動插入一個按鈕。</td></tr>
+<tr><td>section 內有手寫的 <code>&lt;pt-done-btn&gt;&lt;/pt-done-btn&gt;</code></td><td>按鈕出現在那個位置，不再另外插入。即使 section 沒有任何 <code>data-btn*</code> 屬性也會生效。</td></tr>
+<tr><td>section 沒有任何標記，也沒有 <code>&lt;pt-done-btn&gt;</code></td><td>不插入按鈕。</td></tr>
+<tr><td>section 上寫 <code>data-btn="false"</code></td><td>這個 section 完全不處理，也不插入。</td></tr>
+<tr><td><code>&lt;practice-tracker&gt;</code> 上寫 <code>data-btn="false"</code></td><td>整個功能關閉。</td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：寫在 <code>&lt;practice-tracker&gt;</code> 上的 <code>data-btn-text</code> 等屬性只是「全域預設值」，不會讓任何 section 長出按鈕。長不長按鈕，只看 section 自己有沒有標記。</div>
+<h3>5.2 七種樣式（data-btn-style）</h3>
+<div class="tbl"><table>
+<thead><tr><th>樣式</th><th>外觀</th><th>備註</th></tr></thead>
+<tbody>
+<tr><td><code>solid</code></td><td>實心色塊，深色字</td><td></td></tr>
+<tr><td><code>outline</code></td><td>細邊框、透明底，滑過時填滿</td><td>預設樣式。</td></tr>
+<tr><td><code>pill</code></td><td>實心膠囊形</td><td>圓角預設 999px。</td></tr>
+<tr><td><code>ghost</code></td><td>只有文字加底線，無邊框</td><td>最低調。</td></tr>
+<tr><td><code>block</code></td><td>滿版寬度的實心長條</td><td>寬度預設 100%，對齊屬性不明顯。</td></tr>
+<tr><td><code>check</code></td><td>圓形打勾圖示，沒有文字</td><td>你設定的文字只會變成滑鼠提示（title）。寬高預設 2.25em，可用 <code>data-btn-width</code> 改。</td></tr>
+<tr><td><code>split</code></td><td>左邊色塊打勾圖示，右邊文字</td><td>完成後文字會自動去掉開頭的「✓」，避免與圖示重複。</td></tr>
+</tbody></table></div>
+<h3>5.3 按鈕屬性</h3>
+<p>下列屬性可以寫在三個位置：<code>&lt;pt-done-btn&gt;</code> 自己、section、<code>&lt;practice-tracker&gt;</code>。優先順序：<b><code>&lt;pt-done-btn&gt;</code> 自身 大於 section 大於 tracker 大於內建預設</b>。</p>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-btn</code></td><td><code>btn</code></td><td>true</td><td>寫在 tracker 或 section 上設為 false 可關閉（見 5.1）。</td></tr>
+<tr><td><code>data-btn-style</code></td><td><code>btnStyle</code></td><td><code>outline</code></td><td>七種樣式之一，不合法的值退回 outline。</td></tr>
+<tr><td><code>data-btn-text</code></td><td><code>btnText</code></td><td><code>標記完成</code></td><td>未完成時的文字。</td></tr>
+<tr><td><code>data-btn-done-text</code></td><td><code>btnDoneText</code></td><td><code>✓ 已完成</code></td><td>完成後的文字。</td></tr>
+<tr><td><code>data-btn-size</code></td><td><code>btnSize</code></td><td><code>md</code></td><td>sm、md、lg。字體分別為 0.875rem、1rem、1.25rem；padding 分別為 <code>2px 10px</code>、<code>4px 14px</code>、<code>6px 20px</code>。</td></tr>
+<tr><td><code>data-btn-font-size</code></td><td><code>btnFontSize</code></td><td>空</td><td>自訂字體，有填就蓋過 size 的字體。</td></tr>
+<tr><td><code>data-btn-padding</code></td><td><code>btnPadding</code></td><td>空</td><td>自訂 padding，例如 <code>8px 24px</code>，有填就蓋過 size 的 padding。</td></tr>
+<tr><td><code>data-btn-width</code></td><td><code>btnWidth</code></td><td>空</td><td>自訂寬度，例如 <code>160px</code>。留空為內容寬度（block 為 100%）。</td></tr>
+<tr><td><code>data-btn-radius</code></td><td><code>btnRadius</code></td><td>空</td><td>自訂圓角，例如 <code>0</code> 或 <code>12px</code>。</td></tr>
+<tr><td><code>data-btn-color</code></td><td><code>btnColor</code></td><td><code>ocean</code></td><td><b>色票名稱</b>（如 teal、special、pink）或任意 CSS 色碼。這是少數接受色票名稱的屬性。</td></tr>
+<tr><td><code>data-btn-align</code></td><td><code>btnAlign</code></td><td><code>start</code></td><td>start（靠左）、center、end（靠右）。</td></tr>
+<tr><td><code>data-btn-event-name</code></td><td><code>btnEventName</code></td><td><code>pt:section-done</code></td><td>每次有 section 被標記完成時發出的事件名稱，見第 10 節。設為空字串可不發事件。</td></tr>
+</tbody></table></div>
+<h3>5.4 範例</h3>
+<pre><code>&lt;!-- 1. 最簡單：用全域預設 --&gt;
+&lt;section id="ex-1" data-btn-text="標記完成"&gt;...&lt;/section&gt;
+
+&lt;!-- 2. 個別指定樣式、顏色、大小 --&gt;
+&lt;section id="ex-2"
+         data-btn-style="pill" data-btn-text="我讀完了"
+         data-btn-color="special" data-btn-size="lg"&gt;...&lt;/section&gt;
+
+&lt;!-- 3. 自己決定位置，並單獨覆蓋屬性 --&gt;
+&lt;section id="ex-3"&gt;
+  &lt;p&gt;...&lt;/p&gt;
+  &lt;pt-done-btn data-btn-style="check" data-btn-color="pink" data-btn-width="48px"&gt;&lt;/pt-done-btn&gt;
+  &lt;p&gt;按鈕之後還有其他內容&lt;/p&gt;
+&lt;/section&gt;
+
+&lt;!-- 4. 全域預設寫在 tracker 上：整頁的按鈕都是 solid、青綠色 --&gt;
+&lt;practice-tracker data-prefix="ex-" data-btn-style="solid" data-btn-color="teal"&gt;&lt;/practice-tracker&gt;</code></pre>
+<h3>5.5 行為細節</h3>
+<ul>
+<li>完成後按鈕固定變成綠色（<code>#27AE60</code>）並停用，不受 <code>data-btn-color</code> 影響。</li>
+<li>按鈕可用鍵盤操作：Tab 聚焦，Enter 或空白鍵觸發。</li>
+<li>從其他途徑（API、事件、bp-stepper）標記該 section 完成時，按鈕也會同步變成已完成狀態。</li>
+<li>元件內部不顯示任何提示訊息。想要提示，就監聽 <code>pt:section-done</code>，再用 Bootstrap alert 呈現。</li>
+<li>若同一個 section 同時有舊的手寫按鈕與內建按鈕，會出現兩顆。請移除舊的。</li>
+<li>你原有的手寫按鈕、bp-stepper 的 <code>btn-js</code> 完全不受影響，可以並存。</li>
+</ul>
+<div class="code-title">用 Bootstrap alert 顯示完成提示</div>
+<pre><code>document.addEventListener('pt:section-done', e =&gt; {
+  const box = document.getElementById('alerts');
+  box.insertAdjacentHTML('beforeend',
+    '&lt;div class="alert alert-success alert-dismissible fade show"&gt;' +
+    '已標記完成：' + e.detail.sectionId +
+    '&lt;button type="button" class="btn-close" data-bs-dismiss="alert"&gt;&lt;/button&gt;&lt;/div&gt;');
+});</code></pre>
+</section>
+<section class="doc" id="phrase-block">
+<h2>6. 片語收藏區塊（tracker 這一側）</h2>
+<p>只要頁面上有 <code>&lt;phrase-chip data-phrase="..."&gt;</code>，面板就會自動多出一個「片語收藏」區塊：每個片語一個格子，收藏一個點亮一格，並提供「查看收藏清單」按鈕，打開側邊欄列出所有已收藏片語的例句與翻譯。頁面上沒有任何 phrase-chip 時，這個區塊完全不存在，面板與原本一模一樣。</p>
+<h3>6.1 哪些片語會被計入總數</h3>
+<ul>
+<li>依 <code>data-phrase</code> 的內容去重：同一個片語在頁面出現多次，只算一格，收藏一次，所有出現處同步變色。</li>
+<li><code>data-disable-collect</code>（無值或值不是 false）的 chip 是「純字典模式」，不會觸發收藏。若某片語所有出現處都是純字典模式，它不計入總數；只要有一處可收藏，就照常計入。</li>
+<li>總數在 tracker 初始化的那一刻，依 HTML 標記決定，之後不再變動。</li>
+</ul>
+<div class="note note-warn"><b>注意</b>：用 JavaScript 在初始化之後才動態新增的 phrase-chip，不會有對應的格子。它被收藏時，tracker 會直接忽略。這類內容請在頁面載入前就寫進 HTML。</div>
+<h3>6.2 屬性（寫在 <code>&lt;practice-tracker&gt;</code> 上）</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-phrase-block</code></td><td><code>phraseBlock</code></td><td>true</td><td>設為 false 可強制關閉整個區塊，即使頁面有 phrase-chip。</td></tr>
+<tr><td><code>data-phrase-title</code></td><td><code>phraseTitle</code></td><td><code>片語收藏</code></td><td>區塊標題。</td></tr>
+<tr><td><code>data-phrase-label-done</code></td><td><code>phraseLabelDone</code></td><td><code>已收藏</code></td><td>計數後綴，顯示成「2 / 9 已收藏」。</td></tr>
+<tr><td><code>data-phrase-color-done</code></td><td><code>phraseColorDone</code></td><td><code>#FF91D7</code></td><td>已收藏格子的顏色（CSS 色碼）。也是清單項目與按鈕的預設主色。</td></tr>
+<tr><td><code>data-phrase-color-pending</code></td><td><code>phraseColorPending</code></td><td>空</td><td>未收藏格子的顏色，留空則沿用 <code>data-color-pending</code>。</td></tr>
+<tr><td><code>data-phrase-color-complete</code></td><td><code>phraseColorComplete</code></td><td><code>#B3DE73</code></td><td>全部收藏後完成提示的顏色。</td></tr>
+<tr><td><code>data-phrase-cell-shape</code></td><td><code>phraseCellShape</code></td><td><code>circle</code></td><td>片語格子的形狀，可用值同 <code>data-cell-shape</code>。</td></tr>
+<tr><td><code>data-phrase-complete-text</code></td><td><code>phraseCompleteText</code></td><td><code>片語獵人認證！</code></td><td>全部收藏後的文字。<b>請先看第 14 節的已知問題。</b></td></tr>
+<tr><td><code>data-phrase-complete-sub</code></td><td><code>phraseCompleteSub</code></td><td>空</td><td>副文字。</td></tr>
+<tr><td><code>data-phrase-event-name</code></td><td><code>phraseEventName</code></td><td><code>pt:phrase-collected</code></td><td>監聽的收藏事件名稱。必須與 phrase-chip 發出的事件名稱一致，見第 7 節。</td></tr>
+</tbody></table></div>
+<h3>6.3 收藏清單（側邊欄）屬性</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-phrase-list-btn-label</code></td><td><code>phraseListBtnLabel</code></td><td><code>查看收藏清單</code></td><td>按鈕文字。收藏第一個片語之前按鈕是隱藏的，收藏後才出現並常駐。</td></tr>
+<tr><td><code>data-phrase-list-title</code></td><td><code>phraseListTitle</code></td><td>空</td><td>側邊欄標題，留空則沿用 <code>data-phrase-title</code>。</td></tr>
+<tr><td><code>data-phrase-list-placement</code></td><td><code>phraseListPlacement</code></td><td><code>end</code></td><td>側邊欄出現的位置：start（左）、end（右）、top、bottom。</td></tr>
+<tr><td><code>data-phrase-list-theme</code></td><td><code>phraseListTheme</code></td><td>空</td><td><b>只接受色票名稱</b>（如 ocean、pink），用於標題列與按鈕底色。留空則用 <code>data-phrase-color-done</code>。填色碼無效，會退回預設。</td></tr>
+<tr><td><code>data-phrase-list-width</code></td><td><code>phraseListWidth</code></td><td><code>380px</code></td><td>側邊欄寬度，只對 start 與 end 有效。</td></tr>
+<tr><td><code>data-phrase-list-empty-text</code></td><td><code>phraseListEmptyText</code></td><td><code>尚未收藏任何片語</code></td><td>還沒有收藏時的提示文字。</td></tr>
+</tbody></table></div>
+<p>清單裡每個項目的左邊框與標題色，取自該片語的 chip 的 <code>data-theme</code>（色票名稱）；該 chip 沒設 theme 則用 <code>data-phrase-color-done</code>。項目內容包含片語、例句（保留 <code>&lt;mark&gt;</code> 標記）與中文翻譯。</p>
+<div class="note note-info"><b>說明</b>：收藏清單的側邊欄使用 Bootstrap 的 offcanvas，需要載入 Bootstrap JS bundle。它掛在 body 底下，不受面板收合影響，也不會被面板的 overflow 裁切。</div>
+</section>
+<section class="doc" id="phrase-chip">
+<h2>7. phrase-chip.js：`&lt;phrase-chip&gt;` 片語標籤</h2>
+<p>在文章裡把一個片語做成可點擊的標籤。點擊後在標籤附近彈出解釋卡，卡片上有例句、中文翻譯，以及「收藏這個片語」按鈕。收藏後會發出事件，由 practice-tracker 接收並點亮格子、加入清單。</p>
+<h3>7.1 HTML 結構</h3>
+<pre><code>&lt;phrase-chip data-phrase="stick to" data-theme="ocean" data-icon="bookmark"&gt;
+  stick to
+  &lt;phrase-card&gt;
+    &lt;phrase-example&gt;
+      I usually &lt;mark&gt;stick to&lt;/mark&gt; simple dishes that don't leave a mess.
+    &lt;/phrase-example&gt;
+    &lt;phrase-translation&gt;我通常只做簡單、不會弄得一團亂的菜。&lt;/phrase-translation&gt;
+  &lt;/phrase-card&gt;
+&lt;/phrase-chip&gt;</code></pre>
+<ul>
+<li><code>data-phrase</code> 是必填，也是收藏的唯一識別。缺少時元件不會初始化。它同時是解釋卡的標題。</li>
+<li>標籤上顯示的文字，依序取：<code>data-label</code>、<code>&lt;phrase-card&gt;</code> 以外的文字、<code>data-phrase</code> 本身。</li>
+<li><code>&lt;phrase-example&gt;</code> 內可以放 HTML，通常用 <code>&lt;mark&gt;</code> 標出片語。<code>&lt;phrase-translation&gt;</code> 只取純文字。</li>
+<li>兩者都是選用的。沒有 <code>&lt;phrase-card&gt;</code> 時，卡片只有標題與收藏按鈕。</li>
+<li><code>data-phrase</code> 的比對會先去除前後空白，但大小寫與中間空白必須完全一致，否則視為不同片語。</li>
+</ul>
+<h3>7.2 屬性</h3>
+<p>下列屬性寫在 <code>&lt;phrase-chip&gt;</code> 上。也可以用 <code>window.PhraseChipConfig = {...}</code>（駝峰鍵名）設定全站預設，必須在 phrase-chip.js 之前定義。</p>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-phrase</code></td><td>無</td><td>必填</td><td>片語本身，收藏的識別。</td></tr>
+<tr><td><code>data-theme</code></td><td><code>theme</code></td><td><code>ocean</code></td><td><b>色票名稱</b>。決定標籤與卡片的主色，也會被帶入收藏清單。</td></tr>
+<tr><td><code>data-label</code></td><td><code>label</code></td><td>空</td><td>標籤顯示的文字，留空則從內容推得。</td></tr>
+<tr><td><code>data-size</code></td><td><code>size</code></td><td><code>md</code></td><td>sm（0.85rem）、md（1rem）、lg（1.15rem），padding 同步改變。</td></tr>
+<tr><td><code>data-shape</code></td><td><code>shape</code></td><td><code>pill</code></td><td>pill（膠囊）、rounded（圓角方形）、underline（只有底線）。</td></tr>
+<tr><td><code>data-icon</code></td><td><code>icon</code></td><td>空</td><td>標籤前的 Bootstrap Icons 圖示，<b>不含</b> <code>bi-</code> 前綴，例如 <code>bookmark</code>、<code>lightning</code>。</td></tr>
+<tr><td><code>data-card-width</code></td><td><code>cardWidth</code></td><td><code>320px</code></td><td>解釋卡寬度。最大不超過視窗寬度減 32px。</td></tr>
+<tr><td><code>data-card-theme</code></td><td><code>cardTheme</code></td><td>空</td><td>卡片主色（色票名稱），留空則沿用 <code>data-theme</code>。</td></tr>
+<tr><td><code>data-position</code></td><td><code>position</code></td><td><code>auto</code></td><td>卡片出現位置：auto（下方放不下就改上方）、top、bottom。注意：這與 tracker 的同名屬性無關。</td></tr>
+<tr><td><code>data-hide-translation</code></td><td><code>hideTranslation</code></td><td>false</td><td>設為 true 時，翻譯預設隱藏，卡片上多一個「顯示中文翻譯」切換連結。</td></tr>
+<tr><td><code>data-disable-collect</code></td><td><code>disableCollect</code></td><td>false</td><td>設為 true 進入「純字典模式」：卡片沒有收藏按鈕，且該片語不計入 tracker 總數（除非另一處同片語可收藏）。</td></tr>
+<tr><td><code>data-collect-label</code></td><td><code>collectLabel</code></td><td><code>✓ 收藏這個片語</code></td><td>收藏按鈕文字。</td></tr>
+<tr><td><code>data-collected-label</code></td><td><code>collectedLabel</code></td><td><code>已收藏</code></td><td>收藏後，按鈕位置改顯示的文字。</td></tr>
+<tr><td><code>data-collected-icon</code></td><td><code>collectedIcon</code></td><td><code>bi-check-circle-fill</code></td><td>收藏後的圖示。<b>要含 <code>bi-</code> 前綴</b>，這點和 <code>data-icon</code> 相反，很容易寫錯。</td></tr>
+<tr><td><code>data-close-on-collect</code></td><td><code>closeOnCollect</code></td><td>false</td><td>設為 true 時，按下收藏後自動關閉卡片。</td></tr>
+<tr><td><code>data-event-name</code></td><td><code>eventName</code></td><td><code>pt:phrase-collected</code></td><td>收藏時發出的事件名稱。若改了，tracker 的 <code>data-phrase-event-name</code> 必須同步改，否則收藏不會被 tracker 接收。</td></tr>
+</tbody></table></div>
+<h3>7.3 行為細節</h3>
+<ul>
+<li>卡片關閉方式：再點一次標籤、點卡片右上角的 ×、按 Esc、點頁面其他地方。同一時間只會開一張卡片。</li>
+<li>卡片附掛在 body，用 fixed 定位，捲動與縮放視窗時會自動跟著標籤重新定位。層級為 1200，高於 Bootstrap 的 modal 與 offcanvas。</li>
+<li>同一片語出現在多處時，收藏一次，所有處的標籤同步顯示已收藏狀態（多一個打勾圖示，整體略為變淡）。</li>
+<li>收藏狀態只存在記憶體，重新整理頁面即歸零，不會跨頁累積。</li>
+<li>收藏時發出的事件帶有完整內容：片語、主題色、例句 HTML、翻譯文字，所以 tracker 不必回頭查 DOM。</li>
+</ul>
+<h3>7.4 對外 API</h3>
+<div class="tbl"><table>
+<thead><tr><th>API</th><th>回傳</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>PhraseChip.getCollected()</code></td><td>字串陣列</td><td>目前已收藏的所有片語。</td></tr>
+<tr><td><code>PhraseChip.isCollected("stick to")</code></td><td>true 或 false</td><td>某個片語是否已收藏。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="phrase-upgrade">
+<h2>8. phrase-chip.js：`&lt;phrase-upgrade&gt;` 漸進升級文字</h2>
+<p>同一支 phrase-chip.js 還提供第二個元件：一段文字，每點一下就以動畫「升級」成下一個階段的文字，單向前進，到最後一階段停止。用來示範「基本說法如何一步步改成高分說法」。它不彈卡片，也不參與收藏，與 practice-tracker 沒有關係。</p>
+<pre><code>&lt;phrase-upgrade data-anim="strike-fade" data-theme="ocean"&gt;
+  &lt;phrase-stage&gt;I do exercise&lt;/phrase-stage&gt;
+  &lt;phrase-stage text-color="shell"&gt;I work out&lt;/phrase-stage&gt;
+  &lt;phrase-stage text-color="salmon"&gt;I hit the gym&lt;/phrase-stage&gt;
+&lt;/phrase-upgrade&gt;</code></pre>
+<ul>
+<li>至少要有兩個 <code>&lt;phrase-stage&gt;</code>，否則元件不會初始化，內容維持原樣。</li>
+<li>每個 stage 可用 <code>text-color</code> 屬性覆蓋該階段的文字顏色，接受色票名稱（如 <code>shell</code>）或任意 CSS 色碼。沒設定則用 <code>data-theme</code> 的主色。</li>
+<li>動畫進行中點擊無效；到達最後階段後，提示圖示消失、底線由虛線變實線，之後點擊無效。</li>
+<li>沒有「倒退」功能，重新整理頁面才會回到第一階段。</li>
+</ul>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-anim</code></td><td><code>anim</code></td><td><code>strike-fade</code></td><td>動畫種類：<code>crossfade</code>（淡入淡出）、<code>slide-up</code>（上滑）、<code>flip</code>（翻轉）、<code>strike-fade</code>（劃線再淡出）、<code>typewriter</code>（逐字刪除再逐字打出）。不認得的值退回 strike-fade。</td></tr>
+<tr><td><code>data-anim-duration</code></td><td><code>animDuration</code></td><td><code>0.9s</code></td><td>動畫總時間，可寫 <code>0.9s</code> 或 <code>900ms</code>。typewriter 不使用此值。</td></tr>
+<tr><td><code>data-theme</code></td><td><code>theme</code></td><td><code>ocean</code></td><td>主色（色票名稱）。</td></tr>
+<tr><td><code>data-typewriter-speed</code></td><td><code>typewriterSpeed</code></td><td><code>55</code></td><td>僅 typewriter 使用，每個字元的間隔毫秒數（整數）。</td></tr>
+<tr><td><code>data-hide-hint</code></td><td><code>hideHint</code></td><td>false</td><td>設為 true 隱藏右側的「可點擊」提示圖示。</td></tr>
+<tr><td><code>data-hint-icon</code></td><td><code>hintIcon</code></td><td><code>arrow-repeat</code></td><td>提示圖示，Bootstrap Icons 名稱，不含 <code>bi-</code> 前綴。</td></tr>
+</tbody></table></div>
+<div class="note note-info"><b>說明</b>：<code>window.PhraseChipConfig</code> 同時是 phrase-chip 與 phrase-upgrade 的全站預設來源。兩者都有的鍵（例如 <code>theme</code>）設在這裡會同時套用到兩種元件。</div>
+</section>
+<section class="doc" id="promo">
+<h2>9. 定時 Modal（廣告或重要訊息）</h2>
+<p>讀者在頁面上待夠久、也讀過足夠多段落之後，彈出一個金色的 Modal，內容取自頁面上一個隱藏的 div。適合放公告、廣告、問卷邀請。它是獨立的子功能：沒設定 <code>data-promo-target</code> 就完全不啟動。</p>
+<h3>9.1 最小設定</h3>
+<pre><code>&lt;practice-tracker
+  data-prefix="ex-"
+  data-promo-target="promo-1"
+  data-promo-minutes="5"
+  data-promo-min-sections="4"
+  data-promo-title="特別公告"&gt;&lt;/practice-tracker&gt;
+
+&lt;div id="promo-1" style="display: none;"&gt;
+  &lt;h4&gt;限時公告&lt;/h4&gt;
+  &lt;p&gt;這裡放任何 HTML：標題、段落、清單、圖片、連結。&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- 需要 Bootstrap JS bundle --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</code></pre>
+<h3>9.2 屬性</h3>
+<div class="tbl"><table>
+<thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>data-promo-target</code></td><td><code>promoTarget</code></td><td>空</td><td>目標 div 的 id，寫 <code>promo-1</code> 或 <code>#promo-1</code> 都可以。留空或找不到元素就不啟用（找不到時 console 會警告）。</td></tr>
+<tr><td><code>data-promo-minutes</code></td><td><code>promoMinutes</code></td><td><code>5</code></td><td>自頁面載入起算的牆鐘時間（分鐘，可小數，例如 0.5 為 30 秒）。0 表示不限時間。無法解析時退回 5。</td></tr>
+<tr><td><code>data-promo-min-sections</code></td><td><code>promoMinSections</code></td><td><code>4</code></td><td>至少有效瀏覽幾個 section（「至少」，含本數）。0 表示不看瀏覽，只看累計時間。無法解析時退回 4。</td></tr>
+<tr><td><code>data-promo-title</code></td><td><code>promoTitle</code></td><td>空</td><td>Modal 標題，留空則不顯示標題文字（仍保留裝飾線）。</td></tr>
+<tr><td><code>data-promo-button-label</code></td><td><code>promoButtonLabel</code></td><td><code>我知道了</code></td><td>底部按鈕的文字。</td></tr>
+<tr><td><code>data-promo-view-ratio</code></td><td><code>promoViewRatio</code></td><td><code>0.4</code></td><td>一個 section 要被看到多少比例才算「正在瀏覽」，範圍 0.05 到 1。</td></tr>
+<tr><td><code>data-promo-view-seconds</code></td><td><code>promoViewSeconds</code></td><td><code>2</code></td><td>達到比例後，需要連續停留幾秒才算一次有效瀏覽。0 表示立刻算。</td></tr>
+<tr><td><code>data-promo-idle-seconds</code></td><td><code>promoIdleSeconds</code></td><td><code>1.5</code></td><td>條件達成後，等到捲動停止多久才彈出，避免打斷閱讀。</td></tr>
+<tr><td><code>data-promo-event-name</code></td><td><code>promoEventName</code></td><td><code>pt:promo-shown</code></td><td>Modal 顯示時發出的事件名稱。</td></tr>
+<tr><td><code>data-promo-closed-event-name</code></td><td><code>promoClosedEventName</code></td><td><code>pt:promo-closed</code></td><td>Modal 關閉時發出的事件名稱。</td></tr>
+</tbody></table></div>
+<h3>9.3 判定邏輯</h3>
+<ul>
+<li><b>時間</b>：牆鐘時間，從 tracker 初始化那一刻起算。切換分頁也照常累積。使用者切回分頁時會立刻重新檢查條件。</li>
+<li><b>有效瀏覽</b>：只計算符合 <code>data-prefix</code> 的 section。一個 section 要同時滿足兩點才算：可見面積達到 view-ratio，或可見高度達到視窗高度乘以 view-ratio（這是為了讓比視窗高很多的長 section 也能被計入）；並且連續停留 view-seconds 秒。快速捲過不算。每個 section 只計一次。</li>
+<li><b>觸發</b>：時間與瀏覽數兩個條件都成立才進入「準備彈出」，之後還要同時滿足：分頁可見、捲動已停止 idle-seconds 秒、頁面上沒有其他開著的 modal 或 offcanvas。全部滿足才彈出。</li>
+<li><b>只彈一次</b>：不使用 sessionStorage 與 localStorage。同一次載入只會自動彈出一次，重新整理後重新計算。</li>
+<li><b>內容</b>：開啟時複製目標 div 的 innerHTML，並移除複製內容裡的所有 id（避免與原頁面重複）。原 div 維持隱藏。</li>
+<li><b>降級</b>：找不到目標 div、沒載入 Bootstrap JS、瀏覽器不支援 IntersectionObserver，或要求的 section 數超過頁面實際數量時，只在 console 警告，其他功能不受影響。</li>
+</ul>
+<h3>9.4 常見設定組合</h3>
+<div class="tbl"><table>
+<thead><tr><th>需求</th><th>設定</th></tr></thead>
+<tbody>
+<tr><td>看滿 5 分鐘、讀過至少 4 段</td><td><code>data-promo-minutes="5" data-promo-min-sections="4"</code></td></tr>
+<tr><td>只有 2 個 section 的短頁，純看時間</td><td><code>data-promo-minutes="3" data-promo-min-sections="0"</code></td></tr>
+<tr><td>測試用：30 秒、讀過 4 段</td><td><code>data-promo-minutes="0.5" data-promo-min-sections="4"</code></td></tr>
+<tr><td>進頁面很快就彈（不建議）</td><td><code>data-promo-minutes="0" data-promo-min-sections="0"</code></td></tr>
+</tbody></table></div>
+<h3>9.5 外觀</h3>
+<p>Modal 用金色（<code>#D4AF37</code>、<code>#F3E1A0</code>、<code>#9A7B1F</code> 三階）做特殊內容的視覺區隔：深色底、金色雙層邊框、頂部金色漸層條、金色漸層標題、菱形裝飾線、金色圓形關閉鈕與金色膠囊按鈕。內容區的標題、連結、分隔線、清單符號也會變金色。金色不在品牌色票內，且寫死在樣式裡，沒有屬性可以改。若要覆寫，請用第 11 節列出的 <code>.pt-promo-*</code> class。</p>
+<div class="note note-tip"><b>提示</b>：要讓使用者看不到計時資訊，只要不要在頁面上顯示 <code>promoState</code>。元件本身不會輸出任何倒數或進度文字。demo 頁上的狀態列是 demo 自己寫的，正式頁面不要貼。</div>
+</section>
+<section class="doc" id="events-api">
+<h2>10. 事件與 JS API 總表</h2>
+<h3>10.1 tracker 監聽的事件（輸入）</h3>
+<div class="tbl"><table>
+<thead><tr><th>事件</th><th>來源</th><th>detail</th><th>效果</th></tr></thead>
+<tbody>
+<tr><td><code>bps:complete</code></td><td>bp-stepper</td><td>無（用 <code>e.target</code> 找最近的 section）</td><td>標記該 section 完成。受 <code>data-watch-stepper</code> 控制。</td></tr>
+<tr><td><code>pt:stage-complete</code></td><td>你自己</td><td><code>{ sectionId }</code></td><td>標記該 section 完成。事件名可用 <code>data-event-name</code> 改。</td></tr>
+<tr><td><code>pt:phrase-collected</code></td><td>phrase-chip</td><td><code>{ phrase, theme, exampleHTML, translationText }</code></td><td>點亮片語格、加入收藏清單。事件名可用 <code>data-phrase-event-name</code> 改。</td></tr>
+</tbody></table></div>
+<h3>10.2 tracker 發出的事件（輸出）</h3>
+<div class="tbl"><table>
+<thead><tr><th>事件</th><th>時機</th><th>detail</th></tr></thead>
+<tbody>
+<tr><td><code>pt:section-done</code></td><td>任何途徑讓某個 section 第一次被標記完成時，每個 section 只發一次。事件名可用 <code>data-btn-event-name</code> 改，設為空字串則不發。</td><td><code>{ sectionId }</code></td></tr>
+<tr><td><code>pt:promo-shown</code></td><td>定時 Modal 顯示時（含手動 <code>showPromo()</code>）。</td><td><code>{ targetId, viewedSections: [id...], elapsedSeconds }</code></td></tr>
+<tr><td><code>pt:promo-closed</code></td><td>定時 Modal 關閉後。</td><td><code>{ targetId }</code></td></tr>
+</tbody></table></div>
+<div class="note note-warn"><b>注意</b>：輸入事件 <code>pt:stage-complete</code> 與輸出事件 <code>pt:section-done</code> 是兩個不同的名字，這是刻意的，避免你在 <code>pt:section-done</code> 的監聽器裡又去觸發 <code>pt:stage-complete</code> 而形成迴圈。</div>
+<h3>10.3 window.PracticeTracker</h3>
+<div class="tbl"><table>
+<thead><tr><th>成員</th><th>型別</th><th>說明</th></tr></thead>
+<tbody>
+<tr><td><code>markDone(sectionId)</code></td><td>函式</td><td>標記某 section 完成。重複呼叫或 id 不在追蹤範圍時，安靜地什麼都不做。</td></tr>
+<tr><td><code>markPhraseCollected(phrase, meta)</code></td><td>函式</td><td>手動標記某片語已收藏。<code>meta</code> 可帶 <code>{ theme, exampleHTML, translationText }</code> 用於清單。沒有片語區塊時什麼都不做。</td></tr>
+<tr><td><code>changeShape(shape)</code></td><td>函式</td><td>動態更換「章節格子」的形狀。不影響片語格子。</td></tr>
+<tr><td><code>showPromo()</code></td><td>函式</td><td>手動顯示定時 Modal，不管條件是否達成，方便測試。成功回傳 true。之後自動觸發也不會再彈。</td></tr>
+<tr><td><code>promoState</code></td><td>唯讀物件</td><td><code>{ enabled, shown, viewedSections, viewedIds, needSections, elapsedSeconds, needSeconds }</code>，每次讀取都是最新值。</td></tr>
+<tr><td><code>total</code></td><td>數字</td><td>追蹤的 section 總數。</td></tr>
+<tr><td><code>doneSet</code></td><td>Set</td><td>已完成的 section id。</td></tr>
+<tr><td><code>phraseTotal</code></td><td>數字</td><td>片語格子總數。</td></tr>
+<tr><td><code>phraseDoneSet</code></td><td>Set</td><td>已收藏的片語。</td></tr>
+<tr><td><code>phraseCollectedOrder</code></td><td>陣列</td><td>依收藏先後順序排列的片語。</td></tr>
+<tr><td><code>cfg</code></td><td>物件</td><td>最終生效的設定物件，除錯時很有用。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="styling">
+<h2>11. 色票與樣式掛鉤</h2>
+<h3>11.1 色票</h3>
+<div class="tbl"><table>
+<thead><tr><th>名稱</th><th>色碼</th><th>名稱</th><th>色碼</th></tr></thead>
+<tbody>
+<tr><td><code>bg</code></td><td><code>#0C0D0C</code></td><td><code>shell</code>（主文字）</td><td><code>#C6C7BD</code></td></tr>
+<tr><td><code>lavender</code></td><td><code>#C3A5E5</code></td><td><code>sky</code></td><td><code>#82C8E5</code></td></tr>
+<tr><td><code>warning</code></td><td><code>#E6374B</code></td><td><code>salmon</code></td><td><code>#E5C3B3</code></td></tr>
+<tr><td><code>ocean</code></td><td><code>#1CCAE8</code></td><td><code>safe</code></td><td><code>#27AE60</code></td></tr>
+<tr><td><code>teal</code></td><td><code>#0DA591</code></td><td><code>vanilla</code></td><td><code>#DBEDD8</code></td></tr>
+<tr><td><code>yellow</code></td><td><code>#E3D322</code></td><td><code>focus</code></td><td><code>#D4FFFC</code></td></tr>
+<tr><td><code>special</code></td><td><code>#B3DE73</code></td><td><code>info</code></td><td><code>#4171BF</code></td></tr>
+<tr><td><code>indigo</code></td><td><code>#7849C9</code></td><td><code>pink</code></td><td><code>#FF91D7</code></td></tr>
+<tr><td><code>orange</code></td><td><code>#EDA109</code></td><td>金色（特殊內容，不在色票內）</td><td><code>#D4AF37</code></td></tr>
+</tbody></table></div>
+<h3>11.2 哪些屬性吃色票名稱，哪些吃色碼</h3>
+<div class="tbl"><table>
+<thead><tr><th>屬性</th><th>可填的值</th></tr></thead>
+<tbody>
+<tr><td><code>data-color-done</code>、<code>-pending</code>、<code>-panel</code>、<code>-text</code>、<code>-complete</code></td><td>只接受 CSS 色碼</td></tr>
+<tr><td><code>data-phrase-color-done</code>、<code>-pending</code>、<code>-complete</code></td><td>只接受 CSS 色碼</td></tr>
+<tr><td><code>data-phrase-list-theme</code></td><td>只接受色票名稱</td></tr>
+<tr><td><code>data-btn-color</code></td><td>色票名稱或 CSS 色碼皆可</td></tr>
+<tr><td>phrase-chip 的 <code>data-theme</code>、<code>data-card-theme</code></td><td>只接受色票名稱（不認得的名稱退回 ocean）</td></tr>
+<tr><td>phrase-upgrade 的 <code>data-theme</code></td><td>只接受色票名稱</td></tr>
+<tr><td>phrase-stage 的 <code>text-color</code></td><td>色票名稱或 CSS 色碼皆可</td></tr>
+</tbody></table></div>
+<h3>11.3 可用來覆寫外觀的標籤與 class</h3>
+<p>所有樣式都以 <code>&lt;style&gt;</code> 注入，沒有 shadow DOM，所以頁面自己的 CSS 可以直接覆寫。若優先順序不夠，加 <code>!important</code> 或提高選擇器權重。</p>
+<div class="tbl"><table>
+<thead><tr><th>範圍</th><th>元素與 class</th></tr></thead>
+<tbody>
+<tr><td>面板</td><td><code>practice-tracker</code>、<code>pt-header</code>、<code>pt-title</code>、<code>pt-header-count</code>、<code>pt-toggle</code>、<code>pt-body</code>、<code>pt-grid</code>、<code>pt-cell</code>、<code>pt-count</code>、<code>pt-complete</code>、<code>pt-complete-sub</code></td></tr>
+<tr><td>面板狀態 class</td><td><code>.is-collapsed</code>、<code>.pt-complete-state</code>、格子的 <code>.is-done</code>、<code>.pt-pop</code></td></tr>
+<tr><td>片語區塊</td><td><code>pt-phrase-block</code>、<code>pt-phrase-list-btn</code>（<code>.is-shown</code> 為顯示中）、側邊欄 <code>.pt-phrase-offcanvas</code>、清單項目 <code>.pt-phrase-item</code>、<code>.pt-phrase-item-title</code>、<code>.pt-phrase-item-example</code>、<code>.pt-phrase-item-translation</code>、<code>.pt-phrase-empty</code></td></tr>
+<tr><td>完成按鈕</td><td><code>pt-done-btn</code>（屬性 <code>data-style</code>、<code>data-align</code>，完成後有 <code>.is-done</code>）、<code>pt-done-icon</code>、<code>pt-done-label</code>；顏色走 CSS 變數 <code>--ptb-base</code>、<code>--ptb-fs</code>、<code>--ptb-pad</code>、<code>--ptb-width</code>、<code>--ptb-radius</code></td></tr>
+<tr><td>定時 Modal</td><td><code>.pt-promo-modal</code>、<code>.pt-promo-bar</code>、<code>.pt-promo-head</code>、<code>.pt-promo-title</code>、<code>.pt-promo-orn</code>、<code>.pt-promo-close</code>、<code>.pt-promo-body</code>、<code>.pt-promo-foot</code>、<code>.pt-promo-btn</code></td></tr>
+<tr><td>phrase-chip</td><td><code>phrase-chip</code>（<code>.is-open</code>、<code>.is-collected</code>）、<code>pc-label</code>、<code>pc-icon</code>、<code>pc-panel</code>（<code>.is-visible</code>）、<code>pc-panel-head</code>、<code>pc-panel-body</code>、<code>pc-example</code>、<code>pc-translation</code>、<code>pc-translation-toggle</code>、<code>pc-actions</code>、<code>pc-collect-btn</code>、<code>pc-collected-badge</code>、<code>pc-close</code></td></tr>
+<tr><td>phrase-upgrade</td><td><code>phrase-upgrade</code>（<code>.is-animating</code>、<code>.is-final</code>）、<code>pu-text</code>、<code>pu-word</code>（<code>.is-struck</code>）、<code>pu-hint</code></td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="full-example">
+<h2>12. 完整範例頁（可整份複製）</h2>
+<p>這份範例同時用到：進度面板、內建按鈕的多種樣式、phrase-chip、phrase-upgrade、片語收藏清單、定時 Modal，以及用 Bootstrap alert 顯示完成提示。</p>
+<div class="code-title">完整範例</div>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-TW"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;完整範例&lt;/title&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"&gt;
+&lt;/head&gt;
+&lt;body style="background:#0C0D0C; color:#C6C7BD; padding:32px;"&gt;
+
+&lt;div id="alerts"&gt;&lt;/div&gt;
+
+&lt;section id="ex-intro" data-btn-text="標記完成" data-btn-style="solid"&gt;
+  &lt;h2&gt;第一段&lt;/h2&gt;
+  &lt;p&gt;
+    I usually
+    &lt;phrase-chip data-phrase="stick to" data-theme="ocean" data-icon="bookmark"&gt;
+      stick to
+      &lt;phrase-card&gt;
+        &lt;phrase-example&gt;I usually &lt;mark&gt;stick to&lt;/mark&gt; simple dishes.&lt;/phrase-example&gt;
+        &lt;phrase-translation&gt;我通常只做簡單的菜。&lt;/phrase-translation&gt;
+      &lt;/phrase-card&gt;
+    &lt;/phrase-chip&gt;
+    simple dishes.
+  &lt;/p&gt;
+&lt;/section&gt;
+
+&lt;section id="ex-upgrade" data-btn-text="我讀完了" data-btn-style="pill" data-btn-color="special"&gt;
+  &lt;h2&gt;第二段&lt;/h2&gt;
+  &lt;p&gt;
+    Every day,
+    &lt;phrase-upgrade data-anim="strike-fade"&gt;
+      &lt;phrase-stage&gt;I do exercise&lt;/phrase-stage&gt;
+      &lt;phrase-stage text-color="salmon"&gt;I hit the gym&lt;/phrase-stage&gt;
+    &lt;/phrase-upgrade&gt;.
+  &lt;/p&gt;
+&lt;/section&gt;
+
+&lt;section id="ex-more-1" data-btn-text="完成這一段" data-btn-style="outline"&gt;...&lt;/section&gt;
+&lt;section id="ex-more-2" data-btn-text="完成這一段" data-btn-style="ghost" data-btn-align="end"&gt;...&lt;/section&gt;
+
+&lt;practice-tracker
+  data-prefix="ex-"
+  data-title="學習進度"
+  data-collapsed
+  data-click-go="true"
+  data-cells-per-row="4"
+  data-cell-size="28px"
+  data-panel-width="320px"
+  data-complete-text="恭喜完成所有單元！"
+  data-phrase-title="片語收藏"
+  data-promo-target="promo-1"
+  data-promo-minutes="5"
+  data-promo-min-sections="3"
+  data-promo-title="特別公告"&gt;&lt;/practice-tracker&gt;
+
+&lt;div id="promo-1" style="display: none;"&gt;
+  &lt;h4&gt;限時公告&lt;/h4&gt;
+  &lt;p&gt;這裡放廣告或重要訊息。&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;script src="practice-tracker.js"&gt;&lt;/script&gt;
+&lt;script src="phrase-chip.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  document.addEventListener('pt:section-done', e =&gt; {
+    document.getElementById('alerts').insertAdjacentHTML('beforeend',
+      '&lt;div class="alert alert-success alert-dismissible fade show"&gt;已標記完成：' +
+      e.detail.sectionId +
+      '&lt;button type="button" class="btn-close" data-bs-dismiss="alert"&gt;&lt;/button&gt;&lt;/div&gt;');
+  });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3>從舊寫法搬到內建按鈕</h3>
+<ol>
+<li>把 section 內手寫的 <code>&lt;button onclick="handleDone(...)"&gt;標記完成&lt;/button&gt;</code> 刪掉。</li>
+<li>在該 <code>&lt;section&gt;</code> 加上 <code>data-btn-text="標記完成"</code>（要換樣式再加 <code>data-btn-style</code>）。</li>
+<li>全站共用的外觀，改寫在 <code>&lt;practice-tracker&gt;</code> 的 <code>data-btn-*</code> 上，各 section 只留需要例外的屬性。</li>
+<li>舊的 <code>handleDone</code> 函式裡的 <code>showToast</code>，改成監聽 <code>pt:section-done</code> 後用 Bootstrap alert 顯示。</li>
+<li>bp-stepper 的 <code>btn-js="handleDone(...)"</code> 不用動。</li>
+</ol>
+</section>
+<section class="doc" id="troubleshoot">
+<h2>13. 疑難排解</h2>
+<div class="tbl"><table>
+<thead><tr><th>症狀</th><th>最可能的原因</th><th>怎麼處理</th></tr></thead>
+<tbody>
+<tr><td>面板完全沒出現，<code>window.PracticeTracker</code> 是 undefined</td><td>沒有任何 section 的 id 以 <code>data-prefix</code> 開頭。</td><td>檢查前綴有沒有打錯、預設前綴是 <code>ex-</code>。console 輸入 <code>document.querySelectorAll('section[id^="ex-"]')</code> 驗證。</td></tr>
+<tr><td>格子出現了，但按鈕沒有長出來</td><td>section 上沒有任何 <code>data-btn*</code> 屬性，也沒有 <code>&lt;pt-done-btn&gt;</code>。</td><td>在 section 加 <code>data-btn-text</code>。只寫在 <code>&lt;practice-tracker&gt;</code> 上不會讓按鈕出現。</td></tr>
+<tr><td>出現兩顆標記完成按鈕</td><td>舊的手寫按鈕與內建按鈕並存。</td><td>刪除手寫按鈕。</td></tr>
+<tr><td>按鈕出現了但樣式沒變</td><td>寫了不認得的樣式名稱（會退回 outline），或屬性名稱拼錯。</td><td>樣式名只有七種：solid、outline、pill、ghost、block、check、split。</td></tr>
+<tr><td>片語收藏區塊沒出現</td><td>頁面沒有 <code>phrase-chip[data-phrase]</code>；或所有 chip 都是 <code>data-disable-collect</code>；或 <code>data-phrase-block="false"</code>。</td><td>確認至少有一個可收藏的 chip 在 HTML 標記裡。</td></tr>
+<tr><td>點收藏後，格子沒亮</td><td>事件名稱不一致；或 chip 是動態新增的；或 <code>data-phrase</code> 的大小寫、空白與格子不同。</td><td>確認 chip 的 <code>data-event-name</code> 與 tracker 的 <code>data-phrase-event-name</code> 相同（預設都是 <code>pt:phrase-collected</code>）。</td></tr>
+<tr><td>「查看收藏清單」按鈕點了沒反應</td><td>沒載入 Bootstrap JS bundle。</td><td>載入 <code>bootstrap.bundle.min.js</code>（要 bundle 版，內含 Popper 與 offcanvas）。</td></tr>
+<tr><td>phrase-chip 的圖示是空白</td><td>沒載入 Bootstrap Icons CSS，或 <code>data-icon</code> 誤寫了 <code>bi-</code> 前綴，或 <code>data-collected-icon</code> 漏寫了 <code>bi-</code> 前綴。</td><td><code>data-icon="bookmark"</code>；<code>data-collected-icon="bi-check-circle-fill"</code>。</td></tr>
+<tr><td>定時 Modal 一直沒彈</td><td>看 console 警告：找不到目標、沒載入 Bootstrap、section 數不足。也可能是一直在捲動，或有其他 modal 開著。</td><td>用 <code>PracticeTracker.promoState</code> 檢查已瀏覽數與已過秒數；用 <code>PracticeTracker.showPromo()</code> 確認 Modal 本身可正常顯示。</td></tr>
+<tr><td>定時 Modal 彈得太早或太晚</td><td>時間單位是「分鐘」，不是秒。</td><td><code>data-promo-minutes="0.5"</code> 才是 30 秒。</td></tr>
+<tr><td>改了 js 檔，線上頁面沒變化</td><td>使用 jsDelivr 的 CDN 有快取。</td><td>據我所知，jsDelivr 對分支連結的快取最長可達十數小時，可到 jsDelivr 的 purge 功能清除快取，或改用帶版本號、commit 的網址。</td></tr>
+<tr><td><code>PracticeTracker is not defined</code> 之類的例外</td><td>在 tracker 初始化之前就呼叫，或根本沒有符合的 section。</td><td>呼叫前先檢查 <code>window.PracticeTracker</code>；或在 DOMContentLoaded 之後才呼叫。</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc" id="limits">
+<h2>14. 已知問題與限制</h2>
+<div class="note note-bug"><b>已知問題</b>：<b>片語收藏的完成提示，顯示條件是錯的。</b> 我用模擬環境驗證過：片語全部收藏完、但章節還沒全完成時，「片語獵人認證！」不會顯示；反過來，章節全部完成、但片語還沒收藏完時，它卻會顯示（與章節的完成提示同時出現）。原因是樣式規則只認面板本身的完成狀態，不認片語區塊自己的完成狀態。在修正之前，不建議依賴 <code>data-phrase-complete-text</code>。這個問題是原本就存在的，不是這次新增功能造成的。</div>
+<div class="note note-warn"><b>注意</b>：<b>面板主體最高 600px，超出的部分會被裁切，且沒有捲軸。</b> 章節格子加片語格子加完成提示加收藏按鈕，總高度要留意。格子很多時，請加大 <code>data-cells-per-row</code> 與面板寬度，把高度壓下來。</div>
+<div class="note note-warn"><b>注意</b>：<b>原本就有幾處半透明顏色的透明度低於 0.78</b>，例如面板邊框與陰影。若你的規範要求不得低於 0.78，這些需要另外調整。這次新增的樣式都符合。</div>
+<ul>
+<li>進度與收藏都只存在記憶體，重新整理頁面全部歸零。這是刻意的設計，沒有任何儲存機制。</li>
+<li>同一頁只支援一個 <code>&lt;practice-tracker&gt;</code>。</li>
+<li>片語格子的大小、間距、每列數量沿用章節格子的設定，無法單獨指定。</li>
+<li>片語總數在初始化時就固定，之後動態新增的 phrase-chip 不會被計入。</li>
+<li>標記完成後沒有「取消完成」的功能。</li>
+<li>定時 Modal 的金色是寫死的，沒有屬性可以改色。</li>
+<li>預設字體小於 1rem 的屬性（見 3.4），需要在每個頁面自行調大。</li>
+</ul>
+</section>
+</main>
+</div>
+</body>
+</html>
