@@ -53,6 +53,7 @@ ui-fillin .uf-blank.uf-tblank:focus-within{box-shadow:inset 0 0 0 1px var(--uf-a
 ui-fillin .uf-tfield{appearance:none;background:transparent;border:0;outline:0;color:inherit;font:inherit;padding:0;min-width:3ch;text-align:inherit}
 ui-fillin .uf-tfield:disabled{color:inherit;opacity:1;-webkit-text-fill-color:currentColor}
 ui-fillin .uf-blank.uf-tblank .uf-hint-ans{margin-left:6px;font-weight:400;opacity:0.85}
+ui-fillin .uf-blank.uf-has-hint{white-space:normal;max-width:none;vertical-align:text-bottom}
 
 ui-fillin .uf-menu{position:fixed;z-index:1000;display:flex;flex-direction:column;gap:2px;box-sizing:border-box;min-width:9rem;
   max-width:min(var(--uf-menu-max-width),calc(100vw - 16px));max-height:var(--uf-menu-max-height);overflow:auto;padding:var(--uf-menu-padding);
@@ -624,6 +625,11 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       if (done && !res && this.hasAttribute('show-answer-on-wrong')) {
         const hint = el('span', 'uf-hint-ans', this._lab('label-correct-answer-prefix') + q.answers.join(' / '));
         q.wrap.appendChild(hint);
+        // 提示文字可能很長（尤其英文答案），這格暫時解除緊湊模式的不換行／最大寬度限制，
+        // 避免內容撐破外框邊界、疊到下一個挖空格（與容器高度無關，是外框本身的 CSS 限制）
+        q.wrap.classList.add('uf-has-hint');
+      } else {
+        q.wrap.classList.remove('uf-has-hint');
       }
     }
 
