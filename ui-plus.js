@@ -228,21 +228,8 @@
   ].join('\n');
 
   var CSS_READING = [
-    'margin-pin,read-pulse,chalk-mark,col-pair{display:none}',
+    'read-pulse,chalk-mark,col-pair{display:none}',
     'chunk-spot,chunk-item,chunk-subitem{display:none}',
-
-
-    '.urm-pin{border-bottom:1.5px dashed;cursor:help;display:inline;transition:opacity .15s ease}',
-    '.urm-pin:hover{opacity:.8}',
-    '.urm-pannot{position:fixed;z-index:9100;' +
-      'padding:8px 14px;border-radius:9px;' +
-      'font-size:.82rem;line-height:1.48;font-weight:500;' +
-      'pointer-events:none;opacity:0;transition:opacity .2s ease;' +
-      'box-shadow:0 4px 16px rgba(0,0,0,0.78)}',
-    '.urm-pannot.urm-pv{opacity:1}',
-    '.urm-pline{position:fixed;z-index:9099;height:0;border-top:1px dashed;' +
-      'pointer-events:none;opacity:0;transition:opacity .2s ease}',
-    '.urm-pline.urm-pv{opacity:.5}',
 
     '.urm-pulse{position:relative;display:block;padding-left:var(--urm-pg,14px)}',
     '.urm-pbar{position:absolute;left:0;top:0;' +
@@ -251,6 +238,20 @@
     '.urm-pbar.urm-pa{opacity:1;height:100%;' +
       'transition:height var(--urm-ps,2.8s) linear,opacity .3s ease}',
     '.urm-pbar.urm-pd{opacity:0;transition:opacity .9s ease .4s}',
+
+    '.urm-pulse[data-style="gradient"] .urm-pbar{' +
+      'background:linear-gradient(to bottom,var(--urm-c2,var(--urm-c)),var(--urm-c))}',
+    '.urm-pulse[data-style="glow"] .urm-pbar{box-shadow:0 0 9px 1px var(--urm-c)}',
+    '.urm-pulse[data-style="segmented"] .urm-pbar{' +
+      'background-color:transparent;' +
+      'background-image:repeating-linear-gradient(to bottom,var(--urm-c) 0,var(--urm-c) 6px,transparent 6px,transparent 11px)}',
+
+    '.urm-pbar2{position:absolute;left:var(--urm-pg2,9px);top:0;' +
+      'width:var(--urm-pw2,2px);height:0;' +
+      'border-radius:3px;pointer-events:none;opacity:0;transition:opacity .3s ease}',
+    '.urm-pbar2.urm-pa{opacity:.62;height:100%;' +
+      'transition:height var(--urm-ps2,3.3s) linear,opacity .3s ease}',
+    '.urm-pbar2.urm-pd{opacity:0;transition:opacity .9s ease .4s}',
 
     '.urm-chalk{display:inline-block;position:relative;' +
       'vertical-align:baseline;cursor:crosshair;transition:color .25s ease}',
@@ -632,13 +633,14 @@
   }
 
   var UR_CFG = global.UiReadingConfig = Object.assign({
-    pinTheme:        'yellow',
-    pinMargin:       20,
-    pinWidth:        210,
     pulseColor:      'teal',
+    pulseColor2:     '',
+    pulseStyle:      'solid',
     pulseSpeed:      2800,
     pulseWidth:      '3px',
+    pulseWidth2:     '2px',
     pulseGap:        14,
+    pulseGap2:       9,
     pulseTrigger:    'visible',
     chalkTheme:      'focus',
     chalkThickness:  2.5,
@@ -651,98 +653,49 @@
     chunkTheme:      ''
   }, global.UiReadingConfig || {});
 
-  var _pa = null, _pl = null, _pt = null;
-
-  function ensurePinDom() {
-    if (_pa) return;
-    _pa = document.createElement('div');
-    _pa.className = 'urm-pannot';
-    _pl = document.createElement('div');
-    _pl.className = 'urm-pline';
-    document.body.appendChild(_pa);
-    document.body.appendChild(_pl);
-  }
-
-  function initPin(el) {
-    if (el.dataset.urm) return;
-    el.dataset.urm = '1';
-
-    var note     = el.getAttribute('note') || '';
-    var themeRaw = el.getAttribute('theme') || UR_CFG.pinTheme;
-    var isOutline = themeRaw.slice(-8) === '-outline';
-    var themeName = isOutline ? themeRaw.slice(0, -8) : themeRaw;
-    var c = clr(themeName);
-
-    var mark = document.createElement('span');
-    mark.className = 'urm-pin';
-    mark.style.borderBottomColor = c;
-    mark.style.color = c;
-    mark.innerHTML = el.innerHTML;
-    el.replaceWith(mark);
-    ensurePinDom();
-
-    mark.addEventListener('mouseenter', function () {
-      clearTimeout(_pt);
-      var mr = mark.getBoundingClientRect();
-      if (isOutline) {
-        _pa.style.background = BG;
-        _pa.style.color      = c;
-        _pa.style.border     = '1.5px solid ' + c;
-        _pa.style.boxShadow  = '0 4px 16px rgba(0,0,0,0.78)';
-      } else {
-        _pa.style.background = c;
-        _pa.style.color      = BG;
-        _pa.style.border     = 'none';
-        _pa.style.boxShadow  = '0 4px 16px rgba(0,0,0,0.78)';
-      }
-      _pa.style.right    = UR_CFG.pinMargin + 'px';
-      _pa.style.left     = '';
-      _pa.style.maxWidth = UR_CFG.pinWidth + 'px';
-      _pa.style.top      = Math.max(8, mr.top + mr.height / 2 - 20) + 'px';
-      _pa.innerHTML      = note;
-      _pa.classList.add('urm-pv');
-      requestAnimationFrame(function () {
-        var ar  = _pa.getBoundingClientRect();
-        var ly  = mr.top + mr.height / 2;
-        var lx1 = mr.right + 5;
-        var lx2 = ar.left  - 5;
-        _pl.style.top         = ly + 'px';
-        _pl.style.left        = lx1 + 'px';
-        _pl.style.width       = Math.max(0, lx2 - lx1) + 'px';
-        _pl.style.borderColor = c;
-        if (lx2 > lx1) _pl.classList.add('urm-pv');
-      });
-    });
-
-    mark.addEventListener('mouseleave', function () {
-      _pt = setTimeout(function () {
-        _pa.classList.remove('urm-pv');
-        _pl.classList.remove('urm-pv');
-      }, 90);
-    });
-  }
-
   function initPulse(el) {
     if (el.dataset.urm) return;
     el.dataset.urm = '1';
 
-    var c       = clr(el.getAttribute('color')      || UR_CFG.pulseColor);
+    var c       = clr(el.getAttribute('color')       || UR_CFG.pulseColor);
+    var c2Raw   = el.getAttribute('color2')          || UR_CFG.pulseColor2;
+    var c2      = c2Raw ? clr(c2Raw) : null;
+    var style   = el.getAttribute('style')           || UR_CFG.pulseStyle;
     var speed   = +(el.getAttribute('speed')         || UR_CFG.pulseSpeed);
     var pw      = el.getAttribute('pulse-width')     || UR_CFG.pulseWidth;
+    var pw2     = el.getAttribute('pulse-width-2')   || UR_CFG.pulseWidth2;
     var gap     = +(el.getAttribute('gap')           || UR_CFG.pulseGap);
+    var gap2    = +(el.getAttribute('gap-2')         || UR_CFG.pulseGap2);
+    var speed2  = +(el.getAttribute('speed-2')       || Math.round(speed * 1.15));
     var trigger = el.getAttribute('trigger')         || UR_CFG.pulseTrigger;
     var repeat  = el.hasAttribute('repeat');
+    var isDouble = style === 'double';
 
     var wrap = document.createElement('div');
     wrap.className = 'urm-pulse';
+    wrap.dataset.style = style;
     wrap.style.setProperty('--urm-ps', speed + 'ms');
     wrap.style.setProperty('--urm-pw', pw);
-    wrap.style.setProperty('--urm-pg', gap + 'px');
+    wrap.style.setProperty('--urm-pg', (isDouble ? gap + gap2 : gap) + 'px');
+    wrap.style.setProperty('--urm-c', c);
+    if (c2) wrap.style.setProperty('--urm-c2', c2);
+    if (isDouble) wrap.style.setProperty('--urm-ps2', speed2 + 'ms');
 
     var bar = document.createElement('div');
     bar.className = 'urm-pbar';
-    bar.style.background = c;
+    if (style !== 'gradient' && style !== 'segmented') bar.style.background = c;
     wrap.appendChild(bar);
+
+    var bar2 = null;
+    if (isDouble) {
+      bar2 = document.createElement('div');
+      bar2.className = 'urm-pbar2';
+      bar2.style.background = c2 || c;
+      bar2.style.left = gap + 'px';
+      bar2.style.width = pw2;
+      wrap.appendChild(bar2);
+    }
+
     Array.from(el.childNodes).forEach(function (n) { wrap.appendChild(n); });
     el.replaceWith(wrap);
 
@@ -755,10 +708,20 @@
       bar.classList.remove('urm-pa', 'urm-pd');
       void bar.offsetHeight;
       bar.classList.add('urm-pa');
+      if (bar2) {
+        var delay = Math.round(speed * 0.18);
+        setTimeout(function () {
+          bar2.classList.remove('urm-pa', 'urm-pd');
+          void bar2.offsetHeight;
+          bar2.classList.add('urm-pa');
+        }, delay);
+      }
       setTimeout(function () {
         bar.classList.add('urm-pd');
+        if (bar2) bar2.classList.add('urm-pd');
         setTimeout(function () {
           bar.classList.remove('urm-pa', 'urm-pd');
+          if (bar2) bar2.classList.remove('urm-pa', 'urm-pd');
           running = false;
         }, 1400);
       }, speed + 300);
@@ -1242,7 +1205,6 @@
   }
 
   function bootReading() {
-    document.querySelectorAll('margin-pin:not([data-urm])').forEach(initPin);
     document.querySelectorAll('read-pulse:not([data-urm])').forEach(initPulse);
     document.querySelectorAll('chalk-mark:not([data-urm])').forEach(initChalk);
     document.querySelectorAll('chunk-spot:not([data-urm])').forEach(initChunkSpot);
