@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-table 詳細手冊</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#0C0D0C;--shell:#C6C7BD;--lavender:#C3A5E5;--sky:#82C8E5;--warning:#E6374B;
+  --salmon:#E5C3B3;--ocean:#1CCAE8;--safe:#27AE60;--teal:#0DA591;--vanilla:#DBEDD8;
+  --yellow:#E3D322;--focus:#D4FFFC;--special:#B3DE73;--info:#4171BF;--indigo:#7849C9;
+  --pink:#FF91D7;--orange:#EDA109;--line:#3A3B38;
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--shell);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--sky)}
+.layout{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow:auto;padding:24px 16px;border-right:1px solid var(--line);box-sizing:border-box}
+.side h1{font-size:1.375rem;color:var(--lavender);margin:0 0 4px}
+.side .ver{font-size:0.8125rem;margin:0 0 20px;opacity:.82}
+.side a{display:block;padding:6px 12px;color:var(--shell);text-decoration:none;font-size:0.9375rem;border-left:2px solid transparent}
+.side a:hover,.side a.active{color:var(--focus);border-left-color:var(--ocean)}
+.side .grp{font-size:0.75rem;color:var(--special);margin:16px 0 4px;padding-left:12px;letter-spacing:1px}
+main{padding:32px 40px 96px;min-width:0}
+.hero{border:1px solid var(--line);padding:24px 32px;margin-bottom:48px}
+.hero h1{font-size:2rem;color:var(--focus);margin:0 0 8px}
+.hero p{margin:0}
+section{margin-bottom:72px;scroll-margin-top:16px}
+h2{font-size:1.625rem;color:var(--ocean);margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:1.25rem;color:var(--lavender);margin:32px 0 12px}
+p{margin:0 0 12px}
+ul{margin:0 0 12px;padding-left:24px}
+li{margin-bottom:4px}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;font-size:0.875rem;color:var(--sky);background:transparent}
+.note{border-left:3px solid var(--orange);padding:10px 16px;margin:12px 0 16px}
+.note.warn{border-left-color:var(--warning)}
+.note.tip{border-left-color:var(--safe)}
+.note b{color:var(--yellow)}
+.tbl-wrap{overflow-x:auto;margin:12px 0 24px}
+table.attr{width:100%;border-collapse:collapse;font-size:0.9375rem;color:var(--shell);background:var(--bg)}
+table.attr th{color:var(--lavender);text-align:left;padding:8px 12px;border:1px solid var(--line);white-space:nowrap;background:var(--bg)}
+table.attr td{padding:8px 12px;border:1px solid var(--line);vertical-align:top;background:var(--bg);color:var(--shell)}
+table.attr td:first-child{white-space:nowrap}
+.demo{border:1px solid var(--line);margin:16px 0 28px}
+.demo-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 16px;border-bottom:1px solid var(--line)}
+.demo-title{color:var(--special);font-weight:700}
+.demo-actions{display:flex;gap:8px;flex-shrink:0}
+.btn-mini{background:var(--bg);border:1px solid var(--line);color:var(--shell);padding:4px 12px;font-size:0.8125rem;line-height:1.5;cursor:pointer;font-family:inherit}
+.btn-mini:hover{border-color:var(--ocean);color:var(--focus)}
+.demo-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.demo.wide .demo-body{grid-template-columns:minmax(0,1fr)}
+.demo-live{padding:16px;min-width:0;border-right:1px solid var(--line);overflow:auto}
+.demo.wide .demo-live{border-right:0;border-bottom:1px solid var(--line)}
+.demo.nolive .demo-live{display:none}
+.demo-codes{min-width:0;display:flex;flex-direction:column}
+.demo-code{margin:0;padding:16px;overflow:auto;font-size:0.8125rem;line-height:1.5;max-height:560px;color:var(--shell);background:var(--bg);border:0;border-radius:0;font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace}
+.demo-code code{font-size:inherit;color:inherit}
+.code-label{padding:6px 16px;font-size:0.8125rem;color:var(--orange);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tk-t{color:var(--sky)}.tk-a{color:var(--salmon)}.tk-s{color:var(--special)}.tk-p{color:var(--shell)}
+.tk-c{color:var(--teal)}.tk-k{color:var(--pink)}.tk-n{color:var(--orange)}
+.pg-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px;border-bottom:1px solid var(--line)}
+.pg-controls label{display:block;font-size:0.8125rem;color:var(--lavender);margin-bottom:4px}
+.form-select{background-color:var(--bg);color:var(--shell);border:1px solid var(--line);border-radius:0;font-size:0.875rem;padding:4px 32px 4px 8px}
+.form-select:focus{background-color:var(--bg);color:var(--focus);border-color:var(--ocean);box-shadow:none}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:12px 0 24px}
+.sw{border:1px solid var(--line);cursor:pointer;background:var(--bg);color:var(--shell);padding:0;text-align:left;font-family:inherit}
+.sw:hover{border-color:var(--focus)}
+.sw i{display:block;height:36px}
+.sw span{display:block;padding:6px 10px;font-size:0.8125rem}
+.sw b{display:block;color:var(--shell)}
+.tree{border:1px solid var(--line);padding:16px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:0.875rem;line-height:1.5;white-space:pre;margin:12px 0 24px;color:var(--shell)}
+.dyn-bar{display:flex;gap:12px;align-items:center;margin:12px 0}
+#dyn-live .uit-wrap{margin-bottom:12px}
+#alerts{position:fixed;top:16px;right:16px;z-index:10000;width:360px;max-width:calc(100vw - 32px)}
+.alert{--bs-alert-padding-x:16px;--bs-alert-padding-y:10px;border-radius:0;margin-bottom:8px;font-size:0.9375rem;line-height:1.5}
+.alert-success{--bs-alert-color:#27AE60;--bs-alert-bg:#0C0D0C;--bs-alert-border-color:#27AE60}
+.alert-danger{--bs-alert-color:#E6374B;--bs-alert-bg:#0C0D0C;--bs-alert-border-color:#E6374B}
+.alert-info{--bs-alert-color:#82C8E5;--bs-alert-bg:#0C0D0C;--bs-alert-border-color:#82C8E5}
+@media (max-width:992px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  main{padding:24px 16px 64px}
+  .demo-body{grid-template-columns:minmax(0,1fr)}
+  .demo-live{border-right:0;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<div id="alerts"></div>
+<div class="layout">
+
+<nav class="side">
+  <h1>ui-table</h1>
+  <p class="ver">詳細手冊與範例對照，建立於 10-24-26</p>
+  <div class="grp">基礎</div>
+  <a href="#s-overview">總覽與結構</a>
+  <a href="#s-config">全域設定</a>
+  <a href="#s-table">ui-table 屬性</a>
+  <a href="#s-group">ui-group</a>
+  <a href="#s-row">ui-row</a>
+  <a href="#s-enh">ui-row-enhance</a>
+  <div class="grp">儲存格 ui-col</div>
+  <a href="#s-col">基本屬性</a>
+  <a href="#s-expand">expandable</a>
+  <a href="#s-extra">extra-info</a>
+  <a href="#s-next">show-next</a>
+  <a href="#s-mask">遮罩 mask</a>
+  <a href="#s-car">輪播 carousel</a>
+  <a href="#s-alert">提示 alert</a>
+  <a href="#s-arrow">欄間箭頭 arrow</a>
+  <div class="grp">進階</div>
+  <a href="#s-reveal">自動揭示列</a>
+  <a href="#s-json">JSON 資料來源</a>
+  <a href="#s-api">全域 API 與色彩</a>
+  <a href="#s-rules">互斥與注意事項</a>
+</nav>
+
+<main>
+<div class="hero">
+  <h1>ui-table 詳細手冊</h1>
+  <p>涵蓋全域設定、所有標籤與所有屬性。每個範例左側為即時結果，右側為對應程式碼，可按「重新載入」重播動畫與計時效果。</p>
+</div>
+
+<section id="s-overview">
+  <h2>總覽與結構</h2>
+  <p>ui-table 以語意標籤描述表格。元件不使用 shadow DOM，樣式自動注入 <code>&lt;style id="uit-css"&gt;</code>。原始的 <code>ui-table</code> 元素會被隱藏，渲染結果插在它的前面。</p>
+  <p>要顯示 <code>bi-</code> 開頭的圖示、show-next 的箭頭，以及 auto-number 的 1 到 9 圓圈數字，頁面需有 Bootstrap Icons 字型。內建的 <code>i-</code> 圖示為 SVG，不依賴字型。</p>
+  <div class="tree">ui-table
+├─ ui-col[hidden][id]          提示訊息來源（選用，供 alert-msg 引用）
+├─ ui-group                    群組（選用）
+│   ├─ ui-row                  一列，欄數以第一個有儲存格的 ui-row 為準
+│   │   └─ ui-col              儲存格
+│   │       └─ cell-item       輪播項目（只用於 carousel-interval）
+│   └─ ui-row-enhance          一列，欄數由本列自行決定
+└─ ui-row / ui-row-enhance     無群組時，列直接放在 ui-table 下</div>
+  <h3>最小範例</h3>
+  <script type="text/plain" data-demo data-title="三欄表格">
+<ui-table>
+  <ui-row>
+    <ui-col inverse>項目</ui-col>
+    <ui-col inverse>說明</ui-col>
+    <ui-col inverse>狀態</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>元件名稱</ui-col>
+    <ui-col>語意標籤表格</ui-col>
+    <ui-col icon="i-check">可用</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>渲染方式</ui-col>
+    <ui-col>不使用 shadow DOM，樣式自動注入</ui-col>
+    <ui-col icon="bi-lightning-charge">即時</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <div class="note tip"><b>顏色來源：</b>所有顏色參數都接受色名（見「全域 API 與色彩」）、<code>#</code> 色碼或 <code>rgb(...)</code>。內部由色碼產生 rgba 時，透明度一律不低於 0.78。</div>
+</section>
+
+<section id="s-config">
+  <h2>全域設定 UiTableConfig</h2>
+  <p>全域設定是所有表格的預設值，可被 ui-table、ui-row、ui-col 上的屬性覆寫。設定物件需在元件渲染表格之前準備好。</p>
+  <div class="tbl-wrap"><div data-attrs="config" data-head="設定項|型別|預設|說明"></div></div>
+  <script type="text/plain" data-demo data-nolive data-lang="js" data-title="兩種設定方式">
+// 方式一：在載入元件之前宣告全域物件
+window.UiTableConfig = {
+  theme: 'sky',
+  cellPadding: '8px',
+  fontSize: '1.125rem',
+  alertDuration: 4000,
+  autoRevealInterval: 0,
+  cellAlignment: 'left',
+  verticalAlignment: 'top',
+  hoverBgColor: '',
+  cellMinHeight: '',
+  rowBorder: '',
+  arrowSize: '1.5rem',
+  arrowColor: 'focus',
+  arrowPos: 'center'
+};
+
+// 方式二：元件載入後，在新表格渲染之前修改同一個物件
+UiTable.config.fontSize = '1.125rem';
+UiTable.config.rowBorder = '1px solid';
+  </script>
+</section>
+
+<section id="s-table">
+  <h2>ui-table 屬性</h2>
+  <div class="tbl-wrap"><div data-attrs="table"></div></div>
+  <h3>互動調整</h3>
+  <p>調整下方選項，觀察整表層級屬性的效果，右側程式碼會同步更新。</p>
+  <div class="demo wide" id="pg">
+    <div class="demo-head"><span class="demo-title">ui-table 屬性試玩</span><div class="demo-actions"><button class="btn-mini" id="pg-copy" type="button">複製程式碼</button></div></div>
+    <div class="pg-controls" id="pg-controls"></div>
+    <div class="demo-body"><div class="demo-live" id="pg-live"></div><pre class="demo-code" id="pg-code"></pre></div>
+  </div>
+  <h3>文字顏色優先順序</h3>
+  <p>文字顏色的優先順序為 ui-col、ui-row、ui-table 的 <code>font-color</code>，最後才是 <code>theme</code>。邊框與群組標題列永遠使用 theme。</p>
+  <script type="text/plain" data-demo data-title="font-color 三層覆寫">
+<ui-table theme="sky" font-color="vanilla">
+  <ui-row font-color="orange">
+    <ui-col>列層級：orange</ui-col>
+    <ui-col font-color="pink">欄層級：pink</ui-col>
+    <ui-col>列層級：orange</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>表層級：vanilla</ui-col>
+    <ui-col>表層級：vanilla</ui-col>
+    <ui-col font-color="special">欄層級：special</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-group">
+  <h2>ui-group</h2>
+  <p>群組會產生有標題列的區塊，點擊標題列可收合或展開。遮罩的 mask-order 與 show-next 都以群組為單位獨立運作。</p>
+  <div class="tbl-wrap"><div data-attrs="group"></div></div>
+  <script type="text/plain" data-demo data-title="群組標題與預設收合">
+<ui-table theme="sky">
+  <ui-group title-left="第一章：基礎" title-right="2 項">
+    <ui-row>
+      <ui-col>名詞</ui-col>
+      <ui-col>定義</ui-col>
+    </ui-row>
+    <ui-row>
+      <ui-col>群組</ui-col>
+      <ui-col>可收合的區塊</ui-col>
+    </ui-row>
+  </ui-group>
+  <ui-group title-left="第二章：預設收合" title-right="點標題展開" ini-collapse>
+    <ui-row>
+      <ui-col>收合狀態</ui-col>
+      <ui-col>載入時內容隱藏，點擊標題列後展開</ui-col>
+    </ui-row>
+  </ui-group>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-row">
+  <h2>ui-row</h2>
+  <p>ui-row 與 ui-row-enhance 共用同一組屬性。ui-row 的欄數以整張表第一個有儲存格的 ui-row 為準。</p>
+  <div class="tbl-wrap"><div data-attrs="row"></div></div>
+  <script type="text/plain" data-demo data-title="cell-padding、border、col-border">
+<ui-table theme="teal">
+  <ui-row cell-padding="16px" border="2px solid" col-border="1px dashed">
+    <ui-col>內距 16px</ui-col>
+    <ui-col>列外框 2px solid</ui-col>
+    <ui-col>欄線 1px dashed</ui-col>
+  </ui-row>
+  <ui-row cell-padding="2px" border="1px solid" col-border="1px solid">
+    <ui-col>內距 2px</ui-col>
+    <ui-col>列外框 1px solid</ui-col>
+    <ui-col>欄線 1px solid</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="col-widths 欄寬比例">
+<ui-table theme="lavender" row-border="1px solid">
+  <ui-row col-widths="1:2:1">
+    <ui-col>1 份</ui-col>
+    <ui-col>2 份（比例 1:2:1）</ui-col>
+    <ui-col>1 份</ui-col>
+  </ui-row>
+  <ui-row col-widths="3:1:1">
+    <ui-col>3 份（比例 3:1:1）</ui-col>
+    <ui-col>1 份</ui-col>
+    <ui-col>1 份</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="font-size、font-color、line-height、text-indent">
+<ui-table theme="sky">
+  <ui-row font-size="0.875rem" font-color="shell">
+    <ui-col>字級 0.875rem，這一列的所有儲存格都使用較小的字。</ui-col>
+    <ui-col>文字顏色 shell。</ui-col>
+  </ui-row>
+  <ui-row font-size="1.25rem" font-color="orange" line-height="1.5" text-indent="2em">
+    <ui-col>字級 1.25rem，行高 1.5，首行縮排 2em，用來示範段落式的長文字排版。</ui-col>
+    <ui-col>文字顏色 orange，同樣套用縮排。</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="auto-number 自動編號">
+<ui-table theme="special">
+  <ui-row auto-number>
+    <ui-col>空心圓圈（outline）</ui-col>
+    <ui-col>第二欄</ui-col>
+    <ui-col>第三欄</ui-col>
+  </ui-row>
+  <ui-row auto-number="fill">
+    <ui-col>實心圓圈（fill）</ui-col>
+    <ui-col>第二欄</ui-col>
+    <ui-col>第三欄</ui-col>
+  </ui-row>
+  <ui-row auto-number>
+    <ui-col>自訂 icon 時以 icon 為準</ui-col>
+    <ui-col icon="bi-star-fill">第二欄是星星</ui-col>
+    <ui-col>第三欄仍是 3</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-enh">
+  <h2>ui-row-enhance</h2>
+  <p>ui-row-enhance 的欄數由該列自己的儲存格數決定，所以同一張表可以混用不同欄數的列，<code>col-widths</code> 的比例數也只需符合該列自己的欄數。</p>
+  <script type="text/plain" data-demo data-title="不同欄數混排">
+<ui-table theme="lavender" row-border="1px solid">
+  <ui-row>
+    <ui-col inverse>甲</ui-col>
+    <ui-col inverse>乙</ui-col>
+    <ui-col inverse>丙</ui-col>
+  </ui-row>
+  <ui-row-enhance col-widths="1:3">
+    <ui-col>兩欄一列</ui-col>
+    <ui-col>比例 1:3，欄數與上一列不同</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance>
+    <ui-col span="all">單欄橫跨整列</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="1:1:1:1">
+    <ui-col>1</ui-col>
+    <ui-col>2</ui-col>
+    <ui-col>3</ui-col>
+    <ui-col>4</ui-col>
+  </ui-row-enhance>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-col">
+  <h2>ui-col 基本屬性</h2>
+  <div class="tbl-wrap"><div data-attrs="colBasic"></div></div>
+  <script type="text/plain" data-demo data-title="icon 圖示">
+<ui-table theme="sky" cell-min-height="48px">
+  <ui-row>
+    <ui-col icon="bi-star-fill">bi-star-fill</ui-col>
+    <ui-col icon="i-check">i-check</ui-col>
+    <ui-col icon="i-lock">i-lock</ui-col>
+    <ui-col icon="i-grip">i-grip</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col icon="i-arrow-down">i-arrow-down</ui-col>
+    <ui-col icon="i-arrow-up">i-arrow-up</ui-col>
+    <ui-col icon="i-arrow-right">i-arrow-right</ui-col>
+    <ui-col icon="i-arrow-left">i-arrow-left</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="span 橫跨欄數">
+<ui-table theme="orange" row-border="1px solid">
+  <ui-row>
+    <ui-col inverse>A</ui-col>
+    <ui-col inverse>B</ui-col>
+    <ui-col inverse>C</ui-col>
+    <ui-col inverse>D</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col span="2">span="2"，橫跨兩欄</ui-col>
+    <ui-col>C</ui-col>
+    <ui-col>D</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col span="all">span="all"，橫跨整列</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="inverse 反白">
+<ui-table theme="teal" font-color="focus">
+  <ui-row>
+    <ui-col inverse icon="bi-bookmark-fill">反白儲存格</ui-col>
+    <ui-col>一般儲存格</ui-col>
+    <ui-col inverse font-color="pink">反白搭配 pink</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-wide data-title="fixed 與 width">
+<ui-table theme="teal">
+  <ui-row>
+    <ui-col fixed="left">固定在左</ui-col>
+    <ui-col width="1200px">中間欄寬 1200px，超出表格區時請水平捲動，兩側的固定欄會留在原位。</ui-col>
+    <ui-col fixed="right">固定在右</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col fixed="left">第二列左</ui-col>
+    <ui-col width="1200px">固定欄會以底層背景色遮住下方內容。</ui-col>
+    <ui-col fixed="right">第二列右</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <div class="note">固定欄的實際效果取決於容器寬度與儲存格寬度，只有在表格水平捲動時才看得出來。</div>
+</section>
+
+<section id="s-expand">
+  <h2>expandable 可展開文字</h2>
+  <p>加上 <code>expandable</code> 後，內容預設只顯示兩行，點擊文字或右側箭頭可展開與收合。與 <code>mask-text</code> 互斥。</p>
+  <script type="text/plain" data-demo data-title="長文字收合">
+<ui-table theme="vanilla">
+  <ui-row col-widths="1:2">
+    <ui-col inverse>說明</ui-col>
+    <ui-col expandable>這是一段很長的說明文字，用來示範可展開的儲存格。預設只顯示兩行，其餘內容會被截斷，點擊文字或右側箭頭之後才會完整展開。再點一次即可收合。這樣可以讓表格在資訊很多時仍維持整齊。</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:2">
+    <ui-col inverse>另一則</ui-col>
+    <ui-col expandable icon="bi-chat-left-text">帶有圖示的可展開內容。圖示會固定在文字左側，不會隨展開而移動。內容夠長才會出現被截斷的效果，所以這裡多寫幾句，確保超過兩行。</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-extra">
+  <h2>extra-info 額外資訊</h2>
+  <p>在儲存格右側顯示一個圖示，點擊後彈出浮動視窗，內容取自頁面上另一個元素。來源元素在元件載入時自動隱藏，視窗會自動避開視窗邊緣，點擊其他地方或按 Esc 關閉。</p>
+  <div class="note warn"><b>互斥：</b>與 <code>mask-text</code>、<code>carousel-interval</code> 互斥。屬性值不可為空，且對應 id 的元素必須存在。</div>
+  <script type="text/plain" data-demo data-title="點擊圖示顯示補充說明">
+<ui-table theme="sky">
+  <ui-row col-widths="1:2">
+    <ui-col extra-info="xi-demo-1">ephemeral（形容詞）</ui-col>
+    <ui-col extra-info="xi-demo-2">短暫的、轉瞬即逝的</ui-col>
+  </ui-row>
+</ui-table>
+<div id="xi-demo-1">
+  <p>發音：/ɪˈfemərəl/</p>
+  <p>例句：Fame can be ephemeral.</p>
+</div>
+<div id="xi-demo-2">
+  <p>可含有 HTML：</p>
+  <ul><li>清單項目一</li><li>清單項目二</li></ul>
+</div>
+  </script>
+</section>
+
+<section id="s-next">
+  <h2>show-next 逐步展開</h2>
+  <p>點擊帶有 <code>show-next</code> 的儲存格，會展開緊接在下方、且標有 <code>hidden</code> 的列。右側會出現一個會翻轉的箭頭。</p>
+  <div class="tbl-wrap"><div data-attrs="showNext"></div></div>
+  <script type="text/plain" data-demo data-title="整列展開（只有一個 show-next）">
+<ui-table theme="orange">
+  <ui-row col-widths="2:1">
+    <ui-col show-next inverse>點我展開下一列</ui-col>
+    <ui-col>其他欄位</ui-col>
+  </ui-row>
+  <ui-row hidden col-widths="2:1">
+    <ui-col>這一列平時是隱藏的。</ui-col>
+    <ui-col>補充欄</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="各欄各自展開（show-next=&quot;col&quot;）">
+<ui-table theme="pink">
+  <ui-row>
+    <ui-col show-next="col" inverse>問題一</ui-col>
+    <ui-col show-next="col" inverse>問題二</ui-col>
+    <ui-col inverse>沒有答案的欄</ui-col>
+  </ui-row>
+  <ui-row hidden>
+    <ui-col>答案一</ui-col>
+    <ui-col>答案二</ui-col>
+    <ui-col>永遠是空白</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="連鎖展開">
+<ui-table theme="special">
+  <ui-row>
+    <ui-col show-next="row" inverse>第一層（點我）</ui-col>
+  </ui-row>
+  <ui-row hidden>
+    <ui-col show-next="row">第二層（再點我）</ui-col>
+  </ui-row>
+  <ui-row hidden>
+    <ui-col icon="i-check">第三層，已到底</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-mask">
+  <h2>遮罩 mask</h2>
+  <p>遮罩蓋住儲存格內容，點擊後揭開。可選擇純色、反色、漸層，也可以設成雙層或依序解鎖。</p>
+  <div class="tbl-wrap"><div data-attrs="mask"></div></div>
+  <p>內建漸層編號：1 靛紫、2 海藍、3 橘黃、4 粉紅、5 青綠、6 藍紫。</p>
+  <script type="text/plain" data-demo data-wide data-title="顏色、反色與漸層">
+<ui-table theme="sky" cell-alignment="center" vertical-alignment="middle" cell-min-height="64px" row-border="1px solid">
+  <ui-row>
+    <ui-col mask-text="預設遮罩">答案一</ui-col>
+    <ui-col mask-text="自訂 warning" mask-color="warning">答案二</ui-col>
+    <ui-col mask-text="反色遮罩" mask-invert>答案三</ui-col>
+    <ui-col mask-text="反色加 pink" mask-invert mask-color="pink">答案四</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col mask-text="漸層 1" mask-gradient="1">答案五</ui-col>
+    <ui-col mask-text="漸層 2" mask-gradient="2">答案六</ui-col>
+    <ui-col mask-text="漸層 3" mask-gradient="3">答案七</ui-col>
+    <ui-col mask-text="漸層 4" mask-gradient="4">答案八</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col mask-text="漸層 5" mask-gradient="5">答案九</ui-col>
+    <ui-col mask-text="漸層 6" mask-gradient="6">答案十</ui-col>
+    <ui-col mask-text="自訂漸層" mask-gradient="linear-gradient(135deg,#0C0D0C 0%,#1CCAE8 100%)">答案十一</ui-col>
+    <ui-col mask-text="純色 safe" mask-color="safe">答案十二</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="mask-text-2 雙層遮罩">
+<ui-table theme="lavender" cell-min-height="64px" vertical-alignment="middle">
+  <ui-row col-widths="1:1">
+    <ui-col mask-text="第一層：想一想" mask-text-2="第二層：確定要看嗎" mask-color="orange">正確答案：A</ui-col>
+    <ui-col mask-text="點兩次才會揭曉" mask-text-2="再點一次" mask-invert>正確答案：B</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="mask-order 依序解鎖">
+<ui-table theme="orange" cell-min-height="56px" vertical-alignment="middle" row-border="1px solid">
+  <ui-row>
+    <ui-col mask-text="第 1 步" mask-order="0">步驟一：先閱讀題目</ui-col>
+    <ui-col mask-text="第 2 步" mask-order="1">步驟二：整理想法</ui-col>
+    <ui-col mask-text="第 3 步" mask-order="2">步驟三：開口回答</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <div class="note warn"><b>注意：</b><code>mask-order</code> 需從 0 起連續且不可重複。重複時，console 會顯示錯誤並視為無序。順序以群組為範圍，沒有群組時以整張表為範圍。</div>
+</section>
+
+<section id="s-car">
+  <h2>輪播 carousel</h2>
+  <p>以 <code>cell-item</code> 放入多筆內容，儲存格會依設定的間隔向上輪播。只有一筆時不會輪播。若同時有 mask-text 或 alert-msg，輪播會被忽略。</p>
+  <div class="tbl-wrap"><div data-attrs="car"></div></div>
+  <script type="text/plain" data-demo data-title="輪播與進度條">
+<ui-table theme="special">
+  <ui-row col-widths="1:3">
+    <ui-col inverse>每日一句</ui-col>
+    <ui-col carousel-interval="2500" progress-bar progress-bar-color="warning" icon="bi-quote">
+      <cell-item>第一句：Practice makes progress.</cell-item>
+      <cell-item>第二句：Small steps every day.</cell-item>
+      <cell-item>第三句：Speak first, polish later.</cell-item>
+    </ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col inverse>預設間隔</ui-col>
+    <ui-col carousel-interval="3000">
+      <cell-item>不加進度條的輪播（一）</cell-item>
+      <cell-item>不加進度條的輪播（二）</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-alert">
+  <h2>提示 alert</h2>
+  <p>儲存格可以每隔一段時間自動浮現提示，每次顯示的時間由全域的 <code>alertDuration</code> 決定。提示內容可直接寫文字，也可引用 ui-table 底下一個 <code>hidden</code> 且有 <code>id</code> 的 ui-col。</p>
+  <div class="tbl-wrap"><div data-attrs="alert"></div></div>
+  <script type="text/plain" data-demo data-wide data-title="三種提示位置">
+<ui-table theme="lavender" cell-min-height="56px" vertical-alignment="middle" row-border="1px solid">
+  <ui-col hidden id="alert-src-1"><b>提醒</b>：這段內容來自隱藏的 ui-col，可以含有 HTML。</ui-col>
+  <ui-row>
+    <ui-col alert-msg="顯示在右側的提示" alert-color="special" alert-interval="10000" alert-pos="C">位置 C：顯示在儲存格右側（每 10 秒）</ui-col>
+    <ui-col alert-msg="單元內覆蓋提示" alert-color="warning" alert-interval="6000" alert-pos="A">位置 A：覆蓋在儲存格內（每 6 秒）</ui-col>
+    <ui-col alert-msg="alert-src-1" alert-color="sky" alert-interval="8000" alert-pos="B">位置 B：顯示在儲存格上方（每 8 秒）</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <div class="note">提示首次出現在一個間隔之後。請稍候數秒，或按「重新載入」重新計時。</div>
+</section>
+
+<section id="s-arrow">
+  <h2>欄間箭頭 arrow</h2>
+  <p>箭頭畫在相鄰兩欄的交界線上，可以設在整列，也可以只設在個別儲存格。兩側儲存格會自動預留空間，避免壓到文字。</p>
+  <div class="tbl-wrap"><div data-attrs="arrow"></div></div>
+  <script type="text/plain" data-demo data-title="純顯示箭頭">
+<ui-table theme="ocean" cell-alignment="center">
+  <ui-row arrow>
+    <ui-col>輸入</ui-col>
+    <ui-col>處理</ui-col>
+    <ui-col>輸出</ui-col>
+  </ui-row>
+  <ui-row arrow arrow-size="2rem" arrow-color="orange" arrow-pos="top">
+    <ui-col>大箭頭</ui-col>
+    <ui-col>orange 在上緣</ui-col>
+    <ui-col>結果</ui-col>
+  </ui-row>
+  <ui-row arrow>
+    <ui-col>甲</ui-col>
+    <ui-col arrow="none">乙（這欄關閉箭頭）</ui-col>
+    <ui-col>丙</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+  <script type="text/plain" data-demo data-title="可點擊箭頭逐欄揭示">
+<ui-table theme="pink">
+  <ui-row arrow="click">
+    <ui-col>問題</ui-col>
+    <ui-col>提示</ui-col>
+    <ui-col>答案</ui-col>
+  </ui-row>
+  <ui-row arrow="click" arrow-open arrow-color="special">
+    <ui-col>已展開的問題</ui-col>
+    <ui-col>已展開的提示</ui-col>
+    <ui-col>已展開的答案</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col arrow="click" arrow-color="warning">只有第一欄有箭頭</ui-col>
+    <ui-col>被藏起來的第二欄</ui-col>
+    <ui-col>第三欄不受影響</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-reveal">
+  <h2>自動揭示列 auto-reveal-interval</h2>
+  <p>在 ui-table 上設定 <code>auto-reveal-interval</code>，標有 <code>hidden</code> 的列會依序自動出現：第 n 列在 n 倍間隔後出現。也可以在全域設定 <code>autoRevealInterval</code>。</p>
+  <script type="text/plain" data-demo data-title="每 1.5 秒出現一列">
+<ui-table theme="teal" auto-reveal-interval="1500">
+  <ui-row>
+    <ui-col inverse>步驟</ui-col>
+    <ui-col inverse>內容</ui-col>
+  </ui-row>
+  <ui-row hidden>
+    <ui-col>1</ui-col>
+    <ui-col>1.5 秒後出現</ui-col>
+  </ui-row>
+  <ui-row hidden>
+    <ui-col>2</ui-col>
+    <ui-col>3 秒後出現</ui-col>
+  </ui-row>
+  <ui-row hidden>
+    <ui-col>3</ui-col>
+    <ui-col>4.5 秒後出現</ui-col>
+  </ui-row>
+</ui-table>
+  </script>
+</section>
+
+<section id="s-json">
+  <h2>JSON 資料來源</h2>
+  <p>表格內容可由 JSON 產生：<code>data-id</code> 讀取全域變數，<code>src</code> 以 fetch 讀取檔案。JSON 只會建立群組與列，頂層需有 <code>groups</code> 陣列。</p>
+  <h3>欄位對照</h3>
+  <p>JSON 的欄位名稱為屬性名稱的駝峰寫法，例如 <code>col-widths</code> 對應 <code>colWidths</code>。</p>
+  <div class="tbl-wrap"><div data-attrs="jsonTop" data-head="層級|欄位|型別|說明"></div></div>
+  <div class="note warn"><b>JSON 不支援：</b><code>theme</code>（請寫在 ui-table 標籤上）、<code>mask-gradient</code>，以及 <code>show-next</code> 的 col 與 row 指定值（<code>showNext</code> 固定寫入 true，同列有多個時自動各欄展開）。alert 引用的隱藏 ui-col 需直接放在 ui-table 底下，才會在清空前被保留。</div>
+  <script type="text/plain" data-demo data-extra="js-data-1" data-extra-label="全域變數 demoTableData" data-extra-lang="js" data-title="data-id 讀取全域變數">
+<ui-table theme="sky" data-id="demoTableData"></ui-table>
+  </script>
+  <script type="text/plain" data-demo data-extra="json-data-2" data-extra-label="demo-data.json" data-extra-lang="json" data-title="src 讀取 JSON 檔">
+<ui-table theme="orange" src="demo-data.json"></ui-table>
+  </script>
+  <div class="note tip"><b>說明：</b>此頁的 src 範例以瀏覽器內的暫存網址模擬 demo-data.json，實際使用時請改成真實檔案路徑。</div>
+</section>
+
+<section id="s-api">
+  <h2>全域 API 與色彩</h2>
+  <div class="tbl-wrap"><div data-attrs="api" data-head="成員|型別|說明"></div></div>
+  <script type="text/plain" data-demo data-nolive data-lang="js" data-title="動態新增表格">
+var el = document.createElement('ui-table');
+el.setAttribute('theme', 'sky');
+el.innerHTML = '<ui-row><ui-col inverse>動態</ui-col><ui-col>新增的表格</ui-col></ui-row>';
+document.body.appendChild(el);
+
+UiTable.init();   // 只處理尚未渲染過的 ui-table
+  </script>
+  <div class="dyn-bar"><button class="btn-mini" id="dyn-add" type="button">新增一張表格</button><span id="dyn-count">尚未新增</span></div>
+  <div id="dyn-live"></div>
+  <h3>可用色名</h3>
+  <p>色名即 <code>UiTable.colors</code> 的鍵。點擊色塊可複製色名。</p>
+  <div class="swatches" id="swatches"></div>
+</section>
+
+<section id="s-rules">
+  <h2>互斥與注意事項</h2>
+  <p>下列組合會在 console 顯示警告或錯誤，元件會依表格中的方式處理。</p>
+  <div class="tbl-wrap"><div data-attrs="rules" data-head="情況|層級|處理方式"></div></div>
+  <h3>其他注意事項</h3>
+  <ul>
+    <li>點擊 expandable 與 extra-info 時會停止事件冒泡，所以不會同時觸發 show-next。</li>
+    <li>箭頭只在左右兩欄位於同一行時顯示。欄位換行時箭頭會自動隱藏。</li>
+    <li>輪播儲存格的內容只取 <code>cell-item</code>，其餘文字不會顯示。</li>
+    <li>alert 位置 B 與其他位置使用固定定位，儲存格被隱藏或群組收合時不會顯示。</li>
+    <li>同一個 ui-table 只會初始化一次，重複呼叫 <code>UiTable.init()</code> 是安全的。</li>
+    <li>單一表格初始化失敗時，錯誤只影響該表格，並輸出在 console。</li>
+  </ul>
+</section>
+</main>
+</div>
+
+<script id="js-data-1">
+window.demoTableData = {
+  fontSize: '1rem',
+  groups: [{
+    titleLeft: 'JSON 群組',
+    titleRight: '共 4 列',
+    rows: [
+      { colWidths: '1:2:1', cols: [
+        { content: '功能', inverse: true },
+        { content: '說明', inverse: true },
+        { content: '狀態', inverse: true }
+      ]},
+      { colWidths: '1:2:1', cols: [
+        { content: '遮罩', icon: 'bi-eye-slash' },
+        { content: '答案藏在遮罩後面', maskText: '點擊顯示', maskColor: 'warning' },
+        { content: '可用', icon: 'i-check' }
+      ]},
+      { colWidths: '1:2:1', cols: [
+        { content: '輪播', icon: 'bi-arrow-repeat' },
+        { carouselInterval: 2500, progressBar: true, items: ['輪播第一句', '輪播第二句', '輪播第三句'] },
+        { content: '點我展開', showNext: true }
+      ]},
+      { hidden: true, colWidths: '1:2:1', cols: [
+        { content: '' },
+        { content: '這一列由 showNext 展開。' },
+        { content: '' }
+      ]}
+    ]
+  }]
+};
+</script>
+<script type="application/json" id="json-data-2">
+{
+  "cellAlignment": "left",
+  "groups": [
+    {
+      "titleLeft": "src 載入的群組",
+      "titleRight": "JSON 檔案",
+      "rows": [
+        {
+          "autoNumber": "fill",
+          "cols": [
+            { "content": "第一欄" },
+            { "content": "第二欄", "fontColor": "pink" },
+            { "content": "第三欄", "inverse": true }
+          ]
+        },
+        {
+          "arrow": true,
+          "cols": [
+            { "content": "輸入" },
+            { "content": "處理" },
+            { "content": "輸出" }
+          ]
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<script src="ui-table.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 提示（Bootstrap alert） ---------- */
+  var ALERTS = document.getElementById('alerts');
+  function toast(msg, type) {
+    var d = document.createElement('div');
+    d.className = 'alert alert-' + (type || 'success') + ' fade show';
+    d.setAttribute('role', 'alert');
+    d.textContent = msg;
+    ALERTS.appendChild(d);
+    setTimeout(function () {
+      d.classList.remove('show');
+      setTimeout(function () { d.remove(); }, 300);
+    }, 2200);
+  }
+
+  function copyText(text, okMsg) {
+    function done() { toast(okMsg || '已複製到剪貼簿。', 'success'); }
+    function fail() { toast('複製失敗，請手動選取文字。', 'danger'); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fail);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.rows = 12;
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy') ? done() : fail(); } catch (e) { fail(); }
+      ta.remove();
+    }
+  }
+
+  /* ---------- 語法標色 ---------- */
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function hlHtml(code) {
+    var s = esc(code);
+    return s.replace(/&lt;!--[\s\S]*?--&gt;|&lt;(\/?)([\w-]+)((?:[^&]|&(?!gt;))*)&gt;/g, function (m, sl, name, attrs) {
+      if (m.indexOf('&lt;!--') === 0) return '<span class="tk-c">' + m + '</span>';
+      var a = (attrs || '').replace(/([\w:-]+)(?:(=)("[^"]*"))?/g, function (x, n, eq, v) {
+        return '<span class="tk-a">' + n + '</span>' + (eq ? '<span class="tk-p">=</span><span class="tk-s">' + v + '</span>' : '');
+      });
+      return '<span class="tk-p">&lt;' + sl + '</span><span class="tk-t">' + name + '</span>' + a + '<span class="tk-p">&gt;</span>';
+    });
+  }
+
+  function hlJs(code) {
+    var s = esc(code);
+    return s.replace(/(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|\b(var|function|return|true|false|null)\b|(\b\d+(?:\.\d+)?\b)/g,
+      function (m, c, str, kw, num) {
+        if (c) return '<span class="tk-c">' + c + '</span>';
+        if (str) return '<span class="tk-s">' + str + '</span>';
+        if (kw) return '<span class="tk-k">' + kw + '</span>';
+        return '<span class="tk-n">' + num + '</span>';
+      });
+  }
+
+  function highlight(code, lang) {
+    return lang === 'html' ? hlHtml(code) : hlJs(code);
+  }
+
+  function dedent(s) {
+    s = s.replace(/^\s*\n/, '').replace(/\s+$/, '');
+    var lines = s.split('\n'), min = 1e9;
+    lines.forEach(function (l) {
+      if (!l.trim()) return;
+      var m = l.match(/^ */)[0].length;
+      if (m < min) min = m;
+    });
+    if (min === 1e9) min = 0;
+    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  }
+
+  /* ---------- 屬性表 ---------- */
+  var ATTRS = {
+    config: [
+      ['theme', '色名或色碼', "'shell'", '整張表的主色，決定文字、邊框與群組標題列的顏色。可被 ui-table 的 <code>theme</code> 覆寫。'],
+      ['cellPadding', 'CSS 長度', "'6px'", '儲存格內距。可被 ui-row 的 <code>cell-padding</code> 覆寫。'],
+      ['fontSize', 'CSS 長度', "'1rem'", '表格字級。可被 <code>font-size</code> 覆寫，alert 提示文字也使用此值。'],
+      ['alertDuration', '毫秒', '5000', 'alert 提示每次顯示的時間長度。'],
+      ['autoRevealInterval', '毫秒', '0', '大於 0 時，hidden 的列依序自動出現。0 為關閉。'],
+      ['cellAlignment', 'left、center、right', "'left'", '儲存格水平對齊，文字與圖示一併套用。'],
+      ['verticalAlignment', 'top、middle、bottom', "'top'", '儲存格垂直對齊。'],
+      ['hoverBgColor', '色名或色碼', "''", '滑鼠移入儲存格時的背景色。空字串為不啟用。'],
+      ['cellMinHeight', 'CSS 長度', "''", '儲存格最小高度。空字串為不限制。'],
+      ['rowBorder', '例：1px solid', "''", '每列外框的線寬與線型，顏色固定使用 theme。'],
+      ['arrowSize', '數字、px、rem、em', "'1.5rem'", '欄間箭頭的高度。純數字視為 px。'],
+      ['arrowColor', '色名或色碼', "'focus'", '欄間箭頭的顏色。'],
+      ['arrowPos', 'top、center、bottom', "'center'", '欄間箭頭的垂直位置。']
+    ],
+    table: [
+      ['theme', '色名或色碼', '全域 theme', '主色，決定文字、邊框與群組標題列的顏色。'],
+      ['src', 'URL', '無', '以 fetch 讀取 JSON 檔建立表格。與 data-id 同時存在時，以 src 為準。'],
+      ['data-id', '全域變數名稱', '無', '讀取 <code>window[名稱]</code> 的物件建立表格。找不到時 console 顯示錯誤。'],
+      ['font-size', 'CSS 長度', '1rem', '整表字級，建議使用 rem。'],
+      ['font-color', '色名或色碼', '無', '整表文字顏色。優先順序為 ui-col、ui-row、ui-table、theme。'],
+      ['auto-reveal-interval', '毫秒', '0', '大於 0 時，hidden 的列每隔此時間依序出現，第 n 列在 n 倍間隔後出現。'],
+      ['cell-alignment', 'left、center、right', 'left', '水平對齊。'],
+      ['vertical-alignment', 'top、middle、bottom', 'top', '垂直對齊。'],
+      ['hover-bg-color', '色名或色碼', '無', '滑鼠移入儲存格的背景色。'],
+      ['cell-min-height', 'CSS 長度', '無', '儲存格最小高度。'],
+      ['row-border', '例：1px solid', '無', '每一列的外框線寬與線型，顏色使用 theme。ui-row 的 <code>border</code> 優先。']
+    ],
+    group: [
+      ['title-left', '文字', '無', '標題列左側的主標題。'],
+      ['title-right', '文字', '無', '標題列右側的輔助文字。'],
+      ['ini-collapse', '布林屬性', '無', '載入時先收合。點擊標題列可切換收合與展開。']
+    ],
+    row: [
+      ['hidden', '布林屬性', '無', '載入時隱藏此列。由 show-next、arrow 揭示，或由 auto-reveal-interval 依序顯示。'],
+      ['cell-padding', 'CSS 長度', '全域 cellPadding', '本列所有儲存格的內距。'],
+      ['border', '例：1px solid', '無', '本列外框，顏色使用 theme。'],
+      ['col-widths', '例：1:2:1', '等寬', '各欄比例。比例數必須等於欄數，否則略過整列。列中有 span 時不生效。'],
+      ['col-border', '例：1px dashed', '無', '欄與欄之間的直線，最後一欄不畫。列中有 span 時不生效。'],
+      ['font-size', 'CSS 長度', '無', '本列字級。'],
+      ['font-color', '色名或色碼', '無', '本列文字顏色，優先於 ui-table，低於 ui-col。'],
+      ['auto-number', 'outline、fill 或空值', '無', '每欄前自動加圓圈編號，空值等同 outline。自訂 icon 的欄位保留編號位置，但顯示該 icon。'],
+      ['line-height', '數值或 CSS 長度', '無', '本列行高。'],
+      ['text-indent', 'CSS 長度', '無', '本列首行縮排。'],
+      ['arrow', 'right、click、none 或空值', '無', '整列預設的欄間箭頭，個別 ui-col 可覆寫。詳見箭頭章節。'],
+      ['arrow-size', '數字、px、rem、em', '全域 arrowSize', '整列預設的箭頭大小。'],
+      ['arrow-color', '色名或色碼', '全域 arrowColor', '整列預設的箭頭顏色。'],
+      ['arrow-pos', 'top、center、bottom', '全域 arrowPos', '整列預設的箭頭垂直位置。'],
+      ['arrow-open', '布林屬性', '無', '搭配 <code>arrow="click"</code>，右側儲存格一開始就是展開的。']
+    ],
+    colBasic: [
+      ['icon', 'bi- 名稱或內建名稱', '無', '在文字前加圖示。<code>bi-</code> 開頭使用 Bootstrap Icons。內建名稱：i-arrow-down、i-arrow-up、i-arrow-right、i-arrow-left、i-check、i-expand、i-collapse、i-lock、i-grip。'],
+      ['font-color', '色名或色碼', '無', '儲存格文字與圖示顏色，優先順序最高。'],
+      ['span', '正整數或 all', '1', '橫跨的欄數，all 為整列。列中出現 span 時，該列的 col-widths 與 col-border 不生效。'],
+      ['width', 'CSS 長度', '無', '直接設定儲存格寬度，多與 fixed 搭配使用。'],
+      ['fixed', 'left、right', '無', '固定在左側或右側，並以底層背景色遮住下方內容。'],
+      ['inverse', '布林屬性', '無', '反白。底色為原本的文字色，文字與圖示改為底層背景色。']
+    ],
+    showNext: [
+      ['show-next', 'true、col、row 或空值', '無', '點擊後展開下一列。<code>row</code> 為整列展開。<code>col</code> 為只展開下一列相同位置的儲存格，沒有 show-next 的欄保持空白。空值時，同列有兩個以上 show-next 就各欄展開，只有一個則整列展開。'],
+      ['hidden（下一列）', '布林屬性', '無', '被展開的列必須先標上 hidden。最後一列設 show-next 會在 console 顯示警告並略過。']
+    ],
+    mask: [
+      ['mask-text', '文字', '無', '啟用遮罩並設定遮罩上的文字。點擊後揭開。'],
+      ['mask-text-2', '文字', '無', '雙層遮罩。第一次點擊換成這段文字，第二次點擊才揭開。'],
+      ['mask-color', '色名或色碼', '全表 theme', '純色遮罩的底色。搭配 mask-invert 時，改為遮罩文字顏色。'],
+      ['mask-invert', '布林屬性', '無', '反色遮罩。底色為底層背景色，文字為 mask-color 或儲存格文字色。'],
+      ['mask-gradient', '1 到 6 或 CSS 漸層', '無', '漸層遮罩，文字固定為 vanilla。優先於 mask-color，低於 mask-invert。'],
+      ['mask-order', '從 0 起的整數', '無', '依序解鎖。初始為鎖定並顯示鎖頭，前一個揭開後下一個才能點。']
+    ],
+    car: [
+      ['carousel-interval', '毫秒', '無', '啟用輪播並設定換頁間隔。數值無效時使用 3000。'],
+      ['progress-bar', '布林屬性', '無', '在儲存格下方顯示倒數進度條。'],
+      ['progress-bar-color', '色名或色碼', '全表 theme', '進度條顏色。儲存格為 inverse 時預設為底層背景色。'],
+      ['cell-item', '子標籤', '無', '放在 ui-col 內的輪播項目，可含 HTML。']
+    ],
+    alert: [
+      ['alert-msg', '文字或 id', '無', '提示內容。若等於某個 <code>ui-col[hidden][id]</code> 的 id，使用該元素的內容，否則直接當作內容。'],
+      ['alert-color', '色名或色碼', '全表 theme', '提示的底色，文字為底層背景色。'],
+      ['alert-interval', '毫秒', '無', '每隔多久顯示一次，第一次出現在一個間隔之後。必填。'],
+      ['alert-pos', 'A、B、C', '無', 'A 覆蓋在儲存格內，B 在儲存格上方，其他值（建議 C）在儲存格右側。必填。']
+    ],
+    arrow: [
+      ['arrow', 'right、click、none 或空值', '無', '空值或 right 為純顯示的粗箭頭。<code>click</code> 為可點擊的實心三角形，點擊後顯示右側儲存格。<code>none</code> 用於整列設定時關閉個別欄。最後一欄無效。'],
+      ['arrow-size', '數字、px、rem、em', '全域 arrowSize', '箭頭高度，純數字視為 px。'],
+      ['arrow-color', '色名或色碼', '全域 arrowColor', '箭頭顏色。'],
+      ['arrow-pos', 'top、center、bottom', '全域 arrowPos', '箭頭在交界線上的垂直位置。'],
+      ['arrow-open', '布林屬性', '無', '搭配 click，右側儲存格一開始就展開。']
+    ],
+    jsonTop: [
+      ['頂層', 'fontSize、fontColor、autoRevealInterval、cellAlignment、verticalAlignment、hoverBgColor、cellMinHeight、rowBorder', '字串或數字', '對應 ui-table 的同名屬性。'],
+      ['頂層', 'groups', '陣列', '群組陣列，必填。'],
+      ['群組', 'titleLeft、titleRight、iniCollapse、rows', '字串、布林、陣列', '對應 ui-group 的屬性與其底下的列。'],
+      ['列', 'enhance', '布林', 'true 時產生 ui-row-enhance，否則為 ui-row。'],
+      ['列', 'hidden、cellPadding、border、colWidths、colBorder、fontSize、fontColor、lineHeight、textIndent', '字串、布林', '對應 ui-row 的屬性。'],
+      ['列', 'autoNumber', 'true 或 "fill"', 'true 為 outline，"fill" 為實心。'],
+      ['列', 'arrow、arrowSize、arrowColor、arrowPos、arrowOpen', '字串、布林', 'arrow 為 true 時等同空值。'],
+      ['列', 'cols', '陣列', '儲存格陣列。'],
+      ['儲存格', 'icon、fontColor、span、width、fixed、inverse、expandable、extraInfo', '字串、數字、布林', '對應 ui-col 的屬性。'],
+      ['儲存格', 'showNext', '布林', '為真時寫入 show-next。'],
+      ['儲存格', 'maskText、maskText2、maskInvert、maskColor、maskOrder', '字串、布林、數字', '對應遮罩屬性，不含 mask-gradient。'],
+      ['儲存格', 'carouselInterval、progressBar、progressBarColor', '數字、布林、字串', '對應輪播屬性。'],
+      ['儲存格', 'alertMsg、alertColor、alertInterval、alertPos', '字串、數字', '對應 alert 屬性。'],
+      ['儲存格', 'arrow、arrowSize、arrowColor、arrowPos、arrowOpen', '字串、布林', '對應箭頭屬性。'],
+      ['儲存格', 'content', 'HTML 字串', '儲存格內容。'],
+      ['儲存格', 'items', '字串陣列', '輪播項目，每項轉為一個 cell-item。有 items 時忽略 content。']
+    ],
+    api: [
+      ['UiTable.init()', '函式', '掃描並渲染頁面上尚未初始化的 ui-table。動態新增表格後呼叫。'],
+      ['UiTable.config', '物件', '即全域設定物件 UiTableConfig，修改後影響之後渲染的表格。'],
+      ['UiTable.colors', '物件', '色名與色碼的對照表，見下方色塊。']
+    ],
+    rules: [
+      ['mask-text 加 expandable', '儲存格', 'expandable 被忽略，console 警告。'],
+      ['mask-text 加 carousel-interval', '儲存格', 'carousel-interval 被忽略，console 警告。'],
+      ['alert-msg 加 carousel-interval', '儲存格', 'carousel-interval 被忽略，console 警告。'],
+      ['extra-info 加 mask-text', '儲存格', 'extra-info 被忽略，console 警告。'],
+      ['extra-info 加 carousel-interval', '儲存格', 'extra-info 被忽略，console 警告。'],
+      ['extra-info 未填 id', '儲存格', '被忽略，console 錯誤。'],
+      ['extra-info 找不到對應 id', '儲存格', '載入時警告，點擊時再試一次，仍找不到則 console 錯誤。'],
+      ['arrow 加 mask-text（左右任一欄）', '儲存格', '該處箭頭被忽略，console 警告。'],
+      ['arrow 設在最後一欄', '儲存格', '被忽略，console 警告。'],
+      ['arrow 值不是 right、click、none', '儲存格', '當作純顯示箭頭，console 警告。'],
+      ['alert-msg 缺少 alert-interval 或 alert-pos', '儲存格', '略過該提示，console 錯誤。'],
+      ['col-widths 比例數不等於欄數', '列', '略過整列，console 錯誤。'],
+      ['mask-order 重複', '遮罩', '視為無序，各自可點，console 錯誤。'],
+      ['mask-order 不連續', '遮罩', '照順序運作，console 警告。'],
+      ['show-next 在最後一列', '列', '略過，console 警告。'],
+      ['show-next 在下一列找不到對應欄位', '列', '略過該欄，console 警告。'],
+      ['data-id 找不到變數', '表格', '不渲染，console 錯誤。'],
+      ['src 載入失敗', '表格', '不渲染，console 錯誤。']
+    ]
+  };
+
+  function renderAttrs() {
+    document.querySelectorAll('[data-attrs]').forEach(function (box) {
+      var rows = ATTRS[box.getAttribute('data-attrs')];
+      if (!rows) return;
+      var head = (box.getAttribute('data-head') || '屬性|可用值|預設|說明').split('|');
+      var h = '<table class="attr"><thead><tr>' + head.map(function (t) { return '<th>' + t + '</th>'; }).join('') + '</tr></thead><tbody>';
+      rows.forEach(function (r) {
+        h += '<tr>' + r.map(function (c, i) {
+          if (i === 0 && head.length !== 4) return '<td><code>' + c + '</code></td>';
+          if (i === 0 && head[0] !== '層級') return '<td><code>' + c + '</code></td>';
+          if (head[0] === '層級' && i === 1) return '<td><code>' + c + '</code></td>';
+          return '<td>' + c + '</td>';
+        }).join('') + '</tr>';
+      });
+      h += '</tbody></table>';
+      box.innerHTML = h;
+    });
+  }
+
+  /* ---------- 範例卡片 ---------- */
+  var blobCache = {};
+  function blobFor(id) {
+    if (!blobCache[id]) {
+      var t = document.getElementById(id).textContent;
+      blobCache[id] = URL.createObjectURL(new Blob([t], { type: 'application/json' }));
+    }
+    return blobCache[id];
+  }
+
+  function mount(inner, code) {
+    var live = code.replace(/demo-data\.json/g, function () { return blobFor('json-data-2'); });
+    inner.innerHTML = live;
+    UiTable.init();
+  }
+
+  function makeCard(sc) {
+    var code = dedent(sc.textContent);
+    var lang = sc.getAttribute('data-lang') || 'html';
+    var nolive = sc.hasAttribute('data-nolive');
+    var extraId = sc.getAttribute('data-extra');
+    var extraCode = extraId ? dedent(document.getElementById(extraId).textContent) : '';
+    var extraLang = sc.getAttribute('data-extra-lang') || 'js';
+    var extraLabel = sc.getAttribute('data-extra-label') || '';
+
+    var card = document.createElement('div');
+    card.className = 'demo' + ((sc.hasAttribute('data-wide') || nolive) ? ' wide' : '') + (nolive ? ' nolive' : '');
+
+    var head = document.createElement('div');
+    head.className = 'demo-head';
+    var title = document.createElement('span');
+    title.className = 'demo-title';
+    title.textContent = sc.getAttribute('data-title') || '範例';
+    var acts = document.createElement('div');
+    acts.className = 'demo-actions';
+
+    var body = document.createElement('div');
+    body.className = 'demo-body';
+    var live = document.createElement('div');
+    live.className = 'demo-live';
+    var codes = document.createElement('div');
+    codes.className = 'demo-codes';
+
+    var pre = document.createElement('pre');
+    pre.className = 'demo-code';
+    pre.innerHTML = '<code>' + highlight(code, lang) + '</code>';
+    codes.appendChild(pre);
+    if (extraCode) {
+      var lb = document.createElement('div');
+      lb.className = 'code-label';
+      lb.textContent = extraLabel;
+      var pre2 = document.createElement('pre');
+      pre2.className = 'demo-code';
+      pre2.innerHTML = '<code>' + highlight(extraCode, extraLang) + '</code>';
+      codes.appendChild(lb);
+      codes.appendChild(pre2);
+    }
+
+    if (!nolive) {
+      var rp = document.createElement('button');
+      rp.type = 'button';
+      rp.className = 'btn-mini';
+      rp.textContent = '重新載入';
+      rp.addEventListener('click', function () {
+        live.innerHTML = '';
+        mount(live, code);
+        toast('範例已重新載入。', 'info');
+      });
+      acts.appendChild(rp);
+    }
+    var cp = document.createElement('button');
+    cp.type = 'button';
+    cp.className = 'btn-mini';
+    cp.textContent = '複製程式碼';
+    cp.addEventListener('click', function () {
+      copyText(extraCode ? code + '\n\n' + extraCode : code);
+    });
+    acts.appendChild(cp);
+
+    head.append(title, acts);
+    body.append(live, codes);
+    card.append(head, body);
+
+    sc.parentNode.insertBefore(card, sc);
+    sc.remove();
+    if (!nolive) mount(live, code);
+  }
+
+  /* ---------- 互動調整 ---------- */
+  var COLOR_OPTS = ['shell', 'lavender', 'sky', 'warning', 'salmon', 'ocean', 'safe', 'teal', 'vanilla', 'yellow', 'focus', 'special', 'info', 'indigo', 'pink', 'orange'];
+  function opts(list) { return list.map(function (v) { return [v, v]; }); }
+  var PG = [
+    ['theme', 'theme', opts(COLOR_OPTS), 'sky'],
+    ['font-size', 'font-size', [['0.875rem', '0.875rem'], ['1rem', '1rem'], ['1.125rem', '1.125rem'], ['1.25rem', '1.25rem']], '1rem'],
+    ['cell-alignment', 'cell-alignment', opts(['left', 'center', 'right']), 'left'],
+    ['vertical-alignment', 'vertical-alignment', opts(['top', 'middle', 'bottom']), 'top'],
+    ['hover-bg-color', 'hover-bg-color', [['', '不使用']].concat(opts(COLOR_OPTS)), ''],
+    ['cell-min-height', 'cell-min-height', [['', '不限制'], ['60px', '60px'], ['100px', '100px']], ''],
+    ['row-border', 'row-border', [['', '無'], ['1px solid', '1px solid'], ['2px solid', '2px solid'], ['1px dashed', '1px dashed']], ''],
+    ['font-color', 'font-color', [['', '不指定']].concat(opts(COLOR_OPTS)), '']
+  ];
+  var pgState = {};
+  var pgLive = document.getElementById('pg-live');
+  var pgCode = document.getElementById('pg-code');
+  var pgText = '';
+
+  function pgBuild() {
+    var attrs = PG.map(function (p) {
+      var v = pgState[p[0]];
+      return v ? ' ' + p[0] + '="' + v + '"' : '';
+    }).join('');
+    pgText = dedent([
+      '<ui-table' + attrs + '>',
+      '  <ui-group title-left="示範群組" title-right="調整上方選項">',
+      '    <ui-row>',
+      '      <ui-col inverse>項目</ui-col>',
+      '      <ui-col inverse>說明</ui-col>',
+      '      <ui-col inverse>數值</ui-col>',
+      '    </ui-row>',
+      '    <ui-row>',
+      '      <ui-col>甲</ui-col>',
+      '      <ui-col>第一列的說明文字，可以觀察對齊與最小高度的變化。</ui-col>',
+      '      <ui-col>120</ui-col>',
+      '    </ui-row>',
+      '    <ui-row>',
+      '      <ui-col>乙</ui-col>',
+      '      <ui-col>短文字</ui-col>',
+      '      <ui-col>85</ui-col>',
+      '    </ui-row>',
+      '  </ui-group>',
+      '</ui-table>'
+    ].join('\n'));
+    pgCode.innerHTML = '<code>' + hlHtml(pgText) + '</code>';
+    pgLive.innerHTML = pgText;
+    UiTable.init();
+  }
+
+  (function initPg() {
+    var box = document.getElementById('pg-controls');
+    PG.forEach(function (p) {
+      pgState[p[0]] = p[3];
+      var w = document.createElement('div');
+      var lb = document.createElement('label');
+      lb.textContent = p[1];
+      var sel = document.createElement('select');
+      sel.className = 'form-select form-select-sm';
+      p[2].forEach(function (o) {
+        var op = document.createElement('option');
+        op.value = o[0];
+        op.textContent = o[1];
+        if (o[0] === p[3]) op.selected = true;
+        sel.appendChild(op);
+      });
+      sel.addEventListener('change', function () { pgState[p[0]] = sel.value; pgBuild(); });
+      w.append(lb, sel);
+      box.appendChild(w);
+    });
+    document.getElementById('pg-copy').addEventListener('click', function () { copyText(pgText); });
+  })();
+
+  /* ---------- 動態新增 ---------- */
+  (function initDyn() {
+    var themes = ['sky', 'pink', 'special', 'orange', 'teal', 'lavender'];
+    var n = 0;
+    var holder = document.getElementById('dyn-live');
+    var cnt = document.getElementById('dyn-count');
+    document.getElementById('dyn-add').addEventListener('click', function () {
+      var t = themes[n % themes.length];
+      n++;
+      var el = document.createElement('ui-table');
+      el.setAttribute('theme', t);
+      el.innerHTML = '<ui-row><ui-col inverse>第 ' + n + ' 張</ui-col><ui-col>theme="' + t + '"</ui-col></ui-row>';
+      holder.appendChild(el);
+      UiTable.init();
+      cnt.textContent = '已新增 ' + n + ' 張';
+      toast('已新增第 ' + n + ' 張表格。', 'success');
+    });
+  })();
+
+  /* ---------- 色塊 ---------- */
+  (function initSwatches() {
+    var box = document.getElementById('swatches');
+    var colors = UiTable.colors || {};
+    Object.keys(colors).forEach(function (k) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sw';
+      b.innerHTML = '<i style="background:' + colors[k] + '"></i><span><b>' + k + '</b>' + colors[k] + '</span>';
+      b.addEventListener('click', function () { copyText(k, '已複製色名：' + k); });
+      box.appendChild(b);
+    });
+  })();
+
+  /* ---------- 組裝 ---------- */
+  renderAttrs();
+  document.querySelectorAll('script[type="text/plain"][data-demo]').forEach(makeCard);
+  pgBuild();
+
+  /* ---------- 側欄高亮 ---------- */
+  (function nav() {
+    var links = {};
+    document.querySelectorAll('.side a[href^="#"]').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting && links[e.target.id]) {
+          Object.keys(links).forEach(function (k) { links[k].classList.remove('active'); });
+          links[e.target.id].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('main section[id]').forEach(function (s) { io.observe(s); });
+  })();
+})();
+</script>
+</body>
+</html>
