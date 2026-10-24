@@ -379,6 +379,10 @@ pt-complete {
   line-height: 1.5;
 }
 practice-tracker.pt-complete-state pt-complete { display: block; }
+/* 片語區塊自己的完成狀態：只看 pt-phrase-block 的 class，不受章節進度影響 */
+practice-tracker pt-phrase-block:not(.pt-complete-state) pt-complete { display: none; }
+practice-tracker pt-phrase-block.pt-complete-state pt-complete { display: block; }
+pt-phrase-block.pt-complete-state pt-count { opacity: 0.3; }
 pt-complete-sub {
   font-size: var(--pt-fs-complete-sub, 0.73rem);
   font-weight: 400;

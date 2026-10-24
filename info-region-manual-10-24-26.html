@@ -222,7 +222,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tr><td><code>answer</code></td><td>無</td><td>正確選項的 <code>value</code>。比對時忽略大小寫與前後空白。</td></tr>
 <tr><td><code>correct-next</code></td><td>無</td><td>答對後啟用的區塊 id。</td></tr>
 <tr><td><code>wrong-next</code></td><td>無</td><td>答錯後啟用的區塊 id。<b>沒寫時，答錯就是終點，不會推進。</b></td></tr>
-<tr><td><code>quiz-next-delay</code></td><td>實際為 0</td><td>答題後等多少毫秒再啟用下一個區塊。<b>程式碼本意預設 1200，但實測未寫此屬性時是 0（立即）</b>，見第 16 節。建議永遠明確寫出。</td></tr>
+<tr><td><code>quiz-next-delay</code></td><td><code>1200</code></td><td>答題後等多少毫秒再啟用下一個區塊。寫 0 表示立即。（2026-10-24 已修正：原本未寫時會變成 0，現在未寫為 1200。）</td></tr>
 <tr><td><code>manual-next</code></td><td>無</td><td>答題後不自動跳，改顯示「繼續」按鈕，按下才啟用下一個區塊。</td></tr>
 <tr><td><code>quiz-next-label</code></td><td><code>繼續 ▶</code></td><td>繼續按鈕文字，只在 <code>manual-next</code> 時使用。</td></tr>
 <tr><td><code>manual-align</code></td><td><code>right</code></td><td>繼續按鈕的位置，與手動推進共用此屬性。</td></tr>
@@ -597,7 +597,7 @@ new MutationObserver(() =&gt; {
 <tbody>
 <tr><td><code>quiz answer="c"</code></td><td>測驗模式，正確答案是 value 為 c 的選項。</td></tr>
 <tr><td><code>correct-next="s1-q1-done"</code>，沒有 <code>wrong-next</code></td><td>答對才啟用 s1-q1-done；答錯則停在這題。因為有 <code>show-retry</code>，使用者可以重試，這個組合是合理的。</td></tr>
-<tr><td>沒有 <code>quiz-next-delay</code></td><td>答對後下一個區塊<b>立即</b>出現（實際延遲為 0，見第 16 節）。若想要停頓讓使用者先看解說，加上 <code>quiz-next-delay="1200"</code>。</td></tr>
+<tr><td>沒有 <code>quiz-next-delay</code></td><td>答對後等預設的 1200 毫秒，下一個區塊才出現，讓使用者先看解說。想要立即出現，寫 <code>quiz-next-delay="0"</code>。</td></tr>
 <tr><td><code>border-width="1px" border-style="dashed"</code></td><td>四邊 1px 虛線（<code>1px</code> 會被解讀為 1）。</td></tr>
 <tr><td><code>choice-font-size="0.8rem"</code></td><td>單位是 rem，所以字母圈正常縮小，沒有 px 問題。</td></tr>
 <tr><td><code>s1-q1-done</code> 的 <code>manual next="s1-q1-extra1"</code></td><td>顯示「▶ 下一步」按鈕，按了才出現延伸例句。</td></tr>
@@ -614,7 +614,7 @@ new MutationObserver(() =&gt; {
 <tr><td>第一個區塊出現，後面都沒跟著出現</td><td>1) 漏寫 <code>next</code>；2) <code>next</code> 的 id 拼錯（console 有警告）；3) 區塊在 <code>global-progress</code> 或 <code>cascade-interval</code> 的群組裡，next 鏈被停用。</td><td>檢查 id；<code>global-progress</code> 群組請改用 <code>cascade-interval</code>、<code>manual</code>、<code>quiz</code>。</td></tr>
 <tr><td><code>manual</code> 區塊沒有按鈕</td><td>沒有寫 <code>next</code>。</td><td>加上 <code>next</code>。</td></tr>
 <tr><td>答錯之後整個流程停住</td><td>沒寫 <code>wrong-next</code>，答錯就是終點。</td><td>寫 <code>wrong-next</code>（可與 <code>correct-next</code> 相同），或用 <code>show-retry</code> 讓使用者重試。</td></tr>
-<tr><td>答對後下一題太快出現，來不及看解說</td><td>沒寫 <code>quiz-next-delay</code>，實際延遲為 0。</td><td>加 <code>quiz-next-delay="1500"</code>。</td></tr>
+<tr><td>答對後下一題出現得太慢或太快</td><td><code>quiz-next-delay</code> 預設 1200 毫秒。</td><td>依需要調整，立即請寫 <code>quiz-next-delay="0"</code>。</td></tr>
 <tr><td>選項前的字母圈大得離譜</td><td><code>choice-font-size</code> 用了 px 單位。</td><td>改成不帶單位的數字或 rem。</td></tr>
 <tr><td><code>next-interval="0"</code> 還是等了半秒</td><td>0 被視為沒寫，退回預設。</td><td>改寫 <code>1</code>。</td></tr>
 <tr><td>進度條停在 50%、答完最後一題不到 100%</td><td>最後一題答完後沒有任何區塊被啟用，進度條沒機會更新。</td><td>最後一題的 <code>correct-next</code> 指向收尾區塊。</td></tr>
@@ -632,20 +632,19 @@ new MutationObserver(() =&gt; {
 <div class="tbl"><table>
 <thead><tr><th>編號</th><th>問題</th><th>影響</th><th>暫時的做法</th></tr></thead>
 <tbody>
-<tr><td>1</td><td><code>quiz-next-delay</code> 沒寫時，程式碼本意是 1200 毫秒，實際變成 0。原因：未寫屬性時 parseInt 得到 NaN，而 <code>??</code> 不會處理 NaN。</td><td>答題後下一個區塊立即出現。</td><td>永遠明確寫出 <code>quiz-next-delay</code>。</td></tr>
-<tr><td>2</td><td><code>next-interval="0"</code> 與 <code>countdown="0"</code> 會退回預設值（500 與 2000）。</td><td>無法用 0 表示立即。</td><td><code>next-interval</code> 寫 1。</td></tr>
-<tr><td>3</td><td>群組進度條只在區塊 <code>active</code> 被寫入時更新，答題不會觸發。</td><td>最後一題答對後，進度條停在上一次的數值。</td><td>最後一題的 <code>correct-next</code> 指向收尾區塊。</td></tr>
-<tr><td>4</td><td>計分板「總題數」實為作答次數。</td><td>數字比題目數多。</td><td>知道即可，或另做自己的題數顯示。</td></tr>
-<tr><td>5</td><td>計分以 id 去重，沒有 id 的測驗區塊互相衝突。</td><td>答對題數少算。</td><td>每個測驗區塊都寫 id。</td></tr>
-<tr><td>6</td><td><code>choice-font-size</code> 用 px 單位時，字母圈被當成 rem 換算。</td><td>字母圈變成數百 px。</td><td>只用數字或 rem。</td></tr>
-<tr><td>7</td><td><code>global-progress</code> 群組內，區塊的 <code>next</code> 與 <code>countdown</code> 被停用。</td><td>只有第一個區塊亮起。</td><td>改用 <code>cascade-interval</code>、<code>manual</code>、<code>quiz</code>，或程式啟用。</td></tr>
-<tr><td>8</td><td>初始 <code>active="true"</code> 的區塊，啟動流程執行兩次。</td><td>無實際影響，各流程有防重複。</td><td>知道即可。</td></tr>
-<tr><td>9</td><td>不發出任何自訂事件。</td><td>無法被其他元件通知。</td><td>用 MutationObserver 觀察 <code>active</code>。</td></tr>
-<tr><td>10</td><td>行距固定 1.75；多處字體小於 1rem；多處 <code>rgba</code> 透明度低於 0.78。</td><td>與你的版面規範不符。</td><td>第 13 節的覆寫範本處理行距與字體。</td></tr>
-<tr><td>11</td><td><code>InfoRegion.resetAll()</code> 不重設群組計分與進度。</td><td>重設不完整。</td><td>用群組的 <code>reset()</code>。</td></tr>
-<tr><td>12</td><td>啟用狀態下區塊最大高度 4000px。</td><td>超長內容被裁切。</td><td>拆成多個區塊。</td></tr>
-<tr><td>13</td><td><code>explain</code>、<code>correct-msg</code>、<code>wrong-msg</code> 以 innerHTML 寫入。</td><td>內容中的 HTML 會被執行解析。</td><td>只放自己撰寫的內容，不要放使用者輸入。</td></tr>
-<tr><td>14</td><td><code>cascadeInterval</code> 全域設定只被「開始」按鈕讀取，區塊判斷只看屬性（讀碼所得）。</td><td>只靠全域設定時，next 鏈與逐一顯示同時運作。</td><td>一律用 <code>cascade-interval</code> 屬性。</td></tr>
+<tr><td>1</td><td><code>next-interval="0"</code> 與 <code>countdown="0"</code> 會退回預設值（500 與 2000）。</td><td>無法用 0 表示立即。</td><td><code>next-interval</code> 寫 1。</td></tr>
+<tr><td>2</td><td>群組進度條只在區塊 <code>active</code> 被寫入時更新，答題不會觸發。</td><td>最後一題答對後，進度條停在上一次的數值。</td><td>最後一題的 <code>correct-next</code> 指向收尾區塊。</td></tr>
+<tr><td>3</td><td>計分板「總題數」實為作答次數。</td><td>數字比題目數多。</td><td>知道即可，或另做自己的題數顯示。</td></tr>
+<tr><td>4</td><td>計分以 id 去重，沒有 id 的測驗區塊互相衝突。</td><td>答對題數少算。</td><td>每個測驗區塊都寫 id。</td></tr>
+<tr><td>5</td><td><code>choice-font-size</code> 用 px 單位時，字母圈被當成 rem 換算。</td><td>字母圈變成數百 px。</td><td>只用數字或 rem。</td></tr>
+<tr><td>6</td><td><code>global-progress</code> 群組內，區塊的 <code>next</code> 與 <code>countdown</code> 被停用。</td><td>只有第一個區塊亮起。</td><td>改用 <code>cascade-interval</code>、<code>manual</code>、<code>quiz</code>，或程式啟用。</td></tr>
+<tr><td>7</td><td>初始 <code>active="true"</code> 的區塊，啟動流程執行兩次。</td><td>無實際影響，各流程有防重複。</td><td>知道即可。</td></tr>
+<tr><td>8</td><td>不發出任何自訂事件。</td><td>無法被其他元件通知。</td><td>用 MutationObserver 觀察 <code>active</code>。</td></tr>
+<tr><td>9</td><td>行距固定 1.75；多處字體小於 1rem；多處 <code>rgba</code> 透明度低於 0.78。</td><td>與你的版面規範不符。</td><td>第 13 節的覆寫範本處理行距與字體。</td></tr>
+<tr><td>10</td><td><code>InfoRegion.resetAll()</code> 不重設群組計分與進度。</td><td>重設不完整。</td><td>用群組的 <code>reset()</code>。</td></tr>
+<tr><td>11</td><td>啟用狀態下區塊最大高度 4000px。</td><td>超長內容被裁切。</td><td>拆成多個區塊。</td></tr>
+<tr><td>12</td><td><code>explain</code>、<code>correct-msg</code>、<code>wrong-msg</code> 以 innerHTML 寫入。</td><td>內容中的 HTML 會被執行解析。</td><td>只放自己撰寫的內容，不要放使用者輸入。</td></tr>
+<tr><td>13</td><td><code>cascadeInterval</code> 全域設定只被「開始」按鈕讀取，區塊判斷只看屬性（讀碼所得）。</td><td>只靠全域設定時，next 鏈與逐一顯示同時運作。</td><td>一律用 <code>cascade-interval</code> 屬性。</td></tr>
 </tbody></table></div>
 </section>
 </main>

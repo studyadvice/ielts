@@ -52,8 +52,10 @@ pre code { color: #D4FFFC; font-size: 1.125rem; line-height: 1.5; white-space: p
 .tbl { overflow-x: auto; margin: 0 0 24px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px 14px; text-align: left; vertical-align: top; border: 1px solid #2f302f; font-size: 1.125rem; line-height: 1.5; }
-th { background: #1a1b1a; color: #DBEDD8; white-space: nowrap; }
-td:first-child { white-space: nowrap; }
+th { background: #1a1b1a; color: #DBEDD8; }
+td:first-child { white-space: normal; max-width: 340px; overflow-wrap: anywhere; }
+td:last-child { min-width: 360px; }
+th { white-space: normal; }
 tbody tr:nth-child(even) td { background: #111211; }
 .note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #4171BF; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
 .note b { color: #D4FFFC; }
@@ -346,7 +348,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tr><td><code>data-phrase-color-pending</code></td><td><code>phraseColorPending</code></td><td>空</td><td>未收藏格子的顏色，留空則沿用 <code>data-color-pending</code>。</td></tr>
 <tr><td><code>data-phrase-color-complete</code></td><td><code>phraseColorComplete</code></td><td><code>#B3DE73</code></td><td>全部收藏後完成提示的顏色。</td></tr>
 <tr><td><code>data-phrase-cell-shape</code></td><td><code>phraseCellShape</code></td><td><code>circle</code></td><td>片語格子的形狀，可用值同 <code>data-cell-shape</code>。</td></tr>
-<tr><td><code>data-phrase-complete-text</code></td><td><code>phraseCompleteText</code></td><td><code>片語獵人認證！</code></td><td>全部收藏後的文字。<b>請先看第 14 節的已知問題。</b></td></tr>
+<tr><td><code>data-phrase-complete-text</code></td><td><code>phraseCompleteText</code></td><td><code>片語獵人認證！</code></td><td>全部收藏後的文字。只在片語全部收藏後顯示，與章節進度無關。</td></tr>
 <tr><td><code>data-phrase-complete-sub</code></td><td><code>phraseCompleteSub</code></td><td>空</td><td>副文字。</td></tr>
 <tr><td><code>data-phrase-event-name</code></td><td><code>phraseEventName</code></td><td><code>pt:phrase-collected</code></td><td>監聽的收藏事件名稱。必須與 phrase-chip 發出的事件名稱一致，見第 7 節。</td></tr>
 </tbody></table></div>
@@ -690,7 +692,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 </section>
 <section class="doc" id="limits">
 <h2>14. 已知問題與限制</h2>
-<div class="note note-bug"><b>已知問題</b>：<b>片語收藏的完成提示，顯示條件是錯的。</b> 我用模擬環境驗證過：片語全部收藏完、但章節還沒全完成時，「片語獵人認證！」不會顯示；反過來，章節全部完成、但片語還沒收藏完時，它卻會顯示（與章節的完成提示同時出現）。原因是樣式規則只認面板本身的完成狀態，不認片語區塊自己的完成狀態。在修正之前，不建議依賴 <code>data-phrase-complete-text</code>。這個問題是原本就存在的，不是這次新增功能造成的。</div>
+<div class="note note-info"><b>說明</b>：<b>片語完成提示的顯示條件已於 2026-10-24 修正。</b> 先前它會跟著章節進度顯示，現在只看片語本身是否全部收藏，與章節進度互不影響。</div>
 <div class="note note-warn"><b>注意</b>：<b>面板主體最高 600px，超出的部分會被裁切，且沒有捲軸。</b> 章節格子加片語格子加完成提示加收藏按鈕，總高度要留意。格子很多時，請加大 <code>data-cells-per-row</code> 與面板寬度，把高度壓下來。</div>
 <div class="note note-warn"><b>注意</b>：<b>原本就有幾處半透明顏色的透明度低於 0.78</b>，例如面板邊框與陰影。若你的規範要求不得低於 0.78，這些需要另外調整。這次新增的樣式都符合。</div>
 <ul>

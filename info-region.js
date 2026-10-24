@@ -676,7 +676,8 @@
       const answer      = (this.getAttribute('answer') || '').trim().toLowerCase();
       const correctNext = this.getAttribute('correct-next');
       const wrongNext   = this.getAttribute('wrong-next');
-      const nextDelay   = parseInt(this.getAttribute('quiz-next-delay'), 10) ?? 1200;
+      const _nd         = parseInt(this.getAttribute('quiz-next-delay'), 10);
+      const nextDelay   = Number.isNaN(_nd) ? 1200 : _nd;
       const explainTxt  = this.getAttribute('explain') || '';
       const correctMsg  = this.getAttribute('correct-msg')  || '✓ 答對了！';
       const wrongMsg    = this.getAttribute('wrong-msg')    || '✗ 答錯了。';
