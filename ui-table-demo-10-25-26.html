@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ui-table：垂直編號模式 Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+  :root{
+    --bg:#0C0D0C;
+    --shell:#C6C7BD;
+    --lavender:#C3A5E5;
+    --sky:#82C8E5;
+    --vanilla:#DBEDD8;
+    --info:#4171BF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:32px 40px;
+    background:var(--bg);
+    color:var(--shell);
+    font-family:-apple-system,"Segoe UI",system-ui,sans-serif;
+    font-size:1rem;
+    line-height:1.5;
+    min-width:1200px;
+  }
+  h1{
+    font-size:1.6rem;
+    margin:0 0 8px;
+    color:var(--shell);
+  }
+  p.lead{
+    font-size:1rem;
+    color:var(--shell);
+    opacity:.8;
+    margin:0 0 32px;
+  }
+  section{
+    margin-bottom:40px;
+  }
+  section h2{
+    font-size:1.2rem;
+    color:var(--sky);
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:1px solid rgba(130,200,229,0.3);
+  }
+  section p.note{
+    font-size:0.9rem;
+    color:var(--vanilla);
+    opacity:.85;
+    margin:0 0 16px;
+  }
+  code{
+    background:rgba(198,199,189,0.12);
+    color:var(--lavender);
+    padding:2px 6px;
+    border-radius:4px;
+    font-size:0.85rem;
+  }
+  .uit-demo-code{
+    margin-top:14px;
+    background:rgba(198,199,189,0.08);
+    border:1px solid rgba(198,199,189,0.2);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .uit-demo-code summary{
+    cursor:pointer;
+    padding:8px 14px;
+    font-size:0.9rem;
+    color:var(--sky);
+    user-select:none;
+  }
+  .uit-demo-code pre{
+    margin:0;
+    padding:14px 16px 18px;
+    overflow-x:auto;
+    font-size:0.82rem;
+    line-height:1.5;
+    color:var(--shell);
+    white-space:pre;
+  }
+  .uit-demo-log{
+    margin-top:16px;
+    font-size:0.85rem;
+    color:var(--vanilla);
+    opacity:.75;
+  }
+  footer{
+    margin-top:48px;
+    padding-top:16px;
+    border-top:1px solid rgba(198,199,189,0.2);
+    font-size:0.8rem;
+    color:var(--shell);
+    opacity:.6;
+  }
+</style>
+</head>
+<body>
+
+<h1>ui-table 元件：垂直編號模式</h1>
+<p class="lead">
+  新增 <code>auto-number="outline-v"</code> / <code>auto-number="fill-v"</code> / <code>auto-number="v"</code>，
+  讓編號以「列」為單位垂直累計（同一列只領一個序號，列中每個儲存格共用），
+  並在同一個 group（或無 group 時整張表）內跨列遞增，不會像橫向模式一樣在每一列重新從 1 開始。
+</p>
+
+<section>
+  <h2>範例一：橫向編號（原有功能，作為對照）</h2>
+  <p class="note">
+    <code>auto-number="outline"</code> 設在 <code>ui-row</code> 上：每一列由左到右各自從 1 起算，列與列之間互不影響。
+  </p>
+
+  <ui-table theme="lavender" font-size="1rem">
+    <ui-row auto-number="outline" col-widths="1:1:1">
+      <ui-col>蘋果</ui-col>
+      <ui-col>香蕉</ui-col>
+      <ui-col>橘子</ui-col>
+    </ui-row>
+    <ui-row auto-number="outline" col-widths="1:1:1">
+      <ui-col>紅色</ui-col>
+      <ui-col>黃色</ui-col>
+      <ui-col>橘色</ui-col>
+    </ui-row>
+  </ui-table>
+
+  <details class="uit-demo-code">
+    <summary>查看程式碼</summary>
+    <pre>&lt;ui-table theme="lavender" font-size="1rem"&gt;
+  &lt;ui-row auto-number="outline" col-widths="1:1:1"&gt;
+    &lt;ui-col&gt;蘋果&lt;/ui-col&gt;
+    &lt;ui-col&gt;香蕉&lt;/ui-col&gt;
+    &lt;ui-col&gt;橘子&lt;/ui-col&gt;
+  &lt;/ui-row&gt;
+  &lt;ui-row auto-number="outline" col-widths="1:1:1"&gt;
+    &lt;ui-col&gt;紅色&lt;/ui-col&gt;
+    &lt;ui-col&gt;黃色&lt;/ui-col&gt;
+    &lt;ui-col&gt;橘色&lt;/ui-col&gt;
+  &lt;/ui-row&gt;
+&lt;/ui-table&gt;</pre>
+  </details>
+</section>
+
+<section>
+  <h2>範例二：垂直編號（新功能）</h2>
+  <p class="note">
+    每個 <code>ui-row</code> 上設 <code>auto-number="outline-v"</code>：序號以「列」為單位累計（1、2、3…），
+    同一列裡的每個儲存格都掛上同一個序號圖示；沒有 group 包裹時，計數範圍是整張 <code>ui-table</code>。
+  </p>
+
+  <ui-table theme="sky" font-size="1rem">
+    <ui-row auto-number="outline-v" col-widths="1:2">
+      <ui-col>步驟說明</ui-col>
+      <ui-col>先打開瀏覽器，進入教學網站首頁。</ui-col>
+    </ui-row>
+    <ui-row auto-number="outline-v" col-widths="1:2">
+      <ui-col>步驟說明</ui-col>
+      <ui-col>點選左側選單的「Part 2 常見題型」。</ui-col>
+    </ui-row>
+    <ui-row auto-number="outline-v" col-widths="1:2">
+      <ui-col>步驟說明</ui-col>
+      <ui-col>依序完成每一題的口說錄音練習。</ui-col>
+    </ui-row>
+    <ui-row auto-number="outline-v" col-widths="1:2">
+      <ui-col>步驟說明</ui-col>
+      <ui-col>送出錄音後查看 AI 給的回饋與建議修正。</ui-col>
+    </ui-row>
+  </ui-table>
+
+  <details class="uit-demo-code">
+    <summary>查看程式碼</summary>
+    <pre>&lt;ui-table theme="sky" font-size="1rem"&gt;
+  &lt;ui-row auto-number="outline-v" col-widths="1:2"&gt;
+    &lt;ui-col&gt;步驟說明&lt;/ui-col&gt;
+    &lt;ui-col&gt;先打開瀏覽器，進入教學網站首頁。&lt;/ui-col&gt;
+  &lt;/ui-row&gt;
+  &lt;ui-row auto-number="outline-v" col-widths="1:2"&gt;
+    &lt;ui-col&gt;步驟說明&lt;/ui-col&gt;
+    &lt;ui-col&gt;點選左側選單的「Part 2 常見題型」。&lt;/ui-col&gt;
+  &lt;/ui-row&gt;
+  &lt;!-- 其餘列同樣寫法，序號會自動累計為 3、4... --&gt;
+&lt;/ui-table&gt;</pre>
+  </details>
+</section>
+
+<section>
+  <h2>範例三：垂直編號 + group（分段各自歸零）</h2>
+  <p class="note">
+    垂直編號的計數範圍是「同一個 group」；換到下一個 group 時會重新從 1 開始，適合分段式教材或分章節清單。
+  </p>
+
+  <ui-table theme="special" font-size="1rem">
+    <ui-group title-left="第一章：開場白">
+      <ui-row auto-number="fill-v" col-widths="1:3">
+        <ui-col>重點</ui-col>
+        <ui-col>自我介紹時避免背稿，保持自然語調。</ui-col>
+      </ui-row>
+      <ui-row auto-number="fill-v" col-widths="1:3">
+        <ui-col>重點</ui-col>
+        <ui-col>適度延伸興趣與居住地的細節。</ui-col>
+      </ui-row>
+    </ui-group>
+    <ui-group title-left="第二章：長篇口說">
+      <ui-row auto-number="fill-v" col-widths="1:3">
+        <ui-col>重點</ui-col>
+        <ui-col>拿到題卡後先用 1 分鐘列重點大綱。</ui-col>
+      </ui-row>
+      <ui-row auto-number="fill-v" col-widths="1:3">
+        <ui-col>重點</ui-col>
+        <ui-col>敘述時依時間順序鋪陳，避免跳躍。</ui-col>
+      </ui-row>
+      <ui-row auto-number="fill-v" col-widths="1:3">
+        <ui-col>重點</ui-col>
+        <ui-col>結尾補上個人感受或反思。</ui-col>
+      </ui-row>
+    </ui-group>
+  </ui-table>
+
+  <details class="uit-demo-code">
+    <summary>查看程式碼</summary>
+    <pre>&lt;ui-table theme="special" font-size="1rem"&gt;
+  &lt;ui-group title-left="第一章：開場白"&gt;
+    &lt;ui-row auto-number="fill-v" col-widths="1:3"&gt;
+      &lt;ui-col&gt;重點&lt;/ui-col&gt;
+      &lt;ui-col&gt;自我介紹時避免背稿，保持自然語調。&lt;/ui-col&gt;
+    &lt;/ui-row&gt;
+    &lt;ui-row auto-number="fill-v" col-widths="1:3"&gt;
+      &lt;ui-col&gt;重點&lt;/ui-col&gt;
+      &lt;ui-col&gt;適度延伸興趣與居住地的細節。&lt;/ui-col&gt;
+    &lt;/ui-row&gt;
+  &lt;/ui-group&gt;
+  &lt;ui-group title-left="第二章：長篇口說"&gt;
+    &lt;!-- 進入新的 group，序號重新從 1 開始 --&gt;
+    &lt;ui-row auto-number="fill-v" col-widths="1:3"&gt;
+      &lt;ui-col&gt;重點&lt;/ui-col&gt;
+      &lt;ui-col&gt;拿到題卡後先用 1 分鐘列重點大綱。&lt;/ui-col&gt;
+    &lt;/ui-row&gt;
+    ...
+  &lt;/ui-group&gt;
+&lt;/ui-table&gt;</pre>
+  </details>
+</section>
+
+<section>
+  <h2>auto-number 參數一覽</h2>
+  <p class="note">設在 <code>ui-row</code> 上的屬性值：</p>
+
+  <ui-table theme="shell" font-size="0.95rem" cell-alignment="left">
+    <ui-row border="1px solid" col-widths="1:1:3">
+      <ui-col font-color="sky"><b>值</b></ui-col>
+      <ui-col font-color="sky"><b>方向</b></ui-col>
+      <ui-col font-color="sky"><b>說明</b></ui-col>
+    </ui-row>
+    <ui-row border="1px solid" col-widths="1:1:3">
+      <ui-col>outline（預設）</ui-col>
+      <ui-col>橫向</ui-col>
+      <ui-col>同一列由左到右從 1 起算，空心圓圈編號；列與列之間各自歸零。</ui-col>
+    </ui-row>
+    <ui-row border="1px solid" col-widths="1:1:3">
+      <ui-col>fill</ui-col>
+      <ui-col>橫向</ui-col>
+      <ui-col>同 outline，但編號為實心圓圈。</ui-col>
+    </ui-row>
+    <ui-row border="1px solid" col-widths="1:1:3">
+      <ui-col>outline-v / v</ui-col>
+      <ui-col>縱向（新）</ui-col>
+      <ui-col>同一列只領一個序號，跨列於同一 group（或整張表）內累計；空心圓圈編號。</ui-col>
+    </ui-row>
+    <ui-row border="1px solid" col-widths="1:1:3">
+      <ui-col>fill-v</ui-col>
+      <ui-col>縱向（新）</ui-col>
+      <ui-col>同 outline-v，但編號為實心圓圈。</ui-col>
+    </ui-row>
+  </ui-table>
+</section>
+
+<footer>
+  ui-table.js · 垂直編號模式 demo · 建立日期 2026-10-25
+</footer>
+
+<script src="ui-table.js"></script>
+</body>
+</html>

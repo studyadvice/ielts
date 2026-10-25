@@ -657,6 +657,7 @@
   UiTable.prototype._renderRows = function (rowEls, container) {
     var self = this;
     var rds  = [];
+    var vCounter = { n: 0 };   /* 垂直編號的跨列累計計數器，範圍與 mask-order 相同：同一次 _renderRows 呼叫（同一 group 或無 group 時的整張表） */
 
     var globalMoCount = {};
     rowEls.forEach(function (r) {
@@ -670,7 +671,7 @@
 
     rowEls.forEach(function (r) {
       var useLocalN = r.tagName.toLowerCase() === 'ui-row-enhance';
-      var d = self._renderRow(r, globalMoCount, useLocalN);
+      var d = self._renderRow(r, globalMoCount, useLocalN, vCounter);
       if (d) {
         rds.push({ el: d, src: r });
         container.appendChild(d);
@@ -695,7 +696,7 @@
     return rds;
   };
 
-  UiTable.prototype._renderRow = function (rowEl, globalMoCount, useLocalN) {
+  UiTable.prototype._renderRow = function (rowEl, globalMoCount, useLocalN, vCounter) {
     var self = this;
 
     var active = qsa(':scope > ui-col', rowEl).filter(function (c) {
@@ -730,19 +731,39 @@
 
     var pad = rowEl.getAttribute('cell-padding') || CFG.cellPadding;
 
+    /* auto-number 的值：
+       outline / fill                → 橫向（預設）：同一列由左到右 1 起算，列與列之間各自歸零
+       outline-v / fill-v / v        → 縱向：同一容器（group 或整張表）內跨列累計，
+                                        同一列中沒有 icon 的欄位共用該列的序號 */
+    var anRaw = rowEl.hasAttribute('auto-number')
+      ? (rowEl.getAttribute('auto-number') || 'outline').toLowerCase()
+      : null;
+    var anVertical = !!anRaw && /(^v$|-v$)/.test(anRaw);
+    var anFill     = !!anRaw && /^fill/.test(anRaw);
+
     var rowStyle = {
-      fontSize:   rowEl.getAttribute('font-size'),
-      fontColor:  resolveColor(rowEl.getAttribute('font-color')),
-      autoNumber: rowEl.hasAttribute('auto-number') ? (rowEl.getAttribute('auto-number') || 'outline') : null,
-      lineHeight: rowEl.getAttribute('line-height'),
-      textIndent: rowEl.getAttribute('text-indent'),
-      colBorder:  hasSpan ? null : rowEl.getAttribute('col-border')
+      fontSize:           rowEl.getAttribute('font-size'),
+      fontColor:          resolveColor(rowEl.getAttribute('font-color')),
+      autoNumber:         !!anRaw,
+      autoNumberFill:     anFill,
+      autoNumberVertical: anVertical,
+      lineHeight:         rowEl.getAttribute('line-height'),
+      textIndent:         rowEl.getAttribute('text-indent'),
+      colBorder:          hasSpan ? null : rowEl.getAttribute('col-border')
     };
+
+    /* 縱向模式：這一列只領一個序號（累計計數器 +1 一次），橫向模式則維持逐欄 idx+1 */
+    var vSeq = null;
+    if (rowStyle.autoNumber && rowStyle.autoNumberVertical) {
+      vCounter.n += 1;
+      vSeq = vCounter.n;
+    }
 
     var colTotal = active.length;
     var colDivs  = [];
     active.forEach(function (colEl, idx) {
-      var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount, idx + 1);
+      var numIdx = rowStyle.autoNumberVertical ? vSeq : (idx + 1);
+      var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount, numIdx);
       div.appendChild(cd);
       colDivs.push(cd);
 
@@ -943,8 +964,9 @@
     if (ico) {
       ci.insertAdjacentHTML('beforeend', mkIco(ico));
     } else if (rowStyle && rowStyle.autoNumber && numIdx) {
-      /* auto-number：同列由 1 起算；自訂 icon 的儲存格以 icon 為準，但仍佔用該位置的編號 */
-      ci.insertAdjacentHTML('beforeend', mkNum(numIdx, rowStyle.autoNumber === 'fill'));
+      /* auto-number：橫向時 numIdx 為同列由 1 起算的欄位順序；縱向時 numIdx 為該列在容器內的累計序號。
+         自訂 icon 的儲存格以 icon 為準，但仍佔用該位置的編號（橫向時會跳號）。 */
+      ci.insertAdjacentHTML('beforeend', mkNum(numIdx, rowStyle.autoNumberFill));
     }
 
     if (useCar) {
