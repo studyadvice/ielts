@@ -701,6 +701,38 @@
       justify-content: flex-end;
       padding: 4px 0 2px;
     }
+
+    /* ── data-popover-url 自動產生的 pill 連結按鈕 ── */
+    .xpop-url-pill {
+      border-radius: 999px;
+      padding: 4px 14px 4px 15px;
+      gap: 6px;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .xpop-url-pill > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .xpop-url-pill > i {
+      font-size: 0.95em;
+      flex-shrink: 0;
+    }
+    /* 對齊方式：data-popover-url-align="start|center|end"（預設 end） */
+    .xpop-show-btn-wrap[data-align="start"],
+    .xpop-modal-show-btn-wrap[data-align="start"] { justify-content: flex-start; }
+    .xpop-show-btn-wrap[data-align="center"],
+    .xpop-modal-show-btn-wrap[data-align="center"] { justify-content: center; }
+    .xpop-show-btn-wrap[data-align="full"],
+    .xpop-modal-show-btn-wrap[data-align="full"] { justify-content: stretch; }
+    .xpop-show-btn-wrap[data-align="full"] > .xpop-show-btn,
+    .xpop-modal-show-btn-wrap[data-align="full"] > .xpop-show-btn {
+      width: 100%;
+      justify-content: center;
+    }
   `;
 
   const THEMES = {
@@ -833,6 +865,9 @@
     if (rule.offset !== undefined)   mark.dataset.popoverOffset   = String(rule.offset);
     if (rule.showBtn !== undefined)  mark.dataset.popoverShowBtn  = rule.showBtn;
     if (rule.btnHref !== undefined)  mark.dataset.popoverBtnHref  = rule.btnHref;
+    if (rule.url      !== undefined) mark.dataset.popoverUrl      = rule.url;
+    if (rule.urlText  !== undefined) mark.dataset.popoverUrlText  = rule.urlText;
+    if (rule.urlAlign !== undefined) mark.dataset.popoverUrlAlign = rule.urlAlign;
 
     mid.parentNode.insertBefore(mark, mid);
     mark.appendChild(mid);
@@ -945,22 +980,64 @@
     return trigger.dataset.popoverContent || '';
   }
 
+  function isExternalHref(href) {
+    return /^(https?:)?\/\//.test(href);
+  }
+
+  /* 未指定文字時，外部連結取網域名當標籤，內部連結用「前往」 */
+  function defaultUrlLabel(href) {
+    if (!isExternalHref(href)) return '前往';
+    try {
+      const abs  = href.indexOf('//') === 0 ? 'https:' + href : href;
+      const host = new URL(abs).hostname.replace(/^www\./, '');
+      return host || '開啟連結';
+    } catch (e) {
+      return '開啟連結';
+    }
+  }
+
+  /*
+   * 說明方框底部的連結按鈕，兩種寫法：
+   *   1. data-popover-url="https://…"     → 自動顯示 pill 按鈕（推薦）
+   *      data-popover-url-text="原文連結"  → 自訂文字（省略時取網域名）
+   *      data-popover-url-align="start|center|end|full"（預設 end）
+   *   2. data-popover-show-btn / data-popover-btn-href → 舊寫法，方角按鈕，維持相容
+   * 兩者並存時以 data-popover-url 為準。
+   */
   function buildShowBtnEl(trigger, theme, forModal) {
-    const label = trigger.dataset.popoverShowBtn;
-    if (!label && label !== '') return null;           // 屬性不存在 → 不顯示
-    const btnLabel = label || '詳情';
-    const href     = trigger.dataset.popoverBtnHref || '#';
-    const isExternal = /^(https?:\/\/|\/\/)/.test(href);
+    const url    = trigger.dataset.popoverUrl;
+    const legacy = trigger.dataset.popoverShowBtn;
+    let href, btnLabel, isPill;
+
+    if (url) {
+      href     = url;
+      btnLabel = trigger.dataset.popoverUrlText || legacy || defaultUrlLabel(url);
+      isPill   = true;
+    } else {
+      if (!legacy && legacy !== '') return null;       // 兩個屬性都不存在 → 不顯示
+      href     = trigger.dataset.popoverBtnHref || '#';
+      btnLabel = legacy || '詳情';
+      isPill   = false;
+    }
+
+    const isExternal = isExternalHref(href);
+    const align      = trigger.dataset.popoverUrlAlign || 'end';
+
     const wrap = document.createElement('div');
     wrap.className = forModal ? 'xpop-modal-show-btn-wrap' : 'xpop-show-btn-wrap';
+    if (align !== 'end') wrap.dataset.align = align;
 
     const btn = document.createElement('a');
-    btn.className = 'xpop-show-btn';
+    btn.className = isPill ? 'xpop-show-btn xpop-url-pill' : 'xpop-show-btn';
     btn.href      = href;
-    btn.innerHTML = btnLabel + ' <i class="bi bi-arrow-right-short"></i>';
+    btn.innerHTML =
+      '<span></span><i class="bi ' +
+      (isExternal ? 'bi-box-arrow-up-right' : 'bi-arrow-right-short') + '"></i>';
+    btn.querySelector('span').textContent = btnLabel;
     if (isExternal) {
       btn.target = '_blank';
       btn.rel    = 'noopener noreferrer';
+      btn.title  = href;
     }
     wrap.appendChild(btn);
     return wrap;
