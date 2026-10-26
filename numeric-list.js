@@ -52,7 +52,8 @@
     numberPad:            '12px 16px',
     lineGap:              '3px',
 
-    /* ── FAB 專屬 ── */
+    hoverFX:              null,   /* 全域預設 hover 效果，可被 ui-list / list-item 覆蓋 */
+
     fabSize:              '52px',
     fabIconSize:          '1.4rem',
     fabLabelSize:         '0.6rem',
@@ -61,6 +62,9 @@
     fabOffset:            '16px',
     fabBottom:            '120px'
   };
+
+  /* 可用的 hover 效果名稱 */
+  var HoverFX = ['glow', 'lift', 'fill', 'bar', 'slide', 'zoom', 'invert', 'frame', 'none'];
 
   var store = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
 
@@ -78,26 +82,38 @@
     return null;
   }
 
+  function resolveFX(value, attrName) {
+    if (value === null || value === undefined) return null;
+    var v = String(value).trim().toLowerCase();
+    if (!v) return null;
+    if (HoverFX.indexOf(v) !== -1) return v;
+    if (global.console && console.warn) {
+      console.warn('[NumericList] ' + (attrName || 'hover-fx') + '="' + v + '" 無效，可用值：' +
+        HoverFX.join(', '));
+    }
+    return null;
+  }
+
   function buildCSS() {
     var c = Config;
+    var fxc = 'var(--nl-fx-color,' + c.borderHoverColor + ')';
+
     return (
       'ui-list{display:block}' +
 
-      /* ── 直欄（預設） ── */
       '.nl-list{' +
         'display:flex;flex-direction:column;' +
         'gap:var(--nl-gap,' + c.rowGap + ');' +
         'list-style:none;margin:0;padding:0' +
       '}' +
 
-      /* ── Grid 模式 ── */
       '.nl-list--grid{display:grid;grid-template-columns:repeat(var(--nl-cols,2),1fr)}' +
       '.nl-list--grid .nl-number{min-width:' + c.gridNumberMinWidth + '}' +
       '.nl-list--grid.nl-list--last-span>.nl-item:last-child{grid-column:1/-1}' +
       '.nl-list--grid.nl-list--last-span>.nl-item:last-child .nl-number{min-width:' + c.numberMinWidth + '}' +
 
-      /* ── 共用 item ── */
       '.nl-item{' +
+        'position:relative;' +
         'display:flex;align-items:stretch;' +
         'border:' + c.borderWidth + ' solid ' + c.borderColor + ';' +
         'border-radius:' + c.borderRadius + ';overflow:hidden;' +
@@ -130,6 +146,75 @@
       '.nl-placeholder{color:#595a57;font-style:italic}' +
 
       /* ══════════════════════════════════════════════════
+         hover-fx 選擇性滑過效果
+         色彩來源：--nl-fx-color（item accent → list fx-color → hover color）
+         一律以 color-mix 與底色混合成不透明色，不使用低透明度 rgba。
+         ══════════════════════════════════════════════════ */
+
+      /* 1. glow：外光暈，邊框同步染色 */
+      '.nl-item--fx-glow{transition:border-color .18s ease,background .18s ease,box-shadow .22s ease}' +
+      '.nl-item--fx-glow:hover{' +
+        'border-color:' + fxc + ';' +
+        'box-shadow:0 0 0 1px ' + fxc + ',0 4px 18px color-mix(in srgb,' + fxc + ' 40%,' + c.backgroundColor + ')' +
+      '}' +
+
+      /* 2. lift：整列上浮並加投影 */
+      '.nl-item--fx-lift{transition:border-color .18s ease,background .18s ease,transform .2s ease,box-shadow .2s ease}' +
+      '.nl-item--fx-lift:hover{' +
+        'transform:translateY(-3px);' +
+        'border-color:' + fxc + ';' +
+        'box-shadow:0 10px 22px color-mix(in srgb,' + fxc + ' 22%,#000000)' +
+      '}' +
+
+      /* 3. fill：底色由左至右填滿 */
+      '.nl-item--fx-fill::before{' +
+        'content:"";position:absolute;inset:0;z-index:0;pointer-events:none;' +
+        'background:color-mix(in srgb,' + fxc + ' 16%,' + c.backgroundColor + ');' +
+        'transform:scaleX(0);transform-origin:left center;' +
+        'transition:transform .28s ease' +
+      '}' +
+      '.nl-item--fx-fill:hover::before{transform:scaleX(1)}' +
+      '.nl-item--fx-fill:hover{border-color:' + fxc + '}' +
+      '.nl-item--fx-fill>*{position:relative;z-index:1}' +
+
+      /* 4. bar：底部色條展開 */
+      '.nl-item--fx-bar::after{' +
+        'content:"";position:absolute;left:0;right:0;bottom:0;height:3px;' +
+        'background:' + fxc + ';pointer-events:none;' +
+        'transform:scaleX(0);transform-origin:left center;' +
+        'transition:transform .24s ease' +
+      '}' +
+      '.nl-item--fx-bar:hover::after{transform:scaleX(1)}' +
+
+      /* 5. slide：內文右移並染色 */
+      '.nl-item--fx-slide .nl-content{transition:transform .2s ease,color .2s ease}' +
+      '.nl-item--fx-slide:hover .nl-content{transform:translateX(10px);color:' + fxc + '}' +
+      '.nl-item--fx-slide:hover{border-color:' + fxc + '}' +
+
+      /* 6. zoom：數字（或圖示）放大並襯底 */
+      '.nl-item--fx-zoom .nl-number{transition:transform .22s ease,background .22s ease}' +
+      '.nl-item--fx-zoom:hover .nl-number{' +
+        'transform:scale(1.1);' +
+        'background:color-mix(in srgb,' + fxc + ' 20%,' + c.numberBg + ')' +
+      '}' +
+      '.nl-item--fx-zoom:hover{border-color:' + fxc + '}' +
+
+      /* 7. invert：數字區反白 */
+      '.nl-item--fx-invert .nl-number{transition:background .2s ease,color .2s ease}' +
+      '.nl-item--fx-invert:hover .nl-number{background:' + fxc + ';color:' + c.backgroundColor + '!important}' +
+      '.nl-item--fx-invert:hover{border-color:' + fxc + '}' +
+
+      /* 8. frame：外框向外擴張 */
+      '.nl-item--fx-frame{' +
+        'outline:1px solid color-mix(in srgb,' + fxc + ' 0%,' + c.backgroundColor + ');outline-offset:0;' +
+        'transition:border-color .18s ease,background .18s ease,outline-color .2s ease,outline-offset .2s ease' +
+      '}' +
+      '.nl-item--fx-frame:hover{border-color:' + fxc + ';outline-color:' + fxc + ';outline-offset:4px}' +
+
+      /* none：停用所有滑過變化 */
+      '.nl-item--fx-none:hover{border-color:' + c.borderColor + '}' +
+
+      /* ══════════════════════════════════════════════════
          list-item-ad 廣告列
          gap 消除原理（CSS 自訂屬性繼承）：
            .nl-ad:not(:first-child) → 抵消上方 gap
@@ -151,14 +236,11 @@
         'font-size:' + c.fontSize + ';' +
         'line-height:' + c.lineHeight + ';' +
         'text-decoration:none;' +
-        'text-shadow:0 1px 3px rgba(0,0,0,0.32)' +
+        'text-shadow:0 1px 3px rgba(0,0,0,0.92)' +
       '}' +
       '.nl-ad-inner[href]{transition:filter .18s ease}' +
       '.nl-ad-inner[href]:hover{filter:brightness(1.12) saturate(1.08)}' +
 
-      /* ══════════════════════════════════════════════════
-         FAB
-         ══════════════════════════════════════════════════ */
       '.nl-fab-btn{' +
         'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
         'width:' + c.fabSize + ';min-height:' + c.fabSize + ';' +
@@ -249,18 +331,19 @@
       /* list-item */
       var n = seq++;
       return {
-        type  : 'item',
-        number: el.getAttribute('number') || String(n + 1),
-        accent: el.getAttribute('accent') || null,
-        source: el.getAttribute('source') || null,
-        target: el.getAttribute('target') || null,
-        icon  : el.getAttribute('icon')   || null,
-        html  : el.innerHTML.trim()
+        type   : 'item',
+        number : el.getAttribute('number')   || String(n + 1),
+        accent : el.getAttribute('accent')   || null,
+        source : el.getAttribute('source')   || null,
+        target : el.getAttribute('target')   || null,
+        icon   : el.getAttribute('icon')     || null,
+        fx     : el.getAttribute('hover-fx') || null,
+        fxColor: el.getAttribute('fx-color') || null,
+        html   : el.innerHTML.trim()
       };
     });
   }
 
-  /* ─── extractItems：僅供 fab 模式，只讀 <list-item> ─── */
   function extractItems(listEl) {
     var items = listEl.querySelectorAll(':scope > list-item');
     return Array.prototype.map.call(items, function (item, i) {
@@ -273,15 +356,14 @@
         href      : item.getAttribute('href')        || null,
         label     : item.getAttribute('label')       || null,
         linkTarget: item.getAttribute('link-target') || null,
+        fx        : item.getAttribute('hover-fx')    || null,
+        fxColor   : item.getAttribute('fx-color')    || null,
         html      : item.innerHTML.trim()
       };
     });
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  buildLi：數字 / icon / Grid 模式共用
-   * ═══════════════════════════════════════════════════════════════════ */
-  function buildLi(data, idx, siblings, listTheme, isIconMode) {
+  function buildLi(data, idx, siblings, listTheme, isIconMode, listFX, listFXColor) {
     var accent = resolveColor(data.accent, 'accent')
       || listTheme
       || resolveColor(Config.themeColor, 'themeColor')
@@ -291,6 +373,16 @@
 
     var li = document.createElement('li');
     li.className = 'nl-item' + (isClickable ? ' nl-item--clickable' : '');
+
+    /* hover 效果：item 屬性 → list 屬性 → 全域 Config.hoverFX */
+    var fx = resolveFX(data.fx, 'hover-fx')
+      || listFX
+      || resolveFX(Config.hoverFX, 'hoverFX');
+    if (fx) li.classList.add('nl-item--fx-' + fx);
+
+    /* 效果色：item fx-color → list fx-color → 該列 accent */
+    var fxColor = resolveColor(data.fxColor, 'fx-color') || listFXColor || accent;
+    li.style.setProperty('--nl-fx-color', fxColor);
 
     var numDiv = document.createElement('div');
     numDiv.className   = 'nl-number';
@@ -367,9 +459,6 @@
     return li;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  buildFabBtn：fab 模式專用
-   * ═══════════════════════════════════════════════════════════════════ */
   function buildFabBtn(data, idx, listTheme) {
     var accent = resolveColor(data.accent, 'accent')
       || listTheme
@@ -420,9 +509,6 @@
     return el;
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  renderFab
-   * ═══════════════════════════════════════════════════════════════════ */
   function renderFab(listEl) {
     var rawItems = listEl.querySelectorAll(':scope > list-item');
     var itemData;
@@ -469,6 +555,10 @@
    *    ‣ 直欄 / icon 模式：正常渲染 buildAd()
    *    ‣ Grid 模式（cols >= 2）：略過，不渲染
    *    ‣ 廣告不佔 item 序號（accent 循環、編號不計廣告）
+   *
+   *  hover-fx 規則：
+   *    ‣ list-item 的 hover-fx 優先，其次 ui-list，最後 Config.hoverFX
+   *    ‣ fx-color 未指定時，效果色採用該列的 accent
    * ═══════════════════════════════════════════════════════════════════ */
   function renderUIList(listEl) {
     if (listEl.getAttribute('mode') === 'fab') {
@@ -481,8 +571,6 @@
     var isIconMode;
     var cols;
     var hasLastSpan;
-
-    /* 偵測是否有原始子節點（含 ad） */
     var rawNodes = listEl.querySelectorAll(':scope > list-item, :scope > list-item-ad');
 
     if (rawNodes.length) {
@@ -516,7 +604,9 @@
       }
     }
 
-    var theme = getListTheme(listEl);
+    var theme     = getListTheme(listEl);
+    var listFX    = resolveFX(listEl.getAttribute('hover-fx'), 'hover-fx');
+    var listFXCol = resolveColor(listEl.getAttribute('fx-color'), 'fx-color');
 
     var ol = document.createElement('ol');
     ol.className = 'nl-list' +
@@ -538,7 +628,7 @@
       }
 
       /* list-item */
-      var li = buildLi(d, itemCount, liEls, theme, isIconMode);
+      var li = buildLi(d, itemCount, liEls, theme, isIconMode, listFX, listFXCol);
       liEls.push(li);
       ol.appendChild(li);
       itemCount++;
@@ -551,12 +641,10 @@
     listEl.appendChild(ol);
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-   *  公開 API
-   * ═══════════════════════════════════════════════════════════════════ */
   var NumericList = {
     get defaults() { return Object.assign({}, Config); },
     get colors()   { return Object.assign({}, Palette); },
+    get effects()  { return HoverFX.slice(); },
 
     setup: function (opts) {
       if (!opts || typeof opts !== 'object') { injectCSS(); return; }
@@ -569,6 +657,9 @@
       }
       if (opts.numberColor !== undefined && opts.themeColor === undefined) {
         Config.themeColor = Config.numberColor;
+      }
+      if (opts.hoverFX !== undefined) {
+        Config.hoverFX = resolveFX(opts.hoverFX, 'hoverFX');
       }
       var themeChanged = opts.numberColor !== undefined || opts.themeColor !== undefined;
       if (themeChanged && opts.borderHoverColor === undefined) {
