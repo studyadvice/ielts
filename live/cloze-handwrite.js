@@ -454,7 +454,7 @@
         var p = this._pos(e);
         var w = this._penWidth;
         if (e.pointerType === 'pen' && e.pressure > 0) {
-          w = this._penWidth * (0.2 + e.pressure * 1.6);
+          w = this._penWidth * (0.4 + e.pressure * 1.3); //控制壓力敏感度
         }
         this._ctx.strokeStyle = this._penColor;
         this._ctx.lineWidth = w;
