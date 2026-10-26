@@ -3,15 +3,19 @@
  * 雅思教學螢幕錄影控制層（搭配觸控筆 / cloze-handwrite.js）
  *
  * 自訂標籤：
- *   <ui-annotate-layer>  全頁標註圖層（筆、螢光、雷射、復原、清除）
+ *   <ui-annotate-layer>  全頁標註圖層（筆、螢光、雷射、復原、清除、筆跡回放）
  *   <ui-spotlight>       聚光燈遮罩（跟隨指標）
  *   <ui-lower-third>     下方字卡（錄影用重點標題）
  *   <ui-key-hud>         快捷鍵提示徽章（讓觀眾看見你按了什麼）
- *   <ui-studio-bar>      主控列（筆色、粗細、題組導覽、計時、錄影指示）
+ *   <ui-studio-bar>      主控列（筆色、粗細、題組導覽、計時、回放、錄影指示）
  *
  * 對外介面：window.TeachStudio
  *   .shortcuts   快捷鍵對照表 [[key, label], ...]
  *   .bar()       取得主控列實體
+ *
+ * 版本紀錄：
+ *   v1（10-25-26）標註圖層、聚光燈、單題聚焦、答案透視、字卡、計時、快捷鍵
+ *   v2（10-26-26）筆跡時間軸錄製、JSON 存檔與載入、可調回放倍速、單筆逐段播放
  * ========================================================= */
 (function () {
   'use strict';
@@ -34,6 +38,12 @@
     console.log(msg);
   }
 
+  function stamp() {
+    var d = new Date();
+    function p(n) { return String(n).padStart(2, '0'); }
+    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+  }
+
   var SHORTCUTS = [
     ['1', '一般筆跡標註'],
     ['2', '螢光筆標記'],
@@ -41,6 +51,9 @@
     ['0', '關閉標註，回到點選模式'],
     ['Z', '復原上一筆'],
     ['C', '清除全部標註'],
+    ['P', '筆跡回放播放／暫停'],
+    ['N', '播放下一筆（講一句放一筆）'],
+    ['X', '回放重置，回到第一筆'],
     ['S', '聚光燈開關'],
     ['F', '單題聚焦開關'],
     ['A', '顯示／隱藏所有答案'],
@@ -106,6 +119,9 @@
       + '.ts-clock{font-size:1.25rem;line-height:1.3;color:var(--c-focus,#D4FFFC);'
       + 'font-variant-numeric:tabular-nums;min-width:86px;text-align:center;}'
       + '.ts-count{font-size:0.9rem;color:#9a9b94;min-width:72px;text-align:center;}'
+      + '.ts-play-count{font-size:0.9rem;color:var(--c-special,#B3DE73);min-width:86px;text-align:center;'
+      + 'font-variant-numeric:tabular-nums;}'
+      + '.ts-file{display:none;}'
 
       /* ---- 錄影指示 ---- */
       + '.ts-rec{display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--c-warning,#E6374B);}'
@@ -132,7 +148,7 @@
       + 'background:rgba(12,13,12,0.9);}'
       + '.ts-help.ts-on{display:flex;}'
       + '.ts-help-box{background:rgba(23,24,26,0.97);border:1px solid rgba(51,52,47,0.9);border-radius:12px;'
-      + 'padding:26px 32px;width:620px;max-width:92vw;}'
+      + 'padding:26px 32px;width:720px;max-width:92vw;}'
       + '.ts-help-box h3{margin:0 0 16px 0;font-size:1.2rem;line-height:1.4;color:var(--c-focus,#D4FFFC);}'
       + '.ts-help-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 28px;}'
       + '.ts-help-row{display:flex;align-items:center;gap:12px;font-size:0.95rem;line-height:1.4;}'
@@ -147,6 +163,10 @@
 
   /* =========================================================
    * <ui-annotate-layer>
+   *
+   * 錄製：每一筆記錄 mode、color、當下 scrollY，以及點序列
+   *       {x, y, w, t}，t 為該筆起點起算的毫秒數。
+   * 回放：以原始節奏重現，可乘上倍速；亦可一次只播一筆。
    * ========================================================= */
   class UiAnnotateLayer extends HTMLElement {
     connectedCallback() {
@@ -163,12 +183,23 @@
       this._strokes = [];
       this._trail = [];
       this._drawing = false;
+
+      /* 回放狀態 */
+      this._recorded = null;   // 載入或暫存的筆跡資料
+      this._playIndex = 0;     // 下一筆要播的索引
+      this._playing = false;
+      this._cur = null;        // 正在播放中的筆
+      this._speed = 1;
+      this._gap = 420;         // 連續播放時每筆之間的間隔（毫秒）
+      this._gapUntil = 0;
+
       this._resize();
       window.addEventListener('resize', () => this._resize());
       this._bind();
       this._tick();
     }
 
+    /* ---------- 基本設定 ---------- */
     setMode(mode) {
       this._mode = mode;
       this.classList.toggle('ts-live', mode !== 'off');
@@ -178,6 +209,7 @@
     setWidth(px) { this._width = Math.max(1, Number(px) || 4); }
 
     clear() {
+      this.stopPlay();
       this._strokes = [];
       this._redraw();
     }
@@ -186,6 +218,166 @@
       this._redraw();
     }
 
+    /* ---------- 存檔與載入 ---------- */
+    exportInk() {
+      return {
+        v: 2,
+        created: new Date().toISOString(),
+        w: this.clientWidth,
+        h: this.clientHeight,
+        strokes: this._strokes.map(function (s) {
+          return {
+            mode: s.mode,
+            color: s.color,
+            scroll: s.scroll || 0,
+            points: s.points.map(function (p) {
+              return { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10, w: Math.round(p.w * 10) / 10, t: p.t || 0 };
+            })
+          };
+        })
+      };
+    }
+
+    importInk(data) {
+      if (!data || !Array.isArray(data.strokes)) throw new Error('格式不符，缺少 strokes 陣列。');
+      this.stopPlay();
+      this._recorded = data;
+      this._playIndex = 0;
+      this._strokes = [];
+      this._redraw();
+      this._emit('loaded');
+      return data.strokes.length;
+    }
+
+    /* 把畫面上現有筆跡轉為回放素材，不必先存檔再載入 */
+    useCurrentAsRecording() {
+      if (!this._strokes.length) return 0;
+      this._recorded = this.exportInk();
+      this._playIndex = 0;
+      this._strokes = [];
+      this._redraw();
+      this._emit('loaded');
+      return this._recorded.strokes.length;
+    }
+
+    hasRecording() { return !!(this._recorded && this._recorded.strokes.length); }
+    recordedCount() { return this.hasRecording() ? this._recorded.strokes.length : 0; }
+    playedCount() { return this._playIndex; }
+    isPlaying() { return this._playing; }
+    setSpeed(x) { this._speed = Math.min(8, Math.max(0.25, Number(x) || 1)); }
+
+    /* ---------- 回放控制 ---------- */
+    play() {
+      if (!this.hasRecording()) return false;
+      if (this._playIndex >= this._recorded.strokes.length) this.resetPlay();
+      this._playing = true;
+      this._step = false;
+      if (!this._cur) this._beginStroke(this._playIndex);
+      this._emit('play');
+      return true;
+    }
+    pause() {
+      if (!this._playing) return;
+      this._playing = false;
+      this._emit('pause');
+    }
+    togglePlay() {
+      if (this._playing) { this.pause(); return false; }
+      return this.play();
+    }
+    /* 單筆逐段：播完一筆就停，等你講完下一句再按 */
+    playNext() {
+      if (!this.hasRecording()) return false;
+      if (this._playIndex >= this._recorded.strokes.length) return false;
+      this._playing = true;
+      this._step = true;
+      if (!this._cur) this._beginStroke(this._playIndex);
+      this._emit('play');
+      return true;
+    }
+    stopPlay() {
+      this._playing = false;
+      this._cur = null;
+    }
+    resetPlay() {
+      this.stopPlay();
+      this._playIndex = 0;
+      this._strokes = [];
+      this._redraw();
+      this._emit('reset');
+    }
+
+    _emit(state) {
+      this.dispatchEvent(new CustomEvent('ink-play', {
+        bubbles: true,
+        detail: { state: state, index: this._playIndex, total: this.recordedCount(), playing: this._playing }
+      }));
+    }
+
+    _scale() {
+      if (!this._recorded || !this._recorded.w) return 1;
+      return this.clientWidth / this._recorded.w;
+    }
+
+    _beginStroke(idx) {
+      var rec = this._recorded.strokes[idx];
+      if (!rec || !rec.points.length) { this._playIndex++; return; }
+      if (typeof rec.scroll === 'number') window.scrollTo(0, rec.scroll);
+      var live = { mode: rec.mode, color: rec.color, scroll: rec.scroll, points: [] };
+      this._strokes.push(live);
+      this._cur = {
+        rec: rec, live: live, i: 0,
+        t0: rec.points[0].t || 0,
+        base: performance.now(),
+        scale: this._scale()
+      };
+    }
+
+    _advancePlay() {
+      var now = performance.now();
+      if (this._gapUntil && now < this._gapUntil) return;
+      this._gapUntil = 0;
+
+      if (!this._cur) {
+        if (this._playIndex >= this._recorded.strokes.length) {
+          this._playing = false;
+          this._emit('end');
+          return;
+        }
+        this._beginStroke(this._playIndex);
+        if (!this._cur) return;
+      }
+
+      var c = this._cur;
+      var elapsed = (now - c.base) * this._speed;
+      while (c.i < c.rec.points.length && ((c.rec.points[c.i].t || 0) - c.t0) <= elapsed) {
+        var p = c.rec.points[c.i];
+        c.live.points.push({ x: p.x * c.scale, y: p.y * c.scale, w: Math.max(1, p.w * c.scale), t: p.t });
+        if (c.live.points.length > 1) this._drawLast(c.live);
+        c.i++;
+      }
+      if (c.i >= c.rec.points.length) {
+        this._cur = null;
+        this._playIndex++;
+        this._emit('stroke');
+        if (this._step || this._playIndex >= this._recorded.strokes.length) {
+          this._playing = false;
+          if (this._playIndex >= this._recorded.strokes.length) this._emit('end');
+        } else {
+          this._gapUntil = performance.now() + this._gap / this._speed;
+        }
+      }
+    }
+
+    /* 暫停後再播：以目前已畫到的點重新對時 */
+    _resyncIfNeeded() {
+      var c = this._cur;
+      if (!c) return;
+      var donePoint = c.rec.points[Math.max(0, c.i - 1)];
+      c.base = performance.now() - (((donePoint.t || 0) - c.t0) / this._speed);
+    }
+
+    /* ---------- 繪圖 ---------- */
     _resize() {
       var dpr = window.devicePixelRatio || 1;
       var w = this.clientWidth, h = this.clientHeight;
@@ -224,6 +416,21 @@
       ctx.restore();
     }
 
+    _drawLast(stroke) {
+      var n = stroke.points.length;
+      if (n < 2) return;
+      var ctx = this._ictx;
+      ctx.save();
+      ctx.globalAlpha = stroke.mode === 'marker' ? 0.78 : 1;
+      ctx.strokeStyle = stroke.color;
+      ctx.lineWidth = stroke.points[n - 1].w;
+      ctx.beginPath();
+      ctx.moveTo(stroke.points[n - 2].x, stroke.points[n - 2].y);
+      ctx.lineTo(stroke.points[n - 1].x, stroke.points[n - 1].y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
     _lineWidth(e) {
       var base = this._mode === 'marker' ? this._width * 5 : this._width;
       if (e.pointerType === 'pen' && e.pressure > 0) {
@@ -241,10 +448,12 @@
           this._trail.push({ x: e.clientX, y: e.clientY, t: performance.now() });
           return;
         }
+        this._strokeStart = performance.now();
         this._strokes.push({
           mode: this._mode,
           color: this._color,
-          points: [{ x: e.clientX, y: e.clientY, w: this._lineWidth(e) }]
+          scroll: window.scrollY,
+          points: [{ x: e.clientX, y: e.clientY, w: this._lineWidth(e), t: 0 }]
         });
       });
       this.addEventListener('pointermove', (e) => {
@@ -255,25 +464,19 @@
         }
         var s = this._strokes[this._strokes.length - 1];
         if (!s) return;
-        s.points.push({ x: e.clientX, y: e.clientY, w: this._lineWidth(e) });
-        var n = s.points.length;
-        var ctx = this._ictx;
-        ctx.save();
-        ctx.globalAlpha = s.mode === 'marker' ? 0.78 : 1;
-        ctx.strokeStyle = s.color;
-        ctx.lineWidth = s.points[n - 1].w;
-        ctx.beginPath();
-        ctx.moveTo(s.points[n - 2].x, s.points[n - 2].y);
-        ctx.lineTo(s.points[n - 1].x, s.points[n - 1].y);
-        ctx.stroke();
-        ctx.restore();
+        s.points.push({
+          x: e.clientX, y: e.clientY,
+          w: this._lineWidth(e),
+          t: Math.round(performance.now() - this._strokeStart)
+        });
+        this._drawLast(s);
       });
       var end = () => { this._drawing = false; };
       this.addEventListener('pointerup', end);
       this.addEventListener('pointercancel', end);
     }
 
-    /* 雷射軌跡：僅以寬度衰減呈現殘影，不壓低透明度 */
+    /* 每幀：雷射殘影＋回放推進 */
     _tick() {
       var step = () => {
         var ctx = this._lctx;
@@ -296,6 +499,12 @@
             ctx.stroke();
           }
           ctx.restore();
+        }
+        if (this._playing) {
+          if (this._needResync) { this._resyncIfNeeded(); this._needResync = false; }
+          this._advancePlay();
+        } else if (this._cur) {
+          this._needResync = true;
         }
         requestAnimationFrame(step);
       };
@@ -406,6 +615,25 @@
         '<input type="number" data-role="width" min="1" max="14" step="1" value="4" style="width:64px" />' +
         '</div>' +
         '<div class="ts-group">' +
+        '<span class="ts-label">回放</span>' +
+        '<button type="button" class="ts-btn" data-act="save">存檔</button>' +
+        '<button type="button" class="ts-btn" data-act="load">載入</button>' +
+        '<button type="button" class="ts-btn" data-act="stage">轉為素材</button>' +
+        '<button type="button" class="ts-btn" data-act="play">播放 P</button>' +
+        '<button type="button" class="ts-btn" data-act="step">下一筆 N</button>' +
+        '<button type="button" class="ts-btn" data-act="resetplay">重置 X</button>' +
+        '<select data-role="speed" title="回放倍速">' +
+        '<option value="0.5">0.5 倍</option>' +
+        '<option value="1" selected>1 倍</option>' +
+        '<option value="1.5">1.5 倍</option>' +
+        '<option value="2">2 倍</option>' +
+        '<option value="3">3 倍</option>' +
+        '<option value="4">4 倍</option>' +
+        '</select>' +
+        '<span class="ts-play-count" data-role="playcount">0 / 0 筆</span>' +
+        '<input type="file" class="ts-file" accept=".json" data-role="inkfile" />' +
+        '</div>' +
+        '<div class="ts-group">' +
         '<span class="ts-label">畫面</span>' +
         '<button type="button" class="ts-btn" data-act="spot">聚光燈 S</button>' +
         '<button type="button" class="ts-btn" data-act="focus">單題聚焦 F</button>' +
@@ -444,6 +672,7 @@
       this._help = this.querySelector('[data-role="help"]');
       this._clock = this.querySelector('[data-role="clock"]');
       this._count = this.querySelector('[data-role="count"]');
+      this._playCount = this.querySelector('[data-role="playcount"]');
       this._swatch = this.querySelector('[data-role="swatch"]');
 
       this._wire();
@@ -455,6 +684,7 @@
         this._renderClock();
       }, 1000);
       this._bindKeys();
+      document.addEventListener('ink-play', (e) => this._onPlayState(e.detail));
     }
 
     /* ---- 相關元件查找 ---- */
@@ -478,7 +708,13 @@
       });
       var acts = {
         undo: () => { this.layer && this.layer.undo(); },
-        clear: () => { this.layer && this.layer.clear(); },
+        clear: () => { this.layer && this.layer.clear(); this._onPlayState(); },
+        save: () => this.saveInk(),
+        load: () => this.querySelector('[data-role="inkfile"]').click(),
+        stage: () => this.stageInk(),
+        play: () => this.togglePlay(),
+        step: () => this.playNext(),
+        resetplay: () => this.resetPlay(),
         spot: () => this.toggleSpot(),
         focus: () => this.toggleFocus(),
         answers: () => this.toggleAnswers(),
@@ -499,6 +735,11 @@
 
       this.querySelector('[data-role="color"]').addEventListener('change', () => this._syncPen());
       this.querySelector('[data-role="width"]').addEventListener('change', () => this._syncPen());
+      this.querySelector('[data-role="speed"]').addEventListener('change', (e) => {
+        if (this.layer) this.layer.setSpeed(e.target.value);
+        toast('回放倍速設為 ' + e.target.value + ' 倍。', 'info');
+      });
+      this.querySelector('[data-role="inkfile"]').addEventListener('change', (e) => this._onInkFile(e));
     }
 
     _syncPen() {
@@ -507,6 +748,79 @@
       this._swatch.style.background = PALETTE[key] || key;
       if (this.layer) { this.layer.setColor(key); this.layer.setWidth(width); }
       if (this.modal) { this.modal.setPenColor(key); this.modal.setPenWidth(width); }
+    }
+
+    /* ---- 筆跡存檔與載入 ---- */
+    saveInk() {
+      if (!this.layer) return;
+      var data = this.layer.exportInk();
+      if (!data.strokes.length) {
+        toast('畫面上沒有筆跡可以存檔。', 'info');
+        return;
+      }
+      var blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'ink-' + stamp() + '.json';
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+      toast('已存檔 ' + data.strokes.length + ' 筆筆跡。', 'info');
+    }
+
+    stageInk() {
+      if (!this.layer) return;
+      var n = this.layer.useCurrentAsRecording();
+      if (!n) { toast('畫面上沒有筆跡可以轉為回放素材。', 'info'); return; }
+      toast('已將 ' + n + ' 筆筆跡轉為回放素材，按 P 或 N 開始播放。', 'info');
+    }
+
+    _onInkFile(e) {
+      var file = e.target.files[0];
+      if (!file || !this.layer) return;
+      var reader = new FileReader();
+      reader.onload = () => {
+        try {
+          var n = this.layer.importInk(JSON.parse(reader.result));
+          toast('已載入 ' + n + ' 筆筆跡，按 P 連續播放或按 N 一筆一筆播。', 'info');
+        } catch (err) {
+          toast('筆跡檔載入失敗：' + err.message);
+        }
+        e.target.value = '';
+      };
+      reader.onerror = () => toast('筆跡檔讀取失敗。');
+      reader.readAsText(file, 'utf-8');
+    }
+
+    togglePlay() {
+      if (!this.layer) return;
+      if (!this.layer.hasRecording()) {
+        toast('尚未載入筆跡素材，可先按「轉為素材」或「載入」。', 'info');
+        return;
+      }
+      this.layer.togglePlay();
+    }
+    playNext() {
+      if (!this.layer) return;
+      if (!this.layer.hasRecording()) {
+        toast('尚未載入筆跡素材，可先按「轉為素材」或「載入」。', 'info');
+        return;
+      }
+      if (!this.layer.playNext()) toast('已經播到最後一筆了。', 'info');
+    }
+    resetPlay() {
+      if (this.layer) this.layer.resetPlay();
+    }
+
+    _onPlayState(detail) {
+      if (!this.layer) return;
+      var done = this.layer.playedCount();
+      var total = this.layer.recordedCount();
+      this._playCount.textContent = done + ' / ' + total + ' 筆';
+      var playing = this.layer.isPlaying();
+      var btn = this.querySelector('[data-act="play"]');
+      btn.textContent = playing ? '暫停 P' : '播放 P';
+      btn.classList.toggle('ts-active', playing);
+      if (detail && detail.state === 'end') toast('筆跡回放結束。', 'info');
     }
 
     /* ---- 行為 ---- */
@@ -589,7 +903,10 @@
           case '3': this.setMode('laser'); label = '雷射指標'; break;
           case '0': this.setMode('off'); label = '關閉標註'; break;
           case 'z': case 'Z': this.layer && this.layer.undo(); label = '復原'; break;
-          case 'c': case 'C': this.layer && this.layer.clear(); label = '清除標註'; break;
+          case 'c': case 'C': this.layer && this.layer.clear(); this._onPlayState(); label = '清除標註'; break;
+          case 'p': case 'P': this.togglePlay(); label = '筆跡回放'; break;
+          case 'n': case 'N': this.playNext(); label = '播放下一筆'; break;
+          case 'x': case 'X': this.resetPlay(); label = '回放重置'; break;
           case 's': case 'S': this.toggleSpot(); label = '聚光燈'; break;
           case 'f': case 'F': this.toggleFocus(); label = '單題聚焦'; break;
           case 'a': case 'A': this.toggleAnswers(); label = '答案透視'; break;

@@ -41,7 +41,7 @@
   };
 
   var PEN_COLOR_OPTIONS = [
-    ['focus', '霧白 focus'],
+    ['shell', '殼白 shell'],
     ['ocean', '海洋藍 ocean'],
     ['sky', '天空藍 sky'],
     ['special', '嫩綠 special'],
@@ -51,11 +51,9 @@
     ['pink', '粉紅 pink'],
     ['orange', '橙 orange'],
     ['lavender', '薰衣草 lavender'],
-    ['indigo', '靛 indigo'],
-    ['shell', '殼白 shell']
+    ['indigo', '靛 indigo']
   ];
 
-  /* ---------- 全域樣式（僅注入一次） ---------- */
   function injectStyles() {
     if (document.getElementById('cloze-handwrite-styles')) return;
     var css = ''
@@ -73,7 +71,6 @@
       + 'font-family:-apple-system,"Segoe UI","Noto Sans TC",sans-serif;font-size:1rem;}'
       + 'ui-import,ui-bilingual-block,ui-cloze-text,ui-collapse{display:block;}'
 
-      /* ---- 匯入元件 ---- */
       + '.ci-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#17181a;border:1px solid #2a2b28;border-radius:8px;flex-wrap:wrap;}'
       + '.ci-bar input[type=file]{color:var(--c-shell);font-size:0.9rem;}'
       + '.ci-btn{font-size:0.95rem;padding:8px 14px;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);cursor:pointer;}'
@@ -84,7 +81,7 @@
       + '.cc-head{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:8px 12px;background:#15241f;border-left:4px solid var(--c-teal);border-radius:4px;}'
       + '.cc-head .cc-arrow{display:inline-block;transition:transform .15s ease;color:var(--c-teal);font-size:0.9rem;}'
       + '.cc-head.cc-collapsed .cc-arrow{transform:rotate(-90deg);}'
-      + '.cc-body{padding:10px 16px 4px 16px;font-size:1.05rem;line-height:1.5;color:var(--c-vanilla);}'
+      + '.cc-body{padding:10px 16px 4px 16px;font-size:1.05rem;line-height:1.5;color:var(--c-shell);}'
       + '.cc-body.cc-collapsed{display:none;}'
 
       /* ---- 題組區塊 ---- */
@@ -264,7 +261,7 @@
       span.dataset.word = word;
       span.dataset.index = String(index);
       var approxCh = Math.max(2, word.length);
-      span.style.minWidth = (approxCh * 0.62) + 'em';
+      span.style.minWidth = (approxCh * 0.9) + 'em';
       span.innerHTML = '<span class="blank-hint">✎</span>';
       span.addEventListener('click', () => {
         if (span.classList.contains('filled')) return;
@@ -417,7 +414,7 @@
 
     open(blankEl, word) {
       this._currentBlank = blankEl;
-      this._title.textContent = '書寫：';
+      this._title.textContent = 'Nelson is writing ...';
       this._backdrop.classList.add('open');
       this._resizeCanvas();
       this._clearCanvas();
@@ -500,7 +497,6 @@
   }
   customElements.define('ui-handwrite-modal', UiHandwriteModal);
 
-  /* ---------- 對外介面 ---------- */
   injectStyles();
   window.ClozeHandwrite = {
     parseTxt: parseTxt,
