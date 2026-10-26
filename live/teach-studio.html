@@ -5,12 +5,12 @@
 <title>Nelson</title>
 <style>
   :root { color-scheme: dark; }
-  body { padding-top: 96px; }
-  .page { width: 100%; max-width: 1080px; margin: 0 auto; padding: 24px; }
+  body { padding-top: 168px; }
+  .page { width: 100%; max-width: 1080px; margin: 0 auto; padding: 16px; }
   .page-head { margin-bottom: 40px; }
-  .page-head h1 { font-size: 2rem; line-height: 1.3; margin: 0 0 10px 0; color: #D4FFFC; }
-  .page-head p { font-size: 1rem; line-height: 1.5; margin: 0; color: #9A9B94; }
-  .section-title { font-size: 1.2rem; line-height: 1.4; color: #B3DE73; margin: 48px 0 16px 0; }
+  .page-head h1 { font-size: 2.5rem; margin: 0 0 10px 0; color: #D4FFFC; }
+  .page-head p { font-size: 1.1rem; line-height: 1.5; margin: 0; color: #9A9B94; }
+  .section-title { font-size: 1.25rem; line-height: 1.4; color: #B3DE73; margin: 88px 0 16px 0; }
   .note { background: rgba(23, 24, 26, 0.94); border: 1px solid rgba(42, 43, 40, 0.9);
           border-radius: 10px; padding: 20px 24px; line-height: 1.5; font-size: 0.98rem; }
   .note ol, .note ul { margin: 10px 0 0 0; padding-left: 22px; }
@@ -18,10 +18,11 @@
   .note b { color: #82C8E5; }
   pre { background: rgba(15, 16, 14, 0.95); border: 1px solid rgba(42, 43, 40, 0.9);
         border-radius: 10px; padding: 18px 20px; overflow-x: auto;
-        font-size: 0.88rem; line-height: 1.5; color: #C6C7BD; }
+        font-size: 0.9rem; line-height: 1.5; color: #C6C7BD; }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
   textarea { width: 100%; background: rgba(15, 16, 14, 0.95); border: 1px solid rgba(58, 59, 55, 0.9);
-             color: #C6C7BD; border-radius: 8px; padding: 12px; font-size: 0.95rem; line-height: 1.5; }
+             color: #C6C7BD; border-radius: 8px; padding: 16px; font-size: 0.9rem; line-height: 1.5; }
+	ui-bilingual-block .bb-wrap { margin-bottom: 560px; }
 </style>
 <script src="cloze-handwrite.js"></script>
 <script src="teach-studio.js"></script>
@@ -39,28 +40,13 @@
 <div class="page">
 
   <header class="page-head">
-    <h1>IELTS 觸控筆教學錄影台</h1>
-    <p>點擊虛線空格即可用觸控筆書寫答案；在畫面任何位置可直接以筆標註、螢光、雷射指引。按 <b>?</b> 查看全部快捷鍵。</p>
+    <h1>Nelson教學控制台</h1>
   </header>
 
   <ui-import></ui-import>
 
-  <h2 class="section-title">本日題組</h2>
   <div id="blocks"></div>
 
-  <h2 class="section-title">錄影流程建議</h2>
-  <div class="note">
-    <ol>
-      <li>開錄前按 <b>R</b> 打開紅框錄影指示，畫面邊緣出現紅框與 REC 字樣，觀眾一眼看出正在示範。</li>
-      <li>按 <b>F</b> 進入單題聚焦，其餘題組淡化模糊，鏡頭不會被雜訊干擾。</li>
-      <li>講解主旨時按 <b>3</b> 切雷射指標，筆尖所到之處留下短暫紅色軌跡，不會弄髒畫面。</li>
-      <li>要標重點搭配語塊時按 <b>2</b> 螢光筆，拆解結構時按 <b>1</b> 一般筆跡，寫錯按 <b>Z</b> 復原。</li>
-      <li>學生作答階段按 <b>T</b> 啟動計時器，Part 2 正好以兩分鐘為準。</li>
-      <li>對答案時按 <b>A</b> 讓所有空格浮現原文答案，再按一次收回。</li>
-      <li>切到下一題按 <b>K</b>，頁面自動捲動並更新下方字卡標題。</li>
-      <li>需要乾淨畫面截圖時按 <b>H</b> 收起主控列，<b>0</b> 關閉標註模式回到點選。</li>
-    </ol>
-  </div>
 
   <h2 class="section-title">教材格式</h2>
   <div class="two-col">
@@ -72,7 +58,7 @@
       <button type="button" class="ts-btn" id="load-paste" style="margin-top:12px">載入這份教材</button>
     </div>
     <div class="note">
-      <p>頁面用法只要三步，元件自動註冊，不需要額外初始化程式：</p>
+      <p>頁面用法只要三步，元件自動註冊</p>
       <pre>&lt;script src="cloze-handwrite.js"&gt;&lt;/script&gt;
 &lt;script src="teach-studio.js"&gt;&lt;/script&gt;
 
@@ -141,11 +127,11 @@
     var text = document.getElementById('paste').value;
     var pairs = window.ClozeHandwrite.parseTxt(text);
     if (!pairs.length) {
-      window.ClozeHandwrite.showAlert('沒有解析到題組，請確認 [ZH] 與 [EN] 標記。');
+      window.ClozeHandwrite.showAlert('沒有解析到題組，請確認 [ZH] 與 [EN] 標記');
       return;
     }
     render(pairs);
-    window.ClozeHandwrite.showAlert('已載入 ' + pairs.length + ' 個題組。', 'info');
+    window.ClozeHandwrite.showAlert('已載入 ' + pairs.length + ' 個題組', 'info');
   });
 </script>
 
