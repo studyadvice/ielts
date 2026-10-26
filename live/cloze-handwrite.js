@@ -71,9 +71,9 @@
       + 'font-family:-apple-system,"Segoe UI","Noto Sans TC",sans-serif;font-size:1rem;}'
       + 'ui-import,ui-bilingual-block,ui-cloze-text,ui-collapse{display:block;}'
 
-      + '.ci-bar{display:flex;align-items:center;gap:12px;padding:8px 16px;background:#17181a;border:1px solid #2a2b28;flex-wrap:wrap;}'
-      + '.ci-bar input[type=file]{color:var(--c-shell);font-size:0.8rem;}'
-      + '.ci-btn{font-size:0.8rem;padding:8px 16px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);cursor:pointer;}'
+      + '.ci-bar{display:flex;align-items:center;gap:9px;padding:3px 9px;background:#17181a;border:1px solid #2a2b28;flex-wrap:wrap;}'
+      + '.ci-bar input[type=file]{color:var(--c-shell);font-size:0.75rem;}'
+      + '.ci-btn{font-size:0.75rem;padding:3px 9px;border:2px solid #3a3b37;background:#202119;color:var(--c-shell);cursor:pointer;}'
       + '.ci-btn:hover{border-color:var(--c-ocean);color:var(--c-ocean);}'
       + '.ci-hint{font-size:0.8rem;color:#9a9b94;}'
 
@@ -81,7 +81,7 @@
       + '.cc-head{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:8px 12px;background:#15241f;border-left:4px solid var(--c-teal);border-radius:4px;}'
       + '.cc-head .cc-arrow{display:inline-block;transition:transform .15s ease;color:var(--c-teal);font-size:0.9rem;}'
       + '.cc-head.cc-collapsed .cc-arrow{transform:rotate(-90deg);}'
-      + '.cc-body{padding:10px 16px 4px 16px;font-size:1.05rem;line-height:1.5;color:var(--c-shell);}'
+      + '.cc-body{padding:10px 16px 4px 16px;font-size:1rem;line-height:1.4;color:var(--c-shell);}'
       + '.cc-body.cc-collapsed{display:none;}'
 
       /* ---- 題組區塊 ---- */
@@ -90,11 +90,11 @@
       + '.en-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}'
       + '.en-toolbar .zoom-btn{width:34px;height:36px;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);font-size:1.1rem;cursor:pointer;}'
       + '.en-toolbar .zoom-btn:hover{border-color:var(--c-sky);color:var(--c-sky);}'
-      + '.en-toolbar .zoom-label{font-size:0.9rem;color:#9a9b94;}'
-      + '.en-body{font-size:var(--en-font-size);line-height:1.5;color:var(--c-shell);}'
+      + '.en-toolbar .zoom-label{font-size:1rem;color:#9a9b94;}'
+      + '.en-body{font-size:var(--en-font-size);line-height:1.4;color:var(--c-shell);}'
 
       /* ---- 克漏字空格 ---- */
-      + '.blank{position:relative;display:inline-block;min-width:2.2em;margin:0 2px;vertical-align:bottom;'
+      + '.blank{position:relative;display:inline-block;min-width:2em;margin:0 2px;vertical-align:bottom;'
       + 'border-bottom:2px dashed var(--c-sky);cursor:pointer;text-align:center;}'
       + '.blank .blank-hint{opacity:0.5;font-size:0.9em;}'
       + '.blank:hover{border-color:var(--c-ocean);}'
