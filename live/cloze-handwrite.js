@@ -67,13 +67,13 @@
       + '--en-font-size:1.6rem;'
       + '}'
 
-      + 'body{min-width:1080px;margin:0;background:var(--c-bg);color:var(--c-shell);'
+      + 'body{min-width:888px;margin:0;background:var(--c-bg);color:var(--c-shell);'
       + 'font-family:-apple-system,"Segoe UI","Noto Sans TC",sans-serif;font-size:1rem;}'
       + 'ui-import,ui-bilingual-block,ui-cloze-text,ui-collapse{display:block;}'
 
-      + '.ci-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#17181a;border:1px solid #2a2b28;border-radius:8px;flex-wrap:wrap;}'
-      + '.ci-bar input[type=file]{color:var(--c-shell);font-size:0.9rem;}'
-      + '.ci-btn{font-size:0.95rem;padding:8px 14px;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);cursor:pointer;}'
+      + '.ci-bar{display:flex;align-items:center;gap:12px;padding:8px 16px;background:#17181a;border:1px solid #2a2b28;flex-wrap:wrap;}'
+      + '.ci-bar input[type=file]{color:var(--c-shell);font-size:0.8rem;}'
+      + '.ci-btn{font-size:0.8rem;padding:8px 16px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);cursor:pointer;}'
       + '.ci-btn:hover{border-color:var(--c-ocean);color:var(--c-ocean);}'
       + '.ci-hint{font-size:0.8rem;color:#9a9b94;}'
 
@@ -85,18 +85,18 @@
       + '.cc-body.cc-collapsed{display:none;}'
 
       /* ---- 題組區塊 ---- */
-      + '.bb-wrap{margin-bottom:56px;padding:18px;background:#131412;border:1px solid #26271f;border-radius:10px;}'
-      + '.bb-zh{margin-bottom:56px;}'
-      + '.en-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:20px;}'
-      + '.en-toolbar .zoom-btn{width:34px;height:34px;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);font-size:1.1rem;cursor:pointer;}'
+      + '.bb-wrap{margin-bottom:66px;padding:12px;background:#131412;border:1px solid #26271f;}'
+      + '.bb-zh{margin-bottom:66px;}'
+      + '.en-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}'
+      + '.en-toolbar .zoom-btn{width:34px;height:36px;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);font-size:1.1rem;cursor:pointer;}'
       + '.en-toolbar .zoom-btn:hover{border-color:var(--c-sky);color:var(--c-sky);}'
-      + '.en-toolbar .zoom-label{font-size:0.85rem;color:#9a9b94;}'
+      + '.en-toolbar .zoom-label{font-size:0.9rem;color:#9a9b94;}'
       + '.en-body{font-size:var(--en-font-size);line-height:1.5;color:var(--c-shell);}'
 
       /* ---- 克漏字空格 ---- */
       + '.blank{position:relative;display:inline-block;min-width:2.2em;margin:0 2px;vertical-align:bottom;'
       + 'border-bottom:2px dashed var(--c-sky);cursor:pointer;text-align:center;}'
-      + '.blank .blank-hint{opacity:0.5;font-size:0.85em;}'
+      + '.blank .blank-hint{opacity:0.5;font-size:0.9em;}'
       + '.blank:hover{border-color:var(--c-ocean);}'
       + '.blank.filled{cursor:default;border-bottom:2px solid var(--c-teal);}'
       + '.blank.filled img{display:block;height:1.3em;width:auto;max-width:none;margin:0 auto;}'
@@ -126,7 +126,7 @@
       + 'border:1px solid #2a2b28;border-radius:8px;margin-top:12px;font-size:0.9rem;color:var(--c-shell);flex-wrap:wrap;}'
       + '.pen-settings label{display:flex;align-items:center;gap:6px;}'
       + '.pen-settings select,.pen-settings input[type=number]{background:#0f100e;border:1px solid #3a3b37;'
-      + 'color:var(--c-shell);border-radius:4px;padding:4px 6px;font-size:0.9rem;}'
+      + 'color:var(--c-shell);border-radius:4px;padding:6px;font-size:0.9rem;}'
 
       /* ---- 提示訊息（取代 alert） ---- */
       + '.app-alert{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1200;padding:10px 20px;'
@@ -454,7 +454,7 @@
         var p = this._pos(e);
         var w = this._penWidth;
         if (e.pointerType === 'pen' && e.pressure > 0) {
-          w = this._penWidth * (0.4 + e.pressure * 1.3); //控制壓力敏感度
+          w = this._penWidth * (0.2 + e.pressure * 1.6);
         }
         this._ctx.strokeStyle = this._penColor;
         this._ctx.lineWidth = w;
