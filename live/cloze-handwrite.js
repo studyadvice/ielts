@@ -23,6 +23,7 @@
  *                 data-answer-color（答案文字色，預設 sky）
  *   v4（10-27-26）題組標題取代摺疊列的「中文」（data.title 或 data-title 屬性），
  *                 parseJson 保留 title 欄位
+ *   v5（10-27-26）純標籤寫法：<ui-bilingual-block data-title><ui-zh><ui-en>，不需 JS
  * ========================================================= */
 (function () {
   'use strict';
@@ -78,6 +79,7 @@
       + 'body{min-width:888px;margin:0;background:var(--c-bg);color:var(--c-shell);'
       + 'font-family:-apple-system,"Segoe UI","Noto Sans TC",sans-serif;font-size:1rem;}'
       + 'ui-import,ui-bilingual-block,ui-cloze-text,ui-collapse{display:block;}'
+      + 'ui-zh,ui-en{display:none;}'
 
       + '.ci-bar{display:flex;align-items:center;gap:9px;padding:3px 9px;background:#17181a;border:1px solid #2a2b28;flex-wrap:wrap;}'
       + '.ci-bar input[type=file]{color:var(--c-shell);font-size:0.75rem;}'
@@ -324,8 +326,28 @@
 
     connectedCallback() {
       syncColors(this);
+      if (this._built || this._waiting) return;
+      /* 腳本若在 head 載入，子標籤尚未解析完，等 DOM 讀完再建構 */
+      if (document.readyState === 'loading') {
+        this._waiting = true;
+        document.addEventListener('DOMContentLoaded', () => { this._waiting = false; this._build(); });
+        return;
+      }
+      this._build();
+    }
+
+    _build() {
       if (this._built) return;
       this._built = true;
+      /* 純標籤寫法：讀取 <ui-zh>、<ui-en> 子標籤（或 data-zh／data-en 屬性） */
+      var zhTag = this.querySelector(':scope > ui-zh');
+      var enTag = this.querySelector(':scope > ui-en');
+      if (!this._pendingData && (zhTag || enTag || this.hasAttribute('data-zh') || this.hasAttribute('data-en'))) {
+        this._pendingData = {
+          zh: zhTag ? zhTag.textContent.trim() : (this.getAttribute('data-zh') || ''),
+          en: enTag ? enTag.textContent.trim() : (this.getAttribute('data-en') || '')
+        };
+      }
       this._gap = 66;
       this.innerHTML =
         '<div class="bb-wrap">' +
@@ -361,7 +383,7 @@
     }
 
     set data(val) {
-      if (!this.isConnected) {
+      if (!this.isConnected || !this._built) {
         this._pendingData = val;
         return;
       }

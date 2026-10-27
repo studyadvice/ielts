@@ -50,7 +50,26 @@
   </div>
   <div id="blocks-v4"></div>
 
+  <h2><span class="tag ver">v5</span>10-27-26　純標籤寫法（不需 JS）</h2>
+  <div class="note">
+    <p style="margin:0">題組內容直接寫在 HTML 裡：<code>data-title</code> 屬性放標題，<code>&lt;ui-zh&gt;</code> 放中文，<code>&lt;ui-en&gt;</code> 放英文並用方括號挖空。下方這個題組完全沒有用 JS 塞資料。</p>
+  </div>
+  <ui-bilingual-block data-title="Part 2　描述一個讓你印象深刻的地方">
+    <ui-zh>我想談談台南的一條老街。那裡的房子多半有上百年歷史，窄巷裡飄著麻油與線香的氣味。</ui-zh>
+    <ui-en>I'd like to describe an old street in Tainan, a place that has [stuck with me] ever since. Most of the houses there are well over a century old, and the narrow lanes are [steeped in] the smell of sesame oil and incense.</ui-en>
+  </ui-bilingual-block>
+
   <h2>程式碼對照</h2>
+  <div class="note">
+    <p style="margin:0"><b>v5 純標籤用法</b></p>
+    <pre style="margin-top:8px">&lt;ui-bilingual-block data-title="Part 2　描述一個讓你印象深刻的地方"&gt;
+  &lt;ui-zh&gt;我想談談台南的一條老街。……&lt;/ui-zh&gt;
+  &lt;ui-en&gt;I'd like to describe an old street in Tainan, a place that has [stuck with me] ever since. ……&lt;/ui-en&gt;
+&lt;/ui-bilingual-block&gt;
+
+&lt;!-- 較短的內容也可用屬性 --&gt;
+&lt;ui-bilingual-block data-zh="中文" data-en="English with [blanks]."&gt;&lt;/ui-bilingual-block&gt;</pre>
+  </div>
   <div class="note">
     <p style="margin:0"><b>v4 標題用法</b></p>
     <pre style="margin-top:8px">block.data = { title: 'Part 1　Do you live in a house or in a flat?', zh: '...', en: '...' };
