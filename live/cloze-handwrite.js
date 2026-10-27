@@ -19,6 +19,10 @@
  * 版本紀錄：
  *   v1（10-25-26）初版
  *   v2（10-27-26）題組右側垂直工具列：A-／A+ 縮放英文字體，P-／P+ 調整中英間距
+ *   v3（10-27-26）新增屬性 data-blank-color（虛線色，預設 shell）、
+ *                 data-answer-color（答案文字色，預設 sky）
+ *   v4（10-27-26）題組標題取代摺疊列的「中文」（data.title 或 data-title 屬性），
+ *                 parseJson 保留 title 欄位
  * ========================================================= */
 (function () {
   'use strict';
@@ -102,7 +106,7 @@
 
       /* ---- 克漏字空格 ---- */
       + '.blank{position:relative;display:inline-block;min-width:2em;margin:0 2px;vertical-align:bottom;'
-      + 'border-bottom:2px dashed var(--c-sky);cursor:pointer;text-align:center;}'
+      + 'border-bottom:2px dashed var(--cz-blank-color,var(--c-shell));cursor:pointer;text-align:center;}'
       + '.blank .blank-hint{opacity:0.5;font-size:0.9em;}'
       + '.blank:hover{border-color:var(--c-ocean);}'
       + '.blank.filled{cursor:default;border-bottom:2px solid var(--c-teal);}'
@@ -174,7 +178,26 @@
     var data = JSON.parse(text);
     if (!Array.isArray(data)) data = [data];
     return data.map(function (d) {
-      return { zh: (d.zh || '').trim(), en: (d.en || '').trim() };
+      var item = { zh: (d.zh || '').trim(), en: (d.en || '').trim() };
+      if (d.title) item.title = String(d.title).trim();
+      return item;
+    });
+  }
+
+  /* ---------- 色彩屬性：data-blank-color／data-answer-color ----------
+   * 值可為色票名稱（如 sky、shell）或任何 CSS 色彩（如 #82C8E5）。
+   * 可設在 ui-cloze-text，或設在 ui-bilingual-block 由內部克漏字繼承。 */
+  var COLOR_ATTRS = {
+    'data-blank-color': '--cz-blank-color',
+    'data-answer-color': '--cz-answer-color'
+  };
+  var COLOR_ATTR_LIST = Object.keys(COLOR_ATTRS);
+
+  function syncColors(el) {
+    COLOR_ATTR_LIST.forEach(function (attr) {
+      var v = el.getAttribute(attr);
+      if (v) el.style.setProperty(COLOR_ATTRS[attr], PALETTE[v] || v);
+      else el.style.removeProperty(COLOR_ATTRS[attr]);
     });
   }
 
@@ -214,7 +237,11 @@
    * 方法：setText(raw) → 解析方括號並渲染為可點擊空格
    * ========================================================= */
   class UiClozeText extends HTMLElement {
+    static get observedAttributes() { return COLOR_ATTR_LIST; }
+    attributeChangedCallback() { syncColors(this); }
+
     connectedCallback() {
+      syncColors(this);
       if (this._built) return;
       this._built = true;
       this._fontRem = 1.6;
@@ -292,7 +319,11 @@
    * 屬性：data = {zh, en}
    * ========================================================= */
   class UiBilingualBlock extends HTMLElement {
+    static get observedAttributes() { return COLOR_ATTR_LIST; }
+    attributeChangedCallback() { syncColors(this); }
+
     connectedCallback() {
+      syncColors(this);
       if (this._built) return;
       this._built = true;
       this._gap = 66;
@@ -340,6 +371,10 @@
     _apply(val) {
       var zhContent = this.querySelector('[data-role="content"]');
       var clozeEl = this.querySelector('ui-cloze-text');
+      /* 標題：優先用 data.title，其次 data-title 屬性，皆無則顯示「中文」 */
+      if (val.title) this.setAttribute('data-title', val.title);
+      var summary = this.querySelector('[data-role="summary"]');
+      if (summary) summary.textContent = this.getAttribute('data-title') || '中文';
       zhContent.textContent = val.zh || '';
       clozeEl.setText(val.en || '');
     }

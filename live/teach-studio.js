@@ -16,6 +16,7 @@
  * 版本紀錄：
  *   v1（10-25-26）標註圖層、聚光燈、單題聚焦、答案透視、字卡、計時、快捷鍵
  *   v2（10-26-26）筆跡時間軸錄製、JSON 存檔與載入、可調回放倍速、單筆逐段播放
+ *   v3（10-27-26）答案透視文字色改讀 --cz-answer-color，預設 sky
  * ========================================================= */
 (function () {
   'use strict';
@@ -141,7 +142,7 @@
       /* ---- 答案透視 ---- */
       + 'body.ts-answers .blank:not(.filled) .blank-hint{display:none;}'
       + 'body.ts-answers .blank:not(.filled)::after{content:attr(data-word);'
-      + 'color:var(--c-special,#B3DE73);opacity:0.88;}'
+      + 'color:var(--cz-answer-color,var(--c-sky,#82C8E5));opacity:0.88;}'
 
       /* ---- 快捷鍵說明視窗 ---- */
       + '.ts-help{position:fixed;inset:0;z-index:950;display:none;align-items:center;justify-content:center;'
