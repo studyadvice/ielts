@@ -17,6 +17,7 @@
  *   v1（10-25-26）標註圖層、聚光燈、單題聚焦、答案透視、字卡、計時、快捷鍵
  *   v2（10-26-26）筆跡時間軸錄製、JSON 存檔與載入、可調回放倍速、單筆逐段播放
  *   v3（10-27-26）答案透視文字色改讀 --cz-answer-color，預設 sky
+ *   v4（10-27-26）書寫視窗尚未啟動（cloze-handwrite.js 未載入或順序在後）時不再報錯
  * ========================================================= */
 (function () {
   'use strict';
@@ -748,7 +749,8 @@
       var width = this.querySelector('[data-role="width"]').value;
       this._swatch.style.background = PALETTE[key] || key;
       if (this.layer) { this.layer.setColor(key); this.layer.setWidth(width); }
-      if (this.modal) { this.modal.setPenColor(key); this.modal.setPenWidth(width); }
+      var m = this.modal;
+      if (m && typeof m.setPenColor === 'function') { m.setPenColor(key); m.setPenWidth(width); }
     }
 
     /* ---- 筆跡存檔與載入 ---- */

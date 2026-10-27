@@ -6,6 +6,7 @@
 <title>cloze-handwrite demo 10-27-26</title>
 <style>
   :root { color-scheme: dark; font-size: 14px; }
+  body { padding-top: 120px; }
   .page { width: 100%; max-width: 960px; margin: 0 auto; padding: 32px 24px 64px 24px; box-sizing: border-box; }
   h1 { font-size: 1.75rem; line-height: 1.4; color: #D4FFFC; margin: 0 0 8px 0; }
   .lead { font-size: 1rem; line-height: 1.5; color: #9A9B94; margin: 0 0 32px 0; }
@@ -25,15 +26,14 @@
 </style>
 </head>
 <body>
-  <ui-studio-bar></ui-studio-bar>
+<ui-studio-bar></ui-studio-bar>
 <ui-spotlight></ui-spotlight>
 <ui-annotate-layer></ui-annotate-layer>
 <ui-lower-third></ui-lower-third>
 <ui-key-hud></ui-key-hud>
-<ui-handwrite-modal></ui-handwrite-modal>
 <div class="page">
   <h1>cloze-handwrite 元件示範</h1>
-  <p class="lead">同一元件的多次修改都會附加在這個檔案，依版本由上而下排列。</p>
+  <p class="lead">同一元件的多次修改都會附加在這個檔案，依版本由上而下排列。頁面上方的主控列來自 teach-studio.js，標註、聚光燈與快捷鍵都可以在這裡測試。</p>
 
   <h2><span class="tag ver">v2</span>10-27-26　右側垂直工具列（A-／A+／P-／P+）</h2>
   <div class="note">
@@ -69,19 +69,23 @@
   <div class="note">
     <p style="margin:0">兩個新屬性設在 <code>ui-bilingual-block</code> 上：<b>data-block-gap</b> 是這個題組與下一個題組之間的距離，單位 px，預設 66；<b>data-border-color</b> 是題組邊框色，可用色票名稱或 CSS 色彩，預設 #26271f。下方三個題組依序是預設、間距 160 加 lavender 邊框、間距 24 加 #EDA109 邊框。</p>
   </div>
-  <ui-bilingual-block data-title="預設（間距 66，邊框預設色）">
+  <p style="font-size:0.9rem;line-height:1.5;color:#9A9B94;margin:0 0 8px 0">預設（不加屬性）</p>
+  <ui-bilingual-block data-title="Part 1　What time do you prefer to work?">
     <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
     <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
   </ui-bilingual-block>
-  <ui-bilingual-block data-title="data-block-gap=160　data-border-color=lavender" data-block-gap="160" data-border-color="lavender">
+  <p style="font-size:0.9rem;line-height:1.5;color:#9A9B94;margin:0 0 8px 0">data-block-gap="160"　data-border-color="lavender"</p>
+  <ui-bilingual-block data-title="Part 1　What time do you prefer to work?" data-block-gap="160" data-border-color="lavender">
     <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
     <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
   </ui-bilingual-block>
-  <ui-bilingual-block data-title="data-block-gap=24　data-border-color=#EDA109" data-block-gap="24" data-border-color="#EDA109">
+  <p style="font-size:0.9rem;line-height:1.5;color:#9A9B94;margin:0 0 8px 0">data-block-gap="24"　data-border-color="#EDA109"</p>
+  <ui-bilingual-block data-title="Part 1　What time do you prefer to work?" data-block-gap="24" data-border-color="#EDA109">
     <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
     <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
   </ui-bilingual-block>
-  <ui-bilingual-block data-title="接在間距 24 之後的題組" data-border-color="teal">
+  <p style="font-size:0.9rem;line-height:1.5;color:#9A9B94;margin:0 0 8px 0">接在上一題之後的題組，只加 data-border-color="teal"</p>
+  <ui-bilingual-block data-title="Part 1　What time do you prefer to work?" data-border-color="teal">
     <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
     <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
   </ui-bilingual-block>
@@ -153,8 +157,8 @@ cloze.zoom(delta)    // 原 _zoom 改為公開</pre>
   </div>
 </div>
 
-<script src="teach-studio.js"></script>
 <script src="cloze-handwrite.js"></script>
+<script src="teach-studio.js"></script>
 <script>
   var SAMPLE = [
     {
