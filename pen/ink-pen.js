@@ -1,3 +1,29 @@
+/* =========================================================
+ * ink-pen.js
+ * 螢幕錄影用極簡畫筆層（觸控筆 / 雷射筆）
+ * 零依賴，單檔即可運作，不需要 cloze-handwrite.js
+ *
+ * 自訂標籤：
+ *   <ui-ink-layer>  全頁繪圖層（觸控筆、雷射筆）
+ *   <ui-ink-bar>    迷你工具列（可收合成一顆小圓鈕）
+ *
+ * 對外介面：window.InkPen
+ *   .layer()            取得繪圖層實體
+ *   .bar()              取得工具列實體
+ *   .palette            配色表
+ *   .showAlert(msg,type)  提示訊息（info / warn）
+ *
+ * 快捷鍵：
+ *   1  觸控筆
+ *   3  雷射筆
+ *   0  關閉繪圖，回到一般點選
+ *   C  清除全部筆跡
+ *   H  收合／展開工具列
+ *
+ * 版本紀錄：
+ *   v1（10-27-26）觸控筆、雷射筆、筆色、粗細 3 至 12、清除、收合工具列
+ *   v2（10-28-26）data-anchor 座標模式（視窗／文件）、extra-color 自訂筆色
+ * ========================================================= */
 (function () {
   'use strict';
 
@@ -10,7 +36,7 @@
   };
 
   var PEN_OPTIONS = [
-    ['shell', '殼白 shell'],
+    ['focus', '霧白 focus'],
     ['ocean', '海洋藍 ocean'],
     ['yellow', '黃 yellow'],
     ['special', '嫩綠 special'],
@@ -23,6 +49,7 @@
   var WIDTH_MIN = 3;
   var WIDTH_MAX = 12;
   var WIDTH_DEFAULT = 3;
+  var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
   /* ---------- 提示訊息（bootstrap alert 風格，不使用 alert） ---------- */
   function showAlert(msg, type) {
@@ -47,6 +74,7 @@
       + 'ui-ink-layer{position:fixed;inset:0;z-index:820;pointer-events:none;display:block;}'
       + 'ui-ink-layer canvas{position:absolute;inset:0;width:100%;height:100%;}'
       + 'ui-ink-layer.ip-live{pointer-events:auto;cursor:crosshair;touch-action:none;}'
+      + 'ui-ink-layer.ip-live.ip-doc{touch-action:pan-y;}'
 
       /* ---- 工具列容器 ---- */
       + 'ui-ink-bar{position:fixed;z-index:880;display:flex;align-items:center;gap:10px;}'
@@ -103,10 +131,17 @@
 
   /* =========================================================
    * <ui-ink-layer>
+   *
    * 兩張畫布：ink 保留筆跡，laser 每幀重畫殘影。
-   * 座標以視窗為準（position:fixed），錄影時畫面不捲動即可。
+   *
+   * 屬性 data-anchor：
+   *   "viewport"（預設）筆跡貼著視窗，捲動時跟著螢幕走
+   *   "document"        筆跡貼著內容，捲動時跟著段落走（邊捲邊畫）
+   * 兩種模式可隨時互換，既有筆跡會依當下捲動量自動換算座標。
    * ========================================================= */
   class UiInkLayer extends HTMLElement {
+    static get observedAttributes() { return ['data-anchor']; }
+
     connectedCallback() {
       if (this._built) return;
       this._built = true;
@@ -117,17 +152,58 @@
       this._lctx = this._laser.getContext('2d');
 
       this._mode = 'off';
+      this._anchor = (this.getAttribute('data-anchor') === 'document') ? 'document' : 'viewport';
       this._color = PALETTE.focus;
       this._width = WIDTH_DEFAULT;
       this._strokes = [];
       this._trail = [];
       this._drawing = false;
+      this._dirty = false;
+
+      this.classList.toggle('ip-doc', this._anchor === 'document');
 
       this._resize();
       window.addEventListener('resize', () => this._resize());
+      window.addEventListener('scroll', () => {
+        if (this._anchor === 'document') this._dirty = true;
+      }, { passive: true });
       this._bind();
       this._tick();
     }
+
+    attributeChangedCallback(name, oldVal, newVal) {
+      if (!this._built) return;
+      if (name === 'data-anchor') this._applyAnchor(newVal);
+    }
+
+    /* ---------- 座標模式 ---------- */
+    setAnchor(mode) {
+      var next = (mode === 'document') ? 'document' : 'viewport';
+      this.setAttribute('data-anchor', next);
+      this._applyAnchor(next);
+      return next;
+    }
+    getAnchor() { return this._anchor; }
+
+    /* 換算既有筆跡，讓畫面上的位置在切換瞬間維持不動 */
+    _applyAnchor(value) {
+      var next = (value === 'document') ? 'document' : 'viewport';
+      if (next === this._anchor) return;
+      var sign = (next === 'document') ? 1 : -1;
+      var dx = window.scrollX * sign;
+      var dy = window.scrollY * sign;
+      this._strokes.forEach(function (s) {
+        s.points.forEach(function (p) { p.x += dx; p.y += dy; });
+      });
+      this._trail.forEach(function (p) { p.x += dx; p.y += dy; });
+      this._anchor = next;
+      this.classList.toggle('ip-doc', next === 'document');
+      this._redraw();
+    }
+
+    _ox() { return this._anchor === 'document' ? window.scrollX : 0; }
+    _oy() { return this._anchor === 'document' ? window.scrollY : 0; }
+    _pt(e) { return { x: e.clientX + this._ox(), y: e.clientY + this._oy() }; }
 
     /* ---------- 設定 ---------- */
     setMode(mode) {
@@ -176,12 +252,15 @@
     _redraw() {
       this._ictx.clearRect(0, 0, this.clientWidth, this.clientHeight);
       this._strokes.forEach((s) => this._paint(s));
+      this._dirty = false;
     }
 
     _paint(stroke) {
       if (stroke.points.length < 2) return;
       var ctx = this._ictx;
+      var ox = this._ox(), oy = this._oy();
       ctx.save();
+      ctx.translate(-ox, -oy);
       ctx.strokeStyle = stroke.color;
       for (var i = 1; i < stroke.points.length; i++) {
         var a = stroke.points[i - 1], b = stroke.points[i];
@@ -199,6 +278,7 @@
       if (n < 2) return;
       var ctx = this._ictx;
       ctx.save();
+      ctx.translate(-this._ox(), -this._oy());
       ctx.strokeStyle = stroke.color;
       ctx.lineWidth = stroke.points[n - 1].w;
       ctx.beginPath();
@@ -221,25 +301,27 @@
         if (this._mode === 'off') return;
         this.setPointerCapture(e.pointerId);
         this._drawing = true;
+        var p = this._pt(e);
         if (this._mode === 'laser') {
-          this._trail.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+          this._trail.push({ x: p.x, y: p.y, t: performance.now() });
           return;
         }
         this._strokes.push({
           color: this._color,
-          points: [{ x: e.clientX, y: e.clientY, w: this._lineWidth(e) }]
+          points: [{ x: p.x, y: p.y, w: this._lineWidth(e) }]
         });
       });
 
       this.addEventListener('pointermove', (e) => {
         if (!this._drawing || this._mode === 'off') return;
+        var p = this._pt(e);
         if (this._mode === 'laser') {
-          this._trail.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+          this._trail.push({ x: p.x, y: p.y, t: performance.now() });
           return;
         }
         var s = this._strokes[this._strokes.length - 1];
         if (!s) return;
-        s.points.push({ x: e.clientX, y: e.clientY, w: this._lineWidth(e) });
+        s.points.push({ x: p.x, y: p.y, w: this._lineWidth(e) });
         this._drawLast(s);
       });
 
@@ -249,15 +331,18 @@
       this.addEventListener('pointerleave', end);
     }
 
-    /* 每幀重畫雷射殘影 */
+    /* 每幀重畫雷射殘影；文件座標模式下捲動後補畫筆跡 */
     _tick() {
       var step = () => {
+        if (this._dirty) this._redraw();
+
         var ctx = this._lctx;
         ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
         var now = performance.now();
         this._trail = this._trail.filter(function (p) { return now - p.t < 620; });
         if (this._mode === 'laser' && this._trail.length > 1) {
           ctx.save();
+          ctx.translate(-this._ox(), -this._oy());
           ctx.globalAlpha = 0.88;
           ctx.strokeStyle = PALETTE.warning;
           ctx.shadowColor = PALETTE.warning;
@@ -283,17 +368,17 @@
   /* =========================================================
    * <ui-ink-bar>
    * 屬性：
-   *   data-pos="br|bl|tr|tl"  擺放位置，預設右下角
-   *   data-open="true"        載入時直接展開，預設收合成小圓鈕
+   *   data-pos="br|bl|tr|tl"   擺放位置，預設右下角
+   *   data-open="true"         載入時直接展開，預設收合成小圓鈕
+   *   extra-color="#FFFFFF"    追加一個自訂筆色，載入時自動選用
+   *   extra-label="純白"       自訂筆色的顯示名稱，省略時顯示色碼
    * ========================================================= */
   class UiInkBar extends HTMLElement {
+    static get observedAttributes() { return ['extra-color', 'extra-label']; }
+
     connectedCallback() {
       if (this._built) return;
       this._built = true;
-
-      var colorOpts = PEN_OPTIONS.map(function (o) {
-        return '<option value="' + o[0] + '">' + o[1] + '</option>';
-      }).join('');
 
       this.innerHTML =
         '<button type="button" class="ip-dot" data-role="dot" title="展開畫筆工具列（H）">' +
@@ -304,7 +389,7 @@
         '<button type="button" class="ip-btn ip-active" data-mode="off">關 0</button>' +
         '<span class="ip-sep"></span>' +
         '<span class="ip-swatch" data-role="swatch"></span>' +
-        '<select data-role="color" title="筆跡色彩">' + colorOpts + '</select>' +
+        '<select data-role="color" title="筆跡色彩"></select>' +
         '<input type="number" data-role="width" min="' + WIDTH_MIN + '" max="' + WIDTH_MAX +
         '" step="1" value="' + WIDTH_DEFAULT + '" title="筆跡粗細（' + WIDTH_MIN + ' 至 ' + WIDTH_MAX + ' px）" />' +
         '<span class="ip-sep"></span>' +
@@ -316,14 +401,69 @@
       this._dot = this.querySelector('[data-role="dot"]');
       this._dotColor = this.querySelector('[data-role="dotcolor"]');
       this._swatch = this.querySelector('[data-role="swatch"]');
+      this._select = this.querySelector('[data-role="color"]');
 
+      this._renderColors(true);
       this._wire();
       this._syncPen();
       if (this.getAttribute('data-open') === 'true') this.toggleBar(true);
       this._bindKeys();
     }
 
+    attributeChangedCallback(name, oldVal, newVal) {
+      if (!this._built) return;
+      if (name === 'extra-color' || name === 'extra-label') this._renderColors(true);
+    }
+
     get layer() { return document.querySelector('ui-ink-layer'); }
+
+    /* ---------- 色彩選單 ---------- */
+    _extra() {
+      var hex = (this.getAttribute('extra-color') || '').trim();
+      if (!hex) return null;
+      if (!HEX_RE.test(hex)) {
+        showAlert('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
+        return null;
+      }
+      var label = (this.getAttribute('extra-label') || '').trim();
+      return { hex: hex.toUpperCase(), label: label || ('自訂 ' + hex.toUpperCase()) };
+    }
+
+    /* selectExtra 為 true 時，若有自訂色就自動選用 */
+    _renderColors(selectExtra) {
+      var prev = this._select.value;
+      var extra = this._extra();
+      var html = PEN_OPTIONS.map(function (o) {
+        return '<option value="' + o[0] + '">' + o[1] + '</option>';
+      }).join('');
+      if (extra) {
+        html += '<option value="' + extra.hex + '">' + extra.label + '</option>';
+      }
+      this._select.innerHTML = html;
+
+      if (extra && (selectExtra || prev === '' || prev === undefined)) {
+        this._select.value = extra.hex;
+      } else if (prev && this._select.querySelector('option[value="' + prev + '"]')) {
+        this._select.value = prev;
+      }
+      this._syncPen();
+    }
+
+    /* 程式端追加或更換自訂色 */
+    setExtraColor(hex, label) {
+      if (!hex) {
+        this.removeAttribute('extra-color');
+        this.removeAttribute('extra-label');
+        return null;
+      }
+      if (!HEX_RE.test(String(hex).trim())) {
+        showAlert('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
+        return null;
+      }
+      if (label) this.setAttribute('extra-label', label);
+      this.setAttribute('extra-color', String(hex).trim());
+      return String(hex).trim().toUpperCase();
+    }
 
     _wire() {
       this.querySelectorAll('[data-mode]').forEach((btn) => {
@@ -333,15 +473,14 @@
       this.querySelector('[data-act="hide"]').addEventListener('click', () => this.toggleBar(false));
       this._dot.addEventListener('click', () => this.toggleBar());
 
-      var colorSel = this.querySelector('[data-role="color"]');
       var widthInput = this.querySelector('[data-role="width"]');
-      colorSel.addEventListener('change', () => this._syncPen());
+      this._select.addEventListener('change', () => this._syncPen());
       widthInput.addEventListener('change', () => this._syncPen());
       widthInput.addEventListener('input', () => this._syncPen());
     }
 
     _syncPen() {
-      var key = this.querySelector('[data-role="color"]').value;
+      var key = this._select.value;
       var widthInput = this.querySelector('[data-role="width"]');
       var color = PALETTE[key] || key;
       this._swatch.style.background = color;
@@ -367,14 +506,23 @@
         : (mode === 'pen' ? '觸控筆作用中（H 展開工具列）' : '雷射筆作用中（H 展開工具列）'));
     }
 
+    /* 座標模式的便捷入口，實際狀態仍存在繪圖層 */
+    setAnchor(mode) {
+      if (!this.layer) return null;
+      var next = this.layer.setAnchor(mode);
+      showAlert(next === 'document' ? '筆跡改為跟著內容捲動。' : '筆跡改為固定在視窗。', 'info');
+      return next;
+    }
+    getAnchor() { return this.layer ? this.layer.getAnchor() : null; }
+
     clear() {
       if (!this.layer) return;
       if (this.layer.isEmpty()) {
-        
+        showAlert('畫面上沒有筆跡可以清除。', 'info');
         return;
       }
       this.layer.clear();
-      
+      showAlert('已清除全部筆跡。', 'info');
     }
 
     toggleBar(force) {
