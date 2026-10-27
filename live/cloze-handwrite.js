@@ -15,6 +15,10 @@
  *   .showAlert(msg, type)   取代原生 alert
  *   .palette                品牌色票物件
  *   .penColorOptions        筆跡顏色下拉選項 [[key, label], ...]
+ *
+ * 版本紀錄：
+ *   v1（10-25-26）初版
+ *   v2（10-27-26）題組右側垂直工具列：A-／A+ 縮放英文字體，P-／P+ 調整中英間距
  * ========================================================= */
 (function () {
   'use strict';
@@ -86,10 +90,13 @@
 
       /* ---- 題組區塊 ---- */
       + '.bb-wrap{margin-bottom:66px;padding:12px;background:#131412;border:1px solid #26271f;}'
-      + '.bb-zh{margin-bottom:66px;}'
+      + '.bb-wrap{display:flex;align-items:flex-start;gap:12px;}'
+      + '.bb-main{flex:1 1 auto;min-width:0;}'
+      + '.bb-zh{margin-bottom:var(--bb-gap,66px);}'
+      + '.bb-side{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;}'
       + '.en-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}'
-      + '.en-toolbar .zoom-btn{width:34px;height:36px;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);font-size:1.1rem;cursor:pointer;}'
-      + '.en-toolbar .zoom-btn:hover{border-color:var(--c-sky);color:var(--c-sky);}'
+      + '.zoom-btn{width:28px;height:28px;padding:0;border-radius:6px;border:1px solid #3a3b37;background:#202119;color:var(--c-shell);font-size:0.8rem;line-height:1.2;cursor:pointer;}'
+      + '.zoom-btn:hover{border-color:var(--c-sky);color:var(--c-sky);}'
       + '.en-toolbar .zoom-label{font-size:1rem;color:#9a9b94;}'
       + '.en-body{font-size:var(--en-font-size);line-height:1.4;color:var(--c-shell);}'
 
@@ -211,21 +218,27 @@
       if (this._built) return;
       this._built = true;
       this._fontRem = 1.6;
+      /* 設定 data-no-toolbar 時不渲染 A-/A+（由外層元件接管，例如 ui-bilingual-block） */
+      var withBar = !this.hasAttribute('data-no-toolbar');
       this.innerHTML =
-        '<div class="en-toolbar">' +
-        '<button type="button" class="zoom-btn" data-act="dec">A-</button>' +
-        '<button type="button" class="zoom-btn" data-act="inc">A+</button>' +
-        '</div>' +
+        (withBar
+          ? '<div class="en-toolbar">' +
+            '<button type="button" class="zoom-btn" data-act="dec">A-</button>' +
+            '<button type="button" class="zoom-btn" data-act="inc">A+</button>' +
+            '</div>'
+          : '') +
         '<div class="en-body" data-role="body"></div>';
       this.style.setProperty('--en-font-size', this._fontRem + 'rem');
-      this.querySelector('[data-act="dec"]').addEventListener('click', () => this._zoom(-0.2));
-      this.querySelector('[data-act="inc"]').addEventListener('click', () => this._zoom(0.2));
+      if (withBar) {
+        this.querySelector('[data-act="dec"]').addEventListener('click', () => this.zoom(-0.2));
+        this.querySelector('[data-act="inc"]').addEventListener('click', () => this.zoom(0.2));
+      }
       if (this._pendingText !== undefined) {
         this.setText(this._pendingText);
       }
     }
 
-    _zoom(delta) {
+    zoom(delta) {
       this._fontRem = Math.min(3, Math.max(1, this._fontRem + delta));
       this.style.setProperty('--en-font-size', this._fontRem + 'rem');
     }
@@ -282,17 +295,38 @@
     connectedCallback() {
       if (this._built) return;
       this._built = true;
+      this._gap = 66;
       this.innerHTML =
         '<div class="bb-wrap">' +
+        '<div class="bb-main">' +
         '<div class="bb-zh">' +
         '<ui-collapse data-open="true">' +
         '<span data-role="summary">中文</span>' +
         '<div data-role="content"></div>' +
         '</ui-collapse>' +
         '</div>' +
-        '<ui-cloze-text></ui-cloze-text>' +
+        '<ui-cloze-text data-no-toolbar></ui-cloze-text>' +
+        '</div>' +
+        '<div class="bb-side">' +
+        '<button type="button" class="zoom-btn" data-act="a-dec" title="縮小英文字體">A-</button>' +
+        '<button type="button" class="zoom-btn" data-act="a-inc" title="放大英文字體">A+</button>' +
+        '<button type="button" class="zoom-btn" data-act="p-dec" title="縮小中英間距">P-</button>' +
+        '<button type="button" class="zoom-btn" data-act="p-inc" title="加大中英間距">P+</button>' +
+        '</div>' +
         '</div>';
+      var cloze = this.querySelector('ui-cloze-text');
+      this.querySelector('[data-act="a-dec"]').addEventListener('click', () => cloze.zoom(-0.2));
+      this.querySelector('[data-act="a-inc"]').addEventListener('click', () => cloze.zoom(0.2));
+      this.querySelector('[data-act="p-dec"]').addEventListener('click', () => this.setGap(this._gap - 16));
+      this.querySelector('[data-act="p-inc"]').addEventListener('click', () => this.setGap(this._gap + 16));
+      this.setGap(this._gap);
       if (this._pendingData) this._apply(this._pendingData);
+    }
+
+    /* 設定中文與英文之間的空白（px），範圍 0 至 600 */
+    setGap(px) {
+      this._gap = Math.min(600, Math.max(0, Math.round(Number(px) || 0)));
+      this.style.setProperty('--bb-gap', this._gap + 'px');
     }
 
     set data(val) {
