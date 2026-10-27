@@ -59,7 +59,38 @@
     <ui-en>I'd like to describe an old street in Tainan, a place that has [stuck with me] ever since. Most of the houses there are well over a century old, and the narrow lanes are [steeped in] the smell of sesame oil and incense.</ui-en>
   </ui-bilingual-block>
 
+  <h2><span class="tag ver">v6</span>10-27-26　題組間距與邊框色屬性</h2>
+  <div class="note">
+    <p style="margin:0">兩個新屬性設在 <code>ui-bilingual-block</code> 上：<b>data-block-gap</b> 是這個題組與下一個題組之間的距離，單位 px，預設 66；<b>data-border-color</b> 是題組邊框色，可用色票名稱或 CSS 色彩，預設 #26271f。下方三個題組依序是預設、間距 160 加 lavender 邊框、間距 24 加 #EDA109 邊框。</p>
+  </div>
+  <ui-bilingual-block data-title="預設（間距 66，邊框預設色）">
+    <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
+    <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
+  </ui-bilingual-block>
+  <ui-bilingual-block data-title="data-block-gap=160　data-border-color=lavender" data-block-gap="160" data-border-color="lavender">
+    <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
+    <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
+  </ui-bilingual-block>
+  <ui-bilingual-block data-title="data-block-gap=24　data-border-color=#EDA109" data-block-gap="24" data-border-color="#EDA109">
+    <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
+    <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
+  </ui-bilingual-block>
+  <ui-bilingual-block data-title="接在間距 24 之後的題組" data-border-color="teal">
+    <ui-zh>我偏好清晨，大概六點左右。</ui-zh>
+    <ui-en>I'm very much [a morning person], so I tend to start at around six.</ui-en>
+  </ui-bilingual-block>
+
   <h2>程式碼對照</h2>
+  <div class="note">
+    <p style="margin:0"><b>v6 屬性用法</b></p>
+    <pre style="margin-top:8px">&lt;ui-bilingual-block data-block-gap="160" data-border-color="lavender"&gt;
+  ……
+&lt;/ui-bilingual-block&gt;
+
+// 動態修改
+block.setAttribute('data-block-gap', '24');
+block.setAttribute('data-border-color', '#EDA109');</pre>
+  </div>
   <div class="note">
     <p style="margin:0"><b>v5 純標籤用法</b></p>
     <pre style="margin-top:8px">&lt;ui-bilingual-block data-title="Part 2　描述一個讓你印象深刻的地方"&gt;

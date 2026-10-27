@@ -24,6 +24,8 @@
  *   v4（10-27-26）題組標題取代摺疊列的「中文」（data.title 或 data-title 屬性），
  *                 parseJson 保留 title 欄位
  *   v5（10-27-26）純標籤寫法：<ui-bilingual-block data-title><ui-zh><ui-en>，不需 JS
+ *   v6（10-27-26）題組屬性 data-block-gap（題組間距 px，預設 66）、
+ *                 data-border-color（邊框色，預設 #26271f）
  * ========================================================= */
 (function () {
   'use strict';
@@ -95,7 +97,7 @@
       + '.cc-body.cc-collapsed{display:none;}'
 
       /* ---- 題組區塊 ---- */
-      + '.bb-wrap{margin-bottom:66px;padding:12px;background:#131412;border:1px solid #26271f;}'
+      + '.bb-wrap{margin-bottom:var(--bb-block-gap,66px);padding:12px;background:#131412;border:1px solid var(--bb-border-color,#26271f);}'
       + '.bb-wrap{display:flex;align-items:flex-start;gap:12px;}'
       + '.bb-main{flex:1 1 auto;min-width:0;}'
       + '.bb-zh{margin-bottom:var(--bb-gap,66px);}'
@@ -201,6 +203,21 @@
       if (v) el.style.setProperty(COLOR_ATTRS[attr], PALETTE[v] || v);
       else el.style.removeProperty(COLOR_ATTRS[attr]);
     });
+  }
+
+  /* ---------- 題組專用屬性 ----------
+   * data-block-gap    題組與下一個題組之間的距離，數字（px），預設 66
+   * data-border-color 題組邊框色，色票名稱或 CSS 色彩，預設 #26271f */
+  var BLOCK_ATTR_LIST = COLOR_ATTR_LIST.concat(['data-block-gap', 'data-border-color']);
+
+  function syncBlock(el) {
+    syncColors(el);
+    var gap = parseFloat(el.getAttribute('data-block-gap'));
+    if (isFinite(gap) && gap >= 0) el.style.setProperty('--bb-block-gap', gap + 'px');
+    else el.style.removeProperty('--bb-block-gap');
+    var bc = el.getAttribute('data-border-color');
+    if (bc) el.style.setProperty('--bb-border-color', PALETTE[bc] || bc);
+    else el.style.removeProperty('--bb-border-color');
   }
 
   /* =========================================================
@@ -321,11 +338,11 @@
    * 屬性：data = {zh, en}
    * ========================================================= */
   class UiBilingualBlock extends HTMLElement {
-    static get observedAttributes() { return COLOR_ATTR_LIST; }
-    attributeChangedCallback() { syncColors(this); }
+    static get observedAttributes() { return BLOCK_ATTR_LIST; }
+    attributeChangedCallback() { syncBlock(this); }
 
     connectedCallback() {
-      syncColors(this);
+      syncBlock(this);
       if (this._built || this._waiting) return;
       /* 腳本若在 head 載入，子標籤尚未解析完，等 DOM 讀完再建構 */
       if (document.readyState === 'loading') {
