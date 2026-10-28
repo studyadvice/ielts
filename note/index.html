@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote 金色電流示範</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0D0C;
+  --shell: #C6C7BD;
+  --area: #161816;
+  --card-border: #2e2f2e;
+  --muted: #8F9088;
+  --gold: #C9973F;
+  --gold-light: #EFD9A2;
+  --lavender: #C3A5E5;
+  --sky: #82C8E5;
+  --warning: #E6374B;
+  --safe: #27AE60;
+  --focus: #D4FFFC;
+  --special: #B3DE73;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--shell); font-size: 1rem; line-height: 1.5; }
+a { color: var(--sky); }
+code { color: var(--lavender); font-size: 0.9em; }
+
+.layout { display: flex; min-height: 100vh; }
+.side {
+  flex: none; position: sticky; top: 0; width: 240px; height: 100vh; overflow-y: auto;
+  padding: 24px 16px; background: var(--area); border-right: 1px solid var(--card-border);
+}
+.brand { font-size: 1.15rem; font-weight: 700; color: var(--gold-light); margin-bottom: 20px; }
+.side a { display: block; padding: 8px 12px; margin-bottom: 2px; color: var(--shell); text-decoration: none; border-radius: 8px; font-size: 0.95rem; }
+.side a:hover { background: #232623; }
+main { flex: 1; min-width: 0; padding: 32px 40px 80px; }
+h1 { font-size: 1.8rem; margin: 0 0 8px; color: var(--gold-light); }
+h2 { font-size: 1.4rem; margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
+h3 { font-size: 1.05rem; margin: 0 0 8px; color: var(--sky); }
+.lead { color: var(--muted); margin: 0 0 16px; }
+section.blk { margin-bottom: 48px; }
+
+.card-x { background: var(--area); border: 1px solid var(--card-border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+.demo { display: grid; grid-template-columns: minmax(360px, 5fr) minmax(420px, 6fr); gap: 16px; align-items: start; margin-bottom: 16px; }
+.demo .live { background: var(--bg); border: 1px dashed var(--card-border); border-radius: 10px; padding: 24px; min-height: 120px; }
+.demo .live p { margin: 0 0 16px; }
+.demo.js-only { grid-template-columns: 1fr; }
+pre.src {
+  margin: 0; background: var(--area); color: var(--shell); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 16px; overflow: auto; font-size: 0.82rem; line-height: 1.5; max-height: 420px;
+}
+.btn-x {
+  padding: 6px 14px; background: #232623; color: var(--shell); border: 1px solid var(--card-border);
+  border-radius: 8px; font-size: 0.9rem; line-height: 1.5; cursor: pointer;
+}
+.btn-x:hover { border-color: var(--gold); }
+.btn-x.gold { background: var(--gold); color: #0C0D0C; border-color: var(--gold); font-weight: 700; }
+.row-x { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.panel-slot { margin-top: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 16px 24px; }
+
+#alertBox { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 380px; }
+.alert { background: var(--area); color: var(--shell); border: 1px solid var(--card-border); border-left: 4px solid var(--ac, var(--sky)); border-radius: 8px; }
+.alert-success { --ac: var(--safe); }
+.alert-danger { --ac: var(--warning); }
+
+pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-border); border-radius: 8px; padding: 16px; overflow: auto; font-size: 0.8rem; line-height: 1.5; max-height: 640px; }
+.diff .add { color: var(--special); }
+.diff .del { color: var(--warning); }
+.diff .hunk { color: var(--sky); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; background: var(--gold); color: #0C0D0C; margin-right: 8px; font-weight: 700; }
+
+@media (max-width: 1200px) { .demo { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="alertBox"></div>
+
+<div class="layout">
+  <aside class="side">
+    <div class="brand">bp-popnote<br>金色電流</div>
+    <a href="#basic">基本用法</a>
+    <a href="#modes">四種呈現方式</a>
+    <a href="#placement">方向與連結按鈕</a>
+    <a href="#compare">與其他主題並排</a>
+    <a href="#fx">動畫開關</a>
+    <a href="#custom">自訂電流主題</a>
+    <a href="#annotate">自動加註 annotate</a>
+    <a href="#notice">公告列的金色</a>
+    <a href="#diff">修改前後對照</a>
+  </aside>
+
+  <main>
+    <h1>金色電流主題</h1>
+    <p class="lead">新增的 <code>gold</code> 主題有四層效果：沿邊框繞行的電流環、標題下流動的電光線、標題旁閃爍的閃電、邊框光暈的明滅。左邊是實際效果，右邊是同一份原始碼，點擊文字即可開啟。</p>
+
+    <section class="blk" id="basic">
+      <h2>基本用法</h2>
+      <p class="lead">主題用 <code>data-popover-theme="gold"</code>，底線顏色用 <code>data-popover-color="gold"</code>（底線顏色需要另外指定，這是原本就有的行為）。</p>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <p>這是一段說明文字，其中的
+            <span data-popover-theme="gold" data-popover-color="gold"
+                  data-popover-title="resilient"
+                  data-popover-content="adj. 有復原力的。<br>The economy proved <b>resilient</b> after the crisis.">resilient</span>
+            使用金色電流主題。</p>
+          <p>
+            <span data-popover-theme="gold" data-popover-color="gold" data-popover-hint-style="pill"
+                  data-popover-title="pill 樣式"
+                  data-popover-content="底線樣式也可以換成膠囊。">膠囊樣式</span>
+          </p>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="modes">
+      <h2>四種呈現方式</h2>
+      <p class="lead">浮動提示、輪播、固定面板、Modal 與 Offcanvas，四種都有電流效果。</p>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <div class="chips">
+            <span data-popover-theme="gold" data-popover-color="gold"
+                  data-popover-title="三步驟回答法" data-popover-target="#tpl-gold-steps"
+                  data-popover-interval="4000">輪播提示</span>
+
+            <span data-popover-theme="gold" data-popover-color="gold"
+                  data-popover-title="面板模式" data-popover-label="金色面板"
+                  data-popover-panel="#gold-panel"
+                  data-popover-content="內容顯示在下方固定位置，不會浮動。再點一次即可關閉。">固定面板</span>
+
+            <span data-popover-theme="gold" data-popover-color="gold"
+                  data-popover-title="Modal 對話框" data-popover-modal data-popover-modal-size="lg"
+                  data-popover-content="Modal 與 Offcanvas 需要載入 Bootstrap 的 JavaScript。<br>標題旁有閃電，標題下有流動的電光線。"
+                  data-popover-url="https://github.com" data-popover-url-text="前往 GitHub">Modal</span>
+
+            <span data-popover-theme="gold" data-popover-color="gold"
+                  data-popover-title="Offcanvas 側欄" data-popover-modal="end" data-popover-modal-size="420px"
+                  data-popover-content="從右側滑出的側欄，同樣支援電流效果。">Offcanvas</span>
+          </div>
+          <div id="gold-panel" class="panel-slot"></div>
+
+          <template id="tpl-gold-steps">
+            <section><b>第一步</b><br>先直接回答問題，不要鋪陳太久。</section>
+            <section><b>第二步</b><br>補一個具體的理由。</section>
+            <section><b>第三步</b><br>用一個真實的例子收尾。</section>
+          </template>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="placement">
+      <h2>方向與連結按鈕</h2>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <div class="chips" style="justify-content: center; padding: 40px 0;">
+            <span data-popover-theme="gold" data-popover-color="gold" data-popover-placement="top"
+                  data-popover-title="上方" data-popover-content="placement=top">上</span>
+            <span data-popover-theme="gold" data-popover-color="gold" data-popover-placement="bottom"
+                  data-popover-title="下方" data-popover-content="placement=bottom">下</span>
+            <span data-popover-theme="gold" data-popover-color="gold" data-popover-placement="left"
+                  data-popover-title="左側" data-popover-content="placement=left">左</span>
+            <span data-popover-theme="gold" data-popover-color="gold" data-popover-placement="right"
+                  data-popover-title="右側" data-popover-content="placement=right">右</span>
+            <span data-popover-theme="gold" data-popover-color="gold"
+                  data-popover-title="連結按鈕" data-popover-content="按鈕列可以靠左、置中、靠右或填滿。"
+                  data-popover-url="https://github.com" data-popover-url-align="full">填滿的連結按鈕</span>
+          </div>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="compare">
+      <h2>與其他主題並排</h2>
+      <p class="lead">同一個位置依序點擊，比較 gold 與其他主題。只有 gold 內建電流。</p>
+      <div class="card-x"><div class="chips" id="compareChips"></div></div>
+    </section>
+
+    <section class="blk" id="fx">
+      <h2>動畫開關</h2>
+      <p class="lead">三個層級：單一觸發器用 <code>data-popover-fx</code>，整個頁面用 <code>PopoverConfig.set({ fx: false })</code>，主題本身用 <code>fx</code> 欄位。</p>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <div class="chips">
+            <span data-popover-theme="gold" data-popover-color="gold" data-popover-fx="off"
+                  data-popover-title="金色，關閉電流"
+                  data-popover-content="data-popover-fx=&quot;off&quot;，只保留金色配色。">金色但不要電流</span>
+            <span data-popover-theme="sky" data-popover-color="sky" data-popover-fx="electric"
+                  data-popover-title="天空藍，強制電流"
+                  data-popover-content="沒有指定 fxDim 時，暗部色會自動由邊框色混黑計算。">其他主題強制電流</span>
+            <span data-popover-theme="pink" data-popover-color="pink" data-popover-fx="electric"
+                  data-popover-title="粉紅，強制電流"
+                  data-popover-content="任何內建主題都可以加上電流。">粉紅電流</span>
+          </div>
+        </script>
+      </div>
+      <div class="row-x">
+        <button type="button" class="btn-x gold" id="btnFx">全域關閉電流</button>
+        <span class="lead" style="margin: 0;">切換後，下一次開啟的提示框才會套用。</span>
+      </div>
+    </section>
+
+    <section class="blk" id="custom">
+      <h2>自訂電流主題</h2>
+      <p class="lead">用 <code>PopoverConfig.addTheme</code> 註冊自己的主題，加上 <code>fx</code>、<code>fxCore</code>、<code>fxDim</code> 即可有電流。<code>fxCore</code> 是電流亮點，<code>fxDim</code> 是電流環的暗部。</p>
+      <div class="demo js-only" data-lang="js">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          PopoverConfig.addTheme('emerald-volt', {
+            bg: '#06140E',
+            titleColor: '#B3DE73',
+            borderColor: '#27AE60',
+            fx: 'electric',
+            fxCore: '#D4FFFC',
+            fxDim: '#0E4A29'
+          });
+
+          PopoverConfig.addTheme('violet-volt', {
+            bg: '#0e0a18',
+            titleColor: '#C3A5E5',
+            borderColor: '#7849C9',
+            fx: 'electric',
+            fxCore: '#FF91D7',
+            fxDim: '#2A1850'
+          });
+        </script>
+      </div>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <div class="chips">
+            <span data-popover-theme="emerald-volt" data-popover-color="#27AE60"
+                  data-popover-title="綠色電流" data-popover-content="亮點是淺青色，暗部是深綠。">綠色電流</span>
+            <span data-popover-theme="violet-volt" data-popover-color="#7849C9"
+                  data-popover-title="紫色電流" data-popover-content="亮點是粉紅，暗部是深紫。">紫色電流</span>
+          </div>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="annotate">
+      <h2>自動加註 annotate</h2>
+      <p class="lead">不方便改 HTML 的內容（例如後台編輯器輸出的文章），可以用 <code>BpPopnote.annotate</code> 依文字自動加上提示。規則裡的 <code>theme: 'gold'</code> 一樣有電流，也可以用 <code>fx: 'off'</code> 關掉。</p>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <p id="ann-box">Smartphones have become ubiquitous, and their impact on daily life is hard to overstate. The impact is not always positive.</p>
+        </script>
+      </div>
+      <div class="demo js-only" data-lang="js">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          BpPopnote.annotate([
+            { text: 'ubiquitous', within: '#ann-box', theme: 'gold', color: 'gold',
+              title: 'ubiquitous', content: 'adj. 無所不在的' },
+            { text: 'Smartphones', within: '#ann-box', theme: 'sky', color: 'sky',
+              title: 'smartphone', content: 'n. 智慧型手機' },
+            { text: 'impact', within: '#ann-box', occurrence: 2, theme: 'gold', color: 'gold',
+              title: 'impact（第二次出現）', content: '這裡是名詞，指影響。' },
+            { text: 'positive', within: '#ann-box', theme: 'gold', color: 'gold', fx: 'off',
+              title: 'positive', content: '這個詞的規則加了 fx: off，所以沒有電流。' }
+          ]);
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="notice">
+      <h2>公告列的金色</h2>
+      <p class="lead">同一個檔案裡的 <code>&lt;bp-notice&gt;</code> 原本就有 <code>color="gold"</code>（金色加閃光）。這次沒有修改公告列，這裡放在一起方便比較。</p>
+      <div class="demo" data-lang="html">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <bp-notice id="gold-notice" type="announcement" color="gold" icon="bi-stars"
+                     dismissible notice-id="demo-gold-notice"
+                     cta-text="看電流效果" cta-href="#basic">
+            <b>限時活動</b>　金色公告列使用閃光，可記住關閉狀態。
+          </bp-notice>
+        </script>
+      </div>
+      <div class="row-x">
+        <button type="button" class="btn-x" id="btnNoticeReset">重新顯示上方公告</button>
+        <button type="button" class="btn-x" id="btnSticky">切換黏底公告</button>
+      </div>
+    </section>
+
+    <section class="blk" id="diff">
+      <h2>修改前後對照</h2>
+      <p class="lead">以下是 bp-popnote.js 修改前後的差異，綠色是新增，紅色是被改寫的舊行。只有 3 行被改寫（函式簽名與兩處呼叫各多一個參數），其餘都是新增。</p>
+      <pre class="diff"><span class="hunk">--- bp-popnote.js（修改前）</span>
+<span class="hunk">+++ bp-popnote.js（修改後）</span>
+<span class="hunk">@@ -18,6 +18,7 @@</span>
+     info     : '#2351DB',
+     wrong    : '#E6374B',
+     shell    : '#C6C7BD',
+<span class="add">+    gold     : '#C9973F',</span>
+   };
+ 
+   var NOTICE_COLOR_MAP = {
+<span class="hunk">@@ -724,6 +725,133 @@</span>
+       width: 100%;
+       justify-content: center;
+     }
+<span class="add">+</span>
+<span class="add">+    /* ══ fx: electric（金色電流）所有顏色皆為實色，不使用半透明 ══ */</span>
+<span class="add">+    @property --xpop-angle {</span>
+<span class="add">+      syntax: '&lt;angle&gt;';</span>
+<span class="add">+      inherits: false;</span>
+<span class="add">+      initial-value: 0deg;</span>
+<span class="add">+    }</span>
+<span class="add">+    @keyframes xpop-fx-spin { to { --xpop-angle: 360deg; } }</span>
+<span class="add">+    @keyframes xpop-fx-run  { from { background-position: 100% 0; } to { background-position: 0% 0; } }</span>
+<span class="add">+    @keyframes xpop-fx-glow {</span>
+<span class="add">+      0% { box-shadow: 0 8px 32px #000, 0 0 10px var(--xpop-fx-dim); }</span>
+<span class="add">+      7% { box-shadow: 0 8px 32px #000, 0 0 24px var(--xpop-border-color); }</span>
+<span class="add">+      9% { box-shadow: 0 8px 32px #000, 0 0 6px var(--xpop-fx-dim); }</span>
+<span class="add">+      12% { box-shadow: 0 8px 32px #000, 0 0 30px var(--xpop-fx-core); }</span>
+<span class="add">+      16% { box-shadow: 0 8px 32px #000, 0 0 12px var(--xpop-border-color); }</span>
+<span class="add">+      55% { box-shadow: 0 8px 32px #000, 0 0 10px var(--xpop-fx-dim); }</span>
+<span class="add">+      58% { box-shadow: 0 8px 32px #000, 0 0 22px var(--xpop-border-color); }</span>
+<span class="add">+      60% { box-shadow: 0 8px 32px #000, 0 0 8px var(--xpop-fx-dim); }</span>
+<span class="add">+      100% { box-shadow: 0 8px 32px #000, 0 0 10px var(--xpop-fx-dim); }</span>
+<span class="add">+    }</span>
+<span class="add">+    @keyframes xpop-fx-bolt {</span>
+<span class="add">+      0%, 100% { background: var(--xpop-fx-core); }</span>
+<span class="add">+      7%       { background: var(--xpop-fx-dim); }</span>
+<span class="add">+      9%       { background: var(--xpop-fx-core); }</span>
+<span class="add">+      12%      { background: var(--xpop-border-color); }</span>
+<span class="add">+      15%      { background: var(--xpop-fx-core); }</span>
+<span class="add">+      56%      { background: var(--xpop-fx-core); }</span>
+<span class="add">+      58%      { background: var(--xpop-fx-dim); }</span>
+<span class="add">+      61%      { background: var(--xpop-fx-core); }</span>
+<span class="add">+    }</span>
+<span class="add">+</span>
+<span class="add">+    /* 邊框變暗，讓繞行的電流更醒目（modal / offcanvas 的邊框由內聯樣式決定，保持原色） */</span>
+<span class="add">+    .xpop-container[data-fx="electric"],</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"] {</span>
+<span class="add">+      border-color: var(--xpop-fx-dim);</span>
+<span class="add">+    }</span>
+<span class="add">+</span>
+<span class="add">+    /* 光暈閃爍 */</span>
+<span class="add">+    .xpop-container[data-fx="electric"],</span>
+<span class="add">+    #xpop-bs-modal .modal-content[data-fx="electric"],</span>
+<span class="add">+    #xpop-bs-offcanvas[data-fx="electric"] {</span>
+<span class="add">+      animation: xpop-fx-glow 3.6s linear infinite;</span>
+<span class="add">+    }</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"] {</span>
+<span class="add">+      position: relative;</span>
+<span class="add">+      animation: xpop-panel-in 0.28s cubic-bezier(.4,0,.2,1) both,</span>
+<span class="add">+                 xpop-fx-glow 3.6s linear infinite;</span>
+<span class="add">+    }</span>
+<span class="add">+</span>
+<span class="add">+    /* 沿邊框繞行的電流環 */</span>
+<span class="add">+    .xpop-container[data-fx="electric"]::before,</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"]::before,</span>
+<span class="add">+    #xpop-bs-modal .modal-content[data-fx="electric"]::before,</span>
+<span class="add">+    #xpop-bs-offcanvas[data-fx="electric"]::before {</span>
+<span class="add">+      content: '';</span>
+<span class="add">+      position: absolute;</span>
+<span class="add">+      inset: 0;</span>
+<span class="add">+      padding: 2px;</span>
+<span class="add">+      border-radius: inherit;</span>
+<span class="add">+      pointer-events: none;</span>
+<span class="add">+      background: conic-gradient(from var(--xpop-angle, 0deg),</span>
+<span class="add">+        var(--xpop-fx-dim) 0deg,</span>
+<span class="add">+        var(--xpop-fx-dim) 190deg,</span>
+<span class="add">+        var(--xpop-border-color) 270deg,</span>
+<span class="add">+        var(--xpop-fx-core) 335deg,</span>
+<span class="add">+        var(--xpop-fx-dim) 360deg);</span>
+<span class="add">+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);</span>
+<span class="add">+      -webkit-mask-composite: xor;</span>
+<span class="add">+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);</span>
+<span class="add">+      mask-composite: exclude;</span>
+<span class="add">+      animation: xpop-fx-spin 2.6s linear infinite;</span>
+<span class="add">+    }</span>
+<span class="add">+    .xpop-container[data-fx="electric"]::before { inset: -1px; }</span>
+<span class="add">+</span>
+<span class="add">+    /* 標題文字微光 */</span>
+<span class="add">+    .xpop-container[data-fx="electric"] .xpop-header,</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"] .xpop-header,</span>
+<span class="add">+    #xpop-bs-modal .modal-content[data-fx="electric"] .modal-title,</span>
+<span class="add">+    #xpop-bs-offcanvas[data-fx="electric"] .offcanvas-title {</span>
+<span class="add">+      text-shadow: 0 0 8px var(--xpop-border-color);</span>
+<span class="add">+    }</span>
+<span class="add">+</span>
+<span class="add">+    /* 標題下方流動的電光線 */</span>
+<span class="add">+    .xpop-container[data-fx="electric"] .xpop-header,</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"] .xpop-header,</span>
+<span class="add">+    #xpop-bs-modal .modal-content[data-fx="electric"] .modal-header,</span>
+<span class="add">+    #xpop-bs-offcanvas[data-fx="electric"] .offcanvas-header {</span>
+<span class="add">+      position: relative;</span>
+<span class="add">+    }</span>
+<span class="add">+    .xpop-container[data-fx="electric"] .xpop-header::after,</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"] .xpop-header::after,</span>
+<span class="add">+    #xpop-bs-modal .modal-content[data-fx="electric"] .modal-header::after,</span>
+<span class="add">+    #xpop-bs-offcanvas[data-fx="electric"] .offcanvas-header::after {</span>
+<span class="add">+      content: '';</span>
+<span class="add">+      position: absolute;</span>
+<span class="add">+      left: 0;</span>
+<span class="add">+      right: 0;</span>
+<span class="add">+      bottom: -1px;</span>
+<span class="add">+      height: 2px;</span>
+<span class="add">+      pointer-events: none;</span>
+<span class="add">+      background: linear-gradient(90deg,</span>
+<span class="add">+        var(--xpop-fx-dim) 0%,</span>
+<span class="add">+        var(--xpop-fx-dim) 38%,</span>
+<span class="add">+        var(--xpop-border-color) 46%,</span>
+<span class="add">+        var(--xpop-fx-core) 50%,</span>
+<span class="add">+        var(--xpop-border-color) 54%,</span>
+<span class="add">+        var(--xpop-fx-dim) 62%,</span>
+<span class="add">+        var(--xpop-fx-dim) 100%);</span>
+<span class="add">+      background-size: 300% 100%;</span>
+<span class="add">+      animation: xpop-fx-run 2.4s linear infinite;</span>
+<span class="add">+    }</span>
+<span class="add">+</span>
+<span class="add">+    /* 標題旁閃爍的閃電 */</span>
+<span class="add">+    .xpop-container[data-fx="electric"] .xpop-header::before,</span>
+<span class="add">+    .xpop-panel-wrap[data-fx="electric"] .xpop-header::before,</span>
+<span class="add">+    #xpop-bs-modal .modal-content[data-fx="electric"] .modal-title::before,</span>
+<span class="add">+    #xpop-bs-offcanvas[data-fx="electric"] .offcanvas-title::before {</span>
+<span class="add">+      content: '';</span>
+<span class="add">+      display: inline-block;</span>
+<span class="add">+      width: 0.62em;</span>
+<span class="add">+      height: 1em;</span>
+<span class="add">+      margin-right: 8px;</span>
+<span class="add">+      vertical-align: -0.12em;</span>
+<span class="add">+      background: var(--xpop-fx-core);</span>
+<span class="add">+      clip-path: polygon(62% 0, 8% 56%, 44% 56%, 30% 100%, 92% 38%, 56% 38%);</span>
+<span class="add">+      animation: xpop-fx-bolt 3.6s linear infinite;</span>
+<span class="add">+    }</span>
+   `;
+ 
+   const THEMES = {
+<span class="hunk">@@ -749,6 +877,9 @@</span>
+     wrong     : { bg: '#190d0d', titleColor: PALETTE.wrong,    borderColor: PALETTE.wrong    },
+     correct   : { bg: '#091508', titleColor: PALETTE.safe,     borderColor: PALETTE.safe     },
+     accent    : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
+<span class="add">+    /* 金色電流：fx 為動畫種類，fxCore 是電流亮點色，fxDim 是電流環的暗部色 */</span>
+<span class="add">+    gold      : { bg: '#1A1200', titleColor: '#EFD9A2', borderColor: PALETTE.gold,</span>
+<span class="add">+                  fx: 'electric', fxCore: PALETTE.focus, fxDim: '#6B4F12' },</span>
+   };
+ 
+   let config = {
+<span class="hunk">@@ -764,6 +895,7 @@</span>
+     modal       : false,
+     modalSize   : '',
+     modalStatic : false,
+<span class="add">+    fx          : true,</span>
+   };
+ 
+   G.BpPopnote = {
+<span class="hunk">@@ -787,6 +919,26 @@</span>
+   function getTheme(n)   { return config._customThemes[n] || THEMES[n] || THEMES.dark; }
+   function ra(el, k, fb) { return el.dataset[k] !== undefined ? el.dataset[k] : fb; }
+ 
+<span class="add">+  /* 決定這次要不要套用動畫：全域開關 &gt; 觸發器 data-popover-fx &gt; 主題的 fx */</span>
+<span class="add">+  function fxOf(trigger, theme) {</span>
+<span class="add">+    if (config.fx === false) return '';</span>
+<span class="add">+    const raw = trigger.dataset.popoverFx;</span>
+<span class="add">+    const v   = (raw === undefined || raw === '') ? (theme.fx || '') : raw;</span>
+<span class="add">+    return v === 'electric' ? v : '';</span>
+<span class="add">+  }</span>
+<span class="add">+  function applyFx(el, theme, fx) {</span>
+<span class="add">+    if (!fx) {</span>
+<span class="add">+      el.removeAttribute('data-fx');</span>
+<span class="add">+      ['--xpop-fx-core', '--xpop-fx-dim'].forEach(k =&gt; el.style.removeProperty(k));</span>
+<span class="add">+      return;</span>
+<span class="add">+    }</span>
+<span class="add">+    el.setAttribute('data-fx', fx);</span>
+<span class="add">+    el.style.setProperty('--xpop-border-color', theme.borderColor);</span>
+<span class="add">+    el.style.setProperty('--xpop-fx-core', theme.fxCore || PALETTE.focus);</span>
+<span class="add">+    el.style.setProperty('--xpop-fx-dim',  theme.fxDim  ||</span>
+<span class="add">+      'color-mix(in srgb, ' + theme.borderColor + ' 45%, #000)');</span>
+<span class="add">+  }</span>
+<span class="add">+</span>
+   function hexToRgb(hex) {
+     if (!hex || hex.charAt(0) !== '#') return null;
+     let h = hex.slice(1);
+<span class="hunk">@@ -852,6 +1004,7 @@</span>
+     if (rule.url      !== undefined) mark.dataset.popoverUrl      = rule.url;
+     if (rule.urlText  !== undefined) mark.dataset.popoverUrlText  = rule.urlText;
+     if (rule.urlAlign !== undefined) mark.dataset.popoverUrlAlign = rule.urlAlign;
+<span class="add">+    if (rule.fx       !== undefined) mark.dataset.popoverFx       = rule.fx;</span>
+ 
+     mid.parentNode.insertBefore(mark, mid);
+     mark.appendChild(mid);
+<span class="hunk">@@ -1186,12 +1339,13 @@</span>
+     return el;
+   }
+ 
+<span class="del">-  function applyThemeStyles(rootEl, headerEl, titleEl, theme) {</span>
+<span class="add">+  function applyThemeStyles(rootEl, headerEl, titleEl, theme, fx) {</span>
+     rootEl.style.background   = theme.bg;
+     rootEl.style.borderColor  = theme.borderColor;
+     headerEl.style.background       = theme.bg;
+     headerEl.style.borderBottomColor = theme.borderColor;
+     titleEl.style.color = theme.titleColor;
+<span class="add">+    applyFx(rootEl, theme, fx);</span>
+   }
+ 
+   const NAMED_SIZES = { sm: 'modal-sm', lg: 'modal-lg', xl: 'modal-xl' };
+<span class="hunk">@@ -1212,7 +1366,7 @@</span>
+     const titleEl = modalEl.querySelector('.modal-title');
+     const body    = modalEl.querySelector('.modal-body');
+ 
+<span class="del">-    applyThemeStyles(content, header, titleEl, theme);</span>
+<span class="add">+    applyThemeStyles(content, header, titleEl, theme, fxOf(trigger, theme));</span>
+     titleEl.innerHTML = title;
+     body.innerHTML    = html;
+ 
+<span class="hunk">@@ -1267,7 +1421,7 @@</span>
+     const titleEl = ocEl.querySelector('.offcanvas-title');
+     const body    = ocEl.querySelector('.offcanvas-body');
+ 
+<span class="del">-    applyThemeStyles(ocEl, header, titleEl, theme);</span>
+<span class="add">+    applyThemeStyles(ocEl, header, titleEl, theme, fxOf(trigger, theme));</span>
+     titleEl.innerHTML = title;
+     body.innerHTML    = html;
+ 
+<span class="hunk">@@ -1330,6 +1484,7 @@</span>
+     wrap.style.setProperty('--xpop-border-color', theme.borderColor);
+     wrap.style.setProperty('--xpop-font-size',    fontSize);
+     wrap.style.borderStyle = bStyle;
+<span class="add">+    applyFx(wrap, theme, fxOf(trigger, theme));</span>
+ 
+     if (label) {
+       const src = document.createElement('div');
+<span class="hunk">@@ -1392,6 +1547,7 @@</span>
+     pop.style.setProperty('--xpop-font-size',    fontSize);
+     pop.style.setProperty('--xpop-max-width',    maxWidth);
+     pop.style.borderStyle = bStyle;
+<span class="add">+    applyFx(pop, theme, fxOf(trigger, theme));</span>
+     applyHintColor(trigger, theme);
+ 
+     if (showArrow) {
+</pre>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="bp-popnote.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* Bootstrap alert，取代 alert() */
+  function showAlert(msg, type) {
+    var d = document.createElement('div');
+    d.className = 'alert alert-' + (type || 'success') + ' alert-dismissible fade show';
+    d.setAttribute('role', 'alert');
+    d.innerHTML = esc(msg) + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    document.getElementById('alertBox').appendChild(d);
+    setTimeout(function () {
+      if (!d.parentNode) { return; }
+      try { bootstrap.Alert.getOrCreateInstance(d).close(); } catch (e) { d.remove(); }
+    }, 2600);
+  }
+
+  function dedent(text) {
+    var lines = text.replace(/^\n+/, '').replace(/\s+$/, '').split('\n');
+    var min = Infinity;
+    lines.forEach(function (l) {
+      if (!l.trim()) { return; }
+      var n = l.match(/^ */)[0].length;
+      if (n < min) { min = n; }
+    });
+    if (!isFinite(min)) { min = 0; }
+    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  }
+
+  /* 範例與原始碼用同一份文字產生，確保兩邊一致。必須在 DOMContentLoaded 之前同步執行，
+     這樣 bp-popnote.js 的初始化才會抓到動態加入的元素。 */
+  document.querySelectorAll('.demo').forEach(function (box) {
+    var holder = box.querySelector('script[type="text/x-demo"]');
+    var code = dedent(holder.textContent);
+    var live = box.querySelector('.live');
+    box.querySelector('pre.src').textContent = code;
+    if (box.getAttribute('data-lang') === 'js') {
+      live.remove();
+      try { (new Function(code))(); } catch (err) { showAlert('範例執行失敗：' + err.message, 'danger'); }
+    } else {
+      live.innerHTML = code;
+    }
+  });
+
+  /* 與其他主題並排 */
+  var NAMES = ['dark', 'sky', 'ocean', 'success', 'special', 'note', 'salmon', 'pink', 'orange', 'teal', 'focus', 'indigo', 'info', 'warning', 'gold'];
+  var chips = document.getElementById('compareChips');
+  NAMES.forEach(function (n) {
+    var el = document.createElement('span');
+    el.setAttribute('data-popover-theme', n);
+    el.setAttribute('data-popover-title', n);
+    el.setAttribute('data-popover-content', n === 'gold' ? '這是唯一內建電流的主題。' : '主題 ' + n + '，沒有電流。');
+    if (BpNotice.palette[n]) { el.setAttribute('data-popover-color', n); }
+    el.textContent = n;
+    chips.appendChild(el);
+  });
+
+  /* 全域動畫開關 */
+  var fxOn = true;
+  var btnFx = document.getElementById('btnFx');
+  btnFx.addEventListener('click', function () {
+    fxOn = !fxOn;
+    PopoverConfig.set({ fx: fxOn });
+    btnFx.textContent = fxOn ? '全域關閉電流' : '全域開啟電流';
+    showAlert(fxOn ? '已開啟電流，下一次開啟的提示框會有動畫。' : '已關閉電流，所有主題都不再有動畫。');
+  });
+
+  /* 公告列 */
+  document.getElementById('btnNoticeReset').addEventListener('click', function () {
+    BpNotice.show('gold-notice');
+    showAlert('已重新顯示公告。');
+  });
+  var sticky = null;
+  document.getElementById('btnSticky').addEventListener('click', function () {
+    if (sticky) { sticky.remove(); sticky = null; showAlert('已移除黏底公告。'); return; }
+    sticky = document.createElement('bp-notice');
+    sticky.setAttribute('type', 'sticky');
+    sticky.setAttribute('position', 'bottom');
+    sticky.setAttribute('color', 'gold');
+    sticky.setAttribute('icon', 'bi-lightning-charge-fill');
+    sticky.setAttribute('dismissible', '');
+    sticky.innerHTML = '黏在視窗底部的金色公告，右側可以關閉。';
+    document.body.appendChild(sticky);
+    BpNotice.init();
+    showAlert('已加入黏底公告。');
+  });
+  document.addEventListener('bp:notice-close', function (e) {
+    showAlert('公告已關閉' + (e.detail.noticeId ? '（' + e.detail.noticeId + '）' : '') + '。');
+  });
+})();
+</script>
+</body>
+</html>
