@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-theme-switcher 示範</title>
+<!-- 元件放在 head 最前面，載入時就套用已儲存的主題，避免閃爍 -->
+<script src="ui-theme-switcher.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+code { color: var(--accent-2); font-size: 0.9em; }
+
+/* 版面：寬螢幕，左側欄加主內容 */
+.layout { display: flex; min-height: 100vh; }
+.side {
+  flex: none;
+  position: sticky;
+  top: 0;
+  width: 260px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+}
+.brand { font-size: 1.25rem; font-weight: 700; color: var(--accent); margin-bottom: 20px; }
+.side-nav a {
+  display: block;
+  padding: 8px 12px;
+  color: var(--text-main);
+  text-decoration: none;
+  border-radius: 8px;
+}
+.side-nav a:hover { background: var(--bg-hover); }
+.side-foot { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+.side-foot ui-theme-switcher { display: block; }
+main { flex: 1; min-width: 0; padding: 24px 32px; }
+section { margin-bottom: 40px; }
+h1 { font-size: 1.75rem; margin: 0 0 8px; }
+h2 {
+  font-size: 1.4rem;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+h3 { font-size: 1.1rem; margin: 0 0 12px; }
+.lead { color: var(--text-muted); margin: 0 0 24px; }
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+/* 表單 */
+label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+.form-control, .form-select {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.form-control:focus, .form-select:focus {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  border-color: var(--focus);
+  box-shadow: 0 0 0 2px var(--focus);
+}
+textarea.form-control { resize: vertical; }
+.form-check-input { background-color: var(--bg-base); border-color: var(--border); }
+.form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
+
+.btn-role {
+  padding: 6px 14px;
+  background: var(--bg-hover);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.btn-role:hover { border-color: var(--accent); }
+.btn-role.primary { background: var(--accent); color: var(--on-color); border-color: var(--accent); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* 產生器 */
+.gen { display: grid; grid-template-columns: minmax(420px, 520px) 1fr; gap: 24px; align-items: start; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.fields .full { grid-column: 1 / -1; }
+.stage {
+  background: var(--bg-base);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 16px;
+  min-height: 160px;
+}
+.stage-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+
+/* 角色對照表 */
+.role-table { width: 100%; border-collapse: collapse; }
+.role-table th, .role-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.role-table th { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; }
+.sw { display: inline-block; width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); vertical-align: middle; }
+
+/* 固定亮暗示範 */
+.scopes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.scope {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  padding: 16px;
+}
+.scope p { margin: 0 0 12px; color: var(--text-muted); }
+.chip {
+  display: inline-block;
+  padding: 2px 10px;
+  margin-right: 4px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--on-color);
+}
+.c-accent { background: var(--accent); }
+.c-warning { background: var(--warning); }
+.c-safe { background: var(--safe); }
+.c-info { background: var(--info); }
+.c-caution { background: var(--caution); }
+
+/* 使用說明 */
+pre {
+  background: var(--bg-base);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 0 16px;
+  overflow: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.attr-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.attr-table th, .attr-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.attr-table th { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; }
+
+/* Bootstrap alert 配色 */
+#alertBox { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 380px; }
+.alert {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ac, var(--info));
+  border-radius: 8px;
+}
+.alert-success { --ac: var(--safe); }
+.alert-info { --ac: var(--info); }
+.alert-danger { --ac: var(--warning); }
+.alert-warning { --ac: var(--caution); }
+
+/* 修改紀錄對照 */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.cmp h3 { margin-bottom: 8px; }
+.tag { display: inline-block; padding: 2px 10px; margin-right: 8px; border-radius: 999px; font-size: 0.8rem; color: var(--on-color); }
+.tag-old { background: var(--warning); }
+.tag-new { background: var(--safe); }
+.log-item { margin-bottom: 24px; }
+.log-item:last-child { margin-bottom: 0; }
+
+@media (max-width: 1100px) {
+  .gen { grid-template-columns: 1fr; }
+  .scopes { grid-template-columns: 1fr; }
+  .cmp { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="alertBox"></div>
+
+<div class="layout">
+  <aside class="side">
+    <div class="brand">主題色彩示範</div>
+    <nav class="side-nav">
+      <a href="#generator">區塊產生器</a>
+      <a href="#roles">角色對照表</a>
+      <a href="#scopes">固定亮暗</a>
+      <a href="#usage">使用方式</a>
+      <a href="#changelog">修改紀錄對照</a>
+    </nav>
+    <div class="side-foot">
+      <ui-theme-switcher placement="top"></ui-theme-switcher>
+    </div>
+  </aside>
+
+  <main>
+    <h1>ui-theme-switcher</h1>
+    <p class="lead">點擊左下角的「外觀」，可即時切換淺色、深色、跟隨系統，以及六組色彩主題。下方的產生器會依目前主題的角色變數，產生可直接貼進 .html 或 .php 的 div 區塊。</p>
+
+    <section id="generator">
+      <h2>區塊產生器</h2>
+      <div class="gen">
+        <div class="panel">
+          <h3>快速範本</h3>
+          <div class="btn-row" id="presets" style="margin-bottom: 16px;"></div>
+
+          <div class="fields">
+            <div><label for="f-bg">背景角色</label><select id="f-bg" class="form-select"></select></div>
+            <div><label for="f-text">文字角色</label><select id="f-text" class="form-select"></select></div>
+            <div><label for="f-border">邊框角色</label><select id="f-border" class="form-select"></select></div>
+            <div><label for="f-bw">邊框粗細（px）</label><input id="f-bw" type="number" min="0" class="form-control"></div>
+            <div><label for="f-bar">左側色條角色</label><select id="f-bar" class="form-select"></select></div>
+            <div><label for="f-barw">色條粗細（px）</label><input id="f-barw" type="number" min="0" class="form-control"></div>
+            <div><label for="f-radius">圓角（px）</label><input id="f-radius" type="number" min="0" class="form-control"></div>
+            <div><label for="f-pad">內距 padding（px）</label><input id="f-pad" type="number" min="0" class="form-control"></div>
+            <div><label for="f-margin">上下外距 margin（px）</label><input id="f-margin" type="number" min="0" class="form-control"></div>
+            <div><label for="f-fs">字體大小（rem）</label><input id="f-fs" type="number" min="0.5" step="0.05" class="form-control"></div>
+            <div>
+              <label for="f-mode">亮暗模式</label>
+              <select id="f-mode" class="form-select">
+                <option value="follow">跟隨全域切換</option>
+                <option value="dark">固定深色</option>
+                <option value="light">固定淺色</option>
+              </select>
+            </div>
+            <div>
+              <label for="f-width">寬度</label>
+              <select id="f-width" class="form-select">
+                <option value="full">填滿容器</option>
+                <option value="fit">依內容</option>
+              </select>
+            </div>
+            <div class="full">
+              <div class="form-check">
+                <input id="f-shadow" type="checkbox" class="form-check-input">
+                <label for="f-shadow" class="form-check-label" style="display: inline;">加上硬邊陰影</label>
+              </div>
+            </div>
+            <div>
+              <label for="f-out">輸出格式</label>
+              <select id="f-out" class="form-select">
+                <option value="inline">行內樣式</option>
+                <option value="class">class 加 style 標籤</option>
+              </select>
+            </div>
+            <div><label for="f-class">class 名稱</label><input id="f-class" type="text" class="form-control"></div>
+            <div class="full"><label for="f-title">標題文字</label><input id="f-title" type="text" class="form-control"></div>
+            <div class="full"><label for="f-body">內文</label><textarea id="f-body" rows="12" class="form-control"></textarea></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="stage-label">即時預覽（放在整頁底色上）</div>
+          <div class="stage" id="preview"></div>
+          <div class="stage-label">產生的程式碼</div>
+          <textarea id="code" rows="12" class="form-control" readonly></textarea>
+          <div class="btn-row" style="margin-top: 12px;">
+            <button type="button" class="btn-role primary" id="btnCopy">複製程式碼</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roles">
+      <h2>角色對照表</h2>
+      <p class="lead">以下是目前主題實際使用的色碼，切換主題時會同步更新。</p>
+      <div class="panel">
+        <table class="role-table">
+          <thead><tr><th>色塊</th><th>變數</th><th>用途</th><th>目前色碼</th></tr></thead>
+          <tbody id="roleBody"></tbody>
+        </table>
+      </div>
+      <div class="panel" style="margin-top: 16px;">
+        <h3>品牌色（固定色碼）</h3>
+        <p class="lead" style="margin-bottom: 16px;">品牌色以 <code>--brand-名稱</code> 輸出，不論切換哪一組主題或亮暗模式，色碼都不會改變。</p>
+        <table class="role-table">
+          <thead><tr><th>色塊</th><th>變數</th><th>說明</th><th>色碼</th></tr></thead>
+          <tbody id="brandBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="scopes">
+      <h2>固定亮暗</h2>
+      <p class="lead">不加屬性的區塊會跟隨切換；在容器上加 <code>data-jstheme</code> 就能固定該區塊的亮或暗，色彩主題仍會跟著選擇走。</p>
+      <div class="scopes">
+        <div class="scope">
+          <h3>跟隨全域</h3>
+          <p>沒有加屬性，切換時會一起變。</p>
+          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-safe">safe</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
+        </div>
+        <div class="scope" data-jstheme="dark">
+          <h3>固定深色</h3>
+          <p>容器加上 <code>data-jstheme="dark"</code>。</p>
+          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-safe">safe</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
+        </div>
+        <div class="scope" data-jstheme="light">
+          <h3>固定淺色</h3>
+          <p>容器加上 <code>data-jstheme="light"</code>。</p>
+          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-safe">safe</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="usage">
+      <h2>使用方式</h2>
+      <div class="panel">
+        <h3>1. 載入元件</h3>
+<pre>&lt;head&gt;
+  &lt;script src="ui-theme-switcher.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ui-theme-switcher placement="top" storage-key="ui-theme"&gt;&lt;/ui-theme-switcher&gt;
+&lt;/body&gt;</pre>
+
+        <h3>2. 屬性</h3>
+        <table class="attr-table">
+          <thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td><code>storage-key</code></td><td>ui-theme</td><td>儲存鍵名前綴，前後台想用不同主題時請設不同值。</td></tr>
+            <tr><td><code>placement</code></td><td>top</td><td>選單展開方向，可設 top 或 bottom。</td></tr>
+            <tr><td><code>align</code></td><td>start</td><td>選單對齊，可設 start 或 end。</td></tr>
+            <tr><td><code>label</code></td><td>外觀</td><td>觸發按鈕上的文字。</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3. 事件與 API</h3>
+<pre>document.addEventListener('ui-theme-change', function (e) {
+  console.log(e.detail); // { mode, color, colorName, resolved }
+});
+
+UIThemeSwitcher.set({ mode: 'light', color: 'gruvbox' });
+UIThemeSwitcher.get();
+UIThemeSwitcher.register({
+  id: 'mine',
+  name: 'Mine',
+  dark: [/* 14 個色碼，順序同角色對照表 */],
+  light: [/* 14 個色碼 */]
+});</pre>
+
+        <h3>4. 在頁面中使用角色</h3>
+<pre>body    { background: var(--bg-base); color: var(--text-main); }
+.card   { background: var(--bg-panel); border: 1px solid var(--border); }
+a       { color: var(--accent); }
+.danger { background: var(--warning); color: var(--on-color); }</pre>
+
+        <h3>5. 使用品牌色</h3>
+<pre>.tag-lavender { background: var(--brand-lavender); color: var(--brand-bg); }
+.tag-indigo   { background: var(--brand-indigo);   color: var(--brand-focus); }
+
+/* 新增或覆蓋品牌色，只接受 #rgb 或 #rrggbb */
+UIThemeSwitcher.addBrand('coral', '#FF7F50', '珊瑚橘');</pre>
+      </div>
+    </section>
+
+    <section id="changelog">
+      <h2>修改紀錄對照</h2>
+      <p class="lead">同一個元件的每次修改，都把修改前後的範例與程式碼附加在這裡。</p>
+      <div class="panel">
+        <div class="log-item" style="padding-bottom: 24px; border-bottom: 1px solid var(--border);">
+          <h3>v1.2.0　新增 16 個品牌色變數</h3>
+          <p class="lead" style="margin-bottom: 16px;">原因：品牌色固定不變，不應該跟著主題改。新增的變數名稱都以 <code>--brand-</code> 開頭，不影響原有的 14 個角色。</p>
+
+          <h3 style="font-size: 1rem;">1. 在 CSS 使用品牌色</h3>
+          <div class="cmp">
+            <div>
+              <div><span class="tag tag-old">舊</span>v1.1.0</div>
+<pre>/* 寫死色碼，或借用會隨主題變的角色 */
+.tag { background: #C3A5E5; }
+.tag { background: var(--accent-2); }</pre>
+            </div>
+            <div>
+              <div><span class="tag tag-new">新</span>v1.2.0</div>
+<pre>/* 固定的品牌色，切換主題也不變 */
+.tag { background: var(--brand-lavender);
+       color: var(--brand-bg); }</pre>
+            </div>
+          </div>
+
+          <h3 style="font-size: 1rem;">2. JavaScript API</h3>
+          <div class="cmp">
+            <div>
+              <div><span class="tag tag-old">舊</span>v1.1.0</div>
+<pre>UIThemeSwitcher.get();
+UIThemeSwitcher.set({ mode, color });
+UIThemeSwitcher.register(def);
+UIThemeSwitcher.roles;
+UIThemeSwitcher.themes;</pre>
+            </div>
+            <div>
+              <div><span class="tag tag-new">新</span>v1.2.0</div>
+<pre>/* 原有 API 不變，另外新增 */
+UIThemeSwitcher.brand;
+UIThemeSwitcher.addBrand('coral', '#FF7F50', '珊瑚橘');</pre>
+            </div>
+          </div>
+
+          <h3 style="font-size: 1rem;">3. 產生器的選項</h3>
+          <div class="cmp">
+            <div>
+              <div><span class="tag tag-old">舊</span>v1.1.0</div>
+<pre>背景、文字、邊框、色條的下拉選單
+只有主題角色，例如 --accent、--warning</pre>
+            </div>
+            <div>
+              <div><span class="tag tag-new">新</span>v1.2.0</div>
+<pre>下拉選單分成兩組：
+  主題角色（隨主題改變）
+  品牌色（固定色碼）
+實色底的文字色會依深淺自動挑選</pre>
+            </div>
+          </div>
+          <p style="margin: 0; color: var(--text-muted);">品牌色不分亮暗，淺色模式下色碼也相同，所以只用深色背景時不需要另外調整。</p>
+        </div>
+
+        <div class="log-item">
+          <h3>v1.1.0　屬性 data-theme 改名為 data-jstheme</h3>
+          <p class="lead" style="margin-bottom: 16px;">原因：data-theme 容易與其他函式庫或自己的樣式衝突。<code>data-color</code> 與 Bootstrap 的 <code>data-bs-theme</code> 維持不變。</p>
+
+          <h3 style="font-size: 1rem;">1. 容器固定亮或暗</h3>
+          <div class="cmp">
+            <div>
+              <div><span class="tag tag-old">舊</span>v1.0.0</div>
+<pre>&lt;aside data-theme="dark"&gt;
+  永遠是暗色側邊欄
+&lt;/aside&gt;</pre>
+            </div>
+            <div>
+              <div><span class="tag tag-new">新</span>v1.1.0</div>
+<pre>&lt;aside data-jstheme="dark"&gt;
+  永遠是暗色側邊欄
+&lt;/aside&gt;</pre>
+            </div>
+          </div>
+
+          <h3 style="font-size: 1rem;">2. 自己的 CSS 選擇器</h3>
+          <div class="cmp">
+            <div>
+              <div><span class="tag tag-old">舊</span>v1.0.0</div>
+<pre>[data-theme="light"] .card {
+  box-shadow: 4px 4px 0 var(--border);
+}</pre>
+            </div>
+            <div>
+              <div><span class="tag tag-new">新</span>v1.1.0</div>
+<pre>[data-jstheme="light"] .card {
+  box-shadow: 4px 4px 0 var(--border);
+}</pre>
+            </div>
+          </div>
+
+          <h3 style="font-size: 1rem;">3. html 根元素上的屬性</h3>
+          <div class="cmp">
+            <div>
+              <div><span class="tag tag-old">舊</span>v1.0.0</div>
+<pre>&lt;html data-theme="dark" data-color="shell" data-bs-theme="dark"&gt;</pre>
+            </div>
+            <div>
+              <div><span class="tag tag-new">新</span>v1.1.0</div>
+<pre>&lt;html data-jstheme="dark" data-color="shell" data-bs-theme="dark"&gt;</pre>
+            </div>
+          </div>
+
+          <h3 style="font-size: 1rem;">4. 舊頁面的遷移方式</h3>
+<pre>全域搜尋並取代：
+  data-theme=   改為   data-jstheme=
+  [data-theme   改為   [data-jstheme
+
+不要動：data-color、data-bs-theme</pre>
+          <p style="margin: 0; color: var(--text-muted);">上方「固定亮暗」區塊與產生器輸出的 div，已經是新的屬性名稱，可以直接對照測試。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var FILL = ['accent', 'accent-2', 'warning', 'safe', 'info', 'caution'];
+  var BG_ROLES = ['bg-base', 'bg-panel', 'bg-hover'].concat(FILL);
+  var TEXT_ROLES = ['text-main', 'text-muted', 'on-color'].concat(FILL);
+  var BORDER_ROLES = ['border'].concat(FILL, ['focus']);
+  var BAR_ROLES = FILL.concat(['focus']);
+
+  var BRAND = UIThemeSwitcher.brand.map(function (b) { return 'brand-' + b[0]; });
+  var BRAND_LIGHT_TEXT = { 'brand-bg': 'brand-shell', 'brand-indigo': 'brand-focus', 'brand-info': 'brand-focus' };
+
+  var ROLE_LABEL = {};
+  UIThemeSwitcher.roles.forEach(function (r) { ROLE_LABEL[r[0]] = r[1]; });
+  UIThemeSwitcher.brand.forEach(function (b) { ROLE_LABEL['brand-' + b[0]] = b[2]; });
+  ROLE_LABEL.auto = '自動（依背景判斷）';
+  ROLE_LABEL.none = '無';
+
+  /* 自動選文字色：主題實色底用 on-color，品牌色依深淺挑固定的文字色 */
+  function autoText(bg) {
+    if (FILL.indexOf(bg) > -1) { return 'on-color'; }
+    if (BRAND.indexOf(bg) > -1) { return BRAND_LIGHT_TEXT[bg] || 'brand-bg'; }
+    return 'text-main';
+  }
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* Bootstrap alert，取代 alert() */
+  function showAlert(msg, type) {
+    var box = $('alertBox');
+    var d = document.createElement('div');
+    d.className = 'alert alert-' + (type || 'info') + ' alert-dismissible fade show';
+    d.setAttribute('role', 'alert');
+    d.innerHTML = esc(msg) + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    box.appendChild(d);
+    setTimeout(function () {
+      if (!d.parentNode) { return; }
+      try { window.bootstrap.Alert.getOrCreateInstance(d).close(); } catch (e) { d.remove(); }
+    }, 2500);
+  }
+
+  function fillSelect(id, special, roles) {
+    var opt = function (r) {
+      var text = (r === 'auto' || r === 'none') ? ROLE_LABEL[r] : '--' + r + '　' + (ROLE_LABEL[r] || '');
+      return '<option value="' + r + '">' + esc(text) + '</option>';
+    };
+    $(id).innerHTML = special.map(opt).join('') +
+      '<optgroup label="主題角色（隨主題改變）">' + roles.map(opt).join('') + '</optgroup>' +
+      '<optgroup label="品牌色（固定色碼）">' + BRAND.map(opt).join('') + '</optgroup>';
+  }
+  fillSelect('f-bg', [], BG_ROLES);
+  fillSelect('f-text', ['auto'], TEXT_ROLES);
+  fillSelect('f-border', ['none'], BORDER_ROLES);
+  fillSelect('f-bar', ['none'], BAR_ROLES);
+
+  var BASE = {
+    bg: 'bg-panel', text: 'auto', border: 'border', bw: 1, bar: 'none', barw: 4,
+    radius: 10, pad: 16, margin: 16, fs: 1, mode: 'follow', shadow: false, width: 'full',
+    out: 'inline', cls: 'my-block', title: '卡片標題', body: '這是一段內文。\n換行會自動轉成 br 標籤。'
+  };
+  var PRESETS = [
+    { name: '卡片', set: {} },
+    { name: '提示條', set: { bar: 'info', barw: 4, radius: 6, title: '提示訊息', body: '這是一則資訊提示，左側色條使用 info 角色。' } },
+    { name: '警告區塊', set: { bg: 'warning', border: 'none', bw: 0, radius: 8, title: '警告', body: '實色底會自動改用 on-color 作為文字顏色。' } },
+    { name: '成功區塊', set: { bg: 'safe', border: 'none', bw: 0, radius: 8, title: '儲存完成', body: '資料已成功寫入。' } },
+    { name: '品牌色條', set: { bar: 'brand-teal', barw: 4, radius: 6, title: '品牌色條', body: '左側色條使用 brand-teal，不論切換哪一組主題，色碼都不變。' } },
+    { name: '品牌實色', set: { bg: 'brand-lavender', border: 'none', bw: 0, radius: 8, title: '品牌實色區塊', body: '背景使用 brand-lavender，文字會自動配上固定的深色。' } },
+    { name: '固定深色', set: { bg: 'bg-base', mode: 'dark', shadow: true, title: '固定深色區塊', body: '不論全域是亮或暗，這個區塊都維持深色。' } },
+    { name: '固定淺色', set: { bg: 'bg-panel', mode: 'light', shadow: true, title: '固定淺色區塊', body: '不論全域是亮或暗，這個區塊都維持淺色。' } }
+  ];
+
+  function setForm(p) {
+    $('f-bg').value = p.bg;
+    $('f-text').value = p.text;
+    $('f-border').value = p.border;
+    $('f-bw').value = p.bw;
+    $('f-bar').value = p.bar;
+    $('f-barw').value = p.barw;
+    $('f-radius').value = p.radius;
+    $('f-pad').value = p.pad;
+    $('f-margin').value = p.margin;
+    $('f-fs').value = p.fs;
+    $('f-mode').value = p.mode;
+    $('f-shadow').checked = !!p.shadow;
+    $('f-width').value = p.width;
+    $('f-out').value = p.out;
+    $('f-class').value = p.cls;
+    $('f-title').value = p.title;
+    $('f-body').value = p.body;
+  }
+
+  function num(id, fallback, min) {
+    var v = parseFloat($(id).value);
+    if (isNaN(v)) { v = fallback; }
+    return v < min ? min : v;
+  }
+
+  function readForm() {
+    return {
+      bg: $('f-bg').value, text: $('f-text').value, border: $('f-border').value,
+      bw: num('f-bw', 0, 0), bar: $('f-bar').value, barw: num('f-barw', 0, 0),
+      radius: num('f-radius', 0, 0), pad: num('f-pad', 0, 0), margin: num('f-margin', 0, 0),
+      fs: num('f-fs', 1, 0.5), mode: $('f-mode').value, shadow: $('f-shadow').checked,
+      width: $('f-width').value, out: $('f-out').value, cls: $('f-class').value,
+      title: $('f-title').value, body: $('f-body').value
+    };
+  }
+
+  function declarations(c) {
+    var textRole = c.text === 'auto' ? autoText(c.bg) : c.text;
+    var d = [];
+    d.push('background: var(--' + c.bg + ')');
+    d.push('color: var(--' + textRole + ')');
+    if (c.border !== 'none' && c.bw > 0) { d.push('border: ' + c.bw + 'px solid var(--' + c.border + ')'); }
+    if (c.bar !== 'none' && c.barw > 0) { d.push('border-left: ' + c.barw + 'px solid var(--' + c.bar + ')'); }
+    d.push('border-radius: ' + c.radius + 'px');
+    d.push('padding: ' + c.pad + 'px');
+    d.push('margin: ' + c.margin + 'px 0');
+    d.push('font-size: ' + c.fs + 'rem');
+    d.push('line-height: 1.5');
+    if (c.shadow) { d.push('box-shadow: 4px 4px 0 var(--border)'); }
+    if (c.width === 'fit') { d.push('width: fit-content'); }
+    return d;
+  }
+
+  function titleSize(c) { return Math.round(c.fs * 1.25 * 100) / 100; }
+  function bodyHtml(c) { return esc(c.body).replace(/\n/g, '<br>'); }
+
+  function buildInline(c) {
+    var attr = c.mode === 'follow' ? '' : ' data-jstheme="' + c.mode + '"';
+    return '<div' + attr + ' style="' + declarations(c).join('; ') + ';">\n' +
+      '  <div style="font-size: ' + titleSize(c) + 'rem; font-weight: 700; margin-bottom: 8px;">' + esc(c.title) + '</div>\n' +
+      '  <p style="margin: 0;">' + bodyHtml(c) + '</p>\n' +
+      '</div>';
+  }
+
+  function buildClass(c) {
+    var cls = (c.cls || '').replace(/[^a-zA-Z0-9_-]/g, '') || 'my-block';
+    if (/^[0-9-]/.test(cls)) { cls = 'b' + cls; }
+    var attr = c.mode === 'follow' ? '' : ' data-jstheme="' + c.mode + '"';
+    return '<style>\n.' + cls + ' {\n  ' + declarations(c).join(';\n  ') + ';\n}\n' +
+      '.' + cls + '-title {\n  font-size: ' + titleSize(c) + 'rem;\n  font-weight: 700;\n  margin-bottom: 8px;\n}\n' +
+      '.' + cls + ' p {\n  margin: 0;\n}\n</style>\n' +
+      '<div class="' + cls + '"' + attr + '>\n' +
+      '  <div class="' + cls + '-title">' + esc(c.title) + '</div>\n' +
+      '  <p>' + bodyHtml(c) + '</p>\n' +
+      '</div>';
+  }
+
+  function update() {
+    var c = readForm();
+    /* 預覽一律用行內樣式，避免使用者自訂的 class 名稱與本頁樣式衝突 */
+    $('preview').innerHTML = buildInline(c);
+    $('code').value = c.out === 'class' ? buildClass(c) : buildInline(c);
+  }
+
+  /* 快速範本按鈕 */
+  var presetBox = $('presets');
+  PRESETS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn-role';
+    b.textContent = p.name;
+    b.addEventListener('click', function () {
+      var merged = {};
+      Object.keys(BASE).forEach(function (k) { merged[k] = BASE[k]; });
+      Object.keys(p.set).forEach(function (k) { merged[k] = p.set[k]; });
+      setForm(merged);
+      update();
+    });
+    presetBox.appendChild(b);
+  });
+
+  ['f-bg', 'f-text', 'f-border', 'f-bw', 'f-bar', 'f-barw', 'f-radius', 'f-pad', 'f-margin', 'f-fs', 'f-mode', 'f-shadow', 'f-width', 'f-out', 'f-class', 'f-title', 'f-body']
+    .forEach(function (id) {
+      $(id).addEventListener('input', update);
+      $(id).addEventListener('change', update);
+    });
+
+  /* 複製 */
+  $('btnCopy').addEventListener('click', function () {
+    var ta = $('code');
+    var done = function () { showAlert('程式碼已複製到剪貼簿。', 'success'); };
+    var fail = function () { showAlert('複製失敗，請手動選取文字後複製。', 'danger'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ta.value).then(done, fail);
+    } else {
+      ta.select();
+      try { document.execCommand('copy') ? done() : fail(); } catch (e) { fail(); }
+    }
+  });
+
+  /* 角色對照表 */
+  function renderRoles() {
+    var cs = getComputedStyle(document.documentElement);
+    $('roleBody').innerHTML = UIThemeSwitcher.roles.map(function (r) {
+      var v = cs.getPropertyValue('--' + r[0]).trim();
+      return '<tr><td><span class="sw" style="background: var(--' + r[0] + ');"></span></td>' +
+        '<td><code>--' + r[0] + '</code></td><td>' + esc(r[1]) + '</td><td><code>' + esc(v) + '</code></td></tr>';
+    }).join('');
+    $('brandBody').innerHTML = UIThemeSwitcher.brand.map(function (b) {
+      return '<tr><td><span class="sw" style="background: var(--brand-' + b[0] + ');"></span></td>' +
+        '<td><code>--brand-' + esc(b[0]) + '</code></td><td>' + esc(b[2]) + '</td><td><code>' + esc(b[1]) + '</code></td></tr>';
+    }).join('');
+  }
+
+  var MODE_NAME = { light: '淺色', dark: '深色', system: '跟隨系統' };
+  document.addEventListener('ui-theme-change', function (e) {
+    renderRoles();
+    var d = e.detail;
+    showAlert('已切換：' + MODE_NAME[d.mode] + '，色彩主題 ' + d.colorName + '。', 'success');
+  });
+
+  setForm(BASE);
+  update();
+  renderRoles();
+})();
+</script>
+</body>
+</html>
