@@ -919,6 +919,8 @@ class CardToggle extends HTMLElement {
     }
 
     _addNumber() {
+        // reset() 會重新呼叫 _initialize()，避免重複插入編號
+        if (this.querySelector(':scope > .ct-number')) return;
         const number  = this.getAttribute('number');
         /* number-size 保留向下相容；fs-number 屬性由 ctApplyTypography 統一處理 */
         const numSize = this.getAttribute('number-size') || 'var(--ct-fs-number)';
@@ -1714,7 +1716,8 @@ class CardToggle extends HTMLElement {
         }
         
         this._branchResult = null;
-        this.innerHTML = this._originalContent;
+        // 尚未取過快照的卡片（從未點擊過）正面仍完整，不可用空快照覆蓋
+        if (this._snapshotTaken) this.innerHTML = this._originalContent;
         this.removeAttribute('replaced');
         this._isFlipped = false;
         this._attempts = 0;
@@ -1858,7 +1861,11 @@ class CardToggleGroup extends HTMLElement {
 
     _updateSlide() {
         const cardsContainer = this.querySelector('.ct-group-cards');
-        if (!cardsContainer) return;
+        if (!cardsContainer) {
+            // stack / grid 模式沒有輪播容器，但仍需檢查是否全部作答完畢
+            this._checkAllAnswered();
+            return;
+        }
 
         const offset = -this._currentIndex * 100;
         cardsContainer.style.transform = `translateX(${offset}%)`;
@@ -1994,13 +2001,28 @@ class CardToggleGroup extends HTMLElement {
             </button>
         `;
 
-        // 取代整個 group 內容
+        // grid 模式：成績畫面橫跨所有欄
+        resultEl.style.gridColumn = '1 / -1';
+
+        // 取代整個 group 內容（卡片元素仍保留在 this._cards，供重新作答使用）
         this.innerHTML = '';
         this.appendChild(resultEl);
     }
 
     _retryAll() {
-        // 重設所有狀態重新初始化
+        // 成績畫面已清空 DOM，改從 this._cards 取回原本的卡片元素
+        const cards = this._cards.slice();
+
+        this.innerHTML = '';
+        this.style.transform = '';
+        cards.forEach(card => {
+            if (card._snapshotTaken) card.reset();
+            card.style.opacity   = '';
+            card.style.transform = '';
+            this.appendChild(card);
+        });
+
+        // 重設群組狀態後重新初始化（_initialize 會重新抓取卡片並建立導覽）
         this._currentIndex = 0;
         this._answerState  = [];
         this._resultShown  = false;
@@ -2008,8 +2030,7 @@ class CardToggleGroup extends HTMLElement {
         this._pageButtons  = null;
         this._prevBtn      = null;
         this._nextBtn      = null;
-        this._ctGrpConnected = false;
-        this.connectedCallback();
+        this._initialize();
     }
 }
 
