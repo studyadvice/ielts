@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>info-region 金色電流與透明度修正示範</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0D0C;
+  --shell: #C6C7BD;
+  --area: #161816;
+  --line: #2e2f2e;
+  --muted: #8F9088;
+  --gold: #C9973F;
+  --gold-light: #EFD9A2;
+  --sky: #82C8E5;
+  --lavender: #C3A5E5;
+  --warning: #E6374B;
+  --safe: #27AE60;
+  --special: #B3DE73;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--shell); font-size: 1rem; line-height: 1.5; }
+code { color: var(--lavender); font-size: 0.9em; }
+a { color: var(--sky); }
+
+.layout { display: flex; min-height: 100vh; }
+.side {
+  flex: none; position: sticky; top: 0; width: 240px; height: 100vh; overflow-y: auto;
+  padding: 24px 16px; background: var(--area); border-right: 1px solid var(--line);
+}
+.brand { font-size: 1.15rem; font-weight: 700; color: var(--gold-light); margin-bottom: 20px; }
+.side a { display: block; padding: 8px 12px; margin-bottom: 2px; color: var(--shell); text-decoration: none; border-radius: 8px; font-size: 0.95rem; }
+.side a:hover { background: #232623; }
+main { flex: 1; min-width: 0; padding: 32px 40px 80px; }
+h1 { font-size: 1.8rem; margin: 0 0 8px; color: var(--gold-light); }
+h2 { font-size: 1.4rem; margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.lead { color: var(--muted); margin: 0 0 16px; }
+section.blk { margin-bottom: 48px; }
+
+.demo { display: grid; grid-template-columns: minmax(420px, 6fr) minmax(360px, 5fr); gap: 16px; align-items: start; margin-bottom: 16px; }
+.demo .live { background: var(--bg); border: 1px dashed var(--line); border-radius: 10px; padding: 24px; min-height: 120px; }
+pre.src {
+  margin: 0; background: var(--area); color: var(--shell); border: 1px solid var(--line);
+  border-radius: 8px; padding: 16px; overflow: auto; font-size: 0.8rem; line-height: 1.5; max-height: 520px;
+}
+.btn-x {
+  padding: 6px 14px; background: #232623; color: var(--shell); border: 1px solid var(--line);
+  border-radius: 8px; font-size: 0.9rem; line-height: 1.5; cursor: pointer;
+}
+.btn-x:hover { border-color: var(--gold); }
+.btn-x.gold { background: var(--gold); color: #0C0D0C; border-color: var(--gold); font-weight: 700; }
+.row-x { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+table.audit { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+table.audit th, table.audit td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: left; font-size: 0.92rem; }
+table.audit th { color: var(--muted); font-weight: 600; }
+.pass { color: var(--safe); font-weight: 700; }
+.fail { color: var(--warning); font-weight: 700; }
+
+#alertBox { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 380px; }
+.alert { background: var(--area); color: var(--shell); border: 1px solid var(--line); border-left: 4px solid var(--ac, var(--sky)); border-radius: 8px; }
+.alert-success { --ac: var(--safe); }
+.alert-danger { --ac: var(--warning); }
+
+pre.diff { margin: 0; background: var(--area); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow: auto; font-size: 0.78rem; line-height: 1.5; max-height: 720px; }
+.diff .add { color: var(--special); }
+.diff .del { color: var(--warning); }
+.diff .hunk { color: var(--sky); }
+
+@media (max-width: 1200px) { .demo { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="alertBox"></div>
+
+<div class="layout">
+  <aside class="side">
+    <div class="brand">info-region<br>金色電流</div>
+    <a href="#steps">金色步驟序列</a>
+    <a href="#variants">電流的各種寫法</a>
+    <a href="#quiz">測驗模式的結尾</a>
+    <a href="#toggle">全域開關</a>
+    <a href="#audit">透明度檢查</a>
+    <a href="#diff">修改前後對照</a>
+  </aside>
+
+  <main>
+    <h1>info-region 金色電流</h1>
+    <p class="lead">原有的 <code>class="ir-gold"</code> 金箔區塊現在有電流繞行、光暈明滅與閃電。同時修正了所有低於 0.78 的透明度。左邊是實際效果，右邊是同一份原始碼，按「開始」即可播放。</p>
+
+    <section class="blk" id="steps">
+      <h2>金色步驟序列</h2>
+      <p class="lead">金色適合放在序列的第一步與最後一步。第一步用倒數條自動進入下一步，中間用按鈕手動繼續，最後一步有電流收尾。</p>
+      <div class="demo">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <info-region-group id="g1" start-label="▶ 開始" reset-label="↺ 重設">
+            <info-region id="g1-a" class="ir-gold" color="gold" next="g1-b" countdown="2500">
+              <h3>開場</h3>
+              <p>金色區塊有電流沿內緣繞行，右上角的閃電會不規則閃爍。</p>
+            </info-region>
+            <info-region id="g1-b" color="sky" next="g1-c" manual manual-label="▶ 下一步">
+              <h3>中間步驟</h3>
+              <p>一般顏色的區塊沒有電流，按下按鈕繼續。</p>
+            </info-region>
+            <info-region id="g1-c" class="ir-gold" color="gold">
+              <h3>結尾</h3>
+              <p>最後一步再次使用金色，與中間的普通步驟明顯區隔。</p>
+            </info-region>
+          </info-region-group>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="variants">
+      <h2>電流的各種寫法</h2>
+      <p class="lead"><code>ir-gold</code> 預設有電流。<code>fx="off"</code> 關閉，<code>fx="electric"</code> 讓任何顏色都有電流，<code>fx-core</code> 與 <code>fx-dim</code> 可自訂亮點色與暗部色。</p>
+      <div class="row-x"><button type="button" class="btn-x" id="btnReplay2">重新播放</button></div>
+      <div class="demo">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <info-region-group id="g2" layout="horizontal" cols-per-row="2"
+                             cascade-interval="300" show-controls="false" auto-start>
+            <info-region class="ir-gold" color="gold">
+              <h4>ir-gold</h4>
+              <p>預設有電流。</p>
+            </info-region>
+            <info-region class="ir-gold" color="gold" fx="off">
+              <h4>fx="off"</h4>
+              <p>金箔與掃光，沒有電流。</p>
+            </info-region>
+            <info-region color="teal" fx="electric">
+              <h4>teal 加 fx="electric"</h4>
+              <p>暗部色由 teal 自動算出。</p>
+            </info-region>
+            <info-region color="pink" fx="electric" fx-core="#FFFFFF" fx-dim="#5A1F47">
+              <h4>自訂亮點與暗部</h4>
+              <p>fx-core 與 fx-dim 都是不透明色碼。</p>
+            </info-region>
+          </info-region-group>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="quiz">
+      <h2>測驗模式的結尾</h2>
+      <p class="lead">答完最後一題後，用金色區塊收尾。選項、解說與計分板的顏色已全部改為不透明色。</p>
+      <div class="demo">
+        <div class="live"></div>
+        <pre class="src"></pre>
+        <script type="text/x-demo">
+          <info-region-group id="g3" show-score global-progress show-percent progress-color="gold"
+                             start-label="▶ 開始測驗" reset-label="↺ 重來">
+            <info-region id="q1" quiz quiz-item color="sky" quiz-label="第 1 題"
+                         answer="b" correct-next="q2" wrong-next="q2"
+                         explain="主詞是第三人稱單數，動詞要加 <b>s</b>。">
+              <p>哪一句是正確的？</p>
+              <ir-choices layout="column">
+                <ir-choice value="a">She go to school every day.</ir-choice>
+                <ir-choice value="b">She goes to school every day.</ir-choice>
+                <ir-choice value="c">She going to school every day.</ir-choice>
+              </ir-choices>
+            </info-region>
+
+            <info-region id="q2" quiz quiz-item color="sky" quiz-label="第 2 題"
+                         answer="c" correct-next="done" wrong-next="done" show-retry
+                         explain="since 搭配現在完成式，答案是 <code>has lived</code>。">
+              <p>She ___ here since 2020.</p>
+              <ir-choices>
+                <ir-choice value="a">lives</ir-choice>
+                <ir-choice value="b">lived</ir-choice>
+                <ir-choice value="c">has lived</ir-choice>
+                <ir-choice value="d">is living</ir-choice>
+              </ir-choices>
+            </info-region>
+
+            <info-region id="done" class="ir-gold" color="gold">
+              <h3>測驗完成</h3>
+              <p>最後一步用金色電流收尾，上方計分板會顯示答對與答錯的題數。</p>
+            </info-region>
+          </info-region-group>
+        </script>
+      </div>
+    </section>
+
+    <section class="blk" id="toggle">
+      <h2>全域開關</h2>
+      <p class="lead">設定 <code>InfoRegionConfig.fx = false</code> 後，頁面上所有電流都停用。切換後下一次啟動的區塊才會套用，所以按鈕會同時重新啟動上面的範例。</p>
+      <div class="row-x">
+        <button type="button" class="btn-x gold" id="btnFx">全域關閉電流</button>
+      </div>
+    </section>
+
+    <section class="blk" id="audit">
+      <h2>透明度檢查</h2>
+      <p class="lead">下表由腳本即時讀取元件注入的樣式表，逐項掃描。通過的標準是沒有任何低於 0.78 的 rgba、hsla、8 位數色碼，沒有 transparent 關鍵字，也沒有 0 與 1 以外且低於 0.78 的 opacity。</p>
+      <table class="audit">
+        <thead><tr><th>檢查項目</th><th>結果</th><th>說明</th></tr></thead>
+        <tbody id="auditBody"></tbody>
+      </table>
+      <p class="lead">原本有 25 處半透明（rgba 20 處、transparent 4 處、opacity 0.6 一處）。現在的做法是把「前景色以百分比疊在底色上」直接算成不透明的色碼，畫面看起來相同，但沒有任何透明度。掃光動畫改用 <code>mix-blend-mode: screen</code> 搭配不透明的黑到暗金漸層。</p>
+    </section>
+
+    <section class="blk" id="diff">
+      <h2>修改前後對照</h2>
+      <p class="lead">以下是 info-region.js 修改前後的差異，綠色是新增，紅色是被改寫的舊行。另外有 3 處註解的破折號改為全形冒號，未列入對照。</p>
+      <pre class="diff"><span class="hunk">--- info-region.js（修改前）</span>
+<span class="hunk">+++ info-region.js（修改後）</span>
+<span class="hunk">@@ -7,6 +7,24 @@</span>
+     return /[a-z%]$/i.test(String(v)) ? String(v) : v + u;
+   };
+ 
+<span class="add">+  /* 不透明混色：前景色以 pct% 疊在底色上，回傳不透明的十六進位色碼。</span>
+<span class="add">+     底色不是十六進位時退回 color-mix()，結果同樣不透明。</span>
+<span class="add">+     用來取代所有半透明 rgba，畫面看起來相同，但沒有任何透明度。 */</span>
+<span class="add">+  const hexToRgb = h =&gt; {</span>
+<span class="add">+    if (typeof h !== 'string' || h.charAt(0) !== '#') return null;</span>
+<span class="add">+    let t = h.slice(1);</span>
+<span class="add">+    if (t.length === 3) t = t.split('').map(c =&gt; c + c).join('');</span>
+<span class="add">+    if (t.length !== 6 || /[^0-9a-f]/i.test(t)) return null;</span>
+<span class="add">+    return [0, 2, 4].map(i =&gt; parseInt(t.slice(i, i + 2), 16));</span>
+<span class="add">+  };</span>
+<span class="add">+  const solid = (fg, pct, bg) =&gt; {</span>
+<span class="add">+    const a = hexToRgb(fg), b = hexToRgb(bg);</span>
+<span class="add">+    if (!a || !b) return `color-mix(in srgb, ${fg} ${pct}%, ${bg})`;</span>
+<span class="add">+    const k = pct / 100;</span>
+<span class="add">+    return '#' + a.map((v, i) =&gt;</span>
+<span class="add">+      Math.round(v * k + b[i] * (1 - k)).toString(16).padStart(2, '0')).join('').toUpperCase();</span>
+<span class="add">+  };</span>
+<span class="add">+</span>
+   const BrandColors = {
+     bg:       '#0C0D0C',
+     region:   '#333333',
+<span class="hunk">@@ -76,6 +94,7 @@</span>
+     resetBtnPadding:    null,
+     choiceFontSize:     null,   /* ir-choice 字體大小，null = 用 CSS 預設 0.95rem */
+     choicePadding:      null,   /* ir-choice 內距，null = 用 CSS 預設 10px 14px   */
+<span class="add">+    fx:                 true,   /* false = 全域關閉電流動畫（ir-gold 與 fx="electric"） */</span>
+   };
+ 
+   window.InfoRegionConfig = Object.assign({}, defaults, window.InfoRegionConfig || {});
+<span class="hunk">@@ -91,6 +110,8 @@</span>
+     const vDur   = cfg.animDuration + 'ms';
+     const hDur   = cfg.horizontalAnimDur + 'ms';
+     const defClr = BrandColors[cfg.defaultColor] || BrandColors.sky;
+<span class="add">+    const REGION = cfg.bgColor;     /* 區塊底色，測驗選項與解說的混色基準 */</span>
+<span class="add">+    const PAGE   = BrandColors.bg;  /* 頁面底色，計分板的混色基準 */</span>
+ 
+     /* 色彩 variant：自動從 BrandColors 生成，新增色票只需修改上方物件 */
+     const skip = new Set(['bg', 'region']);
+<span class="hunk">@@ -103,11 +124,10 @@</span>
+ 
+     const BTN_VARIANTS = Object.entries(BrandColors)
+       .filter(([k]) =&gt; !skip.has(k))
+<span class="del">-      .map(([k, v]) =&gt; {</span>
+<span class="del">-        const [r, g, b] = [1, 3, 5].map(i =&gt; parseInt(v.slice(i, i + 2), 16));</span>
+<span class="del">-        return `.ir-btn--${k}{border-color:${v};color:${v}}` +</span>
+<span class="del">-               `.ir-btn--${k}:hover{background:rgba(${r},${g},${b},0.18)}`;</span>
+<span class="del">-      }).join('\n      ');</span>
+<span class="add">+      .map(([k, v]) =&gt;</span>
+<span class="add">+        `.ir-btn--${k}{border-color:${v};color:${v}}` +</span>
+<span class="add">+        `.ir-btn--${k}:hover{background:${solid(v, 18, BrandColors.region)}}`</span>
+<span class="add">+      ).join('\n      ');</span>
+ 
+     const css = `
+       info-region {
+<span class="hunk">@@ -118,7 +138,7 @@</span>
+         transform: translateY(10px);
+         pointer-events: none;
+         position: relative;
+<span class="del">-        border-left: ${cfg.borderWidth}px solid transparent;</span>
+<span class="add">+        border-left: ${cfg.borderWidth}px solid ${defClr};</span>
+         border-radius: ${cfg.borderRadius};
+         font-size: ${cfg.fontSize};
+         line-height: 1.75;
+<span class="hunk">@@ -268,7 +288,7 @@</span>
+         border-radius: 6px !important;
+         color: #EFD9A2 !important;
+       }
+<span class="del">-      /* 掃光動畫：裝飾性，低不透明度屬意為之 */</span>
+<span class="add">+      /* 掃光動畫：不透明的黑到暗金漸層，用 screen 混合模式疊加，黑色部分不改變底色 */</span>
+       info-region.ir-gold::before {
+         content: '';
+         position: absolute;
+<span class="hunk">@@ -276,22 +296,95 @@</span>
+         pointer-events: none;
+         background: linear-gradient(
+           102deg,
+<span class="del">-          transparent 25%,</span>
+<span class="del">-          rgba(255, 210, 80, 0.13) 50%,</span>
+<span class="del">-          transparent 75%</span>
+<span class="add">+          #000000 25%,</span>
+<span class="add">+          #2B2008 50%,</span>
+<span class="add">+          #000000 75%</span>
+         );
+         background-size: 200% 100%;
+<span class="add">+        mix-blend-mode: screen;</span>
+         animation: ir-gold-shimmer 4s ease-in-out infinite;
+       }
+       @keyframes ir-gold-shimmer {
+         0%   { background-position: -60% center; }
+         100% { background-position: 160% center; }
+       }
+<span class="del">-      info-region.ir-gold &gt; *:not(.ir-countdown-bar) {</span>
+<span class="add">+      info-region.ir-gold &gt; *:not(.ir-countdown-bar):not(.ir-fx-bolt) {</span>
+         position: relative;
+         z-index: 1;
+       }
+ 
+<span class="add">+      /* ══ 電流特效 ══</span>
+<span class="add">+         class="ir-gold" 預設開啟，其他顏色加 fx="electric"，fx="off" 關閉。</span>
+<span class="add">+         所有顏色皆為不透明色。                                              */</span>
+<span class="add">+      info-region.ir-gold {</span>
+<span class="add">+        --ir-fx-edge: #C9973F;</span>
+<span class="add">+        --ir-fx-dim:  #6B4F12;</span>
+<span class="add">+        --ir-fx-core: #D4FFFC;</span>
+<span class="add">+      }</span>
+<span class="add">+      @property --ir-fx-angle {</span>
+<span class="add">+        syntax: '&lt;angle&gt;';</span>
+<span class="add">+        inherits: false;</span>
+<span class="add">+        initial-value: 0deg;</span>
+<span class="add">+      }</span>
+<span class="add">+      @keyframes ir-fx-spin { to { --ir-fx-angle: 360deg; } }</span>
+<span class="add">+      @keyframes ir-fx-glow {</span>
+<span class="add">+        0%, 100% { box-shadow: 0 0 10px var(--ir-fx-dim); }</span>
+<span class="add">+        7%       { box-shadow: 0 0 22px var(--ir-fx-edge); }</span>
+<span class="add">+        9%       { box-shadow: 0 0 6px  var(--ir-fx-dim); }</span>
+<span class="add">+        12%      { box-shadow: 0 0 28px var(--ir-fx-core); }</span>
+<span class="add">+        16%      { box-shadow: 0 0 12px var(--ir-fx-edge); }</span>
+<span class="add">+        55%      { box-shadow: 0 0 10px var(--ir-fx-dim); }</span>
+<span class="add">+        58%      { box-shadow: 0 0 20px var(--ir-fx-edge); }</span>
+<span class="add">+        60%      { box-shadow: 0 0 8px  var(--ir-fx-dim); }</span>
+<span class="add">+      }</span>
+<span class="add">+      @keyframes ir-fx-bolt {</span>
+<span class="add">+        0%, 100% { background: var(--ir-fx-core); }</span>
+<span class="add">+        7%       { background: var(--ir-fx-dim); }</span>
+<span class="add">+        9%       { background: var(--ir-fx-core); }</span>
+<span class="add">+        12%      { background: var(--ir-fx-edge); }</span>
+<span class="add">+        15%      { background: var(--ir-fx-core); }</span>
+<span class="add">+        56%      { background: var(--ir-fx-core); }</span>
+<span class="add">+        58%      { background: var(--ir-fx-dim); }</span>
+<span class="add">+        61%      { background: var(--ir-fx-core); }</span>
+<span class="add">+      }</span>
+<span class="add">+      /* 光暈明滅 */</span>
+<span class="add">+      info-region[data-ir-fx="electric"][active="true"] {</span>
+<span class="add">+        animation: ir-fx-glow 3.6s linear infinite;</span>
+<span class="add">+      }</span>
+<span class="add">+      /* 沿內緣繞行的電流環 */</span>
+<span class="add">+      info-region[data-ir-fx="electric"][active="true"]::after {</span>
+<span class="add">+        content: '';</span>
+<span class="add">+        position: absolute;</span>
+<span class="add">+        inset: 0;</span>
+<span class="add">+        padding: 2px;</span>
+<span class="add">+        border-radius: inherit;</span>
+<span class="add">+        pointer-events: none;</span>
+<span class="add">+        background: conic-gradient(from var(--ir-fx-angle, 0deg),</span>
+<span class="add">+          var(--ir-fx-dim) 0deg,</span>
+<span class="add">+          var(--ir-fx-dim) 190deg,</span>
+<span class="add">+          var(--ir-fx-edge) 270deg,</span>
+<span class="add">+          var(--ir-fx-core) 335deg,</span>
+<span class="add">+          var(--ir-fx-dim) 360deg);</span>
+<span class="add">+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);</span>
+<span class="add">+        -webkit-mask-composite: xor;</span>
+<span class="add">+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);</span>
+<span class="add">+        mask-composite: exclude;</span>
+<span class="add">+        animation: ir-fx-spin 2.6s linear infinite;</span>
+<span class="add">+      }</span>
+<span class="add">+      /* 右上角閃爍的閃電（由腳本加入） */</span>
+<span class="add">+      .ir-fx-bolt {</span>
+<span class="add">+        position: absolute;</span>
+<span class="add">+        top: 10px;</span>
+<span class="add">+        right: 12px;</span>
+<span class="add">+        width: 11px;</span>
+<span class="add">+        height: 18px;</span>
+<span class="add">+        z-index: 2;</span>
+<span class="add">+        pointer-events: none;</span>
+<span class="add">+        background: var(--ir-fx-core);</span>
+<span class="add">+        clip-path: polygon(62% 0, 8% 56%, 44% 56%, 30% 100%, 92% 38%, 56% 38%);</span>
+<span class="add">+        animation: ir-fx-bolt 3.6s linear infinite;</span>
+<span class="add">+      }</span>
+<span class="add">+</span>
+       /* ══ 測驗模式 ══ */
+ 
+       /* 選項容器 */
+<span class="hunk">@@ -311,8 +404,8 @@</span>
+         align-items: flex-start;
+         gap: 10px;
+         padding: ${cfg.choicePadding || '10px 14px'};
+<span class="del">-        background: rgba(255,255,255,0.05);</span>
+<span class="del">-        border: 1.5px solid rgba(198,199,189,0.22);</span>
+<span class="add">+        background: ${solid('#FFFFFF', 5, REGION)};</span>
+<span class="add">+        border: 1.5px solid ${solid(BrandColors.shell, 22, REGION)};</span>
+         border-radius: 6px;
+         cursor: pointer;
+         font-size: ${cfg.choiceFontSize ? addUnit(cfg.choiceFontSize, 'rem') : '0.95rem'};
+<span class="hunk">@@ -324,8 +417,8 @@</span>
+         user-select: none;
+       }
+       ir-choice:hover:not([disabled]) {
+<span class="del">-        background: rgba(130,200,229,0.12);</span>
+<span class="del">-        border-color: rgba(130,200,229,0.55);</span>
+<span class="add">+        background: ${solid(BrandColors.sky, 12, REGION)};</span>
+<span class="add">+        border-color: ${solid(BrandColors.sky, 55, REGION)};</span>
+       }
+       ir-choice[disabled] { cursor: default; }
+ 
+<span class="hunk">@@ -335,7 +428,7 @@</span>
+         width: 24px;
+         height: 24px;
+         border-radius: 50%;
+<span class="del">-        border: 1.5px solid rgba(198,199,189,0.4);</span>
+<span class="add">+        border: 1.5px solid ${solid(BrandColors.shell, 40, REGION)};</span>
+         display: flex;
+         align-items: center;
+         justify-content: center;
+<span class="hunk">@@ -348,7 +441,7 @@</span>
+ 
+       /* 答對 */
+       ir-choice[state="correct"] {
+<span class="del">-        background: rgba(39,174,96,0.15);</span>
+<span class="add">+        background: ${solid(BrandColors.safe, 15, REGION)};</span>
+         border-color: ${BrandColors.safe};
+       }
+       ir-choice[state="correct"] .ir-choice-key {
+<span class="hunk">@@ -359,7 +452,7 @@</span>
+ 
+       /* 答錯（被選的那個） */
+       ir-choice[state="wrong"] {
+<span class="del">-        background: rgba(230,55,75,0.15);</span>
+<span class="add">+        background: ${solid(BrandColors.warning, 15, REGION)};</span>
+         border-color: ${BrandColors.warning};
+       }
+       ir-choice[state="wrong"] .ir-choice-key {
+<span class="hunk">@@ -370,8 +463,8 @@</span>
+ 
+       /* 其他未選但正確的選項（顯示正解） */
+       ir-choice[state="reveal"] {
+<span class="del">-        background: rgba(39,174,96,0.08);</span>
+<span class="del">-        border-color: rgba(39,174,96,0.45);</span>
+<span class="add">+        background: ${solid(BrandColors.safe, 8, REGION)};</span>
+<span class="add">+        border-color: ${solid(BrandColors.safe, 45, REGION)};</span>
+       }
+       ir-choice[state="reveal"] .ir-choice-key {
+         border-color: ${BrandColors.safe};
+<span class="hunk">@@ -396,19 +489,19 @@</span>
+         pointer-events: auto;
+       }
+       .ir-quiz-explain.is-correct {
+<span class="del">-        background: rgba(39,174,96,0.12);</span>
+<span class="del">-        border: 1px solid rgba(39,174,96,0.4);</span>
+<span class="add">+        background: ${solid(BrandColors.safe, 12, REGION)};</span>
+<span class="add">+        border: 1px solid ${solid(BrandColors.safe, 40, REGION)};</span>
+         color: #a5e6bc;
+       }
+       .ir-quiz-explain.is-wrong {
+<span class="del">-        background: rgba(230,55,75,0.12);</span>
+<span class="del">-        border: 1px solid rgba(230,55,75,0.4);</span>
+<span class="add">+        background: ${solid(BrandColors.warning, 12, REGION)};</span>
+<span class="add">+        border: 1px solid ${solid(BrandColors.warning, 40, REGION)};</span>
+         color: #f0a0a8;
+       }
+       .ir-quiz-explain code {
+         font-family: 'Space Mono', monospace;
+         font-size: 0.88em;
+<span class="del">-        background: rgba(255,255,255,0.1);</span>
+<span class="add">+        background: ${solid('#FFFFFF', 10, REGION)};</span>
+         padding: 1px 5px;
+         border-radius: 3px;
+       }
+<span class="hunk">@@ -457,7 +550,7 @@</span>
+       .ir-quiz-label {
+         font-size: 0.72rem;
+         letter-spacing: 0.08em;
+<span class="del">-        color: rgba(198,199,189,0.5);</span>
+<span class="add">+        color: ${solid(BrandColors.shell, 50, REGION)};</span>
+         margin-bottom: 8px;
+         font-family: 'Space Mono', monospace;
+       }
+<span class="hunk">@@ -468,8 +561,8 @@</span>
+         align-items: center;
+         gap: 18px;
+         padding: 14px 20px;
+<span class="del">-        background: rgba(255,255,255,0.04);</span>
+<span class="del">-        border: 1px solid rgba(198,199,189,0.15);</span>
+<span class="add">+        background: ${solid('#FFFFFF', 4, PAGE)};</span>
+<span class="add">+        border: 1px solid ${solid(BrandColors.shell, 15, PAGE)};</span>
+         border-radius: 6px;
+         margin-top: 16px;
+         font-size: 0.88rem;
+<span class="hunk">@@ -481,8 +574,8 @@</span>
+         font-family: 'Space Mono', monospace;
+         line-height: 1;
+       }
+<span class="del">-      .ir-quiz-score-lbl { font-size: 0.68rem; opacity: 0.6; letter-spacing: 0.06em; }</span>
+<span class="del">-      .ir-quiz-score-divider { width: 1px; height: 36px; background: rgba(198,199,189,0.18); }</span>
+<span class="add">+      .ir-quiz-score-lbl { font-size: 0.68rem; color: ${solid(BrandColors.shell, 60, PAGE)}; letter-spacing: 0.06em; }</span>
+<span class="add">+      .ir-quiz-score-divider { width: 1px; height: 36px; background: ${solid(BrandColors.shell, 18, PAGE)}; }</span>
+     `;
+ 
+     const styleEl = document.createElement('style');
+<span class="hunk">@@ -501,6 +594,7 @@</span>
+         'border-style',
+         'border-top-style', 'border-right-style',
+         'border-bottom-style', 'border-left-style',
+<span class="add">+        'fx', 'fx-core', 'fx-dim',</span>
+       ];
+     }
+ 
+<span class="hunk">@@ -519,11 +613,13 @@</span>
+         if (newVal === 'true' &amp;&amp; oldVal !== 'true') this._onActivated();
+       } else if (this.getAttribute('active') === 'true') {
+         this._applyBorderStyles();
+<span class="add">+        this._applyFx();</span>
+       }
+     }
+ 
+     _onActivated() {
+       this._applyBorderStyles();
+<span class="add">+      this._applyFx();</span>
+ 
+       /* ── 測驗模式優先接管 ── */
+       if (this.hasAttribute('quiz')) {
+<span class="hunk">@@ -567,7 +663,7 @@</span>
+ 
+         this.style[`${p}Width`] = w + 'px';
+         this.style[`${p}Style`] = w &gt; 0 ? s : 'none';
+<span class="del">-        this.style[`${p}Color`] = w &gt; 0 ? hex : 'transparent';</span>
+<span class="add">+        this.style[`${p}Color`] = hex;</span>
+       });
+     }
+ 
+<span class="hunk">@@ -578,6 +674,40 @@</span>
+       });
+     }
+ 
+<span class="add">+    /* 電流特效：ir-gold 預設開啟，其他顏色要加 fx="electric"。</span>
+<span class="add">+       fx="off" 或 InfoRegionConfig.fx = false 則關閉。可用 fx-core、fx-dim 自訂亮點色與暗部色。 */</span>
+<span class="add">+    _applyFx() {</span>
+<span class="add">+      const cfg  = window.InfoRegionConfig;</span>
+<span class="add">+      const gold = this.classList.contains('ir-gold');</span>
+<span class="add">+      const mode = this.getAttribute('fx') || (gold ? 'electric' : '');</span>
+<span class="add">+      const on   = cfg.fx !== false &amp;&amp; mode === 'electric';</span>
+<span class="add">+      const bolt = this.querySelector(':scope &gt; .ir-fx-bolt');</span>
+<span class="add">+</span>
+<span class="add">+      if (!on) {</span>
+<span class="add">+        this.removeAttribute('data-ir-fx');</span>
+<span class="add">+        ['--ir-fx-edge', '--ir-fx-dim', '--ir-fx-core'].forEach(k =&gt; this.style.removeProperty(k));</span>
+<span class="add">+        if (bolt) bolt.remove();</span>
+<span class="add">+        return;</span>
+<span class="add">+      }</span>
+<span class="add">+</span>
+<span class="add">+      const edge = gold</span>
+<span class="add">+        ? BrandColors.gold</span>
+<span class="add">+        : (BrandColors[this.getAttribute('color') || cfg.defaultColor] || BrandColors.sky);</span>
+<span class="add">+      const dim  = this.getAttribute('fx-dim')  || (gold ? '#6B4F12' : solid('#000000', 55, edge));</span>
+<span class="add">+      const core = this.getAttribute('fx-core') || BrandColors.focus;</span>
+<span class="add">+</span>
+<span class="add">+      this.setAttribute('data-ir-fx', 'electric');</span>
+<span class="add">+      this.style.setProperty('--ir-fx-edge', edge);</span>
+<span class="add">+      this.style.setProperty('--ir-fx-dim',  dim);</span>
+<span class="add">+      this.style.setProperty('--ir-fx-core', core);</span>
+<span class="add">+</span>
+<span class="add">+      if (!bolt) {</span>
+<span class="add">+        const b = document.createElement('span');</span>
+<span class="add">+        b.className = 'ir-fx-bolt';</span>
+<span class="add">+        this.appendChild(b);</span>
+<span class="add">+      }</span>
+<span class="add">+    }</span>
+<span class="add">+</span>
+     _insertManualButton() {
+       if (this.querySelector('.ir-manual-wrap')) return;
+ 
+</pre>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="info-region.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* Bootstrap alert，取代 alert() */
+  function showAlert(msg, type) {
+    var d = document.createElement('div');
+    d.className = 'alert alert-' + (type || 'success') + ' alert-dismissible fade show';
+    d.setAttribute('role', 'alert');
+    d.innerHTML = esc(msg) + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    document.getElementById('alertBox').appendChild(d);
+    setTimeout(function () {
+      if (!d.parentNode) { return; }
+      try { bootstrap.Alert.getOrCreateInstance(d).close(); } catch (e) { d.remove(); }
+    }, 2600);
+  }
+
+  function dedent(text) {
+    var lines = text.replace(/^\n+/, '').replace(/\s+$/, '').split('\n');
+    var min = Infinity;
+    lines.forEach(function (l) {
+      if (!l.trim()) { return; }
+      var n = l.match(/^ */)[0].length;
+      if (n < min) { min = n; }
+    });
+    if (!isFinite(min)) { min = 0; }
+    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  }
+
+  /* 範例與原始碼用同一份文字產生，確保兩邊一致 */
+  document.querySelectorAll('.demo').forEach(function (box) {
+    var holder = box.querySelector('script[type="text/x-demo"]');
+    var code = dedent(holder.textContent);
+    box.querySelector('pre.src').textContent = code;
+    box.querySelector('.live').innerHTML = code;
+  });
+
+  /* 全域開關 */
+  var fxOn = true;
+  var btnFx = document.getElementById('btnFx');
+  btnFx.addEventListener('click', function () {
+    fxOn = !fxOn;
+    window.InfoRegionConfig.fx = fxOn;
+    btnFx.textContent = fxOn ? '全域關閉電流' : '全域開啟電流';
+    ['g1', 'g2', 'g3'].forEach(function (id) { document.getElementById(id).start(); });
+    showAlert(fxOn ? '已開啟電流，範例已重新啟動。' : '已關閉電流，範例已重新啟動。');
+  });
+  document.getElementById('btnReplay2').addEventListener('click', function () {
+    document.getElementById('g2').start();
+  });
+
+  /* 即時透明度檢查 */
+  function audit() {
+    var el = document.getElementById('info-region-styles');
+    var css = el ? el.textContent : '';
+    var rows = [];
+    var low = [], all = [];
+    var re = /(rgba|hsla)\(([^)]*)\)/gi, m;
+    while ((m = re.exec(css))) {
+      var parts = m[2].split(/[,\/]/).map(function (x) { return x.trim(); });
+      var a = parseFloat(parts[parts.length - 1]);
+      if (parts.length >= 4 && !isNaN(a)) { all.push(a); if (a < 0.78) { low.push(m[0]); } }
+    }
+    var hex8 = (css.match(/#[0-9a-fA-F]{8}\b/g) || []).filter(function (h) {
+      return parseInt(h.slice(7, 9), 16) / 255 < 0.78;
+    });
+    var transparent = (css.match(/\btransparent\b/gi) || []).length;
+    var opLow = [];
+    var reOp = /opacity:\s*(0?\.\d+)/g;
+    while ((m = reOp.exec(css))) { if (parseFloat(m[1]) < 0.78) { opLow.push(m[0]); } }
+
+    function row(name, ok, note) {
+      rows.push('<tr><td>' + esc(name) + '</td><td class="' + (ok ? 'pass' : 'fail') + '">' + (ok ? '通過' : '未通過') + '</td><td>' + esc(note) + '</td></tr>');
+    }
+    row('rgba、hsla 低於 0.78', low.length === 0,
+        '共 ' + all.length + ' 處' + (all.length ? '，最低 ' + Math.min.apply(null, all) : '') + (low.length ? '，低於標準：' + low.join('、') : ''));
+    row('8 位數色碼低於 0.78', hex8.length === 0, '低於標準的有 ' + hex8.length + ' 處');
+    row('transparent 關鍵字', transparent === 0, '共 ' + transparent + ' 處');
+    row('opacity 低於 0.78（不含 0 與 1）', opLow.length === 0, opLow.length ? opLow.join('、') : '沒有半透明的 opacity，0 與 1 是淡入淡出的狀態切換');
+    document.getElementById('auditBody').innerHTML = rows.join('');
+  }
+  audit();
+})();
+</script>
+</body>
+</html>
