@@ -180,11 +180,12 @@
   <header class="page-head">
     <h1>ink-pen 極簡畫筆層</h1>
     <p>螢幕錄影時的最小標註工具。只保留觸控筆、雷射筆、筆跡色彩、清除與收合，工具列預設是右下角一顆 40px 的小圓鈕，不會壓到錄影主體區。零依賴，單獨一支 js 丟進任何頁面就能用。</p>
-    <p class="meta">最新版本 v3　10-28-26</p>
+    <p class="meta">最新版本 v4　10-28-26</p>
     <nav class="ver-nav">
       <a href="#v1">v1　10-27-26</a>
       <a href="#v2">v2　10-28-26　座標模式與自訂筆色</a>
       <a href="#v3">v3　10-28-26　行內手寫空格</a>
+      <a href="#v4">v4　10-28-26　解答顯示</a>
     </nav>
   </header>
 
@@ -227,6 +228,7 @@
         <tr><td><kbd>0</kbd></td><td>關閉繪圖，回到一般點選與捲動</td></tr>
         <tr><td><kbd>C</kbd></td><td>清除全部筆跡</td></tr>
         <tr><td><kbd>H</kbd></td><td>收合或展開工具列</td></tr>
+        <tr><td><kbd>A</kbd></td><td>顯示或收起全部解答（v4）</td></tr>
         <tr><td><kbd>Esc</kbd></td><td>關閉手寫視窗（v3）</td></tr>
       </table>
       <p style="margin-top:16px;font-size:0.88rem;color:#9A9B94">游標停在輸入框或下拉選單裡時，快捷鍵不會觸發，可以放心打字；手寫視窗開著時也只有 Esc 有效。</p>
@@ -379,8 +381,10 @@ InkPen.bar().setExtraColor(null);     // 移除自訂色</pre>
 
   <!-- ===================== v3 ===================== -->
   <div class="version-band" id="v3">
-    <h2>v3　10-28-26</h2>
+    <h2>v3　10-28-26　（v3.1、v3.2 修正）</h2>
     <p>新增 <code>&lt;ink-handwrite&gt;</code> 行內手寫空格：底線長度決定空格寬度，點一下開手寫視窗，確認後筆跡填回空格。</p>
+    <p style="margin-top:10px">v3.1 修正三件事：元件在文件解析完才讀取底線長度，避免底線殘留與格數誤判；空格高度壓在 1.55em 以內，不會超出行框壓到上一行；筆跡改為絕對定位並加上 <code>overflow:hidden</code>，不會溢出到鄰近文字。</p>
+    <p style="margin-top:10px">v3.2 移除元件內所有畫面提示訊息，錄影時不會有東西跳出來；設定錯誤改寫入 console。<code>InkPen.showAlert</code> 一併移除，本頁的操作紀錄改由下方的紀錄區呈現。</p>
   </div>
 
   <h2 class="section-title">行內手寫空格　ink-handwrite</h2>
@@ -391,21 +395,21 @@ InkPen.bar().setExtraColor(null);     // 移除自訂色</pre>
 
     <p class="cloze">
       <span class="zh">我想談談書法，那是我在暑假期間開始學的。</span>
-      I'd like to talk about <ink-handwrite>___________</ink-handwrite>, which I
-      <ink-handwrite>_________</ink-handwrite> during the summer break.
+      I'd like to talk about <ink-handwrite answer="calligraphy">___________</ink-handwrite>, which I
+      <ink-handwrite answer="picked up">_________</ink-handwrite> during the summer break.
     </p>
 
     <p class="cloze">
       <span class="zh">那條老街的窄巷裡飄著麻油與線香的氣味。</span>
-      The narrow lanes are <ink-handwrite>__________</ink-handwrite> the smell of sesame oil
-      and <ink-handwrite>_______</ink-handwrite>.
+      The narrow lanes are <ink-handwrite answer="steeped in">__________</ink-handwrite> the smell of sesame oil
+      and <ink-handwrite answer="incense">_______</ink-handwrite>.
     </p>
 
     <p class="cloze">
       <span class="zh">多數人最後待得比原本計畫的久很多。</span>
-      Most of them <ink-handwrite>________</ink-handwrite> staying far
-      <ink-handwrite>_____</ink-handwrite> than planned, and nobody
-      <ink-handwrite>_______________</ink-handwrite> about it.
+      Most of them <ink-handwrite answer="ended up">________</ink-handwrite> staying far
+      <ink-handwrite answer="longer">_____</ink-handwrite> than planned, and nobody
+      <ink-handwrite answer="complained">_______________</ink-handwrite> about it.
     </p>
 
     <p style="margin-top:20px">
@@ -474,7 +478,82 @@ document.addEventListener('ink-written', function (e) {
     </div>
   </div>
 
-  <h2 class="section-title">三個版本的標籤對照</h2>
+  <!-- ===================== v4 ===================== -->
+  <div class="version-band" id="v4">
+    <h2>v4　10-28-26</h2>
+    <p>新增 <code>answer</code> 屬性與解答顯示：空格右側長出一顆小圓點，點它顯示該格解答，<kbd class="inline">A</kbd> 一次切換全部。</p>
+  </div>
+
+  <h2 class="section-title">解答顯示　answer</h2>
+
+  <div class="card">
+    <h3>直接試</h3>
+    <p style="margin-bottom:18px">上面那三句教材的空格都已經加上 <code>answer</code>，每格右側都有一顆小圓點。點圓點顯示該格解答，再點一次收起；按 <kbd class="inline">A</kbd> 則是全部一起切換。圓點在解答顯示中會變成嫩綠色實心。</p>
+    <p>
+      <button type="button" class="demo-btn" id="show-answers">顯示全部解答</button>
+      <button type="button" class="demo-btn" id="hide-answers">收起全部解答</button>
+    </p>
+    <p style="margin-top:16px;font-size:0.95rem;color:#9A9B94">第三句的 <code>longer</code> 只給了 5 條底線，可以看到解答自動縮小塞進空格；<code>complained</code> 給了 15 條，則會以原字級顯示。</p>
+  </div>
+
+  <div class="tip">
+    解答顯示是<b>破壞性</b>的：該格原有的手寫筆跡會被丟掉，收起解答後空格回到空白的筆圖示，可以重寫。這是你指定的行為，等於「對完答案就翻篇」。
+  </div>
+
+  <div class="grid-2e" style="margin-top:28px">
+    <div class="card">
+      <h3>圓點為什麼在框外</h3>
+      <p>圓點放在空格右側外緣並垂直置中，不佔用書寫區域，也不會被空格的裁切範圍切掉。有寫 <code>answer</code> 的空格才會長出圓點，右側會自動多留 17px。</p>
+      <p style="margin-top:12px">圓點的 <code>z-index</code> 高於繪圖層，所以<b>筆或雷射開著時圓點仍然點得到</b>，不必先按 <kbd class="inline">0</kbd>。代價是每格少掉約 9px 的可繪圖面積。</p>
+    </div>
+    <div class="card">
+      <h3>解答放不下怎麼辦</h3>
+      <p>解答以單行不換行顯示，寬度超過空格時等比縮小，下限 0.6 倍。縮到下限仍放不下就會在 console 提醒你該格的底線給太短，但畫面上不會跳任何東西。</p>
+      <p style="margin-top:12px">若省略底線只寫 <code>answer</code>，格數直接由答案長度決定（一樣收斂在 5 到 15），省得數底線。</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">v4 用法與介面</h2>
+  <div class="grid-2e">
+    <div>
+      <p class="code-label new">標籤寫法</p>
+      <pre class="new">&lt;ink-handwrite answer="conveniently"&gt;
+  ___________
+&lt;/ink-handwrite&gt;
+
+&lt;!-- 省略底線，格數由答案長度決定 --&gt;
+&lt;ink-handwrite answer="calligraphy"&gt;&lt;/ink-handwrite&gt;
+
+&lt;!-- 沒有 answer 就沒有圓點，A 鍵也不影響它 --&gt;
+&lt;ink-handwrite&gt;________&lt;/ink-handwrite&gt;</pre>
+    </div>
+    <div>
+      <p class="code-label new">v4 新增介面</p>
+      <pre class="new">// 單一空格
+blank.answer;         // 解答字串
+blank.hasAnswer();
+blank.answerShown();
+blank.showAnswer();   // 會丟掉該格手寫
+blank.hideAnswer();
+blank.toggleAnswer();
+
+// 整頁，只影響有 answer 的空格
+InkPen.answerBlanks();
+InkPen.showAnswers(true);
+InkPen.showAnswers(false);
+InkPen.toggleAnswers();   // A 鍵呼叫的就是這個
+
+// 切換時冒泡的事件
+document.addEventListener('ink-answer', function (e) {
+  e.detail.el;      // 哪個空格
+  e.detail.shown;   // true 顯示、false 收起
+  e.detail.answer;  // 解答字串
+  e.detail.slots;   // 該空格的格數
+});</pre>
+    </div>
+  </div>
+
+  <h2 class="section-title">版本標籤對照</h2>
   <div class="grid-3">
     <div>
       <p class="code-label">v1</p>
@@ -499,7 +578,7 @@ document.addEventListener('ink-written', function (e) {
 &lt;!-- 沒有行內手寫 --&gt;</pre>
     </div>
     <div>
-      <p class="code-label new">v3（屬性全為選用）</p>
+      <p class="code-label new">v4（屬性全為選用）</p>
       <pre class="new">&lt;ui-ink-layer
     data-anchor="document"&gt;
 &lt;/ui-ink-layer&gt;
@@ -508,7 +587,9 @@ document.addEventListener('ink-written', function (e) {
     extra-label="純白 white"&gt;
 &lt;/ui-ink-bar&gt;
 
-&lt;ink-handwrite&gt;______
+&lt;ink-handwrite
+    answer="conveniently"&gt;
+  ___________
 &lt;/ink-handwrite&gt;</pre>
     </div>
   </div>
@@ -565,23 +646,40 @@ document.addEventListener('ink-written', function (e) {
   document.addEventListener('ink-written', function (e) {
     var all = window.InkPen.blanks();
     var idx = all.indexOf(e.detail.el) + 1;
+    logLine('第 ' + idx + ' 個空格（' + e.detail.slots + ' 格寬）'
+      + (e.detail.empty ? ' 已清空' : ' 已填入筆跡'));
+  });
+
+  function logLine(text) {
     var time = new Date().toLocaleTimeString('zh-Hant', { hour12: false });
     var line = document.createElement('div');
-    line.textContent = time + '　第 ' + idx + ' 個空格（' + e.detail.slots + ' 格寬）'
-      + (e.detail.empty ? ' 已清空' : ' 已填入筆跡');
+    line.textContent = time + '　' + text;
     if (writeLog.firstChild && writeLog.firstChild.nodeType === 3) writeLog.innerHTML = '';
     writeLog.insertBefore(line, writeLog.firstChild);
-  });
+  }
 
   document.getElementById('clear-blanks').addEventListener('click', function () {
     window.InkPen.clearBlanks();
-    window.InkPen.showAlert('所有空格已清空。', 'info');
+    logLine('所有空格已清空');
+  });
+
+  /* ---------- 解答切換 ---------- */
+  document.addEventListener('ink-answer', function (e) {
+    logLine('解答「' + e.detail.answer + '」' + (e.detail.shown ? '已顯示' : '已收起'));
+  });
+
+  document.getElementById('show-answers').addEventListener('click', function () {
+    window.InkPen.showAnswers(true);
+  });
+
+  document.getElementById('hide-answers').addEventListener('click', function () {
+    window.InkPen.showAnswers(false);
   });
 
   document.getElementById('count-blanks').addEventListener('click', function () {
     var all = window.InkPen.blanks();
     var done = all.filter(function (b) { return b.hasInk(); }).length;
-    window.InkPen.showAlert('已填入 ' + done + ' / ' + all.length + ' 個空格。', 'info');
+    logLine('已填入 ' + done + ' / ' + all.length + ' 個空格');
   });
 </script>
 

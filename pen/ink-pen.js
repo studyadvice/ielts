@@ -1,8 +1,12 @@
-/*
+/* =========================================================
+ * ink-pen.js
+ * 螢幕錄影用極簡畫筆層（觸控筆 / 雷射筆 / 行內手寫空格）
+ * 零依賴，單檔即可運作
+ *
  * 自訂標籤：
  *   <ui-ink-layer>    全頁繪圖層（觸控筆、雷射筆）
  *   <ui-ink-bar>      迷你工具列（可收合成一顆小圓鈕）
- *   <ink-handwrite>   行內手寫空格，內容以底線長度決定寬度
+ *   <ink-handwrite>   行內手寫空格，內容以底線長度決定寬度，可加 answer 屬性附解答
  *   <ui-ink-modal>    手寫視窗（首次需要時自動建立，不必自己放）
  *
  * 對外介面：window.InkPen
@@ -12,18 +16,25 @@
  *   .blanks()             取得頁面上所有 <ink-handwrite>
  *   .palette              配色表
  *
+ * 本元件不在畫面上顯示任何提示訊息，設定錯誤只寫入 console，
+ * 以免錄影時跳出東西干擾畫面。
+ *
  * 快捷鍵：
  *   1  觸控筆
  *   3  雷射筆
  *   0  關閉繪圖，回到一般點選
  *   C  清除全部筆跡
  *   H  收合／展開工具列
+ *   A  顯示／收起全部解答
  *   Esc  關閉手寫視窗
  *
  * 版本紀錄：
  *   v1（10-27-26）觸控筆、雷射筆、筆色、粗細 3 至 12、清除、收合工具列
  *   v2（10-28-26）data-anchor 座標模式（視窗／文件）、extra-color 自訂筆色
  *   v3（10-28-26）<ink-handwrite> 行內手寫空格與手寫視窗
+ *   v3.1（10-28-26）修正解析器先行升級導致底線殘留、格數誤判與筆跡溢出行框
+ *   v3.2（10-28-26）移除畫面提示訊息，錯誤改寫入 console
+ *   v4（10-28-26）answer 屬性與解答顯示：空格右側小圓點單格切換，A 鍵全部切換
  * ========================================================= */
 (function () {
   'use strict';
@@ -61,25 +72,18 @@
   var SLOT_MAX = 15;
   var SLOT_FALLBACK = 10;
 
+  /* 解答文字縮小的下限倍率 */
+  var ANSWER_MIN_SCALE = 0.6;
+
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
   var PEN_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">'
     + '<path d="M3 17.3V21h3.7L17.6 10.1l-3.7-3.7L3 17.3zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.7 3.7L20.7 7z" '
     + 'fill="currentColor"/></svg>';
 
-  /* ---------- 提示訊息（bootstrap alert 風格，不使用 alert） ---------- */
-  function showAlert(msg, type) {
-    var host = document.querySelector('ui-ink-alerts');
-    if (!host) {
-      host = document.createElement('ui-ink-alerts');
-      document.body.appendChild(host);
-    }
-    var box = document.createElement('div');
-    box.className = 'ip-alert ' + (type === 'info' ? 'ip-alert-info' : 'ip-alert-warn');
-    box.textContent = msg;
-    host.appendChild(box);
-    setTimeout(function () { box.classList.add('ip-out'); }, 2000);
-    setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 2400);
+  /* ---------- 設定錯誤只寫入 console，畫面上不出現任何提示 ---------- */
+  function warn(msg) {
+    if (window.console && console.warn) console.warn('[ink-pen] ' + msg);
   }
 
   /* ---------- 樣式（僅注入一次） ---------- */
@@ -131,22 +135,42 @@
 
       /* ---- 行內手寫空格 ----
        * 高度壓在 1.55em 以內，避免超出 line-height 1.5 的行框而壓到上一行；
-       * 筆跡以絕對定位鎖在框內，overflow:hidden 作為最後一道保險。
+       * 內容裝在 .ih-clip 裡並裁切，解答圓點則留在框外不被裁掉。
        */
       + 'ink-handwrite{display:inline-flex;align-items:center;justify-content:center;'
-      + 'vertical-align:-0.3em;height:1.55em;cursor:pointer;position:relative;overflow:hidden;'
+      + 'vertical-align:-0.3em;height:1.55em;cursor:pointer;position:relative;'
       + 'width:calc(var(--ih-n,10) * 1.05ch);margin:0 3px;padding:0;'
       + 'border-bottom:2px solid rgba(13,165,145,0.86);border-radius:3px 3px 0 0;'
       + 'transition:background .15s ease,border-color .15s ease;}'
       + 'ink-handwrite:hover{background:rgba(13,165,145,0.2);border-color:var(--c-ocean,#1CCAE8);}'
+      + 'ink-handwrite.ih-has-answer{margin-right:17px;}'
+      + 'ink-handwrite .ih-clip{position:absolute;inset:0;overflow:hidden;'
+      + 'display:flex;align-items:center;justify-content:center;pointer-events:none;}'
       + 'ink-handwrite .ih-icon{display:flex;align-items:center;justify-content:center;'
-      + 'color:rgba(198,199,189,0.82);pointer-events:none;}'
+      + 'color:rgba(198,199,189,0.82);}'
       + 'ink-handwrite:hover .ih-icon{color:var(--c-ocean,#1CCAE8);}'
-      + 'ink-handwrite img{position:absolute;left:4px;top:2px;'
+      + 'ink-handwrite .ih-clip img{position:absolute;left:4px;top:2px;'
       + 'width:calc(100% - 8px);height:calc(100% - 6px);'
-      + 'object-fit:contain;display:block;pointer-events:none;}'
+      + 'object-fit:contain;display:block;}'
       + 'ink-handwrite.ih-filled{border-color:rgba(179,222,115,0.86);}'
       + 'ink-handwrite.ih-filled .ih-icon{display:none;}'
+
+      /* ---- 解答 ---- */
+      + 'ink-handwrite .ih-ans{display:none;white-space:nowrap;line-height:1.4;'
+      + 'color:var(--c-special,#B3DE73);transform-origin:center center;}'
+      + 'ink-handwrite.ih-answered .ih-ans{display:block;}'
+      + 'ink-handwrite.ih-answered .ih-icon{display:none;}'
+      + 'ink-handwrite.ih-answered{border-bottom-width:3px;'
+      + 'border-color:rgba(179,222,115,0.86);}'
+      /* 圓點的 z-index 高於繪圖層，所以開著筆也點得到 */
+      + 'ink-handwrite .ih-dot{position:absolute;right:-13px;top:50%;'
+      + 'width:9px;height:9px;margin-top:-5px;border-radius:50%;z-index:830;cursor:pointer;'
+      + 'border:1px solid rgba(198,199,189,0.82);background:rgba(12,13,12,0.86);'
+      + 'transition:background .12s ease,border-color .12s ease;}'
+      + 'ink-handwrite .ih-dot:hover{background:var(--c-ocean,#1CCAE8);'
+      + 'border-color:var(--c-ocean,#1CCAE8);}'
+      + 'ink-handwrite.ih-answered .ih-dot{background:var(--c-special,#B3DE73);'
+      + 'border-color:var(--c-special,#B3DE73);}'
 
       /* ---- 手寫視窗 ---- */
       + 'ui-ink-modal{position:fixed;inset:0;z-index:960;display:none;'
@@ -172,15 +196,6 @@
       + 'color:#07211D;font-weight:600;}'
       + '.ipm-ok:hover{color:#07211D;border-color:var(--c-teal,#0DA591);}'
 
-      /* ---- 提示訊息 ---- */
-      + 'ui-ink-alerts{position:fixed;right:20px;bottom:76px;z-index:980;'
-      + 'display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;}'
-      + '.ip-alert{font-size:0.88rem;line-height:1.4;padding:9px 16px;border-radius:8px;'
-      + 'max-width:360px;background:rgba(23,24,26,0.94);box-shadow:0 6px 20px rgba(0,0,0,0.82);'
-      + 'transition:opacity .35s ease;}'
-      + '.ip-alert.ip-out{opacity:0;}'
-      + '.ip-alert-info{border-left:4px solid var(--c-teal,#0DA591);color:var(--c-focus,#D4FFFC);}'
-      + '.ip-alert-warn{border-left:4px solid var(--c-warning,#E6374B);color:var(--c-salmon,#E5C3B3);}'
       ;
     var style = document.createElement('style');
     style.id = 'ink-pen-styles';
@@ -444,36 +459,68 @@
    * 也可改用 data-slots="12" 直接指定。
    * ========================================================= */
   class InkHandwrite extends HTMLElement {
+    /* 本檔在 <head> 載入時，解析器一讀到起始標籤就會升級元件，
+     * 此時標籤內的底線還沒進來，因此等文件解析完才讀長度。 */
     connectedCallback() {
+      if (this._built) return;
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this._init(), { once: true });
+        return;
+      }
+      this._init();
+    }
+
+    _init() {
       if (this._built) return;
       this._built = true;
 
-      var raw = (this.getAttribute('data-slots') || this.textContent || '');
+      this._answer = (this.getAttribute('answer') || '').trim();
+
       var n = Number(this.getAttribute('data-slots'));
       if (!n) {
-        var hits = String(raw).match(/[_＿]/g);
-        n = hits ? hits.length : SLOT_FALLBACK;
+        var hits = String(this.textContent || '').match(/[_＿]/g);
+        /* 沒寫底線時，用答案長度推算格數 */
+        n = hits ? hits.length : (this._answer ? this._answer.length : SLOT_FALLBACK);
       }
       this._slots = Math.min(SLOT_MAX, Math.max(SLOT_MIN, n));
       this.style.setProperty('--ih-n', this._slots);
 
-      this._raw = String(this.textContent || '').trim();
-      this.innerHTML = '<span class="ih-icon">' + PEN_ICON + '</span>';
+      this.innerHTML =
+        '<span class="ih-clip">' +
+        '<span class="ih-icon">' + PEN_ICON + '</span>' +
+        '<span class="ih-ans" data-role="ans"></span>' +
+        '</span>' +
+        (this._answer ? '<span class="ih-dot" data-role="dot" title="顯示解答"></span>' : '');
+
+      this._clip = this.querySelector('.ih-clip');
+      this._ansEl = this.querySelector('[data-role="ans"]');
+      this._ansEl.textContent = this._answer;
+      this.classList.toggle('ih-has-answer', !!this._answer);
       this.setAttribute('title', '點一下用觸控筆手寫（' + this._slots + ' 格寬）');
 
       this.addEventListener('click', () => {
-        var modal = ensureModal();
-        modal.open(this);
+        if (this.classList.contains('ih-answered')) this.hideAnswer();
+        ensureModal().open(this);
       });
+
+      var dot = this.querySelector('[data-role="dot"]');
+      if (dot) {
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.toggleAnswer();
+        });
+      }
     }
 
     get slots() { return this._slots; }
+    get answer() { return this._answer || ''; }
+
     getInk() { return this._ink || null; }
     hasInk() { return !!this._ink; }
 
     setInk(dataUrl) {
       this._ink = dataUrl || null;
-      var img = this.querySelector('img');
+      var img = this._clip.querySelector('img');
       if (!dataUrl) {
         if (img) img.remove();
         this.classList.remove('ih-filled');
@@ -482,13 +529,61 @@
       if (!img) {
         img = document.createElement('img');
         img.alt = '';
-        this.appendChild(img);
+        this._clip.appendChild(img);
       }
       img.src = dataUrl;
       this.classList.add('ih-filled');
     }
 
     clearInk() { this.setInk(null); }
+
+    /* ---------- 解答 ---------- */
+    hasAnswer() { return !!this._answer; }
+    answerShown() { return this.classList.contains('ih-answered'); }
+
+    /* 顯示解答會覆蓋手寫，筆跡不保留 */
+    showAnswer() {
+      if (!this._answer || this.answerShown()) return false;
+      if (this._ink) this.setInk(null);
+      this.classList.add('ih-answered');
+      this._fitAnswer();
+      this._emitAnswer(true);
+      return true;
+    }
+
+    hideAnswer() {
+      if (!this.answerShown()) return false;
+      this.classList.remove('ih-answered');
+      this._emitAnswer(false);
+      return true;
+    }
+
+    toggleAnswer() {
+      return this.answerShown() ? !this.hideAnswer() : this.showAnswer();
+    }
+
+    /* 答案比空格長時等比縮小，下限 0.6 倍 */
+    _fitAnswer() {
+      var el = this._ansEl;
+      el.style.transform = 'none';
+      var avail = this.clientWidth - 8;
+      var need = el.scrollWidth;
+      if (!need || need <= avail) return;
+      var ratio = avail / need;
+      if (ratio < ANSWER_MIN_SCALE) {
+        warn('答案「' + this._answer + '」在 ' + this._slots
+          + ' 格寬的空格裡放不下，已縮到下限 ' + ANSWER_MIN_SCALE + ' 倍，建議加長底線。');
+        ratio = ANSWER_MIN_SCALE;
+      }
+      el.style.transform = 'scale(' + ratio + ')';
+    }
+
+    _emitAnswer(shown) {
+      this.dispatchEvent(new CustomEvent('ink-answer', {
+        bubbles: true,
+        detail: { el: this, shown: shown, answer: this._answer, slots: this._slots }
+      }));
+    }
   }
   customElements.define('ink-handwrite', InkHandwrite);
 
@@ -733,7 +828,6 @@
         bubbles: true,
         detail: { el: target, dataUrl: url, empty: !url, slots: target.slots }
       }));
-      
       this.close();
     }
   }
@@ -805,7 +899,7 @@
       var hex = (this.getAttribute('extra-color') || '').trim();
       if (!hex) return null;
       if (!HEX_RE.test(hex)) {
-        
+        warn('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
         return null;
       }
       var label = (this.getAttribute('extra-label') || '').trim();
@@ -840,7 +934,7 @@
         return null;
       }
       if (!HEX_RE.test(String(hex).trim())) {
-        
+        warn('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
         return null;
       }
       if (label) this.setAttribute('extra-label', label);
@@ -892,20 +986,12 @@
     /* 座標模式的便捷入口，實際狀態仍存在繪圖層 */
     setAnchor(mode) {
       if (!this.layer) return null;
-      var next = this.layer.setAnchor(mode);
-      
-      return next;
+      return this.layer.setAnchor(mode);
     }
     getAnchor() { return this.layer ? this.layer.getAnchor() : null; }
 
     clear() {
-      if (!this.layer) return;
-      if (this.layer.isEmpty()) {
-        
-        return;
-      }
-      this.layer.clear();
-
+      if (this.layer) this.layer.clear();
     }
 
     toggleBar(force) {
@@ -929,6 +1015,7 @@
           case '0': this.setMode('off'); break;
           case 'c': case 'C': this.clear(); break;
           case 'h': case 'H': this.toggleBar(); break;
+          case 'a': case 'A': window.InkPen.toggleAnswers(); break;
           default: return;
         }
         e.preventDefault();
@@ -945,7 +1032,6 @@
     widthRange: { min: WIDTH_MIN, max: WIDTH_MAX, def: WIDTH_DEFAULT },
     handwriteRange: { min: HW_MIN, max: HW_MAX, def: HW_DEFAULT },
     slotRange: { min: SLOT_MIN, max: SLOT_MAX },
-    showAlert: showAlert,
     layer: function () { return document.querySelector('ui-ink-layer'); },
     bar: function () { return document.querySelector('ui-ink-bar'); },
     modal: function () { return ensureModal(); },
@@ -954,6 +1040,24 @@
     },
     clearBlanks: function () {
       this.blanks().forEach(function (b) { b.clearInk(); });
+    },
+    /* 只影響有 answer 屬性的空格 */
+    answerBlanks: function () {
+      return this.blanks().filter(function (b) { return b.hasAnswer && b.hasAnswer(); });
+    },
+    showAnswers: function (on) {
+      var show = (on === undefined) ? true : !!on;
+      this.answerBlanks().forEach(function (b) {
+        if (show) b.showAnswer(); else b.hideAnswer();
+      });
+      return show;
+    },
+    /* 只要還有沒顯示的就全部顯示，否則全部收起 */
+    toggleAnswers: function () {
+      var list = this.answerBlanks();
+      if (!list.length) return false;
+      var anyHidden = list.some(function (b) { return !b.answerShown(); });
+      return this.showAnswers(anyHidden);
     }
   };
 })();
