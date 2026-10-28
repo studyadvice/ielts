@@ -457,6 +457,50 @@ class SliderShow extends HTMLElement {
     return results;
   }
 
+  // 依全域順序（部分由小到大、部分內依 HTML 順序）取得目前投影片的上一張
+  getPreviousGlobalSlide() {
+    const parts = Object.keys(this.partsData).map(Number).sort((a, b) => a - b);
+    const ordered = [];
+    parts.forEach((p) => ordered.push(...this.partsData[p]));
+    const current = this.getCurrentPartSlides()[this.currentSlideInPart];
+    const idx = ordered.indexOf(current);
+    return idx > 0 ? ordered[idx - 1] : null;
+  }
+
+  // 把 sourceSlide 的測驗結果寫到 targetSlide 頂端；sourceSlide 沒有測驗時不動作
+  renderQuizResults(sourceSlide, targetSlide) {
+    const quizResults = this.showQuizResults(sourceSlide);
+    if (!quizResults || quizResults.length === 0) return false;
+
+    let resultsContainer = targetSlide.querySelector('.quiz-results-auto');
+    if (!resultsContainer) {
+      resultsContainer = document.createElement('div');
+      resultsContainer.className = 'quiz-results-auto';
+      targetSlide.insertBefore(resultsContainer, targetSlide.firstChild);
+    }
+
+    let resultsHTML = '';
+    quizResults.forEach((quizResult) => {
+      resultsHTML += '<div class="quiz-result-group">';
+      quizResult.forEach((item, index) => {
+        const statusIcon = item.isCorrect ? '✓' : '✗';
+        const statusClass = item.isCorrect ? 'correct' : 'incorrect';
+        resultsHTML += `
+          <div class="quiz-result-item ${statusClass}">
+            <span class="quiz-result-icon">${statusIcon}</span>
+            <span class="quiz-result-label">第 ${index + 1} 空：</span>
+            <span class="quiz-result-user">你的答案：<strong>${item.userAnswer || '(未填)'}</strong></span>
+            <span class="quiz-result-correct">正確答案：<strong>${item.correctAnswer}</strong></span>
+          </div>
+        `;
+      });
+      resultsHTML += '</div>';
+    });
+
+    resultsContainer.innerHTML = resultsHTML;
+    return true;
+  }
+
   getTotalParts() {
     return Object.keys(this.partsData).length;
   }
@@ -567,6 +611,7 @@ class SliderShow extends HTMLElement {
         }, false);
 
         this.dispatchEvent(new CustomEvent('part-changed', {
+          bubbles: true,
           detail: { part: this.currentPart, total: this.getTotalParts() }
         }));
       }, false);
@@ -590,6 +635,7 @@ class SliderShow extends HTMLElement {
         }, true);
 
         this.dispatchEvent(new CustomEvent('part-changed', {
+          bubbles: true,
           detail: { part: this.currentPart, total: this.getTotalParts() }
         }));
       }, true);
@@ -613,6 +659,7 @@ class SliderShow extends HTMLElement {
       }, true);
 
       this.dispatchEvent(new CustomEvent('restarted', {
+        bubbles: true,
         detail: { part: this.currentPart }
       }));
     }, true);
@@ -742,44 +789,12 @@ class SliderShow extends HTMLElement {
   updateDisplay() {
     const slides = this.getCurrentPartSlides();
 
-    // 檢查並顯示測驗結果
-    if (this.currentSlideInPart > 0) {
-      const previousSlide = slides[this.currentSlideInPart - 1];
-      const currentSlide = slides[this.currentSlideInPart];
-
-      if (previousSlide && currentSlide) {
-        const quizResults = this.showQuizResults(previousSlide);
-        if (quizResults && quizResults.length > 0) {
-          // 在當前投影片中查找或創建結果顯示區域
-          let resultsContainer = currentSlide.querySelector('.quiz-results-auto');
-          if (!resultsContainer) {
-            resultsContainer = document.createElement('div');
-            resultsContainer.className = 'quiz-results-auto';
-            currentSlide.insertBefore(resultsContainer, currentSlide.firstChild);
-          }
-
-          // 生成結果 HTML
-          let resultsHTML = '';
-          quizResults.forEach((quizResult, quizIndex) => {
-            resultsHTML += '<div class="quiz-result-group">';
-            quizResult.forEach((item, index) => {
-              const statusIcon = item.isCorrect ? '✓' : '✗';
-              const statusClass = item.isCorrect ? 'correct' : 'incorrect';
-              resultsHTML += `
-                <div class="quiz-result-item ${statusClass}">
-                  <span class="quiz-result-icon">${statusIcon}</span>
-                  <span class="quiz-result-label">第 ${index + 1} 空：</span>
-                  <span class="quiz-result-user">你的答案：<strong>${item.userAnswer || '(未填)'}</strong></span>
-                  <span class="quiz-result-correct">正確答案：<strong>${item.correctAnswer}</strong></span>
-                </div>
-              `;
-            });
-            resultsHTML += '</div>';
-          });
-
-          resultsContainer.innerHTML = resultsHTML;
-        }
-      }
+    // 檢查並顯示測驗結果：依全域順序取上一張（跨部分也算），
+    // 讓部分最後一張的測驗結果顯示在下一部分的第一張
+    const currentSlideForQuiz = slides[this.currentSlideInPart];
+    const previousSlide = this.getPreviousGlobalSlide();
+    if (previousSlide && currentSlideForQuiz) {
+      this.renderQuizResults(previousSlide, currentSlideForQuiz);
     }
 
     slides.forEach((slide, index) => {
@@ -803,7 +818,8 @@ class SliderShow extends HTMLElement {
       partIndicator.style.display = 'none';
     }
 
-    const autoShowPartButtons = this.getAttribute('auto-show-part-buttons') === 'true';
+    // 分段按鈕預設顯示；明確設為 "false" 才隱藏
+    const autoShowPartButtons = this.getAttribute('auto-show-part-buttons') !== 'false';
     const showFinish = this.getAttribute('show-finish') !== 'false';
     const showRestart = this.getAttribute('show-restart') !== 'false';
 
@@ -908,7 +924,11 @@ class SliderShow extends HTMLElement {
 
     if (finishBtn) {
       finishBtn.addEventListener('click', () => {
+        // 最後一張若有測驗，沒有下一張可顯示結果，直接顯示在本張頂端
+        const lastSlide = this.getCurrentPartSlides()[this.currentSlideInPart];
+        if (lastSlide) this.renderQuizResults(lastSlide, lastSlide);
         this.dispatchEvent(new CustomEvent('finished', {
+          bubbles: true,
           detail: { part: this.currentPart, total: this.getTotalParts() }
         }));
       });
