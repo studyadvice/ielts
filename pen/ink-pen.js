@@ -1,17 +1,16 @@
-/* =========================================================
- * ink-pen.js
- * 螢幕錄影用極簡畫筆層（觸控筆 / 雷射筆）
- * 零依賴，單檔即可運作，不需要 cloze-handwrite.js
- *
+/*
  * 自訂標籤：
- *   <ui-ink-layer>  全頁繪圖層（觸控筆、雷射筆）
- *   <ui-ink-bar>    迷你工具列（可收合成一顆小圓鈕）
+ *   <ui-ink-layer>    全頁繪圖層（觸控筆、雷射筆）
+ *   <ui-ink-bar>      迷你工具列（可收合成一顆小圓鈕）
+ *   <ink-handwrite>   行內手寫空格，內容以底線長度決定寬度
+ *   <ui-ink-modal>    手寫視窗（首次需要時自動建立，不必自己放）
  *
  * 對外介面：window.InkPen
- *   .layer()            取得繪圖層實體
- *   .bar()              取得工具列實體
- *   .palette            配色表
- *   .showAlert(msg,type)  提示訊息（info / warn）
+ *   .layer()              取得繪圖層實體
+ *   .bar()                取得工具列實體
+ *   .modal()              取得手寫視窗實體
+ *   .blanks()             取得頁面上所有 <ink-handwrite>
+ *   .palette              配色表
  *
  * 快捷鍵：
  *   1  觸控筆
@@ -19,10 +18,12 @@
  *   0  關閉繪圖，回到一般點選
  *   C  清除全部筆跡
  *   H  收合／展開工具列
+ *   Esc  關閉手寫視窗
  *
  * 版本紀錄：
  *   v1（10-27-26）觸控筆、雷射筆、筆色、粗細 3 至 12、清除、收合工具列
  *   v2（10-28-26）data-anchor 座標模式（視窗／文件）、extra-color 自訂筆色
+ *   v3（10-28-26）<ink-handwrite> 行內手寫空格與手寫視窗
  * ========================================================= */
 (function () {
   'use strict';
@@ -49,7 +50,22 @@
   var WIDTH_MIN = 3;
   var WIDTH_MAX = 12;
   var WIDTH_DEFAULT = 3;
+
+  /* 手寫視窗的筆較粗，因為寫完會縮小塞進空格 */
+  var HW_MIN = 4;
+  var HW_MAX = 24;
+  var HW_DEFAULT = 10;
+
+  /* 底線數量的可辨識範圍 */
+  var SLOT_MIN = 5;
+  var SLOT_MAX = 15;
+  var SLOT_FALLBACK = 10;
+
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+  var PEN_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">'
+    + '<path d="M3 17.3V21h3.7L17.6 10.1l-3.7-3.7L3 17.3zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.7 3.7L20.7 7z" '
+    + 'fill="currentColor"/></svg>';
 
   /* ---------- 提示訊息（bootstrap alert 風格，不使用 alert） ---------- */
   function showAlert(msg, type) {
@@ -113,8 +129,51 @@
       + '.ip-swatch{width:16px;height:16px;border-radius:50%;flex:0 0 auto;'
       + 'border:1px solid rgba(198,199,189,0.82);}'
 
+      /* ---- 行內手寫空格 ----
+       * 高度壓在 1.55em 以內，避免超出 line-height 1.5 的行框而壓到上一行；
+       * 筆跡以絕對定位鎖在框內，overflow:hidden 作為最後一道保險。
+       */
+      + 'ink-handwrite{display:inline-flex;align-items:center;justify-content:center;'
+      + 'vertical-align:-0.3em;height:1.55em;cursor:pointer;position:relative;overflow:hidden;'
+      + 'width:calc(var(--ih-n,10) * 1.05ch);margin:0 3px;padding:0;'
+      + 'border-bottom:2px solid rgba(13,165,145,0.86);border-radius:3px 3px 0 0;'
+      + 'transition:background .15s ease,border-color .15s ease;}'
+      + 'ink-handwrite:hover{background:rgba(13,165,145,0.2);border-color:var(--c-ocean,#1CCAE8);}'
+      + 'ink-handwrite .ih-icon{display:flex;align-items:center;justify-content:center;'
+      + 'color:rgba(198,199,189,0.82);pointer-events:none;}'
+      + 'ink-handwrite:hover .ih-icon{color:var(--c-ocean,#1CCAE8);}'
+      + 'ink-handwrite img{position:absolute;left:4px;top:2px;'
+      + 'width:calc(100% - 8px);height:calc(100% - 6px);'
+      + 'object-fit:contain;display:block;pointer-events:none;}'
+      + 'ink-handwrite.ih-filled{border-color:rgba(179,222,115,0.86);}'
+      + 'ink-handwrite.ih-filled .ih-icon{display:none;}'
+
+      /* ---- 手寫視窗 ---- */
+      + 'ui-ink-modal{position:fixed;inset:0;z-index:960;display:none;'
+      + 'align-items:center;justify-content:center;background:rgba(12,13,12,0.9);}'
+      + 'ui-ink-modal.ip-on{display:flex;}'
+      + '.ipm-box{background:rgba(23,24,26,0.97);border:1px solid rgba(51,52,47,0.9);'
+      + 'border-radius:12px;padding:24px 28px;box-shadow:0 14px 44px rgba(0,0,0,0.86);}'
+      + '.ipm-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;}'
+      + '.ipm-head h4{margin:0;font-size:1.1rem;line-height:1.4;color:var(--c-focus,#D4FFFC);}'
+      + '.ipm-head span{font-size:0.85rem;line-height:1.4;color:#9a9b94;}'
+      + '.ipm-pad{position:relative;border-radius:10px;overflow:hidden;'
+      + 'background:rgba(15,16,14,0.95);border:1px solid rgba(58,59,55,0.9);}'
+      + '.ipm-pad canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair;}'
+      + '.ipm-base{position:absolute;left:5%;right:5%;bottom:28%;height:0;'
+      + 'border-top:1px dashed rgba(198,199,189,0.82);pointer-events:none;}'
+      + '.ipm-foot{display:flex;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap;}'
+      + '.ipm-foot .ipm-spacer{flex:1 1 auto;}'
+      + '.ipm-foot select,.ipm-foot input[type=number]{background:rgba(15,16,14,0.95);'
+      + 'border:1px solid rgba(58,59,55,0.9);color:var(--c-shell,#C6C7BD);border-radius:12px;'
+      + 'padding:6px 10px;font-size:0.88rem;line-height:1.4;}'
+      + '.ipm-foot input[type=number]{width:64px;}'
+      + '.ipm-ok{background:var(--c-teal,#0DA591);border-color:var(--c-teal,#0DA591);'
+      + 'color:#07211D;font-weight:600;}'
+      + '.ipm-ok:hover{color:#07211D;border-color:var(--c-teal,#0DA591);}'
+
       /* ---- 提示訊息 ---- */
-      + 'ui-ink-alerts{position:fixed;right:20px;bottom:76px;z-index:900;'
+      + 'ui-ink-alerts{position:fixed;right:20px;bottom:76px;z-index:980;'
       + 'display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;}'
       + '.ip-alert{font-size:0.88rem;line-height:1.4;padding:9px 16px;border-radius:8px;'
       + 'max-width:360px;background:rgba(23,24,26,0.94);box-shadow:0 6px 20px rgba(0,0,0,0.82);'
@@ -127,6 +186,32 @@
     style.id = 'ink-pen-styles';
     style.textContent = css;
     document.head.appendChild(style);
+  }
+
+  /* ---------- 共用：以點序列作畫 ---------- */
+  function paintStrokes(ctx, strokes) {
+    strokes.forEach(function (s) {
+      if (!s.points.length) return;
+      ctx.save();
+      ctx.strokeStyle = s.color;
+      ctx.fillStyle = s.color;
+      if (s.points.length === 1) {
+        var d = s.points[0];
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, Math.max(1, d.w / 2), 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        for (var i = 1; i < s.points.length; i++) {
+          var a = s.points[i - 1], b = s.points[i];
+          ctx.lineWidth = b.w;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    });
   }
 
   /* =========================================================
@@ -251,26 +336,12 @@
 
     _redraw() {
       this._ictx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-      this._strokes.forEach((s) => this._paint(s));
-      this._dirty = false;
-    }
-
-    _paint(stroke) {
-      if (stroke.points.length < 2) return;
       var ctx = this._ictx;
-      var ox = this._ox(), oy = this._oy();
       ctx.save();
-      ctx.translate(-ox, -oy);
-      ctx.strokeStyle = stroke.color;
-      for (var i = 1; i < stroke.points.length; i++) {
-        var a = stroke.points[i - 1], b = stroke.points[i];
-        ctx.lineWidth = b.w;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
+      ctx.translate(-this._ox(), -this._oy());
+      paintStrokes(ctx, this._strokes);
       ctx.restore();
+      this._dirty = false;
     }
 
     _drawLast(stroke) {
@@ -366,6 +437,318 @@
   customElements.define('ui-ink-layer', UiInkLayer);
 
   /* =========================================================
+   * <ink-handwrite>
+   *
+   * 用法：<ink-handwrite>__________</ink-handwrite>
+   * 底線數量決定空格寬度，可辨識 5 至 15 個，超出範圍自動收斂。
+   * 也可改用 data-slots="12" 直接指定。
+   * ========================================================= */
+  class InkHandwrite extends HTMLElement {
+    connectedCallback() {
+      if (this._built) return;
+      this._built = true;
+
+      var raw = (this.getAttribute('data-slots') || this.textContent || '');
+      var n = Number(this.getAttribute('data-slots'));
+      if (!n) {
+        var hits = String(raw).match(/[_＿]/g);
+        n = hits ? hits.length : SLOT_FALLBACK;
+      }
+      this._slots = Math.min(SLOT_MAX, Math.max(SLOT_MIN, n));
+      this.style.setProperty('--ih-n', this._slots);
+
+      this._raw = String(this.textContent || '').trim();
+      this.innerHTML = '<span class="ih-icon">' + PEN_ICON + '</span>';
+      this.setAttribute('title', '點一下用觸控筆手寫（' + this._slots + ' 格寬）');
+
+      this.addEventListener('click', () => {
+        var modal = ensureModal();
+        modal.open(this);
+      });
+    }
+
+    get slots() { return this._slots; }
+    getInk() { return this._ink || null; }
+    hasInk() { return !!this._ink; }
+
+    setInk(dataUrl) {
+      this._ink = dataUrl || null;
+      var img = this.querySelector('img');
+      if (!dataUrl) {
+        if (img) img.remove();
+        this.classList.remove('ih-filled');
+        return;
+      }
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = '';
+        this.appendChild(img);
+      }
+      img.src = dataUrl;
+      this.classList.add('ih-filled');
+    }
+
+    clearInk() { this.setInk(null); }
+  }
+  customElements.define('ink-handwrite', InkHandwrite);
+
+  /* =========================================================
+   * <ui-ink-modal>
+   * 手寫視窗。每次開啟都是空白畫布，確認後把筆跡裁切成最小外框，
+   * 再以圖片塞回空格；確認時若未書寫，等同清空該空格。
+   * ========================================================= */
+  class UiInkModal extends HTMLElement {
+    connectedCallback() {
+      if (this._built) return;
+      this._built = true;
+
+      this.innerHTML =
+        '<div class="ipm-box" data-role="box">' +
+        '<div class="ipm-head"><h4>手寫填空</h4><span data-role="sub"></span></div>' +
+        '<div class="ipm-pad" data-role="pad"><canvas data-role="cv"></canvas>' +
+        '<span class="ipm-base"></span></div>' +
+        '<div class="ipm-foot">' +
+        '<span class="ip-swatch" data-role="swatch"></span>' +
+        '<select data-role="color" title="筆跡色彩"></select>' +
+        '<input type="number" data-role="width" min="' + HW_MIN + '" max="' + HW_MAX +
+        '" step="1" value="' + HW_DEFAULT + '" title="筆跡粗細" />' +
+        '<button type="button" class="ip-btn" data-act="clear">清除重寫</button>' +
+        '<span class="ipm-spacer"></span>' +
+        '<button type="button" class="ip-btn" data-act="cancel">取消 Esc</button>' +
+        '<button type="button" class="ip-btn ipm-ok" data-act="ok">確認填入</button>' +
+        '</div></div>';
+
+      this._box = this.querySelector('[data-role="box"]');
+      this._pad = this.querySelector('[data-role="pad"]');
+      this._cv = this.querySelector('[data-role="cv"]');
+      this._ctx = this._cv.getContext('2d');
+      this._sub = this.querySelector('[data-role="sub"]');
+      this._select = this.querySelector('[data-role="color"]');
+      this._widthInput = this.querySelector('[data-role="width"]');
+      this._swatch = this.querySelector('[data-role="swatch"]');
+
+      this._strokes = [];
+      this._drawing = false;
+      this._color = PALETTE.focus;
+      this._width = HW_DEFAULT;
+      this._target = null;
+
+      this._wire();
+    }
+
+    _wire() {
+      this.addEventListener('click', (e) => { if (e.target === this) this.close(); });
+      this._box.addEventListener('click', function (e) { e.stopPropagation(); });
+
+      this.querySelector('[data-act="clear"]').addEventListener('click', () => this.clearPad());
+      this.querySelector('[data-act="cancel"]').addEventListener('click', () => this.close());
+      this.querySelector('[data-act="ok"]').addEventListener('click', () => this.confirm());
+
+      this._select.addEventListener('change', () => this._syncPen());
+      this._widthInput.addEventListener('change', () => this._syncPen());
+      this._widthInput.addEventListener('input', () => this._syncPen());
+
+      document.addEventListener('keydown', (e) => {
+        if (!this.classList.contains('ip-on')) return;
+        if (e.key === 'Escape') { e.preventDefault(); this.close(); }
+      });
+
+      this._bindPad();
+    }
+
+    isOpen() { return this.classList.contains('ip-on'); }
+
+    /* ---------- 開關 ---------- */
+    open(target) {
+      this._target = target || null;
+      this._loadColors();
+      this._sizePad(target);
+      this.clearPad();
+      this._sub.textContent = target
+        ? ('空格寬度 ' + target.slots + ' 格，寫完按確認填入')
+        : '寫完按確認填入';
+      this.classList.add('ip-on');
+    }
+
+    close() {
+      this.classList.remove('ip-on');
+      this._target = null;
+      this._strokes = [];
+    }
+
+    clearPad() {
+      this._strokes = [];
+      this._ctx.clearRect(0, 0, this._cv.clientWidth, this._cv.clientHeight);
+    }
+
+    /* 色彩選單跟著工具列走，包含 extra-color 自訂色 */
+    _loadColors() {
+      var bar = document.querySelector('ui-ink-bar');
+      var barSel = bar && bar.querySelector('[data-role="color"]');
+      if (barSel) {
+        this._select.innerHTML = barSel.innerHTML;
+        this._select.value = barSel.value;
+      } else if (!this._select.options.length) {
+        this._select.innerHTML = PEN_OPTIONS.map(function (o) {
+          return '<option value="' + o[0] + '">' + o[1] + '</option>';
+        }).join('');
+      }
+      this._syncPen();
+    }
+
+    _syncPen() {
+      var key = this._select.value;
+      this._color = PALETTE[key] || key;
+      this._swatch.style.background = this._color;
+      var n = Number(this._widthInput.value) || HW_DEFAULT;
+      this._width = Math.min(HW_MAX, Math.max(HW_MIN, n));
+      if (String(this._width) !== String(this._widthInput.value) && this._widthInput.value !== '') {
+        this._widthInput.value = this._width;
+      }
+    }
+
+    /* 畫布比例貼近目標空格，寫出來的字塞回去才不會變形 */
+    _sizePad(target) {
+      var w = Math.min(920, Math.round(window.innerWidth * 0.84));
+      var h = 200;
+      if (target) {
+        var r = target.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          h = Math.round(w * (r.height / r.width));
+        }
+      }
+      h = Math.min(340, Math.max(170, h));
+      this._pad.style.width = w + 'px';
+      this._pad.style.height = h + 'px';
+
+      var dpr = window.devicePixelRatio || 1;
+      this._cv.width = Math.round(w * dpr);
+      this._cv.height = Math.round(h * dpr);
+      this._ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this._ctx.lineCap = 'round';
+      this._ctx.lineJoin = 'round';
+    }
+
+    _lineWidth(e) {
+      if (e.pointerType === 'pen' && e.pressure > 0) {
+        return Math.max(1, this._width * (0.35 + e.pressure * 1.5));
+      }
+      return this._width;
+    }
+
+    _bindPad() {
+      var pt = (e) => {
+        var r = this._cv.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      };
+
+      this._cv.addEventListener('pointerdown', (e) => {
+        this._cv.setPointerCapture(e.pointerId);
+        this._drawing = true;
+        var p = pt(e);
+        this._strokes.push({
+          color: this._color,
+          points: [{ x: p.x, y: p.y, w: this._lineWidth(e) }]
+        });
+        this._dot(this._strokes[this._strokes.length - 1]);
+      });
+
+      this._cv.addEventListener('pointermove', (e) => {
+        if (!this._drawing) return;
+        var s = this._strokes[this._strokes.length - 1];
+        if (!s) return;
+        var p = pt(e);
+        s.points.push({ x: p.x, y: p.y, w: this._lineWidth(e) });
+        this._drawLast(s);
+      });
+
+      var end = () => { this._drawing = false; };
+      this._cv.addEventListener('pointerup', end);
+      this._cv.addEventListener('pointercancel', end);
+      this._cv.addEventListener('pointerleave', end);
+    }
+
+    _dot(stroke) {
+      var p = stroke.points[0];
+      var ctx = this._ctx;
+      ctx.save();
+      ctx.fillStyle = stroke.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(1, p.w / 2), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    _drawLast(stroke) {
+      var n = stroke.points.length;
+      if (n < 2) return;
+      var ctx = this._ctx;
+      ctx.save();
+      ctx.strokeStyle = stroke.color;
+      ctx.lineWidth = stroke.points[n - 1].w;
+      ctx.beginPath();
+      ctx.moveTo(stroke.points[n - 2].x, stroke.points[n - 2].y);
+      ctx.lineTo(stroke.points[n - 1].x, stroke.points[n - 1].y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    /* 裁切成筆跡的最小外框再輸出，空格裡才不會留一大片空白 */
+    _crop() {
+      if (!this._strokes.length) return null;
+      var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity, maxW = 1;
+      this._strokes.forEach(function (s) {
+        s.points.forEach(function (p) {
+          if (p.x < minX) minX = p.x;
+          if (p.y < minY) minY = p.y;
+          if (p.x > maxX) maxX = p.x;
+          if (p.y > maxY) maxY = p.y;
+          if (p.w > maxW) maxW = p.w;
+        });
+      });
+      var pad = maxW / 2 + 6;
+      minX -= pad; minY -= pad; maxX += pad; maxY += pad;
+      var w = Math.max(10, maxX - minX);
+      var h = Math.max(10, maxY - minY);
+
+      var dpr = Math.min(3, window.devicePixelRatio || 1);
+      var cv = document.createElement('canvas');
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+      var ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.translate(-minX, -minY);
+      paintStrokes(ctx, this._strokes);
+      return cv.toDataURL('image/png');
+    }
+
+    confirm() {
+      var target = this._target;
+      if (!target) { this.close(); return; }
+      var url = this._crop();
+      target.setInk(url);
+      target.dispatchEvent(new CustomEvent('ink-written', {
+        bubbles: true,
+        detail: { el: target, dataUrl: url, empty: !url, slots: target.slots }
+      }));
+      
+      this.close();
+    }
+  }
+  customElements.define('ui-ink-modal', UiInkModal);
+
+  function ensureModal() {
+    var m = document.querySelector('ui-ink-modal');
+    if (!m) {
+      m = document.createElement('ui-ink-modal');
+      document.body.appendChild(m);
+    }
+    return m;
+  }
+
+  /* =========================================================
    * <ui-ink-bar>
    * 屬性：
    *   data-pos="br|bl|tr|tl"   擺放位置，預設右下角
@@ -422,7 +805,7 @@
       var hex = (this.getAttribute('extra-color') || '').trim();
       if (!hex) return null;
       if (!HEX_RE.test(hex)) {
-        showAlert('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
+        
         return null;
       }
       var label = (this.getAttribute('extra-label') || '').trim();
@@ -457,7 +840,7 @@
         return null;
       }
       if (!HEX_RE.test(String(hex).trim())) {
-        showAlert('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
+        
         return null;
       }
       if (label) this.setAttribute('extra-label', label);
@@ -510,7 +893,7 @@
     setAnchor(mode) {
       if (!this.layer) return null;
       var next = this.layer.setAnchor(mode);
-      showAlert(next === 'document' ? '筆跡改為跟著內容捲動。' : '筆跡改為固定在視窗。', 'info');
+      
       return next;
     }
     getAnchor() { return this.layer ? this.layer.getAnchor() : null; }
@@ -518,11 +901,11 @@
     clear() {
       if (!this.layer) return;
       if (this.layer.isEmpty()) {
-        showAlert('畫面上沒有筆跡可以清除。', 'info');
+        
         return;
       }
       this.layer.clear();
-      showAlert('已清除全部筆跡。', 'info');
+
     }
 
     toggleBar(force) {
@@ -534,6 +917,8 @@
     /* ---------- 快捷鍵 ---------- */
     _bindKeys() {
       document.addEventListener('keydown', (e) => {
+        var modal = document.querySelector('ui-ink-modal');
+        if (modal && modal.isOpen && modal.isOpen()) return;
         var t = e.target;
         if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' ||
                   t.tagName === 'SELECT' || t.isContentEditable)) return;
@@ -558,8 +943,17 @@
     palette: PALETTE,
     penColorOptions: PEN_OPTIONS,
     widthRange: { min: WIDTH_MIN, max: WIDTH_MAX, def: WIDTH_DEFAULT },
+    handwriteRange: { min: HW_MIN, max: HW_MAX, def: HW_DEFAULT },
+    slotRange: { min: SLOT_MIN, max: SLOT_MAX },
     showAlert: showAlert,
     layer: function () { return document.querySelector('ui-ink-layer'); },
-    bar: function () { return document.querySelector('ui-ink-bar'); }
+    bar: function () { return document.querySelector('ui-ink-bar'); },
+    modal: function () { return ensureModal(); },
+    blanks: function () {
+      return Array.prototype.slice.call(document.querySelectorAll('ink-handwrite'));
+    },
+    clearBlanks: function () {
+      this.blanks().forEach(function (b) { b.clearInk(); });
+    }
   };
 })();

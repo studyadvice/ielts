@@ -157,12 +157,21 @@
   }
   .scroll-lab .band p { margin: 0; font-size: 1.3rem; line-height: 1.5; color: var(--c-vanilla); }
   .scroll-lab .band small { display: block; margin-top: 10px; font-size: 0.85rem; color: #7E7F78; }
+
+  .cloze { font-size: 1.4rem; line-height: 1.5; color: var(--c-vanilla); margin: 0 0 28px 0; }
+  .cloze:last-child { margin-bottom: 0; }
+  .cloze .zh { display: block; font-size: 0.95rem; color: #9A9B94; margin-bottom: 10px; line-height: 1.5; }
+  .log {
+    margin-top: 18px; font-size: 0.88rem; line-height: 1.5; color: var(--c-special);
+    background: rgba(15, 16, 14, 0.95); border: 1px solid rgba(42, 43, 40, 0.9);
+    border-radius: 8px; padding: 14px 18px; min-height: 64px;
+  }
 </style>
 <script src="ink-pen.js"></script>
 </head>
 <body>
 
-<!-- ===== 全頁各放一個實體即可 ===== -->
+<!-- ===== 全頁各放一個實體即可，手寫視窗會自動建立 ===== -->
 <ui-ink-layer data-anchor="viewport"></ui-ink-layer>
 <ui-ink-bar data-pos="br" extra-color="#FFFFFF" extra-label="純白 white"></ui-ink-bar>
 
@@ -171,10 +180,11 @@
   <header class="page-head">
     <h1>ink-pen 極簡畫筆層</h1>
     <p>螢幕錄影時的最小標註工具。只保留觸控筆、雷射筆、筆跡色彩、清除與收合，工具列預設是右下角一顆 40px 的小圓鈕，不會壓到錄影主體區。零依賴，單獨一支 js 丟進任何頁面就能用。</p>
-    <p class="meta">最新版本 v2　10-28-26</p>
+    <p class="meta">最新版本 v3　10-28-26</p>
     <nav class="ver-nav">
       <a href="#v1">v1　10-27-26</a>
       <a href="#v2">v2　10-28-26　座標模式與自訂筆色</a>
+      <a href="#v3">v3　10-28-26　行內手寫空格</a>
     </nav>
   </header>
 
@@ -217,8 +227,9 @@
         <tr><td><kbd>0</kbd></td><td>關閉繪圖，回到一般點選與捲動</td></tr>
         <tr><td><kbd>C</kbd></td><td>清除全部筆跡</td></tr>
         <tr><td><kbd>H</kbd></td><td>收合或展開工具列</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>關閉手寫視窗（v3）</td></tr>
       </table>
-      <p style="margin-top:16px;font-size:0.88rem;color:#9A9B94">游標停在輸入框或下拉選單裡時，快捷鍵不會觸發，可以放心打字。</p>
+      <p style="margin-top:16px;font-size:0.88rem;color:#9A9B94">游標停在輸入框或下拉選單裡時，快捷鍵不會觸發，可以放心打字；手寫視窗開著時也只有 Esc 有效。</p>
     </div>
 
     <div class="card">
@@ -366,25 +377,139 @@ InkPen.bar().setExtraColor(null);     // 移除自訂色</pre>
     </div>
   </div>
 
-  <h2 class="section-title">v1 與 v2 標籤對照</h2>
+  <!-- ===================== v3 ===================== -->
+  <div class="version-band" id="v3">
+    <h2>v3　10-28-26</h2>
+    <p>新增 <code>&lt;ink-handwrite&gt;</code> 行內手寫空格：底線長度決定空格寬度，點一下開手寫視窗，確認後筆跡填回空格。</p>
+  </div>
+
+  <h2 class="section-title">行內手寫空格　ink-handwrite</h2>
+
+  <div class="card">
+    <h3>直接試寫</h3>
+    <p style="margin-bottom:22px">每個空格都是獨立的。點空格上的筆圖示開啟手寫視窗，寫完按確認填入；再點一次會<b>從空白開始</b>重寫，不會接續上次的筆跡。確認時若畫布是空的，等同清空該空格。</p>
+
+    <p class="cloze">
+      <span class="zh">我想談談書法，那是我在暑假期間開始學的。</span>
+      I'd like to talk about <ink-handwrite>___________</ink-handwrite>, which I
+      <ink-handwrite>_________</ink-handwrite> during the summer break.
+    </p>
+
+    <p class="cloze">
+      <span class="zh">那條老街的窄巷裡飄著麻油與線香的氣味。</span>
+      The narrow lanes are <ink-handwrite>__________</ink-handwrite> the smell of sesame oil
+      and <ink-handwrite>_______</ink-handwrite>.
+    </p>
+
+    <p class="cloze">
+      <span class="zh">多數人最後待得比原本計畫的久很多。</span>
+      Most of them <ink-handwrite>________</ink-handwrite> staying far
+      <ink-handwrite>_____</ink-handwrite> than planned, and nobody
+      <ink-handwrite>_______________</ink-handwrite> about it.
+    </p>
+
+    <p style="margin-top:20px">
+      <button type="button" class="demo-btn" id="clear-blanks">清空所有空格</button>
+      <button type="button" class="demo-btn" id="count-blanks">統計已填入的空格</button>
+    </p>
+    <div class="log" id="write-log">每次確認填入都會在這裡留下紀錄，由 <code>ink-written</code> 事件提供。</div>
+  </div>
+
+  <div class="tip">
+    觸控筆或雷射筆開啟時，繪圖層會蓋住整頁，此時空格點不到。先按 <kbd class="inline">0</kbd> 關閉繪圖再點空格，這也是刻意的：錄影中在空格上劃線與開手寫視窗是兩件不同的事。
+  </div>
+
+  <div class="grid-2e" style="margin-top:28px">
+    <div class="card">
+      <h3>寬度怎麼決定</h3>
+      <p>元件讀取標籤內的底線數量，可辨識 <b>5 到 15 個</b>，不足 5 個補到 5，超過 15 個收到 15。寬度以 <code>ch</code> 計算，所以會跟著周圍文字的字級縮放，長句換行時空格也會一起排版。</p>
+      <p style="margin-top:12px">也可以用 <code>data-slots="12"</code> 直接指定格數，此時標籤內容寫什麼都不影響。全形底線 <code>＿</code> 同樣可辨識。</p>
+    </div>
+    <div class="card">
+      <h3>筆跡怎麼塞進空格</h3>
+      <p>手寫視窗的畫布會<b>依照目標空格的長寬比</b>調整，所以寫出來的字比例和填回去的樣子接近。</p>
+      <p style="margin-top:12px">確認時元件只取筆跡的<b>最小外框</b>再輸出 PNG，寫在畫布哪個位置都沒關係，不會在空格裡留下一大片空白。視窗內的筆較粗，預設 10 px、範圍 4 至 24，因為縮小後線條會變細。</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">v3 用法與介面</h2>
   <div class="grid-2e">
+    <div>
+      <p class="code-label new">標籤寫法，寫在行內文字中間即可</p>
+      <pre class="new">&lt;p&gt;
+  I'd like to talk about
+  &lt;ink-handwrite&gt;___________&lt;/ink-handwrite&gt;,
+  which I
+  &lt;ink-handwrite&gt;_________&lt;/ink-handwrite&gt;
+  during the summer break.
+&lt;/p&gt;
+
+&lt;!-- 直接指定格數，內容不拘 --&gt;
+&lt;ink-handwrite data-slots="12"&gt;&lt;/ink-handwrite&gt;
+
+&lt;!-- 手寫視窗會自動建立，不必自己放 --&gt;</pre>
+    </div>
+    <div>
+      <p class="code-label new">v3 新增介面</p>
+      <pre class="new">// 單一空格
+var blank = document.querySelector('ink-handwrite');
+blank.slots;          // 格數 5 至 15
+blank.hasInk();       // 是否已填入
+blank.getInk();       // PNG 的 dataURL 或 null
+blank.setInk(url);    // 直接塞入既有筆跡
+blank.clearInk();     // 清空
+
+// 整頁
+InkPen.blanks();      // 所有 &lt;ink-handwrite&gt;
+InkPen.clearBlanks(); // 全部清空
+InkPen.modal();       // 取得手寫視窗
+
+// 每次確認填入都會冒泡一個事件
+document.addEventListener('ink-written', function (e) {
+  e.detail.el;        // 哪個空格
+  e.detail.dataUrl;   // 筆跡圖，清空時為 null
+  e.detail.empty;     // 是否為清空
+  e.detail.slots;     // 該空格的格數
+});</pre>
+    </div>
+  </div>
+
+  <h2 class="section-title">三個版本的標籤對照</h2>
+  <div class="grid-3">
     <div>
       <p class="code-label">v1</p>
       <pre class="old">&lt;ui-ink-layer&gt;&lt;/ui-ink-layer&gt;
-&lt;ui-ink-bar data-pos="br"&gt;&lt;/ui-ink-bar&gt;
+&lt;ui-ink-bar data-pos="br"&gt;
+&lt;/ui-ink-bar&gt;
 
 &lt;!-- 筆跡一律貼著視窗 --&gt;
-&lt;!-- 筆色只有內建八色 --&gt;</pre>
+&lt;!-- 筆色只有內建八色 --&gt;
+&lt;!-- 沒有行內手寫 --&gt;</pre>
     </div>
     <div>
-      <p class="code-label new">v2（屬性全為選用，不加等同 v1 行為）</p>
-      <pre class="new">&lt;ui-ink-layer data-anchor="viewport"&gt;&lt;/ui-ink-layer&gt;
+      <p class="code-label">v2</p>
+      <pre class="old">&lt;ui-ink-layer
+    data-anchor="document"&gt;
+&lt;/ui-ink-layer&gt;
 &lt;ui-ink-bar data-pos="br"
-            extra-color="#FFFFFF"
-            extra-label="純白 white"&gt;&lt;/ui-ink-bar&gt;
+    extra-color="#FFFFFF"
+    extra-label="純白 white"&gt;
+&lt;/ui-ink-bar&gt;
 
-&lt;!-- data-anchor="document" 改為邊捲邊畫 --&gt;
-&lt;!-- extra-color 追加第九色並自動選用 --&gt;</pre>
+&lt;!-- 沒有行內手寫 --&gt;</pre>
+    </div>
+    <div>
+      <p class="code-label new">v3（屬性全為選用）</p>
+      <pre class="new">&lt;ui-ink-layer
+    data-anchor="document"&gt;
+&lt;/ui-ink-layer&gt;
+&lt;ui-ink-bar data-pos="br"
+    extra-color="#FFFFFF"
+    extra-label="純白 white"&gt;
+&lt;/ui-ink-bar&gt;
+
+&lt;ink-handwrite&gt;______
+&lt;/ink-handwrite&gt;</pre>
     </div>
   </div>
 
@@ -395,12 +520,12 @@ InkPen.bar().setExtraColor(null);     // 移除自訂色</pre>
       <p>錄影時畫面多半固定不動，視窗座標的運算最少，觸控也能完全鎖住捲動，下筆不會誤觸發頁面滑動。需要長篇講解再切 <code>document</code>。</p>
     </div>
     <div class="card">
-      <h3>為什麼沒有復原</h3>
-      <p>錄影當下按錯鍵的成本比畫錯一筆高。清除是一個明確動作，復原則需要盯著畫面確認結果，反而打斷講解節奏，因此只保留 <code>C</code>。</p>
+      <h3>為什麼手寫視窗每次從空白開始</h3>
+      <p>照你的規格做。教學現場的實際需求是「寫錯就重來」，若保留上次筆跡，你得先判斷哪幾筆要留、哪幾筆要擦，反而比重寫一次慢。</p>
     </div>
     <div class="card">
-      <h3>為什麼工具列在角落</h3>
-      <p>橫跨頂端的主控列會吃掉畫面高度，錄影時主體內容被往下推。改成右下角膠囊後，收合狀態只佔 40 px，展開也只是一條懸浮列，不影響版面。</p>
+      <h3>為什麼筆跡存成圖片</h3>
+      <p>空格裡只需要顯示結果，存成裁切後的 PNG 最單純，可以直接塞進任何版面、跟著文字換行。需要原始點序列再另外擴充即可。</p>
     </div>
   </div>
 
@@ -410,6 +535,7 @@ InkPen.bar().setExtraColor(null);     // 移除自訂色</pre>
   /* ---------- 示範頁的控制按鈕，元件本身不含這些 ---------- */
   var anchorState = document.getElementById('anchor-state');
   var extraState = document.getElementById('extra-state');
+  var writeLog = document.getElementById('write-log');
 
   document.querySelectorAll('[data-anchor-btn]').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -433,6 +559,29 @@ InkPen.bar().setExtraColor(null);     // 移除自訂色</pre>
       window.InkPen.bar().setExtraColor(hex || null, label || null);
       extraState.textContent = '目前自訂色：' + (hex || '無');
     });
+  });
+
+  /* ---------- 手寫空格的事件示範 ---------- */
+  document.addEventListener('ink-written', function (e) {
+    var all = window.InkPen.blanks();
+    var idx = all.indexOf(e.detail.el) + 1;
+    var time = new Date().toLocaleTimeString('zh-Hant', { hour12: false });
+    var line = document.createElement('div');
+    line.textContent = time + '　第 ' + idx + ' 個空格（' + e.detail.slots + ' 格寬）'
+      + (e.detail.empty ? ' 已清空' : ' 已填入筆跡');
+    if (writeLog.firstChild && writeLog.firstChild.nodeType === 3) writeLog.innerHTML = '';
+    writeLog.insertBefore(line, writeLog.firstChild);
+  });
+
+  document.getElementById('clear-blanks').addEventListener('click', function () {
+    window.InkPen.clearBlanks();
+    window.InkPen.showAlert('所有空格已清空。', 'info');
+  });
+
+  document.getElementById('count-blanks').addEventListener('click', function () {
+    var all = window.InkPen.blanks();
+    var done = all.filter(function (b) { return b.hasInk(); }).length;
+    window.InkPen.showAlert('已填入 ' + done + ' / ' + all.length + ' 個空格。', 'info');
   });
 </script>
 
