@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-table 範例 10-29-26</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C;
+    --shell: #C6C7BD;
+    --lavender: #C3A5E5;
+    --sky: #82C8E5;
+    --warning: #E6374B;
+    --salmon: #E5C3B3;
+    --ocean: #1CCAE8;
+    --safe: #27AE60;
+    --teal: #0DA591;
+    --vanilla: #DBEDD8;
+    --yellow: #E3D322;
+    --focus: #D4FFFC;
+    --special: #B3DE73;
+    --info: #4171BF;
+    --indigo: #7849C9;
+    --pink: #FF91D7;
+    --orange: #EDA109;
+  }
+  html, body { background: var(--bg); color: var(--shell); }
+  body {
+    font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+    padding: 32px 40px 80px;
+  }
+  h1 { font-size: 1.85rem; color: var(--lavender); margin: 0 0 8px; font-weight: 700; }
+  h2 { font-size: 1.3rem; color: var(--sky); margin: 0 0 6px; font-weight: 700; }
+  h3 { font-size: 1.05rem; color: var(--vanilla); margin: 0 0 8px; font-weight: 600; }
+  p { margin: 0 0 10px; }
+  code { color: var(--yellow); font-size: 0.92rem; }
+  a { color: var(--ocean); }
+
+  .page-sub { color: var(--shell); margin-bottom: 24px; font-size: 1.05rem; }
+
+  /* 變更摘要 */
+  .chg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .chg { border: 1px solid var(--shell); padding: 14px 16px; }
+  .chg .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 1px 8px; margin-bottom: 8px; color: var(--bg); }
+  .chg .tag.add { background: var(--safe); }
+  .chg .tag.mod { background: var(--orange); }
+  .chg .tag.del { background: var(--warning); }
+  .chg p { font-size: 0.95rem; margin: 0; }
+
+  /* 範例與程式碼對照 */
+  .demo-case { border-top: 1px solid var(--shell); padding: 28px 0 32px; }
+  .demo-case > .desc { margin-bottom: 16px; max-width: 1200px; }
+  .demo-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .demo-pane-label { font-size: 0.85rem; font-weight: 700; color: var(--bg); background: var(--shell); display: inline-block; padding: 1px 10px; margin-bottom: 8px; }
+  .demo-pane-label.code { background: var(--yellow); }
+  .demo-code {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--yellow);
+    background: var(--bg);
+    color: var(--vanilla);
+    font-family: Consolas, "Cascadia Mono", Menlo, monospace;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-height: 640px;
+    overflow-y: auto;
+  }
+  .demo-code .hl { color: var(--bg); background: var(--yellow); font-weight: 700; padding: 0 2px; }
+  .demo-note { font-size: 0.92rem; margin-top: 10px; color: var(--salmon); }
+
+  /* 屬性對照表 */
+  .ref { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .ref th, .ref td { border: 1px solid var(--shell); padding: 8px 12px; vertical-align: top; }
+  .ref th { background: var(--shell); color: var(--bg); text-align: left; font-weight: 700; }
+  .ref td.st-add { color: var(--safe); font-weight: 700; white-space: nowrap; }
+  .ref td.st-mod { color: var(--orange); font-weight: 700; white-space: nowrap; }
+  .ref td.st-del { color: var(--warning); font-weight: 700; white-space: nowrap; }
+  .ref tr.removed td:not(.st-del) { text-decoration: line-through; color: var(--shell); }
+
+  /* 元件訊息（Bootstrap alert，改成站內配色） */
+  [id^="uit-log"] { margin-top: 16px; }
+  [id^="uit-log"] .alert {
+    background: var(--bg);
+    color: var(--shell);
+    border: 1px solid var(--orange);
+    border-left: 6px solid var(--orange);
+    border-radius: 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    padding: 12px 44px 12px 16px;
+    margin-bottom: 10px;
+  }
+  [id^="uit-log"] .alert.is-err { border-color: var(--warning); }
+  [id^="uit-log"] .alert .btn-close { filter: invert(1); padding: 14px; }
+  [id^="uit-log"] .alert b { color: var(--orange); }
+  [id^="uit-log"] .alert.is-err b { color: var(--warning); }
+
+  /* 增修紀錄導覽 */
+  .rev-nav { display: flex; gap: 12px; margin-bottom: 28px; }
+  .rev-nav a { display: inline-block; padding: 6px 16px; border: 1px solid var(--lavender); color: var(--lavender); text-decoration: none; font-size: 0.95rem; }
+  .rev-nav a:hover { background: var(--lavender); color: var(--bg); }
+  .rev-head { border-top: 3px solid var(--lavender); padding-top: 28px; margin-top: 24px; }
+  .rev-head h1 { font-size: 1.6rem; }
+
+  /* 第 2 次增修：樹狀範例用 */
+  .tree-btns { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .btn-uit { background: var(--bg); color: var(--sky); border: 1px solid var(--sky); padding: 5px 16px; font-size: 0.92rem; cursor: pointer; line-height: 1.4; }
+  .btn-uit:hover { background: var(--sky); color: var(--bg); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tree-log { margin-top: 12px; }
+  .tree-log .alert { background: var(--bg); color: var(--shell); border: 1px solid var(--info); border-left: 6px solid var(--info); border-radius: 0; font-size: 0.92rem; padding: 10px 16px; margin: 0; }
+  .tree-log .alert b { color: var(--sky); }
+</style>
+</head>
+<body>
+
+<h1>ui-table 增修範例</h1>
+<p class="page-sub">10-29-26。每個範例左邊是實際效果，右邊是對應的程式碼，標黃的是該次增修新增的屬性。</p>
+<nav class="rev-nav">
+  <a href="#rev1">第 1 次增修：手動輪播、漸層進度條、握把設定</a>
+  <a href="#rev2">第 2 次增修：多層級巢狀結構</a>
+  <a href="#rev3">第 3 次增修：icons-list 滑入動畫</a>
+</nav>
+
+<div class="rev-head" id="rev1">
+  <h1>第 1 次增修</h1>
+  <p class="page-sub">手動輪播、漸層進度條、extra-info 握把尺寸與色彩，並移除 alert-msg。</p>
+</div>
+
+<div class="chg-grid">
+  <div class="chg"><span class="tag add">新增</span><p><code>carousel-interval="0"</code> 搭配 <code>progress-bar</code> 變成手動輪播。進度條改成分段樣式，貼齊儲存格下緣，點一下切換下一畫面，最後一頁再點會回到第一頁。</p></div>
+  <div class="chg"><span class="tag add">新增</span><p><code>progress-bar-color1</code> 與 <code>progress-bar-color2</code> 設定漸層的開始色與結束色，自動與手動輪播都適用。</p></div>
+  <div class="chg"><span class="tag add">新增</span><p><code>extra-info-size</code> 與 <code>extra-info-color</code> 設定握把圖示的尺寸和色彩，可以寫在 ui-col、ui-row 或 ui-table。</p></div>
+  <div class="chg"><span class="tag del">移除</span><p><code>alert-msg</code>、<code>alert-color</code>、<code>alert-interval</code>、<code>alert-pos</code> 及相關的 CSS、JSON 欄位與 <code>alertDuration</code> 設定全部移除。</p></div>
+</div>
+
+<!-- ============ 1 手動輪播（單色） ============ -->
+<section class="demo-case">
+  <h2>1. 手動輪播（單色）</h2>
+  <p class="desc">分段數量等於 cell-item 的數量，目前在第幾個畫面就填滿前幾段。進度條與內容之間的空白比自動輪播大，點擊範圍也比 7px 的色條高一些，比較好點。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="sky">
+  <ui-row col-widths="1:3" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col>Part 2 題目<br>Describe a skill you learned as an adult.</ui-col>
+    <ui-col carousel-interval="0" progress-bar progress-bar-color="sky">
+      <cell-item>開場：I picked up basic carpentry about three years ago.</cell-item>
+      <cell-item>契機：My landlord refused to fix a broken shelf, so I decided to do it myself.</cell-item>
+      <cell-item>困難：Measuring accurately was much harder than I expected.</cell-item>
+      <cell-item>收尾：It taught me to be patient with slow, careful work.</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 手動輪播（漸層） ============ -->
+<section class="demo-case">
+  <h2>2. 手動輪播（漸層）</h2>
+  <p class="desc">漸層是橫跨整條進度條計算的，所以每往下一頁，就多露出一段漸層，分隔點不會打斷色彩的連續性。第二格加上 <code>inverse</code>，軌道會改用中灰，深色填色在亮底上也看得清楚。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="lavender">
+  <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col carousel-interval="0" progress-bar progress-bar-color1="lavender" progress-bar-color2="ocean">
+      <cell-item>important：最常用，但重複太多次會顯得單調。</cell-item>
+      <cell-item>significant：語氣比較正式，適合描述影響或改變。</cell-item>
+      <cell-item>crucial：強調「少了它就不行」的關鍵性。</cell-item>
+      <cell-item>pivotal：強調轉折點，常搭配 role 或 moment。</cell-item>
+      <cell-item>paramount：最高程度，口說時少用，寫作較常見。</cell-item>
+    </ui-col>
+    <ui-col inverse font-color="salmon" carousel-interval="0" progress-bar progress-bar-color1="indigo" progress-bar-color2="warning">
+      <cell-item>It plays a crucial role in my daily routine.</cell-item>
+      <cell-item>That conversation was a pivotal moment for me.</cell-item>
+      <cell-item>Safety is of paramount importance in this job.</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 自動輪播（漸層） ============ -->
+<section class="demo-case">
+  <h2>3. 自動輪播（漸層）</h2>
+  <p class="desc">自動輪播維持原本 3px 的細條。倒數方式改成裁切，漸層色固定不動，不會隨著倒數被壓縮。第二格只設 <code>progress-bar-color</code>，示範舊寫法照常運作。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="orange">
+  <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col carousel-interval="2500" progress-bar progress-bar-color1="orange" progress-bar-color2="pink">
+      <cell-item>Fluency：先求說得順，再求說得難。</cell-item>
+      <cell-item>Lexical Resource：用得穩的字才算數。</cell-item>
+      <cell-item>Grammar：句型變化要在掌控範圍內。</cell-item>
+      <cell-item>Pronunciation：重音與節奏比口音重要。</cell-item>
+    </ui-col>
+    <ui-col carousel-interval="3500" progress-bar progress-bar-color="teal">
+      <cell-item>單色進度條：progress-bar-color</cell-item>
+      <cell-item>沒有設定 color1 與 color2 時使用這個顏色。</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 缺少 progress-bar ============ -->
+<section class="demo-case">
+  <h2>4. 沒有搭配 progress-bar 的手動輪播</h2>
+  <p class="desc">手動輪播的切換入口就是進度條，所以少了 <code>progress-bar</code> 時只會顯示第一個項目，並在主控台發出警告。這個範例頁會把元件的警告改用 Bootstrap alert 顯示在表格下方。第二格只設了 <code>progress-bar-color1</code>，會當成單色使用並提出警告。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="salmon">
+  <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col carousel-interval="0">
+      <cell-item>只會看到這一個項目。</cell-item>
+      <cell-item>這個項目不會出現。</cell-item>
+    </ui-col>
+    <ui-col carousel-interval="0" progress-bar progress-bar-color1="special">
+      <cell-item>只有 color1：當單色使用。</cell-item>
+      <cell-item>第二個畫面。</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+      </div>
+      <div id="uit-log"></div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 extra-info 握把 ============ -->
+<section class="demo-case">
+  <h2>5. extra-info 握把的尺寸與色彩</h2>
+  <p class="desc">尺寸指的是圖示高度，寬度自動為高度的 0.65 倍。純數字視為 px，也接受 px、rem、em。色彩可用色票名稱或 #hex。優先順序是 ui-col、ui-row、ui-table，最後才是 <code>UiTableConfig</code>；都沒設時跟原本一樣，跟隨文字大小與 theme 色。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="vanilla">
+  <ui-row border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col extra-info="xi-default">預設：跟隨文字與 theme</ui-col>
+    <ui-col extra-info="xi-pink" extra-info-size="1.5rem" extra-info-color="pink">1.5rem，pink</ui-col>
+    <ui-col extra-info="xi-yellow" extra-info-size="28" extra-info-color="yellow">28（px），yellow</ui-col>
+    <ui-col inverse font-color="sky" extra-info="xi-inv" extra-info-color="indigo">inverse 格子，indigo</ui-col>
+  </ui-row>
+  <ui-row border="1px solid" col-border="1px solid" cell-padding="12px 16px" extra-info-size="1.25rem" extra-info-color="ocean">
+    <ui-col extra-info="xi-row">整列設定：1.25rem，ocean</ui-col>
+    <ui-col extra-info="xi-row">繼承整列設定</ui-col>
+    <ui-col extra-info="xi-row" extra-info-color="orange">只覆寫色彩：orange</ui-col>
+    <ui-col extra-info="xi-row" extra-info-size="0.8rem">只覆寫尺寸：0.8rem</ui-col>
+  </ui-row>
+</ui-table>
+<div id="xi-default" hidden><p>這是預設的握把，大小跟隨文字，顏色跟隨 theme。</p></div>
+<div id="xi-pink" hidden><p>握把高度 1.5rem，色彩 pink。</p></div>
+<div id="xi-yellow" hidden><p>握把高度 28px，色彩 yellow。</p></div>
+<div id="xi-inv" hidden><p>inverse 格子原本的握把是深色，設定 extra-info-color 後會改用指定色。</p></div>
+<div id="xi-row" hidden><p>整列的握把設定寫在 ui-row 上，個別儲存格可以再覆寫。</p></div>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 JSON 模式 ============ -->
+<section class="demo-case">
+  <h2>6. JSON 資料模式</h2>
+  <p class="desc">JSON 欄位對應：<code>carouselInterval: 0</code>、<code>progressBarColor1</code>、<code>progressBarColor2</code>、<code>extraInfoSize</code>、<code>extraInfoColor</code>（表格、列、欄三層都可以寫）。<code>carouselInterval</code> 填 0 現在會被正確讀取。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<script>
+  window.demoJson = {
+    extraInfoColor: 'special',
+    groups: [{
+      titleLeft: 'Collocations',
+      titleRight: '手動輪播 + 握把',
+      rows: [{
+        colWidths: '2:3',
+        border: '1px solid',
+        colBorder: '1px solid',
+        cellPadding: '12px 16px',
+        cols: [
+          { content: 'make 的常見搭配', extraInfo: 'xi-json', extraInfoSize: 22 },
+          {
+            carouselInterval: 0,
+            progressBar: true,
+            progressBarColor1: 'teal',
+            progressBarColor2: 'special',
+            items: [
+              'make a decision',
+              'make progress',
+              'make an effort',
+              'make a difference'
+            ]
+          }
+        ]
+      }]
+    }]
+  };
+</script>
+<ui-table theme="teal" data-id="demoJson"></ui-table>
+<div id="xi-json" hidden><p>make 偏向「產生、做出結果」，do 偏向「執行、從事活動」。</p></div>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屬性對照 ============ -->
+<section class="demo-case">
+  <h2>屬性對照</h2>
+  <p class="desc">這次增修涉及的屬性，以及對應的 JSON 欄位與全域設定。</p>
+  <table class="ref">
+    <thead>
+      <tr><th>屬性</th><th>JSON 欄位</th><th>可寫在</th><th>說明</th><th>狀態</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>carousel-interval="0"</code></td><td><code>carouselInterval: 0</code></td><td>ui-col</td><td>手動輪播。必須搭配 <code>progress-bar</code>，否則只顯示第一個項目。正整數仍是自動輪播的毫秒數，空值或無效值為 3000。</td><td class="st-add">新增值</td></tr>
+      <tr><td><code>progress-bar</code></td><td><code>progressBar</code></td><td>ui-col</td><td>手動輪播時變成分段進度條：高度 7px，貼齊儲存格下緣，與內容之間留較大空白，可點擊。自動輪播時維持 3px 細條。</td><td class="st-mod">調整</td></tr>
+      <tr><td><code>progress-bar-color1</code></td><td><code>progressBarColor1</code></td><td>ui-col</td><td>漸層開始色（左端）。色票名稱、#hex 或 rgb()。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>progress-bar-color2</code></td><td><code>progressBarColor2</code></td><td>ui-col</td><td>漸層結束色（右端）。兩個都設才是漸層，只設一個時當單色使用並發出警告。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>progress-bar-color</code></td><td><code>progressBarColor</code></td><td>ui-col</td><td>單色進度條。優先順序：color1 加 color2 的漸層，然後是 progress-bar-color，最後是 theme 色（inverse 格子為 #0C0D0C）。</td><td class="st-mod">保留</td></tr>
+      <tr><td><code>extra-info-size</code></td><td><code>extraInfoSize</code></td><td>ui-col、ui-row、ui-table</td><td>握把圖示高度。純數字視為 px，也接受 px、rem、em。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>extra-info-color</code></td><td><code>extraInfoColor</code></td><td>ui-col、ui-row、ui-table</td><td>握把圖示色彩，優先於 theme 與 inverse 的預設色。只影響握把，popover 的框線與文字仍跟隨 theme。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2"><code>UiTableConfig.extraInfoSize</code>、<code>UiTableConfig.extraInfoColor</code></td><td>全域</td><td>整頁的握把預設值，在載入 ui-table.js 之前設定。</td><td class="st-add">新增</td></tr>
+      <tr class="removed"><td><code>alert-msg</code>、<code>alert-color</code>、<code>alert-interval</code>、<code>alert-pos</code></td><td><code>alertMsg</code> 等四個欄位</td><td>ui-col</td><td>定時提示功能整個移除，殘留的屬性會被直接忽略。</td><td class="st-del">移除</td></tr>
+      <tr class="removed"><td colspan="2"><code>UiTableConfig.alertDuration</code></td><td>全域</td><td>提示的顯示時間設定。</td><td class="st-del">移除</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ==================================================================== -->
+<!-- 第 2 次增修：多層級巢狀結構（僅 ui-row-enhance）                       -->
+<!-- ==================================================================== -->
+<div class="rev-head" id="rev2">
+  <h1>第 2 次增修：多層級巢狀結構</h1>
+  <p class="page-sub">只支援 <code>&lt;ui-row-enhance&gt;</code>。把子列直接寫在父列裡面，父列就會出現展開鈕，點擊後子列由上往下滑順展開，層數不限。</p>
+</div>
+
+<div class="chg-grid">
+  <div class="chg"><span class="tag add">新增</span><p>巢狀標記：<code>ui-row-enhance</code> 裡直屬的 <code>ui-row-enhance</code> 就是子列。子列沒寫的 <code>col-widths</code>、<code>cell-padding</code>、<code>border</code>、<code>col-border</code> 會沿用父列。</p></div>
+  <div class="chg"><span class="tag add">新增</span><p>展開鈕、縮排與導引線：<code>tree-col</code>、<code>tree-indent</code>、<code>tree-icon</code>、<code>tree-line</code>、<code>tree-line-color</code>，全部寫在 ui-table 上。</p></div>
+  <div class="chg"><span class="tag add">新增</span><p>初始狀態與互動：<code>tree-open</code>（單列或整張表）、<code>tree-accordion</code>（同層只開一個），以及 <code>uit-tree-toggle</code> 事件。</p></div>
+  <div class="chg"><span class="tag add">新增</span><p><code>UiTable.expandAll()</code> 與 <code>UiTable.collapseAll()</code>，可指定只展開到第幾層。JSON 用 <code>children</code> 寫子列，最外層也可以直接寫 <code>rows</code>。</p></div>
+</div>
+
+<!-- ============ 7 專案管理 ============ -->
+<section class="demo-case">
+  <h2>7. 專案管理（導引線 + 全部展開／收合）</h2>
+  <p class="desc">版面屬性（<code>col-widths</code>、<code>border</code> 等）只寫在最上層的列，子列全部沿用父列，不用每層重寫。最上層只要有任何一列有子列，沒有子列的「年度報稅」與表頭也會留出展開鈕的寬度，文字才會對齊。第一個專案加了 <code>tree-open</code>，載入時就是展開的。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table id="tree-pm" theme="sky" tree-line>
+  <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px">
+    <ui-col inverse>任務</ui-col>
+    <ui-col inverse>負責人</ui-col>
+    <ui-col inverse>進度</ui-col>
+    <ui-col inverse>截止日</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px" tree-open>
+    <ui-col>雅思口說課程改版</ui-col>
+    <ui-col>講師</ui-col>
+    <ui-col font-color="orange">進行中</ui-col>
+    <ui-col>11-30</ui-col>
+    <ui-row-enhance>
+      <ui-col>Part 1 題庫整理</ui-col>
+      <ui-col>講師</ui-col>
+      <ui-col font-color="safe">完成</ui-col>
+      <ui-col>10-15</ui-col>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>Part 2 範例錄音</ui-col>
+      <ui-col>助教</ui-col>
+      <ui-col font-color="orange">進行中</ui-col>
+      <ui-col>11-10</ui-col>
+      <ui-row-enhance>
+        <ui-col>人物類 12 題</ui-col>
+        <ui-col>助教</ui-col>
+        <ui-col font-color="safe">完成</ui-col>
+        <ui-col>10-28</ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance>
+        <ui-col>地點類 10 題</ui-col>
+        <ui-col>助教</ui-col>
+        <ui-col font-color="orange">進行中</ui-col>
+        <ui-col>11-05</ui-col>
+      </ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>Part 3 延伸問答</ui-col>
+      <ui-col>講師</ui-col>
+      <ui-col font-color="warning">未開始</ui-col>
+      <ui-col>11-30</ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px">
+    <ui-col>教學網站改版</ui-col>
+    <ui-col>工程</ui-col>
+    <ui-col font-color="orange">進行中</ui-col>
+    <ui-col>12-20</ui-col>
+    <ui-row-enhance>
+      <ui-col>登入流程</ui-col>
+      <ui-col>工程</ui-col>
+      <ui-col font-color="orange">進行中</ui-col>
+      <ui-col>11-20</ui-col>
+      <ui-row-enhance>
+        <ui-col>邀請碼驗證</ui-col>
+        <ui-col>工程</ui-col>
+        <ui-col font-color="safe">完成</ui-col>
+        <ui-col>10-25</ui-col>
+      </ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>課程頁面版型</ui-col>
+      <ui-col>美編</ui-col>
+      <ui-col font-color="warning">未開始</ui-col>
+      <ui-col>12-20</ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px">
+    <ui-col>年度報稅</ui-col>
+    <ui-col>行政</ui-col>
+    <ui-col font-color="warning">未開始</ui-col>
+    <ui-col>05-31</ui-col>
+  </ui-row-enhance>
+</ui-table>
+<div class="tree-btns">
+  <button type="button" class="btn-uit" onclick="UiTable.expandAll('#tree-pm')">全部展開</button>
+  <button type="button" class="btn-uit" onclick="UiTable.collapseAll('#tree-pm')">全部收合</button>
+</div>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 財務明細 ============ -->
+<section class="demo-case">
+  <h2>8. 財務明細（加減號 + 展開到指定層級）</h2>
+  <p class="desc"><code>tree-icon="plus"</code> 改用方框加減號，<code>tree-indent="26"</code> 加寬縮排。<code>UiTable.expandAll(目標, 1)</code> 只展開最上層，適合先看大項再往下鑽。金額靠右是範例頁自己的 <code>.num</code> 樣式。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table id="tree-fin" theme="vanilla" tree-icon="plus" tree-indent="26">
+  <ui-row-enhance col-widths="3:2:1" border="1px solid" col-border="1px solid" cell-padding="8px 14px">
+    <ui-col inverse>科目</ui-col>
+    <ui-col inverse><div class="num">金額（元）</div></ui-col>
+    <ui-col inverse><div class="num">佔營收</div></ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="3:2:1" border="1px solid" col-border="1px solid" cell-padding="8px 14px">
+    <ui-col>營業收入</ui-col>
+    <ui-col><div class="num">1,280,000</div></ui-col>
+    <ui-col><div class="num">100%</div></ui-col>
+    <ui-row-enhance>
+      <ui-col>課程收入</ui-col>
+      <ui-col><div class="num">1,050,000</div></ui-col>
+      <ui-col><div class="num">82.0%</div></ui-col>
+      <ui-row-enhance>
+        <ui-col>團體班</ui-col>
+        <ui-col><div class="num">620,000</div></ui-col>
+        <ui-col><div class="num">48.4%</div></ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance>
+        <ui-col>一對一</ui-col>
+        <ui-col><div class="num">430,000</div></ui-col>
+        <ui-col><div class="num">33.6%</div></ui-col>
+      </ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>教材銷售</ui-col>
+      <ui-col><div class="num">230,000</div></ui-col>
+      <ui-col><div class="num">18.0%</div></ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="3:2:1" border="1px solid" col-border="1px solid" cell-padding="8px 14px">
+    <ui-col>營業費用</ui-col>
+    <ui-col><div class="num">860,000</div></ui-col>
+    <ui-col><div class="num">67.2%</div></ui-col>
+    <ui-row-enhance>
+      <ui-col>人事費用</ui-col>
+      <ui-col><div class="num">520,000</div></ui-col>
+      <ui-col><div class="num">40.6%</div></ui-col>
+      <ui-row-enhance>
+        <ui-col>講師鐘點</ui-col>
+        <ui-col><div class="num">380,000</div></ui-col>
+        <ui-col><div class="num">29.7%</div></ui-col>
+      </ui-row-enhance>
+      <ui-row-enhance>
+        <ui-col>行政助理</ui-col>
+        <ui-col><div class="num">140,000</div></ui-col>
+        <ui-col><div class="num">10.9%</div></ui-col>
+      </ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>行銷費用</ui-col>
+      <ui-col><div class="num">210,000</div></ui-col>
+      <ui-col><div class="num">16.4%</div></ui-col>
+      <ui-row-enhance>
+        <ui-col>社群廣告</ui-col>
+        <ui-col><div class="num">150,000</div></ui-col>
+        <ui-col><div class="num">11.7%</div></ui-col>
+        <ui-row-enhance>
+          <ui-col>Facebook</ui-col>
+          <ui-col><div class="num">90,000</div></ui-col>
+          <ui-col><div class="num">7.0%</div></ui-col>
+        </ui-row-enhance>
+        <ui-row-enhance>
+          <ui-col>Google</ui-col>
+          <ui-col><div class="num">60,000</div></ui-col>
+          <ui-col><div class="num">4.7%</div></ui-col>
+        </ui-row-enhance>
+      </ui-row-enhance>
+      <ui-row-enhance>
+        <ui-col>講座活動</ui-col>
+        <ui-col><div class="num">60,000</div></ui-col>
+        <ui-col><div class="num">4.7%</div></ui-col>
+      </ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>場地租金</ui-col>
+      <ui-col><div class="num">130,000</div></ui-col>
+      <ui-col><div class="num">10.2%</div></ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance col-widths="3:2:1" border="1px solid" col-border="1px solid" cell-padding="8px 14px" font-color="special">
+    <ui-col>本期淨利</ui-col>
+    <ui-col><div class="num">420,000</div></ui-col>
+    <ui-col><div class="num">32.8%</div></ui-col>
+  </ui-row-enhance>
+</ui-table>
+<div class="tree-btns">
+  <button type="button" class="btn-uit" onclick="UiTable.expandAll('#tree-fin', 1)">展開到第 1 層</button>
+  <button type="button" class="btn-uit" onclick="UiTable.expandAll('#tree-fin', 2)">展開到第 2 層</button>
+  <button type="button" class="btn-uit" onclick="UiTable.expandAll('#tree-fin')">全部展開</button>
+  <button type="button" class="btn-uit" onclick="UiTable.collapseAll('#tree-fin')">全部收合</button>
+</div>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 多層級選單 ============ -->
+<section class="demo-case">
+  <h2>9. 多層級選單（手風琴 + 事件）</h2>
+  <p class="desc"><code>tree-accordion</code> 讓同一層只能展開一個節點，打開 Part 2 時 Part 1 會自動收合。每次展開或收合，原本的 <code>&lt;ui-table&gt;</code> 元素會發出 <code>uit-tree-toggle</code> 事件，<code>e.detail</code> 帶有 <code>open</code>、<code>depth</code>、<code>source</code>（click、api、accordion）、<code>row</code>（原始的 ui-row-enhance）與 <code>rowEl</code>（畫面上的列）。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table id="tree-menu" theme="lavender" tree-icon="caret" tree-indent="18" tree-accordion tree-line tree-line-color="indigo">
+  <ui-row-enhance border="1px solid" cell-padding="8px 14px">
+    <ui-col>雅思口說</ui-col>
+    <ui-row-enhance>
+      <ui-col>Part 1</ui-col>
+      <ui-row-enhance><ui-col>家鄉與居住</ui-col></ui-row-enhance>
+      <ui-row-enhance><ui-col>工作與學業</ui-col></ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col>Part 2</ui-col>
+      <ui-row-enhance><ui-col>人物</ui-col></ui-row-enhance>
+      <ui-row-enhance><ui-col>地點</ui-col></ui-row-enhance>
+      <ui-row-enhance><ui-col>事件</ui-col></ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance><ui-col>Part 3</ui-col></ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance border="1px solid" cell-padding="8px 14px">
+    <ui-col>雅思寫作</ui-col>
+    <ui-row-enhance>
+      <ui-col>Task 1</ui-col>
+      <ui-row-enhance><ui-col>圖表</ui-col></ui-row-enhance>
+      <ui-row-enhance><ui-col>流程圖</ui-col></ui-row-enhance>
+    </ui-row-enhance>
+    <ui-row-enhance><ui-col>Task 2</ui-col></ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance border="1px solid" cell-padding="8px 14px">
+    <ui-col>雅思閱讀</ui-col>
+  </ui-row-enhance>
+</ui-table>
+<div class="tree-log"><div class="alert" role="alert" id="menu-log"><b>事件</b>　尚未展開任何節點。</div></div>
+<script>
+  document.getElementById('tree-menu').addEventListener('uit-tree-toggle', function (e) {
+    var d = e.detail;
+    var name = d.row.querySelector(':scope > ui-col').textContent.trim();
+    var log = document.getElementById('menu-log');
+    log.innerHTML = '<b>事件</b>　' + (d.open ? '展開' : '收合') + '：' + name +
+      '（第 ' + (d.depth + 1) + ' 層，來源 ' + d.source + '）';
+  });
+</script>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 JSON children ============ -->
+<section class="demo-case">
+  <h2>10. JSON 資料模式的巢狀子列</h2>
+  <p class="desc">在列資料裡寫 <code>children</code> 陣列就是子列，子列一律建成 ui-row-enhance，可以一路往下巢狀。最上層的列要寫 <code>enhance: true</code>。這次也讓最外層可以不寫 <code>groups</code>，直接寫 <code>rows</code>。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<script>
+  window.treeJson = {
+    treeLine: true,
+    treeIcon: 'chevron',
+    rows: [{
+      enhance: true,
+      treeOpen: true,
+      colWidths: '2:1',
+      border: '1px solid',
+      colBorder: '1px solid',
+      cellPadding: '10px 14px',
+      cols: [{ content: '口說評分項目' }, { content: '權重' }],
+      children: [
+        { cols: [{ content: 'Fluency and Coherence' }, { content: '25%' }],
+          children: [
+            { cols: [{ content: '語速與停頓' }, { content: '' }] },
+            { cols: [{ content: '連接詞使用' }, { content: '' }] }
+          ] },
+        { cols: [{ content: 'Lexical Resource' }, { content: '25%' }] },
+        { cols: [{ content: 'Grammatical Range and Accuracy' }, { content: '25%' }] },
+        { cols: [{ content: 'Pronunciation' }, { content: '25%' }] }
+      ]
+    }]
+  };
+</script>
+<ui-table theme="teal" data-id="treeJson"></ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 第 2 次增修 屬性對照 ============ -->
+<section class="demo-case">
+  <h2>屬性對照：多層級巢狀結構</h2>
+  <p class="desc">樹狀設定集中寫在 ui-table 上，子列只需要 <code>tree-open</code>。巢狀結構只認 ui-row-enhance，寫在 ui-row 裡的子列，或 ui-row-enhance 裡的 ui-row，都會被忽略並發出警告。</p>
+  <table class="ref">
+    <thead>
+      <tr><th>屬性</th><th>JSON 欄位</th><th>可寫在</th><th>說明</th><th>狀態</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>巢狀的 <code>&lt;ui-row-enhance&gt;</code></td><td><code>children: [ ... ]</code></td><td>ui-row-enhance</td><td>父列裡直屬的 ui-row-enhance 就是子列，層數不限。子列沒寫的 <code>col-widths</code>（欄數相同時）、<code>cell-padding</code>、<code>border</code>、<code>col-border</code> 沿用父列；最上層的列彼此之間不會沿用，各自要寫。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-open</code></td><td><code>treeOpen</code></td><td>ui-row-enhance、ui-table</td><td>寫在列上：這個節點載入時就展開。寫在表格上：所有節點載入時都展開。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-col</code></td><td><code>treeCol</code></td><td>ui-table</td><td>展開鈕與縮排放在第幾欄，1 起算，預設 1。樹狀欄的內容固定靠左。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-indent</code></td><td><code>treeIndent</code></td><td>ui-table</td><td>每一層的縮排寬度，也是展開鈕的寬度，預設 20px。純數字視為 px，也接受 px、rem、em。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-icon</code></td><td><code>treeIcon</code></td><td>ui-table</td><td><code>chevron</code>（預設，展開時旋轉）、<code>caret</code>（實心三角形，展開時旋轉）、<code>plus</code>（方框加減號）。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-line</code></td><td><code>treeLine</code></td><td>ui-table</td><td>顯示每一層的垂直導引線，葉節點會顯示小圓點。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-line-color</code></td><td><code>treeLineColor</code></td><td>ui-table</td><td>導引線與小圓點的色彩，預設 #3A3B38。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>tree-accordion</code></td><td><code>treeAccordion</code></td><td>ui-table</td><td>手風琴模式：同一層只能展開一個節點。只對使用者點擊有作用，<code>expandAll</code> 仍會全部展開。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2"><code>UiTable.expandAll(目標, 層級)</code></td><td>JavaScript</td><td>目標可以是選擇器字串、ui-table 元素，或省略代表整頁。層級省略時全部展開；填 1 只展開最上層，填 2 展開到第二層，以此類推。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2"><code>UiTable.collapseAll(目標)</code></td><td>JavaScript</td><td>全部收合，目標的寫法同上。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2"><code>uit-tree-toggle</code> 事件</td><td>ui-table 元素</td><td><code>e.detail</code>：<code>open</code>、<code>depth</code>（0 起算）、<code>source</code>（click、api、accordion）、<code>row</code>、<code>rowEl</code>。載入時的初始展開不會發出事件。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2"><code>UiTableConfig.treeCol</code>、<code>treeIndent</code>、<code>treeIcon</code>、<code>treeLineColor</code></td><td>全域</td><td>整頁預設值，在載入 ui-table.js 之前設定。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2">JSON 最外層 <code>rows</code></td><td>JSON</td><td>沒有 <code>groups</code> 時，可以直接寫 <code>rows</code>。</td><td class="st-add">新增</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ==================================================================== -->
+<!-- 第 3 次增修：icons-list 滑入動畫（僅 ui-row-enhance）                  -->
+<!-- ==================================================================== -->
+<div class="rev-head" id="rev3">
+  <h1>第 3 次增修：icons-list 滑入動畫</h1>
+  <p class="page-sub">只支援 <code>&lt;ui-row-enhance&gt;</code> 裡的 <code>&lt;ui-col&gt;</code>。滑鼠每次移入格子，就清空內容，從左到右依序顯示圖示，最後一個圖示出現後再過一個間隔，才恢復原本的內容。</p>
+</div>
+
+<div class="chg-grid">
+  <div class="chg"><span class="tag add">新增</span><p><code>icons-list</code>：逗號分隔的圖示清單。<code>bi-</code> 開頭是 Bootstrap Icons，其他文字（例如 3, 2, 1）會直接顯示成文字。</p></div>
+  <div class="chg"><span class="tag add">新增</span><p><code>icons-list-interval</code>：每個圖示之間的毫秒數，預設 500。n 個圖示的動畫總長是 n × interval。</p></div>
+  <div class="chg"><span class="tag mod">規則</span><p>與 <code>mask-text</code>、<code>carousel-interval</code> 互斥，同時設定時忽略 icons-list。寫在 ui-row 裡的 icons-list 也會被忽略。</p></div>
+  <div class="chg"><span class="tag mod">規則</span><p>播放途中再次移入會從頭開始。樹狀欄的展開鈕不會被清掉，圖示列從展開鈕右邊開始。</p></div>
+</div>
+
+<!-- ============ 11 icons-list 基本用法 ============ -->
+<section class="demo-case">
+  <h2>11. 基本用法（滑鼠移入格子）</h2>
+  <p class="desc">第一格是你提供的清單（第四個名稱已修正）。第二格用數字圖示加快速度，第三格示範 inverse 格子，第四格示範文字與圖示混用的倒數。播放時格子高度不變，下方的列不會跳動。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="ocean">
+  <ui-row-enhance border="1px solid" col-border="1px solid" cell-padding="14px 16px">
+    <ui-col icons-list="bi-arrow-right-square, bi-arrow-right-square, bi-arrow-right-square, bi-arrow-right-square, bi-arrow-right-square-fill" icons-list-interval="500">
+      五個圖示，每 0.5 秒一個，共 2.5 秒。
+    </ui-col>
+    <ui-col icons-list="bi-1-circle, bi-2-circle, bi-3-circle, bi-check-circle-fill" icons-list-interval="300" font-color="special">
+      數字圖示，每 0.3 秒一個。
+    </ui-col>
+    <ui-col inverse font-color="yellow" icons-list="bi-lightbulb, bi-lightbulb, bi-lightbulb-fill" icons-list-interval="600">
+      inverse 格子：圖示跟著文字色。
+    </ui-col>
+    <ui-col icons-list="3, 2, 1, bi-play-fill" icons-list-interval="700" font-color="pink">
+      Part 2 準備時間倒數。
+    </ui-col>
+  </ui-row-enhance>
+</ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 搭配樹狀欄 ============ -->
+<section class="demo-case">
+  <h2>12. 搭配樹狀欄</h2>
+  <p class="desc">樹狀欄的格子設了 icons-list 時，展開鈕保持顯示也可以照常點擊，圖示列從展開鈕右邊開始播放。第二欄示範一般欄位。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="lavender" tree-line>
+  <ui-row-enhance col-widths="2:3" border="1px solid" col-border="1px solid" cell-padding="10px 14px" tree-open>
+    <ui-col icons-list="bi-mic, bi-mic, bi-mic-fill" icons-list-interval="400">口說練習</ui-col>
+    <ui-col icons-list="bi-chevron-right, bi-chevron-right, bi-chevron-double-right" icons-list-interval="350">滑過這格看箭頭往前推進</ui-col>
+    <ui-row-enhance>
+      <ui-col icons-list="bi-person, bi-person-fill" icons-list-interval="400">Part 2 人物題</ui-col>
+      <ui-col>Describe a person who inspired you.</ui-col>
+    </ui-row-enhance>
+    <ui-row-enhance>
+      <ui-col icons-list="bi-geo-alt, bi-geo-alt-fill" icons-list-interval="400">Part 2 地點題</ui-col>
+      <ui-col>Describe a place you would like to revisit.</ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+</ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13 互斥與錯誤示範 ============ -->
+<section class="demo-case">
+  <h2>13. 互斥與錯誤示範</h2>
+  <p class="desc">前兩格同時設了遮罩或輪播，icons-list 被忽略，遮罩與輪播照常運作。第三格的圖示名稱打錯，第一次滑入時才會檢查並發出警告，打錯的那一步會是空白。最下面一列是一般的 ui-row，icons-list 不會生效。警告顯示在表格下方。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<ui-table theme="salmon">
+  <ui-row-enhance border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col mask-text="點我揭曉" icons-list="bi-star, bi-star-fill">遮罩優先</ui-col>
+    <ui-col carousel-interval="2000" icons-list="bi-star, bi-star-fill">
+      <cell-item>輪播優先</cell-item>
+      <cell-item>icons-list 已忽略</cell-item>
+    </ui-col>
+    <ui-col icons-list="bi-arrow-right-square, bi-arrow-right-square-, bi-arrow-right-square-fill">名稱打錯一個</ui-col>
+  </ui-row-enhance>
+  <ui-row border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+    <ui-col icons-list="bi-star, bi-star-fill">ui-row 不支援</ui-col>
+    <ui-col>一般格子</ui-col>
+    <ui-col>一般格子</ui-col>
+  </ui-row>
+</ui-table>
+      </div>
+      <div id="uit-log-3"></div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14 JSON ============ -->
+<section class="demo-case">
+  <h2>14. JSON 資料模式</h2>
+  <p class="desc"><code>iconsList</code> 可以寫成陣列，也可以寫成逗號分隔字串；<code>iconsListInterval</code> 是毫秒數。所在的列要是 <code>enhance: true</code>。</p>
+  <div class="demo-pair">
+    <div>
+      <span class="demo-pane-label">效果</span>
+      <div class="demo-src">
+<script>
+  window.iconsJson = {
+    rows: [{
+      enhance: true,
+      border: '1px solid',
+      colBorder: '1px solid',
+      cellPadding: '12px 16px',
+      cols: [
+        { content: '陣列寫法',
+          iconsList: ['bi-hourglass-top', 'bi-hourglass-split', 'bi-hourglass-bottom'],
+          iconsListInterval: 450 },
+        { content: '字串寫法',
+          iconsList: 'bi-emoji-neutral, bi-emoji-smile, bi-emoji-laughing',
+          iconsListInterval: 450 }
+      ]
+    }]
+  };
+</script>
+<ui-table theme="teal" data-id="iconsJson"></ui-table>
+      </div>
+    </div>
+    <div>
+      <span class="demo-pane-label code">程式碼</span>
+      <pre class="demo-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 第 3 次增修 屬性對照 ============ -->
+<section class="demo-case">
+  <h2>屬性對照：icons-list</h2>
+  <table class="ref">
+    <thead>
+      <tr><th>屬性</th><th>JSON 欄位</th><th>可寫在</th><th>說明</th><th>狀態</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>icons-list</code></td><td><code>iconsList</code></td><td>ui-row-enhance 裡的 ui-col</td><td>逗號分隔的清單，前後空白會自動去掉。<code>bi-</code> 開頭是 Bootstrap Icons；元件內建名稱（如 <code>i-check</code>）用內建 SVG；其他文字直接顯示。圖示大小與色彩跟隨格子的文字。</td><td class="st-add">新增</td></tr>
+      <tr><td><code>icons-list-interval</code></td><td><code>iconsListInterval</code></td><td>ui-col</td><td>每個圖示之間的毫秒數，預設 500。第 1 個圖示在滑入當下出現，之後每隔一個間隔出現下一個，最後一個出現後再隔一個間隔恢復內容。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2"><code>UiTableConfig.iconsListInterval</code></td><td>全域</td><td>整頁的預設間隔，在載入 ui-table.js 之前設定。</td><td class="st-add">新增</td></tr>
+      <tr><td colspan="2">互斥規則</td><td>ui-col</td><td>與 <code>mask-text</code>、<code>carousel-interval</code> 同時設定時，icons-list 被忽略並發出警告。寫在 ui-row 裡也會被忽略。</td><td class="st-mod">規則</td></tr>
+      <tr><td colspan="2">名稱檢查</td><td>執行時</td><td>第一次播放時檢查 Bootstrap Icons 名稱，找不到的會列在警告裡。</td><td class="st-mod">規則</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<script>
+  /* 把每個範例的原始碼放進右邊的程式碼框（在 ui-table.js 改寫 DOM 之前擷取） */
+  (function () {
+    var HL = new RegExp('(' + [
+      /* 第 1 次增修 */
+      'carousel-interval="0"', 'progress-bar-color1', 'progress-bar-color2', 'extra-info-size', 'extra-info-color',
+      'carouselInterval: 0', 'progressBarColor1', 'progressBarColor2', 'extraInfoSize', 'extraInfoColor',
+      /* 第 2 次增修 */
+      'tree-line-color', 'tree-accordion', 'tree-indent', 'tree-icon', 'tree-open', 'tree-line', 'tree-col',
+      'treeLineColor', 'treeAccordion', 'treeIndent', 'treeIcon', 'treeOpen', 'treeLine', 'treeCol',
+      'children', 'UiTable\\.expandAll', 'UiTable\\.collapseAll', 'uit-tree-toggle',
+      /* 第 3 次增修 */
+      'icons-list-interval', 'icons-list', 'iconsListInterval', 'iconsList'
+    ].join('|') + ')', 'g');
+    function esc(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function dedent(s) {
+      var lines = s.replace(/^\s*\n/, '').replace(/\s+$/, '').split('\n');
+      var min = Infinity;
+      lines.forEach(function (l) {
+        if (!l.trim()) return;
+        var m = l.match(/^ */)[0].length;
+        if (m < min) min = m;
+      });
+      return lines.map(function (l) { return l.slice(min === Infinity ? 0 : min); }).join('\n');
+    }
+    document.querySelectorAll('.demo-case').forEach(function (sec) {
+      var src = sec.querySelector('.demo-src');
+      var out = sec.querySelector('.demo-code');
+      if (!src || !out) return;
+      var raw = dedent(src.innerHTML).replace(/=""/g, '');
+      out.innerHTML = esc(raw).replace(HL, '<span class="hl">$1</span>');
+    });
+  })();
+
+  /* 把元件的 console 警告與錯誤改用 Bootstrap alert 顯示 */
+  (function () {
+    /* icons-list 的訊息放在第 13 節，其他的放在第 4 節 */
+    function push(kind, args) {
+      var text = Array.prototype.map.call(args, String).join(' ');
+      if (text.indexOf('[ui-table]') !== 0) return;
+      var box = document.getElementById(text.indexOf('icons-list') > -1 ? 'uit-log-3' : 'uit-log');
+      var el = document.createElement('div');
+      el.className = 'alert alert-dismissible fade show' + (kind === 'error' ? ' is-err' : '');
+      el.setAttribute('role', 'alert');
+      var b = document.createElement('b');
+      b.textContent = kind === 'error' ? '錯誤　' : '警告　';
+      el.appendChild(b);
+      el.appendChild(document.createTextNode(text.replace('[ui-table] ', '')));
+      var close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'btn-close';
+      close.setAttribute('data-bs-dismiss', 'alert');
+      el.appendChild(close);
+      box.appendChild(el);
+    }
+    ['warn', 'error'].forEach(function (k) {
+      var orig = console[k].bind(console);
+      console[k] = function () { orig.apply(null, arguments); push(k, arguments); };
+    });
+  })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-table.js"></script>
+</body>
+</html>
