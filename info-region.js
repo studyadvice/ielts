@@ -7,6 +7,24 @@
     return /[a-z%]$/i.test(String(v)) ? String(v) : v + u;
   };
 
+  /* 不透明混色：前景色以 pct% 疊在底色上，回傳不透明的十六進位色碼。
+     底色不是十六進位時退回 color-mix()，結果同樣不透明。
+     用來取代所有半透明 rgba，畫面看起來相同，但沒有任何透明度。 */
+  const hexToRgb = h => {
+    if (typeof h !== 'string' || h.charAt(0) !== '#') return null;
+    let t = h.slice(1);
+    if (t.length === 3) t = t.split('').map(c => c + c).join('');
+    if (t.length !== 6 || /[^0-9a-f]/i.test(t)) return null;
+    return [0, 2, 4].map(i => parseInt(t.slice(i, i + 2), 16));
+  };
+  const solid = (fg, pct, bg) => {
+    const a = hexToRgb(fg), b = hexToRgb(bg);
+    if (!a || !b) return `color-mix(in srgb, ${fg} ${pct}%, ${bg})`;
+    const k = pct / 100;
+    return '#' + a.map((v, i) =>
+      Math.round(v * k + b[i] * (1 - k)).toString(16).padStart(2, '0')).join('').toUpperCase();
+  };
+
   const BrandColors = {
     bg:       '#0C0D0C',
     region:   '#333333',
@@ -21,7 +39,7 @@
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
     focus:    '#D4FFFC',
-    info:     '#2351DB',
+    info:     '#4171BF',
     indigo:   '#7849C9',
     pink:     '#FF91D7',
     orange:   '#EDA109',
@@ -76,6 +94,7 @@
     resetBtnPadding:    null,
     choiceFontSize:     null,   /* ir-choice 字體大小，null = 用 CSS 預設 0.95rem */
     choicePadding:      null,   /* ir-choice 內距，null = 用 CSS 預設 10px 14px   */
+    fx:                 true,   /* false = 全域關閉電流動畫（ir-gold 與 fx="electric"） */
   };
 
   window.InfoRegionConfig = Object.assign({}, defaults, window.InfoRegionConfig || {});
@@ -91,8 +110,10 @@
     const vDur   = cfg.animDuration + 'ms';
     const hDur   = cfg.horizontalAnimDur + 'ms';
     const defClr = BrandColors[cfg.defaultColor] || BrandColors.sky;
+    const REGION = cfg.bgColor;     /* 區塊底色，測驗選項與解說的混色基準 */
+    const PAGE   = BrandColors.bg;  /* 頁面底色，計分板的混色基準 */
 
-    /* 色彩 variant — 自動從 BrandColors 生成，新增色票只需修改上方物件 */
+    /* 色彩 variant：自動從 BrandColors 生成，新增色票只需修改上方物件 */
     const skip = new Set(['bg', 'region']);
 
     const COLOR_VARIANTS = Object.entries(BrandColors)
@@ -103,11 +124,10 @@
 
     const BTN_VARIANTS = Object.entries(BrandColors)
       .filter(([k]) => !skip.has(k))
-      .map(([k, v]) => {
-        const [r, g, b] = [1, 3, 5].map(i => parseInt(v.slice(i, i + 2), 16));
-        return `.ir-btn--${k}{border-color:${v};color:${v}}` +
-               `.ir-btn--${k}:hover{background:rgba(${r},${g},${b},0.18)}`;
-      }).join('\n      ');
+      .map(([k, v]) =>
+        `.ir-btn--${k}{border-color:${v};color:${v}}` +
+        `.ir-btn--${k}:hover{background:${solid(v, 18, BrandColors.region)}}`
+      ).join('\n      ');
 
     const css = `
       info-region {
@@ -118,7 +138,7 @@
         transform: translateY(10px);
         pointer-events: none;
         position: relative;
-        border-left: ${cfg.borderWidth}px solid transparent;
+        border-left: ${cfg.borderWidth}px solid ${defClr};
         border-radius: ${cfg.borderRadius};
         font-size: ${cfg.fontSize};
         line-height: 1.75;
@@ -250,7 +270,7 @@
       info-region ul, info-region ol { padding-left: 18px; }
       info-region li { margin-bottom: 3px; }
 
-      /* ══ 金箔特別版 — class="ir-gold" ══
+      /* ══ 金箔特別版：class="ir-gold" ══
          用於步驟序列的第一步（開場）或最後一步（結尾），
          視覺獨特，與中間普通步驟明顯區隔。            */
       info-region.ir-gold[active="true"] {
@@ -268,7 +288,7 @@
         border-radius: 6px !important;
         color: #EFD9A2 !important;
       }
-      /* 掃光動畫 — 裝飾性，低不透明度屬意為之 */
+      /* 掃光動畫：不透明的黑到暗金漸層，用 screen 混合模式疊加，黑色部分不改變底色 */
       info-region.ir-gold::before {
         content: '';
         position: absolute;
@@ -276,20 +296,93 @@
         pointer-events: none;
         background: linear-gradient(
           102deg,
-          transparent 25%,
-          rgba(255, 210, 80, 0.13) 50%,
-          transparent 75%
+          #000000 25%,
+          #2B2008 50%,
+          #000000 75%
         );
         background-size: 200% 100%;
+        mix-blend-mode: screen;
         animation: ir-gold-shimmer 4s ease-in-out infinite;
       }
       @keyframes ir-gold-shimmer {
         0%   { background-position: -60% center; }
         100% { background-position: 160% center; }
       }
-      info-region.ir-gold > *:not(.ir-countdown-bar) {
+      info-region.ir-gold > *:not(.ir-countdown-bar):not(.ir-fx-bolt) {
         position: relative;
         z-index: 1;
+      }
+
+      /* ══ 電流特效 ══
+         class="ir-gold" 預設開啟，其他顏色加 fx="electric"，fx="off" 關閉。
+         所有顏色皆為不透明色。                                              */
+      info-region.ir-gold {
+        --ir-fx-edge: #C9973F;
+        --ir-fx-dim:  #6B4F12;
+        --ir-fx-core: #D4FFFC;
+      }
+      @property --ir-fx-angle {
+        syntax: '<angle>';
+        inherits: false;
+        initial-value: 0deg;
+      }
+      @keyframes ir-fx-spin { to { --ir-fx-angle: 360deg; } }
+      @keyframes ir-fx-glow {
+        0%, 100% { box-shadow: 0 0 10px var(--ir-fx-dim); }
+        7%       { box-shadow: 0 0 22px var(--ir-fx-edge); }
+        9%       { box-shadow: 0 0 6px  var(--ir-fx-dim); }
+        12%      { box-shadow: 0 0 28px var(--ir-fx-core); }
+        16%      { box-shadow: 0 0 12px var(--ir-fx-edge); }
+        55%      { box-shadow: 0 0 10px var(--ir-fx-dim); }
+        58%      { box-shadow: 0 0 20px var(--ir-fx-edge); }
+        60%      { box-shadow: 0 0 8px  var(--ir-fx-dim); }
+      }
+      @keyframes ir-fx-bolt {
+        0%, 100% { background: var(--ir-fx-core); }
+        7%       { background: var(--ir-fx-dim); }
+        9%       { background: var(--ir-fx-core); }
+        12%      { background: var(--ir-fx-edge); }
+        15%      { background: var(--ir-fx-core); }
+        56%      { background: var(--ir-fx-core); }
+        58%      { background: var(--ir-fx-dim); }
+        61%      { background: var(--ir-fx-core); }
+      }
+      /* 光暈明滅 */
+      info-region[data-ir-fx="electric"][active="true"] {
+        animation: ir-fx-glow 3.6s linear infinite;
+      }
+      /* 沿內緣繞行的電流環 */
+      info-region[data-ir-fx="electric"][active="true"]::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        border-radius: inherit;
+        pointer-events: none;
+        background: conic-gradient(from var(--ir-fx-angle, 0deg),
+          var(--ir-fx-dim) 0deg,
+          var(--ir-fx-dim) 190deg,
+          var(--ir-fx-edge) 270deg,
+          var(--ir-fx-core) 335deg,
+          var(--ir-fx-dim) 360deg);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: ir-fx-spin 2.6s linear infinite;
+      }
+      /* 右上角閃爍的閃電（由腳本加入） */
+      .ir-fx-bolt {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        width: 11px;
+        height: 18px;
+        z-index: 2;
+        pointer-events: none;
+        background: var(--ir-fx-core);
+        clip-path: polygon(62% 0, 8% 56%, 44% 56%, 30% 100%, 92% 38%, 56% 38%);
+        animation: ir-fx-bolt 3.6s linear infinite;
       }
 
       /* ══ 測驗模式 ══ */
@@ -311,8 +404,8 @@
         align-items: flex-start;
         gap: 10px;
         padding: ${cfg.choicePadding || '10px 14px'};
-        background: rgba(255,255,255,0.05);
-        border: 1.5px solid rgba(198,199,189,0.22);
+        background: ${solid('#FFFFFF', 5, REGION)};
+        border: 1.5px solid ${solid(BrandColors.shell, 22, REGION)};
         border-radius: 6px;
         cursor: pointer;
         font-size: ${cfg.choiceFontSize ? addUnit(cfg.choiceFontSize, 'rem') : '0.95rem'};
@@ -324,8 +417,8 @@
         user-select: none;
       }
       ir-choice:hover:not([disabled]) {
-        background: rgba(130,200,229,0.12);
-        border-color: rgba(130,200,229,0.55);
+        background: ${solid(BrandColors.sky, 12, REGION)};
+        border-color: ${solid(BrandColors.sky, 55, REGION)};
       }
       ir-choice[disabled] { cursor: default; }
 
@@ -335,7 +428,7 @@
         width: 24px;
         height: 24px;
         border-radius: 50%;
-        border: 1.5px solid rgba(198,199,189,0.4);
+        border: 1.5px solid ${solid(BrandColors.shell, 40, REGION)};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -348,7 +441,7 @@
 
       /* 答對 */
       ir-choice[state="correct"] {
-        background: rgba(39,174,96,0.15);
+        background: ${solid(BrandColors.safe, 15, REGION)};
         border-color: ${BrandColors.safe};
       }
       ir-choice[state="correct"] .ir-choice-key {
@@ -359,7 +452,7 @@
 
       /* 答錯（被選的那個） */
       ir-choice[state="wrong"] {
-        background: rgba(230,55,75,0.15);
+        background: ${solid(BrandColors.warning, 15, REGION)};
         border-color: ${BrandColors.warning};
       }
       ir-choice[state="wrong"] .ir-choice-key {
@@ -370,8 +463,8 @@
 
       /* 其他未選但正確的選項（顯示正解） */
       ir-choice[state="reveal"] {
-        background: rgba(39,174,96,0.08);
-        border-color: rgba(39,174,96,0.45);
+        background: ${solid(BrandColors.safe, 8, REGION)};
+        border-color: ${solid(BrandColors.safe, 45, REGION)};
       }
       ir-choice[state="reveal"] .ir-choice-key {
         border-color: ${BrandColors.safe};
@@ -396,19 +489,19 @@
         pointer-events: auto;
       }
       .ir-quiz-explain.is-correct {
-        background: rgba(39,174,96,0.12);
-        border: 1px solid rgba(39,174,96,0.4);
+        background: ${solid(BrandColors.safe, 12, REGION)};
+        border: 1px solid ${solid(BrandColors.safe, 40, REGION)};
         color: #a5e6bc;
       }
       .ir-quiz-explain.is-wrong {
-        background: rgba(230,55,75,0.12);
-        border: 1px solid rgba(230,55,75,0.4);
+        background: ${solid(BrandColors.warning, 12, REGION)};
+        border: 1px solid ${solid(BrandColors.warning, 40, REGION)};
         color: #f0a0a8;
       }
       .ir-quiz-explain code {
         font-family: 'Space Mono', monospace;
         font-size: 0.88em;
-        background: rgba(255,255,255,0.1);
+        background: ${solid('#FFFFFF', 10, REGION)};
         padding: 1px 5px;
         border-radius: 3px;
       }
@@ -457,7 +550,7 @@
       .ir-quiz-label {
         font-size: 0.72rem;
         letter-spacing: 0.08em;
-        color: rgba(198,199,189,0.5);
+        color: ${solid(BrandColors.shell, 50, REGION)};
         margin-bottom: 8px;
         font-family: 'Space Mono', monospace;
       }
@@ -468,8 +561,8 @@
         align-items: center;
         gap: 18px;
         padding: 14px 20px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(198,199,189,0.15);
+        background: ${solid('#FFFFFF', 4, PAGE)};
+        border: 1px solid ${solid(BrandColors.shell, 15, PAGE)};
         border-radius: 6px;
         margin-top: 16px;
         font-size: 0.88rem;
@@ -481,8 +574,8 @@
         font-family: 'Space Mono', monospace;
         line-height: 1;
       }
-      .ir-quiz-score-lbl { font-size: 0.68rem; opacity: 0.6; letter-spacing: 0.06em; }
-      .ir-quiz-score-divider { width: 1px; height: 36px; background: rgba(198,199,189,0.18); }
+      .ir-quiz-score-lbl { font-size: 0.68rem; color: ${solid(BrandColors.shell, 60, PAGE)}; letter-spacing: 0.06em; }
+      .ir-quiz-score-divider { width: 1px; height: 36px; background: ${solid(BrandColors.shell, 18, PAGE)}; }
     `;
 
     const styleEl = document.createElement('style');
@@ -501,6 +594,7 @@
         'border-style',
         'border-top-style', 'border-right-style',
         'border-bottom-style', 'border-left-style',
+        'fx', 'fx-core', 'fx-dim',
       ];
     }
 
@@ -508,22 +602,53 @@
       injectStyles();
       if (!this._irConnected) {
         this._irConnected = true;
-        if (this.getAttribute('active') === 'true') {
+        /* 記下一開始是否就是 active，重設時據此還原 */
+        this._initActive = this.getAttribute('active') === 'true';
+        if (this._initActive) {
           requestAnimationFrame(() => this._onActivated());
         }
       }
     }
 
-    attributeChangedCallback(name, oldVal, newVal) {
-      if (name === 'active') {
-        if (newVal === 'true' && oldVal !== 'true') this._onActivated();
-      } else if (this.getAttribute('active') === 'true') {
-        this._applyBorderStyles();
+    disconnectedCallback() {
+      this._clearTimers();
+    }
+
+    /* ── 計時器登記：重設、離開 DOM 時一併取消，避免殘留計時器事後啟動下一個區塊 ── */
+    _later(fn, ms) {
+      if (!this._timers) this._timers = new Set();
+      const id = setTimeout(() => {
+        this._timers.delete(id);
+        fn();
+      }, ms);
+      this._timers.add(id);
+      return id;
+    }
+
+    _clearTimers() {
+      if (this._timers) {
+        this._timers.forEach(clearTimeout);
+        this._timers.clear();
+      }
+      if (this._raf) {
+        cancelAnimationFrame(this._raf);
+        this._raf = 0;
       }
     }
 
-    _onActivated() {
+    attributeChangedCallback(name, oldVal, newVal) {
+      if (name === 'active') {
+        if (newVal === 'true' && oldVal !== 'true') this._onActivated(!!this._silent);
+      } else if (this.getAttribute('active') === 'true') {
+        this._applyBorderStyles();
+        this._applyFx();
+      }
+    }
+
+    /* silent = true：只還原外觀（邊框、電流、測驗版面、手動按鈕），不啟動計時器也不跳下一個 */
+    _onActivated(silent = false) {
       this._applyBorderStyles();
+      this._applyFx();
 
       /* ── 測驗模式優先接管 ── */
       if (this.hasAttribute('quiz')) {
@@ -535,6 +660,8 @@
         this._insertManualButton();
         return;
       }
+
+      if (silent) return;
 
       const grp = this.closest('info-region-group');
       if (grp && (
@@ -567,7 +694,7 @@
 
         this.style[`${p}Width`] = w + 'px';
         this.style[`${p}Style`] = w > 0 ? s : 'none';
-        this.style[`${p}Color`] = w > 0 ? hex : 'transparent';
+        this.style[`${p}Color`] = hex;
       });
     }
 
@@ -576,6 +703,44 @@
         const p = 'border' + cap(side);
         this.style[`${p}Width`] = this.style[`${p}Style`] = this.style[`${p}Color`] = '';
       });
+    }
+
+    /* 電流特效：ir-gold 預設開啟，其他顏色要加 fx="electric"。
+       fx="off" 或 InfoRegionConfig.fx = false 則關閉。可用 fx-core、fx-dim 自訂亮點色與暗部色。 */
+    _applyFx() {
+      const cfg  = window.InfoRegionConfig;
+      const gold = this.classList.contains('ir-gold');
+      const mode = this.getAttribute('fx') || (gold ? 'electric' : '');
+      const on   = cfg.fx !== false && mode === 'electric';
+      const bolt = this.querySelector(':scope > .ir-fx-bolt');
+
+      if (!on) {
+        this._clearFx();
+        return;
+      }
+
+      const edge = gold
+        ? BrandColors.gold
+        : (BrandColors[this.getAttribute('color') || cfg.defaultColor] || BrandColors.sky);
+      const dim  = this.getAttribute('fx-dim')  || (gold ? '#6B4F12' : solid('#000000', 55, edge));
+      const core = this.getAttribute('fx-core') || BrandColors.focus;
+
+      this.setAttribute('data-ir-fx', 'electric');
+      this.style.setProperty('--ir-fx-edge', edge);
+      this.style.setProperty('--ir-fx-dim',  dim);
+      this.style.setProperty('--ir-fx-core', core);
+
+      if (!bolt) {
+        const b = document.createElement('span');
+        b.className = 'ir-fx-bolt';
+        this.appendChild(b);
+      }
+    }
+
+    _clearFx() {
+      this.removeAttribute('data-ir-fx');
+      ['--ir-fx-edge', '--ir-fx-dim', '--ir-fx-core'].forEach(k => this.style.removeProperty(k));
+      this.querySelector(':scope > .ir-fx-bolt')?.remove();
     }
 
     _insertManualButton() {
@@ -628,17 +793,20 @@
       });
       this.appendChild(bar);
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => { bar.style.transform = 'scaleX(0)'; });
+      this._raf = requestAnimationFrame(() => {
+        this._raf = requestAnimationFrame(() => {
+          this._raf = 0;
+          bar.style.transform = 'scaleX(0)';
+        });
       });
 
-      setTimeout(() => this._triggerNext(0), duration);
+      this._later(() => this._triggerNext(0), duration);
     }
 
     _triggerNext(delay) {
       const nextId = this.getAttribute('next');
       if (!nextId) return;
-      setTimeout(() => {
+      this._later(() => {
         const el = document.getElementById(nextId);
         if (el) el.setAttribute('active', 'true');
         else console.warn(`[InfoRegion] 找不到 id="${nextId}" 的元素。`);
@@ -652,21 +820,33 @@
 
     activate() { this.setAttribute('active', 'true'); }
 
-    reset() {
-      this._irConnected = false;
+    /* 還原到載入頁面時的樣子。
+       restore = true（預設）：一開始就是 active 的區塊會回到 active（只還原外觀，不啟動計時器）。
+       restore = false：全部取消 active，群組「開始」時使用。 */
+    reset({ restore = true } = {}) {
+      this._clearTimers();
       this._quizAnswered = false;
       this.removeAttribute('active');
       this._clearBorderStyles();
+      this._clearFx();
       this.querySelector('.ir-countdown-bar')?.remove();
       this.querySelector('.ir-manual-wrap')?.remove();
-      /* 測驗模式：還原選項狀態 */
+      /* 測驗模式：還原選項狀態，並移除腳本注入的字母圈與題號標籤 */
       this.querySelectorAll('ir-choice').forEach(c => {
         c.removeAttribute('state');
         c.removeAttribute('disabled');
+        c.querySelector(':scope > .ir-choice-key')?.remove();
       });
+      this.querySelector(':scope > .ir-quiz-label')?.remove();
       this.querySelector('.ir-quiz-explain')?.remove();
       this.querySelector('.ir-quiz-next-wrap')?.remove();
       this.querySelector('.ir-quiz-retry-wrap')?.remove();
+
+      if (restore && this._initActive) {
+        this._silent = true;
+        try { this.setAttribute('active', 'true'); }
+        finally { this._silent = false; }
+      }
     }
 
     /* ── 測驗模式核心 ── */
@@ -720,7 +900,9 @@
         ch.removeAttribute('disabled');
         ch.removeAttribute('state');
 
-        ch.addEventListener('click', () => {
+        /* 每個選項只保留一個點擊處理器，重設或重試後重新綁定不會累積 */
+        if (ch._irClick) ch.removeEventListener('click', ch._irClick);
+        const onPick = () => {
           if (ch.hasAttribute('disabled') || this._quizAnswered) return;
 
           const chosen = (ch.getAttribute('value') || '').trim().toLowerCase();
@@ -762,6 +944,7 @@
 
             retryBtn.addEventListener('click', () => {
               /* 原地重置：還原選項狀態，清除解說與按鈕列，重新執行 _setupQuiz */
+              this._clearTimers();   /* 取消尚未執行的自動跳題 */
               this._quizAnswered = false;
               this.querySelectorAll('ir-choice').forEach(c => {
                 c.removeAttribute('state');
@@ -782,7 +965,7 @@
           const nextId = correct ? correctNext : wrongNext;
 
           if (autoNext && nextId) {
-            setTimeout(() => this._triggerNextById(nextId), nextDelay);
+            this._later(() => this._triggerNextById(nextId), nextDelay);
           } else if (nextId) {
             /* 手動繼續按鈕 */
             const wrap = document.createElement('div');
@@ -808,7 +991,9 @@
             requestAnimationFrame(() => wrap.classList.add('is-visible'));
           }
           /* nextId 為 null → 本題為終點，不跳轉 */
-        }, { once: false });
+        };
+        ch._irClick = onPick;
+        ch.addEventListener('click', onPick);
       });
     }
 
@@ -840,6 +1025,29 @@
 
     disconnectedCallback() {
       this._observer?.disconnect();
+      this._clearTimers();
+    }
+
+    /* 群組自己的計時器（連鎖啟動）與動畫幀，重設與開始時取消 */
+    _later(fn, ms) {
+      if (!this._timers) this._timers = new Set();
+      const id = setTimeout(() => {
+        this._timers.delete(id);
+        fn();
+      }, ms);
+      this._timers.add(id);
+      return id;
+    }
+
+    _clearTimers() {
+      if (this._timers) {
+        this._timers.forEach(clearTimeout);
+        this._timers.clear();
+      }
+      if (this._raf) {
+        cancelAnimationFrame(this._raf);
+        this._raf = 0;
+      }
     }
 
     _getChildren() {
@@ -1071,9 +1279,10 @@
     }
 
     _start() {
-      this._reset(false);
+      this._reset(false, false);
 
-      requestAnimationFrame(() => requestAnimationFrame(() => {
+      this._raf = requestAnimationFrame(() => { this._raf = requestAnimationFrame(() => {
+        this._raf = 0;
         if (this._progressBar) {
           this._progressBar.style.transition =
             `transform ${window.InfoRegionConfig.progressTransition}ms ease`;
@@ -1086,18 +1295,19 @@
                           window.InfoRegionConfig.cascadeInterval;
 
         if (cascadeMs > 0) {
-          children.forEach((c, i) => setTimeout(() => c.activate(), i * cascadeMs));
+          children.forEach((c, i) => this._later(() => c.activate(), i * cascadeMs));
         } else {
           children[0].activate();
         }
-      }));
+      }); });
     }
 
-    _reset(reenableTransition = true) {
+    _reset(reenableTransition = true, restore = true) {
+      this._clearTimers();
       this._answeredSet.clear();
       this._quizScore   = { correct: 0, wrong: 0 };
       this._updateScoreboard();
-      this._getChildren().forEach(el => el.reset());
+      this._getChildren().forEach(el => el.reset({ restore }));
 
       if (this._progressBar) {
         this._progressBar.style.transition = 'none';
