@@ -27,14 +27,6 @@
  *   H  收合／展開工具列
  *   A  顯示／收起全部解答
  *   Esc  關閉手寫視窗
- *
- * 版本紀錄：
- *   v1（10-27-26）觸控筆、雷射筆、筆色、粗細 3 至 12、清除、收合工具列
- *   v2（10-28-26）data-anchor 座標模式（視窗／文件）、extra-color 自訂筆色
- *   v3（10-28-26）<ink-handwrite> 行內手寫空格與手寫視窗
- *   v3.1（10-28-26）修正解析器先行升級導致底線殘留、格數誤判與筆跡溢出行框
- *   v3.2（10-28-26）移除畫面提示訊息，錯誤改寫入 console
- *   v4（10-28-26）answer 屬性與解答顯示：空格右側小圓點單格切換，A 鍵全部切換
  * ========================================================= */
 (function () {
   'use strict';
@@ -62,31 +54,22 @@
   var WIDTH_MAX = 12;
   var WIDTH_DEFAULT = 3;
 
-  /* 手寫視窗的筆較粗，因為寫完會縮小塞進空格 */
   var HW_MIN = 4;
   var HW_MAX = 24;
   var HW_DEFAULT = 10;
-
-  /* 底線數量的可辨識範圍 */
-  var SLOT_MIN = 5;
-  var SLOT_MAX = 15;
+  var SLOT_MIN = 8;
+  var SLOT_MAX = 255;
   var SLOT_FALLBACK = 10;
-
-  /* 解答文字縮小的下限倍率 */
   var ANSWER_MIN_SCALE = 0.6;
-
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-
   var PEN_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">'
     + '<path d="M3 17.3V21h3.7L17.6 10.1l-3.7-3.7L3 17.3zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.7 3.7L20.7 7z" '
     + 'fill="currentColor"/></svg>';
 
-  /* ---------- 設定錯誤只寫入 console，畫面上不出現任何提示 ---------- */
   function warn(msg) {
     if (window.console && console.warn) console.warn('[ink-pen] ' + msg);
   }
 
-  /* ---------- 樣式（僅注入一次） ---------- */
   function injectStyles() {
     if (document.getElementById('ink-pen-styles')) return;
     var css = ''
