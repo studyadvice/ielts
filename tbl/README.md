@@ -618,36 +618,5 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 
 ---
 
-## 瀏覽器支援
-
-需要支援 CSS Grid、`clip-path`、`mask-image` 與 `:scope` 選擇器的現代瀏覽器。樹狀展開的高度動畫使用 `grid-template-rows` 過渡，需要 Chrome／Edge 107 以上、Firefox 66 以上、Safari 16 以上；較舊的瀏覽器仍可正常展開，只是沒有動畫。不支援 Internet Explorer。
-
----
-
-## 更新紀錄
-
-### 10-29-26
-
-**第 3 次增修：icons-list 滑入動畫**
-- 新增 `icons-list`、`icons-list-interval`（僅 ui-row-enhance）。
-- 新增 `UiTableConfig.iconsListInterval`。
-- JSON 新增 `iconsList`、`iconsListInterval`。
-
-**第 2 次增修：多層級巢狀結構**
-- `ui-row-enhance` 可以巢狀，父列自動出現展開鈕，子列滑順展開。
-- 新增 `tree-col`、`tree-indent`、`tree-icon`、`tree-line`、`tree-line-color`、`tree-accordion`、`tree-open`。
-- 新增 `UiTable.expandAll()`、`UiTable.collapseAll()` 與 `uit-tree-toggle` 事件。
-- JSON 新增 `children`，最外層可以直接寫 `rows`。
-
-**第 1 次增修**
-- `carousel-interval="0"` 搭配 `progress-bar` 為手動輪播，進度條改為可點擊的分段樣式。
-- 新增 `progress-bar-color1`、`progress-bar-color2` 漸層進度條。
-- 新增 `extra-info-size`、`extra-info-color`。
-- 移除 `alert-msg`、`alert-color`、`alert-interval`、`alert-pos` 與 `UiTableConfig.alertDuration`。
-- 修正 JSON 的 `carouselInterval: 0` 被當成未設定。
-
----
-
 ## 授權
-
-尚未指定。發佈前請補上授權條款（例如 MIT）。
+ MIT
