@@ -15,7 +15,7 @@
     teal     : '#0DA591',
     focus    : '#D4FFFC',
     indigo   : '#7849C9',
-    info     : '#2351DB',
+    info     : '#4171BF',
     wrong    : '#E6374B',
     shell    : '#C6C7BD',
     gold     : '#C9973F',
@@ -1668,4 +1668,5 @@
   } else {
     initTriggerHints();
   }
+
 })(window);
