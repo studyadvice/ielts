@@ -26,7 +26,6 @@
     theme:              'shell',
     cellPadding:        '6px',
     fontSize:           '1rem',
-    alertDuration:      5000,
     autoRevealInterval: 0,
     cellAlignment:      'left',
     verticalAlignment:  'top',
@@ -35,8 +34,13 @@
     rowBorder:          '',
     arrowSize:          '1.5rem',
     arrowColor:         'focus',
-    arrowPos:           'center'
+    arrowPos:           'center',
+    extraInfoSize:      '',      /* extra-info 握把圖示高度，空字串 = 跟隨文字（1em） */
+    extraInfoColor:     ''       /* extra-info 握把圖示色彩，空字串 = 跟隨 theme */
   }, global.UiTableConfig || {});
+
+  /* 手動輪播分段進度條：分隔間距（px） */
+  var SEG_GAP = 3;
 
   var ICO = {
     'i-arrow-down':  icoP('M6 9 12 15 18 9'),
@@ -159,6 +163,7 @@
     return Array.from((ctx || document).querySelectorAll(sel));
   }
 
+  /* 同時有 hidden 與 id 的 ui-col 不算欄位、不渲染，可以當 extra-info 的內容來源 */
   function isSrcCol(el) {
     return el.hasAttribute('hidden') && el.hasAttribute('id');
   }
@@ -188,12 +193,17 @@
     return el;
   }
 
-  function timedTrigger(showFn, hideFn, interval, duration) {
-    function once() {
-      showFn();
-      setTimeout(hideFn, duration);
+  /* 進度條填色：progress-bar-color1 + progress-bar-color2 → 由左到右的漸層；
+     只設其中一個時當單色使用；都沒設時用 progress-bar-color，最後才用預設色 */
+  function pbPaint(colEl, fallback) {
+    var c1 = resolveColor(colEl.getAttribute('progress-bar-color1'));
+    var c2 = resolveColor(colEl.getAttribute('progress-bar-color2'));
+    if (c1 && c2) return 'linear-gradient(to right,' + c1 + ',' + c2 + ')';
+    if (c1 || c2) {
+      console.warn('[ui-table] 漸層需要同時設定 progress-bar-color1 與 progress-bar-color2，已改用單色。');
+      return c1 || c2;
     }
-    setTimeout(function () { once(); setInterval(once, interval); }, interval);
+    return resolveColor(colEl.getAttribute('progress-bar-color')) || fallback;
   }
 
   var CSS = [
@@ -237,9 +247,10 @@
     '.uit-col.is-inv .uit-etog{color:#0C0D0C}',
 
     /* extra-info 圖示與 popover（popover 掛在 body，不受儲存格 overflow 裁切） */
-    '.uit-xi{cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;height:1.5em;padding:0 3px;color:var(--uit-tm);opacity:.82;transition:opacity .2s;user-select:none}',
+    '.uit-xi{cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;min-height:1.5em;padding:0 3px;color:var(--uit-tm);opacity:.82;transition:opacity .2s;user-select:none}',
     '.uit-xi:hover,.uit-xi.open{opacity:1}',
     '.uit-col.is-inv .uit-xi{color:#0C0D0C}',
+    '.uit-xi svg{display:block;height:var(--uit-xsz,1em);width:calc(var(--uit-xsz,1em) * 0.65)}',
     '.uit-pop{position:fixed;z-index:9990;display:none;box-sizing:border-box;max-width:min(480px,calc(100vw - 16px));max-height:60vh;overflow:auto;padding:12px 16px;line-height:1.5;word-break:break-word;border:1px solid #C6C7BD;box-shadow:0 6px 20px #000}',
     '.uit-pop.vis{display:block}',
     '.uit-pop a{color:inherit;text-decoration:underline}',
@@ -265,14 +276,19 @@
     '.uit-car{position:relative;overflow:hidden;flex:1;font-size:var(--uit-fs)}',
     '.uit-car-item{width:100%;box-sizing:border-box}',
 
-    '.uit-pb{height:3px;background:#3A3B38;overflow:hidden;margin-top:6px;flex-shrink:0}',
-    '.uit-pf{height:100%;transform-origin:left center}',
-    '@keyframes uit-prog{from{transform:scaleX(1)}to{transform:scaleX(0)}}',
+    /* 自動輪播進度條：用 clip-path 倒數，漸層色會固定不動，不會跟著被壓縮 */
+    '.uit-pb{position:relative;height:3px;background:var(--uit-pbtrk,#3A3B38);overflow:hidden;margin-top:6px;flex-shrink:0}',
+    '.uit-pf{position:absolute;inset:0}',
+    '@keyframes uit-prog{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}',
 
-    '.uit-alert-A{z-index:11;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px 12px;white-space:normal;text-align:center;opacity:0;transition:opacity .35s ease;pointer-events:none;font-weight:600;font-size:var(--uit-fs)}',
-    '.uit-alert-A.vis{opacity:1}',
-    '.uit-alert-ext{position:fixed;z-index:9999;pointer-events:none;padding:5px 14px;font-weight:600;line-height:1.5;white-space:nowrap;opacity:0;transition:opacity .35s ease;font-size:var(--uit-fs,1rem)}',
-    '.uit-alert-ext.vis{opacity:1}',
+    /* 手動輪播（carousel-interval="0"）：分段進度條貼齊儲存格下緣，上方留較大空白，點擊切換下一畫面 */
+    '.uit-pb-sp{height:24px;flex-shrink:0}',
+    '.uit-pb.is-man{position:absolute;left:0;right:0;bottom:0;height:auto;margin:0;padding-top:10px;background:none;overflow:visible;cursor:pointer;z-index:2}',
+    '.uit-pbt{position:relative;height:7px;background:var(--uit-pbtrk,#3A3B38);overflow:hidden;transition:filter .2s ease;' +
+      '-webkit-mask-image:var(--uit-pbmask);mask-image:var(--uit-pbmask)}',
+    '.uit-pb.is-man:hover .uit-pbt{filter:brightness(1.3)}',
+    '.uit-pb.is-man.is-busy{cursor:progress}',
+    '.uit-pbt .uit-pf{transition:clip-path .35s ease}',
 
     /* 欄間箭頭：掛在列上，不受儲存格 overflow 裁切 */
     '.uit-arrow{position:absolute;z-index:12;display:none;line-height:0;pointer-events:none}',
@@ -416,12 +432,6 @@
     this.src    = el.getAttribute('src');
     this.dataId = el.getAttribute('data-id');
     this.colN   = 0;
-
-    this.srcMap = {};
-    var self = this;
-    el.querySelectorAll('ui-col[id][hidden]').forEach(function (c) {
-      self.srcMap[c.id] = c.innerHTML;
-    });
   }
 
   UiTable.prototype.init = function () {
@@ -454,6 +464,8 @@
     if (data.hoverBgColor)       this.el.setAttribute('hover-bg-color',       data.hoverBgColor);
     if (data.cellMinHeight)      this.el.setAttribute('cell-min-height',      data.cellMinHeight);
     if (data.rowBorder)          this.el.setAttribute('row-border',           data.rowBorder);
+    if (data.extraInfoSize)      this.el.setAttribute('extra-info-size',      String(data.extraInfoSize));
+    if (data.extraInfoColor)     this.el.setAttribute('extra-info-color',     data.extraInfoColor);
 
     this.el.innerHTML = '';
 
@@ -480,6 +492,8 @@
         if (rd.arrowColor)         r.setAttribute('arrow-color', rd.arrowColor);
         if (rd.arrowPos)           r.setAttribute('arrow-pos',   rd.arrowPos);
         if (rd.arrowOpen)          r.setAttribute('arrow-open',  '');
+        if (rd.extraInfoSize)      r.setAttribute('extra-info-size',  String(rd.extraInfoSize));
+        if (rd.extraInfoColor)     r.setAttribute('extra-info-color', rd.extraInfoColor);
 
         (rd.cols || []).forEach(function (cd) {
           var c = mk('ui-col');
@@ -494,16 +508,17 @@
           if (cd.maskText2)         c.setAttribute('mask-text-2',       cd.maskText2);
           if (cd.inverse)           c.setAttribute('inverse',           '');
           if (cd.extraInfo)         c.setAttribute('extra-info',        cd.extraInfo);
+          if (cd.extraInfoSize)     c.setAttribute('extra-info-size',   String(cd.extraInfoSize));
+          if (cd.extraInfoColor)    c.setAttribute('extra-info-color',  cd.extraInfoColor);
           if (cd.maskInvert)        c.setAttribute('mask-invert',       '');
           if (cd.maskColor)         c.setAttribute('mask-color',        cd.maskColor);
           if (cd.maskOrder != null) c.setAttribute('mask-order',        String(cd.maskOrder));
-          if (cd.carouselInterval)  c.setAttribute('carousel-interval', String(cd.carouselInterval));
+          /* 0 也是有效值（手動輪播），所以不能用 truthy 判斷 */
+          if (cd.carouselInterval != null) c.setAttribute('carousel-interval', String(cd.carouselInterval));
           if (cd.progressBar)       c.setAttribute('progress-bar',      '');
           if (cd.progressBarColor)  c.setAttribute('progress-bar-color', cd.progressBarColor);
-          if (cd.alertMsg)          c.setAttribute('alert-msg',         cd.alertMsg);
-          if (cd.alertColor)        c.setAttribute('alert-color',       cd.alertColor);
-          if (cd.alertInterval)     c.setAttribute('alert-interval',    String(cd.alertInterval));
-          if (cd.alertPos)          c.setAttribute('alert-pos',         cd.alertPos);
+          if (cd.progressBarColor1) c.setAttribute('progress-bar-color1', cd.progressBarColor1);
+          if (cd.progressBarColor2) c.setAttribute('progress-bar-color2', cd.progressBarColor2);
           if (cd.arrow != null)     c.setAttribute('arrow',             cd.arrow === true ? '' : cd.arrow);
           if (cd.arrowSize)         c.setAttribute('arrow-size',        cd.arrowSize);
           if (cd.arrowColor)        c.setAttribute('arrow-color',       cd.arrowColor);
@@ -749,7 +764,9 @@
       autoNumberVertical: anVertical,
       lineHeight:         rowEl.getAttribute('line-height'),
       textIndent:         rowEl.getAttribute('text-indent'),
-      colBorder:          hasSpan ? null : rowEl.getAttribute('col-border')
+      colBorder:          hasSpan ? null : rowEl.getAttribute('col-border'),
+      xiSize:             rowEl.getAttribute('extra-info-size'),
+      xiColor:            rowEl.getAttribute('extra-info-color')
     };
 
     /* 縱向模式：這一列只領一個序號（累計計數器 +1 一次），橫向模式則維持逐欄 idx+1 */
@@ -922,7 +939,6 @@
     var hasMask  = colEl.hasAttribute('mask-text');
     var hasCar   = colEl.hasAttribute('carousel-interval');
     var hasExp   = colEl.hasAttribute('expandable');
-    var hasAlert = colEl.hasAttribute('alert-msg');
     var hasSN    = colEl.hasAttribute('show-next');
     var hasMO    = colEl.hasAttribute('mask-order');
     var hasInv   = colEl.hasAttribute('inverse');
@@ -931,12 +947,11 @@
 
     if (hasMask  && hasExp)  console.warn('[ui-table] mask-text+expandable 互斥，expandable 已忽略。');
     if (hasMask  && hasCar)  console.warn('[ui-table] mask-text+carousel-interval 互斥，carousel-interval 已忽略。');
-    if (hasAlert && hasCar)  console.warn('[ui-table] alert-msg+carousel-interval 互斥，carousel-interval 已忽略。');
     if (hasExtra && !xid)    console.error('[ui-table] extra-info 需要填入 div 的 id，已忽略。');
     if (hasExtra && hasMask) console.warn('[ui-table] mask-text+extra-info 互斥，extra-info 已忽略。');
     if (hasExtra && hasCar)  console.warn('[ui-table] carousel-interval+extra-info 互斥，extra-info 已忽略。');
 
-    var useCar = hasCar && !hasMask && !hasAlert;
+    var useCar = hasCar && !hasMask;
     var useExp = hasExp && !hasMask;
     var useExtra = hasExtra && !!xid && !hasMask && !hasCar;
 
@@ -972,10 +987,17 @@
     if (useCar) {
       div.appendChild(ci);
       var items  = Array.from(colEl.querySelectorAll('cell-item'));
-      var ms     = parseInt(colEl.getAttribute('carousel-interval')) || 3000;
+      /* carousel-interval：正整數 = 自動輪播毫秒數；0 = 手動輪播（需搭配 progress-bar）；空值或無效值 = 3000 */
+      var ciRaw  = parseInt(colEl.getAttribute('carousel-interval'), 10);
+      var manual = ciRaw === 0;
+      var ms     = manual ? 0 : (ciRaw > 0 ? ciRaw : 3000);
       var hasPb  = colEl.hasAttribute('progress-bar');
-      var pbClr  = resolveColor(colEl.getAttribute('progress-bar-color')) || (hasInv ? BG : this.color);
-      this._setupCarousel(ci, div, items, ms, hasPb, pbClr);
+      var pbFill = pbPaint(colEl, hasInv ? BG : this.color);
+      if (hasInv) div.style.setProperty('--uit-pbtrk', '#6B6C66');   /* inverse 底色較亮，軌道改用中灰才看得出深色填色 */
+      if (manual && !hasPb) {
+        console.warn('[ui-table] carousel-interval="0"（手動輪播）需要搭配 progress-bar，目前只顯示第一個項目。');
+      }
+      this._setupCarousel(ci, div, items, ms, hasPb, pbFill);
     } else {
       var clone = colEl.cloneNode(true);
       clone.querySelectorAll('cell-item').forEach(function (c) { c.remove(); });
@@ -992,6 +1014,26 @@
         var xi = mk('span', 'uit-xi');
         xi.innerHTML = ICO['i-grip'];
         if (rowStyle && rowStyle.fontSize) xi.style.fontSize = rowStyle.fontSize;
+        /* 握把尺寸與色彩，優先順序：ui-col > ui-row > ui-table > UiTableConfig。
+           尺寸是圖示高度（寬度自動為 0.65 倍），純數字視為 px，也接受 px、rem、em */
+        var xiSizeRaw = colEl.getAttribute('extra-info-size') ||
+                        (rowStyle && rowStyle.xiSize) ||
+                        this.el.getAttribute('extra-info-size') ||
+                        CFG.extraInfoSize;
+        if (xiSizeRaw) {
+          var xiSize = normSize(xiSizeRaw, '');
+          if (xiSize) xi.style.setProperty('--uit-xsz', xiSize);
+          else console.warn('[ui-table] extra-info-size="' + xiSizeRaw + '" 不是有效的尺寸，已改用預設值。');
+        }
+        var xiClrRaw = colEl.getAttribute('extra-info-color') ||
+                       (rowStyle && rowStyle.xiColor) ||
+                       this.el.getAttribute('extra-info-color') ||
+                       CFG.extraInfoColor;
+        if (xiClrRaw) {
+          var xiClr = resolveColor(xiClrRaw);
+          if (xiClr) xi.style.color = xiClr;   /* inline 色彩，優先於 theme 與 inverse 的預設色 */
+          else console.warn('[ui-table] extra-info-color="' + xiClrRaw + '" 不是有效的色彩，已改用預設值。');
+        }
         xi.addEventListener('click', function (e) {
           e.stopPropagation();   /* 避免同時觸發 show-next 或展開 */
           openPop(xi, xid, self.color, self.el.getAttribute('font-size') || CFG.fontSize);
@@ -1086,42 +1128,30 @@
       div.appendChild(m);
     }
 
-    if (hasAlert) this._setupAlert(div, colEl);
-
     return div;
   };
 
-  UiTable.prototype._setupCarousel = function (ci, colDiv, items, ms, hasPb, pbClr) {
+  /* ms > 0：自動輪播；ms === 0：手動輪播（點擊分段進度條切換下一畫面） */
+  UiTable.prototype._setupCarousel = function (ci, colDiv, items, ms, hasPb, pbFill) {
     if (!items.length) return;
 
-    var wrap = mk('div', 'uit-car');
+    var manual = ms === 0;
+    var n      = items.length;
+    var wrap   = mk('div', 'uit-car');
 
     var curEl = mk('div', 'uit-car-item');
     curEl.innerHTML = items[0].innerHTML;
     wrap.appendChild(curEl);
     ci.appendChild(wrap);
 
-    var pbFill = null;
-    if (hasPb) {
-      var pb = mk('div', 'uit-pb');
-      var pf = mk('div', 'uit-pf');
-      pf.style.background  = pbClr;
-      pf.style.animation   = 'uit-prog ' + ms + 'ms linear infinite';
-      pb.appendChild(pf);
-      colDiv.appendChild(pb);
-      pbFill = pf;
-    }
-
-    if (items.length <= 1) return;
-
     var idx = 0;
     var animating = false;
 
-    setInterval(function () {
-      if (animating) return;
+    /* 目前項目往上滑出、下一個項目由下方滑入；done 在動畫結束後執行 */
+    function slideTo(next, done) {
+      if (animating || next === idx) return;
       animating = true;
-
-      idx = (idx + 1) % items.length;
+      idx = next;
 
       var h = wrap.offsetHeight || 24;
       wrap.style.height = h + 'px';
@@ -1154,67 +1184,72 @@
         curEl = nxt;
         wrap.style.height = '';
         animating = false;
-
-        if (pbFill) {
-          pbFill.style.animation = 'none';
-          void pbFill.offsetHeight;
-          pbFill.style.animation = 'uit-prog ' + ms + 'ms linear infinite';
-        }
+        if (done) done();
       }, 440);
-    }, ms);
-  };
+    }
 
-  UiTable.prototype._setupAlert = function (colDiv, colEl) {
-    var msg      = colEl.getAttribute('alert-msg') || '';
-    var clr      = resolveColor(colEl.getAttribute('alert-color')) || this.color;
-    var interval = parseInt(colEl.getAttribute('alert-interval'));
-    var pos      = (colEl.getAttribute('alert-pos') || 'C').toUpperCase();
+    /* ---------- 手動輪播 ---------- */
+    if (manual) {
+      if (!hasPb) return;   /* 沒有進度條就沒有切換的入口，只顯示第一個項目（警告已在 _renderCol 發出） */
 
-    if (!interval || !pos || !msg) {
-      console.error('[ui-table] alert-msg 需要同時設定 alert-interval 與 alert-pos，已略過。');
+      /* 拉高內容與進度條之間的空白；進度條本身絕對定位貼齊儲存格下緣 */
+      colDiv.appendChild(mk('div', 'uit-pb-sp'));
+
+      var bar = mk('div', 'uit-pb is-man');
+      var trk = mk('div', 'uit-pbt');
+      var seg = mk('div', 'uit-pf');
+      seg.style.background = pbFill;
+
+      /* 每一段的週期 = (總寬 + 間距) / 段數；用重複漸層當遮罩切出分隔點，
+         填色層是整條的漸層，所以漸層會連續橫跨所有分段 */
+      var period = '(100% + ' + SEG_GAP + 'px) / ' + n;
+      trk.style.setProperty('--uit-pbmask',
+        'repeating-linear-gradient(to right,#000 0 calc(' + period + ' - ' + SEG_GAP + 'px),' +
+        'transparent 0 calc(' + period + '))');
+      trk.appendChild(seg);
+      bar.appendChild(trk);
+      colDiv.appendChild(bar);
+
+      /* 目前在第 idx + 1 個畫面，就填滿前 idx + 1 段 */
+      function paint() {
+        var k = idx + 1;
+        seg.style.clipPath = k >= n
+          ? 'inset(0 0 0 0)'
+          : 'inset(0 calc(100% - ' + k + ' * ' + period + ') 0 0)';
+      }
+      paint();
+
+      bar.addEventListener('click', function (e) {
+        e.stopPropagation();   /* 避免同時觸發 show-next 等儲存格層級的點擊 */
+        if (n <= 1 || animating) return;
+        bar.classList.add('is-busy');
+        slideTo((idx + 1) % n, function () { bar.classList.remove('is-busy'); });
+        paint();               /* 最後一個畫面再點一次會回到第一個 */
+      });
       return;
     }
 
-    var content = (this.srcMap[msg] !== undefined) ? this.srcMap[msg] : msg;
-    var dur     = CFG.alertDuration;
-    var bgStyle = 'background:' + hexRgba(clr, 0.92) + ';color:' + BG + ';';
-
-    if (pos === 'A') {
-      var al = mk('div', 'uit-alert-A');
-      al.style.cssText = bgStyle;
-      al.style.fontSize = CFG.fontSize;
-      al.innerHTML = content;
-      colDiv.style.position = 'relative';
-      colDiv.appendChild(al);
-
-      timedTrigger(
-        function () { al.classList.add('vis'); },
-        function () { al.classList.remove('vis'); },
-        interval, dur
-      );
-    } else {
-      var ext = mk('div', 'uit-alert-ext');
-      ext.style.cssText = bgStyle + 'font-size:' + CFG.fontSize + ';';
-      ext.innerHTML = content;
-      document.body.appendChild(ext);
-
-      timedTrigger(
-        function () {
-          var r = colDiv.getBoundingClientRect();
-          if (!r.width && !r.height) return;   /* 儲存格被隱藏或摺疊時不顯示，避免跑到左上角 */
-          if (pos === 'B') {
-            ext.style.left = r.left + 'px';
-            ext.style.top  = (r.top - (ext.offsetHeight || 34) - 6) + 'px';
-          } else {
-            ext.style.left = (r.right + 8) + 'px';
-            ext.style.top  = (r.top + r.height / 2 - (ext.offsetHeight || 18) / 2) + 'px';
-          }
-          ext.classList.add('vis');
-        },
-        function () { ext.classList.remove('vis'); },
-        interval, dur
-      );
+    /* ---------- 自動輪播 ---------- */
+    var fill = null;
+    if (hasPb) {
+      var pb = mk('div', 'uit-pb');
+      fill = mk('div', 'uit-pf');
+      fill.style.background = pbFill;
+      fill.style.animation  = 'uit-prog ' + ms + 'ms linear infinite';
+      pb.appendChild(fill);
+      colDiv.appendChild(pb);
     }
+
+    if (n <= 1) return;
+
+    setInterval(function () {
+      slideTo((idx + 1) % n, function () {
+        if (!fill) return;
+        fill.style.animation = 'none';
+        void fill.offsetHeight;
+        fill.style.animation = 'uit-prog ' + ms + 'ms linear infinite';
+      });
+    }, ms);
   };
 
   UiTable.prototype._bindSN = function (rds) {
