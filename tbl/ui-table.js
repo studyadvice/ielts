@@ -12,7 +12,7 @@
     safe:     '#27AE60',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    info:     '#2351DB',
+    info:     '#4171BF',
     indigo:   '#7849C9',
     pink:     '#FF91D7',
     focus:    '#D4FFFC',
@@ -44,7 +44,10 @@
     iconsListInterval:  500        /* icons-list 每個圖示之間的間隔（毫秒） */
   }, global.UiTableConfig || {});
 
+  /* 手動輪播分段進度條：分隔間距（px） */
   var SEG_GAP = 3;
+
+  /* 樹狀展開鈕圖示：rot 類別的圖示展開時旋轉 90 度；plus 則是隱藏直線變成減號 */
   var TREE_ICO = {
     chevron: '<svg class="rot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"' +
              ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18 15 12 9 6"/></svg>',
@@ -53,6 +56,7 @@
              '<rect x="1.7" y="1.7" width="12.6" height="12.6" rx="2"/><path d="M5 8h6"/><path class="uit-tv" d="M8 5v6"/></svg>'
   };
 
+  /* 巢狀結構只認 ui-row-enhance 裡的直屬 ui-row-enhance */
   function isEnh(r) {
     return r.tagName.toLowerCase() === 'ui-row-enhance';
   }
@@ -68,6 +72,7 @@
       .filter(Boolean);
   }
 
+  /* bi- 開頭用 Bootstrap Icons；元件內建名稱（i-check 等）用 SVG；其他當成文字（例如 3, 2, 1 倒數） */
   function mkListIco(name) {
     var sp = mk('span', 'uit-ili');
     if (/^bi-/.test(name)) sp.innerHTML = '<i class="bi ' + name + '" aria-hidden="true"></i>';
@@ -117,7 +122,7 @@
     '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#EDA109 100%)',
     '4': 'linear-gradient(135deg,#1a060e 0%,#5e1535 50%,#FF91D7 100%)',
     '5': 'linear-gradient(135deg,#041208 0%,#083820 50%,#0DA591 100%)',
-    '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#2351DB 80%,#7849C9 100%)'
+    '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#4171BF 80%,#7849C9 100%)'
   };
 
   var MASK_GRAD_TEXT = '#DBEDD8';
