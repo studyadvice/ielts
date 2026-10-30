@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-table 範例：can-hide、色彩標籤、列最小高度</title>
+<title>ui-table 範例：can-hide、色彩標籤、列最小高度、注意力動畫</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -140,10 +140,11 @@
 <div class="page">
 
   <h1>ui-table 範例</h1>
-  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height。</p>
+  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height；修改 3 注意力動畫與 &lt;ui-flash&gt; 閃電按鈕。</p>
 
   <div class="toolbar">
     <button type="button" class="btn btn-shell" id="btnRestore"><i class="bi bi-arrow-counterclockwise"></i> 全部顯示回來（UiTable.showHidden）</button>
+    <ui-flash target="w-mitigate" flash-width="4">工具列的按鈕：第 10 節的 mitigate</ui-flash>
     <div id="logBox"></div>
   </div>
 
@@ -471,6 +472,133 @@
         <tr><td>minHeight</td><td>JSON 的列物件</td><td>同上，對應 min-height。</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <!-- ======================================================== -->
+  <div class="rev-head">修改 3：注意力動畫（彩虹光帶繞格子）與 &lt;ui-flash&gt; 閃電按鈕</div>
+
+  <!-- ===================== 10. 基本用法 ===================== -->
+  <section class="demo-sec">
+    <h2>10. 基本用法：格子給 id，按鈕寫 target</h2>
+    <p>一段光帶從格子左上角出發，沿著內緣順時針繞圈，跑的時候顏色依序換成彩虹色（紅、橙、黃、綠、青、藍、靛、紫）。<code class="inl">&lt;ui-flash target="格子id"&gt;</code> 會變成閃電按鈕，可以放在頁面任何地方，例如段落中間、表格外、頁面最上方的工具列。標籤裡的文字會成為按鈕文字，不寫就只有閃電圖示。</p>
+    <p>重點句先看第一個字：<ui-flash target="w-mitigate"></ui-flash>，再看反義詞：<ui-flash target="w-exacerbate" flash-width="6" flash-speed="900" flash-loops="3" color="pink">粗一點、快一點</ui-flash></p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code10">
+<ui-table id="tb10" theme="sky" row-border="1px solid" col-border="1px solid" cell-padding="12px">
+  <ui-row>
+    <ui-col id="w-mitigate">mitigate</ui-col>
+    <ui-col>減輕、緩和</ui-col>
+    <ui-col>mitigate the impact of</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col id="w-exacerbate">exacerbate</ui-col>
+    <ui-col>使惡化、加劇</ui-col>
+    <ui-col id="w-colloc" flash-width="2" flash-speed="2400">exacerbate the problem</ui-col>
+  </ui-row>
+</ui-table>
+<p>
+  <ui-flash target="w-mitigate"></ui-flash>
+  <ui-flash target="w-exacerbate" flash-width="6" flash-speed="900" flash-loops="3" color="pink">粗一點、快一點</ui-flash>
+  <ui-flash target="w-colloc" color="ocean">用格子自己的設定</ui-flash>
+</p>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code10"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 11. 搭配其他功能 ===================== -->
+  <section class="demo-sec">
+    <h2>11. 搭配遮罩、inverse，以及放在格子裡的按鈕</h2>
+    <p>光帶疊在遮罩上方，遮罩還沒揭開也看得到。按鈕放在格子裡時，按下不會觸發該格的 show-next 或展開。按鈕也可以指向別張表的格子。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code11">
+<ui-table id="tb11" theme="lavender" row-border="1px solid" col-border="1px solid"
+          cell-min-height="72px" vertical-alignment="middle">
+  <ui-row>
+    <ui-col>題目：Some people think <c10>technology</c10> makes life more complex.</ui-col>
+    <ui-col id="ans-mask" mask-text="點我看範例句">Technology has, <c3>paradoxically</c3>, added layers of complexity.</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>
+      先看遮罩 <ui-flash target="ans-mask" color="special"></ui-flash>
+      再看反色格 <ui-flash target="ans-inv" color="orange"></ui-flash>
+      跳到第 10 節 <ui-flash target="w-mitigate" color="sky"></ui-flash>
+    </ui-col>
+    <ui-col id="ans-inv" inverse flash-width="5">inverse 格子上的光帶</ui-col>
+  </ui-row>
+</ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code11"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 12. JSON 與 API ===================== -->
+  <section class="demo-sec">
+    <h2>12. JSON 與 JavaScript API</h2>
+    <p>JSON 的欄位物件用 <code class="inl">id</code>、<code class="inl">flashWidth</code>、<code class="inl">flashSpeed</code>、<code class="inl">flashLoops</code>。不想用內建按鈕時，可以呼叫 <code class="inl">UiTable.flash('id', 設定)</code>，例如接在自己的鍵盤快捷鍵上。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code12">
+<script>
+  window.demoJson3 = {
+    rows: [
+      { cols: [
+        { content: 'Band 9', id: 'band9', flashWidth: 4, flashLoops: 3 },
+        { content: 'uses a full range of structures <c2>naturally</c2>' }
+      ] }
+    ]
+  };
+</script>
+<ui-table id="tb12" theme="teal" data-id="demoJson3" row-border="1px solid" cell-padding="12px"></ui-table>
+<p>
+  <ui-flash target="band9">JSON 格子</ui-flash>
+  <button type="button" class="btn btn-shell" id="btnApi">用 API 播放（慢速 3 秒一圈）</button>
+</p>
+<script>
+  document.getElementById('btnApi').addEventListener('click', function () {
+    UiTable.flash('band9', { flashSpeed: 3000, flashLoops: 1 });
+  });
+</script>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code12"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-sec">
+    <h2>修改 3：屬性與 API</h2>
+    <table class="ref">
+      <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>ui-col</td><td>格子的唯一 id，按鈕靠它找到格子。重複時主控台出現錯誤，按鈕只會找到第一個。注意：同時有 <code class="inl">hidden</code> 與 <code class="inl">id</code> 的 ui-col 是 extra-info 的來源區塊，不會渲染成格子。</td></tr>
+        <tr><td>&lt;ui-flash&gt;</td><td>頁面任何地方</td><td>閃電按鈕。<code class="inl">target</code> 填格子 id（必填）；標籤裡的文字當按鈕文字。找不到格子時按鈕會變紅並抖動，詳細原因在主控台。</td></tr>
+        <tr><td>flash-width</td><td>ui-flash、ui-col</td><td>光帶粗細，純數字或 px，範圍 1～20，預設 3。</td></tr>
+        <tr><td>flash-speed</td><td>ui-flash、ui-col</td><td>繞一圈的時間，數字越小越快。純數字視為毫秒，也接受 1.6s、1600ms，範圍 200～20000，預設 1600。</td></tr>
+        <tr><td>flash-loops</td><td>ui-flash、ui-col</td><td>繞幾圈，範圍 1～20，預設 2。每繞一圈顏色走完一次彩虹。</td></tr>
+        <tr><td>flash-length</td><td>ui-col</td><td>光帶長度佔周長的比例，0.05～0.9，預設 0.22。</td></tr>
+        <tr><td>color、size</td><td>ui-flash</td><td>按鈕顏色（色票名稱或色碼，預設 yellow）與字級（純數字視為 px，也接受 rem、em）。</td></tr>
+        <tr><td>設定的優先順序</td><td></td><td>ui-flash 的屬性 &gt; ui-col 的屬性 &gt; UiTableConfig（flashWidth、flashSpeed、flashLoops、flashLength）。</td></tr>
+        <tr><td>UiTable.flash(id, 設定)</td><td>JavaScript</td><td>直接播放，回傳是否成功。設定物件可用 flashWidth、flashSpeed、flashLoops、flashLength。播放中再呼叫一次會從頭開始。格子不在畫面內時會先平滑捲動過去。</td></tr>
+        <tr><td>UiTable.stopFlash(id)</td><td>JavaScript</td><td>立即停止該格的動畫。</td></tr>
+      </tbody>
+    </table>
+    <p class="note">頁面之後才用 JavaScript 加入的 ui-flash 或 ui-table，呼叫一次 <code class="inl">UiTable.init()</code> 就會啟動，已經啟動過的不會重複處理。</p>
   </section>
 
 </div>

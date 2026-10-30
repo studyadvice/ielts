@@ -58,7 +58,11 @@
     treeIndent:         '20px',  /* 每一層的縮排寬度，也是展開鈕的寬度 */
     treeIcon:           'chevron', /* chevron / caret / plus */
     treeLineColor:      '#3A3B38', /* 導引線色彩（tree-line 開啟時） */
-    iconsListInterval:  500        /* icons-list 每個圖示之間的間隔（毫秒） */
+    iconsListInterval:  500,       /* icons-list 每個圖示之間的間隔（毫秒） */
+    flashWidth:         3,         /* 注意力動畫：光帶粗細（px） */
+    flashSpeed:         1600,      /* 注意力動畫：繞一圈的時間（毫秒），數字越小越快 */
+    flashLoops:         2,         /* 注意力動畫：繞幾圈 */
+    flashLength:        0.22       /* 注意力動畫：光帶長度佔周長的比例（0.05～0.9） */
   }, global.UiTableConfig || {});
 
   /* 手動輪播分段進度條：分隔間距（px） */
@@ -410,9 +414,25 @@
     '.uit-row.uit-gone{display:none!important}',
     '.uit-folding{overflow:hidden!important;transition:height .3s ease,opacity .24s ease!important}',
     '@keyframes uit-unfold{from{opacity:0}to{opacity:1}}',
-    '.uit-unfold{animation:uit-unfold .3s ease}'
+    '.uit-unfold{animation:uit-unfold .3s ease}',
+
+    /* 注意力動畫：一段光帶沿著格子內緣繞圈，顏色依序換成彩虹色（疊在遮罩之上，不擋點擊） */
+    '.uit-flash{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:13;overflow:visible;filter:drop-shadow(0 0 3px currentColor)}',
+
+    /* ui-flash 閃電按鈕：可以放在頁面任何地方 */
+    'ui-flash{display:inline-block;vertical-align:middle}',
+    '.uit-fb{display:inline-flex;align-items:center;gap:6px;background:#0C0D0C;color:var(--uit-fbc,#E3D322);border:1px solid currentColor;padding:4px 10px;margin:0;font-size:var(--uit-fbs,1rem);line-height:1.3;cursor:pointer;user-select:none;transition:transform .15s ease,filter .2s ease}',
+    '.uit-fb:hover{filter:brightness(1.18);transform:translateY(-1px)}',
+    '.uit-fb:active{transform:scale(.95)}',
+    '.uit-fb .uit-fb-txt{color:#C6C7BD}',
+    '@keyframes uit-zap{0%,100%{transform:none}25%{transform:rotate(-14deg) scale(1.25)}60%{transform:rotate(10deg) scale(1.15)}}',
+    '.uit-fb.is-play i{display:inline-block;animation:uit-zap .45s ease}',
+    '@keyframes uit-fberr{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}',
+    '.uit-fb.is-err{color:#E6374B;animation:uit-fberr .3s ease 2}'
 
   ].join('\n');
+
+  var _dupIds = {};   /* 重複的格子 id 只回報一次 */
 
   var _cssInj = false;
   function injectCSS() {
@@ -645,6 +665,11 @@
         /* iconsList 可以是陣列或逗號分隔字串 */
         if (cd.iconsList)         c.setAttribute('icons-list',        Array.isArray(cd.iconsList) ? cd.iconsList.join(', ') : String(cd.iconsList));
         if (cd.iconsListInterval) c.setAttribute('icons-list-interval', String(cd.iconsListInterval));
+        /* 注意力動畫：格子 id 與預設的粗細、速度、圈數 */
+        if (cd.id)                c.setAttribute('id',                cd.id);
+        if (cd.flashWidth)        c.setAttribute('flash-width',       String(cd.flashWidth));
+        if (cd.flashSpeed)        c.setAttribute('flash-speed',       String(cd.flashSpeed));
+        if (cd.flashLoops)        c.setAttribute('flash-loops',       String(cd.flashLoops));
 
         if (cd.items && cd.items.length) {
           cd.items.forEach(function (it) {
@@ -1283,6 +1308,22 @@
   UiTable.prototype._renderCol = function (colEl, pad, rowStyle, globalMoCount, numIdx, eyeCell) {
     var self = this;
     var div  = mk('div', 'uit-col');
+
+    /* 格子 id：給 ui-flash 按鈕與 UiTable.flash() 找到這一格。id 留在原本的 ui-col 上，
+       渲染出來的格子掛在 colEl._uitCell，並加上 data-uit-id 方便 CSS 選取 */
+    var cellId = (colEl.getAttribute('id') || '').trim();
+    if (cellId) {
+      colEl._uitCell = div;
+      div._uitSrc    = colEl;
+      div.setAttribute('data-uit-id', cellId);
+      var dupN = (window.CSS && CSS.escape)
+        ? document.querySelectorAll('#' + CSS.escape(cellId)).length
+        : qsa('[id]').filter(function (x) { return x.id === cellId; }).length;
+      if (dupN > 1 && !_dupIds[cellId]) {
+        _dupIds[cellId] = true;
+        console.error('[ui-table] id="' + cellId + '" 重複了 ' + dupN + ' 次，格子 id 必須唯一，閃電按鈕只會找到第一個。');
+      }
+    }
     div.style.padding = pad;
 
     var spanVal = colEl.getAttribute('span');
@@ -1808,6 +1849,180 @@
     });
   };
 
+  /* ---------- 注意力動畫（彩虹光帶繞格子） ---------- */
+
+  /* 彩虹順序用品牌色：warning 紅、orange 橙、yellow 黃、safe 綠、ocean 青、info 藍、indigo 靛、pink 紫，最後回到紅 */
+  var FLASH_COLORS = [BRAND.warning, BRAND.orange, BRAND.yellow, BRAND.safe,
+                      BRAND.ocean, BRAND.info, BRAND.indigo, BRAND.pink, BRAND.warning];
+
+  /* 粗細：純數字或 px */
+  function parsePx(v) {
+    var m = String(v == null ? '' : v).trim().match(/^(\d*\.?\d+)(px)?$/);
+    return m ? parseFloat(m[1]) : NaN;
+  }
+
+  /* 速度：純數字視為毫秒，也接受 1.6s、1600ms */
+  function parseMs(v) {
+    var m = String(v == null ? '' : v).trim().match(/^(\d*\.?\d+)(ms|s)?$/);
+    if (!m) return NaN;
+    return m[2] === 's' ? parseFloat(m[1]) * 1000 : parseFloat(m[1]);
+  }
+
+  /* 依 id 找渲染後的格子 */
+  function findCell(id) {
+    var src = document.getElementById(id);
+    if (!src) return null;
+    if (src._uitCell) return src._uitCell;
+    if (src.classList && src.classList.contains('uit-col')) return src;
+    return null;
+  }
+
+  function stopFlash(cell) {
+    var f = cell && cell._uitFlash;
+    if (!f) return;
+    f.anims.forEach(function (a) { try { a.cancel(); } catch (e) {} });
+    if (f.svg.parentNode) f.svg.parentNode.removeChild(f.svg);
+    cell._uitFlash = null;
+  }
+
+  /* 取設定值，優先順序：呼叫時傳入（按鈕屬性）> 格子屬性 > UiTableConfig */
+  function flashOpt(opts, cell, key, attr, parse, fb, lo, hi) {
+    var src = cell._uitSrc;
+    var cands = [opts && opts[key], src && src.getAttribute(attr), CFG[key]];
+    for (var i = 0; i < cands.length; i++) {
+      if (cands[i] == null || cands[i] === '') continue;
+      var v = parse(cands[i]);
+      if (!isNaN(v) && v >= lo && v <= hi) return v;
+      console.warn('[ui-table] ' + attr + '="' + cands[i] + '" 不是有效的值，已改用下一個設定。');
+    }
+    return fb;
+  }
+
+  /* 播放注意力動畫；成功回傳 true */
+  function flash(id, opts) {
+    id = String(id || '').trim();
+    if (!id) { console.error('[ui-table] flash 需要格子的 id。'); return false; }
+    var cell = findCell(id);
+    if (!cell) {
+      console.error('[ui-table] 找不到 id="' + id + '" 的格子。請確認 ui-col 有寫這個 id，而且不是同時有 hidden 的來源區塊。');
+      return false;
+    }
+    if (!cell.getClientRects().length) {
+      console.warn('[ui-table] id="' + id + '" 的格子目前沒有顯示（可能在被隱藏的列裡），動畫已略過。');
+      return false;
+    }
+    if (!Element.prototype.animate) {
+      console.warn('[ui-table] 這個瀏覽器不支援 Web Animations，無法播放注意力動畫。');
+      return false;
+    }
+
+    var sw    = flashOpt(opts, cell, 'flashWidth', 'flash-width', parsePx, 3, 1, 20);
+    var speed = flashOpt(opts, cell, 'flashSpeed', 'flash-speed', parseMs, 1600, 200, 20000);
+    var loops = flashOpt(opts, cell, 'flashLoops', 'flash-loops', function (v) { return parseInt(v, 10); }, 2, 1, 20);
+    var len   = flashOpt(opts, cell, 'flashLength', 'flash-length', parseFloat, 0.22, 0.05, 0.9);
+
+    stopFlash(cell);   /* 播放中再按一次就從頭開始 */
+
+    /* 格子不在畫面內時先捲過去 */
+    var r = cell.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) {
+      cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    var W = cell.clientWidth, H = cell.clientHeight;
+    var NS  = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'uit-flash');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('aria-hidden', 'true');
+
+    /* 光帶畫在格子內緣：矩形往內縮半個線寬，整條線都在格子裡，不會被 overflow 裁掉 */
+    var rw = Math.max(W - sw, 1), rh = Math.max(H - sw, 1);
+    var P  = 2 * (rw + rh);
+    var seg = P * len;
+    var rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', sw / 2);
+    rect.setAttribute('y', sw / 2);
+    rect.setAttribute('width', rw);
+    rect.setAttribute('height', rh);
+    rect.setAttribute('fill', 'none');
+    rect.setAttribute('stroke', 'currentColor');
+    rect.setAttribute('stroke-width', sw);
+    rect.setAttribute('stroke-linecap', 'round');
+    rect.setAttribute('stroke-dasharray', seg + ' ' + (P - seg));
+    svg.appendChild(rect);
+    svg.style.color = FLASH_COLORS[0];
+    cell.appendChild(svg);
+
+    var total = speed * loops;
+    var anims = [
+      /* 繞圈：從左上角出發，順時針 */
+      rect.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -P }],
+        { duration: speed, iterations: loops, easing: 'linear' }),
+      /* 換色：每繞一圈走完一次彩虹 */
+      svg.animate(FLASH_COLORS.map(function (c) { return { color: c }; }),
+        { duration: speed, iterations: loops, easing: 'linear' }),
+      /* 開頭淡入、結尾淡出 */
+      svg.animate([{ opacity: 0 }, { opacity: 1, offset: Math.min(0.08, 250 / total) },
+                   { opacity: 1, offset: Math.max(0.9, 1 - 350 / total) }, { opacity: 0 }],
+        { duration: total, easing: 'linear', fill: 'forwards' })
+    ];
+    cell._uitFlash = { svg: svg, anims: anims };
+    anims[2].onfinish = function () {
+      if (cell._uitFlash && cell._uitFlash.svg === svg) stopFlash(cell);
+    };
+    return true;
+  }
+
+  /* <ui-flash target="格子id">文字</ui-flash>：渲染成閃電按鈕。
+     屬性：target（必填）、flash-width、flash-speed、flash-loops、color、size；標籤裡的文字當按鈕文字 */
+  function bootFlashBtn(el) {
+    if (el._uitf) return;
+    el._uitf = true;
+    var target = (el.getAttribute('target') || '').trim();
+    if (!target) console.error('[ui-table] ui-flash 需要 target="格子id"。');
+
+    var label = el.textContent.trim();
+    el.innerHTML = '';
+    var b = mk('button', 'uit-fb');
+    b.type  = 'button';
+    b.title = '播放注意力動畫' + (target ? '：' + target : '');
+    b.innerHTML = '<i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>';
+    if (label) {
+      var sp = mk('span', 'uit-fb-txt');
+      sp.textContent = label;
+      b.appendChild(sp);
+    }
+
+    var c = el.getAttribute('color');
+    if (c) {
+      var rc = resolveColor(c);
+      if (rc) b.style.setProperty('--uit-fbc', rc);
+      else console.warn('[ui-table] ui-flash color="' + c + '" 不是有效的色彩，已改用預設值。');
+    }
+    var sz = el.getAttribute('size');
+    if (sz) {
+      var ns = normSize(sz, '');
+      if (ns) b.style.setProperty('--uit-fbs', ns);
+      else console.warn('[ui-table] ui-flash size="' + sz + '" 不是有效的尺寸，已改用預設值。');
+    }
+
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();   /* 按鈕放在格子裡時，不觸發 show-next 等點擊 */
+      var ok = flash(el.getAttribute('target'), {
+        flashWidth: el.getAttribute('flash-width'),
+        flashSpeed: el.getAttribute('flash-speed'),
+        flashLoops: el.getAttribute('flash-loops')
+      });
+      var cls = ok ? 'is-play' : 'is-err';
+      b.classList.remove('is-play', 'is-err');
+      void b.offsetWidth;
+      b.classList.add(cls);
+      setTimeout(function () { b.classList.remove(cls); }, 650);
+    });
+    el.appendChild(b);
+  }
+
   function boot() {
     document.querySelectorAll('ui-table').forEach(function (el) {
       if (el._uit) return;
@@ -1819,6 +2034,8 @@
         console.error('[ui-table] 初始化失敗：', err);
       }
     });
+    /* 表格先渲染，格子裡如果有 ui-flash 也會一起變成按鈕 */
+    document.querySelectorAll('ui-flash').forEach(bootFlashBtn);
   }
 
   /* 先匯出全域物件，再啟動自動初始化，避免初始化過程出錯時 UiTable 變成未定義 */
@@ -1855,7 +2072,9 @@
   global.UiTable = {
     init: boot, config: CFG, colors: BRAND,
     expandAll: expandAll, collapseAll: collapseAll,
-    showHidden: showHidden
+    showHidden: showHidden,
+    flash: flash,             /* UiTable.flash('格子id', { flashWidth: 4, flashSpeed: 1200, flashLoops: 3 }) */
+    stopFlash: function (id) { var c = findCell(id); if (c) stopFlash(c); }
   };
 
   if (document.readyState === 'loading') {
