@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-table 範例：can-hide、色彩標籤、列最小高度</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C;
+    --shell: #C6C7BD;
+    --lavender: #C3A5E5;
+    --sky: #82C8E5;
+    --warning: #E6374B;
+    --salmon: #E5C3B3;
+    --ocean: #1CCAE8;
+    --safe: #27AE60;
+    --teal: #0DA591;
+    --vanilla: #DBEDD8;
+    --yellow: #E3D322;
+    --focus: #D4FFFC;
+    --special: #B3DE73;
+    --info: #4171BF;
+    --indigo: #7849C9;
+    --pink: #FF91D7;
+    --orange: #EDA109;
+  }
+  body {
+    background: var(--bg);
+    color: var(--shell);
+    font-size: 1rem;
+    padding: 32px 40px 80px;
+  }
+  .page { max-width: 1680px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: var(--lavender); margin: 0 0 8px; }
+  h2 { font-size: 1.35rem; color: var(--sky); margin: 0 0 12px; }
+  .lead-txt { color: var(--shell); font-size: 1.05rem; margin: 0 0 24px; }
+  .demo-sec {
+    border: 1px solid #3A3B38;
+    padding: 24px;
+    margin: 0 0 32px;
+  }
+  .demo-sec > p { margin: 0 0 16px; }
+  .demo-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+  }
+  .lbl {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--teal);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  pre.code {
+    background: rgba(26, 27, 25, 0.95);
+    color: var(--vanilla);
+    border: 1px solid #3A3B38;
+    padding: 16px;
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    max-height: 560px;
+    overflow: auto;
+    white-space: pre;
+  }
+  code.inl { color: var(--yellow); font-size: 0.95rem; }
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(12, 13, 12, 0.95);
+    padding: 12px 0;
+    margin: 0 0 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-shell {
+    background: transparent;
+    color: var(--ocean);
+    border: 1px solid var(--ocean);
+    font-size: 0.95rem;
+    padding: 6px 16px;
+  }
+  .btn-shell:hover { background: var(--ocean); color: var(--bg); }
+  #logBox { min-height: 0; flex: 1; }
+  #logBox .alert {
+    margin: 0;
+    padding: 8px 40px 8px 16px;
+    font-size: 0.9rem;
+    background: rgba(65, 113, 191, 0.85);
+    color: #fff;
+    border: 1px solid var(--info);
+  }
+  #logBox .alert.al-warn {
+    background: rgba(237, 161, 9, 0.85);
+    color: var(--bg);
+    border-color: var(--orange);
+  }
+  #logBox .btn-close { padding: 12px; }
+  table.ref { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.ref th, table.ref td {
+    border: 1px solid #3A3B38;
+    padding: 8px 12px;
+    vertical-align: top;
+    color: var(--shell);
+    background: transparent;
+  }
+  table.ref th { color: var(--lavender); font-weight: 600; }
+  table.ref td:first-child { white-space: nowrap; color: var(--yellow); font-family: monospace; }
+  .note { color: var(--salmon); font-size: 0.92rem; margin: 12px 0 0; }
+  .rev-head {
+    font-size: 1.1rem;
+    color: var(--bg);
+    background: var(--lavender);
+    padding: 8px 16px;
+    margin: 40px 0 24px;
+    font-weight: 700;
+  }
+  .rev-head:first-of-type { margin-top: 8px; }
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .sw {
+    border: 1px solid #3A3B38;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  .sw b { display: block; font-family: monospace; font-size: 1rem; }
+  .sw span { display: block; font-size: 0.8rem; opacity: 0.85; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>ui-table 範例</h1>
+  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height。</p>
+
+  <div class="toolbar">
+    <button type="button" class="btn btn-shell" id="btnRestore"><i class="bi bi-arrow-counterclockwise"></i> 全部顯示回來（UiTable.showHidden）</button>
+    <div id="logBox"></div>
+  </div>
+
+  <div class="rev-head">修改 1：can-hide 整列隱藏</div>
+  <p class="lead-txt">替 <code class="inl">&lt;ui-row-enhance&gt;</code> 加上 <code class="inl">can-hide</code>，格子右側會出現眼睛圖示。滑鼠移上去變成劃掉的眼睛，點擊後整列收合隱藏，適合螢幕錄影時逐列帶過教學內容。</p>
+
+  <section class="demo-sec">
+    <h2>1. 基本用法：眼睛放在最後一欄</h2>
+    <p><code class="inl">can-hide</code> 或 <code class="inl">can-hide="true"</code> 時，眼睛出現在最右側的格子。表頭列沒有加，所以不會被隱藏。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code1">
+<ui-table id="tb1" theme="sky" row-border="1px solid">
+  <ui-row-enhance col-widths="1:2:2" font-color="lavender">
+    <ui-col>Word</ui-col>
+    <ui-col>Meaning</ui-col>
+    <ui-col>Collocation</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide col-widths="1:2:2">
+    <ui-col>mitigate</ui-col>
+    <ui-col>減輕、緩和</ui-col>
+    <ui-col>mitigate the impact of</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide="true" col-widths="1:2:2">
+    <ui-col>exacerbate</ui-col>
+    <ui-col>使惡化、加劇</ui-col>
+    <ui-col>exacerbate the problem</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide col-widths="1:2:2">
+    <ui-col>alleviate</ui-col>
+    <ui-col>減輕（痛苦、壓力）</ui-col>
+    <ui-col>alleviate poverty</ui-col>
+  </ui-row-enhance>
+</ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code1"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 2. 指定欄位與 extra-info 互斥 ===================== -->
+  <section class="demo-sec">
+    <h2>2. 指定眼睛的欄位，以及與 extra-info 互斥</h2>
+    <p><code class="inl">can-hide="1"</code> 把眼睛放在第 1 欄，最後一欄的 extra-info 握把照常保留。若眼睛所在的格子也寫了 <code class="inl">extra-info</code>，該格的 extra-info 會被忽略，主控台出現警告；同一列其他格子不受影響。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code2">
+<ui-table id="tb2" theme="special" row-border="1px solid" col-border="1px solid">
+  <ui-row-enhance can-hide="1">
+    <ui-col>Part 2 cue card</ui-col>
+    <ui-col extra-info="xi-cue">Describe a skill you learned</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide>
+    <ui-col>衝突示範</ui-col>
+    <ui-col extra-info="xi-cue">這格同時有 can-hide 與 extra-info，只會顯示眼睛</ui-col>
+  </ui-row-enhance>
+</ui-table>
+<div id="xi-cue" hidden>
+  <p>You should say: what the skill is, when you learned it, how you learned it, and explain why it was useful.</p>
+</div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code2"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 3. 樹狀子列 ===================== -->
+  <section class="demo-sec">
+    <h2>3. 樹狀巢狀：隱藏父列時子列一起隱藏</h2>
+    <p>父列加 <code class="inl">can-hide</code>，點擊眼睛後整個子樹一起收合。子列也可以各自加 <code class="inl">can-hide</code>，只隱藏自己（以及自己的子列）。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code3">
+<ui-table id="tb3" theme="ocean" tree-line tree-open row-border="1px solid">
+  <ui-row-enhance can-hide>
+    <ui-col>Fluency and Coherence</ui-col>
+    <ui-col>口說評分項目</ui-col>
+    <ui-row-enhance can-hide>
+      <ui-col>Discourse markers</ui-col>
+      <ui-col>On top of that, Having said that</ui-col>
+    </ui-row-enhance>
+    <ui-row-enhance can-hide>
+      <ui-col>Self-correction</ui-col>
+      <ui-col>自然地修正，不要停頓太久</ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide>
+    <ui-col>Lexical Resource</ui-col>
+    <ui-col>口說評分項目</ui-col>
+    <ui-row-enhance can-hide>
+      <ui-col>Idiomatic language</ui-col>
+      <ui-col>a blessing in disguise</ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+</ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code3"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 4. 搭配其他功能 ===================== -->
+  <section class="demo-sec">
+    <h2>4. 搭配 inverse、mask-text、輪播，以及尺寸與色彩</h2>
+    <p><code class="inl">can-hide-size</code>、<code class="inl">can-hide-color</code> 寫在列上，調整眼睛的大小與顏色。遮罩格子裡的眼睛會浮在遮罩上方，錄影時不必先揭開遮罩也能隱藏整列。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code4">
+<ui-table id="tb4" theme="lavender" row-border="1px solid" cell-padding="10px">
+  <ui-row-enhance can-hide can-hide-size="1.3rem" can-hide-color="pink">
+    <ui-col>inverse 格子</ui-col>
+    <ui-col inverse>眼睛在反色底上自動改成深色</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide>
+    <ui-col>遮罩格子</ui-col>
+    <ui-col mask-text="點我看答案">a double-edged sword</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide can-hide-color="yellow">
+    <ui-col>輪播格子</ui-col>
+    <ui-col carousel-interval="2500" progress-bar>
+      <cell-item>I'd say ...</cell-item>
+      <cell-item>To be honest ...</cell-item>
+      <cell-item>Off the top of my head ...</cell-item>
+    </ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide>
+    <ui-col>icons-list 格子</ui-col>
+    <ui-col icons-list="bi-1-circle, bi-2-circle, bi-3-circle">滑鼠移入播放，眼睛保持可點</ui-col>
+  </ui-row-enhance>
+</ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code4"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 5. JSON ===================== -->
+  <section class="demo-sec">
+    <h2>5. JSON 資料來源（data-id / src）</h2>
+    <p>列物件加上 <code class="inl">canHide</code>（true 或欄位編號）、<code class="inl">canHideSize</code>、<code class="inl">canHideColor</code>，需同時設定 <code class="inl">enhance: true</code>。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code5">
+<script>
+  window.demoJson = {
+    rows: [
+      { enhance: true, fontColor: 'sky', cols: [{ content: 'Band' }, { content: 'Descriptor' }] },
+      { enhance: true, canHide: true,  cols: [{ content: '7' }, { content: 'uses less common vocabulary' }] },
+      { enhance: true, canHide: 2, canHideColor: 'orange', cols: [{ content: '8' }, { content: 'skilfully uses uncommon items' }] }
+    ]
+  };
+</script>
+<ui-table id="tb5" theme="teal" data-id="demoJson" row-border="1px solid"></ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code5"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 屬性與 API 說明 ===================== -->
+  <section class="demo-sec">
+    <h2>修改 1：屬性與 API</h2>
+    <table class="ref">
+      <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>can-hide</td><td>ui-row-enhance</td><td>空值或 <code class="inl">true</code>：眼睛放在最後一欄。數字（1 起算）：放在指定欄，超過欄數時改放最後一欄。<code class="inl">false</code>：關閉。寫在 ui-row 上會被忽略並出現警告。</td></tr>
+        <tr><td>can-hide-size</td><td>ui-row-enhance</td><td>眼睛大小。純數字視為 px，也接受 px、rem、em。沒寫時跟隨文字大小。</td></tr>
+        <tr><td>can-hide-color</td><td>ui-row-enhance</td><td>眼睛顏色，可用色票名稱（例如 pink）或色碼。沒寫時跟隨格子文字色，inverse 格子自動改成深色。</td></tr>
+        <tr><td>與 extra-info 互斥</td><td>眼睛所在的格子</td><td>該格的 extra-info 被忽略，主控台警告；同一列其他格子的 extra-info 照常運作。</td></tr>
+        <tr><td>uit-row-hide 事件</td><td>原本的 &lt;ui-table&gt;</td><td>整列隱藏動畫結束後觸發，<code class="inl">e.detail.rowEl</code> 是被隱藏的列，<code class="inl">e.detail.hasChildren</code> 表示是否連同子列一起隱藏。</td></tr>
+        <tr><td>UiTable.showHidden(target)</td><td>JavaScript</td><td>把眼睛隱藏的列全部顯示回來，回傳恢復的列數。target 可以是 &lt;ui-table&gt; 元素、CSS 選擇器，省略則作用於頁面上全部的表格。錄影重拍時使用。</td></tr>
+      </tbody>
+    </table>
+    <p class="note">隱藏只影響畫面，重新整理頁面就會恢復。眼睛和 show-next 是各自獨立的：被眼睛隱藏的列，不會因為上一列的 show-next 被點擊而重新出現。</p>
+  </section>
+
+  <!-- ======================================================== -->
+  <div class="rev-head">修改 2：文字色彩標籤 &lt;c1&gt;～&lt;c16&gt;，以及列的 min-height</div>
+
+  <!-- ===================== 6. 色票對照 ===================== -->
+  <section class="demo-sec">
+    <h2>6. 色彩標籤對照表</h2>
+    <p>編號依元件開頭 <code class="inl">BRAND</code> 的定義順序。下方色塊直接讀取 <code class="inl">UiTable.colors</code> 產生，和元件內的定義保持一致。</p>
+    <div class="swatches" id="swatches"></div>
+  </section>
+
+  <!-- ===================== 7. 色彩標籤用法 ===================== -->
+  <section class="demo-sec">
+    <h2>7. 色彩標籤用法：ui-col、cell-item、extra-info</h2>
+    <p>在內容裡用 <code class="inl">&lt;c13&gt;文字&lt;/c13&gt;</code> 就能套用品牌色。可以和 <code class="inl">&lt;b&gt;</code>、<code class="inl">&lt;u&gt;</code> 等標籤互相包覆。inverse 格子的底色是亮色，色彩標籤會自動改成「深色字加品牌色底」的小標籤，避免看不清楚。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code7">
+<ui-table id="tb7" theme="shell" row-border="1px solid">
+  <ui-row col-widths="1:3">
+    <ui-col>ui-col</ui-col>
+    <ui-col>The government should <c13>invest</c13> in <c6>public transport</c6> rather than <c4><u>build more roads</u></c4>.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>cell-item</ui-col>
+    <ui-col carousel-interval="2600" progress-bar>
+      <cell-item>Band 6：<c15>It is good</c15> for people.</cell-item>
+      <cell-item>Band 7：<c3>It is beneficial</c3> to <c7>commuters</c7>.</cell-item>
+      <cell-item>Band 8：<c2><b>It brings tangible benefits</b></c2> to <c7>daily commuters</c7>.</cell-item>
+    </ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>inverse</ui-col>
+    <ui-col inverse>Collocation：<c11>heavy</c11> traffic, <c12>severe</c12> congestion</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>extra-info</ui-col>
+    <ui-col extra-info="xi-c">點右側握把，popover 裡的色彩標籤也有效</ui-col>
+  </ui-row>
+</ui-table>
+<div id="xi-c" hidden>
+  <p><c10>Topic sentence</c10> first, then <c8>support</c8>, then an <c13>example</c13>.</p>
+</div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code7"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 8. 列的 min-height ===================== -->
+  <section class="demo-sec">
+    <h2>8. 單一列的 min-height</h2>
+    <p><code class="inl">min-height="220px"</code> 寫在 <code class="inl">&lt;ui-row&gt;</code> 或 <code class="inl">&lt;ui-row-enhance&gt;</code> 上，只影響這一列的格子，並優先於 <code class="inl">&lt;ui-table&gt;</code> 的 <code class="inl">cell-min-height</code>。純數字視為 px，也接受 px、rem、em、vh。搭配 <code class="inl">vertical-alignment</code> 可以讓內容在高格子裡置中或靠下。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code8">
+<ui-table id="tb8" theme="ocean" cell-min-height="48px" vertical-alignment="middle"
+          row-border="1px solid" col-border="1px solid">
+  <ui-row>
+    <ui-col>一般列</ui-col>
+    <ui-col>沿用 cell-min-height="48px"</ui-col>
+  </ui-row>
+  <ui-row min-height="220px">
+    <ui-col><c10>Writing Task 2</c10></ui-col>
+    <ui-col>這一列最小高度 220px，內容垂直置中，適合錄影時放大展示一個重點</ui-col>
+  </ui-row>
+  <ui-row min-height="96">
+    <ui-col>純數字</ui-col>
+    <ui-col>min-height="96" 等同 96px</ui-col>
+  </ui-row>
+  <ui-row-enhance min-height="140px" tree-open>
+    <ui-col>ui-row-enhance</ui-col>
+    <ui-col>父列 140px，子列不會沿用</ui-col>
+    <ui-row-enhance>
+      <ui-col>子列</ui-col>
+      <ui-col>回到 cell-min-height</ui-col>
+    </ui-row-enhance>
+  </ui-row-enhance>
+</ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code8"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 9. JSON ===================== -->
+  <section class="demo-sec">
+    <h2>9. JSON 資料來源</h2>
+    <p>色彩標籤直接寫在 <code class="inl">content</code> 或 <code class="inl">items</code> 字串裡；列的最小高度用 <code class="inl">minHeight</code>。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code9">
+<script>
+  window.demoJson2 = {
+    rows: [
+      { cols: [{ content: 'Paraphrase' }, { content: '<c4>important</c4> → <c3>significant</c3>' }] },
+      { minHeight: '160px', cols: [
+          { content: 'Rotate' },
+          { carouselInterval: 2200, items: ['<c13>increase</c13>', '<c6>rise</c6>', '<c15>surge</c15>'] }
+      ] }
+    ]
+  };
+</script>
+<ui-table id="tb9" theme="lavender" data-id="demoJson2" vertical-alignment="middle" row-border="1px solid"></ui-table>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code9"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-sec">
+    <h2>修改 2：屬性說明</h2>
+    <table class="ref">
+      <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>&lt;c1&gt;～&lt;c16&gt;</td><td>ui-col、cell-item 的內容，extra-info 來源區塊</td><td>文字色彩快捷標籤，對應元件 BRAND 的定義順序（見第 6 節）。inverse 格子裡會變成深色字加品牌色底。mask-text 是屬性文字，不支援標籤。</td></tr>
+        <tr><td>min-height</td><td>ui-row、ui-row-enhance</td><td>這一列格子的最小高度，優先於 ui-table 的 cell-min-height。純數字視為 px，也接受 px、rem、em、vh；無效值會被忽略並出現警告。巢狀子列不會沿用。</td></tr>
+        <tr><td>minHeight</td><td>JSON 的列物件</td><td>同上，對應 min-height。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<script>
+  /* 在元件初始化之前，把每個範例的原始標記抄進右側程式碼區 */
+  (function () {
+    document.querySelectorAll('.demo-src').forEach(function (src) {
+      var lines = src.innerHTML.replace(/^\s*\n/, '').replace(/\s+$/, '').split('\n');
+      var ind = Math.min.apply(null, lines.filter(function (l) { return l.trim(); })
+        .map(function (l) { return l.match(/^ */)[0].length; }));
+      var txt = lines.map(function (l) { return l.slice(ind); }).join('\n');
+      document.getElementById(src.dataset.code).textContent = txt;
+    });
+  })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-table.js"></script>
+<script>
+  /* 用 Bootstrap alert 顯示訊息，取代 alert() */
+  function showLog(msg, warn) {
+    var box = document.getElementById('logBox');
+    box.innerHTML = '';
+    var el = document.createElement('div');
+    el.className = 'alert alert-dismissible fade show' + (warn ? ' al-warn' : '');
+    el.setAttribute('role', 'alert');
+    el.innerHTML = '<span></span><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+    el.querySelector('span').textContent = msg;
+    box.appendChild(el);
+    clearTimeout(showLog._t);
+    showLog._t = setTimeout(function () {
+      if (window.bootstrap && el.isConnected) bootstrap.Alert.getOrCreateInstance(el).close();
+    }, 3200);
+  }
+
+  document.querySelectorAll('ui-table').forEach(function (t) {
+    t.addEventListener('uit-row-hide', function (e) {
+      var first = e.detail.rowEl.querySelector('.uit-ct, .uit-car-item');
+      var name  = first ? first.textContent.trim() : '';
+      showLog('已隱藏 #' + t.id + ' 的「' + name + '」' + (e.detail.hasChildren ? '，子列一併隱藏。' : '。'));
+    });
+  });
+
+  /* 第 6 節的色票：讀取元件內的定義，順序就是 c1～c16 的編號 */
+  (function () {
+    var box = document.getElementById('swatches');
+    Object.keys(UiTable.colors).forEach(function (k, i) {
+      var c = UiTable.colors[k];
+      var d = document.createElement('div');
+      d.className = 'sw';
+      d.style.borderLeft = '8px solid ' + c;
+      d.innerHTML = '<b></b><span></span>';
+      d.querySelector('b').textContent = '<c' + (i + 1) + '>';
+      d.querySelector('b').style.color = c;
+      d.querySelector('span').textContent = k + ' ' + c;
+      box.appendChild(d);
+    });
+  })();
+
+  document.getElementById('btnRestore').addEventListener('click', function () {
+    var n = UiTable.showHidden();
+    if (n) showLog('已恢復 ' + n + ' 列。');
+    else   showLog('目前沒有被隱藏的列。', true);
+  });
+</script>
+</body>
+</html>

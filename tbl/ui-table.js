@@ -22,6 +22,23 @@
 
   var BG = '#0C0D0C';
 
+  /* 文字色彩快捷標籤：<c1>～<c16> 依 BRAND 的定義順序對應品牌色彩
+     c1 shell      c2 lavender  c3 special  c4 warning
+     c5 salmon     c6 sky       c7 ocean    c8 safe
+     c9 vanilla    c10 yellow   c11 info    c12 indigo
+     c13 pink      c14 focus    c15 orange  c16 teal
+     可以寫在 ui-col、cell-item 的內容，以及 extra-info 的來源區塊裡 */
+  var C_TAGS = Object.keys(BRAND);
+
+  function colorTagCSS() {
+    return C_TAGS.map(function (k, i) {
+      var t = 'c' + (i + 1), c = BRAND[k];
+      return '.uit-wrap ' + t + ',.uit-pop ' + t + '{color:' + c + '}\n' +
+        /* inverse 格子的底色是亮色，色彩文字改成「深色字＋品牌色底」的小標籤才看得清楚 */
+        '.uit-wrap .uit-col.is-inv ' + t + '{color:' + BG + ';background:' + c + ';padding:0 4px}';
+    }).join('\n');
+  }
+
   var CFG = global.UiTableConfig = Object.assign({
     theme:              'shell',
     cellPadding:        '6px',
@@ -355,6 +372,7 @@
     '.uit-tk-in>.uit-row:first-child{margin-top:-1px}',
     '.uit-tk+.uit-row{margin-top:-1px}',
     '.uit-row.uit-hidden+.uit-tk{display:none}',
+    '.uit-row.uit-gone+.uit-tk{display:none}',
 
     /* 縮排、導引線與展開鈕 */
     '.uit-tree{display:inline-flex;align-items:center;flex-shrink:0;min-height:1.5em;align-self:stretch}',
@@ -373,12 +391,26 @@
     /* icons-list（僅 ui-row-enhance）：播放時藏起格子內容（樹狀欄的展開鈕除外），圖示列疊在原位置上依序出現 */
     '.uit-ils{display:none;position:absolute;top:0;bottom:0;right:0;align-items:center;gap:6px;overflow:hidden;pointer-events:none}',
     '.uit-ci.uit-il-on>.uit-ils{display:flex}',
-    '.uit-ci.uit-il-on>:not(.uit-tree):not(.uit-ils){visibility:hidden}',
+    '.uit-ci.uit-il-on>:not(.uit-tree):not(.uit-ils):not(.uit-eye){visibility:hidden}',
     '.uit-ili{display:inline-flex;align-items:center;flex-shrink:0;line-height:1;font-size:1.25em;opacity:0;transform:translateX(-8px);transition:opacity .22s ease,transform .22s ease}',
     '.uit-ili.on{opacity:1;transform:none}',
     '.uit-ili svg{width:1em;height:1em}',
     '@keyframes uit-ilback{from{opacity:0}to{opacity:1}}',
-    '.uit-ci.uit-il-back>:not(.uit-tree):not(.uit-ils){animation:uit-ilback .28s ease}'
+    '.uit-ci.uit-il-back>:not(.uit-tree):not(.uit-ils):not(.uit-eye){animation:uit-ilback .28s ease}',
+
+    /* can-hide（僅 ui-row-enhance）：眼睛圖示放在格子右側，滑鼠移上去變成劃掉的眼睛，點擊後整列收合隱藏 */
+    '.uit-eye{position:relative;z-index:11;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-height:1.5em;padding:0 3px;margin-left:auto;color:var(--uit-tm);opacity:.82;font-size:var(--uit-esz,1em);line-height:1;user-select:none;transition:opacity .2s ease,transform .2s ease}',
+    '.uit-sn-ico+.uit-eye{margin-left:0}',
+    '.uit-eye:hover{opacity:1;transform:scale(1.15)}',
+    '.uit-eye .uit-eye-off{display:none}',
+    '.uit-eye:hover .uit-eye-on{display:none}',
+    '.uit-eye:hover .uit-eye-off{display:inline}',
+    '.uit-col.is-inv .uit-eye{color:#0C0D0C}',
+    '.uit-col.has-mask .uit-eye{filter:drop-shadow(0 0 1px #0C0D0C) drop-shadow(0 0 2px #0C0D0C)}',
+    '.uit-row.uit-gone{display:none!important}',
+    '.uit-folding{overflow:hidden!important;transition:height .3s ease,opacity .24s ease!important}',
+    '@keyframes uit-unfold{from{opacity:0}to{opacity:1}}',
+    '.uit-unfold{animation:uit-unfold .3s ease}'
 
   ].join('\n');
 
@@ -388,7 +420,7 @@
     _cssInj = true;
     var s = document.createElement('style');
     s.id = 'uit-css';
-    s.textContent = CSS;
+    s.textContent = CSS + '\n' + colorTagCSS();
     (document.head || document.documentElement).appendChild(s);
   }
 
@@ -569,6 +601,7 @@
       if (rd.autoNumber)  r.setAttribute('auto-number',  rd.autoNumber === true ? '' : rd.autoNumber);
       if (rd.lineHeight)  r.setAttribute('line-height',  rd.lineHeight);
       if (rd.textIndent)  r.setAttribute('text-indent',  rd.textIndent);
+      if (rd.minHeight)   r.setAttribute('min-height',   String(rd.minHeight));
       if (rd.arrow != null)      r.setAttribute('arrow',       rd.arrow === true ? '' : rd.arrow);
       if (rd.arrowSize)          r.setAttribute('arrow-size',  rd.arrowSize);
       if (rd.arrowColor)         r.setAttribute('arrow-color', rd.arrowColor);
@@ -576,6 +609,9 @@
       if (rd.arrowOpen)          r.setAttribute('arrow-open',  '');
       if (rd.extraInfoSize)      r.setAttribute('extra-info-size',  String(rd.extraInfoSize));
       if (rd.extraInfoColor)     r.setAttribute('extra-info-color', rd.extraInfoColor);
+      if (rd.canHide != null && rd.canHide !== false) r.setAttribute('can-hide', rd.canHide === true ? 'true' : String(rd.canHide));
+      if (rd.canHideSize)        r.setAttribute('can-hide-size',    String(rd.canHideSize));
+      if (rd.canHideColor)       r.setAttribute('can-hide-color',   rd.canHideColor);
 
       (rd.cols || []).forEach(function (cd) {
         var c = mk('ui-col');
@@ -976,6 +1012,16 @@
       : 'repeat(' + colN + ',1fr)';
     div.style.gridTemplateColumns = tpl;
 
+    /* min-height：只作用在這一列的格子，優先於 ui-table 的 cell-min-height。
+       純數字視為 px，也接受 px、rem、em、vh；巢狀子列不會沿用 */
+    var rmh = rowEl.getAttribute('min-height');
+    if (rmh != null && String(rmh).trim() !== '') {
+      var rmhv = String(rmh).trim();
+      if (/^\d*\.?\d+$/.test(rmhv)) rmhv += 'px';
+      if (/^\d*\.?\d+(px|rem|em|vh)$/.test(rmhv)) div.style.setProperty('--uit-minh', rmhv);
+      else console.warn('[ui-table] min-height="' + rmh + '" 不是有效的高度（例如 220px、12rem），已忽略。');
+    }
+
     var bdr = rowEl.getAttribute('border') || this._rowBorder;
     if (bdr) div.style.border = bdr + ' ' + this.color;
 
@@ -1002,8 +1048,13 @@
       colBorder:          hasSpan ? null : rowEl.getAttribute('col-border'),
       xiSize:             rowEl.getAttribute('extra-info-size'),
       xiColor:            rowEl.getAttribute('extra-info-color'),
-      enhance:            !!useLocalN    /* 這一列是否為 ui-row-enhance（icons-list 只在這種列生效） */
+      enhance:            !!useLocalN,   /* 這一列是否為 ui-row-enhance（icons-list、can-hide 只在這種列生效） */
+      ehSize:             rowEl.getAttribute('can-hide-size'),
+      ehColor:            rowEl.getAttribute('can-hide-color')
     };
+
+    /* can-hide：眼睛圖示放在第幾欄（1 起算）；0 = 不啟用 */
+    var ehCol = this._canHideCol(rowEl, useLocalN, active.length);
 
     /* 縱向模式：這一列只領一個序號（累計計數器 +1 一次），橫向模式則維持逐欄 idx+1 */
     var vSeq = null;
@@ -1016,7 +1067,7 @@
     var colDivs  = [];
     active.forEach(function (colEl, idx) {
       var numIdx = rowStyle.autoNumberVertical ? vSeq : (idx + 1);
-      var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount, numIdx);
+      var cd = self._renderCol(colEl, pad, rowStyle, globalMoCount, numIdx, ehCol === idx + 1);
       div.appendChild(cd);
       colDivs.push(cd);
 
@@ -1028,6 +1079,86 @@
     self._setupArrows(div, rowEl, active, colDivs);
 
     return div;
+  };
+
+  /* can-hide 的值：
+     can-hide / can-hide="true"  → 眼睛放在最後一欄（最右側的格子）
+     can-hide="2"                → 眼睛放在第 2 欄（1 起算，超過欄數時改放最後一欄）
+     can-hide="false"            → 關閉
+     只在 ui-row-enhance 生效 */
+  UiTable.prototype._canHideCol = function (rowEl, enhance, colTotal) {
+    if (!rowEl.hasAttribute('can-hide')) return 0;
+    if (!enhance) {
+      console.warn('[ui-table] can-hide 僅支援 ui-row-enhance，ui-row 裡的 can-hide 已忽略。');
+      return 0;
+    }
+    var v = String(rowEl.getAttribute('can-hide') || '').trim().toLowerCase();
+    if (v === 'false') return 0;
+    if (v === '' || v === 'true') return colTotal;
+    var n = parseInt(v, 10);
+    if (isNaN(n) || n < 1) {
+      console.warn('[ui-table] can-hide="' + v + '" 不是有效的值（true、false 或欄位編號），已改放最後一欄。');
+      return colTotal;
+    }
+    if (n > colTotal) {
+      console.warn('[ui-table] can-hide="' + n + '" 超過欄數（' + colTotal + '），已改放最後一欄。');
+      return colTotal;
+    }
+    return n;
+  };
+
+  /* 收合並隱藏一整列；有子列（樹狀）時，子列一起隱藏。
+     先把高度固定成目前的像素值，再轉到 0，結束後加上 uit-gone（display:none） */
+  UiTable.prototype._hideRow = function (row) {
+    if (!row || row._uitGone) return;
+    row._uitGone = true;
+    var self = this;
+    var tk   = row.nextElementSibling;
+    if (!tk || !tk.classList.contains('uit-tk')) tk = null;
+
+    if (_pop && (row.contains(_pop.anchor) || (tk && tk.contains(_pop.anchor)))) closePop();
+
+    var els = tk ? [row, tk] : [row];
+    els.forEach(function (el) {
+      el.style.height = el.offsetHeight + 'px';
+      el.classList.add('uit-folding');
+    });
+    void row.offsetHeight;   /* 讓固定高度先生效，轉場才有起點 */
+    els.forEach(function (el) {
+      el.style.height  = '0px';
+      el.style.opacity = '0';
+    });
+
+    setTimeout(function () {
+      row.classList.add('uit-gone');
+      els.forEach(function (el) {
+        el.classList.remove('uit-folding');
+        el.style.height  = '';
+        el.style.opacity = '';
+      });
+      /* 事件發在原本的 <ui-table> 元素上，可用 addEventListener('uit-row-hide', ...) 監聽 */
+      self.el.dispatchEvent(new CustomEvent('uit-row-hide', {
+        detail: { rowEl: row, hasChildren: !!tk }
+      }));
+    }, 330);
+  };
+
+  /* 把 can-hide 隱藏的列全部顯示回來，回傳恢復的列數 */
+  UiTable.prototype._showHidden = function () {
+    var rows = this.wrap ? qsa('.uit-row.uit-gone', this.wrap) : [];
+    rows.forEach(function (row) {
+      row._uitGone = false;
+      row.classList.remove('uit-gone');
+      var tk = row.nextElementSibling;
+      var els = (tk && tk.classList.contains('uit-tk')) ? [row, tk] : [row];
+      els.forEach(function (el) {
+        el.classList.remove('uit-unfold');
+        void el.offsetWidth;
+        el.classList.add('uit-unfold');
+        setTimeout(function () { el.classList.remove('uit-unfold'); }, 320);
+      });
+    });
+    return rows.length;
   };
 
   /* 欄間箭頭：arrow 設在起點欄（或整列），箭頭壓在它與下一欄的交界線上。
@@ -1149,7 +1280,7 @@
     unlockAt(0);
   };
 
-  UiTable.prototype._renderCol = function (colEl, pad, rowStyle, globalMoCount, numIdx) {
+  UiTable.prototype._renderCol = function (colEl, pad, rowStyle, globalMoCount, numIdx, eyeCell) {
     var self = this;
     var div  = mk('div', 'uit-col');
     div.style.padding = pad;
@@ -1190,6 +1321,12 @@
     var useCar = hasCar && !hasMask;
     var useExp = hasExp && !hasMask;
     var useExtra = hasExtra && !!xid && !hasMask && !hasCar;
+
+    /* can-hide 與 extra-info 互斥：放眼睛的那一格忽略 extra-info，同一列其他格子不受影響 */
+    if (eyeCell && hasExtra) {
+      console.warn('[ui-table] can-hide+extra-info 互斥，眼睛所在格子的 extra-info 已忽略。');
+      useExtra = false;
+    }
 
     /* icons-list：只在 ui-row-enhance 生效；與 mask-text、carousel-interval 互斥，衝突時忽略 icons-list */
     var hasIL  = colEl.hasAttribute('icons-list');
@@ -1254,6 +1391,7 @@
         console.warn('[ui-table] carousel-interval="0"（手動輪播）需要搭配 progress-bar，目前只顯示第一個項目。');
       }
       this._setupCarousel(ci, div, items, ms, hasPb, pbFill);
+      if (eyeCell) ci.appendChild(this._mkEye(rowStyle));
     } else {
       var clone = colEl.cloneNode(true);
       clone.querySelectorAll('cell-item').forEach(function (c) { c.remove(); });
@@ -1322,10 +1460,13 @@
         ci.appendChild(sn);
       }
 
+      if (eyeCell) ci.appendChild(this._mkEye(rowStyle));
+
       div.appendChild(ci);
     }
 
     if (hasMask) {
+      div.classList.add('has-mask');   /* 遮罩上的眼睛加深色外框，淺色遮罩上才看得清楚 */
       var maskGrad   = colEl.getAttribute('mask-gradient') || '';
       var maskText2  = colEl.getAttribute('mask-text-2')   || '';   // 雙層第二層文字
       var maskInvert = colEl.hasAttribute('mask-invert');            // 反色模式
@@ -1393,6 +1534,32 @@
     return div;
   };
 
+  /* can-hide 的眼睛圖示（Bootstrap Icons）：平常是 bi-eye，滑鼠移上去換成 bi-eye-slash 提示「點了會隱藏」。
+     尺寸與色彩：can-hide-size、can-hide-color（寫在 ui-row-enhance 上），沒寫時跟隨文字大小與格子文字色 */
+  UiTable.prototype._mkEye = function (rowStyle) {
+    var self = this;
+    var eye  = mk('span', 'uit-eye');
+    eye.title = '隱藏這一列';
+    eye.innerHTML = '<i class="bi bi-eye uit-eye-on" aria-hidden="true"></i>' +
+                    '<i class="bi bi-eye-slash uit-eye-off" aria-hidden="true"></i>';
+    if (rowStyle && rowStyle.fontSize) eye.style.fontSize = rowStyle.fontSize;
+    if (rowStyle && rowStyle.ehSize) {
+      var sz = normSize(rowStyle.ehSize, '');
+      if (sz) eye.style.setProperty('--uit-esz', sz);
+      else console.warn('[ui-table] can-hide-size="' + rowStyle.ehSize + '" 不是有效的尺寸，已改用預設值。');
+    }
+    if (rowStyle && rowStyle.ehColor) {
+      var clr = resolveColor(rowStyle.ehColor);
+      if (clr) eye.style.color = clr;
+      else console.warn('[ui-table] can-hide-color="' + rowStyle.ehColor + '" 不是有效的色彩，已改用預設值。');
+    }
+    eye.addEventListener('click', function (e) {
+      e.stopPropagation();   /* 不觸發 show-next、展開等儲存格層級的點擊 */
+      self._hideRow(eye.closest('.uit-row'));
+    });
+    return eye;
+  };
+
   /* icons-list 動畫：每次滑鼠移入都從頭播放。
      時間軸（n 個圖示、間隔 ms）：0 清空內容並顯示第 1 個，之後每隔 ms 再顯示下一個，
      最後一個出現後再過 ms 恢復原本的內容，總長 n × ms。播放途中再次移入會重新開始。 */
@@ -1430,6 +1597,9 @@
       /* 樹狀欄：展開鈕保持顯示，圖示列從展開鈕右邊開始 */
       var tr = ci.querySelector(':scope > .uit-tree');
       strip.style.left = (tr ? tr.offsetWidth + 6 : 0) + 'px';
+      /* can-hide 的眼睛保持顯示，圖示列停在眼睛左邊 */
+      var ey = ci.querySelector(':scope > .uit-eye');
+      strip.style.right = (ey ? ey.offsetWidth + 6 : 0) + 'px';
       var ct = ci.querySelector(':scope > .uit-ct');
       strip.style.fontSize = ct ? getComputedStyle(ct).fontSize : '';
       strip.style.justifyContent = tr ? 'flex-start' : getComputedStyle(ci).justifyContent;
@@ -1677,9 +1847,15 @@
     });
   }
 
+  /* can-hide API：把眼睛隱藏的列全部顯示回來（錄影重拍時用），回傳恢復的列數 */
+  function showHidden(target) {
+    return treeTargets(target).reduce(function (sum, t) { return sum + t._showHidden(); }, 0);
+  }
+
   global.UiTable = {
     init: boot, config: CFG, colors: BRAND,
-    expandAll: expandAll, collapseAll: collapseAll
+    expandAll: expandAll, collapseAll: collapseAll,
+    showHidden: showHidden
   };
 
   if (document.readyState === 'loading') {
