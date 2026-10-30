@@ -140,7 +140,7 @@
 <div class="page">
 
   <h1>ui-table 範例</h1>
-  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height；修改 3 注意力動畫與 &lt;ui-flash&gt; 閃電按鈕；修改 4 行內翻譯 &lt;ui-trans&gt;；修改 5 ui-trans 的 popover 寬度與字級。</p>
+  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height；修改 3 注意力動畫與 &lt;ui-flash&gt; 閃電按鈕；修改 4 行內翻譯 &lt;ui-trans&gt;；修改 5 ui-trans 的 popover 寬度與字級；修改 6 cell-item 自動編號。</p>
 
   <div class="toolbar">
     <button type="button" class="btn btn-shell" id="btnRestore"><i class="bi bi-arrow-counterclockwise"></i> 全部顯示回來（UiTable.showHidden）</button>
@@ -733,6 +733,76 @@
         <tr><td>hint-width</td><td>ui-trans</td><td>popover 的寬度。純數字視為 px，也接受 px、rem、em、vw。沒寫時依內容自動，最寬 420px；有寫時以指定值為準，但不超過視窗寬度。無效值會改用預設並出現警告。</td></tr>
         <tr><td>hint-font-size</td><td>ui-trans</td><td>popover 的字級。純數字視為 px，也接受 px、rem、em。沒寫時跟隨標示文字的字級。</td></tr>
         <tr><td>UiTableConfig</td><td>JavaScript</td><td><code class="inl">transWidth</code>、<code class="inl">transFontSize</code> 設定全頁預設值，個別 ui-trans 的屬性優先。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ======================================================== -->
+  <div class="rev-head">修改 6：cell-item 自動編號 item-number</div>
+
+  <!-- ===================== 16. item-number ===================== -->
+  <section class="demo-sec">
+    <h2>16. 輪播項目自動編號</h2>
+    <p>在有 <code class="inl">carousel-interval</code> 的 ui-col 加上 <code class="inl">item-number</code>，每個 cell-item 左側會自動加上編號，內容在右側換行對齊。自動輪播與手動輪播（<code class="inl">carousel-interval="0"</code>）都適用。10 以上的編號會改用同尺寸的圓圈圖形。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code16">
+<ui-table id="tb16" theme="sky" row-border="1px solid" col-border="1px solid"
+          cell-padding="12px" cell-min-height="64px">
+  <ui-row>
+    <ui-col>outline（預設）</ui-col>
+    <ui-col carousel-interval="2600" progress-bar item-number>
+      <cell-item>Describe a place you visited.</cell-item>
+      <cell-item>Describe a person who <c13>inspired</c13> you.</cell-item>
+      <cell-item>Describe a skill you learned.</cell-item>
+    </ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>fill，手動輪播</ui-col>
+    <ui-col carousel-interval="0" progress-bar item-number="fill" progress-bar-color1="lavender" progress-bar-color2="pink">
+      <cell-item>先說結論，再補一個原因。</cell-item>
+      <cell-item>用具體例子支撐原因。</cell-item>
+      <cell-item>最後回扣題目，收尾。</cell-item>
+    </ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>count</ui-col>
+    <ui-col carousel-interval="2200" item-number="count">
+      <cell-item><ui-trans source="tr-thrive">thrive</ui-trans></cell-item>
+      <cell-item>flourish</cell-item>
+      <cell-item>prosper</cell-item>
+      <cell-item>boom</cell-item>
+    </ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>超過 9 個</ui-col>
+    <ui-col carousel-interval="900" item-number>
+      <cell-item>one</cell-item><cell-item>two</cell-item><cell-item>three</cell-item>
+      <cell-item>four</cell-item><cell-item>five</cell-item><cell-item>six</cell-item>
+      <cell-item>seven</cell-item><cell-item>eight</cell-item><cell-item>nine</cell-item>
+      <cell-item>ten</cell-item><cell-item>eleven</cell-item><cell-item>twelve</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+<div id="tr-thrive"><b>蓬勃發展、茁壯</b></div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code16"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-sec">
+    <h2>修改 6：屬性說明</h2>
+    <table class="ref">
+      <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>item-number</td><td>有 carousel-interval 的 ui-col</td><td>空值或 <code class="inl">outline</code>：空心圓圈編號（預設）。<code class="inl">fill</code>：實心圓圈編號。<code class="inl">count</code>：「2 / 5」計數框，同時看得出總共幾項。無效值改用 outline。寫在沒有輪播的格子會被忽略並出現警告。</td></tr>
+        <tr><td>itemNumber</td><td>JSON 的欄位物件</td><td>同上，可填 true、'outline'、'fill'、'count'。</td></tr>
+        <tr><td>編號顏色</td><td></td><td>跟隨格子文字色，所以 font-color、inverse 都會一起套用。</td></tr>
       </tbody>
     </table>
   </section>

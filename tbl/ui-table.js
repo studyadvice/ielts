@@ -343,6 +343,10 @@
 
     '.uit-car{position:relative;overflow:hidden;flex:1;font-size:var(--uit-fs)}',
     '.uit-car-item{width:100%;box-sizing:border-box}',
+    /* item-number：編號放在每個輪播項目的左側，內容在右側換行對齊 */
+    '.uit-car-item.has-num{display:flex;align-items:flex-start;gap:6px}',
+    '.uit-car-item.has-num>.uit-inb{flex:1;min-width:0}',
+    '.uit-icnt{flex-shrink:0;margin-top:.15em;padding:0 6px;border:1px solid currentColor;font-size:.78em;line-height:1.45;font-variant-numeric:tabular-nums;white-space:nowrap;opacity:.88}',
 
     /* 自動輪播進度條：用 clip-path 倒數，漸層色會固定不動，不會跟著被壓縮 */
     '.uit-pb{position:relative;height:3px;background:var(--uit-pbtrk,#3A3B38);overflow:hidden;margin-top:6px;flex-shrink:0}',
@@ -689,6 +693,7 @@
         if (cd.progressBarColor)  c.setAttribute('progress-bar-color', cd.progressBarColor);
         if (cd.progressBarColor1) c.setAttribute('progress-bar-color1', cd.progressBarColor1);
         if (cd.progressBarColor2) c.setAttribute('progress-bar-color2', cd.progressBarColor2);
+        if (cd.itemNumber)        c.setAttribute('item-number',       cd.itemNumber === true ? '' : String(cd.itemNumber));
         if (cd.arrow != null)     c.setAttribute('arrow',             cd.arrow === true ? '' : cd.arrow);
         if (cd.arrowSize)         c.setAttribute('arrow-size',        cd.arrowSize);
         if (cd.arrowColor)        c.setAttribute('arrow-color',       cd.arrowColor);
@@ -1388,6 +1393,9 @@
 
     if (hasMask  && hasExp)  console.warn('[ui-table] mask-text+expandable 互斥，expandable 已忽略。');
     if (hasMask  && hasCar)  console.warn('[ui-table] mask-text+carousel-interval 互斥，carousel-interval 已忽略。');
+    if (colEl.hasAttribute('item-number') && !hasCar) {
+      console.warn('[ui-table] item-number 只在有 carousel-interval 的格子（cell-item 輪播）生效，已忽略。');
+    }
     if (hasExtra && !xid)    console.error('[ui-table] extra-info 需要填入 div 的 id，已忽略。');
     if (hasExtra && hasMask) console.warn('[ui-table] mask-text+extra-info 互斥，extra-info 已忽略。');
     if (hasExtra && hasCar)  console.warn('[ui-table] carousel-interval+extra-info 互斥，extra-info 已忽略。');
@@ -1464,7 +1472,15 @@
       if (manual && !hasPb) {
         console.warn('[ui-table] carousel-interval="0"（手動輪播）需要搭配 progress-bar，目前只顯示第一個項目。');
       }
-      this._setupCarousel(ci, div, items, ms, hasPb, pbFill);
+      /* item-number：outline（預設，空心圓圈編號）、fill（實心圓圈編號）、count（「2 / 5」計數框） */
+      var inRaw = colEl.hasAttribute('item-number')
+        ? String(colEl.getAttribute('item-number') || 'outline').trim().toLowerCase() || 'outline'
+        : '';
+      if (inRaw && ['outline', 'fill', 'count'].indexOf(inRaw) < 0) {
+        console.warn('[ui-table] item-number="' + inRaw + '" 不是有效的值（outline / fill / count），已改用 outline。');
+        inRaw = 'outline';
+      }
+      this._setupCarousel(ci, div, items, ms, hasPb, pbFill, inRaw);
       if (eyeCell) ci.appendChild(this._mkEye(rowStyle));
     } else {
       var clone = colEl.cloneNode(true);
@@ -1704,15 +1720,28 @@
   };
 
   /* ms > 0：自動輪播；ms === 0：手動輪播（點擊分段進度條切換下一畫面） */
-  UiTable.prototype._setupCarousel = function (ci, colDiv, items, ms, hasPb, pbFill) {
+  UiTable.prototype._setupCarousel = function (ci, colDiv, items, ms, hasPb, pbFill, numMode) {
     if (!items.length) return;
 
     var manual = ms === 0;
     var n      = items.length;
     var wrap   = mk('div', 'uit-car');
 
+    /* 放入第 i 個項目的內容；有 item-number 時，左側加上編號，內容包進 .uit-inb */
+    function fillItem(el, i) {
+      if (!numMode) {
+        el.innerHTML = items[i].innerHTML;
+        return;
+      }
+      el.classList.add('has-num');
+      var num = numMode === 'count'
+        ? '<span class="uit-icnt">' + (i + 1) + ' / ' + n + '</span>'
+        : mkNum(i + 1, numMode === 'fill');
+      el.innerHTML = num + '<div class="uit-inb">' + items[i].innerHTML + '</div>';
+    }
+
     var curEl = mk('div', 'uit-car-item');
-    curEl.innerHTML = items[0].innerHTML;
+    fillItem(curEl, 0);
     bootTransIn(curEl);
     wrap.appendChild(curEl);
     ci.appendChild(wrap);
@@ -1730,7 +1759,7 @@
       wrap.style.height = h + 'px';
 
       var nxt = mk('div', 'uit-car-item');
-      nxt.innerHTML = items[idx].innerHTML;
+      fillItem(nxt, idx);
       bootTransIn(nxt);
       nxt.style.cssText = [
         'position:absolute', 'top:0', 'left:0', 'width:100%',
