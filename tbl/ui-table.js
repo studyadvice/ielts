@@ -62,7 +62,12 @@
     flashWidth:         3,         /* 注意力動畫：光帶粗細（px） */
     flashSpeed:         1600,      /* 注意力動畫：繞一圈的時間（毫秒），數字越小越快 */
     flashLoops:         2,         /* 注意力動畫：繞幾圈 */
-    flashLength:        0.22       /* 注意力動畫：光帶長度佔周長的比例（0.05～0.9） */
+    flashLength:        0.22,      /* 注意力動畫：光帶長度佔周長的比例（0.05～0.9） */
+    transTheme:         'sky',     /* ui-trans 預設色彩 */
+    transHintStyle:     'dashed',  /* ui-trans 預設標示樣式 */
+    transDelay:         60,        /* ui-trans 滑鼠移入後多久顯示（毫秒），避免滑過時閃爍 */
+    transWidth:         '',        /* ui-trans popover 寬度，空字串 = 依內容自動（最寬 420px） */
+    transFontSize:      ''         /* ui-trans popover 字級，空字串 = 跟隨標示文字的字級 */
   }, global.UiTableConfig || {});
 
   /* 手動輪播分段進度條：分隔間距（px） */
@@ -428,7 +433,27 @@
     '@keyframes uit-zap{0%,100%{transform:none}25%{transform:rotate(-14deg) scale(1.25)}60%{transform:rotate(10deg) scale(1.15)}}',
     '.uit-fb.is-play i{display:inline-block;animation:uit-zap .45s ease}',
     '@keyframes uit-fberr{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}',
-    '.uit-fb.is-err{color:#E6374B;animation:uit-fberr .3s ease 2}'
+    '.uit-fb.is-err{color:#E6374B;animation:uit-fberr .3s ease 2}',
+
+    /* ui-trans 行內翻譯：五種標示樣式，色彩由 --uit-trc 決定 */
+    'ui-trans{display:inline}',
+    'ui-trans.uit-tr{cursor:help;transition:filter .18s ease,background-color .18s ease}',
+    'ui-trans.hs-dashed{text-decoration-line:underline;text-decoration-style:dashed;text-decoration-color:var(--uit-trc);text-decoration-thickness:1.5px;text-underline-offset:.24em}',
+    'ui-trans.hs-dashed:hover,ui-trans.hs-dashed.open{text-decoration-style:solid}',
+    'ui-trans.hs-pill-fill,ui-trans.hs-pill-outline,ui-trans.hs-square-fill{padding:1px 8px;-webkit-box-decoration-break:clone;box-decoration-break:clone}',
+    'ui-trans.hs-pill-fill{background:var(--uit-trc);color:#0C0D0C;border-radius:999px}',
+    'ui-trans.hs-pill-outline{border:1px solid var(--uit-trc);color:var(--uit-trc);border-radius:999px}',
+    'ui-trans.hs-square-fill{background:var(--uit-trc);color:#0C0D0C;padding:1px 6px}',
+    'ui-trans.hs-pill-fill:hover,ui-trans.hs-square-fill:hover,ui-trans.hs-pill-fill.open,ui-trans.hs-square-fill.open{filter:brightness(1.12)}',
+    'ui-trans.hs-pill-outline:hover,ui-trans.hs-pill-outline.open{background:rgba(255,255,255,.08)}',
+    /* icon：用 ruby 把 bi-translate 放在文字正上方，行高會自動留出空間，不會壓到上一行 */
+    'ui-trans.hs-icon ruby{ruby-position:over;ruby-align:center}',
+    'ui-trans.hs-icon rt{font-size:.6em;line-height:1;color:var(--uit-trc);text-align:center;user-select:none;transition:transform .18s ease}',
+    'ui-trans.hs-icon:hover rt,ui-trans.hs-icon.open rt{transform:translateY(-2px) scale(1.15)}',
+    /* 翻譯 popover：沿用 .uit-pop 的外觀，邊距縮小並加上淡入 */
+    '.uit-pop.uit-tpop{padding:8px 14px;max-width:min(420px,calc(100vw - 16px));z-index:9991}',
+    '@keyframes uit-tpin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}',
+    '.uit-pop.uit-tpop.vis{animation:uit-tpin .16s ease}'
 
   ].join('\n');
 
@@ -463,6 +488,7 @@
       document.addEventListener('click', function (e) {
         if (!_pop) return;
         if (_pop.el.contains(e.target) || _pop.anchor.contains(e.target)) return;
+        if (_tpEl && _tpEl.contains(e.target)) return;   /* 點的是 extra-info 內容裡的翻譯 popover */
         closePop();
       }, true);
       document.addEventListener('keydown', function (e) {
@@ -479,6 +505,7 @@
 
   function closePop() {
     if (!_pop) return;
+    if (_tp && _pop.el.contains(_tp.anchor)) closeTrans();   /* 翻譯錨點在 extra-info 裡時一起關閉 */
     _pop.el.classList.remove('vis');
     _pop.anchor.classList.remove('open');
     _pop = null;
@@ -489,19 +516,18 @@
     _popRaf = requestAnimationFrame(function () { _popRaf = 0; placePop(); });
   }
 
-  function placePop() {
-    if (!_pop) return;
-    var el = _pop.el;
-    var r  = _pop.anchor.getBoundingClientRect();
+  /* popover 定位（extra-info 與 ui-trans 共用）。
+     align = 'right'：對齊錨點右緣往左展開；'center'：對齊錨點中央。
+     垂直方向優先放下方，不夠就放上方，兩邊都不夠時選較大的一側並限制高度。
+     錨點被隱藏或已捲出視窗時回傳 false */
+  function placeBox(el, anchor, align, fixedW) {
+    var r  = anchor.getBoundingClientRect();
     var vw = document.documentElement.clientWidth;
     var vh = document.documentElement.clientHeight;
-    /* 圖示被隱藏（display:none）或已捲出視窗時關閉 */
-    if ((!r.width && !r.height) || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) {
-      closePop();
-      return;
-    }
+    if ((!r.width && !r.height) || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) return false;
+
     var M = 8, GAP = 6;
-    el.style.width = '';
+    el.style.width = fixedW || '';   /* 有指定寬度（ui-trans 的 hint-width）就用指定值量測 */
     el.style.maxHeight = '';
     el.style.left = '0px';
     el.style.top  = '0px';
@@ -509,10 +535,9 @@
     var oh = el.offsetHeight;
     el.style.width = ow + 'px';   /* 固定寬度，移動位置時不會重新換行 */
 
-    /* 水平：對齊圖示右緣往左展開，並夾在視窗內 */
-    var left = Math.max(M, Math.min(r.right - ow, vw - ow - M));
+    var want = align === 'center' ? (r.left + r.width / 2 - ow / 2) : (r.right - ow);
+    var left = Math.max(M, Math.min(want, vw - ow - M));
 
-    /* 垂直：優先放下方，不夠就放上方，兩邊都不夠時選較大的一側並限制高度 */
     var below = vh - r.bottom - GAP - M;
     var above = r.top - GAP - M;
     var top;
@@ -529,6 +554,12 @@
     }
     el.style.left = left + 'px';
     el.style.top  = Math.max(M, top) + 'px';
+    return true;
+  }
+
+  function placePop() {
+    if (!_pop) return;
+    if (!placeBox(_pop.el, _pop.anchor, 'right')) closePop();
   }
 
   function openPop(anchor, id, color, fs) {
@@ -542,6 +573,7 @@
     src.style.display = 'none';
     var el = popEl();
     el.innerHTML = src.innerHTML;          /* 點擊當下才讀取，所以內容之後有變動也會顯示最新的 */
+    bootTransIn(el);
     el.style.borderColor = color;
     el.style.color       = color;
     el.style.fontSize    = fs;
@@ -786,6 +818,7 @@
     this.el.style.display = 'none';
 
     this._setupAutoReveal();
+    bootTransIn(wrap);
   };
 
   UiTable.prototype._setupAutoReveal = function () {
@@ -1680,6 +1713,7 @@
 
     var curEl = mk('div', 'uit-car-item');
     curEl.innerHTML = items[0].innerHTML;
+    bootTransIn(curEl);
     wrap.appendChild(curEl);
     ci.appendChild(wrap);
 
@@ -1697,6 +1731,7 @@
 
       var nxt = mk('div', 'uit-car-item');
       nxt.innerHTML = items[idx].innerHTML;
+      bootTransIn(nxt);
       nxt.style.cssText = [
         'position:absolute', 'top:0', 'left:0', 'width:100%',
         'transform:translateY(100%)',
@@ -2023,6 +2058,174 @@
     el.appendChild(b);
   }
 
+  /* ---------- ui-trans 行內翻譯 ---------- */
+  /* <ui-trans source="來源div的id" theme="sky" hint-style="dashed">a tiny flat</ui-trans>
+     滑鼠移入時讀取來源區塊的內容，以 popover 顯示。
+     hint-style：dashed（預設，虛底線）、pill-fill、pill-outline、square-fill、icon（文字上方顯示 bi-translate） */
+  var HINT_STYLES = ['dashed', 'pill-fill', 'pill-outline', 'square-fill', 'icon'];
+  var _tp = null;          /* { el: popover, anchor: 目前的 ui-trans } */
+  var _tpEl = null;
+  var _tpShowT = 0, _tpHideT = 0, _tpRaf = 0;
+  var _tpMissing = {};     /* 找不到的來源 id 只回報一次 */
+
+  function tpEl() {
+    if (_tpEl) return _tpEl;
+    _tpEl = mk('div', 'uit-pop uit-tpop');
+    _tpEl.style.background = hexRgba(BG, 0.97);
+    document.body.appendChild(_tpEl);
+    /* 滑鼠移到 popover 上時保持開啟，方便選取文字或點連結 */
+    _tpEl.addEventListener('mouseenter', function () { clearTimeout(_tpHideT); });
+    _tpEl.addEventListener('mouseleave', hideTransSoon);
+    document.addEventListener('click', function (e) {
+      if (!_tp) return;
+      if (_tp.el.contains(e.target) || _tp.anchor.contains(e.target)) return;
+      closeTrans();
+    }, true);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeTrans();
+    });
+    window.addEventListener('scroll', function (e) {
+      if (_tp && _tp.el.contains(e.target)) return;
+      if (!_tp || _tpRaf) return;
+      _tpRaf = requestAnimationFrame(function () {
+        _tpRaf = 0;
+        if (_tp && !placeBox(_tp.el, _tp.anchor, 'center', _tp.w)) closeTrans();
+      });
+    }, true);
+    window.addEventListener('resize', function () {
+      if (_tp && !placeBox(_tp.el, _tp.anchor, 'center', _tp.w)) closeTrans();
+    });
+    return _tpEl;
+  }
+
+  function closeTrans() {
+    clearTimeout(_tpShowT);
+    clearTimeout(_tpHideT);
+    if (!_tp) return;
+    _tp.el.classList.remove('vis');
+    _tp.anchor.classList.remove('open');
+    _tp = null;
+  }
+
+  function hideTransSoon() {
+    clearTimeout(_tpHideT);
+    _tpHideT = setTimeout(closeTrans, 160);   /* 留一點時間讓滑鼠移進 popover */
+  }
+
+  function openTrans(anchor) {
+    clearTimeout(_tpHideT);
+    if (_tp && _tp.anchor === anchor) return;
+    closeTrans();
+    var id  = (anchor.getAttribute('source') || '').trim();
+    var src = id ? document.getElementById(id) : null;
+    if (!src) {
+      if (!_tpMissing[id]) {
+        _tpMissing[id] = true;
+        console.error('[ui-table] ui-trans 找不到 source="' + id + '" 的來源區塊。');
+      }
+      return;
+    }
+    var color = anchor._uitTrc || BRAND.sky;
+    var el = tpEl();
+    el.innerHTML = src.innerHTML;          /* 移入當下才讀取，內容之後有變動也會顯示最新的 */
+    el.style.borderColor = color;
+    el.style.color       = color;
+    /* 字級：hint-font-size > UiTableConfig.transFontSize > 標示文字本身的字級 */
+    el.style.fontSize    = anchor._uitTfs || getComputedStyle(anchor).fontSize;
+    /* 寬度：hint-width > UiTableConfig.transWidth > 依內容自動。
+       指定寬度時解除 420px 的上限，但仍不超過視窗寬度 */
+    var tw = anchor._uitTw;
+    el.style.maxWidth = tw ? 'calc(100vw - 16px)' : '';
+    el.classList.remove('vis');
+    void el.offsetWidth;                   /* 重新觸發淡入 */
+    el.classList.add('vis');
+    anchor.classList.add('open');
+    _tp = { el: el, anchor: anchor, w: tw };
+    if (!placeBox(el, anchor, 'center', tw)) closeTrans();
+  }
+
+  function transLen(el, attr, fb, re, eg) {
+    var raw = el.getAttribute(attr);
+    var v = String(raw != null && raw.trim() !== '' ? raw : (fb || '')).trim();
+    if (!v) return '';
+    if (/^\d*\.?\d+$/.test(v)) v += 'px';
+    if (re.test(v)) return v;
+    console.warn('[ui-table] ui-trans ' + attr + '="' + (raw != null ? raw : fb) + '" 不是有效的值（例如 ' + eg + '），已改用預設值。');
+    return '';
+  }
+
+  function bootTrans(el) {
+    if (el._uitt) return;
+    el._uitt = true;
+
+    var theme = el.getAttribute('theme') || CFG.transTheme || 'sky';
+    var color = resolveColor(theme);
+    if (!color) {
+      console.warn('[ui-table] ui-trans theme="' + theme + '" 不是有效的色彩，已改用 sky。');
+      color = BRAND.sky;
+    }
+    el._uitTrc = color;
+
+    /* hint-width：純數字視為 px，也接受 px、rem、em、vw；hint-font-size：純數字視為 px，也接受 px、rem、em */
+    el._uitTw  = transLen(el, 'hint-width', CFG.transWidth, /^\d*\.?\d+(px|rem|em|vw)$/, '180px、20rem');
+    el._uitTfs = transLen(el, 'hint-font-size', CFG.transFontSize, /^\d*\.?\d+(px|rem|em)$/, '0.9rem、14px');
+    el.style.setProperty('--uit-trc', color);
+
+    /* 經由 innerHTML 複製而來的元素（例如表格格子）結構已經建好，只需要重新綁定事件 */
+    if (!el.hasAttribute('data-uit-ready')) {
+      el.setAttribute('data-uit-ready', '');
+      var hs = String(el.getAttribute('hint-style') || CFG.transHintStyle || 'dashed').trim().toLowerCase();
+      if (HINT_STYLES.indexOf(hs) < 0) {
+        console.warn('[ui-table] ui-trans hint-style="' + hs + '" 不是有效的值（' + HINT_STYLES.join(' / ') + '），已改用 dashed。');
+        hs = 'dashed';
+      }
+      el.classList.add('uit-tr', 'hs-' + hs);
+
+      if (hs === 'icon') {
+        var rb   = document.createElement('ruby');
+        var base = mk('span', 'uit-tr-base');
+        while (el.firstChild) base.appendChild(el.firstChild);
+        rb.appendChild(base);
+        var rt = document.createElement('rt');
+        rt.innerHTML = '<i class="bi bi-translate" aria-hidden="true"></i>';
+        rb.appendChild(rt);
+        el.appendChild(rb);
+      }
+
+      var id = (el.getAttribute('source') || '').trim();
+      if (!id) {
+        console.error('[ui-table] ui-trans 需要 source="來源區塊的id"。');
+      } else {
+        var src = document.getElementById(id);
+        if (src) src.style.display = 'none';   /* 載入時自動隱藏來源區塊 */
+      }
+    }
+
+    el.addEventListener('mouseenter', function () {
+      clearTimeout(_tpHideT);
+      clearTimeout(_tpShowT);
+      var d = parseInt(CFG.transDelay, 10);
+      _tpShowT = setTimeout(function () { openTrans(el); }, d >= 0 ? d : 60);
+    });
+    el.addEventListener('mouseleave', function () {
+      clearTimeout(_tpShowT);
+      if (_tp && _tp.anchor === el) hideTransSoon();
+    });
+    /* 觸控裝置沒有 hover：點一下顯示，點其他地方關閉 */
+    el.addEventListener('click', function (e) {
+      e.stopPropagation();   /* 放在格子裡時不觸發 show-next 或展開 */
+      openTrans(el);
+    });
+  }
+
+  function bootTransIn(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('ui-trans').forEach(function (t) {
+      if (t.closest('ui-table')) return;   /* 隱藏中的原始標記不處理，等渲染後的複本 */
+      bootTrans(t);
+    });
+  }
+
   function boot() {
     document.querySelectorAll('ui-table').forEach(function (el) {
       if (el._uit) return;
@@ -2036,6 +2239,7 @@
     });
     /* 表格先渲染，格子裡如果有 ui-flash 也會一起變成按鈕 */
     document.querySelectorAll('ui-flash').forEach(bootFlashBtn);
+    bootTransIn(document);
   }
 
   /* 先匯出全域物件，再啟動自動初始化，避免初始化過程出錯時 UiTable 變成未定義 */

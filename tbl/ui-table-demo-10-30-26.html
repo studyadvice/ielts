@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-table 範例：can-hide、色彩標籤、列最小高度、注意力動畫</title>
+<title>ui-table 範例：can-hide、色彩標籤、列最小高度、注意力動畫、行內翻譯</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -140,7 +140,7 @@
 <div class="page">
 
   <h1>ui-table 範例</h1>
-  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height；修改 3 注意力動畫與 &lt;ui-flash&gt; 閃電按鈕。</p>
+  <p class="lead-txt">本頁依修改順序收錄：修改 1 can-hide 整列隱藏；修改 2 文字色彩標籤 &lt;c1&gt;～&lt;c16&gt; 與列最小高度 min-height；修改 3 注意力動畫與 &lt;ui-flash&gt; 閃電按鈕；修改 4 行內翻譯 &lt;ui-trans&gt;；修改 5 ui-trans 的 popover 寬度與字級。</p>
 
   <div class="toolbar">
     <button type="button" class="btn btn-shell" id="btnRestore"><i class="bi bi-arrow-counterclockwise"></i> 全部顯示回來（UiTable.showHidden）</button>
@@ -599,6 +599,142 @@
       </tbody>
     </table>
     <p class="note">頁面之後才用 JavaScript 加入的 ui-flash 或 ui-table，呼叫一次 <code class="inl">UiTable.init()</code> 就會啟動，已經啟動過的不會重複處理。</p>
+  </section>
+
+  <!-- ======================================================== -->
+  <div class="rev-head">修改 4：行內翻譯 &lt;ui-trans&gt;</div>
+
+  <!-- ===================== 13. 五種標示樣式 ===================== -->
+  <section class="demo-sec">
+    <h2>13. 五種標示樣式</h2>
+    <p>滑鼠移到標示的字上，會讀取 <code class="inl">source</code> 指定的區塊內容，以 popover 顯示在字的下方（下方空間不夠時改到上方）。滑鼠可以移進 popover 裡，方便選取文字。觸控裝置點一下顯示，點其他地方關閉。來源區塊載入時會自動隱藏。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code13">
+<p style="font-size:1.15rem;line-height:2">
+  When I first moved to Taipei, I rented
+  <ui-trans source="tr-flat">a tiny flat</ui-trans>
+  near the station. It was
+  <ui-trans source="tr-cramped" hint-style="pill-fill" theme="salmon">a bit cramped</ui-trans>,
+  but the rent was
+  <ui-trans source="tr-reasonable" hint-style="pill-outline" theme="special">pretty reasonable</ui-trans>,
+  and I could
+  <ui-trans source="tr-walk" hint-style="square-fill" theme="yellow">walk to work</ui-trans>
+  in ten minutes, which was
+  <ui-trans source="tr-godsend" hint-style="icon" theme="pink">a real godsend</ui-trans>.
+</p>
+<div id="tr-flat"><b>一間小公寓</b></div>
+<div id="tr-cramped"><b>有點擠</b></div>
+<div id="tr-reasonable"><b>相當合理</b><br>比 cheap 更自然的說法</div>
+<div id="tr-walk"><b>走路去上班</b></div>
+<div id="tr-godsend">
+  <p><b>天賜的好事、救星</b></p>
+  <p>Band 7 以上常見的 <c10>idiomatic language</c10>，口說時語氣要自然。</p>
+</div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code13"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 14. 搭配表格 ===================== -->
+  <section class="demo-sec">
+    <h2>14. 放在表格格子、輪播與 extra-info 裡</h2>
+    <p>ui-trans 寫在 ui-col、cell-item、extra-info 的來源區塊，或 JSON 的 content 字串裡都有效。點擊 ui-trans 不會觸發格子的 show-next 或展開。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code14">
+<ui-table id="tb14" theme="lavender" row-border="1px solid" col-border="1px solid" cell-padding="12px">
+  <ui-row>
+    <ui-col>格子</ui-col>
+    <ui-col>The city is <ui-trans source="tr-bustling" theme="ocean">bustling</ui-trans> all year round.</ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>輪播</ui-col>
+    <ui-col carousel-interval="3200" progress-bar>
+      <cell-item>It is <ui-trans source="tr-bustling" hint-style="pill-outline" theme="ocean">bustling</ui-trans>.</cell-item>
+      <cell-item>It is <ui-trans source="tr-vibrant" hint-style="pill-outline" theme="orange">vibrant</ui-trans>.</cell-item>
+    </ui-col>
+  </ui-row>
+  <ui-row>
+    <ui-col>extra-info</ui-col>
+    <ui-col extra-info="xi-tr">點握把，popover 裡的字也能再看翻譯</ui-col>
+  </ui-row>
+</ui-table>
+<div id="xi-tr" hidden>
+  <p>Try <ui-trans source="tr-vibrant" theme="orange">vibrant</ui-trans> instead of <i>lively</i>.</p>
+</div>
+<div id="tr-bustling"><b>熙來攘往的、熱鬧的</b></div>
+<div id="tr-vibrant"><b>充滿活力的</b></div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code14"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-sec">
+    <h2>修改 4：屬性說明</h2>
+    <table class="ref">
+      <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>source</td><td>ui-trans</td><td>必填，來源區塊的 id。滑鼠移入當下才讀取內容，所以之後用程式改了來源區塊，也會顯示最新的。找不到時主控台出現錯誤，不顯示 popover。</td></tr>
+        <tr><td>theme</td><td>ui-trans</td><td>標示與 popover 的色彩，色票名稱（例如 sky）或色碼，預設 sky。</td></tr>
+        <tr><td>hint-style</td><td>ui-trans</td><td><code class="inl">dashed</code>（預設，虛底線，移入時變實線）、<code class="inl">pill-fill</code>（實心膠囊）、<code class="inl">pill-outline</code>（空心膠囊）、<code class="inl">square-fill</code>（實心方塊）、<code class="inl">icon</code>（文字正上方顯示 bi-translate 圖示，行高自動留空間）。無效值會改用 dashed。</td></tr>
+        <tr><td>來源區塊</td><td>頁面任何地方</td><td>一般的 div 即可，載入時自動隱藏；也可以自己加 <code class="inl">hidden</code>。內容可以用 &lt;b&gt;、&lt;p&gt;、連結，以及色彩標籤 &lt;c1&gt;～&lt;c16&gt;。</td></tr>
+        <tr><td>UiTableConfig</td><td>JavaScript</td><td><code class="inl">transTheme</code>、<code class="inl">transHintStyle</code> 改全頁預設值；<code class="inl">transDelay</code> 是移入後多久顯示（毫秒，預設 60），避免滑鼠路過時閃一下。</td></tr>
+      </tbody>
+    </table>
+    <p class="note">頁面之後才用 JavaScript 加入的 ui-trans，呼叫 <code class="inl">UiTable.init()</code> 即可啟動。</p>
+  </section>
+
+  <!-- ======================================================== -->
+  <div class="rev-head">修改 5：ui-trans 的 hint-width 與 hint-font-size</div>
+
+  <!-- ===================== 15. 寬度與字級 ===================== -->
+  <section class="demo-sec">
+    <h2>15. 指定 popover 的寬度與字級</h2>
+    <p><code class="inl">hint-width</code> 固定 popover 的寬度，內容較長時會在這個寬度內換行。沒寫時依內容自動調整，最寬 420px；有寫時取消 420px 的上限，但不會超過視窗寬度。<code class="inl">hint-font-size</code> 指定 popover 的字級，沒寫時跟隨標示文字本身的字級。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="lbl">範例</div>
+        <div class="demo-src" data-code="code15">
+<p style="font-size:1.15rem;line-height:2">
+  預設：<ui-trans source="tr-long">a double-edged sword</ui-trans><br>
+  窄一點、字小一點：<ui-trans source="tr-long" hint-width="180px" hint-font-size="0.9rem">a double-edged sword</ui-trans><br>
+  寬版、大字（錄影放大用）：<ui-trans source="tr-long" hint-width="560px" hint-font-size="1.4rem" hint-style="pill-fill" theme="special">a double-edged sword</ui-trans><br>
+  純數字視為 px：<ui-trans source="tr-long" hint-width="240" hint-font-size="15" hint-style="icon" theme="pink">a double-edged sword</ui-trans>
+</p>
+<div id="tr-long">
+  <p><b>一把雙面刃</b></p>
+  <p>指同時帶來好處與壞處的事物，例如 Social media is a double-edged sword.</p>
+</div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">程式碼</div>
+        <pre class="code" id="code15"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-sec">
+    <h2>修改 5：屬性說明</h2>
+    <table class="ref">
+      <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>hint-width</td><td>ui-trans</td><td>popover 的寬度。純數字視為 px，也接受 px、rem、em、vw。沒寫時依內容自動，最寬 420px；有寫時以指定值為準，但不超過視窗寬度。無效值會改用預設並出現警告。</td></tr>
+        <tr><td>hint-font-size</td><td>ui-trans</td><td>popover 的字級。純數字視為 px，也接受 px、rem、em。沒寫時跟隨標示文字的字級。</td></tr>
+        <tr><td>UiTableConfig</td><td>JavaScript</td><td><code class="inl">transWidth</code>、<code class="inl">transFontSize</code> 設定全頁預設值，個別 ui-trans 的屬性優先。</td></tr>
+      </tbody>
+    </table>
   </section>
 
 </div>
