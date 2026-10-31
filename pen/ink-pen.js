@@ -8,12 +8,14 @@
  *   <ui-ink-bar>      迷你工具列（可收合成一顆小圓鈕）
  *   <ink-handwrite>   行內手寫空格，內容以底線長度決定寬度，可加 answer 屬性附解答
  *   <ui-ink-modal>    手寫視窗（首次需要時自動建立，不必自己放）
+ *   <dot-go>          跳轉圓點，開著觸控筆也點得到，可跳到同頁標籤或其他網頁
  *
  * 對外介面：window.InkPen
  *   .layer()              取得繪圖層實體
  *   .bar()                取得工具列實體
  *   .modal()              取得手寫視窗實體
  *   .blanks()             取得頁面上所有 <ink-handwrite>
+ *   .dots()               取得頁面上所有 <dot-go>
  *   .palette              配色表
  *
  * 本元件不在畫面上顯示任何提示訊息，設定錯誤只寫入 console，
@@ -1007,8 +1009,297 @@
   }
   customElements.define('ui-ink-bar', UiInkBar);
 
+  /* =========================================================
+   * <dot-go>
+   *
+   * 用法：
+   *   <dot-go href="#part2" theme="sky" dot-style="star-fill"></dot-go>
+   *   <dot-go href="lesson-02.html" theme="pink" dot-style="square">下一課</dot-go>
+   *
+   * 屬性：
+   *   href         目標。"#id" 為同頁平滑捲動，其餘視為網址
+   *   theme        配色表名稱（sky、pink…）或 #RGB／#RRGGBB，預設 sky
+   *   dot-style    circle | circle-fill | star | star-fill | square | square-fill | icon
+   *                預設 circle-fill
+   *   icon         dot-style="icon" 時使用的 Bootstrap Icons 名稱，
+   *                寫 "bi-translate" 或 "translate" 皆可
+   *                頁面若尚未載入 Bootstrap Icons，會自動從 jsDelivr 載入一次
+   *   size         圖示大小（px），預設 18，範圍 10 至 48
+   *   target       "_blank" 時另開分頁，其餘同分頁跳轉
+   *   offset       同頁跳轉時保留的上方距離（px），給固定頁首用，預設 16
+   *   clear-ink    有此屬性時，跳轉前先清除繪圖層筆跡
+   *
+   * 標籤內的文字會顯示在圖示右側當標籤，留空則只顯示圖示。
+   *
+   * 圓點的 z-index 為 830，高於繪圖層的 820，所以開著觸控筆或雷射筆也點得到。
+   * 但若 <dot-go> 的祖先自己建立了堆疊環境（設了 transform、filter、
+   * opacity 小於 1、或 position 搭配 z-index），圓點會被困在裡面，請避開。
+   *
+   * 事件：
+   *   dot-go       跳轉前觸發，可 preventDefault() 取消
+   *                detail: { el, href, internal, target }
+   * ========================================================= */
+  var DOT_STYLES = ['circle', 'circle-fill', 'star', 'star-fill', 'square', 'square-fill', 'icon'];
+  var BI_CSS_URL = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css';
+  var BI_NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+  var DOT_SIZE_MIN = 10;
+  var DOT_SIZE_MAX = 48;
+  var DOT_SIZE_DEFAULT = 18;
+  var DOT_FLASH_MS = 1400;
+
+  var DOT_SHAPES = {
+    circle: '<circle cx="12" cy="12" r="8.5"/>',
+    star: '<path d="M12 2.8l2.85 5.95 6.5.85-4.78 4.5 1.22 6.45L12 17.4l-5.79 3.15 '
+      + '1.22-6.45-4.78-4.5 6.5-.85z"/>',
+    square: '<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="2.2"/>'
+  };
+
+  function injectDotStyles() {
+    if (document.getElementById('ink-pen-dotgo-styles')) return;
+    var css = ''
+      + 'dot-go{display:inline-flex;align-items:center;gap:6px;position:relative;z-index:830;'
+      + 'vertical-align:middle;cursor:pointer;margin:0 3px;padding:2px 4px;border-radius:8px;'
+      + 'color:var(--dg-c,#82C8E5);line-height:1.3;user-select:none;-webkit-user-select:none;'
+      + 'touch-action:manipulation;transition:background .12s ease;}'
+      + 'dot-go:hover{background:rgba(32,33,25,0.92);}'
+      + 'dot-go .dg-icon{display:flex;align-items:center;justify-content:center;flex:0 0 auto;'
+      + 'transition:transform .15s ease;}'
+      + 'dot-go:hover .dg-icon{transform:scale(1.2);}'
+      + 'dot-go:active .dg-icon{transform:scale(0.92);}'
+      + 'dot-go .dg-icon svg{display:block;overflow:visible;}'
+      + 'dot-go .dg-icon i.bi{display:block;line-height:1;color:currentColor;}'
+      + 'dot-go .dg-icon i.bi::before{display:block;vertical-align:0;}'
+      + 'dot-go .dg-label{font-size:0.92rem;color:var(--dg-c,#82C8E5);white-space:nowrap;}'
+      + 'dot-go .dg-label:empty{display:none;}'
+      + 'dot-go.dg-off{cursor:not-allowed;color:#6b6c66;}'
+      + 'dot-go.dg-off .dg-label{color:#6b6c66;}'
+      + 'dot-go.dg-off:hover .dg-icon{transform:none;}'
+      /* 跳到同頁標籤時，目標閃一下外框，提示觀眾畫面落在哪裡 */
+      + '.dg-flash{animation:dg-flash ' + DOT_FLASH_MS + 'ms ease-out 1;'
+      + 'outline-style:solid;outline-color:var(--dg-flash,#82C8E5);border-radius:6px;}'
+      + '@keyframes dg-flash{'
+      + '0%{outline-width:4px;outline-offset:2px;}'
+      + '60%{outline-width:3px;outline-offset:8px;}'
+      + '100%{outline-width:0;outline-offset:12px;}}';
+    var style = document.createElement('style');
+    style.id = 'ink-pen-dotgo-styles';
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  function resolveColor(theme) {
+    var t = String(theme || '').trim();
+    if (!t) return PALETTE.sky;
+    if (PALETTE[t]) return PALETTE[t];
+    if (HEX_RE.test(t)) return t.toUpperCase();
+    warn('dot-go 的 theme 無法辨識，已改用 sky：' + t);
+    return PALETTE.sky;
+  }
+
+  /* 頁面上已有 Bootstrap Icons 就不重複載入 */
+  function ensureBootstrapIcons() {
+    if (document.getElementById('ink-pen-bi-css')) return;
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+    for (var i = 0; i < links.length; i++) {
+      if (/bootstrap-icons/i.test(links[i].href || '')) return;
+    }
+    var link = document.createElement('link');
+    link.id = 'ink-pen-bi-css';
+    link.rel = 'stylesheet';
+    link.href = BI_CSS_URL;
+    link.addEventListener('error', function () {
+      warn('Bootstrap Icons 載入失敗，請確認網路或自行引入：' + BI_CSS_URL);
+    });
+    document.head.appendChild(link);
+  }
+
+  /* "bi-translate"、"bi bi-translate"、"translate" 都轉成 "translate" */
+  function normalizeIcon(raw) {
+    var s = String(raw || '').trim().toLowerCase().replace(/^bi\s+/, '').replace(/^bi-/, '');
+    if (!s) return '';
+    if (!BI_NAME_RE.test(s)) {
+      warn('icon 名稱格式不符，只接受英數與連字號：' + raw);
+      return '';
+    }
+    return s;
+  }
+
+  class DotGo extends HTMLElement {
+    static get observedAttributes() { return ['href', 'theme', 'dot-style', 'size', 'icon']; }
+
+    connectedCallback() {
+      if (this._built) return;
+      /* 與 <ink-handwrite> 相同，等文件解析完才讀標籤內文字 */
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this._init(), { once: true });
+        return;
+      }
+      this._init();
+    }
+
+    _init() {
+      if (this._built) return;
+      this._built = true;
+
+      var label = String(this.textContent || '').trim();
+      this.innerHTML = '<span class="dg-icon" data-role="icon"></span>'
+        + '<span class="dg-label" data-role="label"></span>';
+      this._icon = this.querySelector('[data-role="icon"]');
+      this._label = this.querySelector('[data-role="label"]');
+      this._label.textContent = label;
+
+      this._render();
+
+      /* 觸控筆點擊時阻止事件往下，避免同時觸發其他元件 */
+      this.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+      this.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.go();
+      });
+    }
+
+    attributeChangedCallback() {
+      if (this._built) this._render();
+    }
+
+    /* ---------- 屬性讀取 ---------- */
+    get href() { return (this.getAttribute('href') || '').trim(); }
+    get internal() { return this.href.charAt(0) === '#'; }
+
+    get dotStyle() {
+      var s = (this.getAttribute('dot-style') || '').trim();
+      if (!s) return 'circle-fill';
+      if (DOT_STYLES.indexOf(s) === -1) {
+        warn('dot-style 不支援「' + s + '」，已改用 circle-fill');
+        return 'circle-fill';
+      }
+      return s;
+    }
+
+    get size() {
+      var n = Number(this.getAttribute('size'));
+      if (!n) return DOT_SIZE_DEFAULT;
+      return Math.min(DOT_SIZE_MAX, Math.max(DOT_SIZE_MIN, n));
+    }
+
+    get color() { return resolveColor(this.getAttribute('theme') || 'sky'); }
+
+    /* ---------- 外觀 ---------- */
+    _render() {
+      var style = this.dotStyle;
+      var size = this.size;
+      this.style.setProperty('--dg-c', this.color);
+
+      /* icon 樣式：改用 Bootstrap Icons 字型圖示，缺名稱時退回 circle-fill */
+      var iconName = '';
+      if (style === 'icon') {
+        iconName = normalizeIcon(this.getAttribute('icon'));
+        if (!iconName) {
+          warn('dot-style="icon" 需要 icon 屬性，例如 icon="bi-translate"，已改用 circle-fill');
+          style = 'circle-fill';
+        }
+      }
+
+      if (iconName) {
+        ensureBootstrapIcons();
+        var i = document.createElement('i');
+        i.className = 'bi bi-' + iconName;
+        i.setAttribute('aria-hidden', 'true');
+        i.style.fontSize = (size / 16) + 'rem';
+        this._icon.innerHTML = '';
+        this._icon.appendChild(i);
+      } else {
+        var shape = style.replace('-fill', '');
+        var filled = style.indexOf('-fill') !== -1;
+        var stroke = filled ? 'none' : 'currentColor';
+        var fill = filled ? 'currentColor' : 'none';
+        this._icon.innerHTML = '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size
+          + '" aria-hidden="true" fill="' + fill + '" stroke="' + stroke
+          + '" stroke-width="2.2" stroke-linejoin="round">' + DOT_SHAPES[shape] + '</svg>';
+      }
+
+      var href = this.href;
+      this.classList.toggle('dg-off', !href);
+      if (!href) {
+        warn('dot-go 缺少 href，圓點已停用');
+        this.setAttribute('title', '未設定 href');
+        return;
+      }
+      var tip = this.internal ? ('跳到 ' + href) : ('前往 ' + href);
+      if (this.getAttribute('target') === '_blank') tip += '（新分頁）';
+      this.setAttribute('title', tip);
+    }
+
+    /* ---------- 跳轉 ---------- */
+    go() {
+      var href = this.href;
+      if (!href) return false;
+
+      var target = this.getAttribute('target') || '';
+      var evt = new CustomEvent('dot-go', {
+        bubbles: true,
+        cancelable: true,
+        detail: { el: this, href: href, internal: this.internal, target: target }
+      });
+      if (!this.dispatchEvent(evt)) return false;
+
+      if (this.hasAttribute('clear-ink')) {
+        var layer = document.querySelector('ui-ink-layer');
+        if (layer && layer.clear) layer.clear();
+      }
+
+      if (this.internal) return this._jumpLocal(href);
+
+      if (target === '_blank') {
+        window.open(href, '_blank', 'noopener');
+      } else {
+        window.location.href = href;
+      }
+      return true;
+    }
+
+    _jumpLocal(href) {
+      var id = href.slice(1);
+      if (!id) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return true;
+      }
+      var el = null;
+      try { el = document.getElementById(decodeURIComponent(id)); }
+      catch (err) { el = document.getElementById(id); }
+      if (!el) el = document.querySelector('[name="' + id.replace(/"/g, '') + '"]');
+      if (!el) {
+        warn('找不到同頁目標：' + href);
+        return false;
+      }
+
+      var offset = Number(this.getAttribute('offset'));
+      if (isNaN(offset) || this.getAttribute('offset') === null) offset = 16;
+      var top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+      if (window.history && history.pushState && location.hash !== href) {
+        history.pushState(null, '', href);
+      }
+      this._flash(el);
+      return true;
+    }
+
+    _flash(el) {
+      el.style.setProperty('--dg-flash', this.color);
+      el.classList.remove('dg-flash');
+      void el.offsetWidth;
+      el.classList.add('dg-flash');
+      clearTimeout(el._dgTimer);
+      el._dgTimer = setTimeout(function () { el.classList.remove('dg-flash'); }, DOT_FLASH_MS + 400);
+    }
+  }
+  customElements.define('dot-go', DotGo);
+
   /* ---------- 對外介面 ---------- */
   injectStyles();
+  injectDotStyles();
   window.InkPen = {
     palette: PALETTE,
     penColorOptions: PEN_OPTIONS,
@@ -1020,6 +1311,10 @@
     modal: function () { return ensureModal(); },
     blanks: function () {
       return Array.prototype.slice.call(document.querySelectorAll('ink-handwrite'));
+    },
+    dotStyles: DOT_STYLES.slice(),
+    dots: function () {
+      return Array.prototype.slice.call(document.querySelectorAll('dot-go'));
     },
     clearBlanks: function () {
       this.blanks().forEach(function (b) { b.clearInk(); });

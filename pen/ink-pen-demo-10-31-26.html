@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ink-pen 示範：dot-go 跳轉圓點</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<script src="ink-pen.js"></script>
+<style>
+  :root{
+    --c-bg:#0C0D0C; --c-shell:#C6C7BD; --c-lavender:#C3A5E5; --c-sky:#82C8E5;
+    --c-warning:#E6374B; --c-salmon:#E5C3B3; --c-ocean:#1CCAE8; --c-safe:#27AE60;
+    --c-teal:#0DA591; --c-vanilla:#DBEDD8; --c-yellow:#E3D322; --c-focus:#D4FFFC;
+    --c-special:#B3DE73; --c-info:#4171BF; --c-indigo:#7849C9; --c-pink:#FF91D7;
+    --c-orange:#EDA109;
+  }
+  html{scroll-behavior:auto;}
+  body{background:var(--c-bg);color:var(--c-shell);font-size:1.05rem;line-height:1.5;margin:0;}
+  .wrap{max-width:1680px;margin:0 auto;padding:32px 48px 140px 48px;}
+  h1{font-size:2rem;color:var(--c-focus);margin:0 0 8px 0;}
+  h2{font-size:1.4rem;color:var(--c-ocean);margin:0 0 14px 0;}
+  h3{font-size:1.1rem;color:var(--c-lavender);margin:18px 0 10px 0;}
+  p.lead{color:var(--c-vanilla);font-size:1.05rem;margin:0 0 24px 0;}
+  .toc{display:flex;flex-wrap:wrap;gap:12px;padding:14px 18px;margin:0 0 28px 0;
+    border:1px solid rgba(58,59,55,0.9);border-radius:12px;background:rgba(19,20,18,0.92);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  section.card-x{border:1px solid rgba(58,59,55,0.9);border-radius:12px;
+    background:rgba(19,20,18,0.92);padding:24px 28px;margin:0 0 28px 0;min-height:420px;}
+  .row-demo{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin:0 0 12px 0;}
+  code,pre{color:var(--c-yellow);}
+  pre{background:rgba(12,13,12,0.95);border:1px solid rgba(58,59,55,0.9);border-radius:10px;
+    padding:14px 16px;margin:10px 0 0 0;font-size:0.85rem;white-space:pre-wrap;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.92rem;}
+  table.attr th,table.attr td{border-bottom:1px solid rgba(58,59,55,0.9);padding:8px 10px;
+    text-align:left;vertical-align:top;}
+  table.attr th{color:var(--c-sky);}
+  .muted{color:#9a9b94;font-size:0.9rem;}
+  #logBox{position:fixed;left:20px;bottom:20px;z-index:870;width:440px;}
+  #logBox .alert{background:rgba(23,24,26,0.95);border-color:rgba(65,113,191,0.9);
+    color:var(--c-focus);font-size:0.9rem;margin:0 0 8px 0;padding:10px 40px 10px 14px;}
+  #logBox .alert b{color:var(--c-special);}
+  #logBox .btn-close{filter:invert(1);padding:12px;}
+</style>
+</head>
+<body>
+<ui-ink-layer data-anchor="document"></ui-ink-layer>
+<ui-ink-bar data-pos="br"></ui-ink-bar>
+
+<div class="wrap">
+  <h1 id="top">dot-go 跳轉圓點</h1>
+  <p class="lead">按 1 開觸控筆，再用筆點下方任何圓點，一樣會跳轉，不會被繪圖層吃掉。按 0 回到一般點選。</p>
+
+  <nav class="toc">
+    <dot-go href="#part1" theme="sky" dot-style="circle-fill">Part 1 樣式</dot-go>
+    <dot-go href="#part2" theme="pink" dot-style="star-fill">Part 2 練習</dot-go>
+    <dot-go href="#part3" theme="yellow" dot-style="square-fill">Part 3 屬性</dot-go>
+    <dot-go href="#part4" theme="orange" dot-style="star" clear-ink>Part 4 清筆跡後跳轉</dot-go>
+    <dot-go href="https://www.ielts.org/" theme="special" dot-style="square" target="_blank">IELTS 官網（新分頁）</dot-go>
+    <dot-go href="#part5" theme="ocean" dot-style="icon" icon="bi-translate">修改 2　icon 樣式</dot-go>
+  </nav>
+
+  <div class="grid">
+    <section class="card-x" id="part1">
+      <h2>Part 1　六種樣式</h2>
+      <div class="row-demo">
+        <dot-go href="#part2" theme="sky" dot-style="circle"></dot-go>
+        <dot-go href="#part2" theme="sky" dot-style="circle-fill"></dot-go>
+        <dot-go href="#part2" theme="pink" dot-style="star"></dot-go>
+        <dot-go href="#part2" theme="pink" dot-style="star-fill"></dot-go>
+        <dot-go href="#part2" theme="yellow" dot-style="square"></dot-go>
+        <dot-go href="#part2" theme="yellow" dot-style="square-fill"></dot-go>
+      </div>
+      <h3>大小 size</h3>
+      <div class="row-demo">
+        <dot-go href="#part3" theme="ocean" dot-style="star-fill" size="12"></dot-go>
+        <dot-go href="#part3" theme="ocean" dot-style="star-fill" size="18"></dot-go>
+        <dot-go href="#part3" theme="ocean" dot-style="star-fill" size="28"></dot-go>
+        <dot-go href="#part3" theme="ocean" dot-style="star-fill" size="40"></dot-go>
+      </div>
+      <h3>自訂色碼</h3>
+      <div class="row-demo">
+        <dot-go href="#top" theme="#FFFFFF" dot-style="circle-fill">回頂端（#FFFFFF）</dot-go>
+        <dot-go theme="lavender" dot-style="circle">未設 href 時自動停用</dot-go>
+      </div>
+      <pre>&lt;dot-go href="#part2" theme="pink" dot-style="star-fill"&gt;&lt;/dot-go&gt;
+&lt;dot-go href="#top" theme="#FFFFFF"&gt;回頂端&lt;/dot-go&gt;</pre>
+    </section>
+
+    <section class="card-x" id="part2">
+      <h2>Part 2　與手寫空格並用</h2>
+      <p>Describe a time when you <ink-handwrite answer="helped">________</ink-handwrite> someone
+        <dot-go href="#part3" theme="pink" dot-style="star-fill" size="14"></dot-go></p>
+      <p>I was <ink-handwrite answer="particularly">____________</ink-handwrite> proud of it,
+        because it <ink-handwrite answer="taught me">__________</ink-handwrite> patience.
+        <dot-go href="#part1" theme="sky" dot-style="circle" size="14"></dot-go></p>
+      <p class="muted">行內圓點建議 size 設 14 左右，和空格右側的解答圓點大小接近。</p>
+      <pre>&lt;ink-handwrite answer="helped"&gt;________&lt;/ink-handwrite&gt; someone
+&lt;dot-go href="#part3" theme="pink" dot-style="star-fill" size="14"&gt;&lt;/dot-go&gt;</pre>
+    </section>
+  </div>
+
+  <section class="card-x" id="part3">
+    <h2>Part 3　屬性與介面</h2>
+    <table class="attr">
+      <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+      <tbody>
+        <tr><td><code>href</code></td><td>「#id」為同頁平滑捲動並閃一下目標外框，其餘當網址跳轉</td><td>無（未設則停用）</td></tr>
+        <tr><td><code>theme</code></td><td>配色表名稱，或 #RGB／#RRGGBB</td><td>sky</td></tr>
+        <tr><td><code>dot-style</code></td><td>circle、circle-fill、star、star-fill、square、square-fill、icon</td><td>circle-fill</td></tr>
+        <tr><td><code>icon</code></td><td>dot-style="icon" 時的 Bootstrap Icons 名稱，例如 bi-translate</td><td>無</td></tr>
+        <tr><td><code>size</code></td><td>圖示大小 px，範圍 10 至 48</td><td>18</td></tr>
+        <tr><td><code>target</code></td><td>設為 _blank 時另開分頁</td><td>同分頁</td></tr>
+        <tr><td><code>offset</code></td><td>同頁跳轉時保留的上方距離 px，給固定頁首用</td><td>16</td></tr>
+        <tr><td><code>clear-ink</code></td><td>有此屬性時，跳轉前先清除繪圖層筆跡</td><td>不清除</td></tr>
+        <tr><td>標籤內文字</td><td>顯示在圖示右側當標籤，留空只顯示圖示</td><td>空</td></tr>
+      </tbody>
+    </table>
+    <h3>事件與 JavaScript</h3>
+    <pre>// 跳轉前觸發，可 preventDefault() 取消
+document.addEventListener('dot-go', function (e) {
+  console.log(e.detail.href, e.detail.internal, e.detail.target);
+});
+
+InkPen.dots();                 // 頁面上所有 &lt;dot-go&gt;
+InkPen.dots()[0].go();         // 用程式觸發跳轉
+InkPen.dotStyles;              // 支援的樣式清單</pre>
+    <p class="muted">注意：若 &lt;dot-go&gt; 的祖先元素設了 transform、filter、opacity 小於 1，
+      或 position 搭配 z-index，會建立新的堆疊環境，圓點可能被繪圖層蓋住。</p>
+  </section>
+
+  <section class="card-x" id="part4">
+    <h2>Part 4　清筆跡後跳轉</h2>
+    <p>先按 1 在畫面上隨意畫幾筆，再點這顆 <dot-go href="#top" theme="orange" dot-style="star" clear-ink>回頂端並清除</dot-go>，
+      筆跡會先清空再跳轉。少了 clear-ink 的圓點則保留筆跡：<dot-go href="#top" theme="teal" dot-style="circle-fill">回頂端（保留筆跡）</dot-go></p>
+    <p class="muted">本示範的繪圖層設為 data-anchor="document"，筆跡會跟著內容捲動。</p>
+  </section>
+
+  <section class="card-x" id="part5">
+    <h2>修改 2　dot-style="icon"（Bootstrap Icons）</h2>
+    <p>新增第七種樣式 <code>icon</code>，搭配 <code>icon</code> 屬性指定 Bootstrap Icons 名稱。
+      頁面若還沒引入 Bootstrap Icons，元件會自動從 jsDelivr 載入一次；已引入則不重複載入。</p>
+
+    <h3>範例</h3>
+    <div class="row-demo">
+      <dot-go href="#part2" theme="sky" dot-style="icon" icon="bi-translate">翻譯練習</dot-go>
+      <dot-go href="#part3" theme="pink" dot-style="icon" icon="bi-mic-fill">口說錄音</dot-go>
+      <dot-go href="#part1" theme="yellow" dot-style="icon" icon="lightbulb">提示</dot-go>
+      <dot-go href="#top" theme="special" dot-style="icon" icon="bi bi-arrow-up-circle-fill">回頂端</dot-go>
+      <dot-go href="https://www.ielts.org/" theme="orange" dot-style="icon" icon="bi-box-arrow-up-right" target="_blank">IELTS 官網</dot-go>
+    </div>
+    <h3>只有圖示，搭配不同 size</h3>
+    <div class="row-demo">
+      <dot-go href="#part2" theme="ocean" dot-style="icon" icon="bi-translate" size="14"></dot-go>
+      <dot-go href="#part2" theme="ocean" dot-style="icon" icon="bi-translate" size="20"></dot-go>
+      <dot-go href="#part2" theme="ocean" dot-style="icon" icon="bi-translate" size="30"></dot-go>
+      <dot-go href="#part2" theme="ocean" dot-style="icon" icon="bi-translate" size="44"></dot-go>
+    </div>
+    <h3>容錯</h3>
+    <div class="row-demo">
+      <dot-go href="#part1" theme="lavender" dot-style="icon">缺 icon 屬性，退回 circle-fill</dot-go>
+    </div>
+    <p class="muted">icon 寫成「bi-translate」、「translate」或「bi bi-translate」都可以。
+      名稱拼錯時畫面會是空白，請到 <a href="https://icons.getbootstrap.com/" target="_blank" style="color:var(--c-sky);">icons.getbootstrap.com</a> 核對名稱。</p>
+
+    <h3>程式碼對照</h3>
+    <div class="grid">
+      <div>
+        <p class="muted">修改 1：SVG 圖形</p>
+        <pre>&lt;dot-go href="#part2"
+        theme="sky"
+        dot-style="star-fill"&gt;翻譯練習&lt;/dot-go&gt;</pre>
+      </div>
+      <div>
+        <p class="muted">修改 2：Bootstrap Icons</p>
+        <pre>&lt;dot-go href="#part2"
+        theme="sky"
+        dot-style="icon"
+        icon="bi-translate"&gt;翻譯練習&lt;/dot-go&gt;</pre>
+      </div>
+    </div>
+    <pre>// 元件內部新增的部分（節錄）
+var DOT_STYLES = [..., 'square-fill', 'icon'];
+
+if (style === 'icon') {
+  iconName = normalizeIcon(this.getAttribute('icon'));   // bi-translate → translate
+  if (!iconName) style = 'circle-fill';                  // 缺名稱時退回
+}
+if (iconName) {
+  ensureBootstrapIcons();                                // 頁面沒有就自動載入
+  i.className = 'bi bi-' + iconName;
+  i.style.fontSize = (size / 16) + 'rem';
+}</pre>
+  </section>
+</div>
+
+<div id="logBox"></div>
+
+<script>
+  /* 用 bootstrap alert 顯示跳轉紀錄，最多保留三筆 */
+  (function () {
+    var box = document.getElementById('logBox');
+    document.addEventListener('dot-go', function (e) {
+      var d = e.detail;
+      var div = document.createElement('div');
+      div.className = 'alert alert-dismissible fade show';
+      div.setAttribute('role', 'alert');
+      var kind = d.internal ? '同頁跳轉' : (d.target === '_blank' ? '另開分頁' : '前往網頁');
+      div.innerHTML = '<b>' + kind + '</b> <span></span>'
+        + '<button type="button" class="btn-close" aria-label="Close"></button>';
+      div.querySelector('span').textContent = d.href;
+      div.querySelector('.btn-close').addEventListener('click', function () { div.remove(); });
+      box.appendChild(div);
+      while (box.children.length > 3) box.firstChild.remove();
+      setTimeout(function () { div.remove(); }, 4000);
+    });
+  })();
+</script>
+</body>
+</html>
