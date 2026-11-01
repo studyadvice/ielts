@@ -16,15 +16,19 @@
  *   .modal()              取得手寫視窗實體
  *   .blanks()             取得頁面上所有 <ink-handwrite>
  *   .dots()               取得頁面上所有 <dot-go>
+ *   .lockScroll(v)        設定捲動鎖定（true／"pen"／false），等同改 data-lock-scroll
+ *   .shortcuts            模式快捷鍵對照表
  *   .palette              配色表
  *
  * 本元件不在畫面上顯示任何提示訊息，設定錯誤只寫入 console，
  * 以免錄影時跳出東西干擾畫面。
  *
  * 快捷鍵：
- *   1  觸控筆
- *   3  雷射筆
- *   0  關閉繪圖，回到一般點選
+ *   Ctrl+Shift+1  觸控筆
+ *   Ctrl+Shift+2  雷射筆
+ *   Ctrl+Shift+`  關閉繪圖，回到一般點選
+ *                 以實體按鍵位置判斷（e.code），不受輸入法與 Shift 換字影響；
+ *                 游標停在工具列的輸入框裡也有效
  *   C  清除全部筆跡
  *   H  收合／展開工具列
  *   A  顯示／收起全部解答
@@ -66,6 +70,44 @@
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
   /* 觸控筆離開螢幕後這段時間內的手指觸碰，視為手掌誤觸 */
   var PALM_MS = 600;
+  /* 捲動鎖定期間，<dot-go> 同頁跳轉可放行的平滑捲動時間 */
+  var LOCK_PASS_MS = 700;
+  /* 會造成頁面捲動的按鍵 */
+  var SCROLL_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    'PageUp', 'PageDown', 'Home', 'End', ' ', 'Spacebar'];
+  /* 模式快捷鍵：Ctrl+Shift+實體按鍵。
+   * fallback 用於少數不回報 e.code 的裝置，比對 e.key（含 Shift 換出的符號） */
+  var MODE_KEYS = [
+    { code: 'Digit1', keys: ['1', '!'], mode: 'pen', label: 'Ctrl+Shift+1' },
+    { code: 'Digit2', keys: ['2', '@'], mode: 'laser', label: 'Ctrl+Shift+2' },
+    { code: 'Backquote', keys: ['`', '~'], mode: 'off', label: 'Ctrl+Shift+`' }
+  ];
+
+  function modeKeyLabel(mode) {
+    for (var i = 0; i < MODE_KEYS.length; i++) {
+      if (MODE_KEYS[i].mode === mode) return MODE_KEYS[i].label;
+    }
+    return '';
+  }
+
+  function isEditable(t) {
+    return !!(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' ||
+      t.tagName === 'SELECT' || t.isContentEditable));
+  }
+
+  /* data-lock-scroll 的值轉成規則：
+   *   未設定 / "false" / "none" / "off"   不鎖定（維持原本行為）
+   *   有屬性但空值 / "true" / "all"        觸控筆與雷射筆模式都鎖定
+   *   "pen"                               只在觸控筆模式鎖定 */
+  function parseLockRule(v) {
+    if (v === null || v === undefined) return 'none';
+    var s = String(v).trim().toLowerCase();
+    if (s === '' || s === 'true' || s === 'all') return 'all';
+    if (s === 'pen') return 'pen';
+    if (s === 'false' || s === 'none' || s === 'off') return 'none';
+    warn('data-lock-scroll 只接受 true、pen、false，已當作 true：' + v);
+    return 'all';
+  }
   var PEN_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">'
     + '<path d="M3 17.3V21h3.7L17.6 10.1l-3.7-3.7L3 17.3zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.7 3.7L20.7 7z" '
     + 'fill="currentColor"/></svg>';
@@ -83,6 +125,8 @@
       /* 一律 touch-action:none，避免瀏覽器把筆的上下移動當成捲動而中斷筆畫；
        * 文件座標模式下的手指捲動改由程式處理 */
       + 'ui-ink-layer.ip-live{pointer-events:auto;cursor:crosshair;touch-action:none;}'
+      /* 捲動鎖定時關掉邊界回彈，觸控板滑到底也不會晃動畫面 */
+      + 'html.ip-scroll-locked,html.ip-scroll-locked body{overscroll-behavior:none;}'
 
       /* ---- 工具列容器 ---- */
       + 'ui-ink-bar{position:fixed;z-index:880;display:flex;align-items:center;gap:10px;}'
@@ -227,9 +271,21 @@
    *   "document"        筆跡貼著內容，捲動時跟著段落走（邊捲邊畫）
    *                     此模式下手指拖曳會捲動頁面，觸控筆與滑鼠負責作畫
    * 兩種模式可隨時互換，既有筆跡會依當下捲動量自動換算座標。
+   *
+   * 屬性 data-lock-scroll：繪圖時鎖定頁面捲動
+   *   不寫此屬性        不鎖定，維持原本行為
+   *   "true"（或空值）  觸控筆、雷射筆模式下都鎖定，按「關」才能捲動
+   *   "pen"             只在觸控筆模式鎖定，雷射筆模式仍可捲動
+   * 鎖定期間滾輪、觸控拖曳、方向鍵／PageUp／PageDown／空白鍵、拖曳捲軸都無效，
+   * viewport 與 document 兩種座標模式一視同仁；document 模式下手指拖曳
+   * 不再捲動頁面，改為和 viewport 模式一樣交給作畫（防手掌誤觸照常運作）。
+   * 唯一例外是 <dot-go> 的同頁跳轉，仍會正常平滑捲動到目標。
+   *
+   * 事件 ink-scroll-lock：鎖定狀態改變時觸發
+   *   detail: { locked, rule, mode }
    * ========================================================= */
   class UiInkLayer extends HTMLElement {
-    static get observedAttributes() { return ['data-anchor']; }
+    static get observedAttributes() { return ['data-anchor', 'data-lock-scroll']; }
 
     connectedCallback() {
       if (this._built) return;
@@ -249,13 +305,21 @@
       this._drawing = false;
       this._dirty = false;
 
+      this._lockRule = parseLockRule(this.getAttribute('data-lock-scroll'));
+      this._locked = false;
+      this._lockX = 0;
+      this._lockY = 0;
+      this._passUntil = 0;
+
       this.classList.toggle('ip-doc', this._anchor === 'document');
 
       this._resize();
       window.addEventListener('resize', () => this._resize());
       window.addEventListener('scroll', () => {
         if (this._anchor === 'document') this._dirty = true;
+        this._guardScroll();
       }, { passive: true });
+      this._bindLock();
       this._bind();
       this._tick();
     }
@@ -263,6 +327,88 @@
     attributeChangedCallback(name, oldVal, newVal) {
       if (!this._built) return;
       if (name === 'data-anchor') this._applyAnchor(newVal);
+      if (name === 'data-lock-scroll') {
+        this._lockRule = parseLockRule(newVal);
+        this._updateLock();
+      }
+    }
+
+    /* ---------- 捲動鎖定 ---------- */
+    /* v：true／"all" 全部繪圖模式鎖定，"pen" 只鎖觸控筆，false／"none" 解除 */
+    setScrollLock(v) {
+      var rule;
+      if (v === false || v === null || v === undefined) rule = 'none';
+      else if (v === true) rule = 'all';
+      else rule = parseLockRule(v);
+      if (rule === 'none') this.removeAttribute('data-lock-scroll');
+      else this.setAttribute('data-lock-scroll', rule === 'pen' ? 'pen' : 'true');
+      return rule;
+    }
+    getScrollLock() { return this._lockRule; }
+    isScrollLocked() { return this._locked; }
+
+    /* 鎖定期間暫時放行程式端捲動（<dot-go> 同頁跳轉會呼叫） */
+    allowScroll(ms) {
+      this._passUntil = performance.now() + (Number(ms) || LOCK_PASS_MS);
+    }
+
+    _shouldLock() {
+      if (this._lockRule === 'all') return this._mode !== 'off';
+      if (this._lockRule === 'pen') return this._mode === 'pen';
+      return false;
+    }
+
+    _updateLock() {
+      var next = this._shouldLock();
+      if (next === this._locked) return;
+      this._locked = next;
+      if (next) {
+        this._lockX = window.scrollX;
+        this._lockY = window.scrollY;
+        this._scrollId = null;
+      }
+      document.documentElement.classList.toggle('ip-scroll-locked', next);
+      this.dispatchEvent(new CustomEvent('ink-scroll-lock', {
+        bubbles: true,
+        detail: { locked: next, rule: this._lockRule, mode: this._mode }
+      }));
+    }
+
+    /* 擋不掉的捲動（拖曳捲軸、錨點連結等）由這裡拉回原位 */
+    _guardScroll() {
+      if (!this._locked) return;
+      var now = performance.now();
+      if (now < this._passUntil) {
+        /* 放行中：記下新位置，平滑捲動還在進行就順延 */
+        this._lockX = window.scrollX;
+        this._lockY = window.scrollY;
+        this._passUntil = Math.max(this._passUntil, now + 180);
+        return;
+      }
+      if (window.scrollX !== this._lockX || window.scrollY !== this._lockY) {
+        window.scrollTo({ left: this._lockX, top: this._lockY, behavior: 'instant' });
+      }
+    }
+
+    /* 在源頭擋下滾輪、觸控拖曳與捲動鍵，避免拉回時畫面抖動 */
+    _bindLock() {
+      var block = (e) => {
+        if (!this._locked) return;
+        if (e.type === 'wheel' && e.ctrlKey) return; /* Ctrl+滾輪是縮放，不是捲動 */
+        if (e.cancelable) e.preventDefault();
+      };
+      window.addEventListener('wheel', block, { passive: false });
+      window.addEventListener('touchmove', block, { passive: false });
+
+      window.addEventListener('keydown', (e) => {
+        if (!this._locked) return;
+        if (SCROLL_KEYS.indexOf(e.key) === -1) return;
+        if (isEditable(e.target)) return;
+        /* 空白鍵在按鈕上是「按下按鈕」，不會捲動，放行 */
+        if ((e.key === ' ' || e.key === 'Spacebar') && e.target &&
+            e.target.tagName === 'BUTTON') return;
+        e.preventDefault();
+      }, true);
     }
 
     /* ---------- 座標模式 ---------- */
@@ -299,6 +445,7 @@
       this._mode = mode;
       this.classList.toggle('ip-live', mode !== 'off');
       if (mode !== 'laser') this._trail = [];
+      this._updateLock();
     }
     getMode() { return this._mode; }
 
@@ -375,6 +522,7 @@
      *   一次只追蹤一個作畫的觸點，其他觸點（例如手掌）不會混進同一筆
      *   觸控筆剛離開螢幕的短時間內，手指觸碰一律忽略（防手掌誤觸）
      *   文件座標模式下，手指拖曳改為捲動頁面，觸控筆與滑鼠負責作畫
+     *   捲動鎖定中則一律不捲動，手指觸碰比照 viewport 模式處理
      * 每次移動都讀取合併事件（getCoalescedEvents），筆走得快也不會漏點 */
     _bind() {
       this._drawId = null;
@@ -390,7 +538,7 @@
 
         if (touch && (this._drawId !== null || palm())) return;
 
-        if (touch && this._anchor === 'document') {
+        if (touch && this._anchor === 'document' && !this._locked) {
           if (this._scrollId !== null) return;
           this._scrollId = e.pointerId;
           this._sx = e.clientX;
@@ -418,6 +566,7 @@
 
       this.addEventListener('pointermove', (e) => {
         if (e.pointerId === this._scrollId) {
+          if (this._locked) return;
           window.scrollBy(this._sx - e.clientX, this._sy - e.clientY);
           this._sx = e.clientX;
           this._sy = e.clientY;
@@ -918,9 +1067,12 @@
         '<button type="button" class="ip-dot" data-role="dot" title="展開畫筆工具列（H）">' +
         '<i data-role="dotcolor"></i></button>' +
         '<div class="ip-bar ip-hidden" data-role="bar">' +
-        '<button type="button" class="ip-btn" data-mode="pen">筆 1</button>' +
-        '<button type="button" class="ip-btn" data-mode="laser">雷射 3</button>' +
-        '<button type="button" class="ip-btn ip-active" data-mode="off">關 0</button>' +
+        '<button type="button" class="ip-btn" data-mode="pen" title="觸控筆（' +
+        modeKeyLabel('pen') + '）">筆</button>' +
+        '<button type="button" class="ip-btn" data-mode="laser" title="雷射筆（' +
+        modeKeyLabel('laser') + '）">雷射</button>' +
+        '<button type="button" class="ip-btn ip-active" data-mode="off" title="關閉繪圖（' +
+        modeKeyLabel('off') + '）">關</button>' +
         '<span class="ip-sep"></span>' +
         '<span class="ip-swatch" data-role="swatch"></span>' +
         '<select data-role="color" title="筆跡色彩"></select>' +
@@ -1047,6 +1199,13 @@
     }
     getAnchor() { return this.layer ? this.layer.getAnchor() : null; }
 
+    /* 捲動鎖定的便捷入口，實際狀態存在繪圖層的 data-lock-scroll */
+    setScrollLock(v) {
+      if (!this.layer) return null;
+      return this.layer.setScrollLock(v);
+    }
+    getScrollLock() { return this.layer ? this.layer.getScrollLock() : null; }
+
     clear() {
       if (this.layer) this.layer.clear();
     }
@@ -1058,18 +1217,35 @@
     }
 
     /* ---------- 快捷鍵 ---------- */
+    /* 模式切換用 Ctrl+Shift 組合鍵，依實體按鍵（e.code）判斷，
+     * 因為按住 Shift 時 e.key 會變成 ! @ ~，中文輸入法下也可能不準 */
+    _matchModeKey(e) {
+      if (!e.ctrlKey || !e.shiftKey || e.altKey || e.metaKey) return null;
+      var code = e.code || '';
+      for (var i = 0; i < MODE_KEYS.length; i++) {
+        var k = MODE_KEYS[i];
+        if (code === k.code) return k.mode;
+        if ((!code || code === 'Unidentified') && k.keys.indexOf(e.key) !== -1) return k.mode;
+      }
+      return null;
+    }
+
     _bindKeys() {
       document.addEventListener('keydown', (e) => {
         var modal = document.querySelector('ui-ink-modal');
         if (modal && modal.isOpen && modal.isOpen()) return;
-        var t = e.target;
-        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' ||
-                  t.tagName === 'SELECT' || t.isContentEditable)) return;
+
+        /* 組合鍵不會和打字衝突，游標在輸入框裡也照樣切換 */
+        var mode = this._matchModeKey(e);
+        if (mode) {
+          e.preventDefault();
+          this.setMode(mode);
+          return;
+        }
+
+        if (isEditable(e.target)) return;
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         switch (e.key) {
-          case '1': this.setMode('pen'); break;
-          case '3': this.setMode('laser'); break;
-          case '0': this.setMode('off'); break;
           case 'c': case 'C': this.clear(); break;
           case 'h': case 'H': this.toggleBar(); break;
           case 'a': case 'A': window.InkPen.toggleAnswers(); break;
@@ -1106,6 +1282,8 @@
    * 圓點的 z-index 為 830，高於繪圖層的 820，所以開著觸控筆或雷射筆也點得到。
    * 但若 <dot-go> 的祖先自己建立了堆疊環境（設了 transform、filter、
    * opacity 小於 1、或 position 搭配 z-index），圓點會被困在裡面，請避開。
+   *
+   * 繪圖層開了 data-lock-scroll 時，同頁跳轉仍可捲動，落點會成為新的鎖定位置。
    *
    * 事件：
    *   dot-go       跳轉前觸發，可 preventDefault() 取消
@@ -1331,9 +1509,16 @@
       return true;
     }
 
+    /* 繪圖層若處於捲動鎖定，先暫時放行這次跳轉 */
+    _passLock() {
+      var layer = document.querySelector('ui-ink-layer');
+      if (layer && layer.allowScroll) layer.allowScroll(LOCK_PASS_MS);
+    }
+
     _jumpLocal(href) {
       var id = href.slice(1);
       if (!id) {
+        this._passLock();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return true;
       }
@@ -1349,6 +1534,7 @@
       var offset = Number(this.getAttribute('offset'));
       if (isNaN(offset) || this.getAttribute('offset') === null) offset = 16;
       var top = el.getBoundingClientRect().top + window.scrollY - offset;
+      this._passLock();
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 
       if (window.history && history.pushState && location.hash !== href) {
@@ -1378,7 +1564,13 @@
     widthRange: { min: WIDTH_MIN, max: WIDTH_MAX, def: WIDTH_DEFAULT },
     handwriteRange: { min: HW_MIN, max: HW_MAX, def: HW_DEFAULT },
     slotRange: { min: SLOT_MIN, max: SLOT_MAX },
+    shortcuts: MODE_KEYS.map(function (k) { return { mode: k.mode, label: k.label, code: k.code }; }),
     layer: function () { return document.querySelector('ui-ink-layer'); },
+    /* 捲動鎖定：true 全部繪圖模式、"pen" 只鎖觸控筆、false 解除 */
+    lockScroll: function (v) {
+      var l = this.layer();
+      return (l && l.setScrollLock) ? l.setScrollLock(v) : null;
+    },
     bar: function () { return document.querySelector('ui-ink-bar'); },
     modal: function () { return ensureModal(); },
     blanks: function () {

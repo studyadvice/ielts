@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ink-pen 捲動鎖定與組合鍵</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="ink-pen.js"></script>
+<style>
+  :root {
+    --c-bg: #0C0D0C; --c-shell: #C6C7BD; --c-lavender: #C3A5E5; --c-sky: #82C8E5;
+    --c-warning: #E6374B; --c-salmon: #E5C3B3; --c-ocean: #1CCAE8; --c-safe: #27AE60;
+    --c-teal: #0DA591; --c-vanilla: #DBEDD8; --c-yellow: #E3D322; --c-focus: #D4FFFC;
+    --c-special: #B3DE73; --c-info: #4171BF; --c-indigo: #7849C9; --c-pink: #FF91D7;
+    --c-orange: #EDA109;
+  }
+  html { font-size: 16px; }
+  body {
+    background: var(--c-bg); color: var(--c-shell);
+    font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    font-size: 1rem; line-height: 1.75; margin: 0;
+  }
+  .wrap { max-width: 1680px; margin: 0 auto; padding: 32px 48px 160px; }
+  h1 { font-size: 2rem; color: var(--c-focus); margin: 0 0 6px; }
+  h2 { font-size: 1.4rem; color: var(--c-ocean); margin: 0 0 16px; }
+  h3 { font-size: 1.1rem; color: var(--c-lavender); margin: 20px 0 10px; }
+  .lead-note { font-size: 1rem; color: #9a9b94; margin: 0 0 28px; }
+  .panel {
+    background: rgba(23, 24, 22, 0.94); border: 1px solid rgba(58, 59, 55, 0.9);
+    border-radius: 12px; padding: 24px 28px; margin: 0 0 28px;
+  }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  label.lbl { display: block; font-size: 0.9rem; color: #9a9b94; margin: 0 0 6px; }
+  select.ctl {
+    width: 100%; background: rgba(15, 16, 14, 0.95); color: var(--c-shell);
+    border: 1px solid rgba(58, 59, 55, 0.9); border-radius: 8px;
+    padding: 8px 12px; font-size: 0.95rem;
+  }
+  .stat { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem;
+    padding: 4px 14px; border-radius: 999px; border: 1px solid rgba(58, 59, 55, 0.9);
+    background: rgba(32, 33, 25, 0.92);
+  }
+  .chip.on-pen { color: #07211D; background: var(--c-teal); border-color: var(--c-teal); }
+  .chip.on-laser { color: #2a0a0e; background: var(--c-warning); border-color: var(--c-warning); }
+  .chip.locked { color: #2b2604; background: var(--c-yellow); border-color: var(--c-yellow); }
+  .chip.free { color: var(--c-special); border-color: rgba(179, 222, 115, 0.86); }
+  kbd {
+    background: rgba(32, 33, 25, 0.95); color: var(--c-focus); border: 1px solid rgba(90, 91, 85, 0.9);
+    border-radius: 6px; padding: 2px 8px; font-size: 0.88rem; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.82);
+  }
+  .keylog {
+    font-family: Consolas, "Courier New", monospace; font-size: 1.05rem;
+    background: rgba(15, 16, 14, 0.95); border: 1px dashed rgba(58, 59, 55, 0.9);
+    border-radius: 8px; padding: 14px 18px; min-height: 58px; color: var(--c-shell);
+  }
+  .keylog .hit { color: var(--c-special); font-weight: 600; }
+  .keylog .miss { color: #9a9b94; }
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.tbl th, table.tbl td { border-bottom: 1px solid rgba(58, 59, 55, 0.9); padding: 10px 12px; vertical-align: top; }
+  table.tbl th { color: var(--c-sky); font-weight: 600; text-align: left; }
+  table.tbl code { color: var(--c-orange); }
+  pre.code {
+    background: rgba(15, 16, 14, 0.96); border: 1px solid rgba(58, 59, 55, 0.9); border-radius: 8px;
+    padding: 16px 18px; margin: 0; font-size: 0.86rem; line-height: 1.6; color: var(--c-vanilla);
+    white-space: pre; overflow-x: auto;
+  }
+  .tag-old, .tag-new {
+    display: inline-block; font-size: 0.8rem; padding: 2px 10px; border-radius: 6px; margin: 0 0 8px;
+  }
+  .tag-old { background: rgba(230, 55, 75, 0.86); color: #fff; }
+  .tag-new { background: rgba(13, 165, 145, 0.9); color: #07211D; font-weight: 600; }
+  .lesson p { font-size: 1.15rem; margin: 0 0 18px; }
+  .lesson .card-line {
+    background: rgba(26, 27, 24, 0.94); border-left: 4px solid var(--c-lavender);
+    border-radius: 8px; padding: 14px 20px; margin: 0 0 14px; font-size: 1.15rem;
+  }
+  .spacer { height: 520px; display: flex; align-items: center; justify-content: center; color: #6b6c66; font-size: 0.95rem; border: 1px dashed rgba(58, 59, 55, 0.9); border-radius: 12px; margin: 0 0 28px; }
+  /* Bootstrap 提示訊息，套用自訂配色 */
+  #toast-zone { position: fixed; top: 20px; left: 20px; z-index: 990; width: 420px; }
+  #toast-zone .alert {
+    font-size: 0.95rem; padding: 12px 44px 12px 16px; margin: 0 0 10px; border-radius: 10px;
+    background: rgba(23, 24, 22, 0.96); color: var(--c-shell); border: 1px solid rgba(58, 59, 55, 0.9);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.82);
+  }
+  #toast-zone .alert.a-lock { border-left: 4px solid var(--c-yellow); }
+  #toast-zone .alert.a-free { border-left: 4px solid var(--c-special); }
+  #toast-zone .alert.a-info { border-left: 4px solid var(--c-ocean); }
+  #toast-zone .btn-close { filter: invert(1); padding: 14px; }
+</style>
+</head>
+<body>
+
+<ui-ink-layer data-lock-scroll="true"></ui-ink-layer>
+<ui-ink-bar data-open="true"></ui-ink-bar>
+<div id="toast-zone"></div>
+
+<div class="wrap">
+  <h1 id="top">ink-pen 捲動鎖定與組合鍵</h1>
+  <p class="lead-note">2026-11-02 修改：新增 <code>data-lock-scroll</code> 屬性；模式快捷鍵改為 Ctrl+Shift 組合鍵。</p>
+
+  <!-- ===== 即時設定 ===== -->
+  <section class="panel">
+    <h2>即時設定與狀態</h2>
+    <div class="grid-3">
+      <div>
+        <label class="lbl" for="sel-lock">data-lock-scroll（繪圖層）</label>
+        <select id="sel-lock" class="ctl">
+          <option value="true" selected>true：筆與雷射都鎖定</option>
+          <option value="pen">pen：只鎖觸控筆</option>
+          <option value="none">不寫屬性：不鎖定（舊行為）</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl" for="sel-anchor">data-anchor（座標模式）</label>
+        <select id="sel-anchor" class="ctl">
+          <option value="viewport" selected>viewport：筆跡貼著螢幕</option>
+          <option value="document">document：筆跡貼著內容</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">目前狀態</label>
+        <div class="stat">
+          <span class="chip" id="chip-mode"><i class="bi bi-power"></i>關</span>
+          <span class="chip free" id="chip-lock"><i class="bi bi-unlock"></i>可捲動</span>
+        </div>
+      </div>
+    </div>
+    <h3>快捷鍵</h3>
+    <div class="stat">
+      <span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>1</kbd> 觸控筆</span>
+      <span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>2</kbd> 雷射筆</span>
+      <span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> 關閉</span>
+      <span><kbd>C</kbd> 清除</span>
+      <span><kbd>H</kbd> 工具列</span>
+      <span><kbd>A</kbd> 解答</span>
+    </div>
+  </section>
+
+  <!-- ===== 按鍵測試 ===== -->
+  <section class="panel">
+    <h2>主控台按鍵測試</h2>
+    <p>按一下主控台上的實體按鈕，下方會顯示瀏覽器收到的組合。綠字代表元件認得這組按鍵。</p>
+    <div class="keylog" id="keylog"><span class="miss">等待按鍵…</span></div>
+  </section>
+
+  <!-- ===== 測試教材 ===== -->
+  <section class="panel lesson" id="part1">
+    <h2>測試區一：開筆後試著捲動</h2>
+    <p>切到觸控筆後，用滾輪、手指拖曳、方向鍵、空白鍵或拖曳捲軸，頁面都不會動；按「關」或 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>`</kbd> 之後才恢復捲動。</p>
+    <div class="card-line">I'd describe myself as someone who <ink-handwrite answer="thrives on">__________</ink-handwrite> a bit of pressure.</div>
+    <div class="card-line">It wasn't the trip itself but the people that <ink-handwrite answer="made it memorable">_______________</ink-handwrite>.</div>
+    <div class="card-line">Looking back, I <ink-handwrite answer="should have">__________</ink-handwrite> taken it more seriously.</div>
+    <p>開著筆也能用圓點跳轉，落點會變成新的鎖定位置：
+      <dot-go href="#part2" theme="sky" dot-style="star-fill">跳到測試區二</dot-go>
+      <dot-go href="#compare" theme="pink" dot-style="icon" icon="bi-code-slash">跳到修改對照</dot-go>
+    </p>
+  </section>
+
+  <div class="spacer">捲動距離填充區</div>
+
+  <section class="panel lesson" id="part2">
+    <h2>測試區二：document 模式</h2>
+    <p>把座標模式切到 document，再把鎖定改成「不寫屬性」，手指拖曳會像以前一樣捲動頁面；改回 true 之後，手指拖曳就不再捲動，觸控筆畫線時頁面完全不會跟著晃。</p>
+    <div class="card-line">What I value most is having the <ink-handwrite answer="freedom to">__________</ink-handwrite> plan my own day.</div>
+    <p><dot-go href="#top" theme="special" dot-style="circle-fill">回到頂端</dot-go></p>
+  </section>
+
+  <div class="spacer">捲動距離填充區</div>
+
+  <!-- ===== 屬性說明 ===== -->
+  <section class="panel">
+    <h2>新增屬性與方法</h2>
+    <table class="tbl">
+      <thead><tr><th style="width:26%">項目</th><th style="width:22%">值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;ui-ink-layer data-lock-scroll&gt;</code></td><td><code>true</code> 或空值</td><td>觸控筆、雷射筆模式都鎖定捲動，只有「關」可以捲動。viewport 與 document 兩種模式都適用。</td></tr>
+        <tr><td></td><td><code>pen</code></td><td>只在觸控筆模式鎖定，雷射筆仍可捲動。</td></tr>
+        <tr><td></td><td>不寫屬性</td><td>不鎖定，維持原本行為。</td></tr>
+        <tr><td><code>layer.setScrollLock(v)</code></td><td><code>true</code>／<code>"pen"</code>／<code>false</code></td><td>程式端切換，會同步改寫屬性。<code>bar.setScrollLock(v)</code> 與 <code>InkPen.lockScroll(v)</code> 效果相同。</td></tr>
+        <tr><td><code>layer.isScrollLocked()</code></td><td>布林</td><td>此刻是否鎖定中。</td></tr>
+        <tr><td><code>ink-scroll-lock</code> 事件</td><td><code>{ locked, rule, mode }</code></td><td>鎖定狀態改變時觸發，會冒泡到 document。</td></tr>
+        <tr><td><code>InkPen.shortcuts</code></td><td>陣列</td><td>模式快捷鍵對照，可用來產生自己的說明畫面。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== 修改對照 ===== -->
+  <section class="panel" id="compare">
+    <h2>本次修改對照（2026-11-02）</h2>
+
+    <h3>一、模式快捷鍵</h3>
+    <div class="grid-2">
+      <div>
+        <span class="tag-old">修改前</span>
+<pre class="code">if (e.ctrlKey || e.metaKey || e.altKey) return;
+switch (e.key) {
+  case '1': this.setMode('pen'); break;
+  case '3': this.setMode('laser'); break;
+  case '0': this.setMode('off'); break;
+  ...
+}</pre>
+      </div>
+      <div>
+        <span class="tag-new">修改後</span>
+<pre class="code">var MODE_KEYS = [
+  { code: 'Digit1',    mode: 'pen',   label: 'Ctrl+Shift+1' },
+  { code: 'Digit2',    mode: 'laser', label: 'Ctrl+Shift+2' },
+  { code: 'Backquote', mode: 'off',   label: 'Ctrl+Shift+`' }
+];
+/* 依實體按鍵 e.code 判斷，按住 Shift 時 e.key
+ * 會變成 ! @ ~，中文輸入法下也可能不準 */
+var mode = this._matchModeKey(e);
+if (mode) { e.preventDefault(); this.setMode(mode); return; }</pre>
+      </div>
+    </div>
+
+    <h3>二、捲動鎖定（HTML 用法）</h3>
+    <div class="grid-2">
+      <div>
+        <span class="tag-old">修改前</span>
+<pre class="code">&lt;ui-ink-layer data-anchor="document"&gt;&lt;/ui-ink-layer&gt;
+&lt;!-- 開筆時滾輪照樣捲動；
+     document 模式下手指拖曳會捲動頁面 --&gt;</pre>
+      </div>
+      <div>
+        <span class="tag-new">修改後</span>
+<pre class="code">&lt;ui-ink-layer data-anchor="document"
+              data-lock-scroll="true"&gt;&lt;/ui-ink-layer&gt;
+&lt;!-- 筆或雷射開著時完全不能捲動，按「關」才恢復
+     只想鎖觸控筆：data-lock-scroll="pen" --&gt;</pre>
+      </div>
+    </div>
+
+    <h3>三、document 模式的手指拖曳</h3>
+    <div class="grid-2">
+      <div>
+        <span class="tag-old">修改前</span>
+<pre class="code">if (touch &amp;&amp; this._anchor === 'document') {
+  /* 手指拖曳 → 捲動頁面 */
+}</pre>
+      </div>
+      <div>
+        <span class="tag-new">修改後</span>
+<pre class="code">if (touch &amp;&amp; this._anchor === 'document' &amp;&amp; !this._locked) {
+  /* 鎖定中不捲動，手指比照 viewport 模式交給作畫，
+   * 防手掌誤觸照常運作 */
+}</pre>
+      </div>
+    </div>
+
+    <h3>四、鎖定的三道防線</h3>
+<pre class="code">/* 1. 源頭攔截：wheel、touchmove（passive:false）與捲動鍵 preventDefault
+ *    Ctrl+滾輪是縮放，放行；空白鍵在按鈕上是按下按鈕，放行；輸入框內的方向鍵放行
+ * 2. 拉回原位：拖曳捲軸等擋不掉的捲動，在 scroll 事件裡以 behavior:'instant' 拉回
+ * 3. 放行通道：&lt;dot-go&gt; 同頁跳轉前呼叫 layer.allowScroll()，平滑捲動結束後
+ *    落點成為新的鎖定位置 */</pre>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+  var layer = document.querySelector('ui-ink-layer');
+  var selLock = document.getElementById('sel-lock');
+  var selAnchor = document.getElementById('sel-anchor');
+  var chipMode = document.getElementById('chip-mode');
+  var chipLock = document.getElementById('chip-lock');
+  var keylog = document.getElementById('keylog');
+  var zone = document.getElementById('toast-zone');
+
+  /* Bootstrap alert 取代 alert()，2.6 秒後自動關閉 */
+  function notify(html, kind) {
+    var box = document.createElement('div');
+    box.className = 'alert alert-dismissible fade show ' + (kind || 'a-info');
+    box.setAttribute('role', 'alert');
+    box.innerHTML = html + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    zone.appendChild(box);
+    setTimeout(function () {
+      if (!box.isConnected) return;
+      var a = window.bootstrap && bootstrap.Alert.getOrCreateInstance(box);
+      if (a) a.close(); else box.remove();
+    }, 2600);
+    while (zone.children.length > 3) zone.firstElementChild.remove();
+  }
+
+  selLock.addEventListener('change', function () {
+    var v = selLock.value;
+    InkPen.lockScroll(v === 'none' ? false : v);
+    notify('data-lock-scroll 已改為 <b>' + (v === 'none' ? '不寫屬性' : v) + '</b>', 'a-info');
+  });
+
+  selAnchor.addEventListener('change', function () {
+    layer.setAnchor(selAnchor.value);
+    notify('座標模式改為 <b>' + selAnchor.value + '</b>', 'a-info');
+  });
+
+  document.addEventListener('ink-scroll-lock', function (e) {
+    notify(e.detail.locked
+      ? '<i class="bi bi-lock-fill"></i> 已鎖定捲動'
+      : '<i class="bi bi-unlock"></i> 已恢復捲動', e.detail.locked ? 'a-lock' : 'a-free');
+  });
+
+  /* 狀態標籤 */
+  var lastMode = '', lastLock = null;
+  var MODE_TEXT = { pen: ['bi-pencil-fill', '觸控筆', 'on-pen'],
+                    laser: ['bi-cursor-fill', '雷射筆', 'on-laser'],
+                    off: ['bi-power', '關', ''] };
+  setInterval(function () {
+    var m = layer.getMode ? layer.getMode() : 'off';
+    var l = layer.isScrollLocked ? layer.isScrollLocked() : false;
+    if (m !== lastMode) {
+      var t = MODE_TEXT[m] || MODE_TEXT.off;
+      chipMode.className = 'chip ' + t[2];
+      chipMode.innerHTML = '<i class="bi ' + t[0] + '"></i>' + t[1];
+      lastMode = m;
+    }
+    if (l !== lastLock) {
+      chipLock.className = 'chip ' + (l ? 'locked' : 'free');
+      chipLock.innerHTML = l ? '<i class="bi bi-lock-fill"></i>捲動鎖定中'
+                             : '<i class="bi bi-unlock"></i>可捲動';
+      lastLock = l;
+    }
+  }, 150);
+
+  /* 按鍵測試：顯示修飾鍵、e.code、e.key */
+  document.addEventListener('keydown', function (e) {
+    if (['Control', 'Shift', 'Alt', 'Meta'].indexOf(e.key) !== -1) return;
+    var mods = [];
+    if (e.ctrlKey) mods.push('Ctrl');
+    if (e.shiftKey) mods.push('Shift');
+    if (e.altKey) mods.push('Alt');
+    if (e.metaKey) mods.push('Meta');
+    var hit = null;
+    if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey) {
+      InkPen.shortcuts.forEach(function (s) { if (s.code === e.code) hit = s; });
+    }
+    var combo = mods.concat([e.code || e.key]).join(' + ');
+    keylog.innerHTML = hit
+      ? '<span class="hit">' + combo + '　→　' + hit.mode + '</span>'
+      : '<span class="miss">' + combo + '（e.key = ' + JSON.stringify(e.key) + '，未對應模式切換）</span>';
+  });
+})();
+</script>
+</body>
+</html>
