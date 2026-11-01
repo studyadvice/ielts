@@ -14,7 +14,7 @@
     yellow:   '#E3D322',
     focus:    '#D4FFFC',
     special:  '#B3DE73',
-    info:     '#2351DB',
+    info:     '#4171BF',
     indigo:   '#7849C9',
     pink:     '#FF91D7',
     orange:   '#EDA109'
