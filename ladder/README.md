@@ -15,19 +15,7 @@
 - 支援預設收合、鍵盤切換、`<c1>` 到 `<c16>` 快速色彩標籤。
 - 寬螢幕排版，適合教學頁與錄影講解。
 
-## 檔案
 
-```
-ui-detail-ladder.js                    細節階梯元件
-ui-detail-ladder-demo-11-01-26.html    細節階梯範例與屬性說明
-ui-insight.js                          亮點字詞解說元件
-ui-insight-demo-11-01-26.html          亮點字詞解說範例與屬性說明
-```
-
-## 需求
-
-- 支援 Custom Elements 的現代瀏覽器（Chrome、Edge、Firefox、Safari）。
-- [Bootstrap Icons](https://icons.getbootstrap.com/)：元件內的按鈕與標題列圖示使用 `bi-*` 類別。
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -345,38 +333,6 @@ ui-insight-demo-11-01-26.html          亮點字詞解說範例與屬性說明
 - 字體大小一律用 `rem`。
 - `margin`、`padding` 與各種間距一律用 `px`。
 
-## 更新紀錄
-
-### 2026-11-01
-
-- `ui-detail-ladder` v1.0：首版。
-- `ui-detail-ladder` v1.1：新增 `ini-collapse` 預設收合、Ctrl+Shift+方向鍵切換、`<step-title>` 的 `icon` 屬性。
-- `ui-insight` v1.0：首版。
-
 ## 授權
 
-本專案採用 MIT 授權。
-
-```
-MIT License
-
-Copyright (c) 2026 [Your Name]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+採用 MIT 授權。
