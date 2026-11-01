@@ -1479,8 +1479,8 @@ class SliderShow extends HTMLElement {
         }
 
         slider-show .step-dot {
-          width: 10px;
-          height: 10px;
+          width: 18px;
+          height: 18px;
           box-sizing: border-box;
           border-radius: 50%;
           border: 2px solid var(--dot-color, rgba(198, 199, 189, 0.82));
@@ -1490,8 +1490,8 @@ class SliderShow extends HTMLElement {
           flex: none;
         }
         slider-show .step-dot.active {
-          width: 14px;
-          height: 14px;
+          width: 22px;
+          height: 22px;
           background: var(--active-dot-color, #c6c7bd);
           border-color: var(--active-dot-color, #c6c7bd);
         }
@@ -1536,13 +1536,13 @@ class SliderShow extends HTMLElement {
         }
 
         slider-show .page-number {
-          width: 18px;
-          height: 18px;
+          width: 22px;
+          height: 22px;
           border: none;
           background: var(--fill-color, #1A1B1A);
           color: rgba(198, 199, 189, 0.82);
           border-radius: 3px;
-          font-size: 0.65rem;
+          font-size: 0.75rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.2s;
