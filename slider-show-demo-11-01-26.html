@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>slider-show 鍵盤換頁示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root { font-size: 18px; }
+  body { background: #0C0D0C; color: #C6C7BD; font-family: "微軟正黑體", "Inter"; padding: 36px 56px; min-width: 988px; }
+  h1 { font-size: 1.6rem; color: #82C8E5; margin-bottom: 8px; }
+  h2 { font-size: 1.2rem; color: #C3A5E5; margin: 36px 0 12px; }
+  .lead-note { font-size: 1rem; color: #DBEDD8; margin-bottom: 24px; }
+  kbd { background: #1A1B1A; color: #E3D322; border: 1px solid #C6C7BD; padding: 2px 8px; font-size: 0.9rem; }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .demo-box { border: 1px solid #2E302E; border-radius: 10px; padding: 18px; background: #111311; }
+  .demo-box h3 { font-size: 1rem; margin-bottom: 12px; color: #82C8E5; }
+  .demo-box h3 .tag { font-size: 0.8rem; padding: 2px 10px; border-radius: 999px; margin-left: 8px; }
+  .tag-on { background: #27AE60; color: #0C0D0C; }
+  .tag-off { border: 1px solid #E5C3B3; color: #E5C3B3; }
+  pre { background: #1A1B1A; color: #DBEDD8; padding: 16px; border-radius: 8px; font-size: 0.85rem; margin: 0; }
+  table.attr { width: 100%; font-size: 0.95rem; }
+  table.attr th { color: #E3D322; border-bottom: 1px solid #C6C7BD; padding: 8px 12px; }
+  table.attr td { border-bottom: 1px dashed rgba(198, 199, 189, 0.82); padding: 8px 12px; vertical-align: top; }
+  .alert-zone { position: fixed; top: 18px; right: 24px; width: 360px; z-index: 2000; }
+  .alert-dark-brand { background: rgba(26, 27, 26, 0.92); color: #D4FFFC; border: 1px solid #1CCAE8; }
+</style>
+</head>
+<body>
+
+<div class="alert-zone" id="alertZone"></div>
+
+<h1>slider-show 鍵盤換頁（keyboard-nav）</h1>
+<div class="lead-note">
+  在開啟的元件上，按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>→</kbd> 換下一頁，<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>←</kbd> 回上一頁。
+  頁面上有多個元件時，最後一次點擊的那一個會回應按鍵。
+</div>
+
+<div class="demo-grid">
+  <div class="demo-box">
+    <h3>範例一：開啟鍵盤換頁<span class="tag tag-on">keyboard-nav</span></h3>
+    <slider-show id="demoOn" keyboard-nav theme="sky" height="280px" progress-style="stepper" show-part-indicator="true">
+      <div slide part="1">
+        <div class="slide-content">
+          <div class="slide-subtitle">Part 1 · 第 1 張</div>
+          <div class="slide-main">按 Ctrl + Shift + → 試試看</div>
+          <div class="slide-footer">部分內換頁</div>
+        </div>
+      </div>
+      <div slide part="1">
+        <div class="slide-content">
+          <div class="slide-subtitle">Part 1 · 第 2 張</div>
+          <div class="slide-main">再按一次會自動進入 Part 2</div>
+          <div class="slide-footer">部分最後一張</div>
+        </div>
+      </div>
+      <div slide part="2">
+        <div class="slide-content">
+          <div class="slide-subtitle">Part 2 · 填空</div>
+          <div class="slide-main">
+            <div>The cafes <quiz>{{conveniently located}}</quiz> around my office.</div>
+          </div>
+          <div class="slide-footer">quiz-require-complete 預設開啟：沒填完不會換頁</div>
+        </div>
+      </div>
+      <div slide part="2">
+        <div class="slide-content">
+          <div class="slide-subtitle">Part 2 · 結果</div>
+          <div class="slide-main">按 Ctrl + Shift + ← 可一路退回 Part 1</div>
+          <div class="slide-footer">最後一張</div>
+        </div>
+      </div>
+    </slider-show>
+  </div>
+
+  <div class="demo-box">
+    <h3>範例二：未開啟（預設）<span class="tag tag-off">無屬性</span></h3>
+    <slider-show id="demoOff" theme="lavender" height="280px" progress-style="dots">
+      <div slide part="1">
+        <div class="slide-content">
+          <div class="slide-subtitle">預設關閉</div>
+          <div class="slide-main">點這裡之後按快捷鍵，不會換頁</div>
+          <div class="slide-footer">只能用箭頭按鈕或進度點</div>
+        </div>
+      </div>
+      <div slide part="1">
+        <div class="slide-content">
+          <div class="slide-subtitle">第 2 張</div>
+          <div class="slide-main">用下方按鈕才到得了這裡</div>
+          <div class="slide-footer">預設行為與舊版相同</div>
+        </div>
+      </div>
+    </slider-show>
+  </div>
+</div>
+
+<h2>屬性說明</h2>
+<table class="attr">
+  <thead><tr><th>寫法</th><th>結果</th></tr></thead>
+  <tbody>
+    <tr><td>不寫 keyboard-nav</td><td>關閉（預設）</td></tr>
+    <tr><td><code>keyboard-nav</code> 或 <code>keyboard-nav="true"</code></td><td>開啟</td></tr>
+    <tr><td><code>keyboard-nav="false"</code></td><td>關閉</td></tr>
+  </tbody>
+</table>
+
+<h2>行為細節</h2>
+<ul>
+  <li>部分最後一張按 →，自動進入下一部分（會套用 part-transition 轉場）；部分第一張按 ←，回到上一部分的最後一張（原本的「上一部分」按鈕仍停在第一張）。</li>
+  <li>填空題未完成且 quiz-require-complete 未設為 false 時，→ 不會換頁。</li>
+  <li>游標在輸入框、textarea 或填空格內時不攔截，保留「選取一個字」的原生功能。</li>
+  <li>按住不放不會連續翻頁，避免錄影時一次跳過好幾張。</li>
+  <li>loop="true" 時，最後一部分的最後一張會繞回該部分第一張。</li>
+</ul>
+
+<h2>程式碼對照（修改 1：新增 keyboard-nav）</h2>
+<div class="demo-grid">
+  <div>
+    <div class="mb-2" style="color:#E5C3B3;">修改前</div>
+<pre>&lt;slider-show theme="sky" height="420px"
+  progress-style="stepper"&gt;
+  ...
+&lt;/slider-show&gt;</pre>
+  </div>
+  <div>
+    <div class="mb-2" style="color:#B3DE73;">修改後</div>
+<pre>&lt;slider-show keyboard-nav theme="sky" height="420px"
+  progress-style="stepper"&gt;
+  ...
+&lt;/slider-show&gt;</pre>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="slider-show.js"></script>
+<script>
+  function showNote(html) {
+    const zone = document.getElementById('alertZone');
+    const div = document.createElement('div');
+    div.className = 'alert alert-dark-brand alert-dismissible fade show';
+    div.innerHTML = html + '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>';
+    zone.appendChild(div);
+    setTimeout(() => { bootstrap.Alert.getOrCreateInstance(div).close(); }, 2600);
+  }
+  document.getElementById('demoOn').addEventListener('part-changed', (e) => {
+    showNote(`<i class="bi bi-arrow-right-circle"></i> 已進入 Part ${e.detail.part} / ${e.detail.total}`);
+  });
+</script>
+</body>
+</html>

@@ -6,6 +6,9 @@ class SliderShow extends HTMLElement {
     this.partsData = {};
     this.isTransitioning = false;
     this.container = null;
+    // 鍵盤換頁（Ctrl+Shift+方向鍵）的事件處理器，綁定一次以便移除
+    this._onKeyNav = this.handleKeyNav.bind(this);
+    this._onPointerActivate = () => { SliderShow.activeInstance = this; };
   }
 
   static get observedAttributes() {
@@ -44,6 +47,92 @@ class SliderShow extends HTMLElement {
     setTimeout(() => {
       this.updateDisplay();
     }, 0);
+
+    // 鍵盤換頁：監聽器只綁一次，是否生效由 keyboard-nav 屬性在按鍵當下判斷
+    document.addEventListener('keydown', this._onKeyNav);
+    this.addEventListener('pointerdown', this._onPointerActivate);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('keydown', this._onKeyNav);
+    this.removeEventListener('pointerdown', this._onPointerActivate);
+    if (SliderShow.activeInstance === this) SliderShow.activeInstance = null;
+  }
+
+  // keyboard-nav 屬性：未設定時關閉；寫上屬性（或值為 true）即開啟，值為 false 視同關閉
+  isKeyboardNavEnabled() {
+    if (!this.hasAttribute('keyboard-nav')) return false;
+    return this.getAttribute('keyboard-nav') !== 'false';
+  }
+
+  // 頁面上有多個 slider-show 時，只讓一個回應按鍵：
+  // 優先最後一次被點擊的元件，其次是焦點所在的元件，最後是頁面上第一個開啟鍵盤換頁的元件
+  isKeyNavTarget() {
+    // 最後點擊的是別的 slider-show（即使它沒開鍵盤換頁），就不搶著回應
+    const active = SliderShow.activeInstance;
+    if (active && document.contains(active)) return active === this;
+
+    const enabled = Array.from(document.querySelectorAll('slider-show'))
+      .filter((el) => el.isKeyboardNavEnabled && el.isKeyboardNavEnabled());
+    if (enabled.length <= 1) return enabled[0] === this;
+
+    const focused = enabled.find((el) => el.contains(document.activeElement));
+    if (focused) return focused === this;
+
+    return enabled[0] === this;
+  }
+
+  // 正在輸入文字時不攔截快捷鍵（Ctrl+Shift+方向鍵在輸入框裡是「選取一個字」）
+  isTypingTarget(target) {
+    if (!target) return false;
+    if (target.isContentEditable) return true;
+    const tag = (target.tagName || '').toLowerCase();
+    return tag === 'input' || tag === 'textarea' || tag === 'select';
+  }
+
+  handleKeyNav(e) {
+    if (!this.isKeyboardNavEnabled()) return;
+    if (!e.ctrlKey || !e.shiftKey || e.altKey || e.metaKey) return;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    if (this.isTypingTarget(e.target)) return;
+    if (!this.isKeyNavTarget()) return;
+
+    e.preventDefault();
+    if (e.repeat) return; // 按住不放時不連續翻頁
+
+    if (e.key === 'ArrowRight') {
+      this.keyNext();
+    } else {
+      this.keyPrev();
+    }
+  }
+
+  // 下一頁：部分內還有投影片就換下一張；已是部分最後一張則進入下一部分
+  // 遵守 quiz-require-complete：填空未完成時不換頁
+  keyNext() {
+    if (this.isTransitioning) return;
+    if (!this.checkQuizCompletion()) return;
+
+    if (!this.isLastSlideInPart()) {
+      this.nextSlide();
+    } else if (!this.isLastPart()) {
+      this.nextPart();
+    } else if (this.getAttribute('loop') === 'true') {
+      this.nextSlide();
+    }
+  }
+
+  // 上一頁：部分內還有前一張就回上一張；已是部分第一張則回到上一部分
+  keyPrev() {
+    if (this.isTransitioning) return;
+
+    if (!this.isFirstSlideInPart()) {
+      this.prevSlide();
+    } else if (!this.isFirstPart()) {
+      this.prevPart(true);
+    } else if (this.getAttribute('loop') === 'true') {
+      this.prevSlide();
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -618,7 +707,8 @@ class SliderShow extends HTMLElement {
     }
   }
 
-  prevPart() {
+  // toLast：回到上一部分時停在最後一張（鍵盤 ← 使用）；按鈕維持原行為停在第一張
+  prevPart(toLast = false) {
     if (this.isTransitioning) return;
 
     if (this.currentPart > 1) {
@@ -627,7 +717,8 @@ class SliderShow extends HTMLElement {
 
       this.applyTransition(transition, 'out', () => {
         this.currentPart--;
-        this.currentSlideInPart = 0;
+        const prevSlides = this.getCurrentPartSlides();
+        this.currentSlideInPart = toLast ? Math.max(prevSlides.length - 1, 0) : 0;
         this.updateDisplay();
 
         this.applyTransition(transition, 'in', () => {
@@ -796,6 +887,14 @@ class SliderShow extends HTMLElement {
     if (previousSlide && currentSlideForQuiz) {
       this.renderQuizResults(previousSlide, currentSlideForQuiz);
     }
+
+    // 先隱藏其他部分的投影片，避免換部分後上一部分最後一張仍留在畫面底層
+    this.querySelectorAll('[slide]').forEach((slide) => {
+      if (!slides.includes(slide)) {
+        slide.classList.remove('active-slide');
+        slide.style.display = 'none';
+      }
+    });
 
     slides.forEach((slide, index) => {
       if (index === this.currentSlideInPart) {
@@ -1633,5 +1732,8 @@ class SliderShow extends HTMLElement {
     this.container = this;
   }
 }
+
+// 最後一次被點擊的 slider-show，用於多個元件同頁時決定由誰回應鍵盤換頁
+SliderShow.activeInstance = null;
 
 customElements.define('slider-show', SliderShow);
