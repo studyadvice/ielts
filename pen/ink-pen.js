@@ -362,7 +362,7 @@
     /* 觸控筆有壓感時依壓力調整線寬，滑鼠則維持固定寬度 */
     _lineWidth(e) {
       if (e.pointerType === 'pen' && e.pressure > 0) {
-        return Math.max(1, this._width * (0.2 + e.pressure * 2.5));
+        return Math.max(1, this._width * (0.1 + e.pressure * 5));
       }
       return this._width;
     }
@@ -711,7 +711,7 @@
 
     _lineWidth(e) {
       if (e.pointerType === 'pen' && e.pressure > 0) {
-        return Math.max(1, this._width * (0.2 + e.pressure * 2.5));
+        return Math.max(1, this._width * (0.1 + e.pressure * 5));
       }
       return this._width;
     }
