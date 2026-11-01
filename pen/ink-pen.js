@@ -1,3 +1,35 @@
+/* =========================================================
+ * ink-pen.js
+ * 螢幕錄影用極簡畫筆層（觸控筆 / 雷射筆 / 行內手寫空格）
+ * 零依賴，單檔即可運作
+ *
+ * 自訂標籤：
+ *   <ui-ink-layer>    全頁繪圖層（觸控筆、雷射筆）
+ *   <ui-ink-bar>      迷你工具列（可收合成一顆小圓鈕）
+ *   <ink-handwrite>   行內手寫空格，內容以底線長度決定寬度，可加 answer 屬性附解答
+ *   <ui-ink-modal>    手寫視窗（首次需要時自動建立，不必自己放）
+ *   <dot-go>          跳轉圓點，開著觸控筆也點得到，可跳到同頁標籤或其他網頁
+ *
+ * 對外介面：window.InkPen
+ *   .layer()              取得繪圖層實體
+ *   .bar()                取得工具列實體
+ *   .modal()              取得手寫視窗實體
+ *   .blanks()             取得頁面上所有 <ink-handwrite>
+ *   .dots()               取得頁面上所有 <dot-go>
+ *   .palette              配色表
+ *
+ * 本元件不在畫面上顯示任何提示訊息，設定錯誤只寫入 console，
+ * 以免錄影時跳出東西干擾畫面。
+ *
+ * 快捷鍵：
+ *   1  觸控筆
+ *   3  雷射筆
+ *   0  關閉繪圖，回到一般點選
+ *   C  清除全部筆跡
+ *   H  收合／展開工具列
+ *   A  顯示／收起全部解答
+ *   Esc  關閉手寫視窗
+ * ========================================================= */
 (function () {
   'use strict';
 
@@ -32,6 +64,8 @@
   var SLOT_FALLBACK = 10;
   var ANSWER_MIN_SCALE = 0.6;
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+  /* 觸控筆離開螢幕後這段時間內的手指觸碰，視為手掌誤觸 */
+  var PALM_MS = 600;
   var PEN_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">'
     + '<path d="M3 17.3V21h3.7L17.6 10.1l-3.7-3.7L3 17.3zM20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.4-.4-1-.4-1.4 0l-1.8 1.8 3.7 3.7L20.7 7z" '
     + 'fill="currentColor"/></svg>';
@@ -46,15 +80,18 @@
       /* ---- 繪圖層 ---- */
       + 'ui-ink-layer{position:fixed;inset:0;z-index:820;pointer-events:none;display:block;}'
       + 'ui-ink-layer canvas{position:absolute;inset:0;width:100%;height:100%;}'
+      /* 一律 touch-action:none，避免瀏覽器把筆的上下移動當成捲動而中斷筆畫；
+       * 文件座標模式下的手指捲動改由程式處理 */
       + 'ui-ink-layer.ip-live{pointer-events:auto;cursor:crosshair;touch-action:none;}'
-      + 'ui-ink-layer.ip-live.ip-doc{touch-action:pan-y;}'
 
+      /* ---- 工具列容器 ---- */
       + 'ui-ink-bar{position:fixed;z-index:880;display:flex;align-items:center;gap:10px;}'
       + 'ui-ink-bar[data-pos="br"],ui-ink-bar:not([data-pos]){right:20px;bottom:20px;flex-direction:row-reverse;}'
       + 'ui-ink-bar[data-pos="bl"]{left:20px;bottom:20px;}'
       + 'ui-ink-bar[data-pos="tr"]{right:20px;top:20px;flex-direction:row-reverse;}'
       + 'ui-ink-bar[data-pos="tl"]{left:20px;top:20px;}'
 
+      /* ---- 收合鈕 ---- */
       + '.ip-dot{width:40px;height:40px;border-radius:50%;flex:0 0 auto;cursor:pointer;'
       + 'display:flex;align-items:center;justify-content:center;padding:0;'
       + 'background:rgba(19,20,18,0.92);border:1px solid rgba(58,59,55,0.9);'
@@ -65,6 +102,7 @@
       + '.ip-dot.ip-armed{border-color:rgba(28,202,232,0.9);'
       + 'box-shadow:0 0 0 2px rgba(28,202,232,0.82),0 4px 14px rgba(0,0,0,0.82);}'
 
+      /* ---- 主體膠囊 ---- */
       + '.ip-bar{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:22px;'
       + 'background:rgba(19,20,18,0.94);border:1px solid rgba(58,59,55,0.9);'
       + 'box-shadow:0 6px 20px rgba(0,0,0,0.82);}'
@@ -83,6 +121,10 @@
       + '.ip-swatch{width:16px;height:16px;border-radius:50%;flex:0 0 auto;'
       + 'border:1px solid rgba(198,199,189,0.82);}'
 
+      /* ---- 行內手寫空格 ----
+       * 高度壓在 1.55em 以內，避免超出 line-height 1.5 的行框而壓到上一行；
+       * 內容裝在 .ih-clip 裡並裁切，解答圓點則留在框外不被裁掉。
+       */
       + 'ink-handwrite{display:inline-flex;align-items:center;justify-content:center;'
       + 'vertical-align:-0.3em;height:1.55em;cursor:pointer;position:relative;'
       + 'width:calc(var(--ih-n,10) * 1.05ch);margin:0 3px;padding:0;'
@@ -101,12 +143,14 @@
       + 'ink-handwrite.ih-filled{border-color:rgba(179,222,115,0.86);}'
       + 'ink-handwrite.ih-filled .ih-icon{display:none;}'
 
+      /* ---- 解答 ---- */
       + 'ink-handwrite .ih-ans{display:none;white-space:nowrap;line-height:1.4;'
       + 'color:var(--c-special,#B3DE73);transform-origin:center center;}'
       + 'ink-handwrite.ih-answered .ih-ans{display:block;}'
       + 'ink-handwrite.ih-answered .ih-icon{display:none;}'
       + 'ink-handwrite.ih-answered{border-bottom-width:3px;'
       + 'border-color:rgba(179,222,115,0.86);}'
+      /* 圓點的 z-index 高於繪圖層，所以開著筆也點得到 */
       + 'ink-handwrite .ih-dot{position:absolute;right:-13px;top:50%;'
       + 'width:9px;height:9px;margin-top:-5px;border-radius:50%;z-index:830;cursor:pointer;'
       + 'border:1px solid rgba(198,199,189,0.82);background:rgba(12,13,12,0.86);'
@@ -116,6 +160,7 @@
       + 'ink-handwrite.ih-answered .ih-dot{background:var(--c-special,#B3DE73);'
       + 'border-color:var(--c-special,#B3DE73);}'
 
+      /* ---- 手寫視窗 ---- */
       + 'ui-ink-modal{position:fixed;inset:0;z-index:960;display:none;'
       + 'align-items:center;justify-content:center;background:rgba(12,13,12,0.9);}'
       + 'ui-ink-modal.ip-on{display:flex;}'
@@ -146,6 +191,7 @@
     document.head.appendChild(style);
   }
 
+  /* ---------- 共用：以點序列作畫 ---------- */
   function paintStrokes(ctx, strokes) {
     strokes.forEach(function (s) {
       if (!s.points.length) return;
@@ -179,6 +225,7 @@
    * 屬性 data-anchor：
    *   "viewport"（預設）筆跡貼著視窗，捲動時跟著螢幕走
    *   "document"        筆跡貼著內容，捲動時跟著段落走（邊捲邊畫）
+   *                     此模式下手指拖曳會捲動頁面，觸控筆與滑鼠負責作畫
    * 兩種模式可隨時互換，既有筆跡會依當下捲動量自動換算座標。
    * ========================================================= */
   class UiInkLayer extends HTMLElement {
@@ -218,6 +265,7 @@
       if (name === 'data-anchor') this._applyAnchor(newVal);
     }
 
+    /* ---------- 座標模式 ---------- */
     setAnchor(mode) {
       var next = (mode === 'document') ? 'document' : 'viewport';
       this.setAttribute('data-anchor', next);
@@ -226,6 +274,7 @@
     }
     getAnchor() { return this._anchor; }
 
+    /* 換算既有筆跡，讓畫面上的位置在切換瞬間維持不動 */
     _applyAnchor(value) {
       var next = (value === 'document') ? 'document' : 'viewport';
       if (next === this._anchor) return;
@@ -273,6 +322,7 @@
     }
     isEmpty() { return !this._strokes.length; }
 
+    /* ---------- 繪圖 ---------- */
     _resize() {
       var dpr = window.devicePixelRatio || 1;
       var w = this.clientWidth, h = this.clientHeight;
@@ -316,15 +366,43 @@
     /* 觸控筆有壓感時依壓力調整線寬，滑鼠則維持固定寬度 */
     _lineWidth(e) {
       if (e.pointerType === 'pen' && e.pressure > 0) {
-        return Math.max(1, this._width * (0.1 + e.pressure * 5));
+        return Math.max(1, this._width * (0.35 + e.pressure * 1.5));
       }
       return this._width;
     }
 
+    /* 觸點分工：
+     *   一次只追蹤一個作畫的觸點，其他觸點（例如手掌）不會混進同一筆
+     *   觸控筆剛離開螢幕的短時間內，手指觸碰一律忽略（防手掌誤觸）
+     *   文件座標模式下，手指拖曳改為捲動頁面，觸控筆與滑鼠負責作畫
+     * 每次移動都讀取合併事件（getCoalescedEvents），筆走得快也不會漏點 */
     _bind() {
+      this._drawId = null;
+      this._scrollId = null;
+      this._penAt = 0;
+
+      var palm = () => performance.now() - this._penAt < PALM_MS;
+
       this.addEventListener('pointerdown', (e) => {
         if (this._mode === 'off') return;
+        var touch = e.pointerType === 'touch';
+        if (e.pointerType === 'pen') this._penAt = performance.now();
+
+        if (touch && (this._drawId !== null || palm())) return;
+
+        if (touch && this._anchor === 'document') {
+          if (this._scrollId !== null) return;
+          this._scrollId = e.pointerId;
+          this._sx = e.clientX;
+          this._sy = e.clientY;
+          this.setPointerCapture(e.pointerId);
+          return;
+        }
+
+        if (this._drawId !== null) return;
+        e.preventDefault();
         this.setPointerCapture(e.pointerId);
+        this._drawId = e.pointerId;
         this._drawing = true;
         var p = this._pt(e);
         if (this._mode === 'laser') {
@@ -335,25 +413,65 @@
           color: this._color,
           points: [{ x: p.x, y: p.y, w: this._lineWidth(e) }]
         });
+        this._drawDot(this._strokes[this._strokes.length - 1]);
       });
 
       this.addEventListener('pointermove', (e) => {
-        if (!this._drawing || this._mode === 'off') return;
-        var p = this._pt(e);
+        if (e.pointerId === this._scrollId) {
+          window.scrollBy(this._sx - e.clientX, this._sy - e.clientY);
+          this._sx = e.clientX;
+          this._sy = e.clientY;
+          return;
+        }
+        if (e.pointerId !== this._drawId || this._mode === 'off') return;
+        if (e.pointerType === 'pen') this._penAt = performance.now();
+
+        var list = (typeof e.getCoalescedEvents === 'function') ? e.getCoalescedEvents() : [];
+        if (!list || !list.length) list = [e];
+
         if (this._mode === 'laser') {
-          this._trail.push({ x: p.x, y: p.y, t: performance.now() });
+          var now = performance.now();
+          list.forEach((ev) => {
+            var lp = this._pt(ev);
+            this._trail.push({ x: lp.x, y: lp.y, t: now });
+          });
           return;
         }
         var s = this._strokes[this._strokes.length - 1];
         if (!s) return;
-        s.points.push({ x: p.x, y: p.y, w: this._lineWidth(e) });
-        this._drawLast(s);
+        list.forEach((ev) => {
+          var p = this._pt(ev);
+          s.points.push({ x: p.x, y: p.y, w: this._lineWidth(ev) });
+          this._drawLast(s);
+        });
       });
 
-      var end = () => { this._drawing = false; };
+      var end = (e) => {
+        if (e.pointerId === this._scrollId) {
+          this._scrollId = null;
+          return;
+        }
+        if (e.pointerId !== this._drawId) return;
+        if (e.pointerType === 'pen') this._penAt = performance.now();
+        this._drawId = null;
+        this._drawing = false;
+      };
       this.addEventListener('pointerup', end);
       this.addEventListener('pointercancel', end);
-      this.addEventListener('pointerleave', end);
+      this.addEventListener('lostpointercapture', end);
+    }
+
+    /* 點一下就放開時也要留下一個圓點 */
+    _drawDot(stroke) {
+      var p = stroke.points[0];
+      var ctx = this._ictx;
+      ctx.save();
+      ctx.translate(-this._ox(), -this._oy());
+      ctx.fillStyle = stroke.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(1, p.w / 2), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
 
     /* 每幀重畫雷射殘影；文件座標模式下捲動後補畫筆跡 */
@@ -398,6 +516,8 @@
    * 也可改用 data-slots="12" 直接指定。
    * ========================================================= */
   class InkHandwrite extends HTMLElement {
+    /* 本檔在 <head> 載入時，解析器一讀到起始標籤就會升級元件，
+     * 此時標籤內的底線還沒進來，因此等文件解析完才讀長度。 */
     connectedCallback() {
       if (this._built) return;
       if (document.readyState === 'loading') {
@@ -416,6 +536,7 @@
       var n = Number(this.getAttribute('data-slots'));
       if (!n) {
         var hits = String(this.textContent || '').match(/[_＿]/g);
+        /* 沒寫底線時，用答案長度推算格數 */
         n = hits ? hits.length : (this._answer ? this._answer.length : SLOT_FALLBACK);
       }
       this._slots = Math.min(SLOT_MAX, Math.max(SLOT_MIN, n));
@@ -662,7 +783,7 @@
 
     _lineWidth(e) {
       if (e.pointerType === 'pen' && e.pressure > 0) {
-        return Math.max(1, this._width * (0.1 + e.pressure * 5));
+        return Math.max(1, this._width * (0.35 + e.pressure * 1.5));
       }
       return this._width;
     }
@@ -1281,6 +1402,7 @@
       });
       return show;
     },
+    /* 只要還有沒顯示的就全部顯示，否則全部收起 */
     toggleAnswers: function () {
       var list = this.answerBlanks();
       if (!list.length) return false;
