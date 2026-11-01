@@ -711,7 +711,7 @@
 
     _lineWidth(e) {
       if (e.pointerType === 'pen' && e.pressure > 0) {
-        return Math.max(1, this._width * (0.35 + e.pressure * 1.5));
+        return Math.max(1, this._width * (0.4 + e.pressure * 2.2));
       }
       return this._width;
     }
