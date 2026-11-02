@@ -14,7 +14,7 @@
 
   const PALETTE = [
     '#C6C7BD', '#C3A5E5', '#82C8E5', '#E6374B', '#E5C3B3', '#1CCAE8', '#27AE60', '#0DA591',
-    '#DBEDD8', '#E3D322', '#D4FFFC', '#B3DE73', '#4171BF', '#7849C9', '#FF91D7', '#EDA109'
+    '#DBEDD8', '#E3D322', '#D4FFFC', '#B3DE73', '#92B5E0', '#7849C9', '#FF91D7', '#EDA109'
   ];
 
   /* 品牌色名稱對照：顏色屬性可直接填名稱（不分大小寫） */
@@ -32,7 +32,7 @@
     yellow: '#E3D322',
     focus: '#D4FFFC',
     special: '#B3DE73',
-    info: '#4171BF',
+    info: '#92B5E0',
     indigo: '#7849C9',
     pink: '#FF91D7',
     orange: '#EDA109'
