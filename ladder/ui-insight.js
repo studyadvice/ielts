@@ -1,7 +1,13 @@
 /*!
- * <ui-insight> 亮點字詞解說元件 v1.0
+ * <ui-insight> 亮點字詞解說元件 v1.2
  * 用途：左側為一句一句的卡片，右側顯示所選句子中亮點字詞的解說，雙向對照。
  * 不使用 shadow DOM，CSS 由本檔自動注入。需要 Bootstrap Icons（bi-*）。
+ * v1.1：所有顏色屬性（含 hl-hot-bg、hl-hot-color、tag-color）可直接填品牌色名稱，
+ *       例如 hl-hot-bg="sky"、hl-hot-color="base"，名稱不分大小寫，也仍可填 #hex 或 rgb()。
+ * v1.2：新增 theme 屬性，例如 theme="lavender"。影響外觀色彩的個別屬性預設都跟著 theme，
+ *       有明確指定的屬性才會覆蓋 theme 的顏色。優先順序：個別屬性 > theme > 內建預設。
+ *       可用主題：default、lavender、sky、ocean、teal、safe、special、yellow、orange、
+ *       salmon、pink、warning、indigo、info。名稱不存在時退回 default。
  */
 (() => {
   if (customElements.get('ui-insight')) return;
@@ -10,6 +16,82 @@
     '#C6C7BD', '#C3A5E5', '#82C8E5', '#E6374B', '#E5C3B3', '#1CCAE8', '#27AE60', '#0DA591',
     '#DBEDD8', '#E3D322', '#D4FFFC', '#B3DE73', '#4171BF', '#7849C9', '#FF91D7', '#EDA109'
   ];
+
+  /* 品牌色名稱對照：顏色屬性可直接填名稱（不分大小寫） */
+  const COLOR_NAMES = {
+    base: '#0C0D0C',
+    shell: '#C6C7BD',
+    lavender: '#C3A5E5',
+    sky: '#82C8E5',
+    warning: '#E6374B',
+    salmon: '#E5C3B3',
+    ocean: '#1CCAE8',
+    safe: '#27AE60',
+    teal: '#0DA591',
+    vanilla: '#DBEDD8',
+    yellow: '#E3D322',
+    focus: '#D4FFFC',
+    special: '#B3DE73',
+    info: '#4171BF',
+    indigo: '#7849C9',
+    pink: '#FF91D7',
+    orange: '#EDA109'
+  };
+
+  /* CSS_ATTRS 之中屬於顏色的屬性，值會先經過品牌色名稱轉換 */
+  const COLOR_ATTRS = new Set([
+    'bg', 'border-color',
+    'card-bg', 'card-border', 'card-hover-border', 'card-active-border',
+    'heading-color', 'sentence-color', 'num-bg', 'num-color', 'num-active-bg', 'num-active-color',
+    'hl-line-color', 'hl-hot-bg', 'hl-hot-color', 'sup-color',
+    'panel-bg', 'summary-color', 'note-num-bg', 'note-num-color', 'note-word-color',
+    'note-text-color', 'note-divider-color', 'note-hot-bg',
+    'tag-text-color', 'tag-default-bg', 'empty-color',
+    'ini-title-color', 'ini-title-bg'
+  ]);
+
+  const resolveColor = (v) => {
+    if (typeof v !== 'string') return v;
+    const key = v.trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(COLOR_NAMES, key) ? COLOR_NAMES[key] : v;
+  };
+
+  /* 主題：只列出與預設不同的顏色屬性，值可用品牌色名稱。
+   * default 為空物件，代表完全使用 CSS_ATTRS 的內建預設。 */
+  const accentTheme = (a, on = 'base') => ({
+    'border-color': a,
+    'card-active-border': a,
+    'heading-color': a,
+    'num-active-bg': a,
+    'num-active-color': on,
+    'hl-line-color': a,
+    'hl-hot-bg': a,
+    'hl-hot-color': on,
+    'sup-color': a,
+    'note-num-bg': a,
+    'note-num-color': on,
+    'note-word-color': a,
+    'tag-default-bg': a,
+    'tag-text-color': on,
+    'ini-title-color': a
+  });
+
+  const THEMES = {
+    default: {},
+    lavender: accentTheme('lavender'),
+    sky: accentTheme('sky'),
+    ocean: accentTheme('ocean'),
+    teal: accentTheme('teal'),
+    safe: accentTheme('safe'),
+    special: accentTheme('special'),
+    yellow: accentTheme('yellow'),
+    orange: accentTheme('orange'),
+    salmon: accentTheme('salmon'),
+    pink: accentTheme('pink'),
+    warning: accentTheme('warning'),
+    indigo: accentTheme('indigo', 'focus'),
+    info: accentTheme('info', 'focus')
+  };
 
   /* 內建標籤：tag="lr" 等簡寫會轉成中文文字與預設顏色 */
   const TAGS = {
@@ -83,6 +165,7 @@
 
   /* 其他屬性（開關與文字） */
   const OPT_ATTRS = {
+    'theme': 'default',
     'border': 'false',
     'show-num': 'true',
     'show-sup': 'true',
@@ -202,7 +285,21 @@ ${PALETTE.map((c, i) => `ui-insight c${i + 1}{color:${c}}`).join('\n')}
 
     _css(name) {
       const v = this.getAttribute(name);
-      return v === null || v === '' ? CSS_ATTRS[name] : v;
+      const has = v !== null && v !== '';
+      if (!COLOR_ATTRS.has(name)) return has ? v : CSS_ATTRS[name];
+      /* 顏色屬性的優先順序：個別屬性 > theme > 內建預設 */
+      if (has) return resolveColor(v);
+      const tv = THEMES[this._themeName()][name];
+      return resolveColor(tv !== undefined ? tv : CSS_ATTRS[name]);
+    }
+
+    _themeName() {
+      const t = this._opt('theme').trim().toLowerCase();
+      return Object.prototype.hasOwnProperty.call(THEMES, t) ? t : 'default';
+    }
+
+    static get themes() {
+      return Object.keys(THEMES);
     }
 
     _collapsible() {
@@ -317,7 +414,7 @@ ${PALETTE.map((c, i) => `ui-insight c${i + 1}{color:${c}}`).join('\n')}
       if (!nt.tag) return '';
       const preset = TAGS[nt.tag.toLowerCase()];
       const text = preset ? preset.text : nt.tag;
-      const bg = nt.tagColor || (preset ? preset.color : this._css('tag-default-bg'));
+      const bg = resolveColor(nt.tagColor) || (preset ? preset.color : this._css('tag-default-bg'));
       return `<span class="uin-tag" style="background:${bg}">${text}</span>`;
     }
 
