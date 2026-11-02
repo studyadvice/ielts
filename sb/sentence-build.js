@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  /* ─── Palette ─────────────────────────────────────────────────────────── */
   const P = {
     background:'#0C0D0C', shell:'#C6C7BD', lavender:'#C3A5E5',
     sky:'#82C8E5',     warning:'#E6374B',  salmon:'#E5C3B3',
@@ -27,7 +26,6 @@
   };
   const na = (el,n,d) => { const v=parseInt(el.getAttribute(n)); return isNaN(v)?d:v; };
 
-  /* ─── Global styles (injected once) ──────────────────────────────────── */
   if (!document.getElementById('sb-css')) {
     const s = document.createElement('style');
     s.id = 'sb-css';
