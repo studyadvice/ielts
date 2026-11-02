@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-progrid 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="ui-progrid.js"></script>
+<style>
+  :root {
+    --c-bg: #0C0D0C; --c-shell: #C6C7BD; --c-lavender: #C3A5E5; --c-sky: #82C8E5;
+    --c-warning: #E6374B; --c-salmon: #E5C3B3; --c-ocean: #1CCAE8; --c-safe: #27AE60;
+    --c-teal: #0DA591; --c-vanilla: #DBEDD8; --c-yellow: #E3D322; --c-focus: #D4FFFC;
+    --c-special: #B3DE73; --c-info: #4171BF; --c-indigo: #7849C9; --c-pink: #FF91D7;
+    --c-orange: #EDA109;
+  }
+  html { font-size: 16px; }
+  body {
+    background: var(--c-bg); color: var(--c-shell); margin: 0;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    font-size: 1rem; line-height: 1.7;
+  }
+  .wrap { max-width: 1760px; margin: 0 auto; padding: 32px 48px 120px; }
+  h1 { font-size: 1.9rem; color: var(--c-focus); margin: 0 0 4px; font-weight: 700; }
+  h2 { font-size: 1.3rem; color: var(--c-ocean); margin: 0 0 6px; font-weight: 600; }
+  h3 { font-size: 1rem; color: var(--c-lavender); margin: 22px 0 10px; font-weight: 600; }
+  .sub { color: #8E8F87; font-size: 0.95rem; margin: 0 0 18px; }
+  .lead-note { color: #8E8F87; margin: 0 0 32px; }
+  section.block { margin: 0 0 48px; }
+  .cols { display: grid; gap: 28px; align-items: start; }
+  .cols-play { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cap { font-size: 0.85rem; color: #8E8F87; margin: 0 0 8px; }
+  .cap code { color: var(--c-orange); }
+
+  .panel {
+    background: #121311; border: 1px solid #262723; border-radius: 10px; padding: 18px 20px;
+  }
+  .ctl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  .ctl label.lbl { display: block; font-size: 0.8rem; color: #8E8F87; margin: 0 0 4px; }
+  .ctl select, .ctl input[type=range] { width: 100%; }
+  .ctl select {
+    background: #0E0F0D; color: var(--c-shell); border: 1px solid #2F302B; border-radius: 6px;
+    padding: 5px 8px; font-size: 0.88rem;
+  }
+  .ctl input[type=range] { accent-color: var(--c-teal); }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 0; }
+  .checks label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; cursor: pointer; }
+  .checks input { accent-color: var(--c-teal); width: 15px; height: 15px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+  .dbtn {
+    font-size: 0.82rem; padding: 4px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid #2F302B; background: #1A1B18; color: var(--c-shell);
+  }
+  .dbtn:hover { border-color: var(--c-ocean); color: var(--c-ocean); }
+  .dbtn code { color: inherit; font-size: 0.82rem; }
+  pre.out, pre.code {
+    margin: 12px 0 0; padding: 12px 14px; border-radius: 8px; background: #0E0F0D;
+    border: 1px solid #262723; color: var(--c-vanilla); font-size: 0.8rem; line-height: 1.55;
+    max-height: 220px; overflow: auto; white-space: pre;
+  }
+  pre.code { max-height: none; font-size: 0.82rem; }
+  .log { margin: 12px 0 0; font-size: 0.8rem; font-family: Consolas, "Courier New", monospace; }
+  .log div { padding: 3px 0; border-bottom: 1px solid #1E1F1C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .log .ev { display: inline-block; min-width: 82px; font-weight: 600; }
+  .log .ev-change { color: var(--c-special); }
+  .log .ev-select { color: var(--c-sky); }
+  .log .ev-invalid { color: var(--c-warning); }
+
+  table.ref { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  table.ref th, table.ref td { border-bottom: 1px solid #22231F; padding: 7px 10px; vertical-align: top; }
+  table.ref th { color: var(--c-sky); text-align: left; font-weight: 600; background: #121311; }
+  table.ref td:first-child { white-space: nowrap; }
+  table.ref code { color: var(--c-orange); font-size: 0.85rem; }
+  .ref-wrap { border: 1px solid #262723; border-radius: 10px; overflow: hidden; }
+  .tag-old, .tag-new {
+    display: inline-block; font-size: 0.78rem; padding: 2px 10px; border-radius: 6px; margin: 0 0 6px;
+  }
+  .tag-old { background: rgba(230, 55, 75, 0.86); color: #fff; }
+  .tag-new { background: rgba(13, 165, 145, 0.9); color: #07211D; font-weight: 600; }
+  .lesson-card {
+    background: #121311; border: 1px solid #262723; border-radius: 10px; padding: 18px 20px;
+  }
+  .lesson-card p { margin: 0 0 12px; font-size: 1.05rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>ui-progrid</h1>
+  <p class="lead-note">緊湊的屬性面板元件。同一個標籤，用屬性在「教材資訊卡」和「後台表單」兩種用途之間切換。建立日期 2026-11-02。</p>
+
+  <!-- ================= 即時調整 ================= -->
+  <section class="block">
+    <h2>即時調整</h2>
+    <p class="sub">右側每個控制項都直接改左邊這張面板的屬性，事件會即時列在下方。</p>
+    <div class="cols cols-play">
+      <div>
+        <ui-progrid id="pg-live" heading="講者設定" show-actions label-ratio="4:6">
+          <pg-cat name="基本資料">
+            <pg-row key="name" label="姓名" icon="person" value="王小明" required maxlength="20">
+              <pg-desc>顯示在片頭字卡的名字，<b>最多 20 字</b>。</pg-desc>
+            </pg-row>
+            <pg-row key="email" label="聯絡信箱" icon="envelope" placeholder="name@example.com"
+                    pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" desc="只用來寄送課程通知。"></pg-row>
+            <pg-row key="role" label="身分" type="select" options="講師|助教|來賓" value="講師"></pg-row>
+            <pg-row key="since" label="開始授課" type="date-roc" value="113/09/01" min-date="100/01/01"
+                    desc="民國年格式，例如 113/09/01。"></pg-row>
+          </pg-cat>
+          <pg-cat name="錄影偏好">
+            <pg-row key="duration" label="單集長度" type="number" value="25" unit="分鐘" min="5" max="90"
+                    desc="建議 15 至 40 分鐘。"></pg-row>
+            <pg-row key="subtitle" label="自動字幕" type="bool" value="true" on-text="開啟" off-text="關閉"></pg-row>
+            <pg-row key="score" label="自評熟練度" type="rating" rating-mode="scale" value="3"
+                    desc="點同一顆星可以退回一級。"></pg-row>
+            <pg-row key="days" label="可錄影日" type="rating" rating-style="square" rating-count="7"
+                    value="1,3,5" rating-min="1" rating-max="4">
+              <pg-desc>代表週一到週日，可選 1 至 4 天。</pg-desc>
+              <pg-more>
+                <p>這一列示範 <code>rating-mode="pick"</code>：每一格獨立切換，值是陣列。</p>
+                <p>搭配 <code>rating-min</code> 與 <code>rating-max</code> 限制可選數量，超過時會跳出提示。</p>
+              </pg-more>
+            </pg-row>
+          </pg-cat>
+          <pg-cat name="系統" collapsed>
+            <pg-row key="uid" label="使用者代號" type="readonly" value="U-20261102-07"></pg-row>
+            <pg-row key="token" label="API 金鑰" type="secret" value="sk-demo-91f3c2a8"></pg-row>
+            <pg-row key="confirm" label="確認字樣" placeholder="請輸入 我同意" exact="我同意"
+                    desc="必須一字不差輸入「我同意」。"></pg-row>
+          </pg-cat>
+        </ui-progrid>
+      </div>
+
+      <div class="panel">
+        <div class="ctl-grid">
+          <div class="ctl">
+            <label class="lbl" for="c-density">density</label>
+            <select id="c-density">
+              <option value="compact">compact（24px）</option>
+              <option value="comfortable" selected>comfortable（30px，預設）</option>
+              <option value="loose">loose（42px）</option>
+            </select>
+          </div>
+          <div class="ctl">
+            <label class="lbl" for="c-style">field-style</label>
+            <select id="c-style">
+              <option value="ghost" selected>ghost（平常像文字）</option>
+              <option value="boxed">boxed（一直顯示框線）</option>
+            </select>
+          </div>
+          <div class="ctl">
+            <label class="lbl" for="c-accent">accent</label>
+            <select id="c-accent"></select>
+          </div>
+          <div class="ctl">
+            <label class="lbl" for="c-ratio">label-ratio：<span id="c-ratio-v">4:6</span></label>
+            <input type="range" id="c-ratio" min="2" max="8" step="1" value="4">
+          </div>
+          <div class="ctl">
+            <label class="lbl" for="c-maxh">max-height</label>
+            <select id="c-maxh">
+              <option value="" selected>不限</option>
+              <option value="200">200</option>
+              <option value="320">320</option>
+            </select>
+          </div>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="c-ro"> readonly</label>
+          <label><input type="checkbox" id="c-nodesc"> no-desc</label>
+          <label><input type="checkbox" id="c-actions" checked> show-actions</label>
+          <label><input type="checkbox" id="c-silent"> silent</label>
+        </div>
+        <div class="btn-row">
+          <button class="dbtn" id="b-values"><code>getValues()</code></button>
+          <button class="dbtn" id="b-set"><code>setValue('score', 隨機)</code></button>
+          <button class="dbtn" id="b-validate"><code>validate()</code></button>
+          <button class="dbtn" id="b-focused"><code>getFocused()</code></button>
+          <button class="dbtn" id="b-collapse"><code>collapseAll()</code></button>
+        </div>
+        <pre class="out" id="out">按上方按鈕查看回傳值</pre>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 兩種用途 ================= -->
+  <section class="block">
+    <h2>兩種用途</h2>
+    <p class="sub">左邊是放在教材頁裡的唯讀資訊卡，右邊是後台填寫用的表單。差別只在屬性。</p>
+    <div class="cols cols-2">
+      <div class="lesson-card">
+        <p class="cap"><code>readonly density="compact" no-desc accent="lavender"</code></p>
+        <p>This unit focuses on describing a change you experienced, with three model answers.</p>
+        <ui-progrid heading="Unit 2 資訊" readonly density="compact" no-desc accent="lavender" label-ratio="3:7">
+          <pg-row key="topic" label="主題" value="Describing a change"></pg-row>
+          <pg-row key="part" label="題型" value="描述題 + 延伸討論"></pg-row>
+          <pg-row key="level" label="難度" type="rating" rating-mode="scale" value="4"></pg-row>
+          <pg-row key="time" label="長度" type="number" value="32" unit="分鐘"></pg-row>
+          <pg-row key="focus" label="重點搭配詞" value="adapt to, get used to, take a toll on">
+            <pg-note>三組都可以接動名詞，示範句在第二張卡。</pg-note>
+          </pg-row>
+          <pg-row key="key" label="參考答案" type="secret" value="see card 3, line 2"></pg-row>
+        </ui-progrid>
+      </div>
+      <div>
+        <p class="cap"><code>field-style="boxed" show-actions</code>，加上 <code>required</code> 等驗證屬性</p>
+        <ui-progrid id="pg-form" heading="新增課程" field-style="boxed" show-actions>
+          <pg-cat name="課程" numbering number-color="sky">
+            <pg-row key="c-title" label="課程名稱" required minlength="4" placeholder="至少 4 個字"></pg-row>
+            <pg-row key="c-type" label="分類" type="select" placeholder="請選擇" required>
+              <pg-opt value="spk">口說</pg-opt>
+              <pg-opt value="wrt">寫作</pg-opt>
+              <pg-opt value="vcb">字彙</pg-opt>
+            </pg-row>
+            <pg-row key="c-date" label="上架日期" type="date" required min-date="2026/01/01"></pg-row>
+            <pg-row key="c-price" label="價格" type="number" unit="元" min="0" max="9999" value="0"></pg-row>
+          </pg-cat>
+          <pg-cat name="發布" numbering number-prefix="B">
+            <pg-row key="c-public" label="公開" type="bool"></pg-row>
+            <pg-row key="c-tags" label="適合程度" type="rating" rating-style="circle" rating-count="4"
+                    rating-min="1" required desc="可多選，至少 1 項。"></pg-row>
+          </pg-cat>
+        </ui-progrid>
+        <p class="cap" style="margin-top:8px">試著直接按標題列的打勾圖示驗證，錯誤列會出現紅色左邊條，訊息顯示在底部說明區。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 密度對照 ================= -->
+  <section class="block">
+    <h2>密度對照</h2>
+    <p class="sub">同一份內容，compact 列高 24px，comfortable 列高 30px，loose 列高 42px。</p>
+    <div class="cols cols-3">
+      <div>
+        <p class="cap"><code>density="compact"</code>（24px）</p>
+        <ui-progrid heading="匯出設定" density="compact" id="pg-c"></ui-progrid>
+      </div>
+      <div>
+        <p class="cap"><code>density="comfortable"</code>（30px，預設）</p>
+        <ui-progrid heading="匯出設定" id="pg-n"></ui-progrid>
+      </div>
+      <div>
+        <p class="cap"><code>density="loose"</code>（42px）</p>
+        <ui-progrid heading="匯出設定" density="loose" id="pg-l"></ui-progrid>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 寫法 ================= -->
+  <section class="block">
+    <h2>標記寫法</h2>
+    <pre class="code">&lt;ui-progrid heading="講者設定" field-style="boxed" show-actions&gt;
+  &lt;pg-cat name="基本資料" numbering&gt;
+    &lt;pg-row key="name" label="姓名" icon="person" required maxlength="20"&gt;
+      &lt;pg-desc&gt;顯示在片頭字卡的名字，&lt;b&gt;最多 20 字&lt;/b&gt;。&lt;/pg-desc&gt;
+    &lt;/pg-row&gt;
+    &lt;pg-row key="role" label="身分" type="select" options="講師|助教|來賓"&gt;&lt;/pg-row&gt;
+    &lt;pg-row key="level" label="分類" type="select" placeholder="請選擇"&gt;
+      &lt;pg-opt value="spk"&gt;口說&lt;/pg-opt&gt;
+      &lt;pg-opt value="wrt"&gt;寫作&lt;/pg-opt&gt;
+    &lt;/pg-row&gt;
+  &lt;/pg-cat&gt;
+  &lt;pg-cat name="系統" collapsed&gt;
+    &lt;pg-row key="token" label="API 金鑰" type="secret" value="sk-..."&gt;&lt;/pg-row&gt;
+    &lt;pg-row key="days" label="可錄影日" type="rating" rating-style="square" rating-count="7" value="1,3"&gt;
+      &lt;pg-note&gt;顯示在這一列正下方的註解&lt;/pg-note&gt;
+      &lt;pg-more&gt;點「⋯」才會開啟的詳細說明，可寫 HTML&lt;/pg-more&gt;
+    &lt;/pg-row&gt;
+  &lt;/pg-cat&gt;
+&lt;/ui-progrid&gt;
+
+&lt;script&gt;
+  var pg = document.getElementById('my-grid');
+  pg.addEventListener('pg-change', function (e) {
+    console.log(e.detail.key, e.detail.value);
+  });
+  pg.setValue('name', '李小華');
+  var result = pg.validate();   // { valid: false, errors: [...] }
+&lt;/script&gt;</pre>
+  </section>
+
+  <!-- ================= 修改紀錄 ================= -->
+  <section class="block" id="changelog">
+    <h2>修改紀錄</h2>
+    <h3>第 2 版：密度改為三段（2026-11-02）</h3>
+    <p class="sub">compact 由 18px 放寬為 24px，新增 loose 42px；comfortable 30px 維持預設。字級、控制項、開關與說明區留白都跟著三段同步調整。</p>
+    <div class="cols cols-2">
+      <div>
+        <span class="tag-old">修改前</span>
+<pre class="code">/* 兩段：comfortable（預設）／compact */
+ui-progrid {
+  --pgx-row: 30px; --pgx-ctl: 24px; --pgx-px: 10px;
+  --pgx-fs: 0.9rem; --pgx-fs-sm: 0.8rem; --pgx-ic: 0.95rem;
+  --pgx-sw-w: 28px; --pgx-sw-h: 16px; --pgx-knob: 12px;
+}
+ui-progrid[density="compact"] {
+  --pgx-row: 18px; --pgx-ctl: 16px; --pgx-px: 6px;
+  --pgx-fs: 0.72rem; --pgx-fs-sm: 0.66rem; --pgx-ic: 0.72rem;
+  --pgx-sw-w: 20px; --pgx-sw-h: 11px; --pgx-knob: 7px;
+}</pre>
+      </div>
+      <div>
+        <span class="tag-new">修改後</span>
+<pre class="code">/* 三段：compact／comfortable（預設）／loose */
+ui-progrid[density="compact"] {
+  --pgx-row: 24px; --pgx-ctl: 20px; --pgx-px: 8px;
+  --pgx-fs: 0.8rem; --pgx-fs-sm: 0.72rem; --pgx-ic: 0.8rem;
+  --pgx-sw-w: 24px; --pgx-sw-h: 13px; --pgx-knob: 9px;
+}
+ui-progrid {          /* comfortable，不變 */
+  --pgx-row: 30px; --pgx-ctl: 24px; --pgx-px: 10px; ...
+}
+ui-progrid[density="loose"] {
+  --pgx-row: 42px; --pgx-ctl: 34px; --pgx-px: 14px;
+  --pgx-fs: 1rem; --pgx-fs-sm: 0.88rem; --pgx-ic: 1.05rem;
+  --pgx-sw-w: 34px; --pgx-sw-h: 19px; --pgx-knob: 15px;
+}</pre>
+      </div>
+    </div>
+    <div class="cols cols-2" style="margin-top:12px">
+      <div>
+        <span class="tag-old">修改前（HTML）</span>
+<pre class="code">&lt;ui-progrid density="compact"&gt;  &lt;!-- 18px --&gt;</pre>
+      </div>
+      <div>
+        <span class="tag-new">修改後（HTML）</span>
+<pre class="code">&lt;ui-progrid density="compact"&gt;  &lt;!-- 24px --&gt;
+&lt;ui-progrid&gt;                    &lt;!-- 30px，預設 --&gt;
+&lt;ui-progrid density="loose"&gt;    &lt;!-- 42px --&gt;</pre>
+      </div>
+    </div>
+    <h3>第 1 版：全新改寫（2026-11-02）</h3>
+    <p class="sub">由舊版 property-grid-v69351 的 class 加 JSON 設定，改寫為 &lt;ui-progrid&gt; 語意標籤與子標籤，套用新配色。舊版欄位對照見下方表格。</p>
+  </section>
+
+  <!-- ================= 參考 ================= -->
+  <section class="block">
+    <h2>屬性參考</h2>
+    <div class="cols cols-2">
+      <div>
+        <h3>&lt;ui-progrid&gt;</h3>
+        <div class="ref-wrap">
+          <table class="ref">
+            <tr><th>屬性</th><th>說明</th></tr>
+            <tr><td><code>heading</code></td><td>標題文字</td></tr>
+            <tr><td><code>density</code></td><td><code>compact</code>（24px）、<code>comfortable</code>（預設，30px）、<code>loose</code>（42px）</td></tr>
+            <tr><td><code>field-style</code></td><td><code>ghost</code>（預設）或 <code>boxed</code></td></tr>
+            <tr><td><code>readonly</code></td><td>整張唯讀</td></tr>
+            <tr><td><code>accent</code></td><td>強調色，配色表名稱或色碼，預設 ocean</td></tr>
+            <tr><td><code>label-ratio</code></td><td>名稱欄比數值欄，例如 <code>3:7</code>，範圍 2:8 至 8:2</td></tr>
+            <tr><td><code>max-height</code></td><td>屬性區最大高度（px）</td></tr>
+            <tr><td><code>no-desc</code></td><td>隱藏底部說明區</td></tr>
+            <tr><td><code>show-actions</code></td><td>顯示驗證與匯出圖示按鈕</td></tr>
+            <tr><td><code>silent</code></td><td>不跳提示，只寫 console</td></tr>
+          </table>
+        </div>
+        <h3>&lt;pg-cat&gt;</h3>
+        <div class="ref-wrap">
+          <table class="ref">
+            <tr><th>屬性</th><th>說明</th></tr>
+            <tr><td><code>name</code></td><td>分類名稱</td></tr>
+            <tr><td><code>collapsed</code></td><td>預設摺疊</td></tr>
+            <tr><td><code>color</code></td><td>分類標題顏色，預設 lavender</td></tr>
+            <tr><td><code>numbering</code></td><td>自動編號，搭配 <code>number-start</code>、<code>number-prefix</code>、<code>number-suffix</code>、<code>number-color</code></td></tr>
+          </table>
+        </div>
+        <h3>事件與方法</h3>
+        <div class="ref-wrap">
+          <table class="ref">
+            <tr><th>名稱</th><th>說明</th></tr>
+            <tr><td><code>pg-change</code></td><td>值改變，detail 含 key、value、old、source</td></tr>
+            <tr><td><code>pg-select</code></td><td>選取列改變</td></tr>
+            <tr><td><code>pg-invalid</code></td><td>某列驗證失敗</td></tr>
+            <tr><td><code>getValue／setValue</code></td><td>單一欄位取值、設值，設值只更新該格</td></tr>
+            <tr><td><code>getValues()</code></td><td>回傳 { key: value }</td></tr>
+            <tr><td><code>validate()</code></td><td>驗證全部，回傳 { valid, errors }</td></tr>
+            <tr><td><code>toJSON(full)／download(full)</code></td><td>取得或下載 JSON</td></tr>
+            <tr><td><code>collapse／collapseAll</code></td><td>摺疊分類</td></tr>
+            <tr><td><code>rebuild(html)</code></td><td>換一組子標籤重建</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h3>&lt;pg-row&gt;</h3>
+        <div class="ref-wrap">
+          <table class="ref">
+            <tr><th>屬性</th><th>說明</th></tr>
+            <tr><td><code>key</code></td><td>欄位代號，請保持唯一</td></tr>
+            <tr><td><code>label</code></td><td>顯示名稱</td></tr>
+            <tr><td><code>type</code></td><td><code>text</code>、<code>number</code>、<code>select</code>、<code>date</code>、<code>date-roc</code>、<code>bool</code>、<code>rating</code>、<code>readonly</code>、<code>secret</code></td></tr>
+            <tr><td><code>value</code></td><td>初始值；bool 寫 true／false，rating pick 寫 <code>1,3</code>，scale 寫數字</td></tr>
+            <tr><td><code>icon</code></td><td>Bootstrap Icons 名稱，<code>person</code> 或 <code>bi-person</code></td></tr>
+            <tr><td><code>desc</code></td><td>簡短純文字說明；要 HTML 用 <code>&lt;pg-desc&gt;</code></td></tr>
+            <tr><td><code>unit</code></td><td>數值後的單位</td></tr>
+            <tr><td><code>placeholder</code></td><td>提示文字；select 會多一個空白選項</td></tr>
+            <tr><td><code>readonly</code>／<code>wrap</code></td><td>此列唯讀／名稱允許換行</td></tr>
+            <tr><td><code>options</code></td><td>select 選項，以 | 分隔；值和文字不同時用 <code>&lt;pg-opt value&gt;</code></td></tr>
+            <tr><td><code>on-text</code>／<code>off-text</code></td><td>bool 開關旁的文字</td></tr>
+            <tr><td><code>rating-count</code></td><td>項目數，預設 5，最多 10</td></tr>
+            <tr><td><code>rating-style</code></td><td><code>star</code>、<code>circle</code>、<code>square</code>、<code>heart</code></td></tr>
+            <tr><td><code>rating-mode</code></td><td><code>pick</code>（個別多選）或 <code>scale</code>（亮到第 N 個）</td></tr>
+            <tr><td><code>rating-min／rating-max</code></td><td>pick 為數量上下限，scale 為分數上下限</td></tr>
+            <tr><td>驗證</td><td><code>required</code>、<code>min</code>、<code>max</code>、<code>minlength</code>、<code>maxlength</code>、<code>pattern</code>、<code>exact</code>、<code>min-date</code>、<code>max-date</code></td></tr>
+          </table>
+        </div>
+        <h3>舊版設定對照</h3>
+        <div class="ref-wrap">
+          <table class="ref">
+            <tr><th>舊版 JSON</th><th>新版</th></tr>
+            <tr><td><code>title</code></td><td><code>heading</code></td></tr>
+            <tr><td><code>columnRatio: "5:5"</code></td><td><code>label-ratio="5:5"</code></td></tr>
+            <tr><td><code>categories[].expanded: false</code></td><td><code>&lt;pg-cat collapsed&gt;</code></td></tr>
+            <tr><td><code>autoNumbering</code></td><td><code>&lt;pg-cat numbering&gt;</code></td></tr>
+            <tr><td><code>type: "dropdown"</code></td><td><code>type="select"</code></td></tr>
+            <tr><td><code>type: "boolean"</code></td><td><code>type="bool"</code></td></tr>
+            <tr><td><code>type: "rating-selector"</code></td><td><code>type="rating"</code></td></tr>
+            <tr><td><code>showValueOnClick</code></td><td><code>type="secret"</code></td></tr>
+            <tr><td><code>tag</code>（彈窗）</td><td><code>&lt;pg-more&gt;</code></td></tr>
+            <tr><td><code>tag</code>（行內顯示）</td><td><code>&lt;pg-note&gt;</code></td></tr>
+            <tr><td><code>labelIcon</code></td><td><code>icon</code></td></tr>
+            <tr><td><code>labelMultiline</code></td><td><code>wrap</code>（預設改為單行）</td></tr>
+            <tr><td><code>showActionButtons</code></td><td><code>show-actions</code></td></tr>
+            <tr><td><code>showDescriptionPanel: false</code></td><td><code>no-desc</code></td></tr>
+            <tr><td><code>theme.*Color</code></td><td><code>accent</code>、<code>&lt;pg-cat color&gt;</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var live = document.getElementById('pg-live');
+  var out = document.getElementById('out');
+  var log = document.getElementById('log');
+
+  /* 密度對照的兩張用同一份內容 */
+  var shared = ''
+    + '<pg-cat name="影片">'
+    + '<pg-row key="res" label="解析度" type="select" options="1080p|1440p|4K" value="1440p"></pg-row>'
+    + '<pg-row key="fps" label="影格率" type="number" value="30" unit="fps"></pg-row>'
+    + '<pg-row key="cursor" label="顯示游標" type="bool" value="true"></pg-row>'
+    + '<pg-row key="q" label="畫質" type="rating" rating-mode="scale" value="4"></pg-row>'
+    + '</pg-cat>'
+    + '<pg-cat name="檔案">'
+    + '<pg-row key="name" label="檔名" value="lesson-02-final"></pg-row>'
+    + '<pg-row key="path" label="儲存位置" type="readonly" value="D:\\Videos\\Lessons"></pg-row>'
+    + '</pg-cat>';
+  ['pg-c', 'pg-n', 'pg-l'].forEach(function (id) { document.getElementById(id).rebuild(shared); });
+
+  /* 強調色選單 */
+  var acc = document.getElementById('c-accent');
+  Object.keys(UiProgrid.palette).filter(function (k) { return k !== 'bg'; }).forEach(function (k) {
+    var o = document.createElement('option');
+    o.value = k;
+    o.textContent = k + '　' + UiProgrid.palette[k];
+    if (k === 'ocean') o.selected = true;
+    acc.appendChild(o);
+  });
+
+  function setAttr(name, val) {
+    if (val === null || val === false || val === '') live.removeAttribute(name);
+    else live.setAttribute(name, val === true ? '' : val);
+  }
+
+  document.getElementById('c-density').addEventListener('change', function () { setAttr('density', this.value); });
+  document.getElementById('c-style').addEventListener('change', function () { setAttr('field-style', this.value); });
+  acc.addEventListener('change', function () { setAttr('accent', this.value); });
+  document.getElementById('c-maxh').addEventListener('change', function () { setAttr('max-height', this.value); });
+  document.getElementById('c-ratio').addEventListener('input', function () {
+    var r = this.value + ':' + (10 - this.value);
+    document.getElementById('c-ratio-v').textContent = r;
+    setAttr('label-ratio', r);
+  });
+  [['c-ro', 'readonly'], ['c-nodesc', 'no-desc'], ['c-actions', 'show-actions'], ['c-silent', 'silent']]
+    .forEach(function (p) {
+      document.getElementById(p[0]).addEventListener('change', function () { setAttr(p[1], this.checked); });
+    });
+
+  function show(v) { out.textContent = JSON.stringify(v, null, 2); }
+  document.getElementById('b-values').addEventListener('click', function () { show(live.getValues()); });
+  document.getElementById('b-focused').addEventListener('click', function () { show(live.getFocused()); });
+  document.getElementById('b-set').addEventListener('click', function () {
+    var n = 1 + Math.floor(Math.random() * 5);
+    live.setValue('score', n);
+    show({ setValue: 'score', value: n });
+  });
+  document.getElementById('b-validate').addEventListener('click', function () {
+    var r = live.validate();
+    show(r);
+    UiProgrid.notify(r.valid ? '全部通過' : ('有 ' + r.errors.length + ' 個欄位需要修正'), r.valid ? 'success' : 'warning');
+  });
+  var folded = false;
+  document.getElementById('b-collapse').addEventListener('click', function () {
+    folded = !folded;
+    live.collapseAll(folded);
+    show({ collapseAll: folded });
+  });
+
+  /* 事件紀錄 */
+  function addLog(cls, name, text) {
+    var d = document.createElement('div');
+    d.innerHTML = '<span class="ev ' + cls + '">' + name + '</span>';
+    d.appendChild(document.createTextNode(text));
+    log.insertBefore(d, log.firstChild);
+    while (log.children.length > 8) log.lastChild.remove();
+  }
+  live.addEventListener('pg-change', function (e) {
+    addLog('ev-change', 'pg-change', e.detail.key + ' = ' + JSON.stringify(e.detail.value) + '（' + e.detail.source + '）');
+  });
+  live.addEventListener('pg-select', function (e) { addLog('ev-select', 'pg-select', e.detail.key); });
+  live.addEventListener('pg-invalid', function (e) { addLog('ev-invalid', 'pg-invalid', e.detail.key + '：' + e.detail.message); });
+})();
+</script>
+</body>
+</html>
