@@ -11,7 +11,7 @@
 .bp-text-vanilla  { color: #DBEDD8; }
 .bp-text-yellow   { color: #E3D322; }
 .bp-text-focus    { color: #3C7BCF; }
-.bp-text-info     { color: #4171BF; }
+.bp-text-info     { color: #92B5E0; }
 .bp-text-stone    { color: #95C9DE; }
 .bp-text-indigo   { color: #7849C9; }
 .bp-text-pink     { color: #FF91D7; }
@@ -33,7 +33,7 @@
 .bp-bg-vanilla    { background-color: #DBEDD8; }
 .bp-bg-yellow     { background-color: #E3D322; }
 .bp-bg-focus      { background-color: #3C7BCF; }
-.bp-bg-info       { background-color: #4171BF; }
+.bp-bg-info       { background-color: #92B5E0; }
 .bp-bg-stone      { background-color: #95C9DE; }
 .bp-bg-indigo     { background-color: #7849C9; }
 .bp-bg-pink       { background-color: #FF91D7; }
@@ -54,7 +54,7 @@
 .bp-border-vanilla    { border: 1px solid #DBEDD8; }
 .bp-border-yellow     { border: 1px solid #E3D322; }
 .bp-border-focus      { border: 1px solid #3C7BCF; }
-.bp-border-info       { border: 1px solid #4171BF; }
+.bp-border-info       { border: 1px solid #92B5E0; }
 .bp-border-stone      { border: 1px solid #95C9DE; }
 .bp-border-indigo     { border: 1px solid #7849C9; }
 .bp-border-pink       { border: 1px solid #FF91D7; }
@@ -62,9 +62,10 @@
 .bp-border-teal       { border: 1px solid #0DA591; }
 .bp-border-ocean      { border: 1px solid #1CCAE8; }
 /* ── Font sizes ──────────────────────────── */
-.fs-superlarge        { font-size: 3.75rem; }
-.fs-extralarge        { font-size: 3rem; }
-.fs-xlarge            { font-size: 2.5rem; }
+.fs-largest        { font-size: 5.25rem; }
+.fs-superlarge        { font-size: 4.5rem; }
+.fs-extralarge        { font-size: 3.6rem; }
+.fs-xlarge            { font-size: 2.75rem; }
 .fs-larger            { font-size: 2rem; }
 .fs-large             { font-size: 1.5rem; }
 .fs-regular           { font-size: 1rem; }
@@ -83,17 +84,17 @@
 .w-20 { width: 20%; }
 
 /* ── Margin utilities (level 6–8) ────────── */
-.m-6                { margin: 4.5rem !important; }
-.mt-6, .my-6        { margin-top: 4.5rem !important; }
-.mb-6, .my-6        { margin-bottom: 4.5rem !important; }
-.ms-6, .mx-6        { margin-left: 4.5rem !important; }
-.me-6, .mx-6        { margin-right: 4.5rem !important; }
+.m-6                { margin: 4.75rem !important; }
+.mt-6, .my-6        { margin-top: 4.75rem !important; }
+.mb-6, .my-6        { margin-bottom: 4.75rem !important; }
+.ms-6, .mx-6        { margin-left: 4.75rem !important; }
+.me-6, .mx-6        { margin-right: 4.75rem !important; }
 
-.m-7                { margin: 5.75rem !important; }
-.mt-7, .my-7        { margin-top: 5.75rem !important; }
-.mb-7, .my-7        { margin-bottom: 5.75rem !important; }
-.ms-7, .mx-7        { margin-left: 5.75rem !important; }
-.me-7, .mx-7        { margin-right: 5.75rem !important; }
+.m-7                { margin: 6rem !important; }
+.mt-7, .my-7        { margin-top: 6rem !important; }
+.mb-7, .my-7        { margin-bottom: 6rem !important; }
+.ms-7, .mx-7        { margin-left: 6rem !important; }
+.me-7, .mx-7        { margin-right: 6rem !important; }
 
 .m-8                { margin: 8rem !important; }
 .mt-8, .my-8        { margin-top: 8rem !important; }
@@ -102,17 +103,17 @@
 .me-8, .mx-8        { margin-right: 8rem !important; }
 
 /* ── Padding utilities (level 6–8) ──────── */
-.p-6                { padding: 4.5rem !important; }
-.pt-6, .py-6        { padding-top: 4.5rem !important; }
-.pb-6, .py-6        { padding-bottom: 4.5rem !important; }
-.ps-6, .px-6        { padding-left: 4.5rem !important; }
-.pe-6, .px-6        { padding-right: 4.5rem !important; }
+.p-6                { padding: 4.75rem !important; }
+.pt-6, .py-6        { padding-top: 4.75rem !important; }
+.pb-6, .py-6        { padding-bottom: 4.75rem !important; }
+.ps-6, .px-6        { padding-left: 4.75rem !important; }
+.pe-6, .px-6        { padding-right: 4.75rem !important; }
 
-.p-7                { padding: 5.75rem !important; }
-.pt-7, .py-7        { padding-top: 5.75rem !important; }
-.pb-7, .py-7        { padding-bottom: 5.75rem !important; }
-.ps-7, .px-7        { padding-left: 5.75rem !important; }
-.pe-7, .px-7        { padding-right: 5.75rem !important; }
+.p-7                { padding: 6rem !important; }
+.pt-7, .py-7        { padding-top: 6rem !important; }
+.pb-7, .py-7        { padding-bottom: 6rem !important; }
+.ps-7, .px-7        { padding-left: 6rem !important; }
+.pe-7, .px-7        { padding-right: 6rem !important; }
 
 .p-8                { padding: 8rem !important; }
 .pt-8, .py-8        { padding-top: 8rem !important; }
@@ -129,12 +130,12 @@
 .bp-ind-7 { padding-left: 3.5em; }
 .bp-ind-8 { padding-left: 4.0em; }
 
-.bp-lnh-1 { line-height: 4.75em; }
-.bp-lnh-2 { line-height: 4.25em; }
-.bp-lnh-3 { line-height: 3.5em; }
-.bp-lnh-4 { line-height: 2.75em; }
-.bp-lnh-5 { line-height: 2em; }
-.bp-lnh-6 { line-height: 1.8em; }
+.bp-lnh-1 { line-height: 5.5em; }
+.bp-lnh-2 { line-height: 4.75em; }
+.bp-lnh-3 { line-height: 4em; }
+.bp-lnh-4 { line-height: 3.25em; }
+.bp-lnh-5 { line-height: 2.5em; }
+.bp-lnh-6 { line-height: 2em; }
 .bp-lnh-7 { line-height: 1.6em; }
 .bp-lnh-8 { line-height: 1.25em; }
 .bp-lnh-9 { line-height: 1em; }
@@ -143,12 +144,12 @@
 .bp-lnh-12 { line-height: 0.6em; }
 
 blockquote {
-    margin: 16px 0;
-    font-size: 1.25rem;
-    padding: 16px 24px 16px 60px;
+    margin: 18px 0;
+    font-size: 1.4rem;
+    padding: 16px 28px 16px 60px;
     background: #333333;
     color: #C6C7BD;
-    line-height: 1.5;
+    line-height: 1.75;
     position: relative;
     overflow: hidden;
 }
@@ -236,5 +237,5 @@ blockquote::before {
 .custom-list li {
   display: flex;
   align-items: flex-start; /* 確保圖示與第一行文字頂端對齊 */
-  margin-bottom: 9px; /* 項目之間的間距 */
+  margin-bottom: 10px; /* 項目之間的間距 */
 }
