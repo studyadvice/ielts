@@ -1458,9 +1458,9 @@ class SliderShow extends HTMLElement {
           justify-content: center;
           align-items: center;
           gap: 5px;
-          margin-top: 4px;
-          margin-bottom: 2px;
-          padding: 0 6px;
+          margin-top: 16px;
+          margin-bottom: 9px;
+          padding: 0 9px;
         }
 
         slider-show .dot {
@@ -1479,8 +1479,8 @@ class SliderShow extends HTMLElement {
         }
 
         slider-show .step-dot {
-          width: 18px;
-          height: 18px;
+          width: 20px;
+          height: 20px;
           box-sizing: border-box;
           border-radius: 50%;
           border: 2px solid var(--dot-color, rgba(198, 199, 189, 0.82));
@@ -1490,8 +1490,8 @@ class SliderShow extends HTMLElement {
           flex: none;
         }
         slider-show .step-dot.active {
-          width: 22px;
-          height: 22px;
+          width: 28px;
+          height: 28px;
           background: var(--active-dot-color, #c6c7bd);
           border-color: var(--active-dot-color, #c6c7bd);
         }
