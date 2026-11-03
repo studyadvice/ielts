@@ -2,7 +2,7 @@
 
 把多個 [Bootstrap Icons](https://icons.getbootstrap.com/) 組成播放動畫的 Web Component。只要一個語意標籤 `<ui-icon-anim>`，不需要額外的 CSS 檔，也不使用 Shadow DOM。
 
-![version](https://img.shields.io/badge/version-1.1.0-7849C9) ![license](https://img.shields.io/badge/license-MIT-27AE60) ![dependency](https://img.shields.io/badge/requires-Bootstrap%20Icons-82C8E5)
+![version](https://img.shields.io/badge/version-1.2.0-7849C9) ![license](https://img.shields.io/badge/license-MIT-27AE60) ![dependency](https://img.shields.io/badge/requires-Bootstrap%20Icons-82C8E5)
 
 ## 特色
 
@@ -13,6 +13,7 @@
 - 按鈕模式：點擊前顯示按鈕文字，點擊後才開始播放
 - 圖示清單可從其他元素擷取，預設讀取 `#global_icon_list`
 - 播放完畢可自動移除或隱藏元件，並顯示指定 id 的區塊
+- 播放完畢可跳轉到指定網址
 - 提供 `play()`、`pause()`、`reset()`、`goTo()` 方法與完整事件
 - 元件離開可視範圍時自動暫停，節省效能
 
@@ -24,8 +25,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="ui-icon-anim.js"></script>
 ```
-
-若未載入 Bootstrap Icons，元件會在頁面頂端顯示提示訊息。
 
 ## 快速開始
 
@@ -103,6 +102,26 @@
 - 同時設定 `remove-on-end` 時，元件移除完成後才顯示目標
 - 移除被 `before-remove` 的 `preventDefault()` 取消時，目標仍會照常顯示
 
+## 播放結束跳頁
+
+```html
+<ui-icon-anim button-text="前往" button-icon="bi-box-arrow-right"
+  icons="bi-1-circle-fill,bi-2-circle-fill,bi-3-circle-fill"
+  interval="500" loop="false"
+  href="next.html" href-delay="300"></ui-icon-anim>
+```
+
+- 只在 `loop="false"` 時生效
+- 結束流程依序為：`anim-end`、移除或隱藏（`remove-on-end`）、顯示目標（`reveal-on-end`）、跳轉（`href`）
+- 跳轉前觸發可取消的 `before-navigate` 事件
+- `href-target="_blank"` 是在動畫結束後才開啟新視窗，不屬於使用者直接操作，可能被瀏覽器的彈出視窗封鎖攔下；一般建議使用預設的 `_self`
+
+```js
+document.addEventListener('before-navigate', e => {
+  if (!confirmed) e.preventDefault();
+});
+```
+
 ## 屬性
 
 | 屬性 | 預設 | 說明 |
@@ -126,6 +145,9 @@
 | `reveal-on-end` | 無 | 播完要顯示的元素 id，逗點分隔，需 `loop="false"` |
 | `reveal-effect` | `fade` | `fade`、`slide`、`none` |
 | `reveal-delay` | `0` | 顯示前延遲（毫秒） |
+| `href` | 無 | 播放結束後跳轉的網址，需 `loop="false"` |
+| `href-target` | `_self` | `_self`、`_blank` 或視窗名稱 |
+| `href-delay` | `0` | 跳轉前延遲（毫秒） |
 | `button-text` | 無 | 按鈕文字，設定後進入按鈕模式 |
 | `button-icon` | 無 | 按鈕文字前的圖示 |
 | `button-color` | `sky` | 按鈕色彩 |
@@ -167,6 +189,9 @@ el.setAttribute('mode', 'sequence'); // 屬性變更會自動重新開始
 | `removed` | `element` | 刪除後於原父元素觸發 |
 | `hidden` | 無 | `remove-mode="hide"` 隱藏後觸發 |
 | `revealed` | `ids`、`elements`、`source` | `reveal-on-end` 目標顯示後觸發 |
+| `before-navigate` | `href`、`target`、`source` | 跳轉前，可 `preventDefault()` 阻止 |
+
+元件已從 DOM 移除時，`revealed` 與 `before-navigate` 改在 `document` 上觸發，可用 `e.detail.source` 判斷來源元件。
 
 ```js
 document.addEventListener('before-remove', e => {
@@ -190,18 +215,6 @@ document.addEventListener('before-remove', e => {
 
 也可以從 `UiIconAnim.PALETTE` 取得完整對照表。
 
-## 示範
-
-開啟 `ui-icon-anim-demo-11-04-26.html` 可查看所有範例、程式碼對照、控制面板與事件紀錄。
-
-## 瀏覽器支援
-
-支援 Custom Elements v1、IntersectionObserver、MutationObserver 與 CSS `max()` 的現代瀏覽器（Chrome、Edge、Firefox、Safari 最新版本）。
-
-## 版本紀錄
-
-- **1.1.0**：新增按鈕模式（`button-text`、`button-icon`、`button-color`、`button-keep`、`button-restore`）、`trigger-click` 事件與 `armed` 屬性；新增 `icons-from`、`colors-from` 與 `#global_icon_list` 預設來源；`icons` 支援空白與換行分隔。
-- **1.0.0**：初版。
 
 ## 授權
 
@@ -209,24 +222,3 @@ document.addEventListener('before-remove', e => {
 
 ```
 MIT License
-
-Copyright (c) 2026 dodowildlife
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
