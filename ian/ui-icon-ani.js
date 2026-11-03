@@ -1,6 +1,5 @@
 /*!
- * ui-icon-anim.js  v1.1.0
- *
+ * ui-icon-anim.js  v1.2.0
  * 基本用法：
  *   <ui-icon-anim icons="bi-heart,bi-star" interval="800" mode="replace" colors="pink,yellow"></ui-icon-anim>
  *
@@ -25,6 +24,9 @@
  *   reveal-on-end  播放結束時要顯示的元素 id，逗點分隔，可帶 # 或不帶
  *   reveal-effect  fade / slide / none，預設 fade
  *   reveal-delay   顯示前的延遲（毫秒），預設 0
+ *   href           播放結束後跳轉的網址（loop="false" 時才生效）
+ *   href-target    _self（預設）、_blank 或其他視窗名稱
+ *   href-delay     跳轉前的延遲（毫秒），預設 0
  *
  * 按鈕模式（設定 button-text 或 button-icon 即啟用）：
  *   button-text     點擊前顯示的按鈕文字，例如「開始」
@@ -45,11 +47,18 @@
  *   removed        元件刪除後在原父元素上觸發，detail: { element }
  *   hidden         remove-mode="hide" 隱藏後觸發
  *   revealed       reveal-on-end 目標顯示後觸發，detail: { ids, elements, source }
+ *   before-navigate  跳轉前觸發，可 preventDefault() 阻止，detail: { href, target, source }
+ *
+ * 結束流程順序：anim-end → 移除或隱藏（remove-on-end）→ 顯示目標（reveal-on-end）→ 跳轉（href）。
+ * 元件已從 DOM 移除時，revealed 與 before-navigate 改在 document 上觸發。
+ * href-target="_blank" 在非使用者操作的時機開啟新視窗，可能被瀏覽器的彈出視窗封鎖攔下。
  *
  * 時間規則：最後一個圖示停留一個 interval（sequence 模式為 hold）後，視為一輪結束。
  * 若 reveal-on-end 與 remove-on-end 同時設定，會在元件移除或隱藏完成後才顯示目標；
  * 若移除被 preventDefault() 取消，仍會照常顯示目標。
  * icons-from、colors-from 的來源元素內容變動時，元件會自動重新開始。
+ *
+ * MIT License
  */
 (() => {
   'use strict';
@@ -605,6 +614,7 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
       this._emit('anim-end', { cycle: this._cycle, removeOnEnd: removeOn, revealTargets: reveal });
       if (!removeOn) {
         this._reveal(reveal);
+        this._navigate();
         if (this._isButtonMode() && toBool(this.getAttribute('button-restore'), false)) this._resetState();
         return;
       }
@@ -619,7 +629,7 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
     _doRemove(reveal) {
       const mode = this._removeMode();
       const ok = this._emit('before-remove', { mode }, true);
-      if (!ok) { this._reveal(reveal); return; }
+      if (!ok) { this._reveal(reveal); this._navigate(); return; }
       const eff = (this.getAttribute('remove-effect') || 'fade').toLowerCase();
       const dur = eff === 'none' ? 0 : LEAVE_MS;
       if (dur) this.classList.add(eff === 'shrink' ? 'uia-leave-shrink' : 'uia-leave-fade');
@@ -634,7 +644,29 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
           if (parent) parent.dispatchEvent(new CustomEvent('removed', { bubbles: true, detail: { element: this } }));
         }
         this._reveal(reveal);
+        this._navigate();
       }, dur);
+    }
+
+    _navigate() {
+      const href = (this.getAttribute('href') || '').trim();
+      if (!href) return;
+      const target = (this.getAttribute('href-target') || '_self').trim() || '_self';
+      const go = () => {
+        const host = this.isConnected ? this : document;
+        const ok = host.dispatchEvent(new CustomEvent('before-navigate', {
+          bubbles: true, cancelable: true, detail: { href, target, source: this }
+        }));
+        if (!ok) return;
+        if (target === '_self') {
+          window.location.assign(href);
+        } else {
+          const w = window.open(href, target);
+          if (!w) console.warn('[ui-icon-anim] 新視窗被瀏覽器攔截，請允許彈出視窗或改用 href-target="_self"。', this);
+        }
+      };
+      const d = toInt(this.getAttribute('href-delay'), 0, 0);
+      if (d) setTimeout(go, d); else go();
     }
 
     _reveal(ids) {
@@ -685,6 +717,9 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
       }
       if (this.loop && this.hasAttribute('reveal-on-end')) {
         console.warn('[ui-icon-anim] reveal-on-end 只在 loop="false" 時生效，目前會被忽略。', this);
+      }
+      if (this.loop && (this.getAttribute('href') || '').trim()) {
+        console.warn('[ui-icon-anim] href 只在 loop="false" 時生效，目前會被忽略。', this);
       }
       if (this.loop && this.hasAttribute('button-restore')) {
         console.warn('[ui-icon-anim] button-restore 只在 loop="false" 時生效；循環播放時可呼叫 reset() 回到按鈕狀態。', this);
