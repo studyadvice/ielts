@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-steps 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .page{max-width:1600px;margin:0 auto;padding:32px 40px 64px 40px;}
+  h1{font-size:2rem;color:#1CCAE8;margin:0 0 8px 0;}
+  h2{font-size:1.4rem;color:#C3A5E5;margin:48px 0 8px 0;padding:0 0 8px 0;border-bottom:1px solid #C3A5E5;}
+  h3{font-size:1.1rem;color:#82C8E5;margin:24px 0 8px 0;}
+  .lead-text{color:#92B5E0;font-size:1rem;margin:0 0 16px 0;}
+  .note{color:#DBEDD8;font-size:0.95rem;margin:0 0 16px 0;}
+  .demo-live{margin:16px 0;}
+  pre.demo-code{background:#0C0D0C;color:#DBEDD8;border:1px solid #82C8E5;border-radius:8px;padding:16px;font-size:0.85rem;max-height:420px;overflow:auto;margin:0;}
+  code{color:#B3DE73;}
+  a{color:#82C8E5;}
+  .ref{--bs-table-bg:transparent;--bs-table-color:#C6C7BD;--bs-table-border-color:#C6C7BD;font-size:0.9rem;}
+  .ref th{color:#E3D322;}
+  .ref td:first-child{color:#B3DE73;font-family:monospace;white-space:nowrap;}
+  .ver{border-left:4px solid #27AE60;padding:8px 16px;margin:8px 0;}
+  .ver strong{color:#27AE60;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>&lt;ui-steps&gt; 流程與時間軸元件</h1>
+  <p class="lead-text">步驟可橫向或直向排列，用連接線與箭頭串起來。帶 <code>source</code> 的步驟可在內容區顯示內容，內容裡帶 <code>detail</code> 的元素在下方細節區顯示更多。屬性約定見 <a href="ui-conventions.html">ui-conventions.html</a>。</p>
+
+  <h2>版本紀錄</h2>
+  <div class="ver"><strong>v1.0（11-03-26）</strong>　初版。</div>
+
+  <!-- ===================== 範例一 ===================== -->
+  <h2>範例一：橫向訂單流程</h2>
+  <p class="note"><code>current="3"</code> 讓前兩步自動成為完成、第三步為目前；完成的步驟改顯示 <code>done-icon</code>。已走過的連接線與箭頭使用啟用色。點擊步驟顯示內容，內容中的按鈕在下方開啟細節。</p>
+  <div class="demo-live" id="demo1"></div>
+  <pre class="demo-code" id="demo1-code"></pre>
+  <script type="text/plain" data-demo="demo1">
+<ui-steps title="訂單進度" current="3" numbered done-icon="check-lg" bordered
+  line arrows arrow-shape="chevron" active="s1-ship"
+  panel-title="{label}" detail-title="更多資訊">
+  <step-item label="下單" note="11/01 10:20" source="s1-order"></step-item>
+  <step-item label="付款" note="11/01 10:25" source="s1-pay"></step-item>
+  <step-item label="出貨" note="處理中" source="s1-ship" badge="!"></step-item>
+  <step-item label="配送" source="s1-deliver"></step-item>
+  <step-item label="完成" source="s1-done"></step-item>
+</ui-steps>
+
+<div id="s1-order" hidden><p>訂單編號 A20261101，共 3 件商品。</p><button detail="s1-items">看商品明細</button></div>
+<div id="s1-pay" hidden><p>已使用信用卡付款，金額 2,380 元。</p></div>
+<div id="s1-ship" hidden>
+  <p>倉庫正在包裝，預計今日出貨。</p>
+  <button detail="s1-items">商品明細</button>
+  <button detail="s1-addr" color="orange" detail-title="收件資訊">收件地址</button>
+</div>
+<div id="s1-deliver" hidden><p>尚未開始配送。</p></div>
+<div id="s1-done" hidden><p>完成後可在這裡填寫評價。</p></div>
+<div id="s1-items" hidden><ul><li>帆布托特包 × 1</li><li>保溫杯 × 1</li><li>筆記本 × 1</li></ul></div>
+<div id="s1-addr" hidden><p>台北市中正區範例路 1 號，王小明收。</p></div>
+  </script>
+
+  <!-- ===================== 範例二 ===================== -->
+  <h2>範例二：直向時間軸，內容區在右側</h2>
+  <p class="note"><code>direction="vertical"</code> 時，內容區放在右側，比例由 <code>columns</code> 決定。用 <code>status</code> 個別指定狀態，用 <code>color</code> 個別上色；含停用步驟與外部連結步驟。連接線改用虛線，長度固定。</p>
+  <div class="demo-live" id="demo2"></div>
+  <pre class="demo-code" id="demo2-code"></pre>
+  <script type="text/plain" data-demo="demo2">
+<ui-steps direction="vertical" columns="4,8" node-shape="rounded" node-size="44"
+  line="dashed" line-color="lavender" compact connector-length="28"
+  accent="lavender" bordered panel-title="{label}" active="s2-plan" toggle>
+  <step-item label="需求訪談" note="9 月" icon="chat-dots-fill" status="done" source="s2-talk"></step-item>
+  <step-item label="規劃設計" note="10 月" icon="pencil-square" status="current" source="s2-plan"></step-item>
+  <step-item label="開發" note="11 月" icon="code-slash" source="s2-dev" badge="3"></step-item>
+  <step-item label="內部測試" note="暫停中" icon="bug-fill" disabled></step-item>
+  <step-item label="上線" note="12 月" icon="rocket-takeoff-fill" color="orange" source="s2-launch"></step-item>
+  <step-item label="專案說明" note="另開視窗" icon="box-arrow-up-right" color="sky"
+    href="https://getbootstrap.com" target="_blank"></step-item>
+</ui-steps>
+
+<template id="s2-talk"><p>與客戶訪談三次，確認核心需求與預算。</p></template>
+<template id="s2-plan">
+  <p>完成版面與流程設計，正在確認細節。</p>
+  <button detail="s2-wire" color="lavender">線框圖說明</button>
+  <button detail="s2-risk" color="warning" toggle>風險（再按一次收合）</button>
+</template>
+<template id="s2-dev"><p>前台、後台與資料庫同步進行。</p></template>
+<template id="s2-launch"><p>預計 12 月中旬正式上線。</p></template>
+<template id="s2-wire"><p>共 12 個頁面，首頁與商品頁已定稿。</p></template>
+<template id="s2-risk"><p>第三方金流審核時間可能延後一週。</p></template>
+  </script>
+
+  <!-- ===================== 範例三 ===================== -->
+  <h2>範例三：純進度條，不帶內容</h2>
+  <p class="note">步驟都沒有 <code>source</code> 時，不會建立內容區，只顯示進度。用 <code>label-width</code> 讓每一步等寬，箭頭改成圓框三角形。</p>
+  <div class="demo-live" id="demo3"></div>
+  <pre class="demo-code" id="demo3-code"></pre>
+  <script type="text/plain" data-demo="demo3">
+<ui-steps current="2" node-size="36" icon-size="1" label-width="96" color="vanilla" accent="pink"
+  done-color="teal" icon-color="base" line="dotted" line-width="3"
+  arrows arrow-style="circle" arrow-shape="triangle" arrow-size="24" arrow-active-color="teal">
+  <step-item label="填寫資料" icon="person-fill"></step-item>
+  <step-item label="上傳證件" icon="upload"></step-item>
+  <step-item label="審核" icon="hourglass-split"></step-item>
+  <step-item label="開通" icon="check2-circle"></step-item>
+</ui-steps>
+  </script>
+
+  <!-- ===================== 屬性一覽 ===================== -->
+  <h2>屬性一覽</h2>
+
+  <h3>容器 &lt;ui-steps&gt;</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>title</td><td>無</td><td>元件標題</td></tr>
+      <tr><td>direction</td><td>horizontal</td><td>horizontal（橫向，內容在下）、vertical（直向，內容在右）</td></tr>
+      <tr><td>columns</td><td>4,8</td><td>直向時步驟與內容區的比例</td></tr>
+      <tr><td>current</td><td>無</td><td>目前步驟（從 1 起算），之前的自動成為完成</td></tr>
+      <tr><td>numbered</td><td>否</td><td>沒有圖示的節點顯示序號</td></tr>
+      <tr><td>done-icon</td><td>無</td><td>完成步驟改顯示的圖示</td></tr>
+      <tr><td>node-size</td><td>48</td><td>節點尺寸（px）</td></tr>
+      <tr><td>node-shape</td><td>circle</td><td>circle、rounded、square</td></tr>
+      <tr><td>icon-size</td><td>1.3</td><td>圖示大小（rem）</td></tr>
+      <tr><td>color</td><td>shell</td><td>未完成節點顏色</td></tr>
+      <tr><td>accent</td><td>ocean</td><td>目前步驟顏色</td></tr>
+      <tr><td>done-color</td><td>safe</td><td>完成步驟顏色</td></tr>
+      <tr><td>icon-color</td><td>底層背景色</td><td>圖示與序號顏色</td></tr>
+      <tr><td>label-width</td><td>自動</td><td>橫向時每一步寬度（px）</td></tr>
+      <tr><td>line</td><td>不顯示</td><td>連接線：solid、dashed、dotted</td></tr>
+      <tr><td>line-width</td><td>2</td><td>連接線粗細（px）</td></tr>
+      <tr><td>line-color</td><td>shell</td><td>連接線顏色</td></tr>
+      <tr><td>line-active-color</td><td>同 accent</td><td>已走過的連接線顏色</td></tr>
+      <tr><td>connector-length</td><td>48</td><td>連接段最短長度（px）</td></tr>
+      <tr><td>compact</td><td>否</td><td>連接段固定為 connector-length，不延展</td></tr>
+      <tr><td>arrows</td><td>不顯示</td><td>連接段中央顯示箭頭，直向時自動朝下</td></tr>
+      <tr><td>arrow-size、arrow-shape、arrow-style、arrow-icon、arrow-color、arrow-active-color</td><td>20、arrow、plain、無、shell、accent</td><td>與 ui-drill 相同</td></tr>
+      <tr><td>gap</td><td>24</td><td>步驟區與內容區距離（px）</td></tr>
+      <tr><td>padding</td><td>16</td><td>外框內距（px）</td></tr>
+      <tr><td>bordered</td><td>否</td><td>外框與內容區分隔線</td></tr>
+      <tr><td>panel-title</td><td>無</td><td>內容區標題，可用 {label}</td></tr>
+      <tr><td>detail-title</td><td>無</td><td>細節區預設標題</td></tr>
+      <tr><td>panel-height</td><td>無</td><td>內容區最大高度（px），超出時捲動</td></tr>
+      <tr><td>placeholder</td><td>請點選步驟。</td><td>未選擇時的提示</td></tr>
+      <tr><td>active、active-detail</td><td>無</td><td>初始選取的 source、初始開啟的 detail</td></tr>
+      <tr><td>trigger、detail-trigger</td><td>click</td><td>click、hover</td></tr>
+      <tr><td>toggle</td><td>否</td><td>再點一次已選步驟時取消</td></tr>
+      <tr><td>button-color</td><td>ocean</td><td>內容中帶 detail 元素的預設配色</td></tr>
+    </tbody>
+  </table>
+
+  <h3>步驟 &lt;step-item&gt;</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>label、note、tooltip</td><td>名稱、次要文字、滑鼠提示</td></tr>
+      <tr><td>icon、badge</td><td>圖示、角標</td></tr>
+      <tr><td>status</td><td>done、current、todo，優先於 current</td></tr>
+      <tr><td>color、icon-color</td><td>本步驟節點顏色（不論狀態）、圖示顏色</td></tr>
+      <tr><td>source</td><td>內容區顯示的內容</td></tr>
+      <tr><td>detail</td><td>選取時同時開啟的細節</td></tr>
+      <tr><td>disabled</td><td>停用</td></tr>
+      <tr><td>href、target</td><td>改為連結</td></tr>
+    </tbody>
+  </table>
+
+  <h3>內容中的觸發元素</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>detail</td><td>在細節區顯示對應內容</td></tr>
+      <tr><td>color</td><td>按鈕配色；已有 btn 類別時不套用</td></tr>
+      <tr><td>toggle</td><td>再按一次收起細節</td></tr>
+      <tr><td>detail-title</td><td>細節區標題</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script src="ui-steps.js"></script>
+<script>
+  // 示範頁專用：同一份原始碼同時渲染成元件與程式碼區塊
+  document.querySelectorAll('script[type="text/plain"][data-demo]').forEach(src => {
+    const lines = src.textContent.replace(/^\n+|\s+$/g, '').split('\n');
+    const indent = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length));
+    const code = lines.map(l => l.slice(indent)).join('\n');
+    document.getElementById(src.dataset.demo).innerHTML = code;
+    document.getElementById(src.dataset.demo + '-code').textContent = code;
+  });
+</script>
+</body>
+</html>
