@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-reading2 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .page{max-width:1600px;margin:0 auto;padding:32px 40px 64px 40px;}
+  h1{font-size:2rem;color:#1CCAE8;margin:0 0 8px 0;}
+  h2{font-size:1.4rem;color:#C3A5E5;margin:48px 0 8px 0;padding:0 0 8px 0;border-bottom:1px solid #C3A5E5;}
+  .lead-text{color:#92B5E0;font-size:1rem;margin:0 0 16px 0;}
+  .note{color:#DBEDD8;font-size:0.95rem;margin:0 0 16px 0;}
+  .demo-live{margin:16px 0;}
+  pre.demo-code{background:#0C0D0C;color:#DBEDD8;border:1px solid #82C8E5;border-radius:8px;padding:16px;font-size:0.85rem;max-height:420px;overflow:auto;margin:0;}
+  code{color:#B3DE73;}
+  a{color:#82C8E5;}
+  .ver{border-left:4px solid #27AE60;padding:8px 16px;margin:8px 0;}
+  .ver strong{color:#27AE60;}
+  .my-panel{border:1px solid #E3D322;border-radius:8px;padding:16px;margin:16px 0 0 0;min-height:64px;color:#DBEDD8;}
+  .passage{font-size:1.1rem;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>ui-reading2 閱讀輔助元件組</h1>
+  <p class="lead-text">包含 <code>&lt;layer-switch&gt;</code>、<code>&lt;ui-spotlight&gt;</code>、<code>&lt;collocation-map&gt;</code>、<code>&lt;cm-group&gt;</code>。遵守 <a href="ui-conventions.html">ui 元件共同約定</a>，可直接放進 ui-drill、ui-steps、ui-cards 的內容來源中。完整屬性見 README.md。</p>
+
+  <h2>版本紀錄</h2>
+  <div class="ver"><strong>v2.0（11-03-26）</strong>　更新品牌色；改為自訂元素，可嵌套在其他 ui 元件中；屬性對齊共同約定（<code>color</code>、<code>tooltip</code>、<code>detail</code>、<code>active</code>、<code>title</code>、<code>placeholder</code>、<code>disabled</code>）；沒有 <code>target</code> 時自動建立內建內容區；移除過渡動畫；低透明度底色改用實色。舊屬性名稱與 <code>&lt;spotlight&gt;</code> 仍可用。</div>
+
+  <!-- ===================== 範例一 ===================== -->
+  <h2>範例一：分層標記，內建內容區</h2>
+  <p class="note">沒有 <code>target</code> 時，自動在文字下方建立內容區。按鈕切換文法層；標記帶 <code>detail</code>，滑鼠移上去時內容區顯示補充說明，移開後還原。<code>active</code> 讓第一層一開始就顯示說明。</p>
+  <div class="demo-live" id="demo1"></div>
+  <pre class="demo-code" id="demo1-code"></pre>
+  <script type="text/plain" data-demo="demo1">
+<layer-switch title="句子結構" active="c1" panel-title="{label}" bordered>
+  <ls-text class="passage">
+    <ls-mark layer="c1" detail="r1-note-c1">Like their peers,</ls-mark>
+    <ls-mark layer="c2" weight="bold">adults</ls-mark>
+    <ls-mark layer="c3">caring for an aging spouse</ls-mark>
+    often <ls-mark layer="c4" tooltip="主要動詞">report</ls-mark> high levels of stress.
+  </ls-text>
+  <ls-layer name="c1" label="介系詞片語" source="r1-c1" color="ocean" icon="signpost-split"></ls-layer>
+  <ls-layer name="c2" label="主詞" source="r1-c2" color="yellow" icon="person-fill"></ls-layer>
+  <ls-layer name="c3" label="分詞片語" source="r1-c3" color="lavender"></ls-layer>
+  <ls-layer name="c4" label="動詞" source="r1-c4" color="special"></ls-layer>
+</layer-switch>
+
+<template id="r1-c1"><p>介系詞片語當副詞，修飾整個主句。</p></template>
+<template id="r1-c2"><p>主詞是 adults，後面接分詞片語作補充。</p></template>
+<template id="r1-c3"><p>現在分詞片語修飾 adults，表示「正在照顧年邁配偶的」。</p></template>
+<template id="r1-c4"><p>主要動詞 report，搭配 high levels of。</p></template>
+<template id="r1-note-c1"><p><strong>補充：</strong>Like 在這裡是介系詞，意思是「如同」。</p></template>
+  </script>
+
+  <!-- ===================== 範例二 ===================== -->
+  <h2>範例二：多層同時啟動，外部目標</h2>
+  <p class="note"><code>multi</code> 允許多層同時亮起；<code>mark-style="box"</code> 用外框標記；<code>toggle-style="dot"</code> 改成圓點按鈕並放在下方。說明顯示在你自己設計的 <code>target</code> 區塊；標記用 <code>detail-trigger="click"</code> 點擊鎖定。</p>
+  <div class="demo-live" id="demo2"></div>
+  <pre class="demo-code" id="demo2-code"></pre>
+  <script type="text/plain" data-demo="demo2">
+<layer-switch multi mark-style="box" toggle-style="dot" toggle-position="bottom"
+  target="r2-panel" detail-trigger="click" body-dim="0.85" palette="pink,teal,orange">
+  <ls-text class="passage">
+    The <ls-mark layer="adj">rapid</ls-mark> <ls-mark layer="n">growth</ls-mark> of
+    <ls-mark layer="adj">online</ls-mark> <ls-mark layer="n" detail="r2-learning">learning</ls-mark>
+    <ls-mark layer="v">has changed</ls-mark> how students <ls-mark layer="v">study</ls-mark>.
+  </ls-text>
+  <ls-layer name="adj" label="形容詞" source="r2-adj"></ls-layer>
+  <ls-layer name="n" label="名詞" source="r2-n"></ls-layer>
+  <ls-layer name="v" label="動詞" source="r2-v"></ls-layer>
+</layer-switch>
+<div id="r2-panel" class="my-panel"></div>
+
+<template id="r2-adj"><p>形容詞：rapid、online。</p></template>
+<template id="r2-n"><p>名詞：growth、learning。</p></template>
+<template id="r2-v"><p>動詞：has changed、study。</p></template>
+<template id="r2-learning"><p>learning 在這裡是動名詞當名詞用。</p></template>
+  </script>
+
+  <!-- ===================== 範例三 ===================== -->
+  <h2>範例三：聚光</h2>
+  <p class="note">點擊段落，其餘內容變暗；再點一次、點遮罩或按 Esc 關閉。第二段用滑過觸發，第三段用虛線外框。</p>
+  <div class="demo-live" id="demo3"></div>
+  <pre class="demo-code" id="demo3-code"></pre>
+  <script type="text/plain" data-demo="demo3">
+<ui-spotlight color="focus" padding="12">
+  <p>第一段：點我聚光。遮罩透明度預設 0.82，最低 0.78。</p>
+</ui-spotlight>
+<ui-spotlight color="yellow" trigger="hover" padding="12" hint-icon="hand-index">
+  <p>第二段：滑鼠移上來就聚光，移開就恢復。</p>
+</ui-spotlight>
+<ui-spotlight color="pink" ring-style="dashed" ring-width="3" ring-radius="4" dim="0.3" padding="12">
+  <p>第三段：虛線外框，其他段落變暗程度較輕。</p>
+</ui-spotlight>
+  </script>
+
+  <!-- ===================== 範例四 ===================== -->
+  <h2>範例四：搭配詞圖與共用內容區</h2>
+  <p class="note"><code>&lt;cm-group&gt;</code> 裡的搭配詞圖都沒有 <code>target</code> 時，群組自動建立一個共用內容區。第一張滑過顯示例句；第二張錨點在右，改用點擊鎖定，並用 <code>active-detail</code> 預先鎖定一項。</p>
+  <div class="demo-live" id="demo4"></div>
+  <pre class="demo-code" id="demo4-code"></pre>
+  <script type="text/plain" data-demo="demo4">
+<cm-group title="常見搭配詞" gap="96" panel-title="例句：{label}">
+  <collocation-map palette="safe,orange,indigo,sky">
+    <cm-point color="lavender">undermine</cm-point>
+    <cm-item detail="cm-confidence">confidence</cm-item>
+    <cm-item detail="cm-trust">trust</cm-item>
+    <cm-item detail="cm-arg" color="pink" tooltip="較正式">the argument</cm-item>
+  </collocation-map>
+  <collocation-map anchor-side="right" trigger="click" line-style="dashed" active-detail="cm-decision">
+    <cm-point color="yellow">make</cm-point>
+    <cm-item detail="cm-decision">a decision</cm-item>
+    <cm-item detail="cm-effort">an effort</cm-item>
+    <cm-item disabled>homework</cm-item>
+  </collocation-map>
+</cm-group>
+
+<template id="cm-confidence"><p>The scandal <b>undermined public confidence</b> in the government.</p></template>
+<template id="cm-trust"><p>Repeated delays <b>undermined trust</b> between the teams.</p></template>
+<template id="cm-arg"><p>New evidence <b>undermines the argument</b> that prices will fall.</p></template>
+<template id="cm-decision"><p>We need to <b>make a decision</b> by Friday.</p></template>
+<template id="cm-effort"><p>She <b>made an effort</b> to speak more slowly.</p></template>
+  </script>
+
+  <!-- ===================== 組合一 ===================== -->
+  <h2>組合一：OneNote 式頁籤＋閱讀元件</h2>
+  <p class="note">ui-drill 的每個頁籤內容來源裡放閱讀元件，切換頁籤時自動建立。</p>
+  <div class="demo-live" id="demo5"></div>
+  <pre class="demo-code" id="demo5-code"></pre>
+  <script type="text/plain" data-demo="demo5">
+<ui-drill tile-shape="tab-trapezoid" icon-color="vanilla" bordered min-height="300"
+  hide-empty-right active="k1-read">
+  <drill-tile source="k1-read" label="課文分析" color="teal" icon="book-half"></drill-tile>
+  <drill-tile source="k1-words" label="搭配詞" color="indigo" icon="diagram-3-fill"></drill-tile>
+  <drill-tile source="k1-focus" label="重點段落" color="orange" icon="bullseye"></drill-tile>
+</ui-drill>
+
+<template id="k1-read">
+  <layer-switch active="s" panel-title="{label}">
+    <ls-text class="passage">
+      <ls-mark layer="s">Many cities</ls-mark> <ls-mark layer="v">are investing</ls-mark>
+      in <ls-mark layer="o">public transport</ls-mark>.
+    </ls-text>
+    <ls-layer name="s" label="主詞" source="k1-s" color="yellow"></ls-layer>
+    <ls-layer name="v" label="動詞" source="k1-v" color="ocean"></ls-layer>
+    <ls-layer name="o" label="受詞" source="k1-o" color="pink"></ls-layer>
+  </layer-switch>
+</template>
+<template id="k1-words">
+  <cm-group panel-title="{label}">
+    <collocation-map>
+      <cm-point>invest</cm-point>
+      <cm-item detail="k1-in">in</cm-item>
+      <cm-item detail="k1-heavily">heavily</cm-item>
+    </collocation-map>
+  </cm-group>
+</template>
+<template id="k1-focus">
+  <ui-spotlight padding="12"><p>重點：invest in 後面接投資的對象。</p></ui-spotlight>
+  <ui-spotlight padding="12" color="yellow"><p>延伸：investment 為名詞形式。</p></ui-spotlight>
+</template>
+<template id="k1-s"><p>主詞是複數名詞 Many cities。</p></template>
+<template id="k1-v"><p>現在進行式 are investing，表示正在發生的趨勢。</p></template>
+<template id="k1-o"><p>public transport 是 invest in 的受詞。</p></template>
+<template id="k1-in"><p>Cities are <b>investing in</b> cleaner buses.</p></template>
+<template id="k1-heavily"><p>The company <b>invested heavily</b> in research.</p></template>
+  </script>
+
+  <!-- ===================== 組合二 ===================== -->
+  <h2>組合二：Outlook 式文章清單＋分層標記</h2>
+  <p class="note">左側選單元，上方是文章清單，點文章後下方出現可切換文法層的課文。</p>
+  <div class="demo-live" id="demo6"></div>
+  <pre class="demo-code" id="demo6-code"></pre>
+  <script type="text/plain" data-demo="demo6">
+<ui-drill layout="stack" tile-cols="1" tile-size="44" tile-label="below" tile-color="vanilla"
+  bordered height="520" stack-ratio="2,3" rightup-label="top" rightup-divider
+  mid-title="{label}" right-title="{label}" tile-count="all" active="u1">
+  <drill-tile source="u1" label="第一單元" icon="1-circle-fill">
+    <rightup-item label="City Transport" meta="A2" detail="p1">公共運輸的投資趨勢</rightup-item>
+    <rightup-item label="Online Learning" meta="B1" detail="p2">線上學習的成長</rightup-item>
+  </drill-tile>
+  <drill-tile source="u2" label="第二單元" icon="2-circle-fill">
+    <rightup-item label="Caring Families" meta="B2" detail="p3">照顧家人的壓力</rightup-item>
+  </drill-tile>
+</ui-drill>
+
+<template id="u1"><p>第一單元共 2 篇文章。</p></template>
+<template id="u2"><p>第二單元共 1 篇文章。</p></template>
+<template id="p1">
+  <layer-switch mark-style="underline">
+    <ls-text class="passage"><ls-mark layer="n">Cities</ls-mark> <ls-mark layer="v">invest</ls-mark> in <ls-mark layer="n">buses</ls-mark>.</ls-text>
+    <ls-layer name="n" label="名詞" color="sky"></ls-layer>
+    <ls-layer name="v" label="動詞" color="orange"></ls-layer>
+  </layer-switch>
+</template>
+<template id="p2">
+  <layer-switch>
+    <ls-text class="passage">Online <ls-mark layer="n">learning</ls-mark> <ls-mark layer="v">keeps growing</ls-mark>.</ls-text>
+    <ls-layer name="n" label="名詞" color="sky"></ls-layer>
+    <ls-layer name="v" label="動詞" color="orange"></ls-layer>
+  </layer-switch>
+</template>
+<template id="p3">
+  <layer-switch>
+    <ls-text class="passage"><ls-mark layer="s">Adults</ls-mark> <ls-mark layer="v">report</ls-mark> stress.</ls-text>
+    <ls-layer name="s" label="主詞" color="yellow"></ls-layer>
+    <ls-layer name="v" label="動詞" color="orange"></ls-layer>
+  </layer-switch>
+</template>
+  </script>
+
+  <!-- ===================== 組合三 ===================== -->
+  <h2>組合三：課程步驟＋單字卡</h2>
+  <p class="note">ui-steps 呈現上課流程，第二步的內容是 ui-cards 單字卡；點卡片，卡片下方的內容區出現搭配詞圖。</p>
+  <div class="demo-live" id="demo7"></div>
+  <pre class="demo-code" id="demo7-code"></pre>
+  <script type="text/plain" data-demo="demo7">
+<ui-steps current="2" numbered done-icon="check-lg" line arrows active="st-words" panel-title="{label}" bordered>
+  <step-item label="暖身" source="st-warm"></step-item>
+  <step-item label="單字" source="st-words"></step-item>
+  <step-item label="閱讀" source="st-read"></step-item>
+</ui-steps>
+
+<template id="st-warm"><p>先說說你最近一次做決定的經驗。</p></template>
+<template id="st-words">
+  <ui-cards cols="3" panel-title="{label}" toggle>
+    <card-item label="make" note="動詞" icon="hammer" color="yellow" detail="wc-make"></card-item>
+    <card-item label="undermine" note="動詞" icon="arrow-down-circle" color="lavender" detail="wc-under"></card-item>
+    <card-item label="invest" note="動詞" icon="graph-up-arrow" color="teal" detail="wc-invest"></card-item>
+  </ui-cards>
+</template>
+<template id="st-read">
+  <ui-spotlight padding="12"><p>閱讀時，先找主詞和動詞。</p></ui-spotlight>
+</template>
+<template id="wc-make">
+  <collocation-map><cm-point>make</cm-point><cm-item detail="cm-decision">a decision</cm-item><cm-item detail="cm-effort">an effort</cm-item></collocation-map>
+</template>
+<template id="wc-under">
+  <collocation-map><cm-point>undermine</cm-point><cm-item detail="cm-trust">trust</cm-item><cm-item detail="cm-confidence">confidence</cm-item></collocation-map>
+</template>
+<template id="wc-invest">
+  <collocation-map><cm-point>invest</cm-point><cm-item detail="k1-in">in</cm-item><cm-item detail="k1-heavily">heavily</cm-item></collocation-map>
+</template>
+  </script>
+
+</div>
+
+<script src="ui-drill.js"></script>
+<script src="ui-steps.js"></script>
+<script src="ui-cards.js"></script>
+<script src="ui-reading2.js"></script>
+<script>
+  // 示範頁專用：同一份原始碼同時渲染成元件與程式碼區塊
+  document.querySelectorAll('script[type="text/plain"][data-demo]').forEach(src => {
+    const lines = src.textContent.replace(/^\n+|\s+$/g, '').split('\n');
+    const indent = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length));
+    const code = lines.map(l => l.slice(indent)).join('\n');
+    document.getElementById(src.dataset.demo).innerHTML = code;
+    document.getElementById(src.dataset.demo + '-code').textContent = code;
+  });
+</script>
+</body>
+</html>
