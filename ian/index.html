@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-icon-anim 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --base:#0C0D0C; --shell:#C6C7BD; --lavender:#C3A5E5; --sky:#82C8E5; --warning:#E6374B;
+    --salmon:#E5C3B3; --ocean:#1CCAE8; --safe:#27AE60; --teal:#0DA591; --vanilla:#DBEDD8;
+    --yellow:#E3D322; --bluebell:#7589D9; --special:#B3DE73; --info:#92B5E0; --indigo:#7849C9;
+    --pink:#FF91D7; --orange:#EDA109;
+    --card:#141614; --line:#2B2F2B; --well:#0F110F;
+  }
+  body{background:var(--base);color:var(--shell);font-size:1rem;}
+  .page{padding:24px 40px 64px 40px;}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:8px;}
+  header.top h1{font-size:2rem;color:var(--lavender);margin:0 0 8px 0;}
+  header.top p{margin:0;font-size:1rem;}
+  .ver{font-size:0.8rem;background:var(--indigo);color:#fff;border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:middle;}
+  h2.section{font-size:1.4rem;color:var(--sky);margin:40px 0 16px 0;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  h2.section small{font-size:0.9rem;color:var(--shell);margin-left:12px;}
+  .demo-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;height:100%;display:flex;flex-direction:column;}
+  .demo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;}
+  .demo-head h3{font-size:1.05rem;color:var(--vanilla);margin:0;}
+  .demo-stage{min-height:130px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;background:var(--well);border:1px dashed var(--line);border-radius:8px;padding:16px;margin-bottom:12px;}
+  .demo-desc{font-size:0.9rem;margin-bottom:12px;line-height:1.7;}
+  pre.code{background:#101210;color:var(--vanilla);font-size:0.8rem;padding:12px;border-radius:8px;margin:0;white-space:pre-wrap;word-break:break-all;border:1px solid var(--line);flex-grow:1;}
+  code{color:var(--pink);}
+  .btn-uia{background:#1A1D1A;border:1px solid var(--bluebell);color:var(--shell);font-size:0.85rem;padding:4px 12px;}
+  .btn-uia:hover,.btn-uia:focus{background:var(--bluebell);color:var(--base);border-color:var(--bluebell);}
+  .btn-uia.go{border-color:var(--safe);} .btn-uia.go:hover{background:var(--safe);}
+  .btn-uia.stop{border-color:var(--orange);} .btn-uia.stop:hover{background:var(--orange);}
+  .btn-uia.danger{border-color:var(--warning);} .btn-uia.danger:hover{background:var(--warning);color:#fff;}
+  .reveal-box{background:#132019;border:1px solid var(--safe);color:var(--vanilla);padding:12px 16px;border-radius:8px;font-size:0.95rem;width:100%;}
+  .reveal-box.alt{background:#151A26;border-color:var(--info);}
+  .reveal-box h4{font-size:1rem;color:var(--special);margin:0 0 4px 0;}
+  .swatch{display:inline-flex;align-items:center;gap:6px;margin:0 12px 8px 0;font-size:0.85rem;}
+  .swatch i{width:16px;height:16px;border-radius:4px;display:inline-block;border:1px solid var(--line);}
+  .table{--bs-table-bg:#121412;--bs-table-color:var(--shell);--bs-table-border-color:var(--line);--bs-table-striped-bg:#171A17;--bs-table-striped-color:var(--shell);font-size:0.9rem;}
+  .table th{color:var(--sky);font-weight:600;}
+  .form-control,.form-select{background:#101210;color:var(--shell);border-color:var(--line);font-size:0.9rem;}
+  .form-control:focus,.form-select:focus{background:#101210;color:var(--shell);border-color:var(--ocean);box-shadow:none;}
+  .form-label{font-size:0.85rem;color:var(--info);margin-bottom:4px;}
+  .form-check-label{font-size:0.9rem;}
+  .form-range::-webkit-slider-thumb{background:var(--ocean);}
+  textarea.log{font-family:Consolas,monospace;font-size:0.8rem;color:var(--special);}
+  .status-pill{font-size:0.85rem;background:#1A1D1A;border:1px solid var(--line);border-radius:20px;padding:4px 12px;margin-right:8px;display:inline-block;}
+  .status-pill b{color:var(--ocean);}
+  #alertArea{position:fixed;top:16px;right:16px;z-index:2000;width:380px;}
+  #alertArea .alert{font-size:0.9rem;padding:12px 40px 12px 16px;margin-bottom:8px;}
+  .alert-info{--bs-alert-bg:#121A24;--bs-alert-color:var(--info);--bs-alert-border-color:var(--info);}
+  .alert-success{--bs-alert-bg:#122018;--bs-alert-color:var(--safe);--bs-alert-border-color:var(--safe);}
+  .alert-warning{--bs-alert-bg:#1E1A0D;--bs-alert-color:var(--orange);--bs-alert-border-color:var(--orange);}
+  .changelog li{margin-bottom:6px;font-size:0.95rem;}
+  .new-badge{font-size:0.75rem;background:var(--special);color:var(--base);border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:middle;font-weight:600;}
+  .cmp-label{font-size:0.9rem;font-weight:600;margin-bottom:8px;}
+  .cmp-label.old{color:var(--salmon);}
+  .cmp-label.new{color:var(--special);}
+  .src-box{background:#101210;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:0.85rem;color:var(--vanilla);}
+</style>
+</head>
+<body>
+<div id="alertArea"></div>
+
+<div class="container-fluid page">
+  <header class="top">
+    <h1><i class="bi bi-play-circle"></i> &lt;ui-icon-anim&gt;<span class="ver">v1.1.0</span></h1>
+    <p>將多個 Bootstrap Icons 以逗點分隔，依 <code>interval</code> 播放動畫。支援原地取代與由左至右排出兩種模式，可指定色彩、尺寸、播放完畢自動移除，以及結束時顯示隱藏區塊。v1.1.0 新增按鈕模式（點擊後才播放），以及從 <code>&lt;div id="global_icon_list"&gt;</code> 等元素擷取圖示清單。每張卡片右上角的「重新執行」會重新建立元件。</p>
+  </header>
+
+  <!-- ===== 1. replace ===== -->
+  <h2 class="section">模式一：原地取代 <small>mode="replace"</small></h2>
+  <div class="row g-3">
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="淡入淡出 fade" data-desc="預設效果。配色可直接使用調色盤名稱。">
+        <template>
+<ui-icon-anim icons="bi-sun,bi-cloud-sun,bi-cloud,bi-cloud-rain,bi-cloud-lightning-rain"
+  interval="900" effect="fade" size="lg"
+  colors="yellow,orange,shell,sky,lavender"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="縮放彈出 scale" data-desc="icons 可省略 bi- 前綴。">
+        <template>
+<ui-icon-anim icons="1-circle-fill,2-circle-fill,3-circle-fill,4-circle-fill,5-circle-fill"
+  interval="700" effect="scale" size="lg"
+  colors="ocean,teal,safe,special,yellow"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="翻轉 flip" data-desc="翻轉時舊圖示先轉出，新圖示再轉入。">
+        <template>
+<ui-icon-anim icons="bi-suit-spade-fill,bi-suit-heart-fill,bi-suit-diamond-fill,bi-suit-club-fill"
+  interval="800" effect="flip" size="xl"
+  colors="shell,warning,warning,shell"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="無轉場 none" data-desc="直接替換，適合逐格動畫。">
+        <template>
+<ui-icon-anim icons="bi-battery,bi-battery-half,bi-battery-full"
+  interval="500" effect="none" size="xl"
+  colors="warning,orange,safe"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 2. sequence ===== -->
+  <h2 class="section">模式二：由左至右排出 <small>mode="sequence"</small></h2>
+  <div class="row g-3">
+    <div class="col-12 col-lg-6 col-xxl-4">
+      <div class="demo-card" data-title="評分星星 fade" data-desc="單一色彩套用全部圖示。<code>hold</code> 控制排滿後停留時間，<code>gap</code> 控制間距（px）。">
+        <template>
+<ui-icon-anim mode="sequence" icons="bi-star-fill,bi-star-fill,bi-star-fill,bi-star-fill,bi-star-fill"
+  interval="300" hold="1500" gap="6" size="md" colors="yellow"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-4">
+      <div class="demo-card" data-title="彩虹圓點 scale" data-desc="色彩逗點分隔，與圖示一一對應。">
+        <template>
+<ui-icon-anim mode="sequence" icons="bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill"
+  interval="250" hold="1200" gap="10" size="md" effect="scale"
+  colors="warning,orange,yellow,safe,ocean,bluebell,indigo"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-4">
+      <div class="demo-card" data-title="流程示意 flip" data-desc="不同圖示組成流程圖，翻轉進場。">
+        <template>
+<ui-icon-anim mode="sequence" icons="bi-file-earmark-code,bi-arrow-right,bi-gear,bi-arrow-right,bi-box-seam"
+  interval="600" hold="1800" gap="12" size="lg" effect="flip"
+  colors="info,shell,orange,shell,special"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 3. size & colors ===== -->
+  <h2 class="section">尺寸與色彩 <small>size / colors</small></h2>
+  <div class="row g-3">
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="預設尺寸關鍵字" data-desc="sm 1.25rem、md 2rem、lg 3rem、xl 4.5rem，可逗點分隔一一對應。sequence 模式各圖示底部對齊。">
+        <template>
+<ui-icon-anim mode="sequence" icons="bi-gem,bi-gem,bi-gem,bi-gem"
+  size="sm,md,lg,xl" interval="400" hold="1500" gap="10"
+  colors="lavender,bluebell,indigo,pink"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="數字與 px 單位" data-desc="純數字視為 rem；也可寫含單位的值，例如 40px。">
+        <template>
+<ui-icon-anim icons="bi-bell,bi-bell-fill" size="2.5" interval="600" colors="salmon"></ui-icon-anim>
+<ui-icon-anim icons="bi-bell,bi-bell-fill" size="40px" interval="600" colors="pink"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="replace 混合尺寸" data-desc="容器取最大尺寸，切換時旁邊文字不會跳動。">
+        <template>
+<span>載入中</span>
+<ui-icon-anim icons="bi-dot,bi-circle,bi-record-circle" size="1.5,3,4.5"
+  interval="500" effect="scale" colors="ocean"></ui-icon-anim>
+<span>請稍候</span>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="HEX 色碼與循環配色" data-desc="色彩數量少於圖示時循環使用；也可混用 HEX 與名稱。">
+        <template>
+<ui-icon-anim mode="sequence" icons="bi-music-note,bi-music-note-beamed,bi-music-note,bi-music-note-beamed,bi-music-note,bi-music-note-beamed"
+  interval="300" hold="1200" size="lg" effect="scale"
+  colors="#FF91D7,sky"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="demo-card">
+        <div class="demo-head"><h3>可用的調色盤名稱</h3></div>
+        <div id="swatches"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 4. remove on end ===== -->
+  <h2 class="section">播放完畢移除或隱藏 <small>loop="false" + remove-on-end</small></h2>
+  <div class="row g-3">
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="淡出移除" data-desc="播完一輪後停留 <code>remove-delay</code> 毫秒，淡出並從 DOM 刪除。事件紀錄在下方控制面板。">
+        <template>
+<ui-icon-anim data-log="淡出移除" icons="bi-hourglass-top,bi-hourglass-split,bi-hourglass-bottom,bi-check-circle-fill"
+  interval="600" effect="flip" size="xl" colors="orange,orange,orange,safe"
+  loop="false" remove-on-end remove-delay="1000" remove-effect="fade"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="縮小移除" data-desc="sequence 模式排完後縮小消失。">
+        <template>
+<ui-icon-anim data-log="縮小移除" mode="sequence" icons="bi-check-lg,bi-check-lg,bi-check-lg"
+  interval="350" hold="600" size="lg" effect="scale" colors="safe"
+  loop="false" remove-on-end remove-delay="500" remove-effect="shrink"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="隱藏後重播" data-desc="<code>remove-mode=&quot;hide&quot;</code> 只隱藏不刪除，可呼叫 <code>play()</code> 重播。">
+        <template>
+<ui-icon-anim id="hideDemo" data-log="隱藏重播" icons="bi-send,bi-send-check,bi-send-check-fill"
+  interval="700" size="xl" effect="scale" colors="sky,ocean,safe"
+  loop="false" remove-on-end remove-mode="hide" remove-delay="600"></ui-icon-anim>
+<button class="btn btn-uia go" onclick="document.getElementById('hideDemo').play()">
+  <i class="bi bi-arrow-repeat"></i> play()
+</button>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="阻止移除 before-remove" data-desc="勾選後，監聽 <code>before-remove</code> 並呼叫 <code>preventDefault()</code>，元件會保留在畫面上。">
+        <template>
+<ui-icon-anim id="rmCancel" data-log="阻止移除" icons="bi-trash,bi-trash-fill,bi-trash3-fill"
+  interval="700" size="xl" colors="warning"
+  loop="false" remove-on-end remove-delay="500"></ui-icon-anim>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="cancelRemove" checked>
+  <label class="form-check-label" for="cancelRemove">阻止移除</label>
+</div>
+        </template>
+        <pre class="code" style="margin-top:8px;flex-grow:0;">document.addEventListener('before-remove', e =&gt; {
+  if (e.target.id === 'rmCancel' &amp;&amp; cancelRemove.checked) e.preventDefault();
+});</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 5. reveal on end ===== -->
+  <h2 class="section">播放結束顯示隱藏區塊 <small>reveal-on-end</small></h2>
+  <div class="row g-3">
+    <div class="col-12 col-xxl-6">
+      <div class="demo-card" data-title="載入動畫後顯示內容" data-desc="同時設定 <code>remove-on-end</code> 時，元件移除完成後才顯示目標，畫面不會重疊。目標可用 <code>hidden</code> 屬性隱藏。">
+        <template>
+<ui-icon-anim data-log="顯示內容" icons="bi-arrow-clockwise,bi-arrow-repeat,bi-arrow-clockwise,bi-cloud-check-fill"
+  interval="500" effect="flip" size="xl" colors="ocean,ocean,ocean,safe"
+  loop="false" remove-on-end remove-delay="500"
+  reveal-on-end="revealA" reveal-effect="slide"></ui-icon-anim>
+<div id="revealA" class="reveal-box" hidden>
+  <h4><i class="bi bi-check2-circle"></i> 資料載入完成</h4>
+  共同步 128 筆紀錄，最後更新時間為剛剛。
+</div>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-xxl-6">
+      <div class="demo-card" data-title="顯示多個區塊（不移除元件）" data-desc="以逗點指定多個 id；目標用 Bootstrap 的 <code>d-none</code> 隱藏也可以。<code>reveal-delay</code> 延遲顯示。">
+        <template>
+<ui-icon-anim data-log="顯示多區塊" mode="sequence" icons="bi-1-square-fill,bi-2-square-fill,bi-3-square-fill"
+  interval="500" hold="400" gap="8" size="lg" effect="scale" colors="bluebell,indigo,lavender"
+  loop="false" reveal-on-end="#revealB,#revealC" reveal-delay="300" reveal-effect="fade"></ui-icon-anim>
+<div id="revealB" class="reveal-box d-none"><h4>步驟完成</h4>三個步驟都已執行。</div>
+<div id="revealC" class="reveal-box alt d-none"><h4>下一步</h4>可以開始匯出報表。</div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== v1.1.0 A. button mode ===== -->
+  <h2 class="section">按鈕模式 <small>button-text / button-icon</small><span class="new-badge">v1.1.0</span></h2>
+  <div class="row g-3">
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="點擊開始，播完回到按鈕" data-desc="設定 <code>button-text</code> 即進入按鈕模式，點擊前只顯示按鈕。<code>button-restore</code> 讓播完後回到按鈕，可再次點擊。">
+        <template>
+<ui-icon-anim data-log="按鈕基本" button-text="開始" button-icon="bi-play-fill"
+  icons="bi-hourglass-top,bi-hourglass-split,bi-hourglass-bottom,bi-check-circle-fill"
+  interval="600" effect="flip" size="lg" colors="orange,orange,orange,safe"
+  loop="false" button-restore></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="保留按鈕外框 button-keep" data-desc="動畫在按鈕框內播放，播放時按鈕無法再點擊，寬度維持不變。<code>button-color</code> 指定按鈕色彩。">
+        <template>
+<ui-icon-anim data-log="保留外框" button-text="送出表單" button-icon="bi-send" button-color="safe" button-keep
+  icons="bi-arrow-clockwise,bi-arrow-repeat,bi-arrow-clockwise,bi-check-lg"
+  interval="450" effect="scale" size="1.25" colors="safe"
+  loop="false" button-restore></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="點擊後移除並顯示內容" data-desc="按鈕模式可搭配 <code>remove-on-end</code> 與 <code>reveal-on-end</code>，點擊後播放、播完移除，再顯示結果。">
+        <template>
+<ui-icon-anim data-log="按鈕顯示" button-text="載入資料" button-icon="bi-cloud-download" button-color="ocean"
+  icons="bi-cloud,bi-cloud-arrow-down,bi-cloud-arrow-down-fill,bi-cloud-check-fill"
+  interval="500" size="xl" colors="sky,ocean,ocean,safe"
+  loop="false" remove-on-end remove-delay="400" reveal-on-end="revealD" reveal-effect="slide"></ui-icon-anim>
+<div id="revealD" class="reveal-box" hidden>
+  <h4><i class="bi bi-database-check"></i> 載入完成</h4>共 42 筆資料。
+</div>
+        </template>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xxl-3">
+      <div class="demo-card" data-title="循環播放與 reset()" data-desc="循環播放時不會自行結束，可呼叫 <code>reset()</code> 回到按鈕狀態。">
+        <template>
+<ui-icon-anim id="btnLoopDemo" data-log="按鈕循環" button-text="開始" button-color="lavender"
+  mode="sequence" icons="bi-music-note,bi-music-note-beamed,bi-music-note,bi-music-note-beamed"
+  interval="300" hold="800" size="md" effect="scale" colors="lavender,pink"></ui-icon-anim>
+<button class="btn btn-uia stop" onclick="document.getElementById('btnLoopDemo').reset()">
+  <i class="bi bi-stop-fill"></i> reset()
+</button>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== v1.1.0 B. icons-from ===== -->
+  <h2 class="section">擷取圖示清單 <small>icons-from / colors-from / global_icon_list</small><span class="new-badge">v1.1.0</span></h2>
+  <!-- 全域圖示清單：未設定 icons 與 icons-from 的元件會自動讀取 -->
+  <div id="global_icon_list" hidden>bi-star, bi-square, bi-circle</div>
+  <div class="row g-3">
+    <div class="col-12 col-xxl-6">
+      <div class="demo-card">
+        <div class="demo-head"><h3>預設讀取 #global_icon_list</h3></div>
+        <div class="demo-stage">
+          <ui-icon-anim data-log="全域清單" size="lg" colors="yellow,sky,pink" effect="scale"></ui-icon-anim>
+          <ui-icon-anim mode="sequence" size="md" colors="special" interval="400" hold="1000"></ui-icon-anim>
+          <ui-icon-anim button-text="開始" size="lg" colors="orange,lavender,ocean" loop="false" button-restore></ui-icon-anim>
+        </div>
+        <div class="demo-desc">三個元件都沒有設定 <code>icons</code>，自動讀取頁面上的 <code>#global_icon_list</code>。來源內容可用逗點、空白或換行分隔。修改下方清單後，所有元件會自動重新開始。</div>
+        <div class="input-group mb-3">
+          <input id="inpGlobalList" type="text" class="form-control" value="bi-star, bi-square, bi-circle">
+          <button class="btn btn-uia go" id="btnGlobalList"><i class="bi bi-arrow-repeat"></i> 更新清單</button>
+          <button class="btn btn-uia" id="btnGlobalReset">還原</button>
+        </div>
+        <pre class="code" style="flex-grow:0;">&lt;!-- 來源元素加上 hidden，避免文字顯示在頁面上 --&gt;
+&lt;div id="global_icon_list" hidden&gt;bi-star, bi-square, bi-circle&lt;/div&gt;
+
+&lt;ui-icon-anim size="lg" colors="yellow,sky,pink" effect="scale"&gt;&lt;/ui-icon-anim&gt;
+&lt;ui-icon-anim mode="sequence" size="md" colors="special" interval="400" hold="1000"&gt;&lt;/ui-icon-anim&gt;
+&lt;ui-icon-anim button-text="開始" size="lg" colors="orange,lavender,ocean" loop="false" button-restore&gt;&lt;/ui-icon-anim&gt;
+
+// 修改來源內容，元件自動重新開始
+document.getElementById('global_icon_list').textContent = 'bi-heart, bi-gem';</pre>
+      </div>
+    </div>
+    <div class="col-12 col-xxl-6">
+      <div class="demo-card" data-title="指定來源 icons-from 與 colors-from" data-desc="長清單可以放在獨立的元素中，用換行排列更好維護。<code>icons</code> 屬性有值時優先使用，其次是 <code>icons-from</code>，最後才是 <code>#global_icon_list</code>。">
+        <template>
+<div id="weatherIcons" hidden>
+  bi-sun
+  bi-cloud-sun
+  bi-cloud
+  bi-cloud-drizzle
+  bi-cloud-rain-heavy
+  bi-cloud-lightning-rain
+  bi-cloud-snow
+  bi-rainbow
+</div>
+<div id="weatherColors" hidden>yellow, orange, shell, info, sky, lavender, vanilla, pink</div>
+
+<ui-icon-anim data-log="指定來源" mode="sequence" icons-from="weatherIcons" colors-from="#weatherColors"
+  interval="300" hold="1500" gap="12" size="lg" effect="flip"></ui-icon-anim>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 6. control panel ===== -->
+  <h2 class="section">方法與事件控制面板 <small>play / pause / reset / goTo</small></h2>
+  <div class="row g-3">
+    <div class="col-12 col-xxl-7">
+      <div class="demo-card">
+        <div class="demo-stage" style="min-height:160px;">
+          <ui-icon-anim id="ctrlDemo" data-log="控制面板"
+            icons="bi-emoji-smile,bi-emoji-laughing,bi-emoji-wink,bi-emoji-sunglasses,bi-emoji-heart-eyes,bi-emoji-surprise"
+            interval="800" size="xl" colors="yellow,orange,pink,sky,salmon,special"></ui-icon-anim>
+        </div>
+        <div class="mb-3">
+          <span class="status-pill">index：<b id="stIndex">-</b></span>
+          <span class="status-pill">icon：<b id="stIcon">-</b></span>
+          <span class="status-pill">playing：<b id="stPlaying">-</b></span>
+          <span class="status-pill">cycle：<b id="stCycle">0</b></span>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <label class="form-label">mode</label>
+            <select id="selMode" class="form-select">
+              <option value="replace">replace</option>
+              <option value="sequence">sequence</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">effect</label>
+            <select id="selEffect" class="form-select">
+              <option>fade</option><option>scale</option><option>flip</option><option>none</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">size</label>
+            <select id="selSize" class="form-select">
+              <option>sm</option><option>md</option><option>lg</option><option selected>xl</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">interval：<span id="lblInterval">800</span> ms</label>
+            <input id="rngInterval" type="range" class="form-range" min="100" max="2000" step="50" value="800">
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <button class="btn btn-uia go" id="btnPlay"><i class="bi bi-play-fill"></i> play()</button>
+          <button class="btn btn-uia stop" id="btnPause"><i class="bi bi-pause-fill"></i> pause()</button>
+          <button class="btn btn-uia" id="btnReset"><i class="bi bi-skip-start-fill"></i> reset()</button>
+          <div class="input-group" style="width:200px;">
+            <input id="inpGoto" type="number" class="form-control" value="3" min="0">
+            <button class="btn btn-uia" id="btnGoto">goTo()</button>
+          </div>
+        </div>
+        <pre class="code" style="margin-top:16px;flex-grow:0;">const el = document.getElementById('ctrlDemo');
+el.play(); el.pause(); el.reset(); el.goTo(3);
+el.setAttribute('mode', 'sequence');   // 屬性變更會自動重新開始
+el.addEventListener('icon-change', e =&gt; console.log(e.detail.index, e.detail.icon));</pre>
+      </div>
+    </div>
+    <div class="col-12 col-xxl-5">
+      <div class="demo-card">
+        <div class="demo-head">
+          <h3>事件紀錄（含移除與顯示示範）</h3>
+          <button class="btn btn-uia danger" id="btnClearLog"><i class="bi bi-x-lg"></i> 清除</button>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="chkIconChange">
+          <label class="form-check-label" for="chkIconChange">紀錄 icon-change（數量較多）</label>
+        </div>
+        <textarea id="eventLog" class="form-control log" rows="25" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 7. reference ===== -->
+  <h2 class="section">屬性、方法與事件一覽</h2>
+  <div class="row g-3">
+    <div class="col-12 col-xxl-7">
+      <div class="demo-card">
+        <table class="table table-striped table-bordered mb-0">
+          <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td><code>icons</code></td><td>無</td><td>Bootstrap Icons 類別名稱，逗點或空白分隔，可省略 <code>bi-</code></td></tr>
+            <tr><td><code>icons-from</code> <span class="new-badge">1.1</span></td><td>global_icon_list</td><td>從指定 id 元素的文字擷取圖示，可帶 #；<code>icons</code> 有值時優先</td></tr>
+            <tr><td><code>colors-from</code> <span class="new-badge">1.1</span></td><td>無</td><td>從指定 id 元素的文字擷取色彩；<code>colors</code> 有值時優先</td></tr>
+            <tr><td><code>interval</code></td><td>1000</td><td>切換間隔（毫秒），最小 100</td></tr>
+            <tr><td><code>mode</code></td><td>replace</td><td><code>replace</code> 原地取代；<code>sequence</code> 由左至右排出</td></tr>
+            <tr><td><code>effect</code></td><td>fade</td><td>fade、scale、flip、none</td></tr>
+            <tr><td><code>colors</code></td><td>繼承文字色</td><td>調色盤名稱或 HEX，逗點分隔一一對應，不足時循環</td></tr>
+            <tr><td><code>size</code></td><td>md（2rem）</td><td>sm、md、lg、xl、數字（rem）或含單位值，可逗點分隔</td></tr>
+            <tr><td><code>gap</code></td><td>8</td><td>sequence 模式間距（px）</td></tr>
+            <tr><td><code>hold</code></td><td>同 interval</td><td>sequence 模式排滿後停留時間（毫秒）</td></tr>
+            <tr><td><code>loop</code></td><td>true</td><td>設為 <code>false</code> 只播一輪</td></tr>
+            <tr><td><code>autoplay</code></td><td>true</td><td>設為 <code>false</code> 需呼叫 <code>play()</code></td></tr>
+            <tr><td><code>remove-on-end</code></td><td>關閉</td><td>播完移除或隱藏元件，需搭配 <code>loop="false"</code></td></tr>
+            <tr><td><code>remove-delay</code></td><td>0</td><td>播完後等待多久才移除（毫秒）</td></tr>
+            <tr><td><code>remove-effect</code></td><td>fade</td><td>fade、shrink、none</td></tr>
+            <tr><td><code>remove-mode</code></td><td>remove</td><td><code>remove</code> 刪除；<code>hide</code> 隱藏，可再 <code>play()</code></td></tr>
+            <tr><td><code>reveal-on-end</code></td><td>無</td><td>播完要顯示的元素 id，逗點分隔，可帶 #；需搭配 <code>loop="false"</code></td></tr>
+            <tr><td><code>reveal-effect</code></td><td>fade</td><td>fade、slide、none</td></tr>
+            <tr><td><code>reveal-delay</code></td><td>0</td><td>顯示前延遲（毫秒）</td></tr>
+            <tr><td><code>button-text</code> <span class="new-badge">1.1</span></td><td>無</td><td>設定後進入按鈕模式，點擊前顯示這段文字，<code>autoplay</code> 失效</td></tr>
+            <tr><td><code>button-icon</code> <span class="new-badge">1.1</span></td><td>無</td><td>按鈕文字前的圖示；只設定圖示也會進入按鈕模式</td></tr>
+            <tr><td><code>button-color</code> <span class="new-badge">1.1</span></td><td>sky</td><td>按鈕色彩，調色盤名稱或 HEX</td></tr>
+            <tr><td><code>button-keep</code> <span class="new-badge">1.1</span></td><td>關閉</td><td>保留按鈕外框，動畫在按鈕內播放</td></tr>
+            <tr><td><code>button-restore</code> <span class="new-badge">1.1</span></td><td>關閉</td><td>播完回到按鈕狀態；需 <code>loop="false"</code> 且未設定 <code>remove-on-end</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-12 col-xxl-5">
+      <div class="demo-card mb-3" style="height:auto;">
+        <table class="table table-striped table-bordered mb-0">
+          <thead><tr><th>方法 / 屬性</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td><code>play()</code></td><td>播放；已結束或已隱藏時從頭重播</td></tr>
+            <tr><td><code>pause()</code></td><td>暫停，保留剩餘時間</td></tr>
+            <tr><td><code>reset()</code></td><td>回到起點，維持原本播放狀態；按鈕模式下回到按鈕</td></tr>
+            <tr><td><code>goTo(i)</code></td><td>跳至第 i 個圖示（從 0 起算）</td></tr>
+            <tr><td><code>index</code></td><td>目前圖示索引（唯讀）</td></tr>
+            <tr><td><code>playing</code></td><td>是否播放中（唯讀）</td></tr>
+            <tr><td><code>armed</code> <span class="new-badge">1.1</span></td><td>是否停在按鈕狀態（唯讀）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="demo-card" style="height:auto;">
+        <table class="table table-striped table-bordered mb-0">
+          <thead><tr><th>事件</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td><code>trigger-click</code> <span class="new-badge">1.1</span></td><td>按鈕被點擊，可 <code>preventDefault()</code> 阻止播放</td></tr>
+            <tr><td><code>icon-change</code></td><td>顯示新圖示，detail：index、icon、mode、cycle</td></tr>
+            <tr><td><code>cycle-end</code></td><td>完成一輪，detail：cycle、mode</td></tr>
+            <tr><td><code>anim-end</code></td><td>播放結束（loop="false"）</td></tr>
+            <tr><td><code>before-remove</code></td><td>移除前，可 <code>preventDefault()</code></td></tr>
+            <tr><td><code>removed</code></td><td>刪除後於原父元素觸發</td></tr>
+            <tr><td><code>hidden</code></td><td>remove-mode="hide" 隱藏後觸發</td></tr>
+            <tr><td><code>revealed</code></td><td>reveal-on-end 目標顯示後觸發</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 8. changelog ===== -->
+  <h2 class="section">版本紀錄</h2>
+  <div class="demo-card" style="height:auto;">
+    <ul class="changelog mb-0">
+      <li><b style="color:var(--special);">v1.1.0（11-04-26）</b>：新增按鈕模式（<code>button-text</code>、<code>button-icon</code>、<code>button-color</code>、<code>button-keep</code>、<code>button-restore</code>）、<code>trigger-click</code> 事件與 <code>armed</code> 屬性；新增 <code>icons-from</code>、<code>colors-from</code>，未設定圖示時自動讀取 <code>#global_icon_list</code>，來源內容變動時自動重新開始；<code>icons</code> 支援空白與換行分隔。</li>
+      <li><b style="color:var(--lavender);">v1.0.0（11-04-26）</b>：初版。replace 與 sequence 兩種模式、四種轉場、調色盤名稱與 HEX 色彩、尺寸關鍵字與逐一尺寸、播放完畢移除或隱藏、結束時顯示指定 id 的區塊、方法與事件、離開可視範圍自動暫停。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 9. version compare ===== -->
+  <h2 class="section">版本對照 <small>v1.0.0 與 v1.1.0</small></h2>
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="demo-card" style="height:auto;">
+        <div class="demo-head"><h3>點擊後才開始播放</h3></div>
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <div class="cmp-label old">v1.0.0：關閉自動播放，自行加按鈕呼叫 play()</div>
+            <pre class="code">&lt;button id="startBtn"&gt;開始&lt;/button&gt;
+&lt;ui-icon-anim id="anim" autoplay="false" loop="false"
+  icons="bi-hourglass-top,bi-hourglass-split,bi-hourglass-bottom"&gt;&lt;/ui-icon-anim&gt;
+
+&lt;script&gt;
+startBtn.addEventListener('click', () =&gt; {
+  startBtn.hidden = true;
+  anim.play();
+});
+anim.addEventListener('anim-end', () =&gt; {
+  startBtn.hidden = false;
+  anim.reset();
+});
+&lt;/script&gt;</pre>
+          </div>
+          <div class="col-lg-6">
+            <div class="cmp-label new">v1.1.0：一個元件完成，不需額外程式碼</div>
+            <pre class="code">&lt;ui-icon-anim button-text="開始" button-icon="bi-play-fill"
+  loop="false" button-restore
+  icons="bi-hourglass-top,bi-hourglass-split,bi-hourglass-bottom"&gt;&lt;/ui-icon-anim&gt;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="demo-card" style="height:auto;">
+        <div class="demo-head"><h3>長圖示清單</h3></div>
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <div class="cmp-label old">v1.0.0：全部寫在 icons 屬性，每個元件重複一次</div>
+            <pre class="code">&lt;ui-icon-anim icons="bi-sun,bi-cloud-sun,bi-cloud,bi-cloud-drizzle,bi-cloud-rain-heavy,bi-cloud-lightning-rain,bi-cloud-snow,bi-rainbow"&gt;&lt;/ui-icon-anim&gt;
+&lt;ui-icon-anim mode="sequence" icons="bi-sun,bi-cloud-sun,bi-cloud,bi-cloud-drizzle,bi-cloud-rain-heavy,bi-cloud-lightning-rain,bi-cloud-snow,bi-rainbow"&gt;&lt;/ui-icon-anim&gt;</pre>
+          </div>
+          <div class="col-lg-6">
+            <div class="cmp-label new">v1.1.0：清單集中一處，元件共用</div>
+            <pre class="code">&lt;div id="global_icon_list" hidden&gt;
+  bi-sun, bi-cloud-sun, bi-cloud, bi-cloud-drizzle,
+  bi-cloud-rain-heavy, bi-cloud-lightning-rain, bi-cloud-snow, bi-rainbow
+&lt;/div&gt;
+
+&lt;ui-icon-anim&gt;&lt;/ui-icon-anim&gt;
+&lt;ui-icon-anim mode="sequence"&gt;&lt;/ui-icon-anim&gt;
+
+&lt;!-- 或指定其他來源 --&gt;
+&lt;ui-icon-anim icons-from="weatherIcons"&gt;&lt;/ui-icon-anim&gt;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-icon-anim.js"></script>
+<script>
+(() => {
+  /* ---------- Bootstrap alert ---------- */
+  function showAlert(msg, type = 'info') {
+    const box = document.createElement('div');
+    box.className = `alert alert-${type} alert-dismissible fade show`;
+    box.setAttribute('role', 'alert');
+    box.innerHTML = msg + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    document.getElementById('alertArea').appendChild(box);
+    setTimeout(() => bootstrap.Alert.getOrCreateInstance(box).close(), 3500);
+  }
+
+  /* ---------- 範例卡片：template 同時渲染與顯示原始碼 ---------- */
+  function dedent(s) {
+    const lines = s.replace(/^\s*\n/, '').replace(/\s+$/, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  }
+  document.querySelectorAll('.demo-card[data-title]').forEach(card => {
+    const tpl = card.querySelector('template');
+    const head = document.createElement('div');
+    head.className = 'demo-head';
+    head.innerHTML = `<h3>${card.dataset.title}</h3><button class="btn btn-uia"><i class="bi bi-arrow-counterclockwise"></i> 重新執行</button>`;
+    const stage = document.createElement('div');
+    stage.className = 'demo-stage';
+    const desc = document.createElement('div');
+    desc.className = 'demo-desc';
+    desc.innerHTML = card.dataset.desc || '';
+    const pre = document.createElement('pre');
+    pre.className = 'code';
+    pre.textContent = dedent(tpl.innerHTML).replace(/=""/g, '');
+    const run = () => stage.replaceChildren(tpl.content.cloneNode(true));
+    head.querySelector('button').addEventListener('click', run);
+    card.prepend(head, stage, desc);
+    card.insertBefore(pre, tpl);
+    run();
+  });
+
+  /* ---------- 調色盤 ---------- */
+  const sw = document.getElementById('swatches');
+  Object.entries(UiIconAnim.PALETTE).forEach(([name, hex]) => {
+    const s = document.createElement('span');
+    s.className = 'swatch';
+    s.innerHTML = `<i style="background:${hex}"></i><code>${name}</code> ${hex}`;
+    sw.appendChild(s);
+  });
+
+  /* ---------- 阻止移除 ---------- */
+  document.addEventListener('before-remove', e => {
+    if (e.target.id !== 'rmCancel') return;
+    const chk = document.getElementById('cancelRemove');
+    if (chk && chk.checked) {
+      e.preventDefault();
+      showAlert('已透過 <code>preventDefault()</code> 阻止移除。', 'warning');
+    }
+  });
+  document.addEventListener('removed', e => {
+    const el = e.detail && e.detail.element;
+    if (el && el.dataset.log) showAlert(`「${el.dataset.log}」元件已從 DOM 移除。`, 'success');
+  });
+
+  /* ---------- 事件紀錄 ---------- */
+  const log = document.getElementById('eventLog');
+  const chkIC = document.getElementById('chkIconChange');
+  const lines = [];
+  const EVENTS = ['trigger-click', 'icon-change', 'cycle-end', 'anim-end', 'before-remove', 'removed', 'hidden', 'revealed'];
+  EVENTS.forEach(name => document.addEventListener(name, e => {
+    if (name === 'icon-change' && !chkIC.checked) return;
+    const d = e.detail || {};
+    const src = d.element || d.source || e.target;
+    if (!src || !src.dataset || !src.dataset.log) return;
+    const t = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+    let info = '';
+    if (name === 'icon-change') info = `index=${d.index} icon=${d.icon}`;
+    else if (name === 'cycle-end') info = `cycle=${d.cycle}`;
+    else if (name === 'anim-end') info = `removeOnEnd=${d.removeOnEnd} reveal=[${(d.revealTargets || []).join(',')}]`;
+    else if (name === 'before-remove') info = `mode=${d.mode}`;
+    else if (name === 'revealed') info = `ids=[${d.ids.join(',')}]`;
+    lines.push(`${t}  [${src.dataset.log}]  ${name}  ${info}`);
+    if (lines.length > 300) lines.shift();
+    log.value = lines.join('\n');
+    log.scrollTop = log.scrollHeight;
+  }));
+  document.getElementById('btnClearLog').addEventListener('click', () => { lines.length = 0; log.value = ''; });
+
+  /* ---------- 全域圖示清單編輯 ---------- */
+  const globalList = document.getElementById('global_icon_list');
+  const defaultList = globalList.textContent;
+  document.getElementById('btnGlobalList').addEventListener('click', () => {
+    const v = document.getElementById('inpGlobalList').value.trim();
+    if (!v) { showAlert('清單不可為空白。', 'warning'); return; }
+    globalList.textContent = v;
+    showAlert('已更新 <code>#global_icon_list</code>，元件已重新開始。', 'success');
+  });
+  document.getElementById('btnGlobalReset').addEventListener('click', () => {
+    globalList.textContent = defaultList;
+    document.getElementById('inpGlobalList').value = defaultList;
+  });
+
+  /* ---------- 控制面板 ---------- */
+  const el = document.getElementById('ctrlDemo');
+  const $ = id => document.getElementById(id);
+  const refresh = () => {
+    $('stIndex').textContent = el.index;
+    $('stPlaying').textContent = el.playing;
+  };
+  el.addEventListener('icon-change', e => {
+    $('stIcon').textContent = e.detail.icon;
+    $('stCycle').textContent = e.detail.cycle;
+    refresh();
+  });
+  el.addEventListener('cycle-end', e => { $('stCycle').textContent = e.detail.cycle; });
+  $('btnPlay').addEventListener('click', () => { el.play(); refresh(); });
+  $('btnPause').addEventListener('click', () => { el.pause(); refresh(); });
+  $('btnReset').addEventListener('click', () => { el.reset(); $('stCycle').textContent = 0; refresh(); });
+  $('btnGoto').addEventListener('click', () => {
+    const n = el.icons.length;
+    const v = parseInt($('inpGoto').value, 10);
+    if (!Number.isFinite(v) || v < 0 || v >= n) {
+      showAlert(`請輸入 0 到 ${n - 1} 之間的索引。`, 'warning');
+      return;
+    }
+    el.goTo(v);
+    refresh();
+  });
+  $('selMode').addEventListener('change', e => el.setAttribute('mode', e.target.value));
+  $('selEffect').addEventListener('change', e => el.setAttribute('effect', e.target.value));
+  $('selSize').addEventListener('change', e => el.setAttribute('size', e.target.value));
+  $('rngInterval').addEventListener('input', e => {
+    $('lblInterval').textContent = e.target.value;
+    el.setAttribute('interval', e.target.value);
+  });
+})();
+</script>
+</body>
+</html>
