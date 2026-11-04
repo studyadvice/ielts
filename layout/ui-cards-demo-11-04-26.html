@@ -125,6 +125,64 @@
     <template id="d-breakfast"><p>早餐含飲品吧，房客免費，非房客每位 380 元。</p></template>
     <template id="d-dinner"><p>晚餐為四道式套餐，請於前一天 18:00 前預約。</p></template>
   </section>
+
+  <h1 style="margin:40px 0 8px 0;">角標圖示與底色<span class="tag-v">第二版</span></h1>
+  <p class="lead-note">新增 badge-icon 與 badge-color。圖示寫法與 icon 相同，star-fill 或 bi-star-fill 皆可；圖示大小跟隨 badge-size。</p>
+
+  <section class="demo">
+    <h2>新增屬性</h2>
+    <table class="ref">
+      <thead><tr><th>屬性</th><th>說明</th><th>預設值</th><th>可放在</th></tr></thead>
+      <tbody>
+        <tr><td><code>badge-icon</code></td><td>角標圖示（Bootstrap Icons）。單獨使用時角標為圓形；與 badge 並用時圖示在前、文字在後。</td><td>無</td><td>card-item</td></tr>
+        <tr><td><code>badge-color</code></td><td>角標底色，接受色盤名稱或色碼。文字色依底色深淺自動選 vanilla 或 base。</td><td>warning</td><td>ui-cards、card-item</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>範例四：三種角標組合</h2>
+    <div class="pair">
+      <ui-cards cols="3" color="sky" divider>
+        <card-item icon="fire" label="只有文字" note="與前一版相同" badge="HOT" footer="badge">
+          沿用預設 warning 底色。
+        </card-item>
+        <card-item icon="patch-check" label="只有圖示" note="圓形角標" badge-icon="patch-check-fill" badge-color="safe" footer="badge-icon + badge-color">
+          safe 底色自動配 vanilla 文字。
+        </card-item>
+        <card-item icon="lightning-charge" label="圖示加文字" note="圖示在前" badge-icon="lightning-charge-fill" badge="限時" badge-color="yellow" footer="badge-icon + badge">
+          yellow 底色自動配 base 文字。
+        </card-item>
+      </ui-cards>
+<pre>&lt;card-item badge="HOT" ...&gt;
+
+&lt;card-item badge-icon="patch-check-fill"
+  badge-color="safe" ...&gt;
+
+&lt;card-item badge-icon="lightning-charge-fill"
+  badge="限時" badge-color="yellow" ...&gt;</pre>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例五：整組角標底色加單張覆寫，搭配 badge-size</h2>
+    <div class="pair">
+      <ui-cards cols="4" badge-color="bluebell" badge-size="0.9">
+        <card-item icon="lock" label="鎖定" badge-icon="lock-fill">僅管理員可編輯。</card-item>
+        <card-item icon="bookmark" label="收藏" badge-icon="bookmark-star-fill" badge="12">已有 12 人收藏。</card-item>
+        <card-item icon="exclamation-triangle" label="警告" badge-icon="exclamation-lg" badge-color="warning" badge-size="1.1">此項目即將到期。</card-item>
+        <card-item icon="palette" label="自訂色碼" badge-icon="droplet-fill" badge="#3A1F5C" badge-color="#3A1F5C">深色色碼自動配淺色文字。</card-item>
+      </ui-cards>
+<pre>&lt;ui-cards cols="4" badge-color="bluebell" badge-size="0.9"&gt;
+  &lt;card-item badge-icon="lock-fill" ...&gt;
+  &lt;card-item badge-icon="bookmark-star-fill" badge="12" ...&gt;
+  &lt;card-item badge-icon="exclamation-lg"
+    badge-color="warning" badge-size="1.1" ...&gt;
+  &lt;card-item badge-icon="droplet-fill" badge="#3A1F5C"
+    badge-color="#3A1F5C" ...&gt;
+&lt;/ui-cards&gt;</pre>
+    </div>
+  </section>
 </div>
 </body>
 </html>

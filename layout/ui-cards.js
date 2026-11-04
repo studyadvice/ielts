@@ -29,6 +29,22 @@
       if (v) node.style.setProperty('--uic-fs-' + k, v);
     });
   };
+  /* 依底色深淺選擇文字色：色盤名稱沿用 LIGHT_TEXT，其餘色碼以亮度判斷 */
+  const textOn = v => {
+    const k = (v || '').trim();
+    if (PALETTE[k]) return LIGHT_TEXT.has(k) ? PALETTE.vanilla : PALETTE.base;
+    const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(k);
+    if (!m) return PALETTE.base;
+    let h = m[1];
+    if (h.length === 3) h = [...h].map(x => x + x).join('');
+    const [r, g, b] = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255);
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.5 ? PALETTE.vanilla : PALETTE.base;
+  };
+  const applyBadgeColor = (node, v) => {
+    if (!v) return;
+    node.style.setProperty('--uic-badge-bg', color(v));
+    node.style.setProperty('--uic-badge-fg', textOn(v));
+  };
   const el = (tag, cls, text) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -88,7 +104,9 @@ ui-cards .uic-body{font-size:var(--uic-fs-body, 0.95rem);line-height:1.7;}
 ui-cards .uic-body > :first-child{margin-top:0;}
 ui-cards .uic-body > :last-child{margin-bottom:0;}
 ui-cards .uic-foot{border-top:var(--uic-div);padding:10px var(--uic-pad);font-size:var(--uic-fs-footer, 0.85rem);color:${PALETTE.info};}
-ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;background:${PALETTE.warning};color:${PALETTE.vanilla};font-size:var(--uic-fs-badge, 0.75rem);font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
+ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;display:inline-flex;align-items:center;gap:4px;background:var(--uic-badge-bg, ${PALETTE.warning});color:var(--uic-badge-fg, ${PALETTE.vanilla});font-size:var(--uic-fs-badge, 0.75rem);font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
+ui-cards .uic-badge .bi{line-height:1;}
+ui-cards .uic-badge.uic-badge-only{justify-content:center;width:2em;height:2em;padding:0;}
 
 ui-cards card-item[data-click]{cursor:pointer;}
 ui-cards card-item[data-click]:hover{border-color:${PALETTE.focus};}
@@ -177,8 +195,9 @@ ${variantCSS}
       s.setProperty('--uic-div', has('divider')
         ? `1px ${lineStyle(a('divider') || 'solid')} ${color(a('divider-color')) || 'var(--uic-c)'}`
         : 'none');
-      /* 全體卡片字級 */
+      /* 全體卡片字級與角標底色 */
       applySizes(this, a);
+      applyBadgeColor(this, a('badge-color'));
 
       /* 卡片 */
       const wrap = this._wrap = el('div', 'uic-wrap');
@@ -276,8 +295,17 @@ ${variantCSS}
       parts.push(main);
 
       if (ta('footer')) parts.push(el('div', 'uic-foot', ta('footer')));
-      if (ta('badge')) parts.push(el('span', 'uic-badge', ta('badge')));
+      const bText = ta('badge');
+      const bIcon = ta('badge-icon');
+      if (bText || bIcon) {
+        const bd = el('span', 'uic-badge');
+        if (bIcon) bd.append(iconEl(bIcon.trim()));
+        if (bText) bd.append(el('span', null, bText));
+        else bd.classList.add('uic-badge-only');
+        parts.push(bd);
+      }
       c.replaceChildren(...parts);
+      applyBadgeColor(c, ta('badge-color'));
 
       if (ta('tooltip')) c.title = ta('tooltip');
       if (ta('color')) c.style.setProperty('--uic-c', color(ta('color')));
