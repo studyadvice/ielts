@@ -1,6 +1,53 @@
-# ui-drill
+# layout 版面元件：ui-drill、ui-cards、ui-steps
 
-`<ui-drill>` 是一個零相依、單一檔案的 Web Component，用來製作「左側方塊 → 中欄清單或按鈕 → 右欄細節」的逐層鑽取介面。常見用途包括產品分類瀏覽、設定面板、知識庫目錄、收件匣，以及教學單元導覽。
+三個以語意標籤撰寫的版面元件，共用同一套「內容來源、外觀、互動」約定。每個元件都是單一 `.js` 檔，載入後自動注入樣式，不使用 Shadow DOM。
+
+| 檔案 | 標籤 | 用途 |
+| --- | --- | --- |
+| `ui-drill.js` | `<ui-drill>` `<drill-tile>` `<rightup-item>` | 左側方塊、中欄清單、右欄細節的逐層鑽取介面，支援三欄、頁籤與收件匣版面。 |
+| `ui-cards.js` | `<ui-cards>` `<card-item>` | 卡片網格與細節內容區，支援顯示按鈕與內容區角標。 |
+| `ui-steps.js` | `<ui-steps>` `<step-item>` | 橫向或直向的流程與時間軸，點步驟顯示內容。 |
+
+## 目錄
+
+- [共同約定](#共同約定)
+- [ui-drill.js](#ui-drilljs)
+- [ui-cards.js](#ui-cardsjs)
+- [ui-steps.js](#ui-stepsjs)
+
+---
+
+## 共同約定
+
+`ui-drill`、`ui-cards`、`ui-steps` 共用同一套屬性命名，學會一個就能套用到其他兩個。完整說明見 `ui-conventions.html`。
+
+| 屬性 | 說明 |
+| --- | --- |
+| `source` | 指向 `div` 或 `<template>` 的 id，填入主要內容區。 |
+| `detail` | 指向 id，填入細節區。項目本身或已顯示內容裡的任何元素都可以帶這個屬性。 |
+| `detail-title` | 寫在觸發元素上，覆寫細節區標題。 |
+| `title` | 容器標題，讀取後會從元素移除，避免出現瀏覽器原生提示。 |
+| `label`、`note`、`tooltip`、`icon`、`badge` | 項目名稱、次要說明、滑鼠提示、Bootstrap 圖示（`star-fill` 或 `bi-star-fill` 皆可）、角標。 |
+| `gap`、`padding`、`size`、`height`、`*-width` | 數字，單位一律是 px。 |
+| `icon-size` | 數字，單位是 rem。 |
+| `color`、`accent`、`*-color` | 品牌色名稱或色碼。`accent` 一律表示選中或目前狀態的顏色。 |
+| `trigger`、`detail-trigger` | `click` 或 `hover`。 |
+| `toggle` | 寫在容器上，再點一次已選項目時取消；寫在觸發元素上，再點一次收起細節。 |
+| `active`、`active-detail` | 初始選中的項目與初始開啟的細節。 |
+| `disabled` | 停用項目或按鈕。 |
+| `href`、`target` | 項目改為連結。 |
+| `placeholder` | 尚未選擇時的提示，設空字串則不顯示。 |
+
+- 內容一律複製，同一份來源可被多個元件、多個項目共用。找不到 id 時在該處顯示紅框警告，不中斷其他功能。
+- 帶 `detail` 的元素自動套用按鈕樣式；已有 Bootstrap `btn` 類別時不覆蓋。
+- 屬性只在載入時讀取一次，之後修改屬性不會更新畫面。沒有切換動畫。
+- 元件可以放在其他元件的內容來源裡，複製出來時會自動建立，可以一層一層嵌套。
+
+---
+
+## ui-drill.js
+
+`<ui-drill>` 是一個零相依、單一檔案的網頁元件，用來製作「左側方塊 → 中欄清單或按鈕 → 右欄細節」的逐層鑽取介面。常見用途包括產品分類瀏覽、設定面板、知識庫目錄、收件匣，以及教學單元導覽。
 
 - 單一 `ui-drill.js`，CSS 與 JavaScript 合併在同一檔案，載入後自動注入樣式。
 - 不使用 Shadow DOM，可以直接用外部 CSS 覆寫。
@@ -8,43 +55,7 @@
 - 支援三欄、頁籤、上下堆疊（收件匣）三種版面。
 - 所有色彩屬性都可直接寫品牌色名稱，例如 `accent="sky"`。
 
-## 目錄
-
-- [安裝](#安裝)
-- [快速開始](#快速開始)
-- [運作方式](#運作方式)
-- [範例](#範例)
-  - [1. 基本三欄](#1-基本三欄)
-  - [2. 方塊分組、徽章、停用與外部連結](#2-方塊分組徽章停用與外部連結)
-  - [3. 細節按鈕的顏色與 Bootstrap 按鈕](#3-細節按鈕的顏色與-bootstrap-按鈕)
-  - [4. 欄間箭頭](#4-欄間箭頭)
-  - [5. 外框、高度與欄寬比例](#5-外框高度與欄寬比例)
-  - [6. 頁籤模式](#6-頁籤模式)
-  - [7. 堆疊模式（收件匣）](#7-堆疊模式收件匣)
-  - [8. 預先選取與滑過觸發](#8-預先選取與滑過觸發)
-  - [9. 鍵盤操作與點擊收合](#9-鍵盤操作與點擊收合)
-  - [10. 隱藏空白的右欄](#10-隱藏空白的右欄)
-- [屬性參考](#屬性參考)
-- [色票](#色票)
-- [CSS 覆寫](#css-覆寫)
-- [瀏覽器支援](#瀏覽器支援)
-- [授權](#授權)
-
-## 安裝
-
-把 `ui-drill.js` 放進專案後直接引用。圖示使用 [Bootstrap Icons](https://icons.getbootstrap.com/)，不用圖示時可以省略。Bootstrap CSS 為選用，只有在想讓細節按鈕套用 `btn` 樣式時才需要。
-
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<!-- 選用 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-<script src="ui-drill.js"></script>
-```
-
-腳本可以放在 `<head>` 或 `<body>` 結尾。元件會等到 `DOMContentLoaded` 才建構，建構完成前會先隱藏，避免畫面閃爍。
-
-## 快速開始
+### 快速開始
 
 ```html
 <ui-drill title="產品目錄" mid-title="{label}" right-title="{label}">
@@ -65,7 +76,7 @@
 <template id="phone-x"><p>6.1 吋螢幕，雙鏡頭。</p></template>
 ```
 
-## 運作方式
+### 運作方式
 
 ```
 ┌──────────┐   source   ┌──────────────┐   detail   ┌──────────────┐
@@ -80,9 +91,9 @@
 
 內容來源可以是 `<template>`（建議）或任何帶 id 的元素。若來源是一般元素，元件會複製它、移除 id，並解除 `hidden` 與 `display:none`，原始元素保持不動，所以可以把它設成 `hidden` 藏在頁面上。
 
-## 範例
+### 範例
 
-### 1. 基本三欄
+#### 1. 基本三欄
 
 方塊下方顯示文字、四欄方塊、自訂提示文字。
 
@@ -112,7 +123,7 @@
 
 `tile-label` 可設為 `tooltip`（預設，滑過顯示）、`below`（顯示在方塊下方）或其他任何值（完全不顯示）。
 
-### 2. 方塊分組、徽章、停用與外部連結
+#### 2. 方塊分組、徽章、停用與外部連結
 
 ```html
 <ui-drill title="系統設定" tile-shape="rounded" tile-cols="3" accent="lavender"
@@ -143,9 +154,9 @@
 - `href`／`target`：點擊後直接開啟網址，不會切換中欄。
 - `color`／`active-color`／`icon-color`：單一方塊的底色、選取色與圖示色。
 
-### 3. 細節按鈕的顏色與 Bootstrap 按鈕
+#### 3. 細節按鈕的顏色與 Bootstrap 按鈕
 
-中欄的細節按鈕預設使用 `ocean` 底色。可在元件上用 `button-color` 統一設定，也可在個別按鈕上用 `color` 覆寫。按鈕若已經帶有 Bootstrap 的 `btn` 或 `btn-*` class，元件就不會套用自己的樣式。
+中欄的細節按鈕預設使用 `ocean` 底色。可在元件上用 `button-color` 統一設定，也可在個別按鈕上用 `color` 覆寫。按鈕若已經帶有 Bootstrap 的 `btn` 或 `btn-*` 類別，元件就不會套用自己的樣式。
 
 ```html
 <ui-drill title="專案狀態" button-color="sky" mid-title="{label}" right-title="{label}">
@@ -172,7 +183,7 @@
 
 `warning`、`indigo`、`teal`、`safe` 這四種深色底會自動改用淺色文字。`label` 屬性決定右欄標題中 `{label}` 的值，沒有設定時會使用按鈕文字。
 
-### 4. 欄間箭頭
+#### 4. 欄間箭頭
 
 ```html
 <!-- 預設箭頭 -->
@@ -211,7 +222,7 @@
 | `arrow-color` | 色名或 CSS 色值 | `shell` |
 | `arrow-active-color` | 下一欄有內容時的顏色 | 沿用 `accent` |
 
-### 5. 外框、高度與欄寬比例
+#### 5. 外框、高度與欄寬比例
 
 ```html
 <ui-drill bordered columns="1,2,3" gap="0" height="360" tile-cols="2" tile-size="56" tile-gap="12" icon-size="1.8"
@@ -235,7 +246,7 @@
 - `bordered`：加上外框與欄間分隔線，欄間距會變成 0。
 - `tile-shape`：預設方形，可設 `rounded` 或 `circle`。
 
-### 6. 頁籤模式
+#### 6. 頁籤模式
 
 `tile-shape` 設成 `tab-` 開頭的值時，方塊會變成橫向頁籤列，下方只剩中欄與右欄（比例取 `columns` 的第二、三個值）。頁籤底色預設使用各自的 `color`，選取後下方色條也會跟著變色。
 
@@ -294,7 +305,7 @@
 | `tab-dim` | 未選取頁籤的亮度，0 到 1 | `0.75` |
 | `tab-bar` | 底部色條粗細（px） | `4`，`tab-pill` 為 `0` |
 
-### 7. 堆疊模式（收件匣）
+#### 7. 堆疊模式（收件匣）
 
 `layout="stack"` 會把右側改成上下兩區：上方是 `<rightup-item>` 清單，下方是細節。適合做收件匣、通知中心、工單清單。
 
@@ -367,7 +378,7 @@
 <template id="t-1025"><p>等待網管人員回覆。</p></template>
 ```
 
-### 8. 預先選取與滑過觸發
+#### 8. 預先選取與滑過觸發
 
 ```html
 <!-- 載入時直接選取「手機」，並開啟右欄的 phone-x -->
@@ -387,7 +398,7 @@
 - `active-detail`：值為細節內容的 id。
 - 方塊本身也可以設 `detail`，選取該方塊時會同時開啟右欄。
 
-### 9. 鍵盤操作與點擊收合
+#### 9. 鍵盤操作與點擊收合
 
 ```html
 <ui-drill keyboard toggle tile-cols="3" mid-title="{label}">
@@ -413,7 +424,7 @@
 
 `toggle`：再點一次已選取的方塊會取消選取並清空中欄與右欄。
 
-### 10. 隱藏空白的右欄
+#### 10. 隱藏空白的右欄
 
 ```html
 <ui-drill hide-empty-right columns="2,10,0" mid-title="{label}" right-title="{label}">
@@ -427,9 +438,9 @@
 <template id="photo-1"><p>2026 年員工旅遊合照。</p></template>
 ```
 
-## 屬性參考
+### 屬性參考
 
-### `<ui-drill>`
+#### `<ui-drill>`
 
 | 屬性 | 說明 | 預設 |
 | --- | --- | --- |
@@ -463,7 +474,7 @@
 | `arrows` 系列 | 見[欄間箭頭](#4-欄間箭頭) | 無 |
 | `tab-*` 系列 | 見[頁籤模式](#6-頁籤模式) | 無 |
 
-### 堆疊模式專用
+#### 堆疊模式專用
 
 | 屬性 | 說明 | 預設 |
 | --- | --- | --- |
@@ -481,7 +492,7 @@
 | `rightup-divider-color` | 分隔線顏色 | `shell` |
 | `rightup-max-height` | 清單區最大高度（px） | 無 |
 
-### `<drill-tile>`
+#### `<drill-tile>`
 
 | 屬性 | 說明 |
 | --- | --- |
@@ -497,7 +508,7 @@
 | `href`／`target` | 改為連結，點擊後開啟網址 |
 | `disabled` | 停用 |
 
-### 細節按鈕（任何帶 `detail` 的元素）
+#### 細節按鈕（任何帶 `detail` 的元素）
 
 | 屬性 | 說明 |
 | --- | --- |
@@ -508,7 +519,7 @@
 | `toggle` | 再點一次時清空右欄 |
 | `disabled` | 停用 |
 
-### `<rightup-item>`
+#### `<rightup-item>`
 
 | 屬性 | 說明 |
 | --- | --- |
@@ -525,25 +536,9 @@
 | `align` | 內文對齊方式 |
 | `detail-title`／`toggle`／`disabled` | 與細節按鈕相同 |
 
-## 色票
+### CSS 覆寫
 
-所有色彩屬性都可以寫下列名稱，也可以寫任何 CSS 色值（`#hex`、`rgb()`、`hsl()`）。
-
-| 名稱 | 色碼 | 名稱 | 色碼 |
-| --- | --- | --- | --- |
-| `base` | `#0C0D0C` | `teal` | `#0DA591` |
-| `shell` | `#C6C7BD` | `vanilla` | `#DBEDD8` |
-| `lavender` | `#C3A5E5` | `yellow` | `#E3D322` |
-| `sky` | `#82C8E5` | `focus` | `#D4FFFC` |
-| `warning` | `#E6374B` | `special` | `#B3DE73` |
-| `salmon` | `#E5C3B3` | `info` | `#92B5E0` |
-| `ocean` | `#1CCAE8` | `indigo` | `#7849C9` |
-| `safe` | `#27AE60` | `pink` | `#FF91D7` |
-| `orange` | `#EDA109` | | |
-
-## CSS 覆寫
-
-元件不使用 Shadow DOM，所有 class 都以 `uid-` 開頭，可以直接覆寫：
+元件不使用 Shadow DOM，所有類別都以 `uid-` 開頭，可以直接覆寫：
 
 ```css
 /* 中欄內文改用較小字體 */
@@ -566,6 +561,320 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(28, 202, 
 | `--uid-size` | 方塊尺寸 |
 | `--uid-gap` | 欄間距 |
 
-## 授權
+---
 
-MIT License
+## ui-cards.js
+
+`<ui-cards>` 把多張 `<card-item>` 排成卡片網格。卡片可以只是展示，也可以點擊後在下方或右側的內容區顯示細節；卡片內與內容區裡任何帶 `detail` 的按鈕也能開啟細節。另外支援 `reveal` 按鈕，按下後顯示頁面上另一個隱藏區塊。遵守 ui 元件共同約定：屬性只在載入時讀取一次，內容一律複製，數字單位為 px（字級為 rem），顏色可填品牌色名稱或色碼。
+
+### 標籤
+
+| 標籤 | 用途 |
+| --- | --- |
+| `<ui-cards>` | 外層容器，網格、內容區與互動設定都寫在這裡。 |
+| `<card-item>` | 一張卡片，子內容會放進卡片的內文區。 |
+| 任何帶 `detail` 的元素 | 細節按鈕，可放在卡片內或內容區裡。 |
+| 任何帶 `reveal` 的元素 | 顯示按鈕，按下後顯示指定 id 的區塊。 |
+
+### `<ui-cards>` 屬性：網格與卡片外觀
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `title` | 文字 | 無 | 元件大標題。 |
+| `title-size` | 數字（rem）或長度 | `1.2rem` | 大標題字級。 |
+| `title-color` | 顏色 | `lavender` | 大標題顏色。 |
+| `cols` | 整數 | `3` | 每列卡片數。 |
+| `gap` | 數字（px） | `16` | 卡片間距，也是網格與內容區的距離。 |
+| `align` | `center` | 靠左 | 卡片內容置中。 |
+| `bordered` | 布林 | 關閉 | 整個元件加外框。 |
+| `card-style` | `filled`、`plain` | 外框卡片 | `filled` 以 `color` 填滿卡片；`plain` 拿掉外框與底色。 |
+| `color` | 顏色 | `shell` | 卡片外框色，`filled` 時為底色。 |
+| `accent` | 顏色 | `ocean` | 選中卡片的外框與光暈色。 |
+| `card-padding` | 數字（px） | `16` | 卡片內距。 |
+| `card-radius` | 數字（px） | `8` | 卡片圓角。 |
+| `card-height` | 數字（px） | 自動 | 卡片最小高度。 |
+| `media-position` | `left` | 上方 | 圖示或圖片放在卡片左側。 |
+| `media-height` | 數字（px） | `140` | 圖片高度（圖片在上方時）。 |
+| `media-width` | 數字（px） | `120` | 圖示或圖片寬度（在左側時）。 |
+| `icon-size` | 數字（rem）或長度 | `2rem` | 圖示大小。 |
+| `icon-color` | 顏色 | 跟隨文字 | 圖示顏色。 |
+| `divider` | `solid`、`dashed`、`dotted`、`none` | 無 | 卡片頁尾上方的分隔線。只寫屬性不給值時為 `solid`。 |
+| `divider-color` | 顏色 | 跟隨 `color` | 分隔線顏色。 |
+| `badge-color` | 顏色 | 內建 | 所有卡片角標的底色，文字色自動取對比。 |
+| `label-size`、`note-size`、`tag-size`、`body-size`、`footer-size`、`badge-size` | 數字（rem）或長度 | 內建 | 卡片各部位字級。 |
+
+### `<ui-cards>` 屬性：內容區與互動
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `panel` | `below`、`right`、`none` | `below` | 內容區位置。只有網格裡有 `detail` 時才會建立內容區。 |
+| `panel-columns` | `網格,內容區` | `8,4` | `panel="right"` 時的寬度比例。 |
+| `panel-height` | 數字（px） | 自動 | 內容區最大高度，超過時捲動。 |
+| `panel-title` | 文字 | 空 | 內容區標題，可用 `{label}` 代入卡片的 `label`。 |
+| `panel-title-size` | 數字（rem）或長度 | `1.1rem` | 內容區標題字級。 |
+| `panel-title-color` | 顏色 | `lavender` | 內容區標題顏色。 |
+| `panel-title-line` | 顏色或 `none` | 跟隨標題色 | 標題底線顏色；`none` 移除底線。 |
+| `placeholder` | 文字 | `請點選卡片。` | 尚未選擇時的提示；設空字串則不顯示。 |
+| `hide-empty-panel` | 布林 | 關閉 | 尚未選擇時隱藏內容區。 |
+| `panel-badge` | 文字 | 無 | 內容區右上角的角標文字。 |
+| `panel-badge-icon` | Bootstrap Icons 名稱 | 無 | 內容區角標圖示。 |
+| `panel-badge-color` | 顏色 | 內建 | 內容區角標底色。 |
+| `trigger` | `click`、`hover` | `click` | 卡片開啟細節的方式。 |
+| `detail-trigger` | `click`、`hover` | `click` | 細節按鈕開啟細節的方式。 |
+| `toggle` | 布林 | 關閉 | 再點一次已選的卡片或按鈕時收起細節。 |
+| `active-detail` | 元素 id | 無 | 載入時就開啟的細節。 |
+| `button-color` | 顏色 | `ocean` | 細節按鈕的預設底色。 |
+
+### `<card-item>` 屬性
+
+| 屬性 | 值 | 說明 |
+| --- | --- | --- |
+| `label` | 文字 | 卡片標題。 |
+| `note` | 文字 | 標題下方的次要說明。 |
+| `tags` | 逗號分隔文字 | 一排小標籤。 |
+| `icon` | Bootstrap Icons 名稱 | 卡片圖示，`star` 或 `bi-star` 皆可。 |
+| `image` | 圖片網址 | 卡片圖片，優先於 `icon`。 |
+| `source` | 元素 id | 把該元素（或 `<template>`）的內容複製到卡片內文。 |
+| `footer` | 文字 | 卡片頁尾。 |
+| `badge` | 文字 | 右上角角標。 |
+| `badge-icon` | Bootstrap Icons 名稱 | 角標圖示。 |
+| `badge-color` | 顏色 | 這張卡片的角標底色。 |
+| `color`、`icon-color`、`icon-size` | 同 `<ui-cards>` | 只覆寫這張卡片。 |
+| `label-size` 等字級屬性 | 同 `<ui-cards>` | 只覆寫這張卡片。 |
+| `span` | 整數 | 卡片橫跨的欄數。 |
+| `tooltip` | 文字 | 滑鼠提示。 |
+| `detail` | 元素 id | 點擊卡片時在內容區顯示的內容。 |
+| `detail-title` | 文字 | 覆寫內容區標題。 |
+| `href`、`target` | 網址、視窗名稱 | 卡片改為連結。 |
+| `disabled` | 布林 | 停用，外框改虛線並轉灰。 |
+| `toggle` | 布林 | 再點一次這張卡片時收起細節。 |
+
+### 細節按鈕屬性
+
+| 屬性 | 值 | 說明 |
+| --- | --- | --- |
+| `detail` | 元素 id | 要顯示的內容。 |
+| `detail-title` | 文字 | 覆寫內容區標題。 |
+| `color` | 顏色 | 按鈕底色，預設為 `button-color`。 |
+| `toggle` | 布林 | 再點一次收起細節。 |
+| `disabled` | 布林 | 停用。 |
+| `detail-badge`、`detail-badge-icon`、`detail-badge-color` | 同 `panel-badge` | 開啟這個細節時使用的內容區角標，優先於 `<ui-cards>` 的設定；寫空值可隱藏角標。 |
+
+### 顯示按鈕屬性
+
+| 屬性 | 值 | 說明 |
+| --- | --- | --- |
+| `reveal` | 元素 id | 按下後顯示這個區塊（移除 `hidden`、`d-none` 或 `display:none`）。 |
+| `remove-cards` | 布林 | 顯示後把整個 `<ui-cards>` 從頁面移除。 |
+| `reveal-scroll` | 布林 | 顯示後平滑捲動到該區塊。 |
+| `color` | 顏色 | 按鈕底色。 |
+| `disabled` | 布林 | 停用。 |
+
+### 屬性解說
+
+- **內容來源**：`source`、`detail`、`reveal` 都指向頁面上的 id，建議用 `<template>` 或加上 `hidden` 的 `div`。內容一律複製，同一份來源可以被多張卡片共用。找不到 id 時會在該處顯示紅框警告。
+- **按鈕樣式**：帶 `detail` 或 `reveal` 的元素會自動套用按鈕樣式；已有 Bootstrap `btn` 類別時不覆蓋，並在選中時加上 `active`。
+- **點擊優先順序**：`reveal` 按鈕最優先，其次是帶 `detail` 的元素，最後才是帶 `href` 的卡片。卡片內一般的連結與按鈕不會被卡片攔截。
+- **巢狀**：內容區裡可以再放 `<ui-cards>` 或其他 ui 元件，複製出來時會自動建立。
+
+### 範例
+
+**展示用卡片**
+
+```html
+<ui-cards title="本課重點" cols="3" color="sky" divider="dashed">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目" tags="Part 2,Part 3" footer="約 1 分鐘"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用" badge="新"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開"></card-item>
+</ui-cards>
+```
+
+**點卡片在右側顯示細節**
+
+```html
+<ui-cards cols="2" panel="right" panel-columns="7,5" panel-title="{label}" accent="pink" toggle>
+  <card-item label="湖畔營地" icon="tree-fill" detail="camp-a"></card-item>
+  <card-item label="山頂小屋" icon="house" detail="camp-b">
+    <button detail="camp-b-rule" color="orange" detail-title="入住須知">須知</button>
+  </card-item>
+  <card-item label="溪谷營地" note="整修中" icon="tree" disabled detail="camp-a"></card-item>
+</ui-cards>
+
+<template id="camp-a"><p>可容納 20 頂帳篷。</p></template>
+<template id="camp-b"><p>需提前一週預約。</p></template>
+<template id="camp-b-rule"><p>晚上十點後保持安靜。</p></template>
+```
+
+**實心卡片、圖示在左與預設開啟**
+
+```html
+<ui-cards cols="4" card-style="filled" media-position="left" media-width="64" icon-size="1.6"
+          active-detail="sum-a" hide-empty-panel>
+  <card-item label="今日訂單" icon="cart-check-fill" color="ocean" detail="sum-a"></card-item>
+  <card-item label="新會員" icon="person-plus-fill" color="special" detail="sum-b"></card-item>
+  <card-item label="退貨申請" icon="arrow-return-left" color="salmon" badge="3" badge-color="warning"></card-item>
+  <card-item label="說明" icon="info-circle" color="lavender" href="#help"></card-item>
+</ui-cards>
+```
+
+**顯示按鈕與內容區角標**
+
+```html
+<ui-cards cols="1" panel-badge="範例" panel-badge-icon="stars">
+  <card-item icon="door-open" label="準備好了嗎？" note="按下按鈕開始練習">
+    <button reveal="practice-1" remove-cards reveal-scroll color="lavender">開始練習</button>
+    <button detail="intro" detail-badge="說明" detail-badge-color="sky">先看說明</button>
+  </card-item>
+</ui-cards>
+
+<section id="practice-1" hidden>練習內容</section>
+<template id="intro"><p>每題限時兩分鐘。</p></template>
+```
+
+### 事件
+
+| 事件 | 發出位置 | `detail` | 觸發時機 |
+| --- | --- | --- | --- |
+| `ui-cards:reveal` | 被顯示的區塊（會冒泡） | `{ id, removed, button }` | `reveal` 按鈕顯示區塊時。 |
+
+---
+
+## ui-steps.js
+
+`<ui-steps>` 是流程與時間軸元件。`<step-item>` 依序排成橫向或直向的節點，節點之間有連接線與箭頭，並依狀態（完成、目前、未開始）上色。點擊帶 `source` 的步驟會在內容區顯示對應內容；內容裡帶 `detail` 的元素再在下方細節區顯示更多內容。遵守 ui 元件共同約定：屬性只在載入時讀取一次，內容一律複製。
+
+### 標籤
+
+| 標籤 | 用途 |
+| --- | --- |
+| `<ui-steps>` | 外層容器。 |
+| `<step-item>` | 一個步驟節點。 |
+| 任何帶 `detail` 的元素 | 內容區裡的細節按鈕。 |
+
+### `<ui-steps>` 屬性：排列與狀態
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `title` | 文字 | 無 | 元件標題。 |
+| `direction` | `vertical` | 橫向 | 改為直向排列，內容區放在右側。 |
+| `columns` | `步驟,內容區` | `4,8` | 直向時兩欄的寬度比例。 |
+| `current` | 整數（1 起算） | 無 | 目前進行到第幾步；之前的為完成，之後的為未開始。 |
+| `numbered` | 布林 | 關閉 | 沒有圖示的節點顯示編號。 |
+| `done-icon` | Bootstrap Icons 名稱 | 無 | 完成狀態的節點改用這個圖示。 |
+| `node-size` | 數字（px） | `48` | 節點直徑。 |
+| `icon-size` | 數字（rem） | `1.3` | 節點圖示大小。 |
+| `label-width` | 數字（px） | 自動 | 步驟文字的寬度。 |
+| `gap` | 數字（px） | `24` | 軌道與內容區的距離。 |
+| `padding` | 數字（px） | `16` | 內容區內距。 |
+| `connector-length` | 數字（px） | `48` | 節點之間的連接長度。 |
+
+### `<ui-steps>` 屬性：顏色
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `color` | `shell` | 未開始節點的顏色。 |
+| `accent` | `ocean` | 目前節點與選中節點的顏色，也是亮起的連接線與箭頭的預設色。 |
+| `done-color` | `safe` | 完成節點的顏色。 |
+| `icon-color` | `base` | 節點內圖示與編號的顏色。 |
+
+### `<ui-steps>` 屬性：連接線與箭頭
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `line` | `solid`、`dashed`、`dotted`、`none` | 無 | 顯示連接線，只寫屬性時為 `solid`。 |
+| `line-width` | 數字（px） | `2` | 連接線粗細。 |
+| `line-color` | 顏色 | `shell` | 連接線顏色。 |
+| `line-active-color` | 顏色 | 跟隨 `accent` | 兩端都已完成或進行中時的連接線顏色。 |
+| `arrows` | 布林 | 關閉 | 在連接處放箭頭。 |
+| `arrow-shape` | `arrow`、`chevron`、`triangle` | `arrow` | 箭頭形狀。 |
+| `arrow-icon` | Bootstrap Icons 名稱 | 無 | 改用圖示當箭頭，優先於 `arrow-shape`。 |
+| `arrow-size` | 數字（px） | `20` | 箭頭大小。 |
+| `arrow-color` | 顏色 | `shell` | 箭頭顏色。 |
+| `arrow-active-color` | 顏色 | 跟隨 `accent` | 亮起的箭頭顏色。 |
+
+### `<ui-steps>` 屬性：內容區與互動
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `panel-title` | 文字 | 空 | 內容區標題，可用 `{label}` 代入步驟名稱。 |
+| `detail-title` | 文字 | 空 | 細節區標題。 |
+| `panel-height` | 數字（px） | 自動 | 內容區最大高度，超過時捲動。 |
+| `placeholder` | 文字 | `請點選步驟。` | 尚未選擇時的提示；設空字串則不顯示。 |
+| `trigger` | `click`、`hover` | `click` | 步驟開啟內容的方式。 |
+| `detail-trigger` | `click`、`hover` | `click` | 細節按鈕開啟細節的方式。 |
+| `toggle` | 布林 | 關閉 | 再點一次已選步驟時收起內容。 |
+| `active` | 步驟的 `source` | 無 | 載入時就選取的步驟。 |
+| `active-detail` | 元素 id | 無 | 載入時就開啟的細節。 |
+| `button-color` | 顏色 | `ocean` | 細節按鈕的預設底色。 |
+
+### `<step-item>` 屬性
+
+| 屬性 | 值 | 說明 |
+| --- | --- | --- |
+| `label` | 文字 | 步驟名稱。 |
+| `note` | 文字 | 名稱下方的次要說明，例如日期。 |
+| `icon` | Bootstrap Icons 名稱 | 節點圖示。 |
+| `badge` | 文字 | 節點角標。 |
+| `status` | `done`、`current`、`todo` | 指定狀態，優先於 `current`。 |
+| `color` | 顏色 | 只覆寫這個節點的顏色（三種狀態都用此色）。 |
+| `icon-color` | 顏色 | 這個節點的圖示顏色。 |
+| `source` | 元素 id | 選取時在內容區顯示的內容。 |
+| `detail` | 元素 id | 選取時同時在細節區顯示的內容。 |
+| `href`、`target` | 網址、視窗名稱 | 步驟改為連結。 |
+| `tooltip` | 文字 | 滑鼠提示。 |
+| `disabled` | 布林 | 停用。 |
+
+### 細節按鈕屬性
+
+| 屬性 | 值 | 說明 |
+| --- | --- | --- |
+| `detail` | 元素 id | 要在細節區顯示的內容。 |
+| `detail-title` | 文字 | 覆寫細節區標題。 |
+| `color` | 顏色 | 按鈕底色，預設為 `button-color`。 |
+| `toggle` | 布林 | 再點一次收起細節。 |
+| `disabled` | 布林 | 停用。 |
+
+### 屬性解說
+
+- **狀態**：每個步驟的狀態先看自己的 `status`，沒有時依 `<ui-steps>` 的 `current` 推算。兩者都沒有時全部為未開始。
+- **可點擊的步驟**：只有帶 `source`、`detail` 或 `href` 且未停用的步驟可以點擊；其餘只是展示用的節點。
+- **內容區**：只要有任何步驟帶 `source` 或 `detail` 才會建立。橫向時內容區在軌道下方，直向時在右側。
+- **內容來源**：建議用 `<template>` 或加上 `hidden` 的 `div`。找不到 id 時會在該處顯示紅框警告。
+
+### 範例
+
+**橫向進度**
+
+```html
+<ui-steps current="3" numbered line arrows arrow-shape="chevron" done-icon="check-lg" accent="lavender">
+  <step-item label="報名" note="9 月"></step-item>
+  <step-item label="分級測驗" note="10 月"></step-item>
+  <step-item label="上課" note="11 月"></step-item>
+  <step-item label="模擬考" note="12 月"></step-item>
+</ui-steps>
+```
+
+**直向時間軸與內容區**
+
+```html
+<ui-steps direction="vertical" columns="4,8" line="dashed" panel-title="{label}" active="s-1" toggle>
+  <step-item label="審題" icon="search" source="s-1"></step-item>
+  <step-item label="列大綱" icon="list-ol" source="s-2"></step-item>
+  <step-item label="寫作" icon="pencil" source="s-3" badge="40'"></step-item>
+</ui-steps>
+
+<template id="s-1"><p>找出題目要求的立場。</p><button detail="s-1-more">看範例</button></template>
+<template id="s-1-more"><p>To what extent do you agree or disagree?</p></template>
+<template id="s-2"><p>決定兩個主體段的主題句。</p></template>
+<template id="s-3"><p>預留五分鐘檢查。</p></template>
+```
+
+**指定狀態與連結步驟**
+
+```html
+<ui-steps line arrows arrow-icon="arrow-right-circle" color="info" done-color="safe">
+  <step-item label="第一課" status="done" href="lesson-1.html"></step-item>
+  <step-item label="第二課" status="current" color="orange"></step-item>
+  <step-item label="第三課" status="todo" disabled tooltip="尚未開放"></step-item>
+</ui-steps>
+```
