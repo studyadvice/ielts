@@ -1,14 +1,40 @@
-/*! ui-fillin.js | 選擇題／文字輸入挖空元件 | 建立日期 10-06-26 | 更新日期 10-22-26 */
 (() => {
   'use strict';
   if (customElements.get('ui-fillin')) return;
 
-  /* ---------- 樣式（與腳本同檔，不使用 shadow DOM） ---------- */
-  /* 預設為緊湊模式，僅供寬螢幕使用，不考慮窄螢幕／無障礙規定 */
+  // 品牌色票：所有 *-color 屬性與 line-color 都可直接使用這些名稱（不分大小寫）
+  const BRAND = {
+    base: '#0C0D0C',
+    shell: '#C6C7BD',
+    lavender: '#C3A5E5',
+    sky: '#82C8E5',
+    warning: '#E6374B',
+    salmon: '#E5C3B3',
+    ocean: '#1CCAE8',
+    safe: '#27AE60',
+    teal: '#0DA591',
+    vanilla: '#DBEDD8',
+    yellow: '#E3D322',
+    bluebell: '#7589D9',
+    special: '#B3DE73',
+    info: '#92B5E0',
+    indigo: '#7849C9',
+    pink: '#FF91D7',
+    orange: '#EDA109'
+  };
+  // 別名：bg / background 都指向底層背景色 base
+  const BRAND_ALIAS = { bg: 'base', background: 'base' };
+  const MIN_ALPHA = 0.78;
+
+  const BRAND_VARS = Object.keys(BRAND).map((k) => `--uf-c-${k}:${BRAND[k]};`).join('');
+
   const CSS = `
 ui-fillin{
-  --uf-bg:#0C0D0C;--uf-text:#C6C7BD;--uf-accent:#C6C7BD;
-  --uf-ok:#27AE60;--uf-bad:#E6374B;
+  ${BRAND_VARS}
+  --uf-bg:var(--uf-c-base);--uf-text:var(--uf-c-shell);--uf-accent:var(--uf-c-shell);
+  --uf-ok:var(--uf-c-safe);--uf-bad:var(--uf-c-warning);
+  --uf-blank:var(--uf-accent);--uf-picked:var(--uf-blank);--uf-menu:var(--uf-bg);
+  --uf-hover:var(--uf-accent);--uf-head:var(--uf-accent);--uf-btn:var(--uf-accent);--uf-alert:var(--uf-accent);
   --uf-line-rgb:198,199,189;--uf-line-a:0.78;
   --uf-line:rgba(var(--uf-line-rgb),var(--uf-line-a));
   --uf-sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
@@ -33,7 +59,7 @@ ui-fillin main-box li:last-child{margin-bottom:0}
 ui-fillin main-box:empty,ui-fillin ans-box:empty{display:none}
 
 ui-fillin .uf-blank{display:inline-flex;align-items:center;gap:4px;box-sizing:border-box;max-width:var(--uf-blank-max-width);margin:0 2px;padding:var(--uf-blank-padding);
-  vertical-align:baseline;white-space:nowrap;appearance:none;background:transparent;color:var(--uf-accent);border:1px solid var(--uf-accent);border-radius:var(--uf-radius);
+  vertical-align:baseline;white-space:nowrap;appearance:none;background:transparent;color:var(--uf-blank);border:1px solid var(--uf-blank);border-radius:var(--uf-radius);
   font:var(--uf-font-size)/var(--uf-line-height) var(--uf-sans);cursor:pointer}
 ui-fillin .uf-blank .uf-no{font-weight:700}
 ui-fillin .uf-blank .uf-no::after{content:"."}
@@ -41,15 +67,15 @@ ui-fillin .uf-blank[data-no-dot="1"] .uf-no::after{content:""}
 ui-fillin .uf-blank .uf-val{overflow:hidden;text-overflow:ellipsis}
 ui-fillin .uf-blank .uf-mark{font-weight:700}
 ui-fillin .uf-blank .uf-mark:empty{display:none}
-ui-fillin .uf-blank:not(:disabled):hover,ui-fillin .uf-blank.is-open{box-shadow:inset 0 0 0 1px var(--uf-accent)}
-ui-fillin .uf-blank.is-picked{background:var(--uf-accent);color:var(--uf-bg)}
+ui-fillin .uf-blank:not(:disabled):hover,ui-fillin .uf-blank.is-open{box-shadow:inset 0 0 0 1px var(--uf-blank)}
+ui-fillin .uf-blank.is-picked{background:var(--uf-picked);border-color:var(--uf-picked);color:var(--uf-bg)}
 ui-fillin .uf-blank.is-ok{background:transparent;color:var(--uf-ok);border-color:var(--uf-ok)}
 ui-fillin .uf-blank.is-bad{background:transparent;color:var(--uf-bad);border-color:var(--uf-bad)}
 ui-fillin .uf-blank:disabled{cursor:default}
 ui-fillin .uf-blank:focus-visible,ui-fillin .uf-btn:focus-visible,ui-fillin .uf-opt:focus-visible{outline:2px solid var(--uf-accent);outline-offset:2px}
 
 ui-fillin .uf-blank.uf-tblank{cursor:text}
-ui-fillin .uf-blank.uf-tblank:focus-within{box-shadow:inset 0 0 0 1px var(--uf-accent)}
+ui-fillin .uf-blank.uf-tblank:focus-within{box-shadow:inset 0 0 0 1px var(--uf-blank)}
 ui-fillin .uf-tfield{appearance:none;background:transparent;border:0;outline:0;color:inherit;font:inherit;padding:0;min-width:3ch;text-align:inherit}
 ui-fillin .uf-tfield:disabled{color:inherit;opacity:1;-webkit-text-fill-color:currentColor}
 ui-fillin .uf-blank.uf-tblank .uf-hint-ans{margin-left:6px;font-weight:400;opacity:0.85}
@@ -57,7 +83,7 @@ ui-fillin .uf-blank.uf-has-hint{white-space:normal;max-width:none;vertical-align
 
 ui-fillin .uf-menu{position:fixed;z-index:1000;display:flex;flex-direction:column;gap:2px;box-sizing:border-box;min-width:9rem;
   max-width:min(var(--uf-menu-max-width),calc(100vw - 16px));max-height:var(--uf-menu-max-height);overflow:auto;padding:var(--uf-menu-padding);
-  background:var(--uf-bg);color:var(--uf-text);border:1px solid var(--uf-accent);border-radius:var(--uf-radius);font:var(--uf-font-size)/var(--uf-line-height) var(--uf-sans)}
+  background:var(--uf-menu);color:var(--uf-text);border:1px solid var(--uf-accent);border-radius:var(--uf-radius);font:var(--uf-font-size)/var(--uf-line-height) var(--uf-sans)}
 ui-fillin .uf-menu[hidden]{display:none}
 ui-fillin .uf-hint{padding:0 10px;color:var(--uf-accent)}
 ui-fillin .uf-opt{display:flex;align-items:baseline;gap:10px;width:100%;box-sizing:border-box;padding:var(--uf-option-padding);
@@ -65,7 +91,7 @@ ui-fillin .uf-opt{display:flex;align-items:baseline;gap:10px;width:100%;box-sizi
 ui-fillin .uf-opt .uf-key{flex:none;font-weight:700;color:var(--uf-accent)}
 ui-fillin .uf-opt.is-on{color:var(--uf-accent);box-shadow:inset 0 0 0 1px var(--uf-accent)}
 ui-fillin .uf-opt.is-on::after{content:"✓";margin-left:auto;font-weight:700}
-ui-fillin .uf-opt:hover,ui-fillin .uf-opt.is-on:hover{background:var(--uf-accent);color:var(--uf-bg)}
+ui-fillin .uf-opt:hover,ui-fillin .uf-opt.is-on:hover{background:var(--uf-hover);color:var(--uf-bg)}
 ui-fillin .uf-opt:hover .uf-key{color:var(--uf-bg)}
 
 ui-fillin ans-box{display:block;box-sizing:border-box;margin-top:0;padding:var(--uf-ans-padding);border-top:1px dashed var(--uf-line)}
@@ -73,19 +99,19 @@ ui-fillin ans-box[hidden]{display:none}
 ui-fillin .uf-scroll{overflow-x:auto}
 ui-fillin .uf-table{width:100%;border-collapse:collapse}
 ui-fillin .uf-table th,ui-fillin .uf-table td{min-width:4.5rem;padding:4px 10px;line-height:var(--uf-line-height);border:1px solid var(--uf-line);text-align:center;vertical-align:middle}
-ui-fillin .uf-table th{color:var(--uf-accent);font-weight:700}
+ui-fillin .uf-table th{color:var(--uf-head);font-weight:700}
 ui-fillin .uf-table td.is-ok{background:var(--uf-ok);color:var(--uf-bg)}
 ui-fillin .uf-table td.is-bad{background:var(--uf-bad);color:var(--uf-bg)}
 ui-fillin .uf-table .uf-mark{margin-left:6px;font-weight:700}
 ui-fillin .uf-bar{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-ui-fillin .uf-btn{appearance:none;padding:var(--uf-btn-padding);border:1px solid var(--uf-accent);border-radius:var(--uf-btn-radius);background:transparent;color:var(--uf-text);font-family:var(--uf-sans);font-size:var(--uf-btn-font-size);cursor:pointer}
-ui-fillin .uf-btn.is-primary{background:var(--uf-accent);color:var(--uf-bg)}
+ui-fillin .uf-btn{appearance:none;padding:var(--uf-btn-padding);border:1px solid var(--uf-btn);border-radius:var(--uf-btn-radius);background:transparent;color:var(--uf-text);font-family:var(--uf-sans);font-size:var(--uf-btn-font-size);cursor:pointer}
+ui-fillin .uf-btn.is-primary{background:var(--uf-btn);color:var(--uf-bg)}
 ui-fillin .uf-btn.is-ghost{border-color:var(--uf-line)}
 ui-fillin .uf-btn:disabled{cursor:default;background:transparent;color:var(--uf-line);border-color:var(--uf-line)}
 
 ui-fillin .uf-alerts{margin-bottom:6px}
 ui-fillin .uf-alerts:empty{display:none}
-ui-fillin .uf-alert{margin:0;padding:6px 10px;border:1px solid var(--uf-accent);border-radius:var(--uf-radius);background:var(--uf-accent);color:var(--uf-bg);font:inherit}
+ui-fillin .uf-alert{margin:0;padding:6px 10px;border:1px solid var(--uf-alert);border-radius:var(--uf-radius);background:var(--uf-alert);color:var(--uf-bg);font:inherit}
 ui-fillin .uf-btn,ui-fillin .uf-opt{line-height:var(--uf-line-height)}
 ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);color:var(--uf-bg)}
 `;
@@ -94,10 +120,9 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
   styleEl.textContent = CSS;
   document.head.appendChild(styleEl);
 
-  /* ---------- 小工具 ---------- */
   const PADS = ['root', 'main', 'blank', 'menu', 'option', 'ans', 'btn'];
-  const COLORS = ['bg', 'text', 'accent', 'ok', 'bad'];
-  // 文字標籤屬性：attribute 名稱 -> [CSS 變數相關 key, 預設值]
+  // 可設定色彩的部位：屬性名稱為「部位-color」，例如 accent-color="sky"
+  const COLORS = ['bg', 'text', 'accent', 'ok', 'bad', 'blank', 'picked', 'menu', 'hover', 'head', 'btn', 'alert'];
   const LABELS = {
     'label-correct': '正確',
     'label-incorrect': '錯誤',
@@ -118,6 +143,28 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
     if (text != null) n.textContent = text;
     return n;
   };
+
+  function hexToRgb(hex) {
+    let h = String(hex).replace('#', '');
+    if (h.length === 3 || h.length === 4) h = h.slice(0, 3).split('').map((c) => c + c).join('');
+    h = h.slice(0, 6);
+    const n = parseInt(h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  // 品牌色名稱解析：支援「sky」或「sky/0.9」（斜線後為透明度，低於 0.78 自動提高到 0.78）
+  function resolveBrand(v) {
+    if (v == null) return null;
+    const m = /^\s*([a-z][a-z-]*)\s*(?:\/\s*(\d*\.?\d+)\s*)?$/i.exec(String(v));
+    if (!m) return null;
+    let key = m[1].toLowerCase();
+    key = BRAND_ALIAS[key] || key;
+    const hex = BRAND[key];
+    if (!hex) return null;
+    let a = m[2] != null ? parseFloat(m[2]) : null;
+    if (a != null) a = Math.min(1, Math.max(MIN_ALPHA, a));
+    return { name: key, hex, rgb: hexToRgb(hex), alpha: a };
+  }
 
   // padding 屬性值：只接受 px 或純數字，最多四個值
   function normPad(v) {
@@ -158,15 +205,18 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
     return m[1] + (m[2] || unit);
   }
 
-  // 顏色屬性值：#hex 或 rgba()／rgb()／hsl()，rgba 透明度不得低於 0.78
+  // 色彩屬性值：品牌色名稱優先，其次才是 rgba / hex / hsl / CSS 色名
+  // 注意：orange、pink 等與 CSS 內建色名重複時，一律採用品牌色
   function normColor(v) {
     if (v == null) return null;
     const s = String(v).trim();
     if (!s) return null;
+    const b = resolveBrand(s);
+    if (b) return b.alpha == null ? b.hex : `rgba(${b.rgb.join(',')},${b.alpha})`;
     const rgbaM = /^rgba?\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*(?:,\s*([\d.]+)\s*)?\)$/i.exec(s);
     if (rgbaM) {
       const a = rgbaM[1] != null ? parseFloat(rgbaM[1]) : 1;
-      return a < 0.78 ? null : s;
+      return a < MIN_ALPHA ? null : s;
     }
     if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(s)) return s;
     if (/^hsla?\(/i.test(s)) return s;
@@ -200,8 +250,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
     return a;
   }
 
-  // 解析大括號內文：直線分隔選項，開頭星號為正確答案，反斜線跳脫
-  // 比對／呈現皆保留原始大小寫（case sensitive），不做任何大小寫正規化
   function parseBody(body) {
     const items = [];
     let cur = [];
@@ -236,8 +284,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
     return opts;
   }
 
-  // 解析大括號內文（輸入題模式）：直線分隔「多個都算正確」的答案字串，反斜線跳脫，不使用星號
-  // 比對／呈現皆保留原始大小寫（case sensitive），不做任何大小寫正規化
   function parseTextAnswers(body) {
     const items = [];
     let cur = [];
@@ -258,7 +304,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       .filter((s) => s.length > 0);
   }
 
-  // 全形轉半形（僅限 ASCII 可對應的全形字元與全形空白），供 normalize-width 屬性使用
   function fullWidthToHalf(s) {
     return s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
       .replace(/　/g, ' ');
@@ -266,17 +311,30 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
 
   const BLOCK_SRC = '\\{((?:\\\\[\\s\\S]|[^{}\\\\])*)\\}';
 
-  /* ---------- 子元素（只當標籤，行為由 ui-fillin 統籌） ---------- */
   class MainBox extends HTMLElement {}
   class AnsBox extends HTMLElement {}
 
-  /* ---------- 主元件 ---------- */
   class UiFillin extends HTMLElement {
     static get observedAttributes() {
       return ['font-size', 'line-height', 'blank-max-width', 'menu-max-width', 'menu-max-height', 'border-width', 'radius', 'btn-font-size', 'btn-radius']
         .concat(PADS.map((p) => p + '-padding'))
         .concat(COLORS.map((c) => c + '-color'))
         .concat(['line-color', 'line-alpha']);
+    }
+
+    // 品牌色票（唯讀副本），例如 customElements.get('ui-fillin').brand.sky
+    static get brand() {
+      return Object.assign({}, BRAND);
+    }
+
+    // 可設定色彩的部位清單
+    static get colorParts() {
+      return COLORS.concat(['line']);
+    }
+
+    // 把品牌色名稱轉成 CSS 色值，無法辨識時回傳 null
+    static resolveColor(v) {
+      return normColor(v);
     }
 
     constructor() {
@@ -300,10 +358,15 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       this._onPlace = () => this._place();
     }
 
-    // 讀取文字標籤屬性，屬性未設定時回退內建中文預設值
     _lab(name) {
       const v = this.getAttribute(name);
       return v != null && v !== '' ? v : LABELS[name];
+    }
+
+    _warnColor(name, v) {
+      if (v != null && String(v).trim() !== '' && window.console) {
+        console.warn(`[ui-fillin] ${name}="${v}" 無法辨識，已改用預設色。可用的品牌色：${Object.keys(BRAND).join(', ')}`);
+      }
     }
 
     attributeChangedCallback(name) {
@@ -354,24 +417,48 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
         else this.style.removeProperty('--uf-btn-radius');
         return;
       }
-      if (name === 'line-color' || name === 'line-alpha') {
-        // line-color 可指定底色 RGB（例如 "198,199,189"），line-alpha 指定透明度，最低 0.78
-        if (name === 'line-color') {
-          const v = this.getAttribute(name);
-          const m = v && /^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/.exec(v);
-          this.style.setProperty('--uf-line-rgb', m ? `${m[1]},${m[2]},${m[3]}` : '198,199,189');
-        } else {
-          const a = parseFloat(this.getAttribute(name));
-          this.style.setProperty('--uf-line-a', (a >= 0.78 ? a : 0.78));
+      if (name === 'line-color') {
+        // 接受「r,g,b」、品牌色名稱（可帶 /透明度）或 hex
+        const v = this.getAttribute(name);
+        let rgb = null;
+        let a = null;
+        const m = v && /^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/.exec(v);
+        if (m) {
+          rgb = [m[1], m[2], m[3]];
+        } else if (v) {
+          const b = resolveBrand(v);
+          if (b) {
+            rgb = b.rgb;
+            a = b.alpha;
+          } else if (/^\s*#([0-9a-f]{3}|[0-9a-f]{6})\s*$/i.test(v)) {
+            rgb = hexToRgb(v.trim());
+          } else {
+            this._warnColor(name, v);
+          }
         }
+        this.style.setProperty('--uf-line-rgb', rgb ? rgb.join(',') : '198,199,189');
+        // 名稱內帶的透明度只在沒有另外設定 line-alpha 時生效
+        if (!this.hasAttribute('line-alpha')) {
+          if (a != null) this.style.setProperty('--uf-line-a', String(a));
+          else this.style.removeProperty('--uf-line-a');
+        }
+        return;
+      }
+      if (name === 'line-alpha') {
+        const a = parseFloat(this.getAttribute(name));
+        this.style.setProperty('--uf-line-a', (a >= MIN_ALPHA ? Math.min(a, 1) : MIN_ALPHA));
         return;
       }
       if (name.endsWith('-color')) {
         const key = name.replace('-color', '');
         if (COLORS.includes(key)) {
-          const v = normColor(this.getAttribute(name));
+          const raw = this.getAttribute(name);
+          const v = normColor(raw);
           if (v) this.style.setProperty('--uf-' + key, v);
-          else this.style.removeProperty('--uf-' + key);
+          else {
+            this.style.removeProperty('--uf-' + key);
+            this._warnColor(name, raw);
+          }
         }
         return;
       }
@@ -401,7 +488,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       this.closeMenu();
     }
 
-    /* ----- 初始化 ----- */
     _init() {
       if (this._ready || !this.isConnected) return;
       this._ready = true;
@@ -469,9 +555,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       });
     }
 
-    // 讀取來源 div，複製後把大括號標記換成按鈕。
-    // first=true：第一次建置，需保留原始（未挖空）內容的備份供日後重新洗牌；
-    // first=false：reshuffle-on-reset 用備份重建，不重新讀取來源元素（來源已清空）。
     _build(first) {
       const base = first ? this._srcEl : this._srcFrag;
       const frag = document.createDocumentFragment();
@@ -551,7 +634,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       return b;
     }
 
-    // 文字輸入比對模式的挖空：answers 為全部都算正確的答案字串清單
     _makeTextBlank(answers) {
       const k = this._qs.length;
       const q = { mode: 'text', no: k + 1, answers, value: '', input: null, wrap: null, mark: null };
@@ -565,7 +647,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       input.className = 'uf-tfield';
       input.autocomplete = 'off';
       input.spellcheck = false;
-      // 依本格最長可接受答案估算欄寬，最少 3 字元
       const maxLen = answers.reduce((m, a) => Math.max(m, a.length), 0);
       input.size = Math.max(3, maxLen + 1);
       q.input = input;
@@ -581,7 +662,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       return wrap;
     }
 
-    /* ----- 判斷與繪製 ----- */
     _judge(q) {
       if (q.mode === 'text') {
         const norm = this.hasAttribute('normalize-width') ? fullWidthToHalf : (s) => s;
@@ -610,7 +690,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       q.btn.disabled = done;
     }
 
-    // 文字輸入格的繪製：提交後鎖定輸入框、標示對錯，可選擇顯示正確答案
     _paintText(q) {
       const done = this._done;
       const picked = q.value.trim().length > 0;
@@ -691,7 +770,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       }
     }
 
-    /* ----- 浮出選項清單 ----- */
     _openMenu(q) {
       this.closeMenu();
       const m = this._menu;
@@ -760,7 +838,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       }));
     }
 
-    /* ----- 提交與重做 ----- */
     submit() {
       if (this._done || !this._qs.length) return;
       this.closeMenu();
@@ -777,7 +854,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       this.dispatchEvent(new CustomEvent('fillin-submit', { bubbles: true, detail: { results } }));
     }
 
-    // 布林屬性 reshuffle-on-reset：搭配 random 屬性，重做時依原稿重新洗牌並重建題目
     reset() {
       if (!this._srcFrag) return;
       this.closeMenu();
@@ -801,7 +877,6 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       this.dispatchEvent(new CustomEvent('fillin-reset', { bubbles: true }));
     }
 
-    /* ----- 結果輸出與提示 ----- */
     _resultsBox() {
       const id = this.getAttribute('results-id');
       return id ? document.getElementById(id) : null;
