@@ -15,26 +15,12 @@
 - 支援預設收合、鍵盤切換、`<c1>` 到 `<c16>` 快速色彩標籤。
 - 寬螢幕排版，適合教學頁與錄影講解。
 
-
-
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 ```
-
-## 安裝
-
-把 `.js` 檔放進專案，在頁面底部引入即可。也可以放在 `<head>`，元件會等頁面解析完成後再初始化。
-
-```html
-<script src="ui-detail-ladder.js"></script>
-<script src="ui-insight.js"></script>
-```
-
----
 
 ## ui-detail-ladder
 
-左側為垂直階梯軌道，右側依序為 pill、次標題、本文、註腳、進度條與按鈕。每往上一階，本文中新增的部分會以亮色標出。
+左側為垂直階梯軌道，右側依序為 膠囊標籤、次標題、本文、註腳、進度條與按鈕。每往上一階，本文中新增的部分會以亮色標出。
 
 ### 基本寫法
 
@@ -57,8 +43,8 @@
 
 | 標籤 | 屬性 | 說明 |
 |---|---|---|
-| `<ladder-step>` | `label` | 左側階梯文字，同時顯示在 pill 冒號後方。 |
-| `<ladder-step>` | `pill` | pill 前段文字。未設定時第一階為「起點」，其後為「第1階」、「第2階」依序遞增。 |
+| `<ladder-step>` | `label` | 左側階梯文字，同時顯示在 膠囊標籤 冒號後方。 |
+| `<ladder-step>` | `pill` | 膠囊標籤 前段文字。未設定時第一階為「起點」，其後為「第1階」、「第2階」依序遞增。 |
 | `<step-title>` | `icon` | 次標題，可省略。`icon` 接受 `bi-star-fill`、`star-fill`、`bi bi-star-fill`。 |
 | `<step-title>` | `icon-color` | 單一圖示顏色。 |
 | `<step-body>` | | 本文。用 `<mark>` 標出這一階新增的部分。 |
@@ -108,10 +94,10 @@
 
 | 屬性 | 預設值 | 說明 |
 |---|---|---|
-| `show-pill` | `true` | 是否顯示 pill。 |
-| `pill-font-size` | `0.85rem` | pill 字體大小。 |
-| `pill-bg` | `#C3A5E5` | pill 底色。 |
-| `pill-color` | `#0C0D0C` | pill 文字色。 |
+| `show-pill` | `true` | 是否顯示 膠囊標籤。 |
+| `pill-font-size` | `0.85rem` | 膠囊標籤 字體大小。 |
+| `pill-bg` | `#C3A5E5` | 膠囊標籤 底色。 |
+| `pill-color` | `#0C0D0C` | 膠囊標籤 文字色。 |
 | `title-font-size` | `1.0625rem` | 次標題大小。 |
 | `title-color` | `#82C8E5` | 次標題顏色。 |
 | `title-icon-color` | `#E3D322` | 次標題圖示統一顏色。 |
@@ -149,8 +135,8 @@
 |---|---|---|
 | `go(n)` | 方法 | 跳到第 n 階。 |
 | `next()` / `prev()` / `reset()` | 方法 | 前進、後退、回到第 1 階。 |
-| `open()` / `close()` / `toggle()` | 方法 | 展開、收合、切換（僅在 `ini-collapse` 時有效）。 |
-| `current` / `total` / `isOpen` | 唯讀屬性 | 目前階數、總階數、是否展開。 |
+| `open()`、`close()`、`toggle()` | 方法 | 展開、收合、切換（僅在 `ini-collapse` 時有效）。 |
+| `current`、`total`、`isOpen` | 唯讀屬性 | 目前階數、總階數、是否展開。 |
 | `ladder-change` | 事件 | `detail` 內含 `index`、`total`、`label`。 |
 | `ladder-toggle` | 事件 | `detail` 內含 `open`。 |
 
@@ -192,6 +178,7 @@
 
 | 屬性 | 預設值 | 說明 |
 |---|---|---|
+| `theme` | `default` | 一次套用整組強調色，可用 `default`、`lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`yellow`、`orange`、`salmon`、`pink`、`warning`、`indigo`、`info`。名稱不存在時退回 `default`。 |
 | `margin` | `6px 12px` | 元件對外間距。 |
 | `padding` | `6px 12px` | 元件對內間距。 |
 | `bg` | `#0C0D0C` | 元件背景色。 |
@@ -273,14 +260,23 @@
 | `empty-text` | `這一句沒有標記亮點。` | 無亮點時的文字。 |
 | `empty-color` | `#C6C7BD` | 上述文字顏色。 |
 
+**主題與顏色**
+
+- `theme` 會改變外框、選取框線、小標題、編號、亮點、解說編號、標籤與收合標題列的顏色。優先順序為：寫在標籤上的個別屬性 > `theme` > 內建預設。
+- 所有顏色屬性都可以直接填品牌色名稱，例如 `hl-hot-bg="sky"`、`hl-hot-color="base"`，不分大小寫，也可以填 `#hex` 或 `rgb()`。
+
+```html
+<ui-insight theme="lavender" hl-hot-color="base">...</ui-insight>
+```
+
 ### JavaScript 介面
 
 | 名稱 | 類型 | 說明 |
 |---|---|---|
 | `go(n)` | 方法 | 選取第 n 句。 |
-| `next()` / `prev()` | 方法 | 下一句或上一句。 |
-| `open()` / `close()` / `toggle()` | 方法 | 展開、收合、切換（僅在 `ini-collapse` 時有效）。 |
-| `current` / `total` / `isOpen` | 唯讀屬性 | 目前句數、總句數、是否展開。 |
+| `next()`、`prev()` | 方法 | 下一句或上一句。 |
+| `open()`、`close()`、`toggle()` | 方法 | 展開、收合、切換（僅在 `ini-collapse` 時有效）。 |
+| `current`、`total`、`isOpen` | 唯讀屬性 | 目前句數、總句數、是否展開。 |
 | `insight-change` | 事件 | `detail` 內含 `index`、`total`、`count`。 |
 | `insight-toggle` | 事件 | `detail` 內含 `open`。 |
 
@@ -332,7 +328,3 @@
 
 - 字體大小一律用 `rem`。
 - `margin`、`padding` 與各種間距一律用 `px`。
-
-## 授權
-
-採用 MIT 授權。
