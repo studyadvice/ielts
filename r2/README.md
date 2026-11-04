@@ -20,28 +20,6 @@
 - 沒有切換動畫；所有底色都是實色，不使用低透明度的 `rgba`。
 - CSS 內含在 JavaScript 中，不使用 Shadow DOM。
 
-## 安裝
-
-```html
-<!-- 使用 icon、hint-icon 屬性時需要 Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<script src="ui-reading2.js"></script>
-
-<!-- 需要組合時再載入 -->
-<script src="ui-drill.js"></script>
-<script src="ui-steps.js"></script>
-<script src="ui-cards.js"></script>
-```
-
-檔案：
-
-| 檔案 | 說明 |
-|---|---|
-| `ui-reading2.js` | 元件本體 |
-| `ui-reading2-demo-11-03-26.html` | 示範頁，含所有範例與組合 |
-| `ui-conventions.html` | ui 元件共同約定 |
-
 ## 快速開始
 
 ```html
@@ -361,31 +339,3 @@
 | `animate`、`transition` | 移除 | 不再有過渡動畫 |
 | `UiReading2Config`、`CollocationMapConfig` | 移除 | 預設值改用屬性設定 |
 | `UiReading2.init()` | 不需要 | 元件會自動建立；保留為相容用的空操作 |
-
-## 瀏覽器支援
-
-支援 Custom Elements 的現代瀏覽器：Chrome、Edge、Firefox、Safari 的近期版本。
-
-## 授權
-
-MIT License
-
-Copyright (c) 2026 ui-reading2 contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.

@@ -12,7 +12,6 @@
 ## 快速開始
 
 ```html
-<script src="ui-layer-diff.js"></script>
 
 <ui-layer-diff>
   <ui-layer label="籠統">I enjoy cooking.</ui-layer>
@@ -73,22 +72,6 @@
 | --- | --- | --- |
 | `label` | `第 N 層` | 該層左上角的標題。 |
 | `note` | 無 | 該層文字下方的補充說明，用強調色顯示。 |
-
-## 色票
-
-顏色屬性（`add-color`、`del-color`、`border`、`progress-from`、`progress-to`）可直接寫以下名稱，也可以寫 hex。
-
-| 名稱 | 色碼 | 名稱 | 色碼 |
-| --- | --- | --- | --- |
-| `bg` | `#0C0D0C` | `shell` | `#C6C7BD` |
-| `lavender` | `#C3A5E5` | `sky` | `#82C8E5` |
-| `warning` | `#E6374B` | `salmon` | `#E5C3B3` |
-| `ocean` | `#1CCAE8` | `safe` | `#27AE60` |
-| `teal` | `#0DA591` | `vanilla` | `#DBEDD8` |
-| `yellow` | `#E3D322` | `focus` | `#D4FFFC` |
-| `special` | `#B3DE73` | `info` | `#4171BF` |
-| `indigo` | `#7849C9` | `pink` | `#FF91D7` |
-| `orange` | `#EDA109` | | |
 
 ## JavaScript API
 
@@ -179,14 +162,3 @@ document.addEventListener('layerend', () => {
 - **渲染方式**：元件會用自己產生的內容取代 `<ui-layer>` 子元素。要修改內容請改 `layers` 屬性或重新建立元素。
 - **CSS 注入**：樣式以 `<style id="ui-layer-diff-style">` 注入 `<head>`，選擇器都限定在 `ui-layer-diff` 之下，不會影響頁面其他元素。
 - **顏色透明度**：元件內部沒有使用任何 rgba 半透明顏色。
-
-## 瀏覽器支援
-
-需要支援 Custom Elements v1、CSS 自訂屬性與 `clip-path` 的現代瀏覽器（Chrome、Edge、Firefox、Safari 近年版本）。
-
-## 檔案
-
-| 檔案 | 說明 |
-| --- | --- |
-| `ui-layer-diff.js` | 元件本體，單一檔案，內含 CSS。 |
-| `ui-layer-diff-demo-10-29-26.html` | 範例與程式碼對照、playground、屬性與 API 一覽。 |

@@ -14,7 +14,6 @@
 
 ## 目錄
 
-- [安裝](#安裝)
 - [快速開始](#快速開始)
 - [標籤結構](#標籤結構)
 - [ui-table 屬性](#ui-table-屬性)
@@ -23,7 +22,7 @@
 - [ui-col 屬性](#ui-col-屬性)
 - [功能說明](#功能說明)
   - [欄寬、跨欄與框線](#欄寬跨欄與框線)
-  - [文字色彩與 inverse](#文字色彩與-inverse)
+  - [文字色彩與 `inverse`](#文字色彩與-inverse)
   - [圖示與自動編號](#圖示與自動編號)
   - [群組](#群組)
   - [逐列揭示：show-next 與 auto-reveal](#逐列揭示show-next-與-auto-reveal)
@@ -33,33 +32,17 @@
   - [輪播](#輪播)
   - [欄間箭頭](#欄間箭頭)
   - [固定欄](#固定欄)
+  - [整列隱藏：can-hide](#整列隱藏can-hide)
+  - [文字色彩標籤](#文字色彩標籤)
+  - [注意力動畫：ui-flash](#注意力動畫ui-flash)
+  - [行內翻譯：ui-trans](#行內翻譯ui-trans)
   - [樹狀巢狀（僅 ui-row-enhance）](#樹狀巢狀僅-ui-row-enhance)
   - [icons-list 滑入動畫（僅 ui-row-enhance）](#icons-list-滑入動畫僅-ui-row-enhance)
 - [JSON 資料模式](#json-資料模式)
 - [JavaScript API 與事件](#javascript-api-與事件)
 - [全域設定 UiTableConfig](#全域設定-uitableconfig)
-- [色票](#色票)
 - [互斥規則](#互斥規則)
 - [主控台訊息](#主控台訊息)
-- [瀏覽器支援](#瀏覽器支援)
-- [更新紀錄](#更新紀錄)
-- [授權](#授權)
-
----
-
-## 安裝
-
-把 `ui-table.js` 放進專案，並載入 Bootstrap Icons（`bi-` 開頭的圖示、圓圈編號、show-next 的箭頭會用到）。Bootstrap 本身不是必要的。
-
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<!-- 頁面內容 ... -->
-
-<script src="ui-table.js"></script>
-```
-
-`ui-table.js` 放在 `<head>` 或 `</body>` 前都可以，它會等到 `DOMContentLoaded` 後才開始渲染。若要調整全域預設值，請在載入 `ui-table.js` 之前定義 `window.UiTableConfig`（見[全域設定](#全域設定-uitableconfig)）。
 
 ---
 
@@ -92,6 +75,9 @@
 | `<ui-row-enhance>` | 進階列。欄數以這一列自己的欄位數為準，並支援樹狀巢狀與 icons-list。 |
 | `<ui-col>` | 儲存格。 |
 | `<cell-item>` | 輪播項目，寫在設了 `carousel-interval` 的 `<ui-col>` 裡。 |
+| `<ui-flash>` | 閃電按鈕，可放在頁面任何地方，按下後讓指定格子播放注意力動畫。 |
+| `<ui-trans>` | 行內翻譯，滑鼠移入時以 浮動框 顯示來源區塊的內容。可放在格子內或一般段落。 |
+| `<c1>`～`<c16>` | 文字色彩快捷標籤，見[文字色彩標籤](#文字色彩標籤)。 |
 
 ```
 ui-table
@@ -116,12 +102,12 @@ ui-table
 | `src` | URL | 從網址讀取 JSON 資料。 |
 | `data-id` | 全域變數名稱 | 從 `window[data-id]` 讀取 JSON 資料。 |
 | `font-size` | CSS 長度 | 整張表的字體大小，預設 `1rem`。 |
-| `font-color` | 色彩 | 整張表的文字色，優先於 theme。框線與標題列仍用 theme。 |
+| `font-color` | 色彩 | 整張表的文字色，優先於主題色。框線與標題列仍用主題色。 |
 | `cell-alignment` | `left`、`center`、`right` | 儲存格水平對齊。 |
 | `vertical-alignment` | `top`、`middle`、`bottom` | 儲存格垂直對齊。 |
 | `hover-bg-color` | 色彩 | 滑鼠移到儲存格上的底色。 |
 | `cell-min-height` | CSS 長度 | 儲存格最小高度。 |
-| `row-border` | 例如 `1px solid` | 每一列的預設外框，色彩自動使用 theme。 |
+| `row-border` | 例如 `1px solid` | 每一列的預設外框，色彩自動使用主題色。 |
 | `auto-reveal-interval` | 毫秒 | 有 `hidden` 的列依序每隔指定時間自動顯示。 |
 | `extra-info-size` | 數字或 `px`、`rem`、`em` | extra-info 握把圖示的預設高度。 |
 | `extra-info-color` | 色彩 | extra-info 握把圖示的預設色彩。 |
@@ -152,8 +138,8 @@ ui-table
 | 屬性 | 值 | 說明 |
 |---|---|---|
 | `col-widths` | 例如 `1:2:1` | 欄寬比例，數量必須等於欄數，否則這一列不會渲染。同一列有 `span` 時忽略。 |
-| `cell-padding` | CSS padding | 這一列儲存格的內距，預設 `6px`。 |
-| `border` | 例如 `1px solid` | 這一列的外框，色彩自動使用 theme。 |
+| `cell-padding` | CSS `padding` 值 | 這一列儲存格的內距，預設 `6px`。 |
+| `border` | 例如 `1px solid` | 這一列的外框，色彩自動使用主題色。 |
 | `col-border` | 例如 `1px solid` | 欄與欄之間的分隔線。同一列有 `span` 時忽略。 |
 | `font-size` | CSS 長度 | 這一列內容的字體大小。 |
 | `font-color` | 色彩 | 這一列的文字色。 |
@@ -164,6 +150,10 @@ ui-table
 | `arrow` 系列 | | 整列的欄間箭頭預設值，見[欄間箭頭](#欄間箭頭)。 |
 | `extra-info-size`、`extra-info-color` | | 這一列的握把預設值。 |
 | `tree-open` | 布林 | 僅 ui-row-enhance：這個節點載入時就展開。 |
+| `min-height` | 數字或 `px`、`rem`、`em`、`vh` | 這一列格子的最小高度，優先於 `cell-min-height`。純數字視為 px，巢狀子列不會沿用。 |
+| `can-hide` | 空值、`true`、欄位編號、`false` | 僅 ui-row-enhance：在格子右側放眼睛圖示，點擊後整列隱藏，見[整列隱藏](#整列隱藏can-hide)。 |
+| `can-hide-size` | 數字或 `px`、`rem`、`em` | 眼睛圖示大小，純數字視為 px。 |
+| `can-hide-color` | 色彩 | 眼睛圖示色彩。 |
 
 ---
 
@@ -194,6 +184,9 @@ ui-table
 | `progress-bar-color1`、`progress-bar-color2` | 進度條漸層的開始色與結束色。 |
 | `arrow`、`arrow-size`、`arrow-color`、`arrow-pos`、`arrow-open` | 欄間箭頭，見[欄間箭頭](#欄間箭頭)。 |
 | `icons-list`、`icons-list-interval` | 僅 ui-row-enhance：滑鼠移入時的圖示動畫。 |
+| `item-number` | 搭配 `carousel-interval`：每個 `<cell-item>` 左側自動編號，`outline`（預設）、`fill` 或 `count`。 |
+| `id` | 格子的唯一 id，`<ui-flash>` 與 `UiTable.flash()` 靠它找到格子。 |
+| `flash-width`、`flash-speed`、`flash-loops`、`flash-length` | 這一格注意力動畫的預設值，見[注意力動畫](#注意力動畫ui-flash)。 |
 
 ---
 
@@ -212,11 +205,11 @@ ui-table
 </ui-table>
 ```
 
-- `border`、`col-border`、`row-border` 只寫粗細與樣式，色彩自動使用 theme。
+- `border`、`col-border`、`row-border` 只寫粗細與樣式，色彩自動使用主題色。
 - 相鄰兩列的框線會重疊成一條。
 - 一般 `<ui-row>` 的欄數以第一個 `<ui-row>` 為準；`<ui-row-enhance>` 各自計算，適合欄數不同的列。
 
-### 文字色彩與 inverse
+### 文字色彩與 `inverse`
 
 文字色彩的優先順序：`ui-col` 的 `font-color` > `ui-row` 的 `font-color` > `ui-table` 的 `font-color` > `theme`。
 
@@ -294,7 +287,7 @@ ui-table
 <ui-col mask-text="反色遮罩" mask-invert mask-color="pink">答案</ui-col>
 ```
 
-- 樣式優先順序：`mask-invert` > `mask-gradient` > `mask-color` > theme。
+- 樣式優先順序：`mask-invert` > `mask-gradient` > `mask-color` > 主題色。
 - `mask-gradient` 可填 `1` 到 `6`（紫、青、橘、粉、綠、藍紫），或任何 CSS 漸層字串。
 - `mask-text-2`：第一次點擊換成第二層文字，第二次點擊才揭曉。
 
@@ -310,7 +303,7 @@ ui-table
 
 ### 補充資訊：extra-info
 
-在內容後面加一個握把圖示，點擊後跳出 popover，內容取自指定 `id` 的元素。
+在內容後面加一個握把圖示，點擊後跳出 浮動框，內容取自指定 `id` 的元素。
 
 ```html
 <ui-col extra-info="note-1" extra-info-size="1.25rem" extra-info-color="pink">make a decision</ui-col>
@@ -321,8 +314,8 @@ ui-table
 ```
 
 - 來源元素會自動隱藏；內容在點擊當下才讀取，之後修改來源也會顯示最新內容。
-- popover 掛在 `<body>`，不會被儲存格裁切，會自動選擇上方或下方的空間。
-- 點擊 popover 以外的地方或按 Esc 關閉。
+- 浮動框 掛在 `<body>`，不會被儲存格裁切，會自動選擇上方或下方的空間。
+- 點擊 浮動框 以外的地方或按 Esc 關閉。
 - 握把的尺寸與色彩優先順序：`ui-col` > `ui-row` > `ui-table` > `UiTableConfig`。尺寸是圖示高度，寬度自動為 0.65 倍。
 
 ### 輪播
@@ -357,9 +350,21 @@ ui-table
 - 點擊進度條切換到下一個項目，最後一個再點會回到第一個。
 - 沒有 `progress-bar` 時沒有切換入口，只會顯示第一個項目並發出警告。
 
+**輪播項目自動編號**
+
+```html
+<ui-col carousel-interval="3000" item-number="count">
+  <cell-item>thrive</cell-item>
+  <cell-item>flourish</cell-item>
+  <cell-item>prosper</cell-item>
+</ui-col>
+```
+
+`item-number` 空值或 `outline` 為空心圓圈編號，`fill` 為實心圓圈編號，`count` 為「2 / 5」計數框。10 以上的編號改用同尺寸的圓圈圖形。編號顏色跟隨格子文字色。寫在沒有輪播的格子會被忽略並出現警告。
+
 **進度條色彩**
 
-優先順序：`progress-bar-color1` 加 `progress-bar-color2` 的漸層 > `progress-bar-color` > theme（inverse 格子為深色）。只設 color1 或 color2 其中一個時當單色使用並發出警告。漸層橫跨整條進度條計算，不會因為倒數或分段而被壓縮或打斷。
+優先順序：`progress-bar-color1` 加 `progress-bar-color2` 的漸層 > `progress-bar-color` > 主題色（`inverse` 格子為深色）。只設 `progress-bar-color1` 或 `progress-bar-color2` 其中一個時當單色使用並發出警告。漸層橫跨整條進度條計算，不會因為倒數或分段而被壓縮或打斷。
 
 ### 欄間箭頭
 
@@ -388,6 +393,93 @@ ui-table
 ### 固定欄
 
 表格寬於容器時可以水平捲動，`fixed="left"` 或 `fixed="right"` 的格子會固定在該側。
+
+### 整列隱藏：can-hide
+
+替 `<ui-row-enhance>` 加上 `can-hide`，格子右側出現眼睛圖示，滑鼠移上去變成劃掉的眼睛，點擊後整列收合隱藏，適合螢幕錄影時逐列帶過。
+
+```html
+<ui-table theme="sky">
+  <ui-row><ui-col>Word</ui-col><ui-col>Meaning</ui-col><ui-col>Collocation</ui-col></ui-row>
+  <ui-row-enhance can-hide col-widths="1:2:2">
+    <ui-col>mitigate</ui-col><ui-col>減輕、緩和</ui-col><ui-col>mitigate the impact of</ui-col>
+  </ui-row-enhance>
+  <ui-row-enhance can-hide="1" can-hide-color="pink" can-hide-size="18" col-widths="1:2:2">
+    <ui-col>exacerbate</ui-col><ui-col>使惡化</ui-col><ui-col extra-info="tip-1">exacerbate the problem</ui-col>
+  </ui-row-enhance>
+</ui-table>
+```
+
+- 空值或 `true`：眼睛放在最後一欄。數字（1 起算）：放在指定欄，超過欄數時改放最後一欄。`false`：關閉。寫在 `<ui-row>` 上會被忽略並出現警告。
+- 眼睛所在的格子不能同時有 `extra-info`，該格的 `extra-info` 會被忽略；同一列其他格子不受影響。
+- 父列隱藏時子列一起隱藏；子列也可以各自加 `can-hide`。
+- 遮罩格子裡的眼睛浮在遮罩上方；`inverse` 格子的眼睛自動改成深色。
+- 隱藏只影響畫面，重新整理就會恢復。被眼睛隱藏的列不會因為上一列的 `show-next` 而重新出現。用 `UiTable.showHidden()` 可全部顯示回來。
+
+### 文字色彩標籤
+
+在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c1>文字</c1>` 到 `<c16>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成深色字加品牌色底。`mask-text` 是屬性文字，不支援標籤。
+
+| 標籤 | 顏色 | 標籤 | 顏色 |
+|---|---|---|---|
+| `<c1>` | shell | `<c9>` | vanilla |
+| `<c2>` | lavender | `<c10>` | yellow |
+| `<c3>` | special | `<c11>` | info |
+| `<c4>` | warning | `<c12>` | indigo |
+| `<c5>` | salmon | `<c13>` | pink |
+| `<c6>` | sky | `<c14>` | focus |
+| `<c7>` | ocean | `<c15>` | orange |
+| `<c8>` | safe | `<c16>` | teal |
+
+```html
+<ui-col>The government should <c13>invest in</c13> public transport.</ui-col>
+```
+
+### 注意力動畫：ui-flash
+
+一段彩虹光帶從格子左上角出發，沿著內緣順時針繞圈。格子要有 `id`，`<ui-flash target="格子id">` 會變成閃電按鈕，標籤裡的文字當按鈕文字。
+
+```html
+<ui-table theme="teal">
+  <ui-row><ui-col id="w-mitigate" flash-speed="1200">mitigate</ui-col><ui-col>減輕、緩和</ui-col></ui-row>
+</ui-table>
+
+<p>先看這個字：<ui-flash target="w-mitigate" flash-width="4" flash-loops="3" color="pink">看這裡</ui-flash></p>
+```
+
+| 屬性 | 寫在哪裡 | 說明 |
+|---|---|---|
+| `target` | `ui-flash` | 必填，格子的 id。找不到格子時按鈕會變紅並抖動。 |
+| `flash-width` | `ui-flash`、`ui-col` | 光帶粗細，純數字或 px，範圍 1～20，預設 3。 |
+| `flash-speed` | `ui-flash`、`ui-col` | 繞一圈的時間，純數字為毫秒，也接受 `1.6s`，範圍 200～20000，預設 1600。 |
+| `flash-loops` | `ui-flash`、`ui-col` | 繞幾圈，範圍 1～20，預設 2。 |
+| `flash-length` | `ui-col` | 光帶長度佔周長的比例，0.05～0.9，預設 0.22。 |
+| `color` | `ui-flash` | 按鈕顏色，預設 `yellow`。 |
+| `size` | `ui-flash` | 按鈕字級，純數字視為 px，也接受 `rem`、`em`。 |
+
+設定優先順序為 `ui-flash` 的屬性 > `ui-col` 的屬性 > `UiTableConfig`。光帶疊在遮罩上方；格子不在畫面內時會先捲過去；按鈕放在格子裡時不會觸發該格的 `show-next`。同時有 `hidden` 與 `id` 的 `ui-col` 是 extra-info 來源區塊，不能當成目標。
+
+### 行內翻譯：ui-trans
+
+滑鼠移到標示的字上，讀取 `source` 區塊的內容，以 浮動框 顯示在字的下方（空間不夠時改到上方）。觸控裝置點一下顯示。來源區塊載入時自動隱藏。
+
+```html
+<p>I rented <ui-trans source="t-flat" theme="sky">a tiny flat</ui-trans> near the station,
+   and it was <ui-trans source="t-godsend" hint-style="icon" hint-width="240">a real godsend</ui-trans>.</p>
+
+<div id="t-flat">一間小公寓</div>
+<div id="t-godsend"><b>天賜的好事</b><p>Band 7 以上常見的 idiomatic language。</p></div>
+```
+
+| 屬性 | 說明 |
+|---|---|
+| `source` | 必填，來源區塊的 id。移入當下才讀取內容，之後修改來源也會顯示最新內容。 |
+| `theme` | 標示與 浮動框 的色彩，預設 `sky`。 |
+| `hint-style` | `dashed`（預設，虛底線）、`pill-fill`、`pill-outline`、`square-fill`、`icon`（文字正上方顯示翻譯圖示）。 |
+| `hint-width` | 浮動框 寬度，純數字視為 px，也接受 `rem`、`em`、`vw`。沒寫時依內容自動，最寬 420px。 |
+| `hint-font-size` | 浮動框 字級，純數字視為 px，也接受 `rem`、`em`。沒寫時跟隨標示文字。 |
+
+`ui-trans` 寫在格子、輪播項目、extra-info 來源或 JSON 的 `content` 字串裡都有效，點擊時不會觸發格子的 `show-next`。
 
 ### 樹狀巢狀（僅 ui-row-enhance）
 
@@ -433,7 +525,7 @@ ui-table
 </ui-row-enhance>
 ```
 
-- 時序（n 個圖示、間隔 interval）：移入當下顯示第 1 個，之後每隔 interval 顯示下一個，最後一個出現後再隔 interval 恢復內容，總長 n × interval。
+- 時序（n 個圖示、間隔 `interval`）：移入當下顯示第 1 個，之後每隔 `interval` 顯示下一個，最後一個出現後再隔 `interval` 恢復內容，總長 n × `interval`。
 - 播放途中再次移入會從頭開始。播放時格子高度不變。
 - `bi-` 開頭用 Bootstrap Icons；內建名稱（如 `i-check`）用內建 SVG；其他文字直接顯示。
 - 圖示色彩跟隨格子文字色，大小為文字的 1.25 倍。
@@ -490,6 +582,8 @@ ui-table
 
 `content`（HTML 字串）或 `items`（輪播項目的 HTML 字串陣列），以及 `icon`、`fontColor`、`span`、`width`、`fixed`、`showNext`、`expandable`、`maskText`、`maskText2`、`maskInvert`、`maskColor`、`maskOrder`、`inverse`、`extraInfo`、`extraInfoSize`、`extraInfoColor`、`carouselInterval`（可為 `0`）、`progressBar`、`progressBarColor`、`progressBarColor1`、`progressBarColor2`、`arrow`、`arrowSize`、`arrowColor`、`arrowPos`、`arrowOpen`、`iconsList`（陣列或逗號分隔字串）、`iconsListInterval`。
 
+後來新增的對應鍵：列物件的 `canHide`（`true` 或欄位編號，需 `enhance: true`）、`canHideSize`、`canHideColor`、`minHeight`；儲存格物件的 `id`、`flashWidth`、`flashSpeed`、`flashLoops`、`itemNumber`（`true`、`'outline'`、`'fill'`、`'count'`）。
+
 目前的限制：JSON 還不支援 `mask-gradient`；`showNext` 只會設成 `true`，無法指定 `row` 或 `col`。
 
 ---
@@ -502,6 +596,9 @@ UiTable.expandAll('#tree-pm');          // 全部展開
 UiTable.expandAll('#tree-fin', 1);      // 只展開最上層；2 = 展開到第二層，以此類推
 UiTable.collapseAll('#tree-pm');        // 全部收合
 UiTable.expandAll();                    // 省略目標 = 頁面上所有表格
+UiTable.showHidden('#tbl-1');           // 把 can-hide 隱藏的列全部顯示回來，回傳恢復的列數；省略目標 = 全部表格
+UiTable.flash('w-mitigate', { flashWidth: 4, flashSpeed: 1200, flashLoops: 3 });  // 播放注意力動畫，回傳是否成功
+UiTable.stopFlash('w-mitigate');        // 立即停止動畫
 UiTable.config;                         // 目前的全域設定
 UiTable.colors;                         // 色票對照表
 ```
@@ -525,6 +622,12 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 
 載入時的初始展開（`tree-open`）不會發出事件。
 
+**uit-row-hide 事件**
+
+`can-hide` 的整列隱藏動畫結束後，原本的 `<ui-table>` 元素會發出 `uit-row-hide`，`e.detail.rowEl` 是被隱藏的列，`e.detail.hasChildren` 表示是否連同子列一起隱藏。
+
+後來才用 JavaScript 加入的 `<ui-table>`、`<ui-flash>`、`<ui-trans>`，呼叫一次 `UiTable.init()` 即可啟動。
+
 ---
 
 ## 全域設定 UiTableConfig
@@ -539,7 +642,6 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
     treeIndent: '24px'
   };
 </script>
-<script src="ui-table.js"></script>
 ```
 
 | 項目 | 預設值 | 說明 |
@@ -557,31 +659,21 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 | `arrowColor` | `'focus'` | 欄間箭頭色彩。 |
 | `arrowPos` | `'center'` | 欄間箭頭垂直位置。 |
 | `extraInfoSize` | `''` | 握把高度，空字串為跟隨文字。 |
-| `extraInfoColor` | `''` | 握把色彩，空字串為跟隨 theme。 |
+| `extraInfoColor` | `''` | 握把色彩，空字串為跟隨主題色。 |
 | `treeCol` | `1` | 樹狀欄位置。 |
 | `treeIndent` | `'20px'` | 每層縮排寬度。 |
 | `treeIcon` | `'chevron'` | 展開鈕圖示。 |
 | `treeLineColor` | `'#3A3B38'` | 導引線色彩。 |
 | `iconsListInterval` | `500` | icons-list 的間隔毫秒數。 |
-
----
-
-## 色票
-
-所有色彩屬性都可以填下列名稱，也可以直接填 `#hex` 或 `rgb()`。元件的底色預設為 `#0C0D0C`。
-
-| 名稱 | 色碼 | 名稱 | 色碼 |
-|---|---|---|---|
-| `shell` | `#C6C7BD` | `vanilla` | `#DBEDD8` |
-| `lavender` | `#C3A5E5` | `yellow` | `#E3D322` |
-| `special` | `#B3DE73` | `info` | `#2351DB` |
-| `warning` | `#E6374B` | `indigo` | `#7849C9` |
-| `salmon` | `#E5C3B3` | `pink` | `#FF91D7` |
-| `sky` | `#82C8E5` | `focus` | `#D4FFFC` |
-| `ocean` | `#1CCAE8` | `orange` | `#EDA109` |
-| `safe` | `#27AE60` | `teal` | `#0DA591` |
-
-元件產生的半透明色彩，不透明度一律不低於 0.78。
+| `flashWidth` | `3` | 注意力動畫光帶粗細（px）。 |
+| `flashSpeed` | `1600` | 注意力動畫繞一圈的毫秒數。 |
+| `flashLoops` | `2` | 注意力動畫繞幾圈。 |
+| `flashLength` | `0.22` | 光帶長度佔周長的比例。 |
+| `transTheme` | `'sky'` | ui-trans 預設色彩。 |
+| `transHintStyle` | `'dashed'` | ui-trans 預設標示樣式。 |
+| `transDelay` | `60` | ui-trans 移入後多久顯示（毫秒）。 |
+| `transWidth` | `''` | ui-trans 浮動框 寬度，空字串為自動。 |
+| `transFontSize` | `''` | ui-trans 浮動框 字級，空字串為跟隨文字。 |
 
 ---
 
@@ -615,8 +707,3 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 - `icons-list` 寫在 `ui-row` 裡，或有找不到的 Bootstrap Icons 名稱。
 
 單一表格初始化失敗時，只會影響那一張表，不影響頁面上的其他表格。
-
----
-
-## 授權
- MIT

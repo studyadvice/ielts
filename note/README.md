@@ -12,15 +12,44 @@
 ## 目錄
 
 - [特色](#特色)
-- [需求與安裝](#需求與安裝)
 - [快速開始](#快速開始)
 - [Popnote 提示框](#popnote-提示框)
+  - [觸發器屬性](#觸發器屬性)
+  - [內容與輪播](#內容與輪播)
+  - [內建主題](#內建主題)
+  - [全域設定](#全域設定)
+  - [自訂主題](#自訂主題)
+  - [annotate：依文字自動加註](#annotate依文字自動加註)
 - [金色電流主題](#金色電流主題)
+  - [使用](#使用)
+  - [三個層級的開關](#三個層級的開關)
+  - [自訂電流主題](#自訂電流主題)
 - [Notice 公告列](#notice-公告列)
+  - [屬性](#屬性)
+  - [事件](#事件)
+  - [JavaScript API](#javascript-api)
+  - [樣式設定](#樣式設定)
 - [活用範例](#活用範例)
+  - [1. 單字註解，重點字用金色](#1-單字註解重點字用金色)
+  - [2. 文法規則輪播](#2-文法規則輪播)
+  - [3. 練習題的解析，點開顯示在題目下方](#3-練習題的解析點開顯示在題目下方)
+  - [4. 長內容放進 Modal，並附上連結按鈕](#4-長內容放進-modal並附上連結按鈕)
+  - [5. 全站改用側邊 Offcanvas](#5-全站改用側邊-offcanvas)
+  - [6. 圖示按鈕與表格欄位說明](#6-圖示按鈕與表格欄位說明)
+  - [7. 用 annotate 替既有文章批次加註](#7-用-annotate-替既有文章批次加註)
+  - [8. 同一個字出現多次，指定第幾個](#8-同一個字出現多次指定第幾個)
+  - [9. 用 context 區分語境](#9-用-context-區分語境)
+  - [10. 切換單元時重新加註](#10-切換單元時重新加註)
+  - [11. 以主題色分類不同種類的提示](#11-以主題色分類不同種類的提示)
+  - [12. 註冊品牌專屬的電流主題](#12-註冊品牌專屬的電流主題)
+  - [13. 只在重要的地方用電流，其餘保持安靜](#13-只在重要的地方用電流其餘保持安靜)
+  - [14. 公告：置頂、促銷、黏底](#14-公告置頂促銷黏底)
+  - [15. 追蹤公告的點擊與關閉](#15-追蹤公告的點擊與關閉)
+  - [16. 倒數計時，動態更新公告內容](#16-倒數計時動態更新公告內容)
+  - [17. PHP 動態輸出](#17-php-動態輸出)
+  - [18. 動態插入的公告列](#18-動態插入的公告列)
 - [安全性提醒](#安全性提醒)
 - [常見問題](#常見問題)
-- [專案檔案](#專案檔案)
 
 ## 特色
 
@@ -31,27 +60,6 @@
 - 23 個內建主題名稱（含別名），可自訂主題。
 - 金色電流主題：電流環、電光線、閃電、光暈，且可單點、全域或依主題開關。
 - 內建 17 色配色（16 色加上 `gold`），以 `BpNotice.palette` 公開，方便與其他元件共用。
-
-## 需求與安裝
-
-| 項目 | 是否必要 | 說明 |
-|---|---|---|
-| Bootstrap 5 CSS | 使用 Modal 或 Offcanvas 時必要 | 對話框與側欄的外觀來自 Bootstrap |
-| Bootstrap 5 JavaScript | 使用 Modal 或 Offcanvas 時必要 | 使用 `bootstrap.Modal` 與 `bootstrap.Offcanvas` |
-| Bootstrap Icons | 建議 | 公告列圖示、連結按鈕箭頭使用 `bi-*` 類別 |
-
-只用浮動提示、輪播與固定面板時，不需要 Bootstrap JavaScript。
-
-```html
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-<!-- 放在 body 結尾之前 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="bp-popnote.js"></script>
-```
-
-腳本載入後會自動初始化。頁面載入完成後才新增的內容，請參考[常見問題](#常見問題)。
 
 ## 快速開始
 
@@ -247,12 +255,6 @@ PopoverConfig.addTheme('emerald-volt', {
 ```
 
 建議 `fxDim` 比 `borderColor` 暗很多，亮暗對比越大，繞行的電流越明顯。`fxCore` 建議選亮色。所有顏色請使用不透明色碼。
-
-### 瀏覽器支援
-
-- 電流環的平滑旋轉使用 CSS `@property`，需要 Chrome 與 Edge 85、Safari 16.4、Firefox 128 以上。較舊的瀏覽器不會平滑旋轉，其餘效果照常。
-- 沒有填 `fxDim` 時會用 `color-mix()` 計算，需要 Chrome 111、Safari 16.2、Firefox 113 以上。
-- 動畫只在提示框開啟期間執行，不會在背景持續耗用資源。
 
 ## Notice 公告列
 
@@ -562,15 +564,3 @@ BpNotice.init();   // 初始化新加入的公告列
 
 **可以同時開多個浮動提示框嗎？**
 不行，同一時間只會有一個浮動提示框，開啟另一個會自動關閉前一個。
-
-## 專案檔案
-
-| 檔案 | 說明 |
-|---|---|
-| `bp-popnote.js` | 元件本體，包含 Popnote 與 Notice |
-| `bp-popnote-demo-10-28-26.html` | 金色電流示範頁，與 `bp-popnote.js` 放在同一個資料夾即可開啟 |
-| `README.md` | 本文件 |
-
-## 授權
-
-MIT License

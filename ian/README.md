@@ -2,7 +2,7 @@
 
 把多個 [Bootstrap Icons](https://icons.getbootstrap.com/) 組成播放動畫的 Web Component。只要一個語意標籤 `<ui-icon-anim>`，不需要額外的 CSS 檔，也不使用 Shadow DOM。
 
-![version](https://img.shields.io/badge/version-1.2.0-7849C9) ![license](https://img.shields.io/badge/license-MIT-27AE60) ![dependency](https://img.shields.io/badge/requires-Bootstrap%20Icons-82C8E5)
+![version](https://img.shields.io/badge/version-1.2.0-7849C9) ![dependency](https://img.shields.io/badge/requires-Bootstrap%20Icons-82C8E5)
 
 ## 特色
 
@@ -16,15 +16,6 @@
 - 播放完畢可跳轉到指定網址
 - 提供 `play()`、`pause()`、`reset()`、`goTo()` 方法與完整事件
 - 元件離開可視範圍時自動暫停，節省效能
-
-## 安裝
-
-元件只有一個檔案。頁面需先載入 Bootstrap Icons 樣式表：
-
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<script src="ui-icon-anim.js"></script>
-```
 
 ## 快速開始
 
@@ -132,7 +123,7 @@ document.addEventListener('before-navigate', e => {
 | `interval` | `1000` | 切換間隔（毫秒），最小 100 |
 | `mode` | `replace` | `replace` 原地取代、`sequence` 由左至右排出 |
 | `effect` | `fade` | `fade`、`scale`、`flip`、`none` |
-| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應 |
+| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`bluebell`、`special`、`info`、`indigo`、`pink`、`orange` |
 | `size` | `md` | `sm`、`md`、`lg`、`xl`、數字（rem）或含單位值 |
 | `gap` | `8` | sequence 模式間距（px） |
 | `hold` | 同 `interval` | sequence 模式排滿後停留時間（毫秒） |
@@ -198,27 +189,3 @@ document.addEventListener('before-remove', e => {
   if (e.target.id === 'keepMe') e.preventDefault();
 });
 ```
-
-## 調色盤名稱
-
-| 名稱 | 色碼 | 名稱 | 色碼 |
-| --- | --- | --- | --- |
-| `shell` | `#C6C7BD` | `vanilla` | `#DBEDD8` |
-| `lavender` | `#C3A5E5` | `yellow` | `#E3D322` |
-| `sky` | `#82C8E5` | `bluebell` | `#7589D9` |
-| `warning` | `#E6374B` | `special` | `#B3DE73` |
-| `salmon` | `#E5C3B3` | `info` | `#92B5E0` |
-| `ocean` | `#1CCAE8` | `indigo` | `#7849C9` |
-| `safe` | `#27AE60` | `pink` | `#FF91D7` |
-| `teal` | `#0DA591` | `orange` | `#EDA109` |
-| `base` | `#0C0D0C` | | |
-
-也可以從 `UiIconAnim.PALETTE` 取得完整對照表。
-
-
-## 授權
-
-本專案以 MIT 授權釋出。
-
-```
-MIT License

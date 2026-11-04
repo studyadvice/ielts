@@ -2,7 +2,7 @@
 
 螢幕錄影教學用的極簡畫筆層。零依賴，單一 JavaScript 檔即可運作，提供觸控筆、雷射筆、行內手寫填空與跳轉圓點。
 
-適合用觸控筆在網頁教材上邊講解邊標註，錄成教學影片。元件不會在畫面上跳出任何提示訊息，設定錯誤只寫入 console，避免錄影時出現干擾畫面的東西。
+適合用觸控筆在網頁教材上邊講解邊標註，錄成教學影片。元件不會在畫面上跳出任何提示訊息，設定錯誤只寫入主控台，避免錄影時出現干擾畫面的東西。
 
 ## 功能
 
@@ -12,14 +12,6 @@
 - **跳轉圓點**：開著觸控筆也點得到，可跳到同頁標籤或其他網頁，支援 SVG 圖形與 Bootstrap Icons。
 - **快捷鍵**：錄影時不必伸手找按鈕。
 
-## 安裝
-
-把 `ink-pen.js` 放進專案，在頁面中引入即可。放在 `<head>` 或 `<body>` 結尾都可以。
-
-```html
-<script src="ink-pen.js"></script>
-```
-
 ## 快速開始
 
 ```html
@@ -27,7 +19,6 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <script src="ink-pen.js"></script>
 </head>
 <body>
   <ui-ink-layer></ui-ink-layer>
@@ -41,7 +32,7 @@
 </html>
 ```
 
-按 `1` 開啟觸控筆，按 `0` 回到一般點選。
+按 `Ctrl+Shift+1` 開啟觸控筆，按 `` Ctrl+Shift+` `` 回到一般點選。
 
 ## 元件
 
@@ -52,8 +43,15 @@
 | 屬性 | 值 | 說明 |
 |---|---|---|
 | `data-anchor` | `viewport`（預設）、`document` | `viewport` 讓筆跡貼著視窗；`document` 讓筆跡貼著內容，捲動時跟著段落走 |
+| `data-lock-scroll` | 不寫（預設）、`true`、`pen`、`false` | 繪圖時鎖定頁面捲動。`true` 或空值在觸控筆與雷射筆模式都鎖定；`pen` 只在觸控筆模式鎖定；不寫或 `false` 不鎖定 |
 
 兩種模式可隨時切換，既有筆跡會依當下捲動量自動換算座標，切換瞬間畫面不會跳動。
+
+鎖定捲動期間，滾輪、觸控拖曳、方向鍵、PageUp、PageDown、空白鍵與拖曳捲軸都無效，按工具列的「關」才能再捲動。`document` 模式在鎖定時，手指拖曳改為作畫。唯一例外是 `<dot-go>` 的同頁跳轉，仍會平滑捲動到目標。
+
+```html
+<ui-ink-layer data-anchor="document" data-lock-scroll="pen"></ui-ink-layer>
+```
 
 繪圖時的觸點分工：
 
@@ -64,10 +62,12 @@
 
 | 方法 | 說明 |
 |---|---|
-| `setMode(mode)` / `getMode()` | `pen`、`laser`、`off` |
-| `setColor(key)` / `getColor()` | 配色表名稱或色碼 |
-| `setWidth(px)` / `getWidth()` | 筆跡粗細，範圍 3 至 12，預設 3 |
-| `setAnchor(mode)` / `getAnchor()` | 切換座標模式 |
+| `setMode(mode)`、`getMode()` | `pen`、`laser`、`off` |
+| `setColor(key)`、`getColor()` | 配色表名稱或色碼 |
+| `setWidth(px)`、`getWidth()` | 筆跡粗細，範圍 3 至 12，預設 3 |
+| `setAnchor(mode)`、`getAnchor()` | 切換座標模式 |
+| `setScrollLock(v)`、`getScrollLock()` | 設定或讀取捲動鎖定規則，`v` 為 `true`、`'pen'` 或 `false`；讀取值為 `all`、`pen`、`none` |
+| `isScrollLocked()` | 目前是否正在鎖定捲動 |
 | `clear()` | 清除全部筆跡 |
 | `isEmpty()` | 是否沒有任何筆跡 |
 
@@ -87,7 +87,7 @@
 | `setMode(mode)` | 切換模式並同步按鈕狀態 |
 | `toggleBar(force)` | 收合或展開，不帶參數時切換 |
 | `setExtraColor(hex, label)` | 程式端追加或更換自訂色，傳空值則移除 |
-| `setAnchor(mode)` / `getAnchor()` | 繪圖層座標模式的便捷入口 |
+| `setAnchor(mode)`、`getAnchor()` | 繪圖層座標模式的便捷入口 |
 | `clear()` | 清除繪圖層筆跡 |
 
 ### `<ink-handwrite>` 行內手寫空格
@@ -106,14 +106,14 @@
 
 格數範圍 8 至 255，超出會自動收斂。沒寫底線也沒設 `data-slots` 時，以答案長度推算，再沒有則用 10 格。
 
-解答比空格長時會等比縮小，下限 0.6 倍，縮到下限仍放不下會在 console 提醒加長底線。顯示解答會覆蓋該空格的手寫筆跡。
+解答比空格長時會等比縮小，下限 0.6 倍，縮到下限仍放不下會在主控台提醒加長底線。顯示解答會覆蓋該空格的手寫筆跡。
 
 | 方法 | 說明 |
 |---|---|
-| `setInk(dataUrl)` / `getInk()` / `hasInk()` / `clearInk()` | 存取手寫筆跡圖片 |
-| `showAnswer()` / `hideAnswer()` / `toggleAnswer()` | 控制解答顯示 |
-| `hasAnswer()` / `answerShown()` | 查詢解答狀態 |
-| `slots` / `answer` | 唯讀屬性 |
+| `setInk(dataUrl)`、`getInk()`、`hasInk()`、`clearInk()` | 存取手寫筆跡圖片 |
+| `showAnswer()`、`hideAnswer()`、`toggleAnswer()` | 控制解答顯示 |
+| `hasAnswer()`、`answerShown()` | 查詢解答狀態 |
+| `slots`、`answer` | 唯讀屬性 |
 
 ### `<ui-ink-modal>` 手寫視窗
 
@@ -135,7 +135,7 @@
 | 屬性 | 值 | 預設 | 說明 |
 |---|---|---|---|
 | `href` | `#id` 或網址 | 無 | `#id` 為同頁平滑捲動，並讓目標閃一下外框；其餘當網址跳轉。未設定時圓點停用 |
-| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `sky` | 圖示與標籤顏色 |
+| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `sky` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`special`、`info`、`indigo`、`pink`、`orange` |
 | `dot-style` | `circle`、`circle-fill`、`star`、`star-fill`、`square`、`square-fill`、`icon` | `circle-fill` | 圖示樣式 |
 | `icon` | Bootstrap Icons 名稱 | 無 | `dot-style="icon"` 時使用，寫 `bi-translate`、`translate` 或 `bi bi-translate` 皆可 |
 | `size` | 10 至 48 | 18 | 圖示大小（px） |
@@ -150,7 +150,7 @@
 | 方法 | 說明 |
 |---|---|
 | `go()` | 以程式觸發跳轉 |
-| `href` / `internal` / `dotStyle` / `size` / `color` | 唯讀屬性 |
+| `href`、`internal`、`dotStyle`、`size`、`color` | 唯讀屬性 |
 
 ## 事件
 
@@ -161,6 +161,7 @@
 | `ink-written` | 手寫視窗確認填入 | `{ el, dataUrl, empty, slots }` |
 | `ink-answer` | 解答顯示或收起 | `{ el, shown, answer, slots }` |
 | `dot-go` | 跳轉前，可 `preventDefault()` 取消 | `{ el, href, internal, target }` |
+| `ink-scroll-lock` | 捲動鎖定狀態改變 | `{ locked, rule, mode }` |
 
 ```js
 document.addEventListener('dot-go', function (e) {
@@ -172,7 +173,9 @@ document.addEventListener('dot-go', function (e) {
 
 | 成員 | 說明 |
 |---|---|
-| `layer()` / `bar()` / `modal()` | 取得各元件實體 |
+| `layer()`、`bar()`、`modal()` | 取得各元件實體 |
+| `lockScroll(v)` | 設定捲動鎖定，`true`、`'pen'` 或 `false`，等同修改 `data-lock-scroll` |
+| `shortcuts` | 模式快捷鍵對照表 |
 | `blanks()` | 頁面上所有 `<ink-handwrite>` |
 | `answerBlanks()` | 有設定 `answer` 的空格 |
 | `clearBlanks()` | 清除所有空格的手寫筆跡 |
@@ -180,38 +183,22 @@ document.addEventListener('dot-go', function (e) {
 | `toggleAnswers()` | 只要還有沒顯示的就全部顯示，否則全部收起 |
 | `dots()` | 頁面上所有 `<dot-go>` |
 | `dotStyles` | 支援的圖示樣式清單 |
-| `palette` / `penColorOptions` | 配色表與筆色選單 |
-| `widthRange` / `handwriteRange` / `slotRange` | 各項數值範圍 |
+| `palette`、`penColorOptions` | 配色表與筆色選單 |
+| `widthRange`、`handwriteRange`、`slotRange` | 各項數值範圍 |
 
 ## 快捷鍵
 
-手寫視窗開啟時，或游標停在輸入框內時，快捷鍵不會作用。
+切換模式的組合鍵以實體按鍵位置判斷，不受輸入法影響，游標停在輸入框裡也有效。其餘單鍵在手寫視窗開啟時或游標停在輸入框內時不會作用。
 
 | 按鍵 | 功能 |
 |---|---|
-| `1` | 觸控筆 |
-| `3` | 雷射筆 |
-| `0` | 關閉繪圖，回到一般點選 |
+| `Ctrl+Shift+1` | 觸控筆 |
+| `Ctrl+Shift+2` | 雷射筆 |
+| `` Ctrl+Shift+` `` | 關閉繪圖，回到一般點選 |
 | `C` | 清除全部筆跡 |
 | `H` | 收合或展開工具列 |
 | `A` | 顯示或收起全部解答 |
 | `Esc` | 關閉手寫視窗 |
-
-## 配色表
-
-`theme` 與筆色可使用以下名稱：
-
-| 名稱 | 色碼 | 名稱 | 色碼 |
-|---|---|---|---|
-| `bg` | `#0C0D0C` | `teal` | `#0DA591` |
-| `shell` | `#C6C7BD` | `vanilla` | `#DBEDD8` |
-| `lavender` | `#C3A5E5` | `yellow` | `#E3D322` |
-| `sky` | `#82C8E5` | `focus` | `#D4FFFC` |
-| `warning` | `#E6374B` | `special` | `#B3DE73` |
-| `salmon` | `#E5C3B3` | `info` | `#4171BF` |
-| `ocean` | `#1CCAE8` | `indigo` | `#7849C9` |
-| `safe` | `#27AE60` | `pink` | `#FF91D7` |
-| `orange` | `#EDA109` | | |
 
 ## 注意事項
 
@@ -223,35 +210,3 @@ document.addEventListener('dot-go', function (e) {
 ## 示範
 
 `ink-pen-demo-10-31-26.html` 與 `ink-pen.js` 放在同一資料夾，用瀏覽器開啟即可。
-
-## 瀏覽器支援
-
-需要支援 Custom Elements v1 與 Pointer Events 的現代瀏覽器，例如 Chrome、Edge、Firefox、Safari 的近期版本。
-
-## 授權
-
-本專案採用 MIT 授權。
-
-```
-MIT License
-
-Copyright (c) 2026 [Your Name]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
