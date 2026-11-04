@@ -1,188 +1,195 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-cards 字級設定範例</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<script src="ui-cards.js"></script>
+<title>ui-cards 示範 | 11-04-26</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <style>
-  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
-  .page{max-width:1600px;margin:0 auto;padding:32px 24px;}
-  h1{font-size:1.8rem;color:#C3A5E5;margin:0 0 8px 0;}
-  h2{font-size:1.3rem;color:#82C8E5;margin:0 0 12px 0;}
-  .lead-note{color:#92B5E0;font-size:0.95rem;margin:0 0 24px 0;}
-  section.demo{border:1px solid #7589D9;border-radius:10px;padding:20px;margin:0 0 28px 0;}
-  .pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;}
-  pre{background:rgba(198,199,189,0.08);color:#DBEDD8;border:1px solid #C6C7BD;border-radius:8px;padding:14px;margin:0;font-size:0.82rem;line-height:1.6;white-space:pre-wrap;}
-  table.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
-  table.ref th,table.ref td{border:1px solid #C6C7BD;padding:8px 10px;text-align:left;vertical-align:top;}
-  table.ref th{color:#C3A5E5;}
-  table.ref code{color:#B3DE73;}
-  .tag-v{display:inline-block;font-size:0.75rem;background:#EDA109;color:#0C0D0C;border-radius:999px;padding:1px 8px;margin:0 0 0 8px;vertical-align:middle;}
+  :root { font-size: 16px; }
+  body {
+    margin: 0;
+    padding: 32px 48px;
+    background: #0C0D0C;
+    color: #C6C7BD;
+    font-family: "微軟正黑體", "Inter";
+    min-width: 1200px;
+  }
+  h1 { font-size: 1.8rem; color: #DBEDD8; margin: 0 0 8px 0; }
+  h2 { font-size: 1.35rem; color: #82C8E5; margin: 0 0 16px 0; }
+  .lead-note { font-size: 1rem; color: #92B5E0; margin: 0 0 32px 0; }
+  .demo-block {
+    border-top: 1px solid rgba(198, 199, 189, 0.78);
+    padding: 32px 0 40px 0;
+  }
+  .demo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0 0 0; }
+  .code-box {
+    margin: 0;
+    padding: 16px;
+    border: 1px solid rgba(198, 199, 189, 0.78);
+    border-radius: 8px;
+    background: #0C0D0C;
+    color: #B3DE73;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-label { font-size: 0.95rem; color: #C3A5E5; margin: 0 0 8px 0; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td {
+    border: 1px solid rgba(198, 199, 189, 0.78);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .attr-table th { color: #DBEDD8; }
+  .attr-table code { color: #E3D322; }
 </style>
 </head>
 <body>
-<div class="page">
-  <h1>ui-cards 字級設定</h1>
-  <p class="lead-note">版本 11-04-26：開放 card-item 各區塊的 font-size 設定。數字視為 rem，也可直接寫帶單位的值（例如 18px、1.2em、clamp(1rem, 2vw, 1.4rem)）。</p>
 
-  <section class="demo">
-    <h2>屬性一覽<span class="tag-v">新增</span></h2>
-    <table class="ref">
-      <thead><tr><th>屬性</th><th>作用區塊</th><th>預設值</th><th>可放在</th></tr></thead>
-      <tbody>
-        <tr><td><code>label-size</code></td><td>標題（label）</td><td>1.1rem</td><td>ui-cards、card-item</td></tr>
-        <tr><td><code>note-size</code></td><td>副標說明（note）</td><td>0.85rem</td><td>ui-cards、card-item</td></tr>
-        <tr><td><code>tag-size</code></td><td>標籤（tags）</td><td>0.75rem</td><td>ui-cards、card-item</td></tr>
-        <tr><td><code>body-size</code></td><td>內文（子元素與 source）</td><td>0.95rem</td><td>ui-cards、card-item</td></tr>
-        <tr><td><code>footer-size</code></td><td>頁尾（footer）</td><td>0.85rem</td><td>ui-cards、card-item</td></tr>
-        <tr><td><code>badge-size</code></td><td>角標（badge）</td><td>0.75rem</td><td>ui-cards、card-item</td></tr>
-        <tr><td><code>icon-size</code></td><td>圖示（icon）</td><td>2rem</td><td>ui-cards、card-item（card-item 為本版新增）</td></tr>
-      </tbody>
-    </table>
-    <p class="lead-note" style="margin:12px 0 0 0;">優先順序：card-item 上的設定 &gt; ui-cards 上的設定 &gt; 預設值。</p>
-  </section>
+<h1>ui-cards 示範</h1>
+<p class="lead-note">11-04-26 修改：開放內容區標題與元件大標題的字級、文字色、底線色設定。</p>
 
-  <section class="demo">
-    <h2>範例一：整組卡片統一字級</h2>
-    <div class="pair">
-      <ui-cards cols="3" label-size="1.4" note-size="1" tag-size="0.85" body-size="1.05" footer-size="0.9" badge-size="0.85" divider>
-        <card-item icon="rocket-takeoff" label="快速部署" note="一鍵完成" tags="CI,自動化" footer="更新於 11/04" badge="NEW">
-          推送後自動建置並發佈到測試環境。
-        </card-item>
-        <card-item icon="shield-check" label="權限控管" note="角色分級" tags="RBAC" footer="更新於 10/28">
-          依角色限制後台可見的功能。
-        </card-item>
-        <card-item icon="graph-up" label="營運報表" note="每日彙整" tags="報表,排程" footer="更新於 10/15">
-          每天早上八點寄送前一日數據。
+<template id="c1-a">
+  <ul class="mb-0">
+    <li>開場句</li>
+    <li>銜接開場句、開始敘事</li>
+  </ul>
+</template>
+<template id="c1-b">
+  <p class="mb-0">把同一個語塊放進 Part 2 的不同題目，練到隨時說得出口。</p>
+</template>
+
+<section class="demo-block">
+  <h2>修改一：內容區標題可設定字級與色彩</h2>
+
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">修改前（標題固定 1.1rem、薰衣草紫）</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="right" panel-columns="7,5"
+        panel-title="橫向練習" color="sky" badge-color="sky" bordered active-detail="c1-a"
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="person-video3" label="IELTS Speaking Tutorial Series" note="雅思口說開放課程"
+          badge-icon="person-video2" detail="c1-a">
+          <p>語塊組合，自由造句</p>
+          <button detail="c1-b" color="sky">橫向練習在Part 2落地</button>
         </card-item>
       </ui-cards>
-<pre>&lt;ui-cards cols="3" divider
-  label-size="1.4" note-size="1" tag-size="0.85"
-  body-size="1.05" footer-size="0.9" badge-size="0.85"&gt;
-  &lt;card-item icon="rocket-takeoff" label="快速部署"
-    note="一鍵完成" tags="CI,自動化"
-    footer="更新於 11/04" badge="NEW"&gt;
-    推送後自動建置並發佈到測試環境。
-  &lt;/card-item&gt;
-  ...
-&lt;/ui-cards&gt;</pre>
     </div>
-  </section>
-
-  <section class="demo">
-    <h2>範例二：單張卡片覆寫</h2>
-    <div class="pair">
-      <ui-cards cols="3" color="sky" divider>
-        <card-item icon="star" label="預設字級" note="沒有額外設定" footer="footer 0.85rem">
-          內文使用預設 0.95rem。
-        </card-item>
-        <card-item icon="star-fill" color="orange" icon-size="3.2" label-size="1.8" note-size="0.95" body-size="1.2" label="放大重點" note="這張卡片單獨放大" footer="footer 18px" footer-size="18px" badge="HOT" badge-size="1rem">
-          內文 1.2rem，圖示 3.2rem。
-        </card-item>
-        <card-item icon="dash-circle" label-size="0.95" note-size="0.75" body-size="0.8" tag-size="0.65" label="縮小次要" note="次要資訊縮小" tags="低優先" footer="footer 預設">
-          內文 0.8rem。
+    <div>
+      <p class="code-label">修改後（標題 1.65rem、香草色，底線改天藍）</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="right" panel-columns="7,5"
+        panel-title="橫向練習" panel-title-size="1.65rem" panel-title-color="vanilla" panel-title-line="sky"
+        color="sky" badge-color="sky" bordered active-detail="c1-a"
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="person-video3" label="IELTS Speaking Tutorial Series" note="雅思口說開放課程"
+          badge-icon="person-video2" detail="c1-a">
+          <p>語塊組合，自由造句</p>
+          <button detail="c1-b" color="sky">橫向練習在Part 2落地</button>
         </card-item>
       </ui-cards>
-<pre>&lt;ui-cards cols="3" color="sky" divider&gt;
-  &lt;card-item icon="star" label="預設字級" ...&gt;...&lt;/card-item&gt;
-
-  &lt;card-item icon="star-fill" color="orange"
-    icon-size="3.2" label-size="1.8" note-size="0.95"
-    body-size="1.2" footer-size="18px"
-    badge="HOT" badge-size="1rem" ...&gt;
-    內文 1.2rem，圖示 3.2rem。
-  &lt;/card-item&gt;
-
-  &lt;card-item icon="dash-circle"
-    label-size="0.95" note-size="0.75"
-    body-size="0.8" tag-size="0.65" ...&gt;
-    內文 0.8rem。
-  &lt;/card-item&gt;
-&lt;/ui-cards&gt;</pre>
     </div>
-  </section>
+  </div>
 
-  <section class="demo">
-    <h2>範例三：整組設定加單張覆寫，搭配 filled 與內容區</h2>
-    <div class="pair">
-      <ui-cards cols="2" card-style="filled" color="vanilla" label-size="1.3" body-size="1" panel="below" panel-title="{label}" placeholder="請點選卡片查看詳情。">
-        <card-item icon="cup-hot" label="早餐方案" note="06:30 – 10:00" detail="d-breakfast">提供中西式自助餐。</card-item>
-        <card-item icon="moon-stars" color="lavender" label-size="clamp(1.2rem, 2vw, 1.7rem)" label="晚餐方案" note="17:30 – 21:00" detail="d-dinner">套餐需提前預約。</card-item>
-      </ui-cards>
-<pre>&lt;ui-cards cols="2" card-style="filled" color="vanilla"
-  label-size="1.3" body-size="1"
-  panel="below" panel-title="{label}"&gt;
-  &lt;card-item icon="cup-hot" label="早餐方案"
-    detail="d-breakfast"&gt;...&lt;/card-item&gt;
-  &lt;card-item icon="moon-stars" color="lavender"
-    label-size="clamp(1.2rem, 2vw, 1.7rem)"
-    label="晚餐方案" detail="d-dinner"&gt;...&lt;/card-item&gt;
-&lt;/ui-cards&gt;</pre>
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">修改前程式碼</p>
+<pre class="code-box">&lt;ui-cards cols="2" media-position="left" media-width="168" panel="right" panel-columns="8,4"
+  panel-title="橫向練習" placeholder="點卡片或卡片內的按鈕。" color="sky" badge-color="sky" bordered
+  active-detail="c1-a" label-size="1.65rem" note-size="1.25rem"&gt;</pre>
     </div>
-    <template id="d-breakfast"><p>早餐含飲品吧，房客免費，非房客每位 380 元。</p></template>
-    <template id="d-dinner"><p>晚餐為四道式套餐，請於前一天 18:00 前預約。</p></template>
-  </section>
+    <div>
+      <p class="code-label">修改後程式碼</p>
+<pre class="code-box">&lt;ui-cards cols="2" media-position="left" media-width="168" panel="right" panel-columns="8,4"
+  panel-title="橫向練習" panel-title-size="1.65rem" panel-title-color="vanilla" panel-title-line="sky"
+  placeholder="點卡片或卡片內的按鈕。" color="sky" badge-color="sky" bordered
+  active-detail="c1-a" label-size="1.65rem" note-size="1.25rem"&gt;</pre>
+    </div>
+  </div>
+</section>
 
-  <h1 style="margin:40px 0 8px 0;">角標圖示與底色<span class="tag-v">第二版</span></h1>
-  <p class="lead-note">新增 badge-icon 與 badge-color。圖示寫法與 icon 相同，star-fill 或 bi-star-fill 皆可；圖示大小跟隨 badge-size。</p>
+<section class="demo-block">
+  <h2>修改二：元件大標題同樣開放設定</h2>
+  <ui-cards title="本課重點" title-size="1.5rem" title-color="yellow"
+    cols="3" panel="none" color="lavender">
+    <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目"></card-item>
+    <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用"></card-item>
+    <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開"></card-item>
+  </ui-cards>
+<pre class="code-box mt-3">&lt;ui-cards title="本課重點" title-size="1.5rem" title-color="yellow" cols="3" panel="none" color="lavender"&gt;</pre>
+</section>
 
-  <section class="demo">
-    <h2>新增屬性</h2>
-    <table class="ref">
-      <thead><tr><th>屬性</th><th>說明</th><th>預設值</th><th>可放在</th></tr></thead>
-      <tbody>
-        <tr><td><code>badge-icon</code></td><td>角標圖示（Bootstrap Icons）。單獨使用時角標為圓形；與 badge 並用時圖示在前、文字在後。</td><td>無</td><td>card-item</td></tr>
-        <tr><td><code>badge-color</code></td><td>角標底色，接受色盤名稱或色碼。文字色依底色深淺自動選 vanilla 或 base。</td><td>warning</td><td>ui-cards、card-item</td></tr>
-      </tbody>
-    </table>
-  </section>
+<section class="demo-block">
+  <h2>修改三：顯示按鈕（reveal）</h2>
+  <p>按鈕文字就是按鈕內容，可自由填寫。按下後讓指定 id 的隱藏區塊顯示；加上 <code>remove-cards</code> 會連同按鈕所在的整個 ui-cards 一起移除。</p>
 
-  <section class="demo">
-    <h2>範例四：三種角標組合</h2>
-    <div class="pair">
-      <ui-cards cols="3" color="sky" divider>
-        <card-item icon="fire" label="只有文字" note="與前一版相同" badge="HOT" footer="badge">
-          沿用預設 warning 底色。
-        </card-item>
-        <card-item icon="patch-check" label="只有圖示" note="圓形角標" badge-icon="patch-check-fill" badge-color="safe" footer="badge-icon + badge-color">
-          safe 底色自動配 vanilla 文字。
-        </card-item>
-        <card-item icon="lightning-charge" label="圖示加文字" note="圖示在前" badge-icon="lightning-charge-fill" badge="限時" badge-color="yellow" footer="badge-icon + badge">
-          yellow 底色自動配 base 文字。
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">範例 A：只顯示目標，保留卡片</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="none" color="sky" bordered
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="person-video3" label="IELTS Speaking Tutorial Series" note="雅思口說開放課程">
+          <p>語塊組合，自由造句</p>
+          <button reveal="reveal-a" color="special">看完整示範</button>
         </card-item>
       </ui-cards>
-<pre>&lt;card-item badge="HOT" ...&gt;
-
-&lt;card-item badge-icon="patch-check-fill"
-  badge-color="safe" ...&gt;
-
-&lt;card-item badge-icon="lightning-charge-fill"
-  badge="限時" badge-color="yellow" ...&gt;</pre>
+      <div id="reveal-a" class="mt-3 p-3 border rounded" hidden>
+        A tiny apartment on the fifth floor of a fifteen-year-old building, conveniently located near the MRT station.
+      </div>
     </div>
-  </section>
-
-  <section class="demo">
-    <h2>範例五：整組角標底色加單張覆寫，搭配 badge-size</h2>
-    <div class="pair">
-      <ui-cards cols="4" badge-color="bluebell" badge-size="0.9">
-        <card-item icon="lock" label="鎖定" badge-icon="lock-fill">僅管理員可編輯。</card-item>
-        <card-item icon="bookmark" label="收藏" badge-icon="bookmark-star-fill" badge="12">已有 12 人收藏。</card-item>
-        <card-item icon="exclamation-triangle" label="警告" badge-icon="exclamation-lg" badge-color="warning" badge-size="1.1">此項目即將到期。</card-item>
-        <card-item icon="palette" label="自訂色碼" badge-icon="droplet-fill" badge="#3A1F5C" badge-color="#3A1F5C">深色色碼自動配淺色文字。</card-item>
+    <div>
+      <p class="code-label">範例 B：顯示目標並移除整個 ui-cards</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="none" color="lavender" bordered
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="door-open" label="準備好了嗎？" note="按下按鈕開始練習">
+          <button reveal="reveal-b" remove-cards color="lavender">開始練習</button>
+        </card-item>
       </ui-cards>
-<pre>&lt;ui-cards cols="4" badge-color="bluebell" badge-size="0.9"&gt;
-  &lt;card-item badge-icon="lock-fill" ...&gt;
-  &lt;card-item badge-icon="bookmark-star-fill" badge="12" ...&gt;
-  &lt;card-item badge-icon="exclamation-lg"
-    badge-color="warning" badge-size="1.1" ...&gt;
-  &lt;card-item badge-icon="droplet-fill" badge="#3A1F5C"
-    badge-color="#3A1F5C" ...&gt;
-&lt;/ui-cards&gt;</pre>
+      <div id="reveal-b" class="p-3 border rounded" style="display: none;">
+        練習一：把 conveniently located 放進「你常去的咖啡店」這一題。
+      </div>
     </div>
-  </section>
-</div>
+  </div>
+
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">範例 A 程式碼</p>
+<pre class="code-box">&lt;button reveal="reveal-a" color="special"&gt;看完整示範&lt;/button&gt;
+
+&lt;div id="reveal-a" hidden&gt;...&lt;/div&gt;</pre>
+    </div>
+    <div>
+      <p class="code-label">範例 B 程式碼</p>
+<pre class="code-box">&lt;button reveal="reveal-b" remove-cards color="lavender"&gt;開始練習&lt;/button&gt;
+
+&lt;div id="reveal-b" style="display: none;"&gt;...&lt;/div&gt;</pre>
+    </div>
+  </div>
+</section>
+
+<section class="demo-block">
+  <h2>新增屬性一覽</h2>
+  <table class="attr-table">
+    <thead>
+      <tr><th>屬性</th><th>作用</th><th>預設值</th><th>寫法</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>panel-title-size</code></td><td>內容區標題字級</td><td>1.1rem</td><td>純數字視為 rem，例如 1.65；也可寫 24px、clamp() 等</td></tr>
+      <tr><td><code>panel-title-color</code></td><td>內容區標題文字色，未設定底線色時底線跟著改</td><td>lavender</td><td>色盤名稱或色碼</td></tr>
+      <tr><td><code>panel-title-line</code></td><td>內容區標題底線色；寫 none 移除底線</td><td>同標題文字色</td><td>色盤名稱、色碼或 none</td></tr>
+      <tr><td><code>title-size</code></td><td>元件大標題（title 屬性）字級</td><td>1.2rem</td><td>同 panel-title-size</td></tr>
+      <tr><td><code>title-color</code></td><td>元件大標題文字色</td><td>lavender</td><td>色盤名稱或色碼</td></tr>
+      <tr><td><code>reveal</code>（按鈕）</td><td>按下後顯示此 id 的區塊，支援 hidden、display: none、d-none 三種隱藏方式</td><td>無</td><td>目標 id</td></tr>
+      <tr><td><code>remove-cards</code>（按鈕）</td><td>顯示目標後移除按鈕所在的整個 ui-cards</td><td>不移除</td><td>寫上屬性即啟用</td></tr>
+      <tr><td><code>reveal-scroll</code>（按鈕）</td><td>顯示後平滑捲動到目標區塊</td><td>不捲動</td><td>寫上屬性即啟用</td></tr>
+      <tr><td><code>color</code>（按鈕）</td><td>按鈕底色，與 detail 按鈕相同</td><td>button-color 或 ocean</td><td>色盤名稱或色碼</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<script src="ui-cards.js"></script>
 </body>
 </html>

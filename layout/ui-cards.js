@@ -74,7 +74,7 @@
   const CSS = `
 ui-cards{display:block;color:${PALETTE.shell};font-size:1rem;}
 ui-cards:not([data-ready]){visibility:hidden;}
-ui-cards .uic-title{font-size:1.2rem;font-weight:700;color:${PALETTE.lavender};margin:0 0 16px 0;}
+ui-cards .uic-title{font-size:var(--uic-fs-title, 1.2rem);font-weight:700;color:var(--uic-title-c, ${PALETTE.lavender});margin:0 0 16px 0;}
 ui-cards .uic-wrap{display:grid;gap:var(--uic-gap);align-items:start;box-sizing:border-box;}
 ui-cards .uic-wrap.uic-side{grid-template-columns:var(--uic-pcols);}
 ui-cards .uic-wrap.uic-side.uic-nopanel{grid-template-columns:minmax(0,1fr);}
@@ -124,7 +124,8 @@ ui-cards[card-style="plain"] card-item{border-color:transparent;background:trans
 
 ui-cards .uic-panel{min-width:0;border:1px solid ${PALETTE.shell};border-radius:8px;padding:16px;box-sizing:border-box;}
 ui-cards .uic-side .uic-panel{position:sticky;top:16px;}
-ui-cards .uic-head{font-size:1.1rem;font-weight:700;color:${PALETTE.lavender};margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid ${PALETTE.lavender};}
+ui-cards .uic-head{font-size:var(--uic-fs-head, 1.1rem);font-weight:700;color:var(--uic-head-c, ${PALETTE.lavender});margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid var(--uic-head-line, var(--uic-head-c, ${PALETTE.lavender}));}
+ui-cards[panel-title-line="none"] .uic-head{border-bottom:none;padding-bottom:0;}
 ui-cards .uic-head:empty{display:none;}
 ui-cards .uic-pbody{line-height:1.7;}
 ui-cards .uic-pbody > :first-child{margin-top:0;}
@@ -198,6 +199,14 @@ ${variantCSS}
       /* 全體卡片字級與角標底色 */
       applySizes(this, a);
       applyBadgeColor(this, a('badge-color'));
+      /* 元件大標題與內容區標題：字級、文字色、底線色 */
+      const setVar = (name, v) => { if (v) s.setProperty(name, v); };
+      setVar('--uic-fs-title', fs(a('title-size')));
+      setVar('--uic-title-c', color(a('title-color')));
+      setVar('--uic-fs-head', fs(a('panel-title-size')));
+      setVar('--uic-head-c', color(a('panel-title-color')));
+      const line = a('panel-title-line');
+      if (line && line !== 'none') setVar('--uic-head-line', color(line));
 
       /* 卡片 */
       const wrap = this._wrap = el('div', 'uic-wrap');
@@ -319,6 +328,14 @@ ${variantCSS}
 
     _onClick(e) {
       const wrap = this._wrap;
+      /* 顯示按鈕優先處理，避免被所在卡片的 detail 攔截 */
+      const r = e.target.closest('[reveal]');
+      if (r && wrap.contains(r)) {
+        e.preventDefault();
+        e.stopPropagation();
+        this._reveal(r);
+        return;
+      }
       const b = e.target.closest('[detail]');
       if (b && wrap.contains(b)) {
         const link = e.target.closest('a[href]');
@@ -332,6 +349,34 @@ ${variantCSS}
         const target = c.getAttribute('target');
         target ? window.open(c.getAttribute('href'), target) : (location.href = c.getAttribute('href'));
       }
+    }
+
+    /* 顯示目標區塊；按鈕有 remove-cards 時一併移除整個 ui-cards */
+    _reveal(r) {
+      if (r.disabled || r.hasAttribute('disabled')) return;
+      const id = (r.getAttribute('reveal') || '').trim();
+      const target = id ? document.getElementById(id) : null;
+      if (!target) {
+        const next = r.nextElementSibling;
+        if (!(next && next.classList.contains('uic-alert'))) r.after(alertEl(id));
+        return;
+      }
+      target.hidden = false;
+      target.classList.remove('d-none');
+      if (target.style.display === 'none') target.style.removeProperty('display');
+      if (getComputedStyle(target).display === 'none') target.style.display = 'block';
+
+      const removeCards = r.hasAttribute('remove-cards');
+      target.dispatchEvent(new CustomEvent('ui-cards:reveal', {
+        bubbles: true,
+        detail: { id, removed: removeCards, button: r }
+      }));
+      if (removeCards) {
+        this.remove();
+      } else {
+        r.classList.add('uic-on');
+      }
+      if (r.hasAttribute('reveal-scroll')) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     _press(b, isClick) {
@@ -380,7 +425,7 @@ ${variantCSS}
     }
 
     _decorateButtons(root) {
-      root.querySelectorAll('[detail]').forEach(b => {
+      root.querySelectorAll('[detail], [reveal]').forEach(b => {
         if (b.localName === 'card-item') return;
         if (b.localName === 'button' && !b.hasAttribute('type')) b.type = 'button';
         if (b.classList.contains('uic-btn')) return;
