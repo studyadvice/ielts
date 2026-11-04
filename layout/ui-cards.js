@@ -11,12 +11,10 @@
   };
   const LIGHT_TEXT = new Set(['warning', 'indigo', 'teal', 'safe']);
 
-  /* 可設定字級的卡片區塊：屬性名稱為 {key}-size，對應 CSS 變數 --uic-fs-{key} */
   const SIZE_KEYS = ['label', 'note', 'tag', 'body', 'footer', 'badge'];
 
   const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
-  /* 純數字視為 rem；帶單位（px、em、%、clamp() 等）則原樣使用 */
   const fs = v => {
     if (v == null) return '';
     const t = String(v).trim();
@@ -29,7 +27,6 @@
       if (v) node.style.setProperty('--uic-fs-' + k, v);
     });
   };
-  /* 依底色深淺選擇文字色：色盤名稱沿用 LIGHT_TEXT，其餘色碼以亮度判斷 */
   const textOn = v => {
     const k = (v || '').trim();
     if (PALETTE[k]) return LIGHT_TEXT.has(k) ? PALETTE.vanilla : PALETTE.base;
@@ -52,6 +49,15 @@
     return n;
   };
   const iconEl = name => el('i', 'bi ' + (name.startsWith('bi-') ? name : 'bi-' + name));
+  /* 角標：卡片與內容區共用 */
+  const badgeEl = (text, icon) => {
+    if (!text && !icon) return null;
+    const bd = el('span', 'uic-badge');
+    if (icon) bd.append(iconEl(icon.trim()));
+    if (text) bd.append(el('span', null, text));
+    else bd.classList.add('uic-badge-only');
+    return bd;
+  };
   const lineStyle = st => (st === 'none' ? 'none' : (['solid', 'dashed', 'dotted'].includes(st) ? st : 'solid'));
   const alertEl = id => el('div', 'alert alert-danger uic-alert', `找不到 id 為「${id}」的內容。`);
   const cloneOf = id => {
@@ -122,7 +128,9 @@ ui-cards[card-style="filled"] .uic-tag{border-color:${PALETTE.base};color:${PALE
 ui-cards[card-style="filled"] .uic-foot{border-top-color:${PALETTE.base};}
 ui-cards[card-style="plain"] card-item{border-color:transparent;background:transparent;}
 
-ui-cards .uic-panel{min-width:0;border:1px solid ${PALETTE.shell};border-radius:8px;padding:16px;box-sizing:border-box;}
+ui-cards .uic-panel{position:relative;min-width:0;border:1px solid ${PALETTE.shell};border-radius:8px;padding:16px;box-sizing:border-box;}
+ui-cards .uic-panel.uic-has-badge .uic-head{padding-right:var(--uic-pbadge-w, 96px);}
+ui-cards .uic-panel.uic-has-badge .uic-head:empty + .uic-pbody{padding-right:var(--uic-pbadge-w, 96px);}
 ui-cards .uic-side .uic-panel{position:sticky;top:16px;}
 ui-cards .uic-head{font-size:var(--uic-fs-head, 1.1rem);font-weight:700;color:var(--uic-head-c, ${PALETTE.lavender});margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid var(--uic-head-line, var(--uic-head-c, ${PALETTE.lavender}));}
 ui-cards[panel-title-line="none"] .uic-head{border-bottom:none;padding-bottom:0;}
@@ -172,6 +180,9 @@ ${variantCSS}
         panelTitle: a('panel-title') || '',
         placeholder: has('placeholder') ? a('placeholder') : '請點選卡片。',
         hideEmpty: has('hide-empty-panel'),
+        panelBadge: a('panel-badge') || '',
+        panelBadgeIcon: a('panel-badge-icon') || '',
+        panelBadgeColor: a('panel-badge-color') || '',
         btnColor: a('button-color') || 'ocean'
       };
       const heading = a('title');
@@ -304,15 +315,8 @@ ${variantCSS}
       parts.push(main);
 
       if (ta('footer')) parts.push(el('div', 'uic-foot', ta('footer')));
-      const bText = ta('badge');
-      const bIcon = ta('badge-icon');
-      if (bText || bIcon) {
-        const bd = el('span', 'uic-badge');
-        if (bIcon) bd.append(iconEl(bIcon.trim()));
-        if (bText) bd.append(el('span', null, bText));
-        else bd.classList.add('uic-badge-only');
-        parts.push(bd);
-      }
+      const bd = badgeEl(ta('badge'), ta('badge-icon'));
+      if (bd) parts.push(bd);
       c.replaceChildren(...parts);
       applyBadgeColor(c, ta('badge-color'));
 
@@ -412,7 +416,27 @@ ${variantCSS}
         : this._o.panelTitle.replace('{label}', label);
       p.body.replaceChildren(cloneOf(id) || alertEl(id));
       this._decorateButtons(p.body);
+      this._setPanelBadge(b);
       this._wrap.classList.remove('uic-nopanel');
+    }
+
+    /* 內容區角標：按鈕的 detail-badge* 優先，其次為 ui-cards 的 panel-badge*；清空時移除 */
+    _setPanelBadge(b) {
+      const p = this._panel;
+      if (p.badge) p.badge.remove();
+      p.badge = null;
+      p.col.classList.remove('uic-has-badge');
+      if (!b) return;
+      const pick = (own, fallback) => (b.hasAttribute(own) ? b.getAttribute(own) : fallback);
+      const text = pick('detail-badge', this._o.panelBadge);
+      const icon = pick('detail-badge-icon', this._o.panelBadgeIcon);
+      const bd = badgeEl(text, icon);
+      if (!bd) return;
+      applyBadgeColor(bd, pick('detail-badge-color', this._o.panelBadgeColor));
+      p.col.append(bd);
+      p.badge = bd;
+      p.col.classList.add('uic-has-badge');
+      p.col.style.setProperty('--uic-pbadge-w', (bd.offsetWidth + 16) + 'px');
     }
 
     _clear() {
@@ -421,6 +445,7 @@ ${variantCSS}
       this._on = null;
       p.head.textContent = this._o.panelTitle.replace('{label}', '').trim();
       p.body.replaceChildren(...(this._o.placeholder ? [el('div', 'uic-ph', this._o.placeholder)] : []));
+      this._setPanelBadge(null);
       if (this._o.hideEmpty) this._wrap.classList.add('uic-nopanel');
     }
 
