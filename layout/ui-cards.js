@@ -1,28 +1,34 @@
-/*!
- * ui-cards.js  v1.0
- * 卡片牆元件：<ui-cards> 內放 <card-item>，以網格排列。
- * 卡片內容可直接寫在 <card-item> 裡，或用 source 複製；帶 detail 的卡片或元素在內容區顯示對應內容。
- * 遵守 ui 元件共同約定（見 ui-conventions.html）。屬性只在載入時讀取一次，內容一律複製。
- * 依賴：Bootstrap Icons（使用 icon 屬性時）。
- * MIT License
- */
 (() => {
   'use strict';
   if (customElements.get('ui-cards')) return;
 
-  /* ---------- 配色 ---------- */
   const PALETTE = {
     base: '#0C0D0C', shell: '#C6C7BD', lavender: '#C3A5E5', sky: '#82C8E5',
     warning: '#E6374B', salmon: '#E5C3B3', ocean: '#1CCAE8', safe: '#27AE60',
-    teal: '#0DA591', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#D4FFFC',
-    special: '#B3DE73', info: '#92B5E0', indigo: '#7849C9', pink: '#FF91D7',
-    orange: '#EDA109'
+    teal: '#0DA591', vanilla: '#DBEDD8', yellow: '#E3D322', bluebell: '#7589D9',
+    focus: '#D4FFFC', special: '#B3DE73', info: '#92B5E0', indigo: '#7849C9',
+    pink: '#FF91D7', orange: '#EDA109'
   };
   const LIGHT_TEXT = new Set(['warning', 'indigo', 'teal', 'safe']);
 
-  /* ---------- 小工具 ---------- */
+  /* 可設定字級的卡片區塊：屬性名稱為 {key}-size，對應 CSS 變數 --uic-fs-{key} */
+  const SIZE_KEYS = ['label', 'note', 'tag', 'body', 'footer', 'badge'];
+
   const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+  /* 純數字視為 rem；帶單位（px、em、%、clamp() 等）則原樣使用 */
+  const fs = v => {
+    if (v == null) return '';
+    const t = String(v).trim();
+    if (!t) return '';
+    return /^\d*\.?\d+$/.test(t) ? t + 'rem' : t;
+  };
+  const applySizes = (node, get) => {
+    SIZE_KEYS.forEach(k => {
+      const v = fs(get(k + '-size'));
+      if (v) node.style.setProperty('--uic-fs-' + k, v);
+    });
+  };
   const el = (tag, cls, text) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -74,15 +80,15 @@ ui-cards[media-position="left"] .uic-media.uic-img{height:auto;min-height:100%;}
 ui-cards .uic-media img{width:100%;height:100%;object-fit:cover;display:block;}
 
 ui-cards .uic-main{flex:1 1 auto;padding:var(--uic-pad);display:flex;flex-direction:column;gap:6px;min-width:0;}
-ui-cards .uic-label{font-size:1.1rem;font-weight:700;line-height:1.4;color:var(--uic-c);}
-ui-cards .uic-note{font-size:0.85rem;line-height:1.5;color:${PALETTE.info};}
+ui-cards .uic-label{font-size:var(--uic-fs-label, 1.1rem);font-weight:700;line-height:1.4;color:var(--uic-c);}
+ui-cards .uic-note{font-size:var(--uic-fs-note, 0.85rem);line-height:1.5;color:${PALETTE.info};}
 ui-cards .uic-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:var(--uic-jc);}
-ui-cards .uic-tag{font-size:0.75rem;line-height:1.5;border:1px solid ${PALETTE.sky};color:${PALETTE.sky};border-radius:999px;padding:1px 8px;}
-ui-cards .uic-body{font-size:0.95rem;line-height:1.7;}
+ui-cards .uic-tag{font-size:var(--uic-fs-tag, 0.75rem);line-height:1.5;border:1px solid ${PALETTE.sky};color:${PALETTE.sky};border-radius:999px;padding:1px 8px;}
+ui-cards .uic-body{font-size:var(--uic-fs-body, 0.95rem);line-height:1.7;}
 ui-cards .uic-body > :first-child{margin-top:0;}
 ui-cards .uic-body > :last-child{margin-bottom:0;}
-ui-cards .uic-foot{border-top:var(--uic-div);padding:10px var(--uic-pad);font-size:0.85rem;color:${PALETTE.info};}
-ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;background:${PALETTE.warning};color:${PALETTE.vanilla};font-size:0.75rem;font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
+ui-cards .uic-foot{border-top:var(--uic-div);padding:10px var(--uic-pad);font-size:var(--uic-fs-footer, 0.85rem);color:${PALETTE.info};}
+ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;background:${PALETTE.warning};color:${PALETTE.vanilla};font-size:var(--uic-fs-badge, 0.75rem);font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
 
 ui-cards card-item[data-click]{cursor:pointer;}
 ui-cards card-item[data-click]:hover{border-color:${PALETTE.focus};}
@@ -162,7 +168,7 @@ ${variantCSS}
       s.setProperty('--uic-minh', has('card-height') ? num(a('card-height'), 0) + 'px' : 'auto');
       s.setProperty('--uic-mh', num(a('media-height'), 140) + 'px');
       s.setProperty('--uic-mw', num(a('media-width'), 120) + 'px');
-      s.setProperty('--uic-isize', num(a('icon-size'), 2) + 'rem');
+      s.setProperty('--uic-isize', fs(a('icon-size')) || '2rem');
       s.setProperty('--uic-c', color(a('color')) || PALETTE.shell);
       s.setProperty('--uic-accent', color(a('accent')) || PALETTE.ocean);
       if (has('icon-color')) s.setProperty('--uic-icon', color(a('icon-color')));
@@ -171,6 +177,8 @@ ${variantCSS}
       s.setProperty('--uic-div', has('divider')
         ? `1px ${lineStyle(a('divider') || 'solid')} ${color(a('divider-color')) || 'var(--uic-c)'}`
         : 'none');
+      /* 全體卡片字級 */
+      applySizes(this, a);
 
       /* 卡片 */
       const wrap = this._wrap = el('div', 'uic-wrap');
@@ -274,6 +282,9 @@ ${variantCSS}
       if (ta('tooltip')) c.title = ta('tooltip');
       if (ta('color')) c.style.setProperty('--uic-c', color(ta('color')));
       if (ta('icon-color')) c.style.setProperty('--uic-icon', color(ta('icon-color')));
+      if (ta('icon-size')) c.style.setProperty('--uic-isize', fs(ta('icon-size')));
+      /* 單張卡片字級（覆寫 ui-cards 的設定） */
+      applySizes(c, ta);
       if (ta('span')) c.style.gridColumn = `span ${Math.max(1, parseInt(ta('span'), 10) || 1)}`;
       if (!c.hasAttribute('disabled') && (ta('detail') || ta('href'))) c.setAttribute('data-click', '');
     }
@@ -282,7 +293,6 @@ ${variantCSS}
       const wrap = this._wrap;
       const b = e.target.closest('[detail]');
       if (b && wrap.contains(b)) {
-        // 卡片內一般連結照常運作
         const link = e.target.closest('a[href]');
         if (link && link !== b && !link.hasAttribute('detail') && b.contains(link)) return;
         e.preventDefault();

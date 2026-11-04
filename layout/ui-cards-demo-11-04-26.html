@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 字級設定範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="ui-cards.js"></script>
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .page{max-width:1600px;margin:0 auto;padding:32px 24px;}
+  h1{font-size:1.8rem;color:#C3A5E5;margin:0 0 8px 0;}
+  h2{font-size:1.3rem;color:#82C8E5;margin:0 0 12px 0;}
+  .lead-note{color:#92B5E0;font-size:0.95rem;margin:0 0 24px 0;}
+  section.demo{border:1px solid #7589D9;border-radius:10px;padding:20px;margin:0 0 28px 0;}
+  .pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;}
+  pre{background:rgba(198,199,189,0.08);color:#DBEDD8;border:1px solid #C6C7BD;border-radius:8px;padding:14px;margin:0;font-size:0.82rem;line-height:1.6;white-space:pre-wrap;}
+  table.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+  table.ref th,table.ref td{border:1px solid #C6C7BD;padding:8px 10px;text-align:left;vertical-align:top;}
+  table.ref th{color:#C3A5E5;}
+  table.ref code{color:#B3DE73;}
+  .tag-v{display:inline-block;font-size:0.75rem;background:#EDA109;color:#0C0D0C;border-radius:999px;padding:1px 8px;margin:0 0 0 8px;vertical-align:middle;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-cards 字級設定</h1>
+  <p class="lead-note">版本 11-04-26：開放 card-item 各區塊的 font-size 設定。數字視為 rem，也可直接寫帶單位的值（例如 18px、1.2em、clamp(1rem, 2vw, 1.4rem)）。</p>
+
+  <section class="demo">
+    <h2>屬性一覽<span class="tag-v">新增</span></h2>
+    <table class="ref">
+      <thead><tr><th>屬性</th><th>作用區塊</th><th>預設值</th><th>可放在</th></tr></thead>
+      <tbody>
+        <tr><td><code>label-size</code></td><td>標題（label）</td><td>1.1rem</td><td>ui-cards、card-item</td></tr>
+        <tr><td><code>note-size</code></td><td>副標說明（note）</td><td>0.85rem</td><td>ui-cards、card-item</td></tr>
+        <tr><td><code>tag-size</code></td><td>標籤（tags）</td><td>0.75rem</td><td>ui-cards、card-item</td></tr>
+        <tr><td><code>body-size</code></td><td>內文（子元素與 source）</td><td>0.95rem</td><td>ui-cards、card-item</td></tr>
+        <tr><td><code>footer-size</code></td><td>頁尾（footer）</td><td>0.85rem</td><td>ui-cards、card-item</td></tr>
+        <tr><td><code>badge-size</code></td><td>角標（badge）</td><td>0.75rem</td><td>ui-cards、card-item</td></tr>
+        <tr><td><code>icon-size</code></td><td>圖示（icon）</td><td>2rem</td><td>ui-cards、card-item（card-item 為本版新增）</td></tr>
+      </tbody>
+    </table>
+    <p class="lead-note" style="margin:12px 0 0 0;">優先順序：card-item 上的設定 &gt; ui-cards 上的設定 &gt; 預設值。</p>
+  </section>
+
+  <section class="demo">
+    <h2>範例一：整組卡片統一字級</h2>
+    <div class="pair">
+      <ui-cards cols="3" label-size="1.4" note-size="1" tag-size="0.85" body-size="1.05" footer-size="0.9" badge-size="0.85" divider>
+        <card-item icon="rocket-takeoff" label="快速部署" note="一鍵完成" tags="CI,自動化" footer="更新於 11/04" badge="NEW">
+          推送後自動建置並發佈到測試環境。
+        </card-item>
+        <card-item icon="shield-check" label="權限控管" note="角色分級" tags="RBAC" footer="更新於 10/28">
+          依角色限制後台可見的功能。
+        </card-item>
+        <card-item icon="graph-up" label="營運報表" note="每日彙整" tags="報表,排程" footer="更新於 10/15">
+          每天早上八點寄送前一日數據。
+        </card-item>
+      </ui-cards>
+<pre>&lt;ui-cards cols="3" divider
+  label-size="1.4" note-size="1" tag-size="0.85"
+  body-size="1.05" footer-size="0.9" badge-size="0.85"&gt;
+  &lt;card-item icon="rocket-takeoff" label="快速部署"
+    note="一鍵完成" tags="CI,自動化"
+    footer="更新於 11/04" badge="NEW"&gt;
+    推送後自動建置並發佈到測試環境。
+  &lt;/card-item&gt;
+  ...
+&lt;/ui-cards&gt;</pre>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例二：單張卡片覆寫</h2>
+    <div class="pair">
+      <ui-cards cols="3" color="sky" divider>
+        <card-item icon="star" label="預設字級" note="沒有額外設定" footer="footer 0.85rem">
+          內文使用預設 0.95rem。
+        </card-item>
+        <card-item icon="star-fill" color="orange" icon-size="3.2" label-size="1.8" note-size="0.95" body-size="1.2" label="放大重點" note="這張卡片單獨放大" footer="footer 18px" footer-size="18px" badge="HOT" badge-size="1rem">
+          內文 1.2rem，圖示 3.2rem。
+        </card-item>
+        <card-item icon="dash-circle" label-size="0.95" note-size="0.75" body-size="0.8" tag-size="0.65" label="縮小次要" note="次要資訊縮小" tags="低優先" footer="footer 預設">
+          內文 0.8rem。
+        </card-item>
+      </ui-cards>
+<pre>&lt;ui-cards cols="3" color="sky" divider&gt;
+  &lt;card-item icon="star" label="預設字級" ...&gt;...&lt;/card-item&gt;
+
+  &lt;card-item icon="star-fill" color="orange"
+    icon-size="3.2" label-size="1.8" note-size="0.95"
+    body-size="1.2" footer-size="18px"
+    badge="HOT" badge-size="1rem" ...&gt;
+    內文 1.2rem，圖示 3.2rem。
+  &lt;/card-item&gt;
+
+  &lt;card-item icon="dash-circle"
+    label-size="0.95" note-size="0.75"
+    body-size="0.8" tag-size="0.65" ...&gt;
+    內文 0.8rem。
+  &lt;/card-item&gt;
+&lt;/ui-cards&gt;</pre>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例三：整組設定加單張覆寫，搭配 filled 與內容區</h2>
+    <div class="pair">
+      <ui-cards cols="2" card-style="filled" color="vanilla" label-size="1.3" body-size="1" panel="below" panel-title="{label}" placeholder="請點選卡片查看詳情。">
+        <card-item icon="cup-hot" label="早餐方案" note="06:30 – 10:00" detail="d-breakfast">提供中西式自助餐。</card-item>
+        <card-item icon="moon-stars" color="lavender" label-size="clamp(1.2rem, 2vw, 1.7rem)" label="晚餐方案" note="17:30 – 21:00" detail="d-dinner">套餐需提前預約。</card-item>
+      </ui-cards>
+<pre>&lt;ui-cards cols="2" card-style="filled" color="vanilla"
+  label-size="1.3" body-size="1"
+  panel="below" panel-title="{label}"&gt;
+  &lt;card-item icon="cup-hot" label="早餐方案"
+    detail="d-breakfast"&gt;...&lt;/card-item&gt;
+  &lt;card-item icon="moon-stars" color="lavender"
+    label-size="clamp(1.2rem, 2vw, 1.7rem)"
+    label="晚餐方案" detail="d-dinner"&gt;...&lt;/card-item&gt;
+&lt;/ui-cards&gt;</pre>
+    </div>
+    <template id="d-breakfast"><p>早餐含飲品吧，房客免費，非房客每位 380 元。</p></template>
+    <template id="d-dinner"><p>晚餐為四道式套餐，請於前一天 18:00 前預約。</p></template>
+  </section>
+</div>
+</body>
+</html>
