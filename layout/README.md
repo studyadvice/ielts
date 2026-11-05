@@ -594,6 +594,10 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `card-padding` | 數字（px） | `16` | 卡片內距。 |
 | `card-radius` | 數字（px） | `8` | 卡片圓角。 |
 | `card-height` | 數字（px） | 自動 | 卡片最小高度。 |
+| `border-width` | 數字（px） | `1` | 卡片框線粗細。 |
+| `hover-color` | 顏色 | `vanilla` | 滑鼠移到卡片上的框線色。 |
+| `hover-width` | 數字（px） | 不變 | 滑過時的框線粗細，往內加粗，卡片大小與內容位置不會跳動。沒設時只換顏色。 |
+| `hover-all` | 布林 | 關閉 | 讓純展示的卡片也有滑過效果。沒設時只有帶 `detail` 或 `href` 的卡片會反應；停用的卡片一律不反應。 |
 | `media-position` | `left` | 上方 | 圖示或圖片放在卡片左側。 |
 | `media-height` | 數字（px） | `140` | 圖片高度（圖片在上方時）。 |
 | `media-width` | 數字（px） | `120` | 圖示或圖片寬度（在左側時）。 |
@@ -642,6 +646,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `badge-icon` | Bootstrap Icons 名稱 | 角標圖示。 |
 | `badge-color` | 顏色 | 這張卡片的角標底色。 |
 | `color`、`icon-color`、`icon-size` | 同 `<ui-cards>` | 只覆寫這張卡片。 |
+| `border-width`、`hover-color`、`hover-width` | 同 `<ui-cards>` | 只覆寫這張卡片的框線與滑過效果。 |
 | `label-size` 等字級屬性 | 同 `<ui-cards>` | 只覆寫這張卡片。 |
 | `span` | 整數 | 卡片橫跨的欄數。 |
 | `tooltip` | 文字 | 滑鼠提示。 |
@@ -727,6 +732,16 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
   <card-item icon="chat-quote" label="開場句" detail="d-open"></card-item>
   <card-item icon="arrow-left-right" label="橫向練習" detail="d-cross" card-style="filled" color="pink"></card-item>
   <card-item icon="signpost-split" label="銜接敘事" detail="d-link"></card-item>
+</ui-cards>
+```
+
+**框線粗細與滑過效果**
+
+```html
+<ui-cards cols="3" hover-all border-width="2" hover-color="pink" hover-width="4">
+  <card-item label="開場句" note="第一句不照搬題目"></card-item>
+  <card-item label="重點" color="yellow" border-width="3" hover-color="yellow" hover-width="5"></card-item>
+  <card-item label="停用" disabled></card-item>
 </ui-cards>
 ```
 

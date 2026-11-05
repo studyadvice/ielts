@@ -65,6 +65,13 @@
     else bd.classList.add('uic-badge-only');
     return bd;
   };
+  /* border-width、hover-width 為 px 數字；hover-color 為品牌色名稱或色碼 */
+  const applyBorder = (node, get) => {
+    const bw = get('border-width'), hw = get('hover-width'), hc = get('hover-color');
+    if (bw != null && bw !== '') node.style.setProperty('--uic-bw', num(bw, 1) + 'px');
+    if (hw != null && hw !== '') node.style.setProperty('--uic-hw', num(hw, 0) + 'px');
+    if (hc) node.style.setProperty('--uic-hc', color(hc));
+  };
   const lineStyle = st => (st === 'none' ? 'none' : (['solid', 'dashed', 'dotted'].includes(st) ? st : 'solid'));
   const alertEl = id => el('div', 'alert alert-danger uic-alert', `找不到 id 為「${id}」的內容。`);
   const cloneOf = id => {
@@ -108,7 +115,7 @@ ui-cards[bordered] .uic-wrap{border:1px solid ${PALETTE.shell};border-radius:8px
 
 ui-cards .uic-grid{display:grid;grid-template-columns:repeat(var(--uic-cols),minmax(0,1fr));gap:var(--uic-gap);min-width:0;}
 
-ui-cards card-item{position:relative;display:flex;flex-direction:column;min-height:var(--uic-minh);border:1px solid var(--uic-c);border-radius:var(--uic-radius);background:${PALETTE.base};color:${PALETTE.shell};box-sizing:border-box;overflow:hidden;text-align:var(--uic-align);}
+ui-cards card-item{position:relative;display:flex;flex-direction:column;min-height:var(--uic-minh);border:var(--uic-bw, 1px) solid var(--uic-c);border-radius:var(--uic-radius);background:${PALETTE.base};color:${PALETTE.shell};box-sizing:border-box;overflow:hidden;text-align:var(--uic-align);}
 ui-cards[media-position="left"] card-item[data-media]{display:grid;grid-template-columns:var(--uic-mw) minmax(0,1fr);grid-template-rows:1fr auto;}
 ui-cards[media-position="left"] card-item[data-media] .uic-media{grid-row:1 / -1;}
 ui-cards[media-position="left"] card-item[data-media] .uic-main,
@@ -134,7 +141,8 @@ ui-cards .uic-badge .bi{line-height:1;}
 ui-cards .uic-badge.uic-badge-only{justify-content:center;width:2em;height:2em;padding:0;}
 
 ui-cards card-item[data-click]{cursor:pointer;}
-ui-cards card-item[data-click]:hover{border-color:${PALETTE.focus};}
+ui-cards card-item[data-click]:hover,
+ui-cards[hover-all] card-item:not([disabled]):hover{border-color:var(--uic-hc, ${PALETTE.focus});outline:var(--uic-hw, 0px) solid var(--uic-hc, ${PALETTE.focus});outline-offset:calc(var(--uic-hw, 0px) * -1);}
 ui-cards card-item[data-active]{border-color:var(--uic-accent);box-shadow:0 0 0 2px var(--uic-accent);}
 ui-cards card-item[disabled]{border-style:dashed;cursor:not-allowed;filter:grayscale(1);}
 
@@ -222,6 +230,8 @@ ${variantCSS}
       s.setProperty('--uic-c-on', textOn(a('color') || 'shell'));
       s.setProperty('--uic-accent-on', textOn(a('accent') || 'ocean'));
       if (has('icon-color')) s.setProperty('--uic-icon', color(a('icon-color')));
+      /* 卡片框線與滑過效果 */
+      applyBorder(this, a);
       s.setProperty('--uic-align', center ? 'center' : 'left');
       s.setProperty('--uic-jc', center ? 'center' : 'flex-start');
       s.setProperty('--uic-div', has('divider')
@@ -349,6 +359,8 @@ ${variantCSS}
       const st = (ta('card-style') || this._o.cardStyle).trim();
       if (['filled', 'plain', 'outline'].includes(st)) c.setAttribute('data-style', st);
       if (ta('icon-color')) c.style.setProperty('--uic-icon', color(ta('icon-color')));
+      /* 單張卡片的框線與滑過效果（覆寫 ui-cards 的設定） */
+      applyBorder(c, ta);
       if (ta('icon-size')) c.style.setProperty('--uic-isize', fs(ta('icon-size')));
       /* 單張卡片字級（覆寫 ui-cards 的設定） */
       applySizes(c, ta);

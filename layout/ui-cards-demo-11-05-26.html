@@ -35,8 +35,8 @@
 <body>
 <div id="alerts"></div>
 <div class="page">
-  <h1>ui-cards：卡片實心與選中實心</h1>
-  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。</p>
+  <h1>ui-cards：卡片實心、選中實心、框線與滑過效果</h1>
+  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。第二次修改新增框線粗細與滑過效果：<code>border-width</code>、<code>hover-color</code>、<code>hover-width</code>、<code>hover-all</code>，見範例 5 到 7。</p>
 
   <section class="demo">
     <h2>屬性一覽</h2>
@@ -46,6 +46,10 @@
         <tr><td><code>card-style</code></td><td><code>&lt;ui-cards&gt;</code></td><td><code>filled</code>、<code>plain</code></td><td>整組卡片的外觀預設值。</td></tr>
         <tr><td><code>card-style</code></td><td><code>&lt;card-item&gt;</code></td><td><code>filled</code>、<code>plain</code>、<code>outline</code></td><td>只設定這張卡片，優先於 <code>&lt;ui-cards&gt;</code> 的設定。<code>outline</code> 用來在整組實心時讓某張恢復外框。</td></tr>
         <tr><td><code>active-style</code></td><td><code>&lt;ui-cards&gt;</code></td><td><code>filled</code></td><td>目前選中的卡片以 <code>accent</code> 色實心顯示，其他卡片維持原本外觀。</td></tr>
+        <tr><td><code>border-width</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>數字（px）</td><td>卡片框線粗細，預設 <code>1</code>。寫在 <code>&lt;card-item&gt;</code> 只影響這張。</td></tr>
+        <tr><td><code>hover-color</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>品牌色名稱或色碼</td><td>滑鼠移到卡片上的框線色，預設 <code>vanilla</code>。</td></tr>
+        <tr><td><code>hover-width</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>數字（px）</td><td>滑過時的框線粗細。往內加粗，卡片大小與內容位置不會跳動。沒設時粗細不變，只換顏色。</td></tr>
+        <tr><td><code>hover-all</code></td><td><code>&lt;ui-cards&gt;</code></td><td>布林</td><td>讓純展示的卡片也有滑過效果。沒設時只有帶 <code>detail</code> 或 <code>href</code> 的卡片會反應；停用的卡片一律不反應。</td></tr>
         <tr><td>文字色</td><td>自動</td><td></td><td>實心時依底色亮度自動選擇深色或淺色文字，深色底（例如元件色名 <code>indigo</code>、<code>warning</code>）會改用淺色字。</td></tr>
       </tbody>
     </table>
@@ -89,7 +93,59 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 5：框線加粗，滑過換色並更粗</h2>
+    <p class="desc"><code>border-width="2"</code> 讓所有卡片框線變成 2px；<code>hover-color="pink"</code> 加 <code>hover-width="4"</code>，滑鼠移上去時變成 4px 粉紅框。這組卡片帶 <code>detail</code>，所以本來就會反應滑過。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex5"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 6：純展示的卡片也有滑過效果</h2>
+    <p class="desc">卡片沒有 <code>detail</code> 或 <code>href</code> 時，預設不反應滑過。加上 <code>hover-all</code> 就會有效果；設了 <code>disabled</code> 的卡片仍然不反應。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex6"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex6"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 7：單張卡片覆寫</h2>
+    <p class="desc">三個屬性都可以寫在 <code>&lt;card-item&gt;</code> 上，只改這一張。這裡讓「重點」卡片框線 3px，滑過時變成 5px 黃框，其他卡片沿用整組設定。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex7"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex7"></pre></div>
+    </div>
+  </section>
 </div>
+
+<template id="ex5">
+<ui-cards cols="3" border-width="2" hover-color="pink" hover-width="4" panel-title="{label}" placeholder="點選一張卡片。">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目" detail="d-open"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用" detail="d-cross"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開" detail="d-link"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex6">
+<ui-cards cols="4" hover-all hover-color="blue" hover-width="3" align="center">
+  <card-item icon="headphones" label="聽力" note="30 分鐘"></card-item>
+  <card-item icon="book" label="閱讀" note="60 分鐘"></card-item>
+  <card-item icon="pencil" label="寫作" note="60 分鐘"></card-item>
+  <card-item icon="mic" label="口說" note="下週開放" disabled></card-item>
+</ui-cards>
+</template>
+
+<template id="ex7">
+<ui-cards cols="3" hover-all hover-color="green" hover-width="2">
+  <card-item label="一般卡片" note="滑過：2px 綠框"></card-item>
+  <card-item label="重點" note="平時 3px，滑過 5px 黃框" color="yellow" border-width="3" hover-color="yellow" hover-width="5"></card-item>
+  <card-item label="一般卡片" note="滑過：2px 綠框"></card-item>
+</ui-cards>
+</template>
 
 <template id="ex1">
 <ui-cards cols="3" color="#86877F">
