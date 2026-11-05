@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>版面視覺化編輯器</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --panel: #141514; --panel-2: #1B1C1B; --line: #2C2D2B;
+    --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7; --red: #EF6661;
+    --orange: #F79C40; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1; --violet: #B484E8; --gray: #86877F;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; margin: 0; }
+  .app { max-width: 1880px; margin: 0 auto; padding: 20px 28px 60px 28px; }
+
+  /* 頁首 */
+  .top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 0 16px 0; }
+  .top h1 { font-size: 1.5rem; color: var(--vanilla); font-weight: 700; margin: 0; }
+  .tabs { display: flex; gap: 6px; }
+  .tab { background: var(--panel-2); color: var(--shell); border: 1px solid var(--line); border-radius: 8px;
+         padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+  .tab.on { background: var(--blue); color: var(--bg); border-color: var(--blue); font-weight: 700; }
+  .top .spacer { flex: 1; }
+  .btnx { background: var(--panel-2); color: var(--shell); border: 1px solid var(--line); border-radius: 6px;
+          padding: 6px 12px; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .btnx:hover { border-color: var(--blue); color: var(--vanilla); }
+  .btnx.pri { background: var(--blue); color: var(--bg); border-color: var(--blue); font-weight: 600; }
+  .btnx.pri:hover { background: var(--vanilla); border-color: var(--vanilla); color: var(--bg); }
+  .btnx.dan:hover { border-color: var(--red); color: var(--red); }
+  .btnx.sm { padding: 3px 8px; font-size: 0.8rem; }
+  .presets { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .presets .lbl { color: var(--gray); font-size: 0.85rem; margin: 0 4px 0 0; }
+
+  /* 編輯區 */
+  .work { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 20px; align-items: start; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  .box-h { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line);
+           color: var(--vanilla); font-weight: 600; font-size: 0.95rem; flex-wrap: wrap; }
+  .box-h .sub { color: var(--gray); font-weight: 400; font-size: 0.8rem; }
+  .box-b { padding: 14px; }
+  .structure { min-height: 360px; max-height: 760px; overflow: auto; }
+  .inspector { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+
+  /* 結構：ui-table */
+  .st-item { border: 1px solid var(--line); border-radius: 8px; margin: 0 0 10px 0; background: var(--panel-2); }
+  .st-item.sel { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .st-head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; cursor: pointer; flex-wrap: wrap; }
+  .st-tag { font-family: Consolas, monospace; font-size: 0.8rem; color: var(--violet); }
+  .st-head .grow { flex: 1; }
+  .chip { font-size: 0.72rem; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--gray); white-space: nowrap; }
+  .chip.c-blue { border-color: var(--blue); color: var(--blue); }
+  .chip.c-pink { border-color: var(--pink); color: var(--pink); }
+  .chip.c-green { border-color: var(--green); color: var(--green); }
+  .chip.c-orange { border-color: var(--orange); color: var(--orange); }
+  .chip.c-violet { border-color: var(--violet); color: var(--violet); }
+  .chip.c-yellow { border-color: var(--yellow); color: var(--yellow); }
+  .warn { color: var(--red); font-size: 0.78rem; padding: 0 10px 6px 10px; }
+  .warn i { margin: 0 4px 0 0; }
+  .st-cells { display: grid; gap: 6px; padding: 0 10px 10px 10px; }
+  .st-cell { border: 1px dashed #3A3B38; border-radius: 6px; padding: 8px 10px; min-height: 54px; cursor: pointer;
+             font-size: 0.88rem; line-height: 1.5; overflow: hidden; background: var(--panel); }
+  .st-cell:hover { border-color: var(--gray); }
+  .st-cell.sel { border: 1px solid var(--pink); box-shadow: 0 0 0 1px var(--pink); }
+  .st-cell.inv { background: #26302A; }
+  .st-cell .txt { color: var(--shell); word-break: break-word; }
+  .st-cell .txt.empty { color: var(--gray); font-style: italic; }
+  .st-cell .chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 0 0; }
+  .st-add-col { border: 1px dashed var(--line); border-radius: 6px; color: var(--gray); display: flex; align-items: center;
+                justify-content: center; cursor: pointer; min-height: 54px; font-size: 1.2rem; }
+  .st-add-col:hover { color: var(--blue); border-color: var(--blue); }
+  .st-group { border-left: 4px solid var(--violet); }
+  .st-group .st-head { padding: 10px; }
+  .st-tools { display: inline-flex; gap: 4px; }
+  .ico { background: transparent; border: 1px solid transparent; color: var(--gray); border-radius: 4px; padding: 1px 6px; cursor: pointer; font-size: 0.85rem; }
+  .ico:hover { color: var(--vanilla); border-color: var(--line); }
+  .ico.dan:hover { color: var(--red); border-color: var(--red); }
+  .st-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 12px 0; }
+  .st-table-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line);
+                   border-radius: 8px; margin: 0 0 10px 0; cursor: pointer; background: var(--panel-2); }
+  .st-table-head.sel { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .empty-hint { color: var(--gray); padding: 24px; text-align: center; }
+
+  /* 結構：info-region */
+  .st-region { display: flex; border: 1px solid var(--line); border-radius: 8px; margin: 0 0 8px 0; background: var(--panel-2); cursor: pointer; overflow: hidden; }
+  .st-region.sel { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .st-region .bar { width: 6px; flex: none; }
+  .st-region .main { flex: 1; padding: 8px 12px; min-width: 0; }
+  .st-region .row1 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .st-region .rid { font-family: Consolas, monospace; color: var(--vanilla); font-size: 0.85rem; }
+  .st-region .txt { color: var(--shell); font-size: 0.88rem; margin: 4px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .st-flow { color: var(--gray); font-size: 0.8rem; text-align: center; margin: -4px 0 4px 0; }
+
+  /* 屬性面板 */
+  .fsec { color: var(--yellow); font-size: 0.8rem; letter-spacing: 0.05em; margin: 14px 0 6px 0; padding: 0 0 4px 0; border-bottom: 1px solid var(--line); }
+  .fsec:first-child { margin-top: 0; }
+  .frow { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 8px; align-items: center; margin: 0 0 8px 0; }
+  .frow.full { grid-template-columns: 1fr; }
+  .frow label { font-size: 0.85rem; color: var(--shell); }
+  .frow label small { display: block; color: var(--gray); font-size: 0.72rem; font-family: Consolas, monospace; }
+  .frow input[type=text], .frow select, .frow textarea {
+    width: 100%; background: var(--bg); color: var(--vanilla); border: 1px solid var(--line); border-radius: 6px;
+    padding: 5px 8px; font-size: 0.9rem; font-family: inherit; }
+  .frow textarea { font-family: Consolas, "微軟正黑體", monospace; font-size: 0.85rem; line-height: 1.5; resize: vertical; }
+  .frow input:focus, .frow select:focus, .frow textarea:focus { outline: none; border-color: var(--blue); }
+  .frow .colorbox { display: flex; gap: 6px; align-items: center; }
+  .frow .sw { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--line); flex: none; }
+  .frow .chk { display: flex; align-items: center; gap: 6px; }
+  .frow .chk input { width: 16px; height: 16px; accent-color: #5DBAE8; }
+  .frow .hint { grid-column: 2; color: var(--gray); font-size: 0.75rem; margin: -4px 0 0 0; }
+  .frow.full .hint { grid-column: 1; }
+  .inline-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0 0 0; }
+  .insp-title { color: var(--vanilla); font-weight: 700; font-size: 1rem; margin: 0 0 4px 0; }
+  .insp-sub { color: var(--gray); font-size: 0.8rem; margin: 0 0 12px 0; }
+
+  /* 預覽與程式碼 */
+  .out { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; margin: 20px 0 0 0; align-items: start; }
+  .preview-frame { width: 100%; border: 0; display: block; min-height: 200px; background: var(--bg); border-radius: 0 0 10px 10px; }
+  pre.code { margin: 0; padding: 14px; background: #101110; color: var(--vanilla); font-size: 0.82rem; line-height: 1.6;
+             white-space: pre-wrap; word-break: break-word; max-height: 720px; overflow: auto; border-radius: 0 0 10px 10px;
+             font-family: Consolas, monospace; }
+  pre.code .t { color: var(--blue); }
+  pre.code .a { color: var(--violet); }
+  pre.code .v { color: var(--green); }
+  pre.code .cm { color: var(--gray); }
+
+  /* 提示訊息（Bootstrap alert） */
+  .toast-zone { position: fixed; top: 16px; right: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 360px; }
+  .toast-zone .alert { margin: 0; background: #1B1C1B; color: var(--vanilla); border: 1px solid var(--green); font-size: 0.9rem; padding: 10px 40px 10px 14px; }
+  .toast-zone .alert.alert-warning { border-color: var(--orange); }
+  .toast-zone .alert.alert-danger { border-color: var(--red); }
+  .toast-zone .btn-close { filter: invert(1); }
+
+  /* 匯入視窗 */
+  .modal-x { position: fixed; inset: 0; background: rgba(12, 13, 12, 0.88); z-index: 1500; display: none; align-items: center; justify-content: center; }
+  .modal-x.on { display: flex; }
+  .modal-x .dlg { width: min(1100px, 94vw); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+  .modal-x h2 { font-size: 1.15rem; color: var(--vanilla); margin: 0 0 6px 0; }
+  .modal-x p { color: var(--gray); font-size: 0.85rem; margin: 0 0 10px 0; }
+  .modal-x textarea { width: 100%; background: var(--bg); color: var(--vanilla); border: 1px solid var(--line); border-radius: 6px;
+                      padding: 10px; font-family: Consolas, monospace; font-size: 0.85rem; }
+  .modal-x .acts { display: flex; justify-content: flex-end; gap: 8px; margin: 12px 0 0 0; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1><i class="bi bi-grid-1x2"></i> 版面視覺化編輯器</h1>
+    <div class="tabs">
+      <button class="tab on" data-tab="table">ui-table 表格</button>
+      <button class="tab" data-tab="info">info-region 逐步區塊</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btnx" id="btn-import"><i class="bi bi-box-arrow-in-down"></i>匯入程式碼</button>
+    <button class="btnx dan" id="btn-clear"><i class="bi bi-trash3"></i>清空</button>
+  </div>
+  <div class="presets" id="presets"></div>
+
+  <div class="work" style="margin-top:14px">
+    <section class="box">
+      <div class="box-h"><i class="bi bi-diagram-3"></i>版面結構 <span class="sub" id="struct-sub">點格子或列，右側調整屬性</span></div>
+      <div class="box-b structure" id="structure"></div>
+    </section>
+    <aside class="box inspector">
+      <div class="box-h"><i class="bi bi-sliders"></i>屬性</div>
+      <div class="box-b" id="inspector"></div>
+    </aside>
+  </div>
+
+  <div class="out">
+    <section class="box">
+      <div class="box-h"><i class="bi bi-eye"></i>即時預覽 <span class="grow" style="flex:1"></span>
+        <button class="btnx sm" id="btn-reload"><i class="bi bi-arrow-clockwise"></i>重新播放</button></div>
+      <iframe class="preview-frame" id="preview" title="預覽"></iframe>
+    </section>
+    <section class="box">
+      <div class="box-h"><i class="bi bi-code-slash"></i>程式碼 <span class="grow" style="flex:1"></span>
+        <button class="btnx sm" id="btn-copy-part"><i class="bi bi-clipboard"></i>複製元件</button>
+        <button class="btnx sm pri" id="btn-copy-full"><i class="bi bi-clipboard-plus"></i>複製含載入</button></div>
+      <pre class="code" id="code"></pre>
+    </section>
+  </div>
+</div>
+
+<div class="toast-zone" id="toasts"></div>
+
+<div class="modal-x" id="import-modal">
+  <div class="dlg">
+    <h2>匯入程式碼</h2>
+    <p>貼上含有 &lt;ui-table&gt; 或 &lt;info-region-group&gt; 的 HTML。編輯器不認得的屬性會放進「其他屬性」原樣保留；元件後面的 &lt;template&gt;、隱藏區塊會放進「附加 HTML」。</p>
+    <textarea id="import-text" rows="25" spellcheck="false"></textarea>
+    <div class="acts">
+      <button class="btnx" id="import-cancel">取消</button>
+      <button class="btnx pri" id="import-ok"><i class="bi bi-check2"></i>匯入</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── 共用設定 ───────────────────────────────────────── */
+  var CDN = 'https://cdn.jsdelivr.net/gh/studyadvice/ielts/';
+  var LIBS = {
+    table: CDN + 'tbl/ui-table.js',
+    info:  CDN + 'info/info-region.js'
+  };
+  var HEAD_LINKS = [
+    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">',
+    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">'
+  ];
+  var PALETTE = { shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7', red: '#EF6661', orange: '#F79C40',
+                  green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8', gray: '#86877F' };
+  var NAMES = Object.keys(PALETTE);
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function qv(s) { return String(s).replace(/"/g, '&quot;'); }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function strip(h) { var d = document.createElement('div'); d.innerHTML = h || ''; return (d.textContent || '').replace(/\s+/g, ' ').trim(); }
+  function colorHex(v) { if (!v) return ''; if (PALETTE[v]) return PALETTE[v]; if (v === 'gold') return '#C9973F'; return /^#|^rgb/.test(v) ? v : ''; }
+  function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
+
+  function toast(msg, type) {
+    var z = $('#toasts');
+    var a = document.createElement('div');
+    a.className = 'alert alert-' + (type || 'success') + ' alert-dismissible';
+    a.setAttribute('role', 'alert');
+    a.innerHTML = msg + '<button type="button" class="btn-close" aria-label="關閉"></button>';
+    a.querySelector('.btn-close').onclick = function () { a.remove(); };
+    z.appendChild(a);
+    setTimeout(function () { a.remove(); }, 3200);
+  }
+
+  /* ── 屬性欄位定義 ────────────────────────────────────── */
+  /* type：text、color、select、bool、area。select 的 '@bare' 代表只寫屬性名稱 */
+  var COLOR_OPTS = [''].concat(NAMES);
+  var F = {
+    table: [
+      { s: '外觀' },
+      { k: 'theme', l: '主題色', t: 'color', h: '框線、群組標題列與預設文字色' },
+      { k: 'font-color', l: '文字色', t: 'color' },
+      { k: 'font-size', l: '字級', t: 'text', ph: '1rem' },
+      { k: 'row-border', l: '每列外框', t: 'select', o: ['', '1px solid', '1px dashed', '2px solid'] },
+      { k: 'hover-bg-color', l: '滑過底色', t: 'color' },
+      { k: 'cell-min-height', l: '格子最小高度', t: 'text', ph: '48px' },
+      { s: '對齊' },
+      { k: 'cell-alignment', l: '水平對齊', t: 'select', o: ['', 'left', 'center', 'right'] },
+      { k: 'vertical-alignment', l: '垂直對齊', t: 'select', o: ['', 'top', 'middle', 'bottom'] },
+      { s: '揭示' },
+      { k: 'auto-reveal-interval', l: '自動揭示間隔', t: 'text', ph: '1500', h: '毫秒。hidden 的列依序出現' },
+      { s: '樹狀（進階列巢狀時）' },
+      { k: 'tree-icon', l: '展開鈕圖示', t: 'select', o: ['', 'chevron', 'caret', 'plus'] },
+      { k: 'tree-line', l: '導引線', t: 'bool' },
+      { k: 'tree-open', l: '全部展開', t: 'bool' }
+    ],
+    group: [
+      { s: '群組' },
+      { k: 'title-left', l: '左側標題', t: 'text' },
+      { k: 'title-right', l: '右側文字', t: 'text' },
+      { k: 'ini-collapse', l: '載入時收合', t: 'bool' }
+    ],
+    row: [
+      { s: '欄寬與框線' },
+      { k: 'col-widths', l: '欄寬比例', t: 'text', ph: '1:2:1', h: '數量要等於欄數，否則這一列不會顯示', act: 'even' },
+      { k: 'cell-padding', l: '內距', t: 'text', ph: '10px 14px' },
+      { k: 'border', l: '外框', t: 'select', o: ['', '1px solid', '1px dashed', '2px solid'] },
+      { k: 'col-border', l: '欄間分隔線', t: 'select', o: ['', '1px solid', '1px dashed', '2px solid'] },
+      { k: 'min-height', l: '最小高度', t: 'text', ph: '60' },
+      { s: '文字' },
+      { k: 'font-size', l: '字級', t: 'text', ph: '1.1rem' },
+      { k: 'font-color', l: '文字色', t: 'color' },
+      { k: 'line-height', l: '行高', t: 'text', ph: '1.8' },
+      { k: 'auto-number', l: '自動編號', t: 'select', o: ['', 'outline', 'fill', 'outline-v', 'fill-v'] },
+      { s: '互動' },
+      { k: 'hidden', l: '先隱藏', t: 'bool', h: '交給上一列的 show-next 或 auto-reveal 顯示' },
+      { k: 'arrow', l: '整列欄間箭頭', t: 'select', o: ['', '@bare', 'click'], ol: ['無', '純箭頭', '點擊揭示右格'] },
+      { k: 'can-hide', l: '眼睛隱藏整列', t: 'bool', h: '只有進階列有效', only: 'ui-row-enhance' }
+    ],
+    col: [
+      { s: '內容' },
+      { k: '_content', l: '內容 HTML', t: 'area', full: true, h: '可用 <b>、<u>、<c-blue> 等色名標籤' },
+      { k: '_items', l: '輪播項目', t: 'area', full: true, h: '一行一個 <cell-item>。有內容時取代上面的內容，並需設定輪播間隔' },
+      { s: '外觀' },
+      { k: 'font-color', l: '文字色', t: 'color' },
+      { k: 'inverse', l: '反白', t: 'bool', h: '底色等於文字色，適合表頭' },
+      { k: 'icon', l: '圖示', t: 'text', ph: 'bi-star-fill' },
+      { k: 'span', l: '跨欄', t: 'text', ph: '2 或 all' },
+      { k: 'fixed', l: '固定欄', t: 'select', o: ['', 'left', 'right'] },
+      { s: '揭示' },
+      { k: 'show-next', l: '點擊顯示下一列', t: 'select', o: ['', '@bare', 'row', 'col'], ol: ['無', '自動判斷', '整列', '同位置格子'] },
+      { k: 'expandable', l: '長文先顯示兩行', t: 'bool' },
+      { s: '遮罩' },
+      { k: 'mask-text', l: '遮罩文字', t: 'text', ph: '點我揭曉' },
+      { k: 'mask-text-2', l: '第二層文字', t: 'text' },
+      { k: 'mask-gradient', l: '漸層遮罩', t: 'select', o: ['', '1', '2', '3', '4', '5', '6'], ol: ['無', '1 紫', '2 青', '3 橘', '4 粉', '5 綠', '6 藍紫'] },
+      { k: 'mask-color', l: '遮罩底色', t: 'color' },
+      { k: 'mask-invert', l: '反色遮罩', t: 'bool' },
+      { k: 'mask-order', l: '解鎖順序', t: 'text', ph: '1' },
+      { s: '欄間箭頭' },
+      { k: 'arrow', l: '箭頭', t: 'select', o: ['', '@bare', 'click', 'none'], ol: ['無', '純箭頭', '點擊揭示右格', '關閉整列箭頭'] },
+      { k: 'arrow-open', l: '右格一開始就顯示', t: 'bool' },
+      { k: 'arrow-color', l: '箭頭色', t: 'color' },
+      { s: '輪播' },
+      { k: 'carousel-interval', l: '輪播間隔', t: 'text', ph: '2500', h: '毫秒；0 為手動輪播（需進度條）' },
+      { k: 'progress-bar', l: '進度條', t: 'bool' },
+      { k: 'progress-bar-color', l: '進度條色', t: 'color' },
+      { k: 'item-number', l: '項目編號', t: 'select', o: ['', 'outline', 'fill', 'count'] },
+      { s: '補充與識別' },
+      { k: 'extra-info', l: '補充資訊來源 id', t: 'text', h: '來源元素寫在表格設定的「附加 HTML」' },
+      { k: 'id', l: '格子 id', t: 'text', h: '<ui-flash> 動畫用' }
+    ],
+    group_ir: [
+      { s: '排列' },
+      { k: 'layout', l: '排列方式', t: 'select', o: ['', 'horizontal'], ol: ['垂直', '橫向卡片'] },
+      { k: 'cols-per-row', l: '每列欄數', t: 'text', ph: '4', h: '橫向排列時有效' },
+      { k: 'gutter-size', l: '卡片間距', t: 'text', ph: '16px' },
+      { k: 'cascade-interval', l: '依序登場間隔', t: 'text', ph: '250', h: '毫秒。大於 0 時所有區塊一次依序登場' },
+      { s: '控制按鈕' },
+      { k: 'auto-start', l: '載入後自動開始', t: 'bool' },
+      { k: 'show-controls', l: '開始與重設按鈕', t: 'select', o: ['', 'false'], ol: ['顯示', '隱藏'] },
+      { k: 'start-label', l: '開始按鈕文字', t: 'text', ph: '▶ 開始' },
+      { k: 'start-color', l: '開始按鈕色', t: 'color' },
+      { k: 'reset-label', l: '重設按鈕文字', t: 'text', ph: '↺ 重設' },
+      { k: 'reset-color', l: '重設按鈕色', t: 'color' },
+      { s: '進度與計分' },
+      { k: 'global-progress', l: '整體進度條', t: 'bool' },
+      { k: 'progress-position', l: '進度條位置', t: 'select', o: ['', 'top', 'bottom'] },
+      { k: 'progress-color', l: '進度條色', t: 'color' },
+      { k: 'show-percent', l: '顯示百分比', t: 'bool' },
+      { k: 'show-score', l: '計分板', t: 'bool', h: '測驗用' }
+    ],
+    region: [
+      { s: '基本' },
+      { k: 'id', l: 'id', t: 'text', h: '被串接的區塊需要 id' },
+      { k: 'color', l: '顏色', t: 'color', gold: true },
+      { k: '_gold', l: '金色外觀', t: 'bool', h: '加上 class="ir-gold"，預設有電流' },
+      { k: 'fx', l: '電流', t: 'select', o: ['', 'electric', 'off'], ol: ['依外觀', '開啟', '關閉'] },
+      { k: '_content', l: '內容 HTML', t: 'area', full: true, h: '測驗題寫題目即可，選項在下方設定' },
+      { s: '流程' },
+      { k: '_mode', l: '換到下一步', t: 'select', o: ['auto', 'countdown', 'manual', 'quiz', 'end'], ol: ['顯示後自動', '倒數條跑完', '按按鈕', '測驗題', '終點（不接下一步）'] }
+    ],
+    flow_next: [ { k: 'next', l: '下一個區塊', t: 'next' } ],
+    flow_auto: [ { k: 'next-interval', l: '等待毫秒', t: 'text', ph: '500' } ],
+    flow_countdown: [
+      { k: 'countdown', l: '倒數毫秒', t: 'text', ph: '3000' },
+      { k: 'countdown-position', l: '倒數條位置', t: 'select', o: ['', 'top', 'bottom'] },
+      { k: 'countdown-color', l: '倒數條色', t: 'color' }
+    ],
+    flow_manual: [
+      { k: 'manual-label', l: '按鈕文字', t: 'text', ph: '▶ 下一步' },
+      { k: 'manual-align', l: '按鈕對齊', t: 'select', o: ['', 'left', 'center', 'right'] },
+      { k: 'manual-color', l: '按鈕色', t: 'color' }
+    ],
+    flow_quiz: [
+      { s: '測驗' },
+      { k: 'quiz-label', l: '題號標籤', t: 'text', ph: '第 1 題' },
+      { k: '_choices', l: '選項', t: 'area', full: true, h: '一行一個選項，A、B、C 會自動加上' },
+      { k: 'answer', l: '正確答案', t: 'answer' },
+      { k: '_layout', l: '選項排列', t: 'select', o: ['', 'column'], ol: ['兩欄', '單欄'] },
+      { k: 'explain', l: '解說', t: 'text', h: '支援 <b>、<i>、<u>、<br>' },
+      { k: 'correct-next', l: '答對後到', t: 'next' },
+      { k: 'wrong-next', l: '答錯後到', t: 'next' },
+      { k: 'manual-next', l: '答完按鈕才跳題', t: 'bool' },
+      { k: 'show-retry', l: '重試按鈕', t: 'bool' },
+      { k: '_item', l: '計入題數', t: 'bool', h: 'quiz-item：進度條與計分只算這些題目' }
+    ],
+    region_tail: [
+      { s: '邊框' },
+      { k: 'border-width', l: '四邊寬度', t: 'text', ph: '2' },
+      { k: 'border-top-width', l: '上邊寬度', t: 'text', ph: '6' },
+      { k: 'border-style', l: '樣式', t: 'select', o: ['', 'solid', 'dashed', 'dotted'] }
+    ]
+  };
+  function keysOf(list) { return list.filter(function (f) { return f.k && f.k[0] !== '_'; }).map(function (f) { return f.k; }); }
+  var KNOWN = {
+    table: keysOf(F.table), group: keysOf(F.group), row: keysOf(F.row), col: keysOf(F.col), group_ir: keysOf(F.group_ir),
+    region: ['id', 'color', 'fx', 'next', 'next-interval', 'countdown', 'countdown-position', 'countdown-color', 'manual',
+             'manual-label', 'manual-align', 'manual-color', 'quiz', 'quiz-item', 'quiz-label', 'answer', 'explain',
+             'correct-next', 'wrong-next', 'manual-next', 'show-retry', 'border-width', 'border-top-width', 'border-style']
+  };
+  var BOOLS = ['tree-line', 'tree-open', 'ini-collapse', 'hidden', 'can-hide', 'inverse', 'expandable', 'mask-invert',
+               'arrow-open', 'progress-bar', 'auto-start', 'global-progress', 'show-percent', 'show-score', 'manual',
+               'quiz', 'quiz-item', 'manual-next', 'show-retry'];
+
+  /* 依欄位順序輸出屬性 */
+  function attrs(keys, a, extra) {
+    var out = [];
+    keys.forEach(function (k) {
+      var v = a[k];
+      if (v === undefined || v === '' || v === false || v === null) return;
+      if (v === true || v === '@bare') out.push(k);
+      else out.push(k + '="' + qv(v) + '"');
+    });
+    if (extra && extra.trim()) out.push(extra.trim());
+    return out.length ? ' ' + out.join(' ') : '';
+  }
+  /* 讀取元素屬性：認得的放進 a，其他組成 extra */
+  function readAttrs(el, known, skip) {
+    var a = {}, ex = [];
+    Array.from(el.attributes).forEach(function (at) {
+      if (skip && skip.indexOf(at.name) > -1) return;
+      if (known.indexOf(at.name) > -1) {
+        a[at.name] = BOOLS.indexOf(at.name) > -1 ? (at.value === 'false' ? false : true)
+                   : (at.value === '' ? '@bare' : at.value);
+      } else ex.push(at.value === '' ? at.name : at.name + '="' + qv(at.value) + '"');
+    });
+    return { a: a, extra: ex.join(' ') };
+  }
+  function indent(html, pad) {
+    return html.split('\n').map(function (l) { return l.trim() ? pad + l : l; }).join('\n');
+  }
+
+  /* ══ ui-table 模型 ═══════════════════════════════════ */
+  function newCell(txt) { return { a: {}, extra: '', content: txt || '', items: '' }; }
+  function newRow(tag, n, widths) {
+    var r = { kind: 'row', tag: tag || 'ui-row', a: { 'cell-padding': '10px 14px', 'col-border': '1px solid' }, extra: '', cols: [], nested: '' };
+    if (widths) r.a['col-widths'] = widths;
+    for (var i = 0; i < (n || 2); i++) r.cols.push(newCell(''));
+    return r;
+  }
+  function tableDefault() { return { a: { theme: 'blue', 'row-border': '1px solid' }, extra: '', items: [], after: '' }; }
+
+  var TABLE_PRESETS = {
+    '詞彙對照': function () {
+      var t = tableDefault();
+      var h = newRow('ui-row', 3, '1:1:2');
+      h.cols[0].content = '語塊'; h.cols[1].content = '中文'; h.cols[2].content = '搭配';
+      h.cols.forEach(function (c) { c.a.inverse = true; });
+      t.items.push(h);
+      [['mitigate', '減輕、緩和', '<c-blue>mitigate</c-blue> the impact of'], ['exacerbate', '使惡化', '<c-pink>exacerbate</c-pink> the problem'],
+       ['alleviate', '減輕痛苦', '<c-green>alleviate</c-green> pressure on']].forEach(function (w) {
+        var r = newRow('ui-row', 3, '1:1:2'); r.cols[0].content = w[0]; r.cols[1].content = w[1]; r.cols[2].content = w[2]; t.items.push(r);
+      });
+      return t;
+    },
+    '問答揭曉': function () {
+      var t = tableDefault(); t.a.theme = 'violet';
+      [['Do you like mornings?', 'Honestly, I\'m <c-green>not much of a morning person</c-green>.'],
+       ['What do you usually do on weekends?', 'I tend to <c-orange>unwind</c-orange> by going for a long walk.']].forEach(function (q) {
+        var r = newRow('ui-row', 1); delete r.a['col-border'];
+        r.cols[0].content = q[0]; r.cols[0].a['show-next'] = '@bare'; r.cols[0].a.icon = 'bi-chat-left-text';
+        var a = newRow('ui-row', 1); delete a.a['col-border'];
+        a.a.hidden = true; a.cols[0].content = q[1]; a.cols[0].a['font-color'] = 'vanilla';
+        t.items.push(r, a);
+      });
+      return t;
+    },
+    '遮罩自我測驗': function () {
+      var t = tableDefault(); t.a.theme = 'green';
+      var h = newRow('ui-row', 2, '1:2'); h.cols[0].content = '中文提示'; h.cols[1].content = '道地說法';
+      h.cols.forEach(function (c) { c.a.inverse = true; }); t.items.push(h);
+      [['很少早起', 'I\'m not much of a morning person.', '1'], ['走路十分鐘', 'It\'s about a ten-minute walk.', '2'],
+       ['不論晴雨', 'I go jogging, rain or shine.', '3']].forEach(function (q) {
+        var r = newRow('ui-row', 2, '1:2'); r.cols[0].content = q[0]; r.cols[1].content = q[1];
+        r.cols[1].a['mask-text'] = '第 ' + q[2] + ' 題'; r.cols[1].a['mask-order'] = q[2]; r.cols[1].a['mask-gradient'] = '2';
+        t.items.push(r);
+      });
+      return t;
+    },
+    '逐步箭頭': function () {
+      var t = tableDefault(); t.a.theme = 'orange';
+      var h = newRow('ui-row', 3, '1:1:1'); h.cols[0].content = '原句'; h.cols[1].content = '換詞'; h.cols[2].content = '換句型';
+      h.cols.forEach(function (c) { c.a.inverse = true; }); t.items.push(h);
+      var r = newRow('ui-row', 3, '1:1:1'); r.a.arrow = 'click';
+      r.cols[0].content = 'I live near my school.'; r.cols[1].content = 'I live <c-blue>close to</c-blue> my school.';
+      r.cols[2].content = 'My school is <c-pink>a ten-minute walk</c-pink> from my place.';
+      t.items.push(r);
+      return t;
+    },
+    '群組與輪播': function () {
+      var t = tableDefault(); t.a.theme = 'indigo';
+      t.items.push({ kind: 'group', a: { 'title-left': 'Part 1：Hometown', 'title-right': '2 題' }, extra: '' });
+      var r1 = newRow('ui-row', 2, '1:2'); r1.cols[0].content = 'Where is your hometown?';
+      r1.cols[1].items = 'I\'m from <c-blue>a coastal city</c-blue> in the south.\nIt\'s <c-green>a laid-back place</c-green> with great seafood.';
+      r1.cols[1].a['carousel-interval'] = '2500'; r1.cols[1].a['progress-bar'] = true; r1.cols[1].a['item-number'] = 'count';
+      var r2 = newRow('ui-row', 2, '1:2'); r2.cols[0].content = 'Do you like living there?';
+      r2.cols[1].content = 'Yes, it\'s <c-orange>quiet but never boring</c-orange>.'; r2.cols[1].a.expandable = true;
+      t.items.push(r1, r2);
+      t.items.push({ kind: 'group', a: { 'title-left': 'Part 1：Work', 'title-right': '1 題', 'ini-collapse': true }, extra: '' });
+      var r3 = newRow('ui-row', 2, '1:2'); r3.cols[0].content = 'What do you do?'; r3.cols[1].content = 'I\'m <c-violet>an IELTS teacher</c-violet>.';
+      t.items.push(r3);
+      return t;
+    }
+  };
+
+  function tableToHTML(t) {
+    var L = [];
+    L.push('<ui-table' + attrs(KNOWN.table, t.a, t.extra) + '>');
+    var inGroup = false;
+    t.items.forEach(function (it) {
+      if (it.kind === 'group') {
+        if (inGroup) L.push('  </ui-group>');
+        L.push('  <ui-group' + attrs(KNOWN.group, it.a, it.extra) + '>');
+        inGroup = true; return;
+      }
+      var pad = inGroup ? '    ' : '  ';
+      var ra = clone(it.a);
+      if (it.tag !== 'ui-row-enhance') delete ra['can-hide'];
+      L.push(pad + '<' + it.tag + attrs(KNOWN.row, ra, it.extra) + '>');
+      it.cols.forEach(function (c) {
+        var open = pad + '  <ui-col' + attrs(KNOWN.col, c.a, c.extra) + '>';
+        var items = (c.items || '').split('\n').filter(function (s) { return s.trim(); });
+        if (items.length) {
+          L.push(open);
+          items.forEach(function (s) { L.push(pad + '    <cell-item>' + s.trim() + '</cell-item>'); });
+          L.push(pad + '  </ui-col>');
+        } else if ((c.content || '').indexOf('\n') > -1) {
+          L.push(open); L.push(indent(c.content.trim(), pad + '    ')); L.push(pad + '  </ui-col>');
+        } else L.push(open + (c.content || '') + '</ui-col>');
+      });
+      if (it.nested && it.nested.trim()) L.push(indent(it.nested.trim(), pad + '  '));
+      L.push(pad + '</' + it.tag + '>');
+    });
+    if (inGroup) L.push('  </ui-group>');
+    L.push('</ui-table>');
+    if (t.after && t.after.trim()) { L.push(''); L.push(t.after.trim()); }
+    return L.join('\n');
+  }
+
+  function parseTable(html) {
+    var doc = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html');
+    var el = doc.querySelector('ui-table');
+    if (!el) return null;
+    var r = readAttrs(el, KNOWN.table);
+    var t = { a: r.a, extra: r.extra, items: [], after: '' };
+    function readRow(rowEl) {
+      var rr = readAttrs(rowEl, KNOWN.row);
+      var row = { kind: 'row', tag: rowEl.tagName.toLowerCase(), a: rr.a, extra: rr.extra, cols: [], nested: '' };
+      var nested = [];
+      Array.from(rowEl.children).forEach(function (ch) {
+        var tg = ch.tagName.toLowerCase();
+        if (tg === 'ui-col') {
+          var cr = readAttrs(ch, KNOWN.col);
+          var cell = { a: cr.a, extra: cr.extra, content: '', items: '' };
+          var its = Array.from(ch.children).filter(function (x) { return x.tagName.toLowerCase() === 'cell-item'; });
+          if (its.length) cell.items = its.map(function (x) { return x.innerHTML.trim(); }).join('\n');
+          else cell.content = ch.innerHTML.trim();
+          row.cols.push(cell);
+        } else nested.push(ch.outerHTML);
+      });
+      row.nested = nested.join('\n');
+      return row;
+    }
+    Array.from(el.children).forEach(function (ch) {
+      var tg = ch.tagName.toLowerCase();
+      if (tg === 'ui-group') {
+        var g = readAttrs(ch, KNOWN.group);
+        t.items.push({ kind: 'group', a: g.a, extra: g.extra });
+        Array.from(ch.children).forEach(function (rw) {
+          var tt = rw.tagName.toLowerCase();
+          if (tt === 'ui-row' || tt === 'ui-row-enhance') t.items.push(readRow(rw));
+        });
+      } else if (tg === 'ui-row' || tg === 'ui-row-enhance') t.items.push(readRow(ch));
+    });
+    /* 元件後面的兄弟元素（extra-info 來源、template）放進附加 HTML */
+    var after = [], n = el.nextElementSibling;
+    while (n) { if (n.tagName.toLowerCase() !== 'script') after.push(n.outerHTML); n = n.nextElementSibling; }
+    t.after = after.join('\n');
+    return t;
+  }
+
+  /* ══ info-region 模型 ════════════════════════════════ */
+  function newRegion(i, mode) {
+    return { a: { id: 'r' + i, color: 'blue' }, extra: '', content: '<p>內容</p>', mode: mode || 'manual',
+             gold: false, choices: '', layout: '', item: true };
+  }
+  function infoDefault() { return { a: {}, extra: '', regions: [], after: '' }; }
+  function nextId(m) {
+    var used = {}; m.regions.forEach(function (r) { used[r.a.id] = 1; });
+    var i = 1; while (used['r' + i]) i++; return i;
+  }
+  var INFO_PRESETS = {
+    '三步驟教學': function () {
+      var g = infoDefault();
+      var a = newRegion(1, 'countdown'); a.a.countdown = '3000'; a.content = '<h4>第一步：讀題</h4>\n<p>先找出題目的<c-blue>關鍵字</c-blue>，倒數條跑完後自動進入下一步。</p>';
+      var b = newRegion(2, 'manual'); b.a.color = 'green'; b.a['manual-label'] = '我準備好了 ▶';
+      b.content = '<h4>第二步：想一個例子</h4>\n<p>用<c-orange>具體的人事時地物</c-orange>撐起答案。</p>';
+      var c = newRegion(3, 'end'); c.gold = true; c.a.color = 'gold'; c.content = '<h4>完成</h4>\n<p>開口說說看。</p>';
+      g.regions.push(a, b, c); return g;
+    },
+    '測驗三題': function () {
+      var g = infoDefault(); g.a['show-score'] = true; g.a['global-progress'] = true; g.a['show-percent'] = true;
+      var qs = [['She ___ to school every day.', 'go\ngoes\ngoing', 'b', '主詞是第三人稱單數，動詞加 <b>s</b>。'],
+                ['They ___ football on Sundays.', 'play\nplays\nplaying', 'a', '主詞是複數，用原形動詞。'],
+                ['I ___ here since 2020.', 'live\nhave lived\nam living', 'b', 'since 搭配<b>現在完成式</b>。']];
+      qs.forEach(function (q, i) {
+        var r = newRegion(i + 1, 'quiz'); r.a.color = 'indigo'; r.a['quiz-label'] = '第 ' + (i + 1) + ' 題';
+        r.content = '<p>' + q[0] + '</p>'; r.choices = q[1]; r.a.answer = q[2]; r.a.explain = q[3]; r.layout = 'column';
+        g.regions.push(r);
+      });
+      var d = newRegion(4, 'end'); d.gold = true; d.a.color = 'gold'; d.a.id = 'done';
+      d.content = '<h4>測驗完成</h4>\n<p>上方的計分板會顯示答對與答錯的題數。</p>';
+      g.regions.push(d); return g;
+    },
+    '橫向卡片': function () {
+      var g = infoDefault(); g.a.layout = 'horizontal'; g.a['cols-per-row'] = '4'; g.a['cascade-interval'] = '250';
+      g.a['auto-start'] = true; g.a['show-controls'] = 'false';
+      [['blue', '聽力', '四個段落，三十分鐘。'], ['green', '閱讀', '三篇文章，六十分鐘。'],
+       ['orange', '寫作', '兩個任務，六十分鐘。'], ['pink', '口說', '三個部分，十一到十四分鐘。']].forEach(function (c, i) {
+        var r = newRegion(i + 1, 'end'); r.a.color = c[0]; r.content = '<h4>' + c[1] + '</h4>\n<p>' + c[2] + '</p>'; g.regions.push(r);
+      });
+      return g;
+    },
+    '答錯補充說明': function () {
+      var g = infoDefault(); g.a['show-score'] = true;
+      var q = newRegion(1, 'quiz'); q.a.id = 'q1'; q.a['quiz-label'] = '第 1 題'; q.content = '<p>Which is more natural?</p>';
+      q.choices = 'I very like cooking.\nI\'m really into cooking.'; q.a.answer = 'b'; q.a['correct-next'] = 'q2'; q.a['wrong-next'] = 'q1-help';
+      var h = newRegion(2, 'manual'); h.a.id = 'q1-help'; h.a.color = 'orange'; h.a.next = 'q2'; h.a['manual-label'] = '我懂了 ▶'; h.item = false;
+      h.content = '<h4>補充</h4>\n<p><c-red>very like</c-red> 不自然，改用 <c-green>really like</c-green> 或 <c-green>be into</c-green>。</p>';
+      var q2 = newRegion(3, 'quiz'); q2.a.id = 'q2'; q2.a['quiz-label'] = '第 2 題'; q2.content = '<p>Pick the better opener.</p>';
+      q2.choices = 'I\'m going to talk about my hometown.\nThe place I\'d like to describe is a small fishing town.'; q2.a.answer = 'b';
+      g.regions.push(q, h, q2); return g;
+    }
+  };
+
+  function resolveNext(m, i, v) {
+    if (v === '@end') return '';
+    if (!v || v === '@auto') { var n = m.regions[i + 1]; return n ? n.a.id : ''; }
+    return v;
+  }
+  function choiceList(r) { return (r.choices || '').split('\n').map(function (s) { return s.trim(); }).filter(Boolean); }
+  var LETTERS = 'abcdefghij';
+
+  function infoToHTML(m) {
+    var L = [];
+    L.push('<info-region-group' + attrs(KNOWN.group_ir, m.a, m.extra) + '>');
+    m.regions.forEach(function (r, i) {
+      var a = { id: r.a.id, color: r.a.color, fx: r.a.fx };
+      var keys = ['id'];
+      var cls = r.gold ? ' class="ir-gold"' : '';
+      if (r.mode !== 'end' && r.mode !== 'quiz') {
+        a.next = resolveNext(m, i, r.a.next);
+        if (r.mode === 'auto') a['next-interval'] = r.a['next-interval'];
+        if (r.mode === 'countdown') { a.countdown = r.a.countdown || '3000'; a['countdown-position'] = r.a['countdown-position']; a['countdown-color'] = r.a['countdown-color']; }
+        if (r.mode === 'manual') { a.manual = true; a['manual-label'] = r.a['manual-label']; a['manual-align'] = r.a['manual-align']; a['manual-color'] = r.a['manual-color']; }
+      }
+      if (r.mode === 'quiz') {
+        a.quiz = true; a['quiz-item'] = r.item !== false; a['quiz-label'] = r.a['quiz-label']; a.answer = r.a.answer;
+        a['correct-next'] = resolveNext(m, i, r.a['correct-next']); a['wrong-next'] = resolveNext(m, i, r.a['wrong-next']);
+        a.explain = r.a.explain; a['manual-next'] = r.a['manual-next']; a['show-retry'] = r.a['show-retry'];
+      }
+      a['border-width'] = r.a['border-width']; a['border-top-width'] = r.a['border-top-width']; a['border-style'] = r.a['border-style'];
+      var order = ['id', 'color', 'fx', 'next', 'next-interval', 'countdown', 'countdown-position', 'countdown-color', 'manual', 'manual-label',
+                   'manual-align', 'manual-color', 'quiz', 'quiz-item', 'quiz-label', 'answer', 'correct-next', 'wrong-next', 'explain',
+                   'manual-next', 'show-retry', 'border-width', 'border-top-width', 'border-style'];
+      var at = attrs(order, a, r.extra);
+      at = at.replace(/^ id="[^"]*"/, function (s) { return s + cls; });
+      L.push('  <info-region' + at + '>');
+      if ((r.content || '').trim()) L.push(indent(r.content.trim(), '    '));
+      if (r.mode === 'quiz') {
+        L.push('    <ir-choices' + (r.layout ? ' layout="' + r.layout + '"' : '') + '>');
+        choiceList(r).forEach(function (c, k) { L.push('      <ir-choice value="' + LETTERS[k] + '">' + c + '</ir-choice>'); });
+        L.push('    </ir-choices>');
+      }
+      L.push('  </info-region>');
+    });
+    L.push('</info-region-group>');
+    if (m.after && m.after.trim()) { L.push(''); L.push(m.after.trim()); }
+    return L.join('\n');
+  }
+
+  function parseInfo(html) {
+    var doc = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html');
+    var grp = doc.querySelector('info-region-group');
+    var regs = grp ? Array.from(grp.querySelectorAll(':scope > info-region')) : Array.from(doc.querySelectorAll('info-region'));
+    if (!regs.length) return null;
+    var m = infoDefault();
+    if (grp) { var g = readAttrs(grp, KNOWN.group_ir); m.a = g.a; m.extra = g.extra; }
+    regs.forEach(function (el, i) {
+      var rr = readAttrs(el, KNOWN.region, ['class']);
+      var cls = (el.getAttribute('class') || '').split(/\s+/).filter(Boolean);
+      var gold = cls.indexOf('ir-gold') > -1;
+      var others = cls.filter(function (c) { return c !== 'ir-gold'; });
+      var r = { a: {}, extra: rr.extra + (others.length ? (rr.extra ? ' ' : '') + 'class="' + others.join(' ') + '"' : ''),
+                content: '', mode: 'end', gold: gold, choices: '', layout: '', item: true };
+      var a = rr.a;
+      Object.keys(a).forEach(function (k) { r.a[k] = a[k]; });
+      if (!r.a.id) r.a.id = 'r' + (i + 1);
+      if (a.quiz) r.mode = 'quiz';
+      else if (a.countdown) r.mode = 'countdown';
+      else if (a.manual) r.mode = 'manual';
+      else if (a.next) r.mode = 'auto';
+      if (a.quiz) r.item = !!a['quiz-item'];
+      var ch = el.querySelector('ir-choices');
+      if (ch) {
+        r.layout = ch.getAttribute('layout') || '';
+        var cs = Array.from(ch.querySelectorAll('ir-choice'));
+        r.choices = cs.map(function (c) { return c.innerHTML.trim(); }).join('\n');
+        var ansIdx = cs.findIndex(function (c) { return (c.getAttribute('value') || '').toLowerCase() === String(a.answer || '').toLowerCase(); });
+        r.a.answer = ansIdx > -1 ? LETTERS[ansIdx] : '';
+        ch.remove();
+      }
+      ['quiz', 'quiz-item', 'manual'].forEach(function (k) { delete r.a[k]; });
+      r.content = el.innerHTML.trim().replace(/\n\s+/g, '\n');
+      m.regions.push(r);
+    });
+    var anchor = grp || regs[regs.length - 1];
+    var after = [], n = anchor.nextElementSibling;
+    while (n) { if (n.tagName.toLowerCase() !== 'script') after.push(n.outerHTML); n = n.nextElementSibling; }
+    m.after = after.join('\n');
+    return m;
+  }
+
+  /* ══ 狀態 ════════════════════════════════════════════ */
+  var S = {
+    tab: store('uib-tab') || 'table',
+    table: store('uib-table') || TABLE_PRESETS['詞彙對照'](),
+    info: store('uib-info') || INFO_PRESETS['三步驟教學'](),
+    sel: { table: { type: 'table' }, info: { type: 'group' } }
+  };
+  function save() { store('uib-tab', S.tab); store('uib-table', S.table); store('uib-info', S.info); }
+
+  /* ══ 驗證 ════════════════════════════════════════════ */
+  function rowWarnings(t, i) {
+    var r = t.items[i], w = [];
+    var hasSpan = r.cols.some(function (c) { return c.a.span; });
+    var cw = (r.a['col-widths'] || '').trim();
+    if (cw && !hasSpan && cw.split(':').length !== r.cols.length) w.push('欄寬比例有 ' + cw.split(':').length + ' 個數字，但這一列有 ' + r.cols.length + ' 欄，這一列不會顯示。');
+    if (r.tag === 'ui-row') {
+      var first = null;
+      t.items.some(function (x) { if (x.kind === 'row' && x.tag === 'ui-row' && x.cols.length) { first = x; return true; } });
+      if (first && first !== r && !hasSpan && first.cols.length !== r.cols.length) w.push('一般列的欄數以第一個 ui-row 為準（' + first.cols.length + ' 欄），欄數不同請改成進階列。');
+    }
+    if (!r.cols.length) w.push('這一列沒有任何格子。');
+    return w;
+  }
+  function cellWarnings(c) {
+    var a = c.a, w = [];
+    var hasItems = (c.items || '').trim();
+    if (a['mask-text'] && a.expandable) w.push('遮罩與 expandable 不能並用，expandable 會被忽略。');
+    if (a['mask-text'] && (a['carousel-interval'] || hasItems)) w.push('遮罩與輪播不能並用，輪播會被忽略。');
+    if (a['mask-text'] && a['extra-info']) w.push('遮罩與補充資訊不能並用。');
+    if (a['mask-text'] && a.arrow) w.push('遮罩與欄間箭頭不能並用，箭頭會被忽略。');
+    if (hasItems && !a['carousel-interval']) w.push('有輪播項目但沒有輪播間隔，請填毫秒數或 0。');
+    if (a['carousel-interval'] === '0' && !a['progress-bar']) w.push('手動輪播（0）需要勾選進度條才能切換。');
+    return w;
+  }
+  function infoWarnings(m) {
+    var w = [];
+    var ids = {}, dup = [];
+    m.regions.forEach(function (r) { if (ids[r.a.id]) dup.push(r.a.id); ids[r.a.id] = 1; });
+    if (dup.length) w.push('id 重複：' + dup.join('、') + '。');
+    if ((m.a['global-progress'] || +m.a['cascade-interval'] > 0) && m.regions.some(function (r) { return r.mode === 'auto' || r.mode === 'countdown'; }))
+      w.push('群組有整體進度條或依序登場時，「顯示後自動」與「倒數條」不會觸發，請改用按鈕或測驗題。');
+    m.regions.forEach(function (r) {
+      ['next', 'correct-next', 'wrong-next'].forEach(function (k) {
+        var v = r.a[k]; if (v && v[0] !== '@' && !ids[v]) w.push(r.a.id + ' 的 ' + k + ' 指向不存在的 id「' + v + '」。');
+      });
+      if (r.mode === 'quiz' && !r.a.answer) w.push(r.a.id + ' 是測驗題，但還沒選正確答案。');
+      if (r.mode === 'quiz' && choiceList(r).length < 2) w.push(r.a.id + ' 至少需要兩個選項。');
+    });
+    return w;
+  }
+
+  /* ══ 結構畫面 ════════════════════════════════════════ */
+  function chipsFor(c) {
+    var a = c.a, out = [];
+    if (a.inverse) out.push(['反白', 'c-yellow']);
+    if (a['mask-text']) out.push(['遮罩' + (a['mask-order'] ? ' #' + a['mask-order'] : ''), 'c-pink']);
+    if (a['show-next']) out.push(['點擊顯示下一列', 'c-blue']);
+    if (a.expandable) out.push(['展開長文', 'c-blue']);
+    if ((c.items || '').trim()) out.push(['輪播 ' + c.items.split('\n').filter(function (s) { return s.trim(); }).length + ' 項', 'c-orange']);
+    if (a.arrow) out.push(['箭頭 ' + (a.arrow === '@bare' ? '' : a.arrow), 'c-violet']);
+    if (a.icon) out.push([a.icon, '']);
+    if (a.span) out.push(['跨 ' + a.span, '']);
+    if (a['extra-info']) out.push(['補充 ' + a['extra-info'], 'c-green']);
+    if (a['font-color']) out.push(['色 ' + a['font-color'], '']);
+    return out.map(function (x) { return '<span class="chip ' + x[1] + '">' + esc(x[0]) + '</span>'; }).join('');
+  }
+
+  function renderTableStructure() {
+    var t = S.table, sel = S.sel.table, h = [];
+    h.push('<div class="st-toolbar">' +
+      '<button class="btnx sm" data-act="add-row"><i class="bi bi-plus-lg"></i>一般列</button>' +
+      '<button class="btnx sm" data-act="add-enh"><i class="bi bi-plus-lg"></i>進階列</button>' +
+      '<button class="btnx sm" data-act="add-group"><i class="bi bi-collection"></i>群組</button></div>');
+    h.push('<div class="st-table-head' + (sel.type === 'table' ? ' sel' : '') + '" data-pick="table">' +
+      '<span class="st-tag">&lt;ui-table&gt;</span><span class="chip c-blue">theme ' + esc(t.a.theme || 'shell') + '</span>' +
+      (t.after && t.after.trim() ? '<span class="chip c-green">附加 HTML</span>' : '') +
+      '<span style="flex:1"></span><span class="chip">表格設定</span></div>');
+    if (!t.items.length) h.push('<div class="empty-hint">還沒有任何列，按上方的「一般列」開始。</div>');
+    t.items.forEach(function (it, i) {
+      var isSel = sel.type === 'item' && sel.i === i;
+      var tools = '<span class="st-tools">' +
+        '<button class="ico" data-act="up" data-i="' + i + '" title="上移"><i class="bi bi-arrow-up"></i></button>' +
+        '<button class="ico" data-act="down" data-i="' + i + '" title="下移"><i class="bi bi-arrow-down"></i></button>' +
+        '<button class="ico" data-act="dup" data-i="' + i + '" title="複製"><i class="bi bi-copy"></i></button>' +
+        '<button class="ico dan" data-act="del" data-i="' + i + '" title="刪除"><i class="bi bi-x-lg"></i></button></span>';
+      if (it.kind === 'group') {
+        h.push('<div class="st-item st-group' + (isSel ? ' sel' : '') + '"><div class="st-head" data-pick="item" data-i="' + i + '">' +
+          '<span class="st-tag">&lt;ui-group&gt;</span><b style="color:var(--vanilla)">' + esc(it.a['title-left'] || '（無標題）') + '</b>' +
+          '<span class="chip">' + esc(it.a['title-right'] || '') + '</span>' + (it.a['ini-collapse'] ? '<span class="chip c-orange">收合</span>' : '') +
+          '<span class="grow"></span>' + tools + '</div></div>');
+        return;
+      }
+      var cw = (it.a['col-widths'] || '').split(':').map(function (x) { return parseFloat(x) || 1; });
+      var useCw = cw.length === it.cols.length && !it.cols.some(function (c) { return c.a.span; });
+      var tpl = useCw ? cw.map(function (x) { return x + 'fr'; }).join(' ') : 'repeat(' + Math.max(it.cols.length, 1) + ', minmax(0, 1fr))';
+      var rowChips = [];
+      if (it.a['col-widths']) rowChips.push('<span class="chip">' + esc(it.a['col-widths']) + '</span>');
+      if (it.a.hidden) rowChips.push('<span class="chip c-orange">先隱藏</span>');
+      if (it.a.arrow) rowChips.push('<span class="chip c-violet">整列箭頭</span>');
+      if (it.a['auto-number']) rowChips.push('<span class="chip">編號 ' + esc(it.a['auto-number']) + '</span>');
+      if (it.a['can-hide'] && it.tag === 'ui-row-enhance') rowChips.push('<span class="chip c-green">眼睛</span>');
+      if (it.nested && it.nested.trim()) rowChips.push('<span class="chip c-yellow">含巢狀子列</span>');
+      var w = rowWarnings(t, i);
+      h.push('<div class="st-item' + (isSel ? ' sel' : '') + '">' +
+        '<div class="st-head" data-pick="item" data-i="' + i + '"><span class="st-tag">&lt;' + it.tag + '&gt;</span>' + rowChips.join('') +
+        '<span class="grow"></span><button class="ico" data-act="add-col" data-i="' + i + '" title="加一欄"><i class="bi bi-layout-split"></i> 加欄</button>' + tools + '</div>' +
+        (w.length ? '<div class="warn">' + w.map(function (x) { return '<div><i class="bi bi-exclamation-triangle"></i>' + esc(x) + '</div>'; }).join('') + '</div>' : '') +
+        '<div class="st-cells" style="grid-template-columns:' + tpl + ' 40px">');
+      it.cols.forEach(function (c, k) {
+        var txt = (c.items || '').trim() ? strip(c.items.split('\n')[0]) + ' …' : strip(c.content);
+        var span = c.a.span ? (c.a.span === 'all' ? 'grid-column:1 / -2' : 'grid-column:span ' + (parseInt(c.a.span, 10) || 1)) : '';
+        var cs = sel.type === 'cell' && sel.i === i && sel.c === k;
+        var cwn = cellWarnings(c);
+        h.push('<div class="st-cell' + (cs ? ' sel' : '') + (c.a.inverse ? ' inv' : '') + '" data-pick="cell" data-i="' + i + '" data-c="' + k + '" style="' + span + '">' +
+          '<div class="txt' + (txt ? '' : ' empty') + '" style="' + (colorHex(c.a['font-color']) ? 'color:' + colorHex(c.a['font-color']) : '') + '">' +
+          esc(txt ? txt.slice(0, 90) : '（空白，點我編輯）') + '</div>' +
+          '<div class="chips">' + chipsFor(c) + (cwn.length ? '<span class="chip" style="border-color:#EF6661;color:#EF6661">' + cwn.length + ' 個提醒</span>' : '') + '</div></div>');
+      });
+      h.push('<div class="st-add-col" data-act="add-col" data-i="' + i + '" title="加一欄"><i class="bi bi-plus"></i></div></div></div>');
+    });
+    $('#structure').innerHTML = h.join('');
+  }
+
+  function renderInfoStructure() {
+    var m = S.info, sel = S.sel.info, h = [];
+    h.push('<div class="st-toolbar">' +
+      '<button class="btnx sm" data-act="add-region"><i class="bi bi-plus-lg"></i>區塊</button>' +
+      '<button class="btnx sm" data-act="add-quiz"><i class="bi bi-ui-radios"></i>測驗題</button>' +
+      '<button class="btnx sm" data-act="add-gold"><i class="bi bi-stars"></i>金色區塊</button></div>');
+    var gChips = [];
+    if (m.a.layout === 'horizontal') gChips.push('<span class="chip c-blue">橫向 ' + esc(m.a['cols-per-row'] || 4) + ' 欄</span>');
+    if (m.a['auto-start']) gChips.push('<span class="chip c-green">自動開始</span>');
+    if (m.a['global-progress']) gChips.push('<span class="chip c-orange">進度條</span>');
+    if (m.a['show-score']) gChips.push('<span class="chip c-pink">計分板</span>');
+    if (+m.a['cascade-interval'] > 0) gChips.push('<span class="chip c-violet">依序登場</span>');
+    h.push('<div class="st-table-head' + (sel.type === 'group' ? ' sel' : '') + '" data-pick="group"><span class="st-tag">&lt;info-region-group&gt;</span>' +
+      gChips.join('') + '<span style="flex:1"></span><span class="chip">群組設定</span></div>');
+    var w = infoWarnings(m);
+    if (w.length) h.push('<div class="warn" style="padding:0 0 10px 0">' + w.map(function (x) { return '<div><i class="bi bi-exclamation-triangle"></i>' + esc(x) + '</div>'; }).join('') + '</div>');
+    if (!m.regions.length) h.push('<div class="empty-hint">還沒有任何區塊，按上方的「區塊」開始。</div>');
+    var MODE = { auto: '顯示後自動', countdown: '倒數條', manual: '按鈕', quiz: '測驗題', end: '終點' };
+    m.regions.forEach(function (r, i) {
+      var isSel = sel.type === 'region' && sel.i === i;
+      var col = r.gold ? '#C9973F' : (colorHex(r.a.color) || '#5DBAE8');
+      var flow = '';
+      if (r.mode === 'quiz') {
+        var cn = resolveNext(m, i, r.a['correct-next']), wn = resolveNext(m, i, r.a['wrong-next']);
+        flow = '答對 → ' + (cn || '結束') + '，答錯 → ' + (wn || '結束');
+      } else if (r.mode !== 'end') flow = '→ ' + (resolveNext(m, i, r.a.next) || '結束');
+      h.push('<div class="st-region' + (isSel ? ' sel' : '') + '" data-pick="region" data-i="' + i + '">' +
+        '<div class="bar" style="background:' + col + '"></div><div class="main"><div class="row1">' +
+        '<span class="rid">#' + esc(r.a.id) + '</span><span class="chip c-blue">' + MODE[r.mode] + '</span>' +
+        (r.gold ? '<span class="chip c-yellow">金色</span>' : '') +
+        (r.mode === 'quiz' ? '<span class="chip c-pink">' + choiceList(r).length + ' 個選項</span>' : '') +
+        (flow ? '<span class="chip">' + esc(flow) + '</span>' : '') + '<span style="flex:1"></span>' +
+        '<span class="st-tools">' +
+        '<button class="ico" data-act="up" data-i="' + i + '" title="上移"><i class="bi bi-arrow-up"></i></button>' +
+        '<button class="ico" data-act="down" data-i="' + i + '" title="下移"><i class="bi bi-arrow-down"></i></button>' +
+        '<button class="ico" data-act="dup" data-i="' + i + '" title="複製"><i class="bi bi-copy"></i></button>' +
+        '<button class="ico dan" data-act="del" data-i="' + i + '" title="刪除"><i class="bi bi-x-lg"></i></button></span></div>' +
+        '<div class="txt">' + esc(strip(r.content).slice(0, 120) || '（空白）') + '</div></div></div>');
+    });
+    $('#structure').innerHTML = h.join('');
+  }
+
+  /* ══ 屬性面板 ════════════════════════════════════════ */
+  function fieldHTML(f, val, ctx) {
+    if (f.s) return '<div class="fsec">' + esc(f.s) + '</div>';
+    var id = 'f-' + f.k.replace(/[^\w-]/g, '');
+    var lab = '<label for="' + id + '">' + esc(f.l) + (f.k[0] !== '_' ? '<small>' + esc(f.k) + '</small>' : '') + '</label>';
+    var inp = '';
+    var v = val == null ? '' : val;
+    if (f.t === 'text') inp = '<input type="text" id="' + id + '" data-k="' + f.k + '" value="' + esc(v) + '" placeholder="' + esc(f.ph || '') + '">';
+    else if (f.t === 'area') inp = '<textarea id="' + id + '" data-k="' + f.k + '" rows="12" spellcheck="false">' + esc(v) + '</textarea>';
+    else if (f.t === 'bool') inp = '<div class="chk"><input type="checkbox" id="' + id + '" data-k="' + f.k + '"' + (v ? ' checked' : '') + '></div>';
+    else if (f.t === 'select' || f.t === 'next' || f.t === 'answer') {
+      var o = f.o, ol = f.ol;
+      if (f.t === 'next') {
+        o = ['@auto', '@end'].concat(ctx.ids); ol = ['下一個區塊（自動）', '結束'].concat(ctx.ids.map(function (x) { return '#' + x; }));
+        if (!v) v = '@auto';
+      }
+      if (f.t === 'answer') {
+        var n = ctx.choices.length; o = ['']; ol = ['（未選）'];
+        for (var i = 0; i < n; i++) { o.push(LETTERS[i]); ol.push(LETTERS[i].toUpperCase() + '：' + strip(ctx.choices[i]).slice(0, 40)); }
+      }
+      inp = '<select id="' + id + '" data-k="' + f.k + '">' + o.map(function (x, i) {
+        return '<option value="' + esc(x) + '"' + (String(v) === x ? ' selected' : '') + '>' + esc(ol ? ol[i] : (x || '（預設）')) + '</option>';
+      }).join('') + '</select>';
+    } else if (f.t === 'color') {
+      var names = f.gold ? NAMES.concat(['gold']) : NAMES;
+      inp = '<div class="colorbox"><span class="sw" style="background:' + (colorHex(v) || 'transparent') + '"></span>' +
+        '<input type="text" id="' + id + '" data-k="' + f.k + '" value="' + esc(v) + '" list="dl-colors' + (f.gold ? '-g' : '') + '" placeholder="色名或 #hex"></div>';
+      if (!document.getElementById('dl-colors')) {
+        var dl = document.createElement('datalist'); dl.id = 'dl-colors';
+        dl.innerHTML = NAMES.map(function (n) { return '<option value="' + n + '">'; }).join('');
+        var dl2 = dl.cloneNode(true); dl2.id = 'dl-colors-g'; dl2.innerHTML += '<option value="gold">';
+        document.body.appendChild(dl); document.body.appendChild(dl2);
+      }
+    }
+    if (f.act === 'even') inp = '<div class="colorbox">' + inp + '<button class="btnx sm" data-even="1" type="button" title="依欄數產生">平均</button></div>';
+    return '<div class="frow' + (f.full ? ' full' : '') + '">' + lab + inp + (f.h ? '<div class="hint">' + esc(f.h) + '</div>' : '') + '</div>';
+  }
+  function extraHTML(v, label) {
+    return '<div class="fsec">進階</div><div class="frow full"><label for="f-extra">' + (label || '其他屬性（原樣輸出）') + '</label>' +
+      '<input type="text" id="f-extra" data-k="_extra" value="' + esc(v || '') + '" placeholder=\'例如 extra-info-color="pink"\'></div>';
+  }
+
+  function renderInspector() {
+    var box = $('#inspector'), h = [];
+    if (S.tab === 'table') {
+      var t = S.table, sel = S.sel.table;
+      if (sel.type === 'table') {
+        h.push('<div class="insp-title">表格設定</div><div class="insp-sub">&lt;ui-table&gt; 的屬性，影響整張表。</div>');
+        F.table.forEach(function (f) { h.push(fieldHTML(f, f.k ? t.a[f.k] : null)); });
+        h.push(extraHTML(t.extra));
+        h.push('<div class="fsec">附加 HTML</div><div class="frow full"><label for="f-after">放在表格後面，例如補充資訊的來源區塊</label>' +
+          '<textarea id="f-after" data-k="_after" rows="12" spellcheck="false" placeholder=\'<div id="note-1" hidden>補充內容</div>\'>' + esc(t.after || '') + '</textarea></div>');
+      } else if (sel.type === 'item') {
+        var it = t.items[sel.i];
+        if (!it) { S.sel.table = { type: 'table' }; return renderInspector(); }
+        if (it.kind === 'group') {
+          h.push('<div class="insp-title">群組</div><div class="insp-sub">下方的列都屬於這個群組，直到下一個群組為止。</div>');
+          F.group.forEach(function (f) { h.push(fieldHTML(f, f.k ? it.a[f.k] : null)); });
+          h.push(extraHTML(it.extra));
+        } else {
+          h.push('<div class="insp-title">列 ' + (sel.i + 1) + '</div><div class="insp-sub">' + it.cols.length + ' 欄。點下方格子可以編輯內容。</div>');
+          h.push('<div class="frow"><label for="f-tag">列的種類<small>tag</small></label><select id="f-tag" data-k="_tag">' +
+            '<option value="ui-row"' + (it.tag === 'ui-row' ? ' selected' : '') + '>一般列 ui-row</option>' +
+            '<option value="ui-row-enhance"' + (it.tag === 'ui-row-enhance' ? ' selected' : '') + '>進階列 ui-row-enhance</option></select>' +
+            '<div class="hint">進階列的欄數各自計算，並支援眼睛隱藏與巢狀子列</div></div>');
+          F.row.forEach(function (f) { if (f.only && f.only !== it.tag) return; h.push(fieldHTML(f, f.k ? it.a[f.k] : null)); });
+          h.push(extraHTML(it.extra));
+          if (it.tag === 'ui-row-enhance') h.push('<div class="frow full"><label for="f-nested">巢狀子列 HTML（樹狀）</label><textarea id="f-nested" data-k="_nested" rows="12" spellcheck="false" placeholder="<ui-row-enhance>…</ui-row-enhance>">' + esc(it.nested || '') + '</textarea></div>');
+          h.push('<div class="inline-btns"><button class="btnx sm" data-act="add-col" data-i="' + sel.i + '"><i class="bi bi-plus"></i>加一欄</button></div>');
+        }
+      } else if (sel.type === 'cell') {
+        var row = t.items[sel.i], c = row && row.cols[sel.c];
+        if (!c) { S.sel.table = { type: 'table' }; return renderInspector(); }
+        h.push('<div class="insp-title">格子：第 ' + (sel.i + 1) + ' 列，第 ' + (sel.c + 1) + ' 欄</div><div class="insp-sub">&lt;ui-col&gt; 的內容與屬性。</div>');
+        var cw = cellWarnings(c);
+        if (cw.length) h.push('<div class="warn" style="padding:0 0 10px 0">' + cw.map(function (x) { return '<div><i class="bi bi-exclamation-triangle"></i>' + esc(x) + '</div>'; }).join('') + '</div>');
+        h.push('<div class="inline-btns" style="margin:0 0 12px 0">' +
+          '<button class="btnx sm" data-act="cell-left"><i class="bi bi-arrow-left"></i>左移</button>' +
+          '<button class="btnx sm" data-act="cell-right"><i class="bi bi-arrow-right"></i>右移</button>' +
+          '<button class="btnx sm" data-act="cell-dup"><i class="bi bi-copy"></i>複製這格</button>' +
+          '<button class="btnx sm dan" data-act="cell-del"><i class="bi bi-trash3"></i>刪除這格</button>' +
+          '<button class="btnx sm dan" data-act="col-del"><i class="bi bi-layout-sidebar-inset-reverse"></i>刪除整欄</button>' +
+          '<button class="btnx sm" data-act="col-apply"><i class="bi bi-arrow-down-up"></i>整欄套用外觀</button></div>');
+        F.col.forEach(function (f) {
+          var v = f.k === '_content' ? c.content : f.k === '_items' ? c.items : (f.k ? c.a[f.k] : null);
+          h.push(fieldHTML(f, v));
+        });
+        h.push(extraHTML(c.extra));
+      }
+    } else {
+      var m = S.info, s2 = S.sel.info;
+      if (s2.type === 'group') {
+        h.push('<div class="insp-title">群組設定</div><div class="insp-sub">&lt;info-region-group&gt; 的排列、按鈕與進度。</div>');
+        F.group_ir.forEach(function (f) { h.push(fieldHTML(f, f.k ? m.a[f.k] : null)); });
+        h.push(extraHTML(m.extra));
+        h.push('<div class="fsec">附加 HTML</div><div class="frow full"><label for="f-after">放在群組後面的內容</label>' +
+          '<textarea id="f-after" data-k="_after" rows="12" spellcheck="false">' + esc(m.after || '') + '</textarea></div>');
+      } else {
+        var r = m.regions[s2.i];
+        if (!r) { S.sel.info = { type: 'group' }; return renderInspector(); }
+        var ctx = { ids: m.regions.filter(function (x) { return x !== r; }).map(function (x) { return x.a.id; }), choices: choiceList(r) };
+        h.push('<div class="insp-title">區塊 #' + esc(r.a.id) + '</div><div class="insp-sub">第 ' + (s2.i + 1) + ' 個 &lt;info-region&gt;。</div>');
+        var val = function (f) {
+          if (!f.k) return null;
+          if (f.k === '_content') return r.content; if (f.k === '_mode') return r.mode; if (f.k === '_gold') return r.gold;
+          if (f.k === '_choices') return r.choices; if (f.k === '_layout') return r.layout; if (f.k === '_item') return r.item !== false;
+          return r.a[f.k];
+        };
+        F.region.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
+        if (r.mode !== 'end' && r.mode !== 'quiz') F.flow_next.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
+        (F['flow_' + r.mode] || []).forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
+        F.region_tail.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
+        h.push(extraHTML(r.extra));
+      }
+    }
+    box.innerHTML = h.join('');
+  }
+
+  /* 面板輸入 → 模型 */
+  function target() {
+    if (S.tab === 'table') {
+      var s = S.sel.table, t = S.table;
+      if (s.type === 'table') return t;
+      if (s.type === 'item') return t.items[s.i];
+      return t.items[s.i].cols[s.c];
+    }
+    var s2 = S.sel.info;
+    return s2.type === 'group' ? S.info : S.info.regions[s2.i];
+  }
+  function onField(e) {
+    var el = e.target, k = el.getAttribute('data-k');
+    if (!k) return;
+    var v = el.type === 'checkbox' ? el.checked : el.value;
+    var o = target();
+    var rebuild = false;
+    if (k === '_extra') o.extra = v;
+    else if (k === '_after') o.after = v;
+    else if (k === '_content') o.content = v;
+    else if (k === '_items') o.items = v;
+    else if (k === '_nested') o.nested = v;
+    else if (k === '_tag') { o.tag = v; rebuild = true; }
+    else if (k === '_mode') { o.mode = v; rebuild = true; }
+    else if (k === '_gold') { o.gold = v; if (v && !o.a.color) o.a.color = 'gold'; }
+    else if (k === '_choices') { o.choices = v; }
+    else if (k === '_layout') o.layout = v;
+    else if (k === '_item') o.item = v;
+    else if (k === 'id' && S.tab === 'info') {
+      var old = o.a.id; o.a.id = v.trim();
+      /* 其他區塊指向舊 id 的地方一起改名 */
+      S.info.regions.forEach(function (r) { ['next', 'correct-next', 'wrong-next'].forEach(function (kk) { if (r.a[kk] === old) r.a[kk] = o.a.id; }); });
+    }
+    else o.a[k] = v;
+    if (el.closest('.colorbox')) { var sw = el.closest('.colorbox').querySelector('.sw'); if (sw) sw.style.background = colorHex(v) || 'transparent'; }
+    if (rebuild || (k === '_choices' && e.type === 'change')) renderInspector();
+    refresh(false);
+  }
+
+  /* ══ 動作 ════════════════════════════════════════════ */
+  function move(arr, i, d) { var j = i + d; if (j < 0 || j >= arr.length) return false; var x = arr[i]; arr[i] = arr[j]; arr[j] = x; return true; }
+  function adjustWidths(row, op, idx) {
+    var cw = (row.a['col-widths'] || '').trim(); if (!cw) return;
+    var p = cw.split(':');
+    if (op === 'add') p.splice(idx == null ? p.length : idx, 0, '1');
+    if (op === 'del') p.splice(idx, 1);
+    if (op === 'swap') { var x = p[idx]; p[idx] = p[idx + 1]; p[idx + 1] = x; }
+    row.a['col-widths'] = p.filter(Boolean).join(':');
+  }
+  function doAction(act, i) {
+    if (S.tab === 'table') {
+      var t = S.table, sel = S.sel.table;
+      if (act === 'add-row' || act === 'add-enh') {
+        var last = null; t.items.forEach(function (x) { if (x.kind === 'row') last = x; });
+        var n = last ? last.cols.length : 2;
+        var r = newRow(act === 'add-enh' ? 'ui-row-enhance' : 'ui-row', n, last ? last.a['col-widths'] : '');
+        if (last) { r.a = clone(last.a); delete r.a.hidden; }
+        var at = sel.type !== 'table' ? sel.i + 1 : t.items.length;
+        t.items.splice(at, 0, r); S.sel.table = { type: 'item', i: at };
+      } else if (act === 'add-group') {
+        var at2 = sel.type !== 'table' ? sel.i + 1 : 0;
+        t.items.splice(at2, 0, { kind: 'group', a: { 'title-left': '新群組' }, extra: '' }); S.sel.table = { type: 'item', i: at2 };
+      } else if (act === 'up' || act === 'down') {
+        if (move(t.items, i, act === 'up' ? -1 : 1)) S.sel.table = { type: 'item', i: i + (act === 'up' ? -1 : 1) };
+      } else if (act === 'dup') {
+        t.items.splice(i + 1, 0, clone(t.items[i])); S.sel.table = { type: 'item', i: i + 1 };
+      } else if (act === 'del') {
+        t.items.splice(i, 1); S.sel.table = { type: 'table' };
+      } else if (act === 'add-col') {
+        var row = t.items[i];
+        if (row.tag === 'ui-row') {
+          /* 一般列的欄數要一致：所有一般列一起加一欄 */
+          var nRows = 0;
+          t.items.forEach(function (x) { if (x.kind === 'row' && x.tag === 'ui-row' && !x.cols.some(function (c) { return c.a.span; })) { x.cols.push(newCell('')); adjustWidths(x, 'add'); nRows++; } });
+          if (nRows > 1) toast('一般列的欄數要一致，已替 ' + nRows + ' 個一般列各加一欄。');
+        } else { row.cols.push(newCell('')); adjustWidths(row, 'add'); }
+        S.sel.table = { type: 'cell', i: i, c: row.cols.length - 1 };
+      } else if (/^cell-|^col-/.test(act)) {
+        var rw = t.items[sel.i], c = sel.c;
+        if (act === 'cell-del') { rw.cols.splice(c, 1); adjustWidths(rw, 'del', c); S.sel.table = { type: 'item', i: sel.i }; }
+        if (act === 'col-del') {
+          var nd = 0;
+          t.items.forEach(function (x) { if (x.kind === 'row' && x.tag === rw.tag && x.cols.length > c && !x.cols.some(function (cc) { return cc.a.span; })) { x.cols.splice(c, 1); adjustWidths(x, 'del', c); nd++; } });
+          if (!rw.cols.length || nd === 0) { /* 只有自己 */ }
+          S.sel.table = { type: 'item', i: sel.i };
+          toast('已刪除 ' + nd + ' 列的第 ' + (c + 1) + ' 欄。', 'warning');
+        }
+        if (act === 'cell-dup') { rw.cols.splice(c + 1, 0, clone(rw.cols[c])); adjustWidths(rw, 'add', c + 1); S.sel.table = { type: 'cell', i: sel.i, c: c + 1 }; }
+        if (act === 'cell-left' && c > 0) { move(rw.cols, c, -1); adjustWidths(rw, 'swap', c - 1); S.sel.table = { type: 'cell', i: sel.i, c: c - 1 }; }
+        if (act === 'cell-right' && c < rw.cols.length - 1) { move(rw.cols, c, 1); adjustWidths(rw, 'swap', c); S.sel.table = { type: 'cell', i: sel.i, c: c + 1 }; }
+        if (act === 'col-apply') {
+          var src = rw.cols[c], keys = ['font-color', 'inverse', 'icon', 'fixed', 'mask-gradient', 'mask-color', 'mask-invert', 'arrow-color'];
+          var cnt = 0;
+          t.items.forEach(function (x, xi) {
+            if (x.kind !== 'row' || xi === sel.i || !x.cols[c]) return;
+            keys.forEach(function (k) { if (src.a[k] !== undefined) x.cols[c].a[k] = src.a[k]; else delete x.cols[c].a[k]; });
+            cnt++;
+          });
+          toast('已把這格的文字色、反白、圖示等外觀套用到同一欄的其他 ' + cnt + ' 格。');
+        }
+      } else if (act === 'even') {
+        var rr = t.items[sel.i]; rr.a['col-widths'] = rr.cols.map(function () { return '1'; }).join(':');
+      }
+    } else {
+      var m = S.info;
+      if (act === 'add-region' || act === 'add-quiz' || act === 'add-gold') {
+        var r2 = newRegion(nextId(m), act === 'add-quiz' ? 'quiz' : act === 'add-gold' ? 'end' : 'manual');
+        if (act === 'add-quiz') { r2.content = '<p>題目</p>'; r2.choices = '選項一\n選項二\n選項三'; r2.a['quiz-label'] = '第 ' + (m.regions.filter(function (x) { return x.mode === 'quiz'; }).length + 1) + ' 題'; r2.layout = 'column'; }
+        if (act === 'add-gold') { r2.gold = true; r2.a.color = 'gold'; r2.content = '<h4>完成</h4>'; }
+        var s3 = S.sel.info, at3 = s3.type === 'region' ? s3.i + 1 : m.regions.length;
+        m.regions.splice(at3, 0, r2); S.sel.info = { type: 'region', i: at3 };
+      } else if (act === 'up' || act === 'down') {
+        if (move(m.regions, i, act === 'up' ? -1 : 1)) S.sel.info = { type: 'region', i: i + (act === 'up' ? -1 : 1) };
+      } else if (act === 'dup') {
+        var cp = clone(m.regions[i]); cp.a.id = 'r' + nextId(m); m.regions.splice(i + 1, 0, cp); S.sel.info = { type: 'region', i: i + 1 };
+      } else if (act === 'del') {
+        m.regions.splice(i, 1); S.sel.info = { type: 'group' };
+      }
+    }
+    refresh(true);
+  }
+
+  /* ══ 輸出：程式碼與預覽 ═════════════════════════════ */
+  function currentHTML() { return S.tab === 'table' ? tableToHTML(S.table) : infoToHTML(S.info); }
+  function fullHTML() {
+    return HEAD_LINKS.join('\n') + '\n\n' + currentHTML() + '\n\n<script src="' + LIBS[S.tab] + '"><\/script>';
+  }
+  function highlight(code) {
+    return code.replace(/(<!--[\s\S]*?-->)|(<\/?[\w-]+(?:"[^"]*"|[^>"])*>)|([^<]+|<)/g, function (m, cm, tag, txt) {
+      if (cm) return '<span class="cm">' + esc(cm) + '</span>';
+      if (txt) return esc(txt);
+      var mm = tag.match(/^<(\/?)([\w-]+)([\s\S]*?)(\/?)>$/);
+      if (!mm) return esc(tag);
+      var at = mm[3].replace(/([^\s=]+)(="[^"]*")?/g, function (s, n, v) {
+        return '<span class="a">' + esc(n) + '</span>' + (v ? '=<span class="v">' + esc(v.slice(1)) + '</span>' : '');
+      });
+      return '<span class="t">&lt;' + mm[1] + mm[2] + '</span>' + at + '<span class="t">' + mm[4] + '&gt;</span>';
+    });
+  }
+  var pvTimer = null, pvToken = 0;
+  function renderPreview() {
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(function () {
+      var tok = ++pvToken;
+      var doc = '<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">' + HEAD_LINKS.join('') +
+        '<style>html,body{background:#0C0D0C;color:#C6C7BD;margin:0}body{padding:16px;font-family:"微軟正黑體","Inter",sans-serif;font-size:1rem}</style></head><body>' +
+        currentHTML() + '<script src="' + LIBS[S.tab] + '"><\/script>' +
+        '<script>(function(){function s(){parent.postMessage({uibPreview:' + tok + ',h:document.documentElement.scrollHeight},"*")}' +
+        'if(window.ResizeObserver)new ResizeObserver(s).observe(document.body);window.addEventListener("load",s);setTimeout(s,600);setTimeout(s,1600)})();<\/script></body></html>';
+      $('#preview').srcdoc = doc;
+    }, 350);
+  }
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.uibPreview === pvToken) $('#preview').style.height = Math.max(200, e.data.h + 4) + 'px';
+  });
+  function renderCode() { $('#code').innerHTML = highlight(currentHTML()); }
+
+  function refresh(full) {
+    if (S.tab === 'table') renderTableStructure(); else renderInfoStructure();
+    if (full) renderInspector();
+    renderCode(); renderPreview(); save();
+  }
+
+  function renderPresets() {
+    var P = S.tab === 'table' ? TABLE_PRESETS : INFO_PRESETS;
+    $('#presets').innerHTML = '<span class="lbl"><i class="bi bi-lightning-charge"></i> 快速範本</span>' +
+      Object.keys(P).map(function (k) { return '<button class="btnx sm" data-preset="' + esc(k) + '">' + esc(k) + '</button>'; }).join('');
+  }
+  function setTab(tab) {
+    S.tab = tab;
+    document.querySelectorAll('.tab').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === tab); });
+    $('#struct-sub').textContent = tab === 'table' ? '點格子或列，右側調整屬性' : '點區塊，右側調整內容與流程';
+    renderPresets(); refresh(true);
+  }
+
+  function copy(text, msg) {
+    var done = function () { toast(msg); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.top = '-9999px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { toast('無法自動複製，請手動選取程式碼。', 'warning'); }
+      ta.remove();
+    }
+  }
+
+  /* ══ 事件綁定 ════════════════════════════════════════ */
+  $('#structure').addEventListener('click', function (e) {
+    var a = e.target.closest('[data-act]');
+    if (a) { e.stopPropagation(); doAction(a.getAttribute('data-act'), +a.getAttribute('data-i')); return; }
+    var p = e.target.closest('[data-pick]');
+    if (!p) return;
+    var kind = p.getAttribute('data-pick'), i = +p.getAttribute('data-i');
+    if (S.tab === 'table') S.sel.table = kind === 'cell' ? { type: 'cell', i: i, c: +p.getAttribute('data-c') } : kind === 'item' ? { type: 'item', i: i } : { type: 'table' };
+    else S.sel.info = kind === 'region' ? { type: 'region', i: i } : { type: 'group' };
+    refresh(true);
+  });
+  $('#inspector').addEventListener('input', onField);
+  $('#inspector').addEventListener('change', function (e) { if (e.target.tagName === 'SELECT' || e.target.type === 'checkbox' || e.target.getAttribute('data-k') === '_choices') onField(e); });
+  $('#inspector').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (b) { doAction(b.getAttribute('data-act'), +b.getAttribute('data-i')); return; }
+    if (e.target.closest('[data-even]')) doAction('even');
+  });
+  document.querySelectorAll('.tab').forEach(function (b) { b.onclick = function () { setTab(b.getAttribute('data-tab')); }; });
+  $('#presets').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-preset]'); if (!b) return;
+    var k = b.getAttribute('data-preset');
+    if (S.tab === 'table') { S.table = TABLE_PRESETS[k](); S.sel.table = { type: 'table' }; }
+    else { S.info = INFO_PRESETS[k](); S.sel.info = { type: 'group' }; }
+    refresh(true); toast('已載入範本「' + k + '」。');
+  });
+  $('#btn-clear').onclick = function () {
+    if (S.tab === 'table') { S.table = tableDefault(); S.table.items.push(newRow('ui-row', 2, '1:1')); S.sel.table = { type: 'table' }; }
+    else { S.info = infoDefault(); S.info.regions.push(newRegion(1, 'end')); S.sel.info = { type: 'group' }; }
+    refresh(true); toast('已清空，留下一個起點。', 'warning');
+  };
+  $('#btn-reload').onclick = function () { pvToken++; renderPreview(); };
+  $('#btn-copy-part').onclick = function () { copy(currentHTML(), '已複製元件程式碼。'); };
+  $('#btn-copy-full').onclick = function () { copy(fullHTML(), '已複製元件與載入用的 link、script。'); };
+  $('#btn-import').onclick = function () { $('#import-text').value = currentHTML(); $('#import-modal').classList.add('on'); $('#import-text').focus(); };
+  $('#import-cancel').onclick = function () { $('#import-modal').classList.remove('on'); };
+  $('#import-ok').onclick = function () {
+    var txt = $('#import-text').value;
+    var t = parseTable(txt), m = parseInfo(txt);
+    if (t) { S.table = t; S.sel.table = { type: 'table' }; setTab('table'); toast('已匯入 ui-table，共 ' + t.items.length + ' 個列與群組。'); }
+    else if (m) { S.info = m; S.sel.info = { type: 'group' }; setTab('info'); toast('已匯入 info-region，共 ' + m.regions.length + ' 個區塊。'); }
+    else { toast('找不到 &lt;ui-table&gt; 或 &lt;info-region&gt;。', 'danger'); return; }
+    $('#import-modal').classList.remove('on');
+  };
+
+  window.UiBuilder = { state: S, tableToHTML: tableToHTML, infoToHTML: infoToHTML, parseTable: parseTable, parseInfo: parseInfo, setTab: setTab };
+  setTab(S.tab);
+})();
+</script>
+</body>
+</html>

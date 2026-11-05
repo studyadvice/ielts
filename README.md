@@ -55,10 +55,18 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 - 色名與對照表可從 `window.UiColorTags.colors`、`window.UiColorTags.aliases` 讀取。
 - 範例頁：`color-tags-demo-11-05-26.html`。
 
+## 工具頁
+
+| 檔案 | 用途 |
+| --- | --- |
+| [`builder/layout-builder-11-05-26.html`](builder/layout-builder-11-05-26.html) | `ui-table` 與 `info-region` 的視覺化編輯器：點格子或區塊調整屬性，即時預覽，複製程式碼，也能匯入既有程式碼繼續編輯。 |
+| [`layout/ui-cards-templates-11-05-26.html`](layout/ui-cards-templates-11-05-26.html) | `ui-cards` 九種資料呈現版型，每個版型附可複製的程式碼。 |
+
 ## 目錄
 
 - [色名對照](#色名對照)
 - [色名標籤](#色名標籤)
+- [工具頁](#工具頁)
 - [arrow-flow.js](#arrow-flowjs)
 - [bp-stepper.js](#bp-stepperjs)
 - [card-toggle.js](#card-togglejs)
