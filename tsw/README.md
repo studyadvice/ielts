@@ -124,7 +124,7 @@ UIThemeSwitcher.set({ mode: 'light', color: 'gruvbox' });   // 切換並儲存
 UIThemeSwitcher.register({                          // 註冊自訂主題
   id: 'ielts', name: 'IELTS',
   dark:  ['#0C0D0C', '#161816', '#232623', '#C6C7BD', '#86877F', '#3A3D3A', '#5DBAE8', '#B484E8', '#EF6661', '#71CD76', '#778CE1', '#F79C40', '#DBEDD8', '#0C0D0C'],
-  light: ['#F3F4EE', '#FFFFFF', '#E4E6DC', '#1B1D1A', '#5C5F58', '#B9BCB0', '#1A7FA8', '#7849C9', '#C4182C', '#1E8449', '#2F5AA6', '#B87800', '#0DA591', '#FFFFFF']
+  light: ['#F3F4EE', '#FFFFFF', '#E4E6DC', '#1B1D1A', '#5C5F58', '#B9BCB0', '#1A7FA8', '#778CE1', '#C4182C', '#1E8449', '#2F5AA6', '#B87800', '#71CD76', '#FFFFFF']
 });
 UIThemeSwitcher.addBrand('mint', '#71CD76', '薄荷綠');  // 新增品牌色，輸出為 --brand-mint
 UIThemeSwitcher.roles;    // 變數清單與用途，色碼陣列的順序以此為準

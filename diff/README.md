@@ -41,7 +41,7 @@
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `width` | `100%` | 元件寬度。純數字視為 px，也可寫 `50%`、`40rem`。 |
-| `theme` | `dark` | `dark`、`light`、`ocean`、`lavender`、`teal`、`pink`、`orange`、`salmon`、`sky`、`yellow`。 |
+| `theme` | `dark` | `dark`、`light`、`ocean`、`lavender`、`teal`、`pink`、`orange`、`salmon`、`sky`、`yellow`。也可用 `blue`、`green`、`red`、`violet`、`indigo`、`gray`、`vanilla`。 |
 | `padding` | `16` | 內距。純數字視為 px，可寫兩個值，例如 `8 24`。 |
 | `font-size` | `1.125` | 內文字級。純數字視為 rem，標題與按鈕依比例縮放。 |
 | `border` | `1px solid`（主題色） | 寬度、樣式、顏色可任意省略，順序不限。顏色可用色票名稱或 hex。`none` 取消邊框。 |

@@ -5,21 +5,27 @@
 
   const BRAND_COLORS = {
     shell:    '#C6C7BD',
-    lavender: '#C3A5E5',
-    sky:      '#82C8E5',
-    warning:  '#E6374B',
-    salmon:   '#E5C3B3',
-    ocean:    '#1CCAE8',
-    safe:     '#27AE60',
-    teal:     '#0DA591',
+    lavender: '#B484E8',
+    sky:      '#5DBAE8',
+    warning:  '#EF6661',
+    salmon:   '#F79C40',
+    ocean:    '#5DBAE8',
+    safe:     '#71CD76',
+    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#D4FFFC',
-    special:  '#B3DE73',
-    info:     '#4171BF',
-    indigo:   '#7849C9',
+    focus:    '#DBEDD8',
+    special:  '#71CD76',
+    info:     '#778CE1',
+    indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#EDA109',
+    orange:   '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F',
   };
 
   const LEGACY_THEME_ALIASES = {
@@ -88,7 +94,7 @@
       .cd-strip {
         flex: 0 0 var(--cd-sw, 8px);
         width: var(--cd-sw, 8px);
-        background: var(--cd-color, #C3A5E5);
+        background: var(--cd-color, #B484E8);
         cursor: pointer;
         transition: filter .15s ease, width .15s ease;
         position: relative;
@@ -194,12 +200,12 @@
       .cd-wrap.cd-fixed .cd-body {
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: var(--cd-color, #C3A5E5) transparent;
+        scrollbar-color: var(--cd-color, #B484E8) transparent;
       }
       .cd-wrap.cd-fixed .cd-body::-webkit-scrollbar { width: 4px; }
       .cd-wrap.cd-fixed .cd-body::-webkit-scrollbar-track { background: transparent; }
       .cd-wrap.cd-fixed .cd-body::-webkit-scrollbar-thumb {
-        background: var(--cd-color, #C3A5E5);
+        background: var(--cd-color, #B484E8);
         border-radius: 2px;
         opacity: .6;
       }
@@ -282,7 +288,7 @@
       }
 
       .cd-tpl {
-        color: var(--cd-color, #C3A5E5);
+        color: var(--cd-color, #B484E8);
         font-weight: 600;
         font-variant-numeric: tabular-nums;
         display: inline;
@@ -290,8 +296,8 @@
         padding: 0 1px;
       }
       @keyframes cd-tpl-flash {
-        0%   { background: var(--cd-color, #C3A5E5); color: ${BASE_BG}; border-radius: 2px; }
-        100% { background: transparent; color: var(--cd-color, #C3A5E5); }
+        0%   { background: var(--cd-color, #B484E8); color: ${BASE_BG}; border-radius: 2px; }
+        100% { background: transparent; color: var(--cd-color, #B484E8); }
       }
       .cd-tpl.cd-flash {
         animation: cd-tpl-flash .45s ease-out forwards;
@@ -307,7 +313,7 @@
         left: 0;
         height: var(--cd-ph, 2px);
         width: 0%;
-        background: var(--cd-color, #C3A5E5);
+        background: var(--cd-color, #B484E8);
         pointer-events: none;
         will-change: width;
         overflow: visible;
@@ -393,7 +399,7 @@
         right: 4px;
         font-size: var(--cd-cd-fsz, .52rem);
         font-family: var(--cd-cd-ff, monospace);
-        color: var(--cd-cd-clr, var(--cd-color, #C3A5E5));
+        color: var(--cd-cd-clr, var(--cd-color, #B484E8));
         opacity: .55;
         pointer-events: none;
         letter-spacing: .03em;

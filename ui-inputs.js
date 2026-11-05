@@ -76,21 +76,27 @@
   const BRAND_COLORS = {
     background: '#0C0D0C',
     shell: '#C6C7BD',
-    lavender: '#C3A5E5',
-    sky: '#82C8E5',
-    warning: '#E6374B',
-    salmon: '#E5C3B3',
-    ocean: '#1CCAE8',
-    safe: '#27AE60',
-    teal: '#0DA591',
+    lavender: '#B484E8',
+    sky: '#5DBAE8',
+    warning: '#EF6661',
+    salmon: '#F79C40',
+    ocean: '#5DBAE8',
+    safe: '#71CD76',
+    teal: '#71CD76',
     vanilla: '#DBEDD8',
     yellow: '#E3D322',
-    focus: '#D4FFFC',
-    special: '#B3DE73',
-    info: '#4171BF',
-    indigo: '#7849C9',
+    focus: '#DBEDD8',
+    special: '#71CD76',
+    info: '#778CE1',
+    indigo: '#778CE1',
     pink: '#FF91D7',
-    orange: '#EDA109'
+    orange: '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   function parseColor(value) {
@@ -172,26 +178,26 @@ ui-otp .uo-sep{
   user-select:none;
 }
 ui-otp .uo-cell.is-active-cell{
-  border-color:var(--uo-focus-ring-color,var(--uo-accent-color,#82C8E5));
+  border-color:var(--uo-focus-ring-color,var(--uo-accent-color,#5DBAE8));
 }
 ui-otp.is-focused .uo-cell.is-active-cell{
-  box-shadow:0 0 0 var(--uo-focus-ring-width,3px) var(--uo-focus-ring-shadow,rgba(130,200,229,.35));
+  box-shadow:0 0 0 var(--uo-focus-ring-width,3px) var(--uo-focus-ring-shadow,rgba(93,186,232,.35));
 }
 ui-otp .uo-cell.is-active-cell::after{
   content:'';
   display:var(--uo-caret-display,none);
   width:2px;
   height:55%;
-  background:var(--uo-focus-ring-color,var(--uo-accent-color,#82C8E5));
+  background:var(--uo-focus-ring-color,var(--uo-accent-color,#5DBAE8));
   animation:uo-blink 1s step-start infinite;
 }
 @keyframes uo-blink{ 50%{ opacity:0; } }
 
 ui-otp.is-valid .uo-cell{
-  border-color:var(--uo-valid-color,#27AE60);
+  border-color:var(--uo-valid-color,#71CD76);
 }
 ui-otp.is-invalid .uo-cell{
-  border-color:var(--uo-error-color,#E6374B);
+  border-color:var(--uo-error-color,#EF6661);
 }
 ui-otp.is-disabled .uo-cell{
   opacity:.5;
@@ -218,10 +224,10 @@ ui-otp.is-disabled .uo-input{ cursor:not-allowed; }
 ui-otp .uo-message{
   margin-top:8px;
   font-size:var(--uo-message-font-size,0.9rem);
-  color:var(--uo-error-color,#E6374B);
+  color:var(--uo-error-color,#EF6661);
 }
 ui-otp.is-valid .uo-message{
-  color:var(--uo-valid-color,#27AE60);
+  color:var(--uo-valid-color,#71CD76);
 }
 
 /* ---- mode="generate" 專用 ---- */
@@ -245,8 +251,8 @@ ui-otp .uo-copy-btn{
   padding:var(--uo-copy-btn-padding,8px 14px);
   font-size:var(--uo-copy-btn-font-size,1rem);
   color:var(--uo-copy-btn-color,#0C0D0C);
-  background:var(--uo-copy-btn-bg,var(--uo-accent-color,#82C8E5));
-  border:var(--uo-border-width,1px) solid var(--uo-accent-color,#82C8E5);
+  background:var(--uo-copy-btn-bg,var(--uo-accent-color,#5DBAE8));
+  border:var(--uo-border-width,1px) solid var(--uo-accent-color,#5DBAE8);
   border-radius:var(--uo-radius,8px);
   cursor:pointer;
   white-space:nowrap;
@@ -822,7 +828,7 @@ ui-blank .ub-row{
   transition:box-shadow .15s ease;
 }
 ui-blank.is-focused .ub-row{
-  box-shadow:0 0 0 var(--ub-focus-ring-width,3px) var(--ub-focus-ring-shadow,rgba(130,200,229,.35));
+  box-shadow:0 0 0 var(--ub-focus-ring-width,3px) var(--ub-focus-ring-shadow,rgba(93,186,232,.35));
 }
 ui-blank .ub-input{
   box-sizing:border-box;
@@ -839,7 +845,7 @@ ui-blank .ub-input{
   transition:border-color .15s ease;
 }
 ui-blank .ub-input:focus{
-  border-color:var(--ub-focus-ring-color,var(--ub-accent-color,#82C8E5));
+  border-color:var(--ub-focus-ring-color,var(--ub-accent-color,#5DBAE8));
 }
 ui-blank .ub-button{
   display:inline-flex;
@@ -851,8 +857,8 @@ ui-blank .ub-button{
   font-size:var(--ub-btn-font-size,0.95rem);
   line-height:1.3;
   color:var(--ub-btn-color,#0C0D0C);
-  background:var(--ub-btn-bg,var(--ub-accent-color,#82C8E5));
-  border:var(--ub-border-width,1px) solid var(--ub-accent-color,#82C8E5);
+  background:var(--ub-btn-bg,var(--ub-accent-color,#5DBAE8));
+  border:var(--ub-border-width,1px) solid var(--ub-accent-color,#5DBAE8);
   border-radius:0 var(--ub-radius,6px) var(--ub-radius,6px) 0;
   cursor:pointer;
   white-space:nowrap;
@@ -865,11 +871,11 @@ ui-blank .ub-button .bi{ font-size:1em; line-height:1; }
 
 ui-blank.is-valid .ub-input,
 ui-blank.is-valid .ub-button{
-  border-color:var(--ub-valid-color,#27AE60);
+  border-color:var(--ub-valid-color,#71CD76);
 }
 ui-blank.is-invalid .ub-input,
 ui-blank.is-invalid .ub-button{
-  border-color:var(--ub-error-color,#E6374B);
+  border-color:var(--ub-error-color,#EF6661);
 }
 ui-blank.is-disabled .ub-input,
 ui-blank.is-disabled .ub-button{
@@ -880,10 +886,10 @@ ui-blank .ub-message{
   margin-top:6px;
   font-size:var(--ub-message-font-size,0.85rem);
   line-height:1.4;
-  color:var(--ub-error-color,#E6374B);
+  color:var(--ub-error-color,#EF6661);
 }
 ui-blank.is-valid .ub-message{
-  color:var(--ub-valid-color,#27AE60);
+  color:var(--ub-valid-color,#71CD76);
 }
 
 /* plain：純文字，不加框不加底色（預設） */
@@ -1180,8 +1186,8 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
       set('--ub-message-padding', this.getAttribute('message-padding'));
       set('--ub-message-radius', this.getAttribute('message-radius'));
       // filled / icon-banner 樣式的淡化底色，跟著目前驗證狀態的顏色走
-      const fillBase = this._state === 'valid' ? (validColor || '#27AE60')
-        : this._state === 'invalid' ? (errorColor || '#E6374B') : null;
+      const fillBase = this._state === 'valid' ? (validColor || '#71CD76')
+        : this._state === 'invalid' ? (errorColor || '#EF6661') : null;
       if (fillBase) set('--ub-message-fill', toRgba(fillBase, 0.15));
       this._renderMessage();
     }

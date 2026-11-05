@@ -2,23 +2,29 @@
   'use strict';
 
   var PALETTE = {
-    lavender : '#C3A5E5',
-    sky      : '#82C8E5',
-    ocean    : '#1CCAE8',
-    safe     : '#27AE60',
-    special  : '#B3DE73',
+    lavender : '#B484E8',
+    sky      : '#5DBAE8',
+    ocean    : '#5DBAE8',
+    safe     : '#71CD76',
+    special  : '#71CD76',
     yellow   : '#E3D322',
-    salmon   : '#E5C3B3',
+    salmon   : '#F79C40',
     pink     : '#FF91D7',
-    orange   : '#EDA109',
+    orange   : '#F79C40',
     vanilla  : '#DBEDD8',
-    teal     : '#0DA591',
-    focus    : '#D4FFFC',
-    indigo   : '#7849C9',
-    info     : '#4171BF',
-    wrong    : '#E6374B',
+    teal     : '#71CD76',
+    focus    : '#DBEDD8',
+    indigo   : '#778CE1',
+    info     : '#778CE1',
+    wrong    : '#EF6661',
     shell    : '#C6C7BD',
     gold     : '#C9973F',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F',
   };
 
   var NOTICE_COLOR_MAP = {
@@ -38,6 +44,12 @@
     info     : PALETTE.info,
     wrong    : PALETTE.wrong,
     warning  : PALETTE.yellow,
+    /* 新色票 */
+    red      : PALETTE.red,
+    green    : PALETTE.green,
+    blue     : PALETTE.blue,
+    violet   : PALETTE.violet,
+    gray     : PALETTE.gray,
   };
 
   var _noticeCssEl = null;
@@ -352,7 +364,7 @@
       cursor: pointer;
       border-bottom-width: 1px;
       border-bottom-style: dashed;
-      border-bottom-color: var(--xpop-hint-color, #C3A5E5);
+      border-bottom-color: var(--xpop-hint-color, #B484E8);
       transition: border-color 0.2s, color 0.2s, background 0.2s, padding 0.15s;
     }
     [data-popover-hint="false"] {
@@ -368,7 +380,7 @@
     [data-popover-hint-style="pill"] {
       border-bottom: none !important;
       background: rgba(var(--xpop-hint-rgb, 195,165,229), 0.18) !important;
-      color: var(--xpop-hint-color, #C3A5E5) !important;
+      color: var(--xpop-hint-color, #B484E8) !important;
       border-radius: 999px !important;
       padding: 1px 8px !important;
       display: inline-block;
@@ -381,7 +393,7 @@
     [data-popover-hint-style="pill-full"] {
       border-bottom: none !important;
       background: rgba(var(--xpop-hint-rgb, 195,165,229), 0.22) !important;
-      color: var(--xpop-hint-color, #C3A5E5) !important;
+      color: var(--xpop-hint-color, #B484E8) !important;
       border-radius: 6px !important;
       padding: 3px 12px !important;
       display: inline-block;
@@ -396,7 +408,7 @@
     /* panel-active 在 pill / pill-full 上加亮框 */
     [data-popover-hint-style="pill"].xpop-panel-active,
     [data-popover-hint-style="pill-full"].xpop-panel-active {
-      outline: 1px solid var(--xpop-hint-color, #C3A5E5);
+      outline: 1px solid var(--xpop-hint-color, #B484E8);
     }
 
     .xpop-container {
@@ -407,7 +419,7 @@
       border-radius: 8px;
       border-width: 1px;
       border-style: var(--xpop-border-style, solid);
-      border-color: var(--xpop-border-color, #C3A5E5);
+      border-color: var(--xpop-border-color, #B484E8);
       background: var(--xpop-bg, #130e1e);
       font-size: var(--xpop-font-size, 1rem);
       color: #c6c7bd;
@@ -434,22 +446,22 @@
     .xpop-container[data-placement="top"] .xpop-arrow {
       bottom: -16px; left: 50%;
       transform: translateX(-50%);
-      border-top-color: var(--xpop-border-color, #C3A5E5);
+      border-top-color: var(--xpop-border-color, #B484E8);
     }
     .xpop-container[data-placement="bottom"] .xpop-arrow {
       top: -16px; left: 50%;
       transform: translateX(-50%);
-      border-bottom-color: var(--xpop-border-color, #C3A5E5);
+      border-bottom-color: var(--xpop-border-color, #B484E8);
     }
     .xpop-container[data-placement="left"] .xpop-arrow {
       right: -16px; top: 50%;
       transform: translateY(-50%);
-      border-left-color: var(--xpop-border-color, #C3A5E5);
+      border-left-color: var(--xpop-border-color, #B484E8);
     }
     .xpop-container[data-placement="right"] .xpop-arrow {
       left: -16px; top: 50%;
       transform: translateY(-50%);
-      border-right-color: var(--xpop-border-color, #C3A5E5);
+      border-right-color: var(--xpop-border-color, #B484E8);
     }
     .xpop-arrow::after {
       content: '';
@@ -478,8 +490,8 @@
       padding: 10px 16px 8px;
       font-size: calc(var(--xpop-font-size, 1rem) * 1.05);
       font-weight: 700;
-      color: var(--xpop-title-color, #C3A5E5);
-      border-bottom: 1px solid var(--xpop-border-color, #C3A5E5);
+      color: var(--xpop-title-color, #B484E8);
+      border-bottom: 1px solid var(--xpop-border-color, #B484E8);
       letter-spacing: 0.03em;
     }
     .xpop-header:empty { display: none; }
@@ -532,14 +544,14 @@
       border: none; padding: 0;
     }
     .xpop-dot.xpop-dot-active {
-      background: var(--xpop-title-color, #C3A5E5);
+      background: var(--xpop-title-color, #B484E8);
       transform: scale(1.3);
     }
     .xpop-nav { display: flex; align-items: center; gap: 8px; color: #c6c7bd; font-size: 0.88rem; }
     .xpop-nav-btn {
       background: none;
       border: 1px solid rgba(255,255,255,0.18);
-      color: var(--xpop-title-color, #C3A5E5);
+      color: var(--xpop-title-color, #B484E8);
       border-radius: 4px;
       width: 26px; height: 26px;
       cursor: pointer;
@@ -550,7 +562,7 @@
     }
     .xpop-nav-btn:hover {
       background: rgba(255,255,255,0.08);
-      border-color: var(--xpop-title-color, #C3A5E5);
+      border-color: var(--xpop-title-color, #B484E8);
     }
     .xpop-nav-btn:disabled { opacity: 0.3; cursor: default; }
     .xpop-counter {
@@ -564,7 +576,7 @@
     .xpop-progress-bar {
       position: absolute; left: 0; top: 0;
       height: 100%; width: 0%;
-      background: var(--xpop-title-color, #C3A5E5);
+      background: var(--xpop-title-color, #B484E8);
       transition: width linear;
     }
 
@@ -572,7 +584,7 @@
       border-radius: 8px;
       border-width: 1px;
       border-style: solid;
-      border-color: var(--xpop-border-color, #C3A5E5);
+      border-color: var(--xpop-border-color, #B484E8);
       background: var(--xpop-bg, #130e1e);
       font-size: var(--xpop-font-size, 1rem);
       color: #c6c7bd;
@@ -589,7 +601,7 @@
     .xpop-panel-source {
       padding: 9px 16px 4px;
       font-size: 0.76rem;
-      color: var(--xpop-title-color, #C3A5E5);
+      color: var(--xpop-title-color, #B484E8);
       opacity: 0.78;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -612,7 +624,7 @@
     [data-popover-content].xpop-panel-active,
     [data-popover-target].xpop-panel-active {
       border-bottom-style: solid !important;
-      color: var(--xpop-hint-color, #C3A5E5);
+      color: var(--xpop-hint-color, #B484E8);
     }
 
     mark.bpn-annotated {
@@ -672,10 +684,10 @@
       align-items: center;
       gap: 5px;
       padding: 5px 14px;
-      border: 1px solid var(--xpop-border-color, #C3A5E5);
+      border: 1px solid var(--xpop-border-color, #B484E8);
       border-radius: 5px;
       background: transparent;
-      color: var(--xpop-title-color, #C3A5E5);
+      color: var(--xpop-title-color, #B484E8);
       font-size: calc(var(--xpop-font-size, 1rem) * 0.85);
       font-weight: 600;
       cursor: pointer;
@@ -685,7 +697,7 @@
       white-space: nowrap;
     }
     .xpop-show-btn:hover {
-      background: var(--xpop-border-color, #C3A5E5);
+      background: var(--xpop-border-color, #B484E8);
       color: #0C0D0C;
     }
     /* Modal / Offcanvas 內的 show-btn 繼承 theme 色 */
@@ -877,6 +889,12 @@
     wrong     : { bg: '#190d0d', titleColor: PALETTE.wrong,    borderColor: PALETTE.wrong    },
     correct   : { bg: '#091508', titleColor: PALETTE.safe,     borderColor: PALETTE.safe     },
     accent    : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
+    /* 新色票 */
+    blue      : { bg: '#071318', titleColor: PALETTE.blue,     borderColor: PALETTE.blue     },
+    green     : { bg: '#091508', titleColor: PALETTE.green,    borderColor: PALETTE.green    },
+    red       : { bg: '#190d0d', titleColor: PALETTE.red,      borderColor: PALETTE.red      },
+    violet    : { bg: '#130e1e', titleColor: PALETTE.violet,   borderColor: PALETTE.violet   },
+    gray      : { bg: '#121311', titleColor: PALETTE.gray,     borderColor: PALETTE.gray     },
     /* 金色電流：fx 為動畫種類，fxCore 是電流亮點色，fxDim 是電流環的暗部色 */
     gold      : { bg: '#1A1200', titleColor: '#EFD9A2', borderColor: PALETTE.gold,
                   fx: 'electric', fxCore: PALETTE.focus, fxDim: '#6B4F12' },

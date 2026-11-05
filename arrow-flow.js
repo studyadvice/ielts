@@ -71,12 +71,18 @@
 
   /* ── 色板 ─────────────────────────────────────────────────────────────────── */
   const P = {
-    bg      : '#0C0D0C', shell   : '#C6C7BD', lavender: '#C3A5E5',
-    sky     : '#82C8E5', warning : '#E6374B', salmon  : '#E5C3B3',
-    ocean   : '#1CCAE8', safe    : '#27AE60', teal    : '#0DA591',
-    vanilla : '#DBEDD8', yellow  : '#E3D322', focus   : '#D4FFFC',
-    special : '#B3DE73', info    : '#4171BF', indigo  : '#7849C9',
-    pink    : '#FF91D7', orange  : '#EDA109',
+    bg      : '#0C0D0C', shell   : '#C6C7BD', lavender: '#B484E8',
+    sky     : '#5DBAE8', warning : '#EF6661', salmon  : '#F79C40',
+    ocean   : '#5DBAE8', safe    : '#71CD76', teal    : '#71CD76',
+    vanilla : '#DBEDD8', yellow  : '#E3D322', focus   : '#DBEDD8',
+    special : '#71CD76', info    : '#778CE1', indigo  : '#778CE1',
+    pink    : '#FF91D7', orange  : '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F',
   };
 
   /* ── 箭頭尖端尺寸 ──────────────────────────────────────────────────────────── */

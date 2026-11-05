@@ -3,33 +3,39 @@
 
   var Palette = {
     shell:    '#C6C7BD',
-    lavender: '#C3A5E5',
-    sky:      '#82C8E5',
-    warning:  '#E6374B',
-    salmon:   '#E5C3B3',
-    ocean:    '#1CCAE8',
-    safe:     '#27AE60',
-    teal:     '#0DA591',
+    lavender: '#B484E8',
+    sky:      '#5DBAE8',
+    warning:  '#EF6661',
+    salmon:   '#F79C40',
+    ocean:    '#5DBAE8',
+    safe:     '#71CD76',
+    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#D4FFFC',
-    special:  '#B3DE73',
-    info:     '#4171BF',
-    indigo:   '#7849C9',
+    focus:    '#DBEDD8',
+    special:  '#71CD76',
+    info:     '#778CE1',
+    indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#EDA109'
+    orange:   '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   var Config = {
     borderColor:          '#6a6b68',
-    borderHoverColor:     '#82C8E5',
-    borderActiveColor:    '#C3A5E5',
-    numberColor:          '#82C8E5',
+    borderHoverColor:     '#5DBAE8',
+    borderActiveColor:    '#B484E8',
+    numberColor:          '#5DBAE8',
     themeColor:           null,
 
     accentColors: [
-      '#82C8E5', '#C3A5E5', '#1CCAE8', '#B3DE73', '#E3D322',
-      '#E5C3B3', '#0DA591', '#FF91D7', '#EDA109', '#7849C9'
+      '#5DBAE8', '#B484E8', '#71CD76', '#E3D322', '#F79C40',
+      '#FF91D7', '#EF6661', '#778CE1', '#DBEDD8', '#C6C7BD'
     ],
 
     backgroundColor:      '#0C0D0C',
@@ -429,7 +435,7 @@
    *    同頁錨點 (#id) → 瀏覽器原生跳轉
    *    外部 URL       → 頁面導航（搭配 link-target="_blank"）
    *
-   *  漸層預設：indigo (#7849C9) → ocean (#1CCAE8)，方向 135deg
+   *  漸層預設：indigo (#778CE1) → ocean (#5DBAE8)，方向 135deg
    *  from / to / dir 屬性可覆蓋，支援 Palette 名稱或任意 CSS 色值。
    * ═══════════════════════════════════════════════════════════════════ */
   function buildAd(data) {

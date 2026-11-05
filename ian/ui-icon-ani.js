@@ -65,11 +65,17 @@
   if (customElements.get('ui-icon-anim')) return;
 
   const PALETTE = {
-    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#C3A5E5', sky: '#82C8E5',
-    warning: '#E6374B', salmon: '#E5C3B3', ocean: '#1CCAE8', safe: '#27AE60',
-    teal: '#0DA591', vanilla: '#DBEDD8', yellow: '#E3D322', bluebell: '#7589D9',
-    special: '#B3DE73', info: '#92B5E0', indigo: '#7849C9', pink: '#FF91D7',
-    orange: '#EDA109'
+    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
+    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
+    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', bluebell: '#778CE1',
+    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
   const SIZE_PRESETS = { sm: '1.25rem', md: '2rem', lg: '3rem', xl: '4.5rem' };
   const EFFECTS = ['fade', 'scale', 'flip', 'none'];
@@ -90,9 +96,9 @@ ui-icon-anim .uia-replace .uia-icon{position:absolute;top:0;left:0;right:0;botto
 
 ui-icon-anim .uia-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
   font-family:inherit;font-size:1rem;line-height:1.2;padding:8px 20px;border-radius:8px;
-  border:1px solid var(--uia-btn-color,#82C8E5);background:#141614;color:var(--uia-btn-color,#82C8E5);
+  border:1px solid var(--uia-btn-color,#5DBAE8);background:#141614;color:var(--uia-btn-color,#5DBAE8);
   cursor:pointer;transition:background-color .2s ease,color .2s ease;}
-ui-icon-anim .uia-btn:hover,ui-icon-anim .uia-btn:focus-visible{background:var(--uia-btn-color,#82C8E5);color:#0C0D0C;outline:none;}
+ui-icon-anim .uia-btn:hover,ui-icon-anim .uia-btn:focus-visible{background:var(--uia-btn-color,#5DBAE8);color:#0C0D0C;outline:none;}
 ui-icon-anim .uia-btn-label{display:inline-flex;align-items:center;gap:8px;}
 ui-icon-anim .uia-btn-label .bi::before{vertical-align:top;}
 ui-icon-anim.uia-armed .uia-stage{display:none;}
@@ -125,11 +131,11 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
 .uia-reveal-slide{animation:uia-slide-in 500ms ease both;}
 
 .uia-sys-alert{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;
-  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #EDA109;color:#EDA109;
+  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #F79C40;color:#F79C40;
   border-radius:8px;padding:12px 44px 12px 16px;font-size:0.95rem;line-height:1.6;}
 .uia-sys-alert code{color:#E3D322;font-size:0.85rem;word-break:break-all;}
 .uia-sys-alert .uia-close{position:absolute;top:8px;right:10px;background:none;border:0;
-  color:#EDA109;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
+  color:#F79C40;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
 `;
 
   /* ---------- 工具函式 ---------- */

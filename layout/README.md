@@ -167,7 +167,7 @@
   <button detail="pj-a" label="官網改版">官網改版</button>
   <button detail="pj-b" color="orange" label="App 2.0">App 2.0</button>
   <button detail="pj-c" color="warning" label="延遲專案">延遲專案</button>
-  <button detail="pj-d" color="#B3DE73" detail-title="自訂右欄標題">自訂色</button>
+  <button detail="pj-d" color="#71CD76" detail-title="自訂右欄標題">自訂色</button>
   <button detail="pj-e" class="btn btn-outline-info">Bootstrap 按鈕</button>
   <a href="#" detail="pj-f" toggle>可收合（再點一次清空右欄）</a>
   <button detail="pj-a" disabled>停用按鈕</button>
@@ -548,7 +548,7 @@ ui-drill .uid-mid .uid-body { font-size: 0.95rem; }
 ui-drill .uid-ph { border-style: solid; }
 
 /* 方塊選取時加上陰影 */
-ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(28, 202, 232, 0.8); }
+ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 232, 0.8); }
 ```
 
 常用的 CSS 變數：

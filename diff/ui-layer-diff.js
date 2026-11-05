@@ -4,19 +4,26 @@
   if (window.customElements && customElements.get('ui-layer-diff')) return;
 
   var PALETTE = {
-    bg: '#0C0D0C', shell: '#C6C7BD', lavender: '#C3A5E5', sky: '#82C8E5',
-    warning: '#E6374B', salmon: '#E5C3B3', ocean: '#1CCAE8', safe: '#27AE60',
-    teal: '#0DA591', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#D4FFFC',
-    special: '#B3DE73', info: '#4171BF', indigo: '#7849C9', pink: '#FF91D7',
-    orange: '#EDA109'
+    bg: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
+    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
+    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#DBEDD8',
+    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   var THEMES = {
-    dark: { bg: '#0C0D0C', text: '#C6C7BD', border: '#82C8E5', accent: '#82C8E5', add: '#B3DE73', del: '#E6374B' },
-    light: { bg: '#DBEDD8', text: '#0C0D0C', border: '#0DA591', accent: '#0DA591', add: '#4171BF', del: '#E6374B' }
+    dark: { bg: '#0C0D0C', text: '#C6C7BD', border: '#5DBAE8', accent: '#5DBAE8', add: '#71CD76', del: '#EF6661' },
+    light: { bg: '#DBEDD8', text: '#0C0D0C', border: '#71CD76', accent: '#71CD76', add: '#778CE1', del: '#EF6661' }
   };
-  ['ocean', 'lavender', 'teal', 'pink', 'orange', 'salmon', 'sky', 'yellow'].forEach(function (n) {
-    THEMES[n] = { bg: '#0C0D0C', text: '#C6C7BD', border: PALETTE[n], accent: PALETTE[n], add: '#B3DE73', del: '#E6374B' };
+  ['ocean', 'lavender', 'teal', 'pink', 'orange', 'salmon', 'sky', 'yellow',
+   'blue', 'green', 'red', 'violet', 'indigo', 'gray', 'vanilla'].forEach(function (n) {
+    THEMES[n] = { bg: '#0C0D0C', text: '#C6C7BD', border: PALETTE[n], accent: PALETTE[n], add: '#71CD76', del: '#EF6661' };
   });
 
   var BORDER_STYLES = ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'];

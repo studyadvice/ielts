@@ -2,21 +2,27 @@
   'use strict';
   var BRAND = {
     shell:    '#C6C7BD',
-    lavender: '#C3A5E5',
-    special:  '#B3DE73',
-    warning:  '#E6374B',
-    salmon:   '#E5C3B3',
-    sky:      '#82C8E5',
-    ocean:    '#1CCAE8',
-    safe:     '#27AE60',
-    teal:     '#0DA591',
+    lavender: '#B484E8',
+    special:  '#71CD76',
+    warning:  '#EF6661',
+    salmon:   '#F79C40',
+    sky:      '#5DBAE8',
+    ocean:    '#5DBAE8',
+    safe:     '#71CD76',
+    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#D4FFFC',
-    info:     '#2351DB',
-    indigo:   '#7849C9',
+    focus:    '#DBEDD8',
+    info:     '#778CE1',
+    indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#EDA109'
+    orange:   '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   var BG     = '#0C0D0C';
@@ -295,7 +301,7 @@
     '.urm-cs-annot ul,.urm-cs-annot ol{padding-left:18px;margin-bottom:8px}',
     '.urm-cs-annot li{margin-bottom:3px}',
     '.urm-cs-annot strong,.urm-cs-annot b{color:#E3D322;font-weight:700}',
-    '.urm-cs-annot em,.urm-cs-annot i{color:#82C8E5;font-style:italic}',
+    '.urm-cs-annot em,.urm-cs-annot i{color:#5DBAE8;font-style:italic}',
     '.urm-cs-annot code{font-family:monospace;font-size:.88em;' +
       'background:#222321;padding:1px 5px;border-radius:4px}',
     '.urm-cs-annot pre{font-family:monospace;font-size:.82em;' +
@@ -868,9 +874,9 @@
   }
 
   var _cpPalette = [
-    BRAND.yellow, BRAND.sky,    BRAND.lavender, BRAND.ocean,
-    BRAND.salmon, BRAND.teal,   BRAND.focus,    BRAND.info,
-    BRAND.pink,   BRAND.orange, BRAND.indigo,   BRAND.vanilla
+    BRAND.yellow, BRAND.blue,   BRAND.violet,   BRAND.green,
+    BRAND.orange, BRAND.pink,   BRAND.red,      BRAND.indigo,
+    BRAND.vanilla, BRAND.gray
   ];
   var _cpPaletteIdx = 0;
   var _cpGroups = {};
@@ -938,9 +944,9 @@
   }
 
   var _csPalette = [
-    BRAND.sky,    BRAND.yellow, BRAND.lavender, BRAND.salmon,
-    BRAND.teal,   BRAND.focus,  BRAND.pink,     BRAND.ocean,
-    BRAND.info,   BRAND.indigo, BRAND.orange,   BRAND.vanilla
+    BRAND.blue,   BRAND.yellow, BRAND.violet,   BRAND.orange,
+    BRAND.green,  BRAND.pink,   BRAND.red,      BRAND.indigo,
+    BRAND.vanilla, BRAND.gray
   ];
 
   function initChunkSpot(el) {

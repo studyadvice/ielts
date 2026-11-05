@@ -46,21 +46,27 @@
   var BRAND = [
     ['bg', '#0C0D0C', '底層背景'],
     ['shell', '#C6C7BD', '主要文字'],
-    ['lavender', '#C3A5E5', '薰衣草紫'],
-    ['sky', '#82C8E5', '天空藍'],
-    ['warning', '#E6374B', '警告紅'],
-    ['salmon', '#E5C3B3', '鮭魚粉'],
-    ['ocean', '#1CCAE8', '海洋藍'],
-    ['safe', '#27AE60', '安全綠'],
-    ['teal', '#0DA591', '藍綠'],
+    ['lavender', '#B484E8', '薰衣草紫'],
+    ['sky', '#5DBAE8', '天空藍'],
+    ['warning', '#EF6661', '警告紅'],
+    ['salmon', '#F79C40', '鮭魚粉'],
+    ['ocean', '#5DBAE8', '海洋藍'],
+    ['safe', '#71CD76', '安全綠'],
+    ['teal', '#71CD76', '藍綠'],
     ['vanilla', '#DBEDD8', '香草綠白'],
     ['yellow', '#E3D322', '黃'],
-    ['focus', '#D4FFFC', '焦點淺青'],
-    ['special', '#B3DE73', '特別黃綠'],
-    ['info', '#4171BF', '資訊藍'],
-    ['indigo', '#7849C9', '靛紫'],
+    ['focus', '#DBEDD8', '焦點淺青'],
+    ['special', '#71CD76', '特別黃綠'],
+    ['info', '#778CE1', '資訊藍'],
+    ['indigo', '#778CE1', '靛紫'],
     ['pink', '#FF91D7', '粉紅'],
-    ['orange', '#EDA109', '橘']
+    ['orange', '#F79C40', '橘'],
+    /* 新色票 */
+    ['red', '#EF6661', '紅'],
+    ['green', '#71CD76', '綠'],
+    ['blue', '#5DBAE8', '藍'],
+    ['violet', '#B484E8', '紫'],
+    ['gray', '#86877F', '灰']
   ];
 
   function pal(a) {
@@ -73,12 +79,12 @@
   var THEMES = [
     {
       id: 'shell', name: 'Shell',
-      dark: pal(['#0C0D0C', '#161816', '#232623', '#C6C7BD', '#8F9088', '#3A3D3A', '#82C8E5', '#C3A5E5', '#E6374B', '#27AE60', '#4171BF', '#EDA109', '#D4FFFC', '#0C0D0C']),
+      dark: pal(['#0C0D0C', '#161816', '#232623', '#C6C7BD', '#8F9088', '#3A3D3A', '#5DBAE8', '#B484E8', '#EF6661', '#71CD76', '#778CE1', '#F79C40', '#DBEDD8', '#0C0D0C']),
       light: pal(['#F3F4EE', '#FFFFFF', '#E4E6DC', '#1B1D1A', '#5C5F58', '#B9BCB0', '#1A7FA8', '#7849C9', '#C4182C', '#1E8449', '#2F5AA6', '#B87800', '#0DA591', '#FFFFFF'])
     },
     {
       id: 'evernight', name: 'Evernight',
-      dark: pal(['#1A1217', '#241920', '#32232C', '#E8DDE2', '#A8939D', '#4A3641', '#E57A8C', '#C3A5E5', '#FF5A6E', '#4CC38A', '#6FA3F0', '#EDA109', '#FFD1DA', '#1A1217']),
+      dark: pal(['#1A1217', '#241920', '#32232C', '#E8DDE2', '#A8939D', '#4A3641', '#E57A8C', '#B484E8', '#FF5A6E', '#4CC38A', '#6FA3F0', '#F79C40', '#FFD1DA', '#1A1217']),
       light: pal(['#FBF3F5', '#FFFFFF', '#F3E1E6', '#2A1A20', '#75585F', '#DDBFC7', '#C2455B', '#7849C9', '#C4182C', '#1E8449', '#2F5AA6', '#B87800', '#C2455B', '#FFFFFF'])
     },
     {
@@ -98,7 +104,7 @@
     },
     {
       id: 'oled', name: 'OLED',
-      dark: pal(['#000000', '#0D0D0D', '#1A1A1A', '#E6E6E6', '#9A9A9A', '#333333', '#6EA8FF', '#B794F6', '#FF4D5E', '#34D17A', '#5B9DFF', '#FFB020', '#D4FFFC', '#000000']),
+      dark: pal(['#000000', '#0D0D0D', '#1A1A1A', '#E6E6E6', '#9A9A9A', '#333333', '#6EA8FF', '#B794F6', '#FF4D5E', '#34D17A', '#5B9DFF', '#FFB020', '#DBEDD8', '#000000']),
       light: pal(['#FFFFFF', '#F7F7F7', '#EAEAEA', '#111111', '#666666', '#CCCCCC', '#1D5FD1', '#6B3FD1', '#C4182C', '#1E8449', '#1D5FD1', '#B87800', '#0A7A6C', '#FFFFFF'])
     }
   ];

@@ -69,7 +69,7 @@
 | `ini-collapse` | （無） | 出現即預設收合。 |
 | `ini-title` | `點擊展開` | 收合標題列文字。 |
 | `ini-title-size` | `1rem` | 標題列字體大小。 |
-| `ini-title-color` | `#82C8E5` | 標題列文字色。 |
+| `ini-title-color` | `#5DBAE8` | 標題列文字色。 |
 | `ini-title-bg` | `#161816` | 標題列底色。 |
 | `keyboard` | `true` | 是否啟用鍵盤切換。 |
 
@@ -83,12 +83,12 @@
 | `dot-size` | `22px` | 數字圓點直徑。 |
 | `dot-font-size` | `0.6875rem` | 圓點內數字大小。 |
 | `label-color` | `#C6C7BD` | 未到達的階梯顏色。 |
-| `active-color` | `#82C8E5` | 已經過的階梯顏色，也是前進按鈕底色。 |
-| `current-color` | `#1CCAE8` | 目前階梯顏色。 |
+| `active-color` | `#5DBAE8` | 已經過的階梯顏色，也是前進按鈕底色。 |
+| `current-color` | `#5DBAE8` | 目前階梯顏色。 |
 | `line-style` | `solid` | 垂直線類型：`solid`、`dashed`、`dotted`、`double`。 |
 | `line-width` | `2px` | 垂直線粗細，`double` 建議 3px 以上。 |
 | `line-color` | `#C6C7BD` | 垂直線未到達段顏色。 |
-| `line-active-color` | `#82C8E5` | 垂直線已到達段顏色。 |
+| `line-active-color` | `#5DBAE8` | 垂直線已到達段顏色。 |
 
 **Pill、次標題、本文、註腳**
 
@@ -96,10 +96,10 @@
 |---|---|---|
 | `show-pill` | `true` | 是否顯示 膠囊標籤。 |
 | `pill-font-size` | `0.85rem` | 膠囊標籤 字體大小。 |
-| `pill-bg` | `#C3A5E5` | 膠囊標籤 底色。 |
+| `pill-bg` | `#B484E8` | 膠囊標籤 底色。 |
 | `pill-color` | `#0C0D0C` | 膠囊標籤 文字色。 |
 | `title-font-size` | `1.0625rem` | 次標題大小。 |
-| `title-color` | `#82C8E5` | 次標題顏色。 |
+| `title-color` | `#5DBAE8` | 次標題顏色。 |
 | `title-icon-color` | `#E3D322` | 次標題圖示統一顏色。 |
 | `body-font-size` | `1rem` | 本文大小。 |
 | `body-color` | `#C6C7BD` | 本文顏色。 |
@@ -109,7 +109,7 @@
 | `divider-style` | `solid` | 分隔線類型。 |
 | `divider-width` | `1px` | 分隔線粗細。 |
 | `divider-color` | `#C6C7BD` | 分隔線顏色。 |
-| `hl-bg` | `#B3DE73` | `<mark>` 底色。 |
+| `hl-bg` | `#71CD76` | `<mark>` 底色。 |
 | `hl-color` | `#0C0D0C` | `<mark>` 文字色。 |
 
 **進度條與按鈕**
@@ -118,7 +118,7 @@
 |---|---|---|
 | `show-progress` | `true` | 是否顯示進度條與下方文字。 |
 | `progress-height` | `6px` | 進度條粗細。 |
-| `progress-color` | `#B3DE73` | 進度條顏色，搭配 `progress-color-end` 時為漸層起點。 |
+| `progress-color` | `#71CD76` | 進度條顏色，搭配 `progress-color-end` 時為漸層起點。 |
 | `progress-color-end` | （空） | 設定後成為由左到右的雙色漸層。 |
 | `progress-track` | `#262826` | 底軌顏色，也是重來按鈕底色。 |
 | `progress-text` | `具體程度 {p}%` | 文字範本，`{p}` 百分比、`{n}` 目前階數、`{total}` 總階數。 |
@@ -178,7 +178,7 @@
 
 | 屬性 | 預設值 | 說明 |
 |---|---|---|
-| `theme` | `default` | 一次套用整組強調色，可用 `default`、`lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`yellow`、`orange`、`salmon`、`pink`、`warning`、`indigo`、`info`。名稱不存在時退回 `default`。 |
+| `theme` | `default` | 一次套用整組強調色，可用 `default`、`lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`yellow`、`orange`、`salmon`、`pink`、`warning`、`indigo`、`info`。名稱不存在時退回 `default`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
 | `margin` | `6px 12px` | 元件對外間距。 |
 | `padding` | `6px 12px` | 元件對內間距。 |
 | `bg` | `#0C0D0C` | 元件背景色。 |
@@ -192,7 +192,7 @@
 | `ini-collapse` | （無） | 出現即預設收合。 |
 | `ini-title` | `點擊展開` | 收合標題列文字。 |
 | `ini-title-size` | `1rem` | 標題列字體大小。 |
-| `ini-title-color` | `#82C8E5` | 標題列文字色。 |
+| `ini-title-color` | `#5DBAE8` | 標題列文字色。 |
 | `ini-title-bg` | `#161816` | 標題列底色。 |
 | `keyboard` | `true` | 是否啟用鍵盤切換。 |
 
@@ -205,31 +205,31 @@
 | `card-bg` | `#161816` | 卡片底色。 |
 | `card-border` | `#2A2B29` | 卡片框線。 |
 | `card-hover-border` | `#5A5B56` | 滑過時框線。 |
-| `card-active-border` | `#1CCAE8` | 選取中框線。 |
+| `card-active-border` | `#5DBAE8` | 選取中框線。 |
 | `card-radius` | `8px` | 卡片圓角。 |
 | `heading-font-size` | `0.75rem` | 卡片小標題大小。 |
-| `heading-color` | `#C3A5E5` | 卡片小標題顏色。 |
+| `heading-color` | `#B484E8` | 卡片小標題顏色。 |
 | `sentence-font-size` | `1rem` | 句子大小。 |
 | `sentence-color` | `#C6C7BD` | 句子顏色。 |
 | `sentence-line-height` | `2.1` | 句子行高。 |
 | `show-num` | `true` | 是否顯示句子編號。 |
 | `num-bg` | `#2A2B29` | 編號底色。 |
 | `num-color` | `#C6C7BD` | 編號文字色。 |
-| `num-active-bg` | `#1CCAE8` | 選取中編號底色。 |
+| `num-active-bg` | `#5DBAE8` | 選取中編號底色。 |
 | `num-active-color` | `#0C0D0C` | 選取中編號文字色。 |
 
 **亮點字詞**
 
 | 屬性 | 預設值 | 說明 |
 |---|---|---|
-| `hl-line-color` | `#B3DE73` | 亮點底線顏色。 |
+| `hl-line-color` | `#71CD76` | 亮點底線顏色。 |
 | `hl-line-style` | `solid` | 底線類型。 |
 | `hl-line-width` | `2px` | 底線粗細。 |
-| `hl-hot-bg` | `#B3DE73` | 對照中亮點底色。 |
+| `hl-hot-bg` | `#71CD76` | 對照中亮點底色。 |
 | `hl-hot-color` | `#0C0D0C` | 對照中亮點文字色。 |
 | `show-sup` | `true` | 是否顯示亮點小編號。 |
 | `sup-font-size` | `0.625rem` | 小編號大小。 |
-| `sup-color` | `#B3DE73` | 小編號顏色。 |
+| `sup-color` | `#71CD76` | 小編號顏色。 |
 
 **右側解說面板**
 
@@ -244,10 +244,10 @@
 | `summary-text` | `第 {n} 句，共 {count} 個亮點` | 摘要範本，`{n}` 目前句數、`{total}` 總句數、`{count}` 亮點數。 |
 | `summary-font-size` | `0.75rem` | 摘要大小。 |
 | `summary-color` | `#C6C7BD` | 摘要顏色。 |
-| `note-num-bg` | `#B3DE73` | 解說編號底色。 |
+| `note-num-bg` | `#71CD76` | 解說編號底色。 |
 | `note-num-color` | `#0C0D0C` | 解說編號文字色。 |
 | `note-word-size` | `0.95rem` | 解說字詞大小。 |
-| `note-word-color` | `#B3DE73` | 解說字詞顏色。 |
+| `note-word-color` | `#71CD76` | 解說字詞顏色。 |
 | `note-text-size` | `0.82rem` | 解說內文大小。 |
 | `note-text-color` | `#C6C7BD` | 解說內文顏色。 |
 | `note-divider-style` | `dashed` | 解說分隔線類型。 |
@@ -316,13 +316,15 @@
 | 標籤 | 顏色 | 標籤 | 顏色 |
 |---|---|---|---|
 | `<c1>` | shell `#C6C7BD` | `<c9>` | vanilla `#DBEDD8` |
-| `<c2>` | lavender `#C3A5E5` | `<c10>` | yellow `#E3D322` |
-| `<c3>` | sky `#82C8E5` | `<c11>` | focus `#D4FFFC` |
-| `<c4>` | warning `#E6374B` | `<c12>` | special `#B3DE73` |
-| `<c5>` | salmon `#E5C3B3` | `<c13>` | info `#4171BF` |
-| `<c6>` | ocean `#1CCAE8` | `<c14>` | indigo `#7849C9` |
-| `<c7>` | safe `#27AE60` | `<c15>` | pink `#FF91D7` |
-| `<c8>` | teal `#0DA591` | `<c16>` | orange `#EDA109` |
+| `<c2>` | violet `#B484E8` | `<c10>` | yellow `#E3D322` |
+| `<c3>` | blue `#5DBAE8` | `<c11>` | vanilla `#DBEDD8` |
+| `<c4>` | red `#EF6661` | `<c12>` | green `#71CD76` |
+| `<c5>` | orange `#F79C40` | `<c13>` | indigo `#778CE1` |
+| `<c6>` | blue `#5DBAE8` | `<c14>` | indigo `#778CE1` |
+| `<c7>` | green `#71CD76` | `<c15>` | pink `#FF91D7` |
+| `<c8>` | green `#71CD76` | `<c16>` | orange `#F79C40` |
+
+這 16 個標籤原本對應舊色票的 16 色，改用新色票後部分標籤顏色相同。
 
 ### 單位慣例
 

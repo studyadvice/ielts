@@ -33,7 +33,7 @@ class DualCell {
 
       showMenuButton:               options.showMenuButton !== false,
       menuButtonPosition:           options.menuButtonPosition  || 'right',
-      menuButtonColor:              R(options.menuButtonColor)  || tc.menuButtonColor || '#b3de73',
+      menuButtonColor:              R(options.menuButtonColor)  || tc.menuButtonColor || '#71CD76',
       menuButtonSize:               options.menuButtonSize      || '1.25rem',
       menuButtonIconPush:           options.menuButtonIconPush           || null,
       menuButtonIconPull:           options.menuButtonIconPull           || null,
@@ -47,15 +47,15 @@ class DualCell {
       targetId: options.targetId || null,
 
       overlay1Text:  options.overlay1Text  || null,
-      overlay1Color: R(options.overlay1Color) || tc.menuButtonColor || '#DECA4B',
+      overlay1Color: R(options.overlay1Color) || tc.menuButtonColor || '#E3D322',
       overlay2Text:  options.overlay2Text  || null,
-      overlay2Color: R(options.overlay2Color) || tc.menuButtonColor || '#DECA4B',
+      overlay2Color: R(options.overlay2Color) || tc.menuButtonColor || '#E3D322',
       overlayInvert: options.overlayInvert || false,
-      accentColor:   tc.menuButtonColor || R(options.menuButtonColor) || '#b3de73',
+      accentColor:   tc.menuButtonColor || R(options.menuButtonColor) || '#71CD76',
 
       groupTitleFontSize: options.groupTitleFontSize || '1.125rem',
       groupTitleColor:    R(options.groupTitleColor)   || tc.groupTitleColor   || '#1C1C1E',
-      groupTitleBgColor:  R(options.groupTitleBgColor) || tc.groupTitleBgColor || '#b3de73',
+      groupTitleBgColor:  R(options.groupTitleBgColor) || tc.groupTitleBgColor || '#71CD76',
       groupTitlePadding:  options.groupTitlePadding    || '10px 12px',
       groupIconSize:      options.groupIconSize        || '1rem',
       groupCollapsedIcon: options.groupCollapsedIcon   || null,
@@ -64,7 +64,7 @@ class DualCell {
       carouselInterval:        parseInt(options.carouselInterval)   || 4000,
       carouselIndicator:       options.carouselIndicator       !== false,
       autoRevealInterval:      parseInt(options.autoRevealInterval) || 0,
-      carouselIndicatorColor:  R(options.carouselIndicatorColor) || tc.menuButtonColor || '#b3de73',
+      carouselIndicatorColor:  R(options.carouselIndicatorColor) || tc.menuButtonColor || '#71CD76',
       carouselIndicatorHeight: options.carouselIndicatorHeight || '3px',
 
       onCellClick:   options.onCellClick   || null,
@@ -82,19 +82,25 @@ class DualCell {
 
   static getThemeConfig(name) {
     const T = {
-      lavender:  { borderColor:'#C3A5E5', cellBgColor:'#2a2435', hoverBgColor:'#3d344a', textColor:'#e8dff5', menuButtonColor:'#C3A5E5', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#C3A5E5' },
-      special:   { borderColor:'#b3de73', cellBgColor:'#2a2e1a', hoverBgColor:'#3d4329', textColor:'#edf0d9', menuButtonColor:'#b3de73', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#b3de73' },
-      warning:   { borderColor:'#F08080', cellBgColor:'#2e2422', hoverBgColor:'#443532', textColor:'#f5e8e6', menuButtonColor:'#F08080', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#F08080' },
-      sky:       { borderColor:'#0ABDC6', cellBgColor:'#182e30', hoverBgColor:'#244044', textColor:'#d9f4f5', menuButtonColor:'#0ABDC6', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#0ABDC6' },
-      safe:      { borderColor:'#299459', cellBgColor:'#1e2d25', hoverBgColor:'#2c4035', textColor:'#daf5ec', menuButtonColor:'#299459', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#299459' },
-      salmon:    { borderColor:'#E5C3B3', cellBgColor:'#2e2824', hoverBgColor:'#443d36', textColor:'#f5ede8', menuButtonColor:'#E5C3B3', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#E5C3B3' },
-      pink:      { borderColor:'#FFB3D9', cellBgColor:'#2e2228', hoverBgColor:'#44323d', textColor:'#ffe8f5', menuButtonColor:'#FFB3D9', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FFB3D9' },
-      orange:    { borderColor:'#EDA109', cellBgColor:'#2d2510', hoverBgColor:'#42381a', textColor:'#f5ece0', menuButtonColor:'#EDA109', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#EDA109' },
-      yellow:    { borderColor:'#DECA4B', cellBgColor:'#2c2d10', hoverBgColor:'#403f1a', textColor:'#f5f2d9', menuButtonColor:'#DECA4B', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#DECA4B' },
-      info:      { borderColor:'#1E65C7', cellBgColor:'#1a2540', hoverBgColor:'#263a58', textColor:'#d9e8ff', menuButtonColor:'#1E65C7', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#1E65C7' },
-      stone:     { borderColor:'#95c9de', cellBgColor:'#1e2830', hoverBgColor:'#2c3d48', textColor:'#daeaf5', menuButtonColor:'#95c9de', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#95c9de' },
+      lavender:  { borderColor:'#B484E8', cellBgColor:'#2a2435', hoverBgColor:'#3d344a', textColor:'#e8dff5', menuButtonColor:'#B484E8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#B484E8' },
+      special:   { borderColor:'#71CD76', cellBgColor:'#2a2e1a', hoverBgColor:'#3d4329', textColor:'#edf0d9', menuButtonColor:'#71CD76', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#71CD76' },
+      warning:   { borderColor:'#EF6661', cellBgColor:'#2e2422', hoverBgColor:'#443532', textColor:'#f5e8e6', menuButtonColor:'#EF6661', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#EF6661' },
+      sky:       { borderColor:'#5DBAE8', cellBgColor:'#182e30', hoverBgColor:'#244044', textColor:'#d9f4f5', menuButtonColor:'#5DBAE8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#5DBAE8' },
+      safe:      { borderColor:'#71CD76', cellBgColor:'#1e2d25', hoverBgColor:'#2c4035', textColor:'#daf5ec', menuButtonColor:'#71CD76', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#71CD76' },
+      salmon:    { borderColor:'#F79C40', cellBgColor:'#2e2824', hoverBgColor:'#443d36', textColor:'#f5ede8', menuButtonColor:'#F79C40', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#F79C40' },
+      pink:      { borderColor:'#FF91D7', cellBgColor:'#2e2228', hoverBgColor:'#44323d', textColor:'#ffe8f5', menuButtonColor:'#FF91D7', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FF91D7' },
+      orange:    { borderColor:'#F79C40', cellBgColor:'#2d2510', hoverBgColor:'#42381a', textColor:'#f5ece0', menuButtonColor:'#F79C40', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#F79C40' },
+      yellow:    { borderColor:'#E3D322', cellBgColor:'#2c2d10', hoverBgColor:'#403f1a', textColor:'#f5f2d9', menuButtonColor:'#E3D322', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#E3D322' },
+      info:      { borderColor:'#778CE1', cellBgColor:'#1a2540', hoverBgColor:'#263a58', textColor:'#d9e8ff', menuButtonColor:'#778CE1', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#778CE1' },
+      stone:     { borderColor:'#5DBAE8', cellBgColor:'#1e2830', hoverBgColor:'#2c3d48', textColor:'#daeaf5', menuButtonColor:'#5DBAE8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#5DBAE8' },
       vanilla:   { borderColor:'#DBEDD8', cellBgColor:'#1e2b1e', hoverBgColor:'#2b3d2a', textColor:'#e8f5e5', menuButtonColor:'#DBEDD8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#DBEDD8' },
-      indigo:    { borderColor:'#9B72CF', cellBgColor:'#221838', hoverBgColor:'#33254e', textColor:'#eedff8', menuButtonColor:'#9B72CF', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#9B72CF' },
+      indigo:    { borderColor:'#778CE1', cellBgColor:'#221838', hoverBgColor:'#33254e', textColor:'#eedff8', menuButtonColor:'#778CE1', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#778CE1' },
+      /* 新色票 */
+      blue:      { borderColor:'#5DBAE8', cellBgColor:'#182e30', hoverBgColor:'#244044', textColor:'#d9f4f5', menuButtonColor:'#5DBAE8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#5DBAE8' },
+      green:     { borderColor:'#71CD76', cellBgColor:'#1e2d25', hoverBgColor:'#2c4035', textColor:'#daf5ec', menuButtonColor:'#71CD76', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#71CD76' },
+      red:       { borderColor:'#EF6661', cellBgColor:'#2e2422', hoverBgColor:'#443532', textColor:'#f5e8e6', menuButtonColor:'#EF6661', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#EF6661' },
+      violet:    { borderColor:'#B484E8', cellBgColor:'#2a2435', hoverBgColor:'#3d344a', textColor:'#e8dff5', menuButtonColor:'#B484E8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#B484E8' },
+      gray:      { borderColor:'#86877F', cellBgColor:'#2a2b28', hoverBgColor:'#3a3b37', textColor:'#e2e3dc', menuButtonColor:'#86877F', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#86877F' },
       default:   { borderColor:'#C6C7BD', cellBgColor:'#333333', hoverBgColor:'#404040', textColor:'#C6C7BD', menuButtonColor:'#C6C7BD', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#C6C7BD' },
     };
     return T[name?.toLowerCase()] || T.default;
@@ -104,21 +110,27 @@ class DualCell {
     if (!color) return null;
     const M = {
       shell:     '#C6C7BD',
-      lavender:  '#C3A5E5',
-      special:   '#b3de73',
-      warning:   '#F08080',
-      salmon:    '#E5C3B3',
-      sky:       '#0ABDC6',   // ★ #95c9de → #0ABDC6
-      safe:      '#299459',
+      lavender:  '#B484E8',
+      special:   '#71CD76',
+      warning:   '#EF6661',
+      salmon:    '#F79C40',
+      sky:       '#5DBAE8',   // ★ #5DBAE8 → #5DBAE8
+      safe:      '#71CD76',
       vanilla:   '#DBEDD8',   // ★ #DBEDD8 → #DBEDD8
-      yellow:    '#DECA4B',
-      info:      '#1E65C7',   // ★ #1E65C7 → #1E65C7
-      stone:     '#95c9de',   // ★ #7090A8 → #95c9de
-      indigo:    '#9B72CF',   // ★ #9B72CF → #9B72CF
-      pink:      '#FFB3D9',
-      orange:    '#EDA109',
+      yellow:    '#E3D322',
+      info:      '#778CE1',   // ★ #778CE1 → #778CE1
+      stone:     '#5DBAE8',   // ★ #7090A8 → #5DBAE8
+      indigo:    '#778CE1',   // ★ #778CE1 → #778CE1
+      pink:      '#FF91D7',
+      orange:    '#F79C40',
       bg:        '#0C0D0C',
       area:      '#333333',
+      /* 新色票 */
+      red: '#EF6661',
+      green: '#71CD76',
+      blue: '#5DBAE8',
+      violet: '#B484E8',
+      gray: '#86877F',
     };
     return M[color.toLowerCase()] || color;
   }

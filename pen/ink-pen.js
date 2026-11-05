@@ -38,22 +38,28 @@
   'use strict';
 
   var PALETTE = {
-    bg: '#0C0D0C', shell: '#C6C7BD', lavender: '#C3A5E5', sky: '#82C8E5',
-    warning: '#E6374B', salmon: '#E5C3B3', ocean: '#1CCAE8', safe: '#27AE60',
-    teal: '#0DA591', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#D4FFFC',
-    special: '#B3DE73', info: '#4171BF', indigo: '#7849C9', pink: '#FF91D7',
-    orange: '#EDA109'
+    bg: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
+    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
+    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#DBEDD8',
+    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   var PEN_OPTIONS = [
-    ['focus', '霧白 focus'],
-    ['ocean', '海洋藍 ocean'],
+    ['vanilla', '香草白 vanilla'],
+    ['blue', '藍 blue'],
     ['yellow', '黃 yellow'],
-    ['special', '嫩綠 special'],
+    ['green', '綠 green'],
     ['pink', '粉紅 pink'],
-    ['orange', '橙 orange'],
-    ['lavender', '薰衣草 lavender'],
-    ['sky', '天空藍 sky']
+    ['orange', '橘 orange'],
+    ['violet', '紫 violet'],
+    ['red', '紅 red']
   ];
 
   var WIDTH_MIN = 3;
@@ -140,11 +146,11 @@
       + 'display:flex;align-items:center;justify-content:center;padding:0;'
       + 'background:rgba(19,20,18,0.92);border:1px solid rgba(58,59,55,0.9);'
       + 'box-shadow:0 4px 14px rgba(0,0,0,0.82);transition:border-color .15s ease;}'
-      + '.ip-dot:hover{border-color:var(--c-ocean,#1CCAE8);}'
+      + '.ip-dot:hover{border-color:var(--c-ocean,#5DBAE8);}'
       + '.ip-dot i{width:14px;height:14px;border-radius:50%;display:block;'
-      + 'background:var(--c-focus,#D4FFFC);}'
-      + '.ip-dot.ip-armed{border-color:rgba(28,202,232,0.9);'
-      + 'box-shadow:0 0 0 2px rgba(28,202,232,0.82),0 4px 14px rgba(0,0,0,0.82);}'
+      + 'background:var(--c-focus,#DBEDD8);}'
+      + '.ip-dot.ip-armed{border-color:rgba(93,186,232,0.9);'
+      + 'box-shadow:0 0 0 2px rgba(93,186,232,0.82),0 4px 14px rgba(0,0,0,0.82);}'
 
       /* ---- 主體膠囊 ---- */
       + '.ip-bar{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:22px;'
@@ -155,8 +161,8 @@
       + '.ip-btn{font-size:0.88rem;line-height:1.4;padding:5px 12px;border-radius:14px;'
       + 'border:1px solid rgba(58,59,55,0.9);background:rgba(32,33,25,0.92);'
       + 'color:var(--c-shell,#C6C7BD);cursor:pointer;white-space:nowrap;}'
-      + '.ip-btn:hover{border-color:var(--c-ocean,#1CCAE8);color:var(--c-ocean,#1CCAE8);}'
-      + '.ip-btn.ip-active{background:var(--c-teal,#0DA591);border-color:var(--c-teal,#0DA591);'
+      + '.ip-btn:hover{border-color:var(--c-ocean,#5DBAE8);color:var(--c-ocean,#5DBAE8);}'
+      + '.ip-btn.ip-active{background:var(--c-teal,#71CD76);border-color:var(--c-teal,#71CD76);'
       + 'color:#07211D;font-weight:600;}'
       + '.ip-bar select,.ip-bar input[type=number]{background:rgba(15,16,14,0.95);'
       + 'border:1px solid rgba(58,59,55,0.9);color:var(--c-shell,#C6C7BD);border-radius:12px;'
@@ -172,37 +178,37 @@
       + 'ink-handwrite{display:inline-flex;align-items:center;justify-content:center;'
       + 'vertical-align:-0.3em;height:1.55em;cursor:pointer;position:relative;'
       + 'width:calc(var(--ih-n,10) * 1.05ch);margin:0 3px;padding:0;'
-      + 'border-bottom:2px solid rgba(13,165,145,0.86);border-radius:3px 3px 0 0;'
+      + 'border-bottom:2px solid rgba(113,205,118,0.86);border-radius:3px 3px 0 0;'
       + 'transition:background .15s ease,border-color .15s ease;}'
-      + 'ink-handwrite:hover{background:rgba(13,165,145,0.2);border-color:var(--c-ocean,#1CCAE8);}'
+      + 'ink-handwrite:hover{background:rgba(113,205,118,0.2);border-color:var(--c-ocean,#5DBAE8);}'
       + 'ink-handwrite.ih-has-answer{margin-right:17px;}'
       + 'ink-handwrite .ih-clip{position:absolute;inset:0;overflow:hidden;'
       + 'display:flex;align-items:center;justify-content:center;pointer-events:none;}'
       + 'ink-handwrite .ih-icon{display:flex;align-items:center;justify-content:center;'
       + 'color:rgba(198,199,189,0.82);}'
-      + 'ink-handwrite:hover .ih-icon{color:var(--c-ocean,#1CCAE8);}'
+      + 'ink-handwrite:hover .ih-icon{color:var(--c-ocean,#5DBAE8);}'
       + 'ink-handwrite .ih-clip img{position:absolute;left:4px;top:2px;'
       + 'width:calc(100% - 8px);height:calc(100% - 6px);'
       + 'object-fit:contain;display:block;}'
-      + 'ink-handwrite.ih-filled{border-color:rgba(179,222,115,0.86);}'
+      + 'ink-handwrite.ih-filled{border-color:rgba(113,205,118,0.86);}'
       + 'ink-handwrite.ih-filled .ih-icon{display:none;}'
 
       /* ---- 解答 ---- */
       + 'ink-handwrite .ih-ans{display:none;white-space:nowrap;line-height:1.4;'
-      + 'color:var(--c-special,#B3DE73);transform-origin:center center;}'
+      + 'color:var(--c-special,#71CD76);transform-origin:center center;}'
       + 'ink-handwrite.ih-answered .ih-ans{display:block;}'
       + 'ink-handwrite.ih-answered .ih-icon{display:none;}'
       + 'ink-handwrite.ih-answered{border-bottom-width:3px;'
-      + 'border-color:rgba(179,222,115,0.86);}'
+      + 'border-color:rgba(113,205,118,0.86);}'
       /* 圓點的 z-index 高於繪圖層，所以開著筆也點得到 */
       + 'ink-handwrite .ih-dot{position:absolute;right:-13px;top:50%;'
       + 'width:9px;height:9px;margin-top:-5px;border-radius:50%;z-index:830;cursor:pointer;'
       + 'border:1px solid rgba(198,199,189,0.82);background:rgba(12,13,12,0.86);'
       + 'transition:background .12s ease,border-color .12s ease;}'
-      + 'ink-handwrite .ih-dot:hover{background:var(--c-ocean,#1CCAE8);'
-      + 'border-color:var(--c-ocean,#1CCAE8);}'
-      + 'ink-handwrite.ih-answered .ih-dot{background:var(--c-special,#B3DE73);'
-      + 'border-color:var(--c-special,#B3DE73);}'
+      + 'ink-handwrite .ih-dot:hover{background:var(--c-ocean,#5DBAE8);'
+      + 'border-color:var(--c-ocean,#5DBAE8);}'
+      + 'ink-handwrite.ih-answered .ih-dot{background:var(--c-special,#71CD76);'
+      + 'border-color:var(--c-special,#71CD76);}'
 
       /* ---- 手寫視窗 ---- */
       + 'ui-ink-modal{position:fixed;inset:0;z-index:960;display:none;'
@@ -211,7 +217,7 @@
       + '.ipm-box{background:rgba(23,24,26,0.97);border:1px solid rgba(51,52,47,0.9);'
       + 'border-radius:12px;padding:24px 28px;box-shadow:0 14px 44px rgba(0,0,0,0.86);}'
       + '.ipm-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;}'
-      + '.ipm-head h4{margin:0;font-size:1.1rem;line-height:1.4;color:var(--c-focus,#D4FFFC);}'
+      + '.ipm-head h4{margin:0;font-size:1.1rem;line-height:1.4;color:var(--c-focus,#DBEDD8);}'
       + '.ipm-head span{font-size:0.85rem;line-height:1.4;color:#9a9b94;}'
       + '.ipm-pad{position:relative;border-radius:10px;overflow:hidden;'
       + 'background:rgba(15,16,14,0.95);border:1px solid rgba(58,59,55,0.9);}'
@@ -224,9 +230,9 @@
       + 'border:1px solid rgba(58,59,55,0.9);color:var(--c-shell,#C6C7BD);border-radius:12px;'
       + 'padding:6px 10px;font-size:0.88rem;line-height:1.4;}'
       + '.ipm-foot input[type=number]{width:64px;}'
-      + '.ipm-ok{background:var(--c-teal,#0DA591);border-color:var(--c-teal,#0DA591);'
+      + '.ipm-ok{background:var(--c-teal,#71CD76);border-color:var(--c-teal,#71CD76);'
       + 'color:#07211D;font-weight:600;}'
-      + '.ipm-ok:hover{color:#07211D;border-color:var(--c-teal,#0DA591);}'
+      + '.ipm-ok:hover{color:#07211D;border-color:var(--c-teal,#71CD76);}'
 
       ;
     var style = document.createElement('style');
@@ -1309,7 +1315,7 @@
     var css = ''
       + 'dot-go{display:inline-flex;align-items:center;gap:6px;position:relative;z-index:830;'
       + 'vertical-align:middle;cursor:pointer;margin:0 3px;padding:2px 4px;border-radius:8px;'
-      + 'color:var(--dg-c,#82C8E5);line-height:1.3;user-select:none;-webkit-user-select:none;'
+      + 'color:var(--dg-c,#5DBAE8);line-height:1.3;user-select:none;-webkit-user-select:none;'
       + 'touch-action:manipulation;transition:background .12s ease;}'
       + 'dot-go:hover{background:rgba(32,33,25,0.92);}'
       + 'dot-go .dg-icon{display:flex;align-items:center;justify-content:center;flex:0 0 auto;'
@@ -1319,14 +1325,14 @@
       + 'dot-go .dg-icon svg{display:block;overflow:visible;}'
       + 'dot-go .dg-icon i.bi{display:block;line-height:1;color:currentColor;}'
       + 'dot-go .dg-icon i.bi::before{display:block;vertical-align:0;}'
-      + 'dot-go .dg-label{font-size:0.92rem;color:var(--dg-c,#82C8E5);white-space:nowrap;}'
+      + 'dot-go .dg-label{font-size:0.92rem;color:var(--dg-c,#5DBAE8);white-space:nowrap;}'
       + 'dot-go .dg-label:empty{display:none;}'
       + 'dot-go.dg-off{cursor:not-allowed;color:#6b6c66;}'
       + 'dot-go.dg-off .dg-label{color:#6b6c66;}'
       + 'dot-go.dg-off:hover .dg-icon{transform:none;}'
       /* 跳到同頁標籤時，目標閃一下外框，提示觀眾畫面落在哪裡 */
       + '.dg-flash{animation:dg-flash ' + DOT_FLASH_MS + 'ms ease-out 1;'
-      + 'outline-style:solid;outline-color:var(--dg-flash,#82C8E5);border-radius:6px;}'
+      + 'outline-style:solid;outline-color:var(--dg-flash,#5DBAE8);border-radius:6px;}'
       + '@keyframes dg-flash{'
       + '0%{outline-width:4px;outline-offset:2px;}'
       + '60%{outline-width:3px;outline-offset:8px;}'

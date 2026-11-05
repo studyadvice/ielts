@@ -3,54 +3,66 @@
   const BRAND = {
     bg:       '#0C0D0C',
     shell:    '#C6C7BD',
-    lavender: '#C3A5E5',
-    sky:      '#95C9DE',
-    warning:  '#E6374B',
-    salmon:   '#E5C3B3',
-    ocean:    '#1CCAE8',
-    safe:     '#299459',
-    teal:     '#0DA591',
+    lavender: '#B484E8',
+    sky:      '#5DBAE8',
+    warning:  '#EF6661',
+    salmon:   '#F79C40',
+    ocean:    '#5DBAE8',
+    safe:     '#71CD76',
+    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#3C7BCF',
-    info:     '#2351DB',
-    indigo:   '#7849C9',
+    focus:    '#DBEDD8',
+    info:     '#778CE1',
+    indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#EDA109',
-    special:  '#B3DE73',
+    orange:   '#F79C40',
+    special:  '#71CD76',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F',
   };
 
   const THEMES = {
-    lavender: { color: BRAND.lavender, colorActive: BRAND.special,  colorDone: BRAND.safe,   titleColor: BRAND.lavender, badgeBg: 'rgba(195,165,229,0.15)'  },
-    sky:      { color: BRAND.sky,      colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.sky,      badgeBg: 'rgba(149,201,222,0.12)'  },
-    info:     { color: BRAND.info,     colorActive: BRAND.indigo,   colorDone: BRAND.safe,   titleColor: BRAND.info,     badgeBg: 'rgba(35,81,219,0.12)'    },
-    indigo:   { color: BRAND.indigo,   colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.indigo,   badgeBg: 'rgba(120,73,201,0.12)'   },
-    ocean:    { color: BRAND.ocean,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.ocean,    badgeBg: 'rgba(28,202,232,0.12)'   },
-    teal:     { color: BRAND.teal,     colorActive: BRAND.ocean,    colorDone: BRAND.safe,   titleColor: BRAND.teal,     badgeBg: 'rgba(13,165,145,0.12)'   },
-    safe:     { color: BRAND.safe,     colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.safe,     badgeBg: 'rgba(41,148,89,0.12)'    },
+    lavender: { color: BRAND.lavender, colorActive: BRAND.blue,  colorDone: BRAND.safe,   titleColor: BRAND.lavender, badgeBg: 'rgba(180,132,232,0.15)'  },
+    sky:      { color: BRAND.sky,      colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.sky,      badgeBg: 'rgba(93,186,232,0.12)'  },
+    info:     { color: BRAND.info,     colorActive: BRAND.violet,   colorDone: BRAND.safe,   titleColor: BRAND.info,     badgeBg: 'rgba(119,140,225,0.12)'    },
+    indigo:   { color: BRAND.indigo,   colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.indigo,   badgeBg: 'rgba(119,140,225,0.12)'   },
+    ocean:    { color: BRAND.ocean,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.ocean,    badgeBg: 'rgba(93,186,232,0.12)'   },
+    teal:     { color: BRAND.teal,     colorActive: BRAND.yellow,    colorDone: BRAND.blue,   titleColor: BRAND.teal,     badgeBg: 'rgba(113,205,118,0.12)'   },
+    safe:     { color: BRAND.safe,     colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.safe,     badgeBg: 'rgba(113,205,118,0.12)'    },
     yellow:   { color: BRAND.yellow,   colorActive: BRAND.orange,   colorDone: BRAND.teal,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
-    orange:   { color: BRAND.orange,   colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.orange,   badgeBg: 'rgba(237,161,9,0.12)'    },
-    focus:    { color: BRAND.focus,    colorActive: BRAND.special,  colorDone: BRAND.teal,   titleColor: BRAND.focus,    badgeBg: 'rgba(60,123,207,0.12)'   },
-    special:  { color: BRAND.special,  colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.special,  badgeBg: 'rgba(179,222,115,0.12)'  },
+    orange:   { color: BRAND.orange,   colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.orange,   badgeBg: 'rgba(247,156,64,0.12)'    },
+    focus:    { color: BRAND.focus,    colorActive: BRAND.yellow,  colorDone: BRAND.teal,   titleColor: BRAND.focus,    badgeBg: 'rgba(219,237,216,0.12)'   },
+    special:  { color: BRAND.special,  colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.special,  badgeBg: 'rgba(113,205,118,0.12)'  },
     pink:     { color: BRAND.pink,     colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.pink,     badgeBg: 'rgba(255,145,215,0.12)'  },
-    salmon:   { color: BRAND.salmon,   colorActive: BRAND.pink,     colorDone: BRAND.teal,   titleColor: BRAND.salmon,   badgeBg: 'rgba(229,195,179,0.12)'  },
-    warning:  { color: BRAND.warning,  colorActive: BRAND.orange,   colorDone: BRAND.salmon, titleColor: BRAND.warning,  badgeBg: 'rgba(230,55,75,0.12)'    },
+    salmon:   { color: BRAND.salmon,   colorActive: BRAND.pink,     colorDone: BRAND.teal,   titleColor: BRAND.salmon,   badgeBg: 'rgba(247,156,64,0.12)'  },
+    warning:  { color: BRAND.warning,  colorActive: BRAND.orange,   colorDone: BRAND.green, titleColor: BRAND.warning,  badgeBg: 'rgba(239,102,97,0.12)'    },
     shell:    { color: BRAND.shell,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.shell,    badgeBg: 'rgba(198,199,189,0.13)'  },
-    vanilla:  { color: BRAND.vanilla,  colorActive: BRAND.focus,    colorDone: BRAND.teal,   titleColor: BRAND.vanilla,  badgeBg: 'rgba(219,237,216,0.12)'  },
+    vanilla:  { color: BRAND.vanilla,  colorActive: BRAND.blue,    colorDone: BRAND.teal,   titleColor: BRAND.vanilla,  badgeBg: 'rgba(219,237,216,0.12)'  },
+    /* 新色票 */
+    blue:     { color: BRAND.blue,     colorActive: BRAND.indigo,   colorDone: BRAND.green,  titleColor: BRAND.blue,     badgeBg: 'rgba(93,186,232,0.12)'   },
+    green:    { color: BRAND.green,    colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.green,    badgeBg: 'rgba(113,205,118,0.12)'  },
+    red:      { color: BRAND.red,      colorActive: BRAND.orange,   colorDone: BRAND.green,  titleColor: BRAND.red,      badgeBg: 'rgba(239,102,97,0.12)'   },
+    violet:   { color: BRAND.violet,   colorActive: BRAND.pink,     colorDone: BRAND.green,  titleColor: BRAND.violet,   badgeBg: 'rgba(180,132,232,0.12)'  },
+    gray:     { color: BRAND.gray,     colorActive: BRAND.blue,     colorDone: BRAND.green,  titleColor: BRAND.gray,     badgeBg: 'rgba(134,135,127,0.13)'  },
   };
 
   const defaults = {
     color:               BRAND.lavender,
-    colorActive:         BRAND.special,
+    colorActive:         BRAND.blue,
     colorDone:           BRAND.safe,
     colorError:          BRAND.warning,
     textColor:           BRAND.shell,
     titleColor:          BRAND.lavender,
-    badgeBg:             'rgba(195,165,229,0.15)',
+    badgeBg:             'rgba(180,132,232,0.15)',
     cardBg:              'rgba(12,13,12,0.55)',
-    cardBgActive:        'rgba(179,222,115,0.07)',
-    cardBgDone:          'rgba(41,148,89,0.07)',
-    cardBgError:         'rgba(230,55,75,0.07)',
+    cardBgActive:        'rgba(113,205,118,0.07)',
+    cardBgDone:          'rgba(113,205,118,0.07)',
+    cardBgError:         'rgba(239,102,97,0.07)',
     stroke:              '2px',
     radius:              '12px',
     cardWidth:           '220px',
@@ -138,11 +150,11 @@ bp-stepper {
   --bps-color-error:           ${BRAND.warning};
   --bps-text:                  ${BRAND.shell};
   --bps-title:                 ${BRAND.lavender};
-  --bps-badge-bg:              rgba(195,165,229,0.15);
+  --bps-badge-bg:              rgba(180,132,232,0.15);
   --bps-card-bg:               rgba(12,13,12,0.55);
-  --bps-card-bg-act:           rgba(179,222,115,0.07);
-  --bps-card-bg-done:          rgba(41,148,89,0.07);
-  --bps-card-bg-err:           rgba(230,55,75,0.07);
+  --bps-card-bg-act:           rgba(113,205,118,0.07);
+  --bps-card-bg-done:          rgba(113,205,118,0.07);
+  --bps-card-bg-err:           rgba(239,102,97,0.07);
   --bps-stroke:                2px;
   --bps-radius:                8px;
   --bps-width:                 300px;
@@ -1202,7 +1214,7 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
 
     Object.entries(DATA_MAP).forEach(([key, cssVar]) => {
       let val = el.dataset[key] !== undefined ? el.dataset[key] : cfg[key];
-      // ★ 解析 BRAND 色名別名（e.g. 'salmon' → '#E5C3B3'，'ocean' → '#1CCAE8'）
+      // ★ 解析 BRAND 色名別名（e.g. 'salmon' → '#F79C40'，'ocean' → '#5DBAE8'）
       //   data-color-active / data-color-done 等直接填色名時，原本會以字串形式寫入
       //   CSS 變數，導致：
       //     • 碰巧是 CSS 原生色名（如 salmon）→ 顯示錯誤顏色

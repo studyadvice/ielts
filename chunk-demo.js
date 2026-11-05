@@ -92,7 +92,7 @@ chunk-demo { display: block; }
 .cd-h-lbl {
   font-size: .7rem; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase;
-  color: #95C9DE;
+  color: #5DBAE8;
 }
 
 .cd-lv {
@@ -120,7 +120,7 @@ chunk-demo { display: block; }
 .cd-preview {
   margin-top: 1px; padding: 3px;
   margin-left: var(--pv-indent, 0px);
-  border-left: 3px solid var(--pvb, #B3DE73);
+  border-left: 3px solid var(--pvb, #71CD76);
   border-radius: 0 6px 6px 0;
   background: var(--pvbg, rgba(255,255,255,.035));
 }
@@ -261,33 +261,39 @@ chunk-demo { display: block; }
   const DEFAULTS = {
     themes: {
       shell:    { border: '#C6C7BD', text: '#C6C7BD', bg: 'rgba(198,199,189,.09)' },
-      lavender: { border: '#C3A5E5', text: '#C3A5E5', bg: 'rgba(195,165,229,.09)' },
-      special:  { border: '#B3DE73', text: '#B3DE73', bg: 'rgba(179,222,115,.09)' },
-      warning:  { border: '#E6374B', text: '#E6374B', bg: 'rgba(230,55,75,.09)'   },
-      salmon:   { border: '#E5C3B3', text: '#E5C3B3', bg: 'rgba(229,195,179,.09)' },
-      sky:      { border: '#95C9DE', text: '#95C9DE', bg: 'rgba(149,201,222,.09)' },
-      safe:     { border: '#299459', text: '#299459', bg: 'rgba(41,148,89,.09)'   },
+      lavender: { border: '#B484E8', text: '#B484E8', bg: 'rgba(180,132,232,.09)' },
+      special:  { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)' },
+      warning:  { border: '#EF6661', text: '#EF6661', bg: 'rgba(239,102,97,.09)'   },
+      salmon:   { border: '#F79C40', text: '#F79C40', bg: 'rgba(247,156,64,.09)' },
+      sky:      { border: '#5DBAE8', text: '#5DBAE8', bg: 'rgba(93,186,232,.09)' },
+      safe:     { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)'   },
       vanilla:  { border: '#DBEDD8', text: '#DBEDD8', bg: 'rgba(219,237,216,.09)' },
-      focus:    { border: '#3C7BCF', text: '#3C7BCF', bg: 'rgba(60,123,207,.09)'  },
+      focus:    { border: '#DBEDD8', text: '#DBEDD8', bg: 'rgba(219,237,216,.09)'  },
       yellow:   { border: '#E3D322', text: '#E3D322', bg: 'rgba(227,211,34,.09)'  },
-      info:     { border: '#2351DB', text: '#2351DB', bg: 'rgba(35,81,219,.09)'   },
-      indigo:   { border: '#7849C9', text: '#7849C9', bg: 'rgba(120,73,201,.09)'  },
+      info:     { border: '#778CE1', text: '#778CE1', bg: 'rgba(119,140,225,.09)'   },
+      indigo:   { border: '#778CE1', text: '#778CE1', bg: 'rgba(119,140,225,.09)'  },
       pink:     { border: '#FF91D7', text: '#FF91D7', bg: 'rgba(255,145,215,.09)' },
-      orange:   { border: '#EDA109', text: '#EDA109', bg: 'rgba(237,161,9,.09)'   },
+      orange:   { border: '#F79C40', text: '#F79C40', bg: 'rgba(247,156,64,.09)'   },
+      /* 新色票 */
+      red:      { border: '#EF6661', text: '#EF6661', bg: 'rgba(239,102,97,.09)'   },
+      green:    { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)'  },
+      blue:     { border: '#5DBAE8', text: '#5DBAE8', bg: 'rgba(93,186,232,.09)'   },
+      violet:   { border: '#B484E8', text: '#B484E8', bg: 'rgba(180,132,232,.09)'  },
+      gray:     { border: '#86877F', text: '#86877F', bg: 'rgba(134,135,127,.09)'  },
     },
     defaultTheme:     'special',
     chunkBorderWidth: '1.5px',
     chunkBorderStyle: 'solid',
 
     levelDotColors: {
-      1: '#299459',
+      1: '#71CD76',
       2: '#E3D322',
-      3: '#C3A5E5',
-      4: '#1CCAE8',
-      5: '#E6374B',
-      6: '#EDA109',
+      3: '#B484E8',
+      4: '#5DBAE8',
+      5: '#EF6661',
+      6: '#F79C40',
       7: '#FF91D7',
-      8: '#95C9DE',
+      8: '#778CE1',
     },
 
     fixedTextColor:     '#C6C7BD',

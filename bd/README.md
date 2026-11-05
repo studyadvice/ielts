@@ -30,7 +30,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 品牌色名稱或色碼，可加 `-outline` 後綴 | `shell` | 主題色，例如 `sky`、`sky-outline`。可用名稱：`shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`ocean`、`safe`、`vanilla`、`yellow`、`focus`、`info`、`stone`、`teal`、`indigo`、`pink`、`orange`。 |
+| `theme` | 品牌色名稱或色碼，可加 `-outline` 後綴 | `shell` | 主題色，例如 `sky`、`sky-outline`。可用名稱：`shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`ocean`、`safe`、`vanilla`、`yellow`、`focus`、`info`、`stone`、`teal`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
 | `outline` | `true` | `false` | 外框樣式，與 `theme="xxx-outline"` 效果相同。 |
 | `size` | `xs`、`sm`、`md`、`re`、`lg`、`xl` | `re` | 尺寸。`re` 為 1.01rem，`lg` 為 1.363rem，`xl` 為 1.758rem，`md` 保留給舊頁面。 |
 | `font-size` | 長度 | 無 | 自訂字級，覆蓋 `size` 的字級。 |

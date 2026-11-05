@@ -63,7 +63,7 @@
 | `slide-font-family` | 繼承 | 內容字體。 |
 | `surface-bg` | 自動推算 | 內容區底色。 |
 | `dot-color` | `rgba(12,13,12,.78)` | 一般圓點顏色。 |
-| `dot-active-color` | `#D4FFFC` | 目前圓點顏色。 |
+| `dot-active-color` | `#DBEDD8` | 目前圓點顏色。 |
 | `badge-color` | `rgba(198,199,189,.78)` | 頁碼文字色。 |
 | `badge-font-size` | `.6rem` | 頁碼字級。 |
 | `badge-font-family` | `monospace` | 頁碼字體。 |
@@ -193,7 +193,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | `lavender`、`special`、`warning`、`sky`、`safe`、`salmon`、`pink`、`orange`、`yellow`、`info`、`stone`、`vanilla`、`indigo` | 中性灰 | 一次套用外框、格子底色、文字、按鈕與群組標題的配色。 |
+| `theme` | `lavender`、`special`、`warning`、`sky`、`safe`、`salmon`、`pink`、`orange`、`yellow`、`info`、`stone`、`vanilla`、`indigo` | 中性灰 | 一次套用外框、格子底色、文字、按鈕與群組標題的配色。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
 | `cols` | 整數 | `2` | 未用 `<dual-row>` 時，每列幾格。 |
 | `col-widths` | 例如 `1:2` | 平均 | 欄寬比例。 |
 | `cell-min-height` | 長度 | `40px` | 格子最小高度。 |
@@ -217,7 +217,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 | --- | --- | --- | --- |
 | `show-menu-button` | `false` | 顯示 | 隱藏所有功能按鈕。 |
 | `menu-button-position` | `left`、`right` | `right` | 按鈕位置。 |
-| `menu-button-color` | 顏色 | `#b3de73` | 按鈕顏色。 |
+| `menu-button-color` | 顏色 | `#71CD76` | 按鈕顏色。 |
 | `menu-button-size` | 長度 | `1.25rem` | 按鈕大小。 |
 | `menu-button-icon-push`、`-pull`、`-copy`、`-swap`、`-clear`、`-toggle`、`-toggle-expanded`、`-put`、`-show-next` | Bootstrap Icons 類別 | 無 | 各動作的按鈕圖示，例如 `menu-button-icon-copy="bi-clipboard"`。 |
 
@@ -278,7 +278,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 - **八種動作**：`push` 把格子內容放進外部目標；`pull` 把外部目標的內容拉進格子；`copy` 複製格子文字；`swap` 與右側（最後一格則左側）格子交換內容；`clear` 確認後清空；`toggle` 在列下方展開或收起附屬內容（優先使用 `<dual-slot>`，沒有時讀取 `target`）；`put` 把內容放進 id 為 `target` 的另一格；`show-next` 顯示下一個隱藏列。
 - **雙層遮罩**：設了 `overlay-1-text` 的格子先被遮住，點一下移除第一層；有第二層時再點一下才完全揭曉。
 - **兩種逐列揭示**：`auto-reveal-interval` 從載入開始，依固定間隔逐列顯示；`auto-reveal-delay` 則是某一列被顯示（例如按了 `show-next`）之後，接著自動顯示下一列。
-- **顏色名稱**：顏色屬性可填 `shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`safe`、`vanilla`、`yellow`、`info`、`stone`、`indigo`、`pink`、`orange`、`bg`、`area` 或任意色碼。
+- **顏色名稱**：顏色屬性可填 `shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`safe`、`vanilla`、`yellow`、`info`、`stone`、`indigo`、`pink`、`orange`、`bg`、`area` 或任意色碼。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
 - **建立時機**：屬性只在連到畫面時讀取一次。
 
 ### 範例

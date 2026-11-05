@@ -156,21 +156,27 @@ class SliderShow extends HTMLElement {
       'background': '#0C0D0C',
       'fill': '#1A1B1A',
       'shell': '#C6C7BD',
-      'lavender': '#C3A5E5',
-      'sky': '#82C8E5',
-      'warning': '#E6374B',
-      'salmon': '#E5C3B3',
-      'ocean': '#1CCAE8',
-      'safe': '#27AE60',
-      'teal': '#0DA591',
+      'lavender': '#B484E8',
+      'sky': '#5DBAE8',
+      'warning': '#EF6661',
+      'salmon': '#F79C40',
+      'ocean': '#5DBAE8',
+      'safe': '#71CD76',
+      'teal': '#71CD76',
       'vanilla': '#DBEDD8',
       'yellow': '#E3D322',
-      'focus': '#D4FFFC',
-      'special': '#B3DE73',
-      'info': '#4171BF',
-      'indigo': '#7849C9',
+      'focus': '#DBEDD8',
+      'special': '#71CD76',
+      'info': '#778CE1',
+      'indigo': '#778CE1',
       'pink': '#FF91D7',
-      'orange': '#EDA109'
+      'orange': '#F79C40',
+      /* 新色票 */
+      'red': '#EF6661',
+      'green': '#71CD76',
+      'blue': '#5DBAE8',
+      'violet': '#B484E8',
+      'gray': '#86877F'
     };
 
     if (brandColors[colorValue.toLowerCase()]) {
@@ -1079,7 +1085,7 @@ class SliderShow extends HTMLElement {
     if (endStyle !== 'none') this.dataset.endStyle = endStyle; else delete this.dataset.endStyle;
 
     const [startColorA, startColorB] = this.parseColorPair(this.getAttribute('start-colors'), ['lavender', 'sky']);
-    const [endColorA, endColorB] = this.parseColorPair(this.getAttribute('end-colors'), ['safe', 'teal']);
+    const [endColorA, endColorB] = this.parseColorPair(this.getAttribute('end-colors'), ['green', 'blue']);
 
     // 使用 CSS 變數設定此元件的顏色
     this.style.setProperty('--theme-color', themeColor);
@@ -1168,7 +1174,7 @@ class SliderShow extends HTMLElement {
 
         slider-show .slide-subtitle {
           font-size: 1.2rem;
-          color: var(--fontcolor-subtitle, #C3A5E5);
+          color: var(--fontcolor-subtitle, #B484E8);
           font-weight: 500;
           padding-bottom: 6px;
           border-bottom: 2px solid rgba(198, 199, 189, 0.82);
@@ -1196,7 +1202,7 @@ class SliderShow extends HTMLElement {
 
         slider-show .slide-footer {
           font-size: 0.9rem;
-          color: var(--fontcolor-footer, #82C8E5);
+          color: var(--fontcolor-footer, #5DBAE8);
           padding-top: 6px;
           border-top: 1px solid rgba(198, 199, 189, 0.82);
         }
@@ -1281,9 +1287,9 @@ class SliderShow extends HTMLElement {
         }
 
         .extra-note-trigger:hover {
-          text-decoration-color: var(--extra-note-hover-color, #B3DE73);
+          text-decoration-color: var(--extra-note-hover-color, #71CD76);
           text-decoration-thickness: 3px;
-          color: var(--extra-note-hover-color, #B3DE73);
+          color: var(--extra-note-hover-color, #71CD76);
         }
 
         .extra-note-content {
@@ -1304,7 +1310,7 @@ class SliderShow extends HTMLElement {
         }
 
         .extra-note-content strong {
-          color: #B3DE73;
+          color: #71CD76;
           font-weight: 600;
         }
 
@@ -1414,11 +1420,11 @@ class SliderShow extends HTMLElement {
         }
 
         .quiz-result-item.correct {
-          border-left: 3px solid #27AE60;
+          border-left: 3px solid #71CD76;
         }
 
         .quiz-result-item.incorrect {
-          border-left: 3px solid #E6374B;
+          border-left: 3px solid #EF6661;
         }
 
         .quiz-result-icon {
@@ -1428,11 +1434,11 @@ class SliderShow extends HTMLElement {
         }
 
         .quiz-result-item.correct .quiz-result-icon {
-          color: #27AE60;
+          color: #71CD76;
         }
 
         .quiz-result-item.incorrect .quiz-result-icon {
-          color: #E6374B;
+          color: #EF6661;
         }
 
         .quiz-result-label {
@@ -1447,7 +1453,7 @@ class SliderShow extends HTMLElement {
 
         .quiz-result-user strong,
         .quiz-result-correct strong {
-          color: #B3DE73;
+          color: #71CD76;
           font-weight: 600;
         }
 
@@ -1634,11 +1640,11 @@ class SliderShow extends HTMLElement {
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         slider-show .finish-btn {
-          background: var(--finish-btn-bg, #27AE60);
+          background: var(--finish-btn-bg, #71CD76);
           color: var(--finish-btn-color, #0C0D0C);
         }
         slider-show .restart-btn {
-          background: var(--restart-btn-bg, #4171BF);
+          background: var(--restart-btn-bg, #778CE1);
           color: var(--restart-btn-color, #C6C7BD);
         }
 

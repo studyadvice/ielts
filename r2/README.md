@@ -41,7 +41,7 @@
 
 數字型的尺寸屬性單位為 px，字體大小屬性單位為 rem；也可以直接填任何 CSS 值。顏色屬性可填配色名稱或色碼。
 
-配色名稱：`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`special`、`info`、`indigo`、`pink`、`orange`。
+配色名稱：`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`special`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
 
 ### `<layer-switch>`
 

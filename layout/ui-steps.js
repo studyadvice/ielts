@@ -12,13 +12,20 @@
 
   /* ---------- 配色與圖形 ---------- */
   const PALETTE = {
-    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#C3A5E5', sky: '#82C8E5',
-    warning: '#E6374B', salmon: '#E5C3B3', ocean: '#1CCAE8', safe: '#27AE60',
-    teal: '#0DA591', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#D4FFFC',
-    special: '#B3DE73', info: '#92B5E0', indigo: '#7849C9', pink: '#FF91D7',
-    orange: '#EDA109'
+    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
+    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
+    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#DBEDD8',
+    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
-  const LIGHT_TEXT = new Set(['warning', 'indigo', 'teal', 'safe']);
+  /* 新色票都偏亮，實心底一律用深色字 */
+  const LIGHT_TEXT = new Set([]);
   const ARROW_SVG = {
     arrow: '<path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>',
     chevron: '<path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',

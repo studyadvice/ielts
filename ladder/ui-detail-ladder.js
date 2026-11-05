@@ -2,8 +2,8 @@
   if (customElements.get('ui-detail-ladder')) return;
 
   const PALETTE = [
-    '#C6C7BD', '#C3A5E5', '#82C8E5', '#E6374B', '#E5C3B3', '#1CCAE8', '#27AE60', '#0DA591',
-    '#DBEDD8', '#E3D322', '#D4FFFC', '#B3DE73', '#4171BF', '#7849C9', '#FF91D7', '#EDA109'
+    '#C6C7BD', '#B484E8', '#5DBAE8', '#EF6661', '#F79C40', '#5DBAE8', '#71CD76', '#71CD76',
+    '#DBEDD8', '#E3D322', '#DBEDD8', '#71CD76', '#778CE1', '#778CE1', '#FF91D7', '#F79C40'
   ];
 
   const CSS_ATTRS = {
@@ -20,17 +20,17 @@
     'dot-size': '22px',
     'dot-font-size': '0.6875rem',
     'label-color': '#C6C7BD',
-    'active-color': '#82C8E5',
-    'current-color': '#1CCAE8',
+    'active-color': '#5DBAE8',
+    'current-color': '#5DBAE8',
     'line-style': 'solid',
     'line-width': '2px',
     'line-color': '#C6C7BD',
-    'line-active-color': '#82C8E5',
+    'line-active-color': '#5DBAE8',
     'pill-font-size': '0.85rem',
-    'pill-bg': '#C3A5E5',
+    'pill-bg': '#B484E8',
     'pill-color': '#0C0D0C',
     'title-font-size': '1.0625rem',
-    'title-color': '#82C8E5',
+    'title-color': '#5DBAE8',
     'body-font-size': '1rem',
     'body-color': '#C6C7BD',
     'note-font-size': '0.85rem',
@@ -38,10 +38,10 @@
     'divider-style': 'solid',
     'divider-width': '1px',
     'divider-color': '#C6C7BD',
-    'hl-bg': '#B3DE73',
+    'hl-bg': '#71CD76',
     'hl-color': '#0C0D0C',
     'progress-height': '6px',
-    'progress-color': '#B3DE73',
+    'progress-color': '#71CD76',
     'progress-color-end': '',
     'progress-track': '#262826',
     'progress-text-size': '0.75rem',
@@ -49,7 +49,7 @@
     'button-font-size': '0.875rem',
     'title-icon-color': '#E3D322',
     'ini-title-size': '1rem',
-    'ini-title-color': '#82C8E5',
+    'ini-title-color': '#5DBAE8',
     'ini-title-bg': '#161816'
   };
 

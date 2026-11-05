@@ -143,21 +143,21 @@
 
 | 主題名稱 | 邊框色 | 備註 |
 |---|---|---|
-| `dark`、`lavender`、`accent` | `#C3A5E5` | 預設主題 |
-| `sky` | `#82C8E5` | |
-| `ocean` | `#1CCAE8` | |
-| `warning`、`wrong` | `#E6374B` | |
-| `success`、`safe`、`correct` | `#27AE60` | |
-| `special`、`highlight` | `#B3DE73` | |
+| `dark`、`lavender`、`accent` | `#B484E8` | 預設主題 |
+| `sky` | `#5DBAE8` | |
+| `ocean` | `#5DBAE8` | |
+| `warning`、`wrong` | `#EF6661` | |
+| `success`、`safe`、`correct` | `#71CD76` | |
+| `special`、`highlight` | `#71CD76` | |
 | `note`、`yellow` | `#E3D322` | |
-| `salmon` | `#E5C3B3` | |
+| `salmon` | `#F79C40` | |
 | `pink` | `#FF91D7` | |
-| `orange` | `#EDA109` | |
+| `orange` | `#F79C40` | |
 | `vanilla` | `#DBEDD8` | |
-| `teal` | `#0DA591` | |
-| `focus` | `#D4FFFC` | |
-| `indigo` | `#7849C9` | |
-| `info` | `#4171BF` | |
+| `teal` | `#71CD76` | |
+| `focus` | `#DBEDD8` | |
+| `indigo` | `#778CE1` | |
+| `info` | `#778CE1` | |
 | `gold` | `#C9973F` | 內建電流動畫 |
 
 ### 全域設定
@@ -184,8 +184,8 @@ PopoverConfig.set({
 ```js
 PopoverConfig.addTheme('brand', {
   bg: '#0e0a18',          // 背景色
-  titleColor: '#C3A5E5',  // 標題文字與輪播按鈕色
-  borderColor: '#7849C9'  // 邊框、箭頭與分隔線色
+  titleColor: '#B484E8',  // 標題文字與輪播按鈕色
+  borderColor: '#778CE1'  // 邊框、箭頭與分隔線色
 });
 ```
 
@@ -214,7 +214,7 @@ BpPopnote.clearAnnotations('#article');  // 清除指定範圍內的加註，不
 
 `gold` 主題有四層效果，全部以實色繪製：
 
-1. **電流環**：一段亮光沿著邊框繞行，亮點是淺青色 `#D4FFFC`，拖尾由金色漸變到暗金色。
+1. **電流環**：一段亮光沿著邊框繞行，亮點是淺青色 `#DBEDD8`，拖尾由金色漸變到暗金色。
 2. **電光線**：標題下方有一道光點由左向右流動，Modal 與 Offcanvas 的標題列同樣有。
 3. **閃電**：標題旁的閃電圖示會不規則閃爍。
 4. **光暈**：邊框外的金色光暈忽強忽弱。
@@ -246,10 +246,10 @@ Popover、輪播、固定面板、Modal、Offcanvas 五種呈現都支援。
 ```js
 PopoverConfig.addTheme('emerald-volt', {
   bg: '#06140E',
-  titleColor: '#B3DE73',
-  borderColor: '#27AE60',
+  titleColor: '#71CD76',
+  borderColor: '#71CD76',
   fx: 'electric',      // 動畫種類，目前只有 electric
-  fxCore: '#D4FFFC',   // 電流亮點色，不填時為 #D4FFFC
+  fxCore: '#DBEDD8',   // 電流亮點色，不填時為 #DBEDD8
   fxDim: '#0E4A29'     // 電流環暗部色，不填時由 borderColor 混黑計算
 });
 ```
@@ -281,7 +281,7 @@ PopoverConfig.addTheme('emerald-volt', {
 
 預設圖示：`announcement` 為 `bi-megaphone-fill`，`promo` 為 `bi-tag-fill`，`sticky` 為 `bi-info-circle-fill`。
 
-`color` 可以填的名稱有 `lavender`、`sky`、`ocean`、`safe`、`special`、`yellow`、`salmon`、`pink`、`orange`、`vanilla`、`teal`、`focus`、`indigo`、`info`、`wrong`、`warning`（等同 `yellow`）以及 `gold`。`gold` 有深金底色與緩慢掃過的閃光。
+`color` 可以填的名稱有 `lavender`、`sky`、`ocean`、`safe`、`special`、`yellow`、`salmon`、`pink`、`orange`、`vanilla`、`teal`、`focus`、`indigo`、`info`、`wrong`、`warning`（等同 `yellow`）以及 `gold`。`gold` 有深金底色與緩慢掃過的閃光。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
 
 ### 事件
 
@@ -309,7 +309,7 @@ BpNotice.colorMap;                       // color 屬性可用的名稱對照
 公告列的底色、文字色與邊框色讀取 CSS 變數 `--area`、`--shell`、`--card-border`，沒有定義時使用內建預設值。也可以直接改設定後重新注入樣式：
 
 ```js
-BpNotice.config.theme.accent = '#82C8E5';
+BpNotice.config.theme.accent = '#5DBAE8';
 BpNotice.config.stickyOffset = '56px';   // 黏頂或黏底公告與視窗邊緣的距離
 BpNotice._reCSS();
 ```
@@ -446,13 +446,13 @@ function loadUnit(id) {
 
 ```js
 PopoverConfig.addTheme('member', {
-  bg: '#0e0a18', titleColor: '#C3A5E5', borderColor: '#7849C9',
+  bg: '#0e0a18', titleColor: '#B484E8', borderColor: '#778CE1',
   fx: 'electric', fxCore: '#FF91D7', fxDim: '#2A1850'
 });
 ```
 
 ```html
-<span data-popover-theme="member" data-popover-color="#7849C9"
+<span data-popover-theme="member" data-popover-color="#778CE1"
       data-popover-title="會員專屬" data-popover-content="登入後即可使用。">會員功能</span>
 ```
 

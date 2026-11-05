@@ -3,30 +3,37 @@
 
   var BRAND = {
     shell:    '#C6C7BD',
-    lavender: '#C3A5E5',
-    special:  '#B3DE73',
-    warning:  '#E6374B',
-    salmon:   '#E5C3B3',
-    sky:      '#82C8E5',
-    ocean:    '#1CCAE8',
-    safe:     '#27AE60',
+    lavender: '#B484E8',
+    special:  '#71CD76',
+    warning:  '#EF6661',
+    salmon:   '#F79C40',
+    sky:      '#5DBAE8',
+    ocean:    '#5DBAE8',
+    safe:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    info:     '#4171BF',
-    indigo:   '#7849C9',
+    info:     '#778CE1',
+    indigo:   '#778CE1',
     pink:     '#FF91D7',
-    focus:    '#D4FFFC',
-    orange:   '#EDA109',
-    teal:     '#0DA591'
+    focus:    '#DBEDD8',
+    orange:   '#F79C40',
+    teal:     '#71CD76',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   var BG = '#0C0D0C';
 
-  /* 文字色彩快捷標籤：<c1>～<c16> 依 BRAND 的定義順序對應品牌色彩
-     c1 shell      c2 lavender  c3 special  c4 warning
-     c5 salmon     c6 sky       c7 ocean    c8 safe
-     c9 vanilla    c10 yellow   c11 info    c12 indigo
-     c13 pink      c14 focus    c15 orange  c16 teal
+  /* 文字色彩快捷標籤：<c1>～<c21> 依 BRAND 的定義順序對應品牌色彩（括號內為新色票的顏色）
+     c1 shell            c2 lavender(violet)  c3 special(green)  c4 warning(red)
+     c5 salmon(orange)   c6 sky(blue)         c7 ocean(blue)     c8 safe(green)
+     c9 vanilla          c10 yellow           c11 info(indigo)   c12 indigo
+     c13 pink            c14 focus(vanilla)   c15 orange         c16 teal(green)
+     c17 red             c18 green            c19 blue           c20 violet        c21 gray
      可以寫在 ui-col、cell-item 的內容，以及 extra-info 的來源區塊裡 */
   var C_TAGS = Object.keys(BRAND);
 
@@ -143,12 +150,12 @@
   }
 
   var MASK_GRADIENTS = {
-    '1': 'linear-gradient(135deg,#0d0814 0%,#1e1040 45%,#7849C9 100%)',
-    '2': 'linear-gradient(135deg,#041418 0%,#073540 45%,#1CCAE8 100%)',
-    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#EDA109 100%)',
+    '1': 'linear-gradient(135deg,#0d0814 0%,#1e1040 45%,#778CE1 100%)',
+    '2': 'linear-gradient(135deg,#041418 0%,#073540 45%,#5DBAE8 100%)',
+    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#F79C40 100%)',
     '4': 'linear-gradient(135deg,#1a060e 0%,#5e1535 50%,#FF91D7 100%)',
-    '5': 'linear-gradient(135deg,#041208 0%,#083820 50%,#0DA591 100%)',
-    '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#4171BF 80%,#7849C9 100%)'
+    '5': 'linear-gradient(135deg,#041208 0%,#083820 50%,#71CD76 100%)',
+    '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#778CE1 80%,#778CE1 100%)'
   };
 
   var MASK_GRAD_TEXT = '#DBEDD8';
@@ -437,7 +444,7 @@
     '@keyframes uit-zap{0%,100%{transform:none}25%{transform:rotate(-14deg) scale(1.25)}60%{transform:rotate(10deg) scale(1.15)}}',
     '.uit-fb.is-play i{display:inline-block;animation:uit-zap .45s ease}',
     '@keyframes uit-fberr{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}',
-    '.uit-fb.is-err{color:#E6374B;animation:uit-fberr .3s ease 2}',
+    '.uit-fb.is-err{color:#EF6661;animation:uit-fberr .3s ease 2}',
 
     /* ui-trans 行內翻譯：五種標示樣式，色彩由 --uit-trc 決定 */
     'ui-trans{display:inline}',
@@ -1916,8 +1923,8 @@
   /* ---------- 注意力動畫（彩虹光帶繞格子） ---------- */
 
   /* 彩虹順序用品牌色：warning 紅、orange 橙、yellow 黃、safe 綠、ocean 青、info 藍、indigo 靛、pink 紫，最後回到紅 */
-  var FLASH_COLORS = [BRAND.warning, BRAND.orange, BRAND.yellow, BRAND.safe,
-                      BRAND.ocean, BRAND.info, BRAND.indigo, BRAND.pink, BRAND.warning];
+  var FLASH_COLORS = [BRAND.red, BRAND.orange, BRAND.yellow, BRAND.green,
+                      BRAND.blue, BRAND.indigo, BRAND.violet, BRAND.pink, BRAND.red];
 
   /* 粗細：純數字或 px */
   function parsePx(v) {

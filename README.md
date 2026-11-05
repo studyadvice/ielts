@@ -17,8 +17,24 @@
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題。 |
 | `ui-plus.js` | `<ui-cluster>` `<read-pulse>` `<chalk-mark>` `<col-pair>` `<chunk-spot>` `<ui-btn>` | 概念聚合圖、閱讀輔助標記與展開按鈕。 |
 
+## 色名對照
+
+所有元件（含子資料夾）使用同一套色名：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`。舊色名仍可使用，會自動對應到新色：
+
+| 舊色名 | 對應到 |
+| --- | --- |
+| `sky`、`ocean`、`stone` | `blue` |
+| `safe`、`teal`、`special` | `green` |
+| `warning` | `red` |
+| `lavender` | `violet` |
+| `info`、`bluebell` | `indigo` |
+| `salmon` | `orange` |
+| `focus` | `vanilla` |
+| `attention` | `yellow` |
+
 ## 目錄
 
+- [色名對照](#色名對照)
 - [arrow-flow.js](#arrow-flowjs)
 - [bp-stepper.js](#bp-stepperjs)
 - [card-toggle.js](#card-togglejs)
@@ -232,12 +248,12 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `data-color` | `lavender` | 一般狀態的邊框、連接線與編號圓圈色。 |
-| `data-color-active` | `special` | 進行中狀態的顏色。 |
+| `data-color-active` | `blue` | 進行中狀態的顏色。 |
 | `data-color-done` | `safe` | 完成狀態的顏色。 |
 | `data-color-error` | `warning` | 錯誤狀態的顏色。 |
 | `data-text-color` | `shell` | 內文顏色。 |
 | `data-title-color` | `lavender` | 標題顏色。 |
-| `data-badge-bg` | `rgba(195,165,229,0.15)` | 編號圓圈底色。 |
+| `data-badge-bg` | `rgba(180,132,232,0.15)` | 編號圓圈底色。 |
 | `data-card-bg` | `rgba(12,13,12,0.55)` | 一般卡片底色。 |
 | `data-card-bg-active` | 自動推算 | 進行中卡片底色。 |
 | `data-card-bg-done` | 自動推算 | 完成卡片底色。 |
@@ -279,7 +295,7 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 
 ### 屬性解說
 
-- **主題**：`data-theme` 一次設定一般色、進行中色、完成色、標題色與編號圓圈底色。可用名稱有 `lavender`、`sky`、`info`、`indigo`、`ocean`、`teal`、`safe`、`yellow`、`orange`、`focus`、`special`、`pink`、`salmon`、`warning`、`shell`、`vanilla`。套用主題後，個別的 `data-color-*` 仍可再覆寫。
+- **主題**：`data-theme` 一次設定一般色、進行中色、完成色、標題色與編號圓圈底色。可用名稱有 `lavender`、`sky`、`info`、`indigo`、`ocean`、`teal`、`safe`、`yellow`、`orange`、`focus`、`special`、`pink`、`salmon`、`warning`、`shell`、`vanilla`。套用主題後，個別的 `data-color-*` 仍可再覆寫。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
 - **卡片底色自動推算**：只覆寫 `data-color-active`、`data-color-done` 或 `data-color-error`，而沒有指定對應的 `data-card-bg-*` 時，元件會依該色推算淡色卡片底色，讓顏色保持一致。
 - **推進模式**：`mode="progress"` 會在每張卡片右下角放推進按鈕，按下即把下一步設為進行中；按下最後一步則全部標記完成並觸發 `bps:complete`。`mode="progress-show"` 行為相同，但尚未輪到的步驟完全隱藏，按下按鈕才以動畫逐張出現。推進模式不會自動設定起點，請在第一個 `<bp-step>` 加上 `data-state="active"`。
 - **推進按鈕形狀**：只有圖示時是正圓形，只有文字或圖文並列時是膠囊形，圖示與文字都為空時不放按鈕。
@@ -424,7 +440,7 @@ BPStepper.THEMES;                       // 主題設定
 | `number` | 文字 | 在正面最前方加上「N. 」編號。 |
 | `number-size` / `number-weight` / `number-opacity` | CSS 值 | 編號的字級、粗細、透明度。 |
 
-`color` 可用的名稱：`shell`、`lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`info`、`indigo`、`focus`、`warning`、`salmon`、`pink`、`orange`、`attention`、`stone`。其中 `attention` 等同 `yellow`，`stone` 等同 `sky`，是舊名稱的別名。`vanilla` 與 `yellow` 目前沒有對應的色條樣式，請改用 `attention` 代替 `yellow`。
+`color` 可用的名稱：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`。舊名稱 `lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`info`、`focus`、`warning`、`salmon`、`attention`、`stone` 仍可使用，對應見文件開頭的「色名對照」。
 
 ### 填空問答
 
@@ -654,7 +670,7 @@ document.querySelector('card-toggle').reset();  // 清除作答狀態與提示�
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 主題名稱 | `special` | 意群按鈕的配色。可用 `shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`safe`、`vanilla`、`focus`、`yellow`、`info`、`indigo`、`pink`、`orange`。 |
+| `theme` | 主題名稱 | `special` | 意群按鈕的配色。可用 `shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`safe`、`vanilla`、`focus`、`yellow`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
 | `level-colors` | 逗號分隔的顏色 | 內建八色 | 依序覆寫第 1、2、3 級的圓點顏色。 |
 | `border-width` | 長度 | `1.5px` | 意群按鈕的邊框粗細。 |
 | `border-style` | CSS 邊框樣式 | `solid` | 意群按鈕的邊框樣式。 |
@@ -985,8 +1001,8 @@ DualLine.palette;                                        // 目前的色盤
 | `accentColors` | 十色陣列 | 輪替用的編號色。 |
 | `hoverFX` | `null` | 全域滑過效果。 |
 | `borderColor` | `#6a6b68` | 列的邊框色。 |
-| `borderHoverColor` | `#82C8E5` | 滑過時的邊框色。 |
-| `borderActiveColor` | `#C3A5E5` | 選取時的邊框色。 |
+| `borderHoverColor` | `#5DBAE8` | 滑過時的邊框色。 |
+| `borderActiveColor` | `#B484E8` | 選取時的邊框色。 |
 | `backgroundColor` | `#0C0D0C` | 列底色。 |
 | `numberBg` | `#0d1b24` | 編號區底色。 |
 | `textColor` | `#C6C7BD` | 內文顏色。 |
@@ -1003,7 +1019,7 @@ DualLine.palette;                                        // 目前的色盤
 | `fabOffset` / `fabBottom` | `16px` / `120px` | 浮動按鈕的預設位置。 |
 | `fabIconSize` / `fabLabelSize` | `1.4rem` / `0.6rem` | 浮動按鈕的圖示與小字字級。 |
 | `fabBg` / `fabBorderRadius` | `#0d1b24` / `8px` | 浮動按鈕的底色與圓角。 |
-| `numberColor` | `#82C8E5` | 沒有輪替色時的編號色。 |
+| `numberColor` | `#5DBAE8` | 沒有輪替色時的編號色。 |
 | `numberDivider` | `#1c2d38` | 編號區與內文之間的分隔線色。 |
 | `numberPad` | `12px 16px` | 編號區內距。 |
 | `activeBackground` | `#10192a` | 選取列的底色。 |
@@ -1224,11 +1240,11 @@ PhraseChip.isCollected('set aside');  // 是否已收藏
 | `data-cell-radius` | `4px` | 圓角，只對 `square` 有效。 |
 | `data-cells-per-row` | `5` | 每列格數。 |
 | `data-cell-shape` | `square` | `square`、`circle`、`star`、`diamond`、`hexagon`、`heart`。 |
-| `data-color-done` | `#27AE60` | 已完成格子的顏色。 |
+| `data-color-done` | `#71CD76` | 已完成格子的顏色。 |
 | `data-color-pending` | `#2a2b2a` | 未完成格子的顏色。 |
 | `data-color-panel` | `#1a1b1a` | 面板背景。 |
 | `data-color-text` | `#C6C7BD` | 面板文字顏色。 |
-| `data-color-complete` | `#B3DE73` | 全部完成提示的文字顏色。 |
+| `data-color-complete` | `#71CD76` | 全部完成提示的文字顏色。 |
 
 ### 面板屬性：文字、字級與動畫
 
@@ -1278,7 +1294,7 @@ PhraseChip.isCollected('set aside');  // 是否已收藏
 | `data-phrase-label-done` | `已收藏` | 計數後綴。 |
 | `data-phrase-color-done` | `#FF91D7` | 已收藏格子的顏色，也是清單的預設主色。 |
 | `data-phrase-color-pending` | 沿用 `data-color-pending` | 未收藏格子的顏色。 |
-| `data-phrase-color-complete` | `#B3DE73` | 全部收藏後提示的顏色。 |
+| `data-phrase-color-complete` | `#71CD76` | 全部收藏後提示的顏色。 |
 | `data-phrase-cell-shape` | `circle` | 片語格子的形狀。 |
 | `data-phrase-complete-text` | `片語獵人認證！` | 全部收藏後的文字。 |
 | `data-phrase-complete-sub` | 空 | 副文字。 |
@@ -1471,7 +1487,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 | `fill-color` | `fill`（`#1A1B1A`） | `.slide-content`、補充說明與填空格的底色。 |
 | `start-style` / `end-style` | 有對應 `role` 時為 `accent-frame` | 起始與結束畫面的裝飾：`accent-frame`（單色粗框）、`gradient-border`（漸層框）、`gradient-bg`（漸層底）、`top-bottom-bar`（上下色條）、`corner-tag`（左上角三角標）、`none`。 |
 | `start-colors` | `lavender,sky` | 起始畫面的兩個裝飾色，以逗號分隔。 |
-| `end-colors` | `safe,teal` | 結束畫面的兩個裝飾色。 |
+| `end-colors` | `green,blue` | 結束畫面的兩個裝飾色。 |
 
 ### 投影片內的互動內容
 
@@ -1872,11 +1888,11 @@ UF.resolveColor('sky/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時�
 | `border-color` | `rgba(198,199,189,0.78)` | 格子邊框色。 |
 | `bg-color` | 透明 | 格子底色。 |
 | `text-color` | `#C6C7BD` | 文字色。 |
-| `accent-color` | `#82C8E5` | 強調色，也是焦點框與複製按鈕的預設色。 |
+| `accent-color` | `#5DBAE8` | 強調色，也是焦點框與複製按鈕的預設色。 |
 | `focus-ring-width` | `3px` | 焦點框粗細。 |
 | `focus-ring-color` | 跟隨 `accent-color` | 焦點框顏色。 |
-| `error-color` | `#E6374B` | 驗證失敗顏色。 |
-| `valid-color` | `#27AE60` | 驗證成功顏色。 |
+| `error-color` | `#EF6661` | 驗證失敗顏色。 |
+| `valid-color` | `#71CD76` | 驗證成功顏色。 |
 
 ### `<ui-blank>` 屬性：輸入與驗證
 
@@ -1925,11 +1941,11 @@ UF.resolveColor('sky/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時�
 | `btn-font-size` | `0.95rem` | 按鈕字級。 |
 | `btn-bg` | 跟隨 `accent-color` | 按鈕底色。 |
 | `btn-color` | `#0C0D0C` | 按鈕文字色。 |
-| `accent-color` | `#82C8E5` | 強調色。 |
+| `accent-color` | `#5DBAE8` | 強調色。 |
 | `focus-ring-width` | `3px` | 焦點框粗細。 |
 | `focus-ring-color` | 跟隨 `accent-color` | 焦點框顏色。 |
-| `error-color` | `#E6374B` | 答錯顏色。 |
-| `valid-color` | `#27AE60` | 答對顏色。 |
+| `error-color` | `#EF6661` | 答錯顏色。 |
+| `valid-color` | `#71CD76` | 答對顏色。 |
 
 ### 屬性解說
 

@@ -2,12 +2,18 @@
   'use strict';
 
   const P = {
-    background:'#0C0D0C', shell:'#C6C7BD', lavender:'#C3A5E5',
-    sky:'#82C8E5',     warning:'#E6374B',  salmon:'#E5C3B3',
-    ocean:'#1CCAE8',   safe:'#27AE60',     teal:'#0DA591',
-    vanilla:'#DBEDD8', yellow:'#E3D322',   focus:'#D4FFFC',
-    special:'#B3DE73', info:'#4171BF',     indigo:'#7849C9',
-    pink:'#FF91D7',    orange:'#EDA109',
+    background:'#0C0D0C', shell:'#C6C7BD', lavender:'#B484E8',
+    sky:'#5DBAE8',     warning:'#EF6661',  salmon:'#F79C40',
+    ocean:'#5DBAE8',   safe:'#71CD76',     teal:'#71CD76',
+    vanilla:'#DBEDD8', yellow:'#E3D322',   focus:'#DBEDD8',
+    special:'#71CD76', info:'#778CE1',     indigo:'#778CE1',
+    pink:'#FF91D7',    orange:'#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F',
   };
   const clr = k => P[k] || k || '#C6C7BD';
   const lum = h => {
@@ -53,11 +59,11 @@ sentence-build { display: block; }
 .sb-chunk:hover .sb-bg { opacity: .85; }
 .sb-chunk.ghost        { opacity: .35; }
 .sb-bg    { display: inline-block; white-space: nowrap; transition: outline .12s, opacity .15s; }
-.sb-bg.ok { outline: 2px solid #27AE60; outline-offset: 1px; }
-.sb-bg.no { outline: 2px solid #E6374B; outline-offset: 1px; }
+.sb-bg.ok { outline: 2px solid #71CD76; outline-offset: 1px; }
+.sb-bg.no { outline: 2px solid #EF6661; outline-offset: 1px; }
 .sb-clbl  { font-size: .72rem; color: #9a9b96; margin-top: 2px; text-align: center;
             max-width: 200px; line-height: 1.25; }
-.sb-ph    { border: 2px dashed rgba(130,200,229,0.82); border-radius: 999px;
+.sb-ph    { border: 2px dashed rgba(93,186,232,0.82); border-radius: 999px;
             display: inline-block; min-width: 48px; height: 28px;
             vertical-align: middle; pointer-events: none; }
 .sb-fb    { font-size: .88rem; min-height: 1.4em; margin-top: 5px; }
@@ -73,7 +79,7 @@ sentence-build { display: block; }
 .sb-fill  { height: 100%; border-radius: 2px; transition: width .9s linear, background-color .4s; }
 .sb-tval  { font-size: .82rem; min-width: 2em; text-align: right;
             font-variant-numeric: tabular-nums; color: #C6C7BD; transition: color .3s; }
-.sb-tval.warn { color: #E6374B; }
+.sb-tval.warn { color: #EF6661; }
 @keyframes sb-shk {
   0%,100% { transform: translateX(0);   }
   15%     { transform: translateX(-6px); }

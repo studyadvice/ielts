@@ -102,14 +102,14 @@
 | `border-style` | `solid` | 四邊的邊框樣式 |
 | `border-top-style` 等 | 無 | 單獨指定上、右、下、左的邊框樣式 |
 | `fx` | 依 class | `electric` 開啟電流，`off` 關閉，見[金色電流](#金色電流) |
-| `fx-core` | `#D4FFFC` | 電流亮點色 |
+| `fx-core` | `#DBEDD8` | 電流亮點色 |
 | `fx-dim` | 自動計算 | 電流環暗部色 |
 
 測驗相關屬性請見[測驗模式](#測驗模式)。
 
 ### 顏色清單
 
-`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`info`、`indigo`、`pink`、`orange`、`special`、`stone`、`gold`、`shell`。
+`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`info`、`indigo`、`pink`、`orange`、`special`、`stone`、`gold`、`shell`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
 
 按鈕也有對應的顏色類別 `ir-btn--顏色`。要新增顏色，修改檔案開頭的 `BrandColors` 物件即可，相關樣式會自動產生。
 

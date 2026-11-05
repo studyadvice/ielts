@@ -6,21 +6,27 @@
   const BRAND = {
     bg:       '#0C0D0C',
     shell:    '#C6C7BD',
-    lavender: '#C3A5E5',
-    sky:      '#82C8E5',
-    warning:  '#E6374B',
-    salmon:   '#E5C3B3',
-    ocean:    '#1CCAE8',
-    safe:     '#27AE60',
-    teal:     '#0DA591',
+    lavender: '#B484E8',
+    sky:      '#5DBAE8',
+    warning:  '#EF6661',
+    salmon:   '#F79C40',
+    ocean:    '#5DBAE8',
+    safe:     '#71CD76',
+    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#D4FFFC',
-    special:  '#B3DE73',
-    info:     '#4171BF',
-    indigo:   '#7849C9',
+    focus:    '#DBEDD8',
+    special:  '#71CD76',
+    info:     '#778CE1',
+    indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#EDA109',
+    orange:   '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F',
   };
 
   const SIZE_MAP = {
@@ -288,9 +294,9 @@ phrase-chip {
   user-select: none;
   font-weight: 600;
   line-height: 1.5;
-  color: var(--pc-accent, #1CCAE8);
+  color: var(--pc-accent, #5DBAE8);
   background: #17181A;
-  border: 1px solid var(--pc-accent, #1CCAE8);
+  border: 1px solid var(--pc-accent, #5DBAE8);
   font-size: var(--pc-font, 1rem);
   padding: var(--pc-pad-y, 6px) var(--pc-pad-x, 14px);
   border-radius: 999px;
@@ -299,14 +305,14 @@ phrase-chip {
 phrase-chip[data-shape="rounded"] { border-radius: 8px; }
 phrase-chip[data-shape="underline"] {
   border: none;
-  border-bottom: 2px solid var(--pc-accent, #1CCAE8);
+  border-bottom: 2px solid var(--pc-accent, #5DBAE8);
   border-radius: 0;
   background: transparent;
   padding-left: 2px;
   padding-right: 2px;
 }
 phrase-chip:hover { filter: brightness(1.25); transform: translateY(-1px); }
-phrase-chip.is-open { background: var(--pc-accent, #1CCAE8); color: #0C0D0C; }
+phrase-chip.is-open { background: var(--pc-accent, #5DBAE8); color: #0C0D0C; }
 phrase-chip.is-collected { opacity: 0.88; }
 pc-icon { display: inline-flex; align-items: center; font-size: 0.9em; }
 pc-icon.pc-collected-mark { display: none; }
@@ -320,7 +326,7 @@ pc-panel {
   width: var(--pc-card-width, 320px);
   max-width: calc(100vw - 32px);
   background: #141514;
-  border: 1px solid var(--pc-card-accent, #1CCAE8);
+  border: 1px solid var(--pc-card-accent, #5DBAE8);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.85);
   z-index: 1200;
@@ -332,7 +338,7 @@ pc-panel-head {
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: var(--pc-card-accent, #1CCAE8);
+  background: var(--pc-card-accent, #5DBAE8);
   color: #0C0D0C;
   font-weight: 700;
   font-size: 1rem;
@@ -353,7 +359,7 @@ pc-panel-body {
 }
 pc-example { display: block; margin-bottom: 10px; }
 pc-example mark {
-  background: var(--pc-card-accent, #1CCAE8);
+  background: var(--pc-card-accent, #5DBAE8);
   color: #0C0D0C;
   padding: 0 3px;
   border-radius: 3px;
@@ -366,7 +372,7 @@ pc-translation-toggle {
   font-size: 0.9rem;
   text-decoration: underline;
   cursor: pointer;
-  color: var(--pc-card-accent, #1CCAE8);
+  color: var(--pc-card-accent, #5DBAE8);
 }
 pc-actions {
   display: flex;
@@ -383,7 +389,7 @@ pc-collect-btn {
   font-weight: 700;
   padding: 7px 14px;
   border-radius: 999px;
-  background: var(--pc-card-accent, #1CCAE8);
+  background: var(--pc-card-accent, #5DBAE8);
   color: #0C0D0C;
   border: none;
   transition: filter 0.2s ease;
@@ -395,7 +401,7 @@ pc-collected-badge {
   gap: 6px;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #27AE60;
+  color: #71CD76;
   padding: 7px 0;
 }
 
@@ -412,8 +418,8 @@ pu-word {
   display: inline-block;
   position: relative;
   font-weight: 600;
-  color: var(--pu-accent, #1CCAE8);
-  border-bottom: 2px dashed var(--pu-accent, #1CCAE8);
+  color: var(--pu-accent, #5DBAE8);
+  border-bottom: 2px dashed var(--pu-accent, #5DBAE8);
 }
 phrase-upgrade.is-final pu-word { border-bottom-style: solid; }
 pu-word::after {
@@ -421,7 +427,7 @@ pu-word::after {
   position: absolute;
   left: 0; right: 0; top: 50%;
   height: 2px;
-  background: var(--pu-accent, #1CCAE8);
+  background: var(--pu-accent, #5DBAE8);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform var(--pu-strike, 300ms) ease;
@@ -432,7 +438,7 @@ pu-hint {
   align-items: center;
   margin-left: 4px;
   font-size: 0.8em;
-  color: var(--pu-accent, #1CCAE8);
+  color: var(--pu-accent, #5DBAE8);
   opacity: 0.6;
   transform: scale(1);
   transition: transform 0.2s ease;

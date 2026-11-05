@@ -77,7 +77,7 @@
 | `<cell-item>` | 輪播項目，寫在設了 `carousel-interval` 的 `<ui-col>` 裡。 |
 | `<ui-flash>` | 閃電按鈕，可放在頁面任何地方，按下後讓指定格子播放注意力動畫。 |
 | `<ui-trans>` | 行內翻譯，滑鼠移入時以 浮動框 顯示來源區塊的內容。可放在格子內或一般段落。 |
-| `<c1>`～`<c16>` | 文字色彩快捷標籤，見[文字色彩標籤](#文字色彩標籤)。 |
+| `<c1>`～`<c21>` | 文字色彩快捷標籤，見[文字色彩標籤](#文字色彩標籤)。 |
 
 ```
 ui-table
@@ -418,18 +418,20 @@ ui-table
 
 ### 文字色彩標籤
 
-在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c1>文字</c1>` 到 `<c16>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成深色字加品牌色底。`mask-text` 是屬性文字，不支援標籤。
+在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c1>文字</c1>` 到 `<c21>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成深色字加品牌色底。`mask-text` 是屬性文字，不支援標籤。
 
-| 標籤 | 顏色 | 標籤 | 顏色 |
-|---|---|---|---|
-| `<c1>` | shell | `<c9>` | vanilla |
-| `<c2>` | lavender | `<c10>` | yellow |
-| `<c3>` | special | `<c11>` | info |
-| `<c4>` | warning | `<c12>` | indigo |
-| `<c5>` | salmon | `<c13>` | pink |
-| `<c6>` | sky | `<c14>` | focus |
-| `<c7>` | ocean | `<c15>` | orange |
-| `<c8>` | safe | `<c16>` | teal |
+| 標籤 | 顏色 | 標籤 | 顏色 | 標籤 | 顏色 |
+|---|---|---|---|---|---|
+| `<c1>` | shell | `<c9>` | vanilla | `<c17>` | red |
+| `<c2>` | violet | `<c10>` | yellow | `<c18>` | green |
+| `<c3>` | green | `<c11>` | indigo | `<c19>` | blue |
+| `<c4>` | red | `<c12>` | indigo | `<c20>` | violet |
+| `<c5>` | orange | `<c13>` | pink | `<c21>` | gray |
+| `<c6>` | blue | `<c14>` | vanilla | | |
+| `<c7>` | blue | `<c15>` | orange | | |
+| `<c8>` | green | `<c16>` | green | | |
+
+`<c1>`～`<c16>` 原本對應舊色票的 16 色，改用新色票後部分標籤顏色相同；新寫的內容建議用 `<c17>`～`<c21>` 與不重複的標籤。
 
 ```html
 <ui-col>The government should <c13>invest in</c13> public transport.</ui-col>

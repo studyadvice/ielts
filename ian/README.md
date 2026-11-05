@@ -123,7 +123,7 @@ document.addEventListener('before-navigate', e => {
 | `interval` | `1000` | 切換間隔（毫秒），最小 100 |
 | `mode` | `replace` | `replace` 原地取代、`sequence` 由左至右排出 |
 | `effect` | `fade` | `fade`、`scale`、`flip`、`none` |
-| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`bluebell`、`special`、`info`、`indigo`、`pink`、`orange` |
+| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`bluebell`、`special`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
 | `size` | `md` | `sm`、`md`、`lg`、`xl`、數字（rem）或含單位值 |
 | `gap` | `8` | sequence 模式間距（px） |
 | `hold` | 同 `interval` | sequence 模式排滿後停留時間（毫秒） |

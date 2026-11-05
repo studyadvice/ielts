@@ -13,29 +13,35 @@
   if (customElements.get('ui-insight')) return;
 
   const PALETTE = [
-    '#C6C7BD', '#C3A5E5', '#82C8E5', '#E6374B', '#E5C3B3', '#1CCAE8', '#27AE60', '#0DA591',
-    '#DBEDD8', '#E3D322', '#D4FFFC', '#B3DE73', '#92B5E0', '#7849C9', '#FF91D7', '#EDA109'
+    '#C6C7BD', '#B484E8', '#5DBAE8', '#EF6661', '#F79C40', '#5DBAE8', '#71CD76', '#71CD76',
+    '#DBEDD8', '#E3D322', '#DBEDD8', '#71CD76', '#778CE1', '#778CE1', '#FF91D7', '#F79C40'
   ];
 
   /* 品牌色名稱對照：顏色屬性可直接填名稱（不分大小寫） */
   const COLOR_NAMES = {
     base: '#0C0D0C',
     shell: '#C6C7BD',
-    lavender: '#C3A5E5',
-    sky: '#82C8E5',
-    warning: '#E6374B',
-    salmon: '#E5C3B3',
-    ocean: '#1CCAE8',
-    safe: '#27AE60',
-    teal: '#0DA591',
+    lavender: '#B484E8',
+    sky: '#5DBAE8',
+    warning: '#EF6661',
+    salmon: '#F79C40',
+    ocean: '#5DBAE8',
+    safe: '#71CD76',
+    teal: '#71CD76',
     vanilla: '#DBEDD8',
     yellow: '#E3D322',
-    focus: '#D4FFFC',
-    special: '#B3DE73',
-    info: '#92B5E0',
-    indigo: '#7849C9',
+    focus: '#DBEDD8',
+    special: '#71CD76',
+    info: '#778CE1',
+    indigo: '#778CE1',
     pink: '#FF91D7',
-    orange: '#EDA109'
+    orange: '#F79C40',
+    /* 新色票 */
+    red: '#EF6661',
+    green: '#71CD76',
+    blue: '#5DBAE8',
+    violet: '#B484E8',
+    gray: '#86877F'
   };
 
   /* CSS_ATTRS 之中屬於顏色的屬性，值會先經過品牌色名稱轉換 */
@@ -89,16 +95,23 @@
     salmon: accentTheme('salmon'),
     pink: accentTheme('pink'),
     warning: accentTheme('warning'),
-    indigo: accentTheme('indigo', 'focus'),
-    info: accentTheme('info', 'focus')
+    indigo: accentTheme('indigo'),
+    info: accentTheme('info'),
+    /* 新色票 */
+    red: accentTheme('red'),
+    green: accentTheme('green'),
+    blue: accentTheme('blue'),
+    violet: accentTheme('violet'),
+    gray: accentTheme('gray'),
+    vanilla: accentTheme('vanilla')
   };
 
   /* 內建標籤：tag="lr" 等簡寫會轉成中文文字與預設顏色 */
   const TAGS = {
-    lr: { text: '詞彙', color: '#B3DE73' },
-    gra: { text: '文法', color: '#C3A5E5' },
-    fc: { text: '連貫', color: '#82C8E5' },
-    p: { text: '發音', color: '#EDA109' }
+    lr: { text: '詞彙', color: '#71CD76' },
+    gra: { text: '文法', color: '#B484E8' },
+    fc: { text: '連貫', color: '#5DBAE8' },
+    p: { text: '發音', color: '#F79C40' }
   };
 
   /* 會轉成 CSS 變數的屬性與預設值 */
@@ -117,25 +130,25 @@
     'card-bg': '#161816',
     'card-border': '#2A2B29',
     'card-hover-border': '#5A5B56',
-    'card-active-border': '#1CCAE8',
+    'card-active-border': '#5DBAE8',
     'card-radius': '8px',
     'heading-font-size': '0.75rem',
-    'heading-color': '#C3A5E5',
+    'heading-color': '#B484E8',
     'sentence-font-size': '1rem',
     'sentence-color': '#C6C7BD',
     'sentence-line-height': '2.1',
     'num-bg': '#2A2B29',
     'num-color': '#C6C7BD',
-    'num-active-bg': '#1CCAE8',
+    'num-active-bg': '#5DBAE8',
     'num-active-color': '#0C0D0C',
 
-    'hl-line-color': '#B3DE73',
+    'hl-line-color': '#71CD76',
     'hl-line-style': 'solid',
     'hl-line-width': '2px',
-    'hl-hot-bg': '#B3DE73',
+    'hl-hot-bg': '#71CD76',
     'hl-hot-color': '#0C0D0C',
     'sup-font-size': '0.625rem',
-    'sup-color': '#B3DE73',
+    'sup-color': '#71CD76',
 
     'panel-bg': '#161816',
     'panel-padding': '14px 16px',
@@ -143,10 +156,10 @@
     'panel-top': '12px',
     'summary-font-size': '0.75rem',
     'summary-color': '#C6C7BD',
-    'note-num-bg': '#B3DE73',
+    'note-num-bg': '#71CD76',
     'note-num-color': '#0C0D0C',
     'note-word-size': '0.95rem',
-    'note-word-color': '#B3DE73',
+    'note-word-color': '#71CD76',
     'note-text-size': '0.82rem',
     'note-text-color': '#C6C7BD',
     'note-divider-style': 'dashed',
@@ -159,7 +172,7 @@
     'empty-color': '#C6C7BD',
 
     'ini-title-size': '1rem',
-    'ini-title-color': '#82C8E5',
+    'ini-title-color': '#5DBAE8',
     'ini-title-bg': '#161816'
   };
 

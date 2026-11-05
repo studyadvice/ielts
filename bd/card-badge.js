@@ -48,22 +48,28 @@ class CardBadge extends HTMLElement {
       'background': '#0C0D0C',
       'fill'      : '#1a1b1a',       // 元件內部深背景
       'shell'     : '#C6C7BD',       // main text
-      'lavender'  : '#C3A5E5',
-      'special'   : '#b3de73',
-      'warning'   : '#F08080',
-      'salmon'    : '#E5C3B3',
-      'sky'       : '#95c9de',
-      'ocean'     : '#0ABDC6',
-      'safe'      : '#299459',
+      'lavender'  : '#B484E8',
+      'special'   : '#71CD76',
+      'warning'   : '#EF6661',
+      'salmon'    : '#F79C40',
+      'sky'       : '#5DBAE8',
+      'ocean'     : '#5DBAE8',
+      'safe'      : '#71CD76',
       'vanilla'   : '#DBEDD8',
-      'yellow'    : '#DECA4B',
-      'focus'     : '#E0BE79',
-      'info'      : '#1E65C7',
-      'stone'     : '#95c9de',
-      'teal'      : '#0DA591',
-      'indigo'    : '#9B72CF',
-      'pink'      : '#FFB3D9',
-      'orange'    : '#EDA109'
+      'yellow'    : '#E3D322',
+      'focus'     : '#DBEDD8',
+      'info'      : '#778CE1',
+      'stone'     : '#5DBAE8',
+      'teal'      : '#71CD76',
+      'indigo'    : '#778CE1',
+      'pink'      : '#FF91D7',
+      'orange'    : '#F79C40',
+      /* 新色票 */
+      'red': '#EF6661',
+      'green': '#71CD76',
+      'blue': '#5DBAE8',
+      'violet': '#B484E8',
+      'gray': '#86877F'
     };
   }
 
