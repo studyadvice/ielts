@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-check 範例：品牌色與按鈕樣式</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
+    --red: #EF6661; --orange: #F79C40; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --violet: #B484E8; --gray: #86877F;
+  }
+  body { background: var(--bg); color: var(--shell); font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid #2A2B29; border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 560px; overflow: auto; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .tbl th, .tbl td { border-bottom: 1px solid #2A2B29; padding: 8px 12px; text-align: left; vertical-align: middle; }
+  .tbl th { color: var(--vanilla); font-weight: 600; }
+  .swatch { display: inline-block; width: 18px; height: 18px; border-radius: 4px; vertical-align: middle; margin: 0 8px 0 0; border: 1px solid #2A2B29; }
+  .grid-rows > div { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px dashed #2A2B29; }
+  .grid-rows > div > span.tag { width: 160px; color: var(--gray); font-size: 0.85rem; }
+  .builder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 20px; margin: 0 0 16px 0; }
+  .builder label { display: block; font-size: 0.85rem; color: var(--gray); margin: 0 0 4px 0; }
+  .builder .form-select, .builder .form-control { background-color: #1A1B1A; color: var(--shell); border-color: #2A2B29; font-size: 0.95rem; }
+  .preview-box { min-height: 96px; display: flex; align-items: center; justify-content: center; border: 1px dashed #2A2B29; border-radius: 8px; padding: 20px; margin: 0 0 12px 0; }
+  .tool { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 0 0; }
+  .tool .btn { font-size: 0.9rem; }
+  .btn-brand { background: var(--blue); color: var(--bg); border: none; }
+  .btn-brand:hover { background: var(--indigo); color: var(--bg); }
+  .btn-line { background: transparent; color: var(--shell); border: 1px solid var(--gray); }
+  .btn-line:hover { background: #1B1C1B; color: var(--vanilla); }
+  #alerts { position: fixed; top: 16px; right: 24px; z-index: 1080; width: 400px; }
+</style>
+</head>
+<body>
+<div id="alerts"></div>
+<div class="page">
+  <h1>ui-check：品牌色與按鈕樣式</h1>
+  <p class="lead-note">修改日期 11-05-26。品牌色改用新色票，舊色名自動對應；新增 <code>variant</code>、<code>color2</code>、<code>angle</code>、<code>shape</code> 四個屬性；內部 class 改為 <code>uck-</code> 前綴並限定在 <code>ui-check</code> 內，不再與 <code>ui-cards</code> 的 <code>.uic-btn</code> 互相影響。修改 2：<code>outline</code> 滑過時改為 solid 效果。</p>
+
+  <section class="demo">
+    <h2>屬性一覽</h2>
+    <table class="tbl">
+      <thead><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>variant</code></td><td><code>outline</code>、<code>solid</code>、<code>soft</code>、<code>ghost</code>、<code>link</code>、<code>gradient</code>、<code>gradient-outline</code></td><td><code>outline</code></td><td>按鈕的視覺樣式。寫錯時退回 <code>outline</code>。</td></tr>
+        <tr><td><code>color</code></td><td>品牌色名</td><td><code>blue</code></td><td>主色。舊色名仍可用，見下方對照表。</td></tr>
+        <tr><td><code>color2</code></td><td>品牌色名</td><td><code>violet</code></td><td>漸層的第二色，只在 <code>gradient</code>、<code>gradient-outline</code> 使用。</td></tr>
+        <tr><td><code>angle</code></td><td><code>90deg</code>、<code>to right</code> 等</td><td><code>135deg</code></td><td>漸層方向。</td></tr>
+        <tr><td><code>shape</code></td><td><code>rounded</code>、<code>pill</code>、<code>square</code></td><td><code>rounded</code></td><td>按鈕外形。</td></tr>
+        <tr><td><code>size</code></td><td><code>xs</code>、<code>sm</code>、<code>md</code>、<code>lg</code></td><td><code>xs</code></td><td>沿用原本的尺寸。</td></tr>
+        <tr><td><code>icon</code>、<code>key</code>、<code>state</code></td><td colspan="2">不變</td><td>行為與原本相同。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>品牌色與舊色名對照</h2>
+    <p class="desc">實心底上的文字色依亮度自動選擇；這組品牌色都偏亮，因此一律使用深色字，對比度介於 5.36 到 15.87。舊色名對應到最接近的新色，若想改對應，只要修改檔案開頭的 <code>ALIASES</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">新品牌色</p><table class="tbl" id="tbl-colors"><thead><tr><th>色名</th><th>色碼</th><th>outline</th><th>solid</th></tr></thead><tbody></tbody></table></div>
+      <div><p class="pair-label">舊色名的對應</p><table class="tbl" id="tbl-aliases"><thead><tr><th>舊色名</th><th>對應到</th><th>效果</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：七種樣式</h2>
+    <p class="desc">同一段文字套用不同的 <code>variant</code>。點任何一顆按鈕都會切換成「已確認」，可用下方按鈕全部重設。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live grid-rows" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+    <div class="tool"><button type="button" class="btn btn-line" data-reset="ex1"><i class="bi bi-arrow-counterclockwise"></i> 全部重設</button></div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：雙色漸層</h2>
+    <p class="desc"><code>variant="gradient"</code> 以 <code>color</code> 到 <code>color2</code> 的漸層填滿；<code>variant="gradient-outline"</code> 只有外框是漸層。<code>angle</code> 改變方向。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live grid-rows" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+    <div class="tool"><button type="button" class="btn btn-line" data-reset="ex2"><i class="bi bi-arrow-counterclockwise"></i> 全部重設</button></div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：外形與尺寸</h2>
+    <p class="desc"><code>shape</code> 與 <code>size</code> 可以和任何 <code>variant</code> 搭配。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live grid-rows" data-tpl="ex3"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre></div>
+    </div>
+    <div class="tool"><button type="button" class="btn btn-line" data-reset="ex3"><i class="bi bi-arrow-counterclockwise"></i> 全部重設</button></div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：放進段落與已確認狀態</h2>
+    <p class="desc">實際在課件段落中的樣子。<code>state="done"</code> 由伺服器寫入，代表學員已點過；已確認一律顯示綠色勾，與樣式無關。點擊時會發出 <code>ui-check-done</code> 事件，這裡用 Bootstrap alert 顯示。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
+    </div>
+    <div class="tool"><button type="button" class="btn btn-line" data-reset="ex4" data-keep-done><i class="bi bi-arrow-counterclockwise"></i> 重設（保留伺服器已確認的那一顆）</button></div>
+  </section>
+
+  <section class="demo">
+    <h2>修改 2：outline 滑過時變成 solid</h2>
+    <p class="desc">原本 <code>outline</code> 滑過時只換成深灰底；現在滑過時以按鈕本身的品牌色填滿，文字與圖示改用深色字，效果和 <code>solid</code> 相同。只影響 <code>outline</code>，其他樣式不變。把滑鼠移到下方按鈕上試試看。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live grid-rows" data-tpl="ex5"></div></div>
+      <div><p class="pair-label">程式碼（元件內的樣式規則）</p><pre class="code">/* 修改前 */
+ui-check .uck-outline:hover:not([disabled]) { background: #1B1C1B; }
+
+/* 修改後 */
+ui-check .uck-outline:hover:not([disabled]) { background: var(--uck-c); color: var(--uck-on); }</pre>
+        <p class="pair-label" style="margin:16px 0 8px 0">使用方式不變</p><pre class="code" data-code="ex5"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>組合產生器</h2>
+    <p class="desc">選好樣式後複製程式碼，直接貼進課件。</p>
+    <div class="builder">
+      <div><label for="b-variant">variant</label><select id="b-variant" class="form-select"></select></div>
+      <div><label for="b-color">color</label><select id="b-color" class="form-select"></select></div>
+      <div><label for="b-color2">color2（漸層用）</label><select id="b-color2" class="form-select"></select></div>
+      <div><label for="b-angle">angle（漸層用）</label><select id="b-angle" class="form-select">
+        <option>135deg</option><option>90deg</option><option>45deg</option><option>180deg</option><option>to right</option></select></div>
+      <div><label for="b-shape">shape</label><select id="b-shape" class="form-select">
+        <option>rounded</option><option>pill</option><option>square</option></select></div>
+      <div><label for="b-size">size</label><select id="b-size" class="form-select">
+        <option>xs</option><option selected>sm</option><option>md</option><option>lg</option></select></div>
+      <div><label for="b-icon">icon</label><input id="b-icon" class="form-control" value="bi-check2-square"></div>
+      <div><label for="b-label">文字</label><input id="b-label" class="form-control" value="這段我讀懂了"></div>
+    </div>
+    <div class="pair">
+      <div><p class="pair-label">預覽</p><div class="preview-box" id="b-preview"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" id="b-code"></pre>
+        <div class="tool"><button type="button" class="btn btn-brand" id="b-copy"><i class="bi bi-clipboard"></i> 複製程式碼</button></div></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex5">
+<div><span class="tag">滑過看看</span><ui-check size="sm" icon="bi-question-circle">懂了嗎？</ui-check> <ui-check size="sm" color="orange">懂了嗎？</ui-check> <ui-check size="sm" color="pink" icon="bi-bookmark-check">懂了嗎？</ui-check> <ui-check size="md" color="green" shape="pill">懂了嗎？</ui-check> <ui-check size="md" color="gray" icon="bi-eye">懂了嗎？</ui-check></div>
+</template>
+
+<template id="ex1">
+<div><span class="tag">outline（預設）</span><ui-check size="sm" icon="bi-question-circle">懂了嗎？</ui-check> <ui-check size="sm" color="orange">懂了嗎？</ui-check></div>
+<div><span class="tag">solid</span><ui-check variant="solid" size="sm" icon="bi-check2-square">懂了嗎？</ui-check> <ui-check variant="solid" size="sm" color="pink">懂了嗎？</ui-check></div>
+<div><span class="tag">soft</span><ui-check variant="soft" size="sm" icon="bi-lightbulb">懂了嗎？</ui-check> <ui-check variant="soft" size="sm" color="green">懂了嗎？</ui-check></div>
+<div><span class="tag">ghost</span><ui-check variant="ghost" size="sm" icon="bi-hand-index">懂了嗎？</ui-check> <ui-check variant="ghost" size="sm" color="yellow">懂了嗎？</ui-check></div>
+<div><span class="tag">link</span><ui-check variant="link" size="sm">懂了嗎？</ui-check> <ui-check variant="link" size="sm" color="violet">懂了嗎？</ui-check></div>
+<div><span class="tag">gradient</span><ui-check variant="gradient" size="sm" icon="bi-stars">懂了嗎？</ui-check> <ui-check variant="gradient" size="sm" color="orange" color2="pink">懂了嗎？</ui-check></div>
+<div><span class="tag">gradient-outline</span><ui-check variant="gradient-outline" size="sm">懂了嗎？</ui-check> <ui-check variant="gradient-outline" size="sm" color="green" color2="blue">懂了嗎？</ui-check></div>
+</template>
+
+<template id="ex2">
+<div><span class="tag">blue → violet</span><ui-check variant="gradient" color="blue" color2="violet" size="md" shape="pill">這段我讀懂了</ui-check></div>
+<div><span class="tag">orange → pink</span><ui-check variant="gradient" color="orange" color2="pink" size="md" shape="pill">這段我讀懂了</ui-check></div>
+<div><span class="tag">green → yellow</span><ui-check variant="gradient" color="green" color2="yellow" angle="90deg" size="md">這段我讀懂了</ui-check></div>
+<div><span class="tag">indigo → blue</span><ui-check variant="gradient" color="indigo" color2="blue" angle="to right" size="md" icon="bi-check2-circle">這段我讀懂了</ui-check></div>
+<div><span class="tag">red → orange</span><ui-check variant="gradient" color="red" color2="orange" angle="45deg" size="md" icon="bi-fire">重點，確認一下</ui-check></div>
+<div><span class="tag">漸層外框</span><ui-check variant="gradient-outline" color="pink" color2="violet" size="md" shape="pill">這段我讀懂了</ui-check> <ui-check variant="gradient-outline" color="yellow" color2="green" angle="90deg" size="md">這段我讀懂了</ui-check></div>
+</template>
+
+<template id="ex3">
+<div><span class="tag">shape</span><ui-check variant="solid" color="blue" size="sm" shape="rounded">rounded</ui-check> <ui-check variant="solid" color="blue" size="sm" shape="pill">pill</ui-check> <ui-check variant="solid" color="blue" size="sm" shape="square">square</ui-check></div>
+<div><span class="tag">size（gradient）</span><ui-check variant="gradient" size="xs">xs</ui-check> <ui-check variant="gradient" size="sm">sm</ui-check> <ui-check variant="gradient" size="md">md</ui-check> <ui-check variant="gradient" size="lg">lg</ui-check></div>
+<div><span class="tag">size（outline）</span><ui-check size="xs">xs</ui-check> <ui-check size="sm">sm</ui-check> <ui-check size="md">md</ui-check> <ui-check size="lg">lg</ui-check></div>
+</template>
+
+<template id="ex4">
+<p style="font-size:1.125rem;line-height:1.9;margin:0 0 12px 0">
+  Everything I need on a weekday sits within a ten-minute walk, so the lack of space has never really bothered me.
+  <ui-check variant="soft" color="yellow" size="sm" icon="bi-exclamation-triangle">sits 的用法有把握嗎？</ui-check>
+</p>
+<p style="font-size:1.125rem;line-height:1.9;margin:0">
+  I've managed to stick to a daily workout routine for years, rain or shine.
+  <ui-check variant="gradient" color="blue" color2="violet" size="sm" shape="pill" state="done">這句的亮點都找到了嗎？</ui-check>
+</p>
+</template>
+
+<script src="ui-check.js"></script>
+<script>
+  /* 依 template 同時產生畫面與程式碼，兩邊永遠一致 */
+  function mount(box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.innerHTML = '';
+    box.appendChild(tpl.content.cloneNode(true));
+    var code = document.querySelector('pre[data-code="' + box.dataset.tpl + '"]');
+    if (code) code.textContent = tpl.innerHTML.trim().replace(/<span class="tag">.*?<\/span>/g, '').replace(/<\/?div>/g, '').replace(/> </g, '>\n<');
+  }
+  document.querySelectorAll('.live[data-tpl]').forEach(mount);
+
+  function showAlert(msg, kind) {
+    var box = document.getElementById('alerts');
+    var div = document.createElement('div');
+    div.className = 'alert alert-' + (kind || 'info') + ' alert-dismissible fade show';
+    div.setAttribute('role', 'alert');
+    div.textContent = msg;
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'btn-close';
+    close.setAttribute('data-bs-dismiss', 'alert');
+    div.appendChild(close);
+    box.appendChild(div);
+    setTimeout(function () { div.classList.remove('show'); setTimeout(function () { div.remove(); }, 200); }, 2600);
+  }
+
+  /* 重設：重新放入 template，連同伺服器寫入的 state 一起還原 */
+  document.querySelectorAll('[data-reset]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      mount(document.querySelector('.live[data-tpl="' + btn.dataset.reset + '"]'));
+      showAlert('已重設。', 'secondary');
+    });
+  });
+
+  document.addEventListener('ui-check-done', function (e) {
+    var label = e.target._label || '';
+    showAlert('已確認：' + label + (e.detail.local ? '（範例頁不送出到伺服器）' : ''), 'success');
+  });
+
+  /* 色票表：直接讀元件內的定義，與元件永遠一致 */
+  var UC = customElements.get('ui-check');
+  var colorBody = document.querySelector('#tbl-colors tbody');
+  Object.keys(UC.colors).forEach(function (k) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><span class="swatch" style="background:' + UC.colors[k] + '"></span><code>' + k + '</code></td>' +
+      '<td>' + UC.colors[k] + '</td>' +
+      '<td><ui-check size="sm" color="' + k + '">' + k + '</ui-check></td>' +
+      '<td><ui-check variant="solid" size="sm" color="' + k + '">' + k + '</ui-check></td>';
+    colorBody.appendChild(tr);
+  });
+  var aliasBody = document.querySelector('#tbl-aliases tbody');
+  Object.keys(UC.aliases).forEach(function (k) {
+    var to = UC.aliases[k];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><code>' + k + '</code></td>' +
+      '<td><span class="swatch" style="background:' + UC.colors[to] + '"></span><code>' + to + '</code></td>' +
+      '<td><ui-check size="sm" color="' + k + '">color="' + k + '"</ui-check></td>';
+    aliasBody.appendChild(tr);
+  });
+
+  /* 組合產生器 */
+  var $ = function (id) { return document.getElementById(id); };
+  ['outline', 'solid', 'soft', 'ghost', 'link', 'gradient', 'gradient-outline'].forEach(function (v) {
+    $('b-variant').add(new Option(v, v, v === 'gradient', v === 'gradient'));
+  });
+  Object.keys(UC.colors).forEach(function (k) {
+    $('b-color').add(new Option(k, k, k === 'blue', k === 'blue'));
+    $('b-color2').add(new Option(k, k, k === 'violet', k === 'violet'));
+  });
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function build() {
+    var v = $('b-variant').value, grad = v.indexOf('gradient') === 0;
+    var attrs = [];
+    if (v !== 'outline') attrs.push('variant="' + v + '"');
+    if ($('b-color').value !== 'blue') attrs.push('color="' + $('b-color').value + '"');
+    if (grad && $('b-color2').value !== 'violet') attrs.push('color2="' + $('b-color2').value + '"');
+    if (grad && $('b-angle').value !== '135deg') attrs.push('angle="' + $('b-angle').value + '"');
+    if ($('b-shape').value !== 'rounded') attrs.push('shape="' + $('b-shape').value + '"');
+    if ($('b-size').value !== 'xs') attrs.push('size="' + $('b-size').value + '"');
+    var icon = $('b-icon').value.trim();
+    if (icon) attrs.push('icon="' + esc(icon) + '"');
+    var html = '<ui-check' + (attrs.length ? ' ' + attrs.join(' ') : '') + '>' + esc($('b-label').value.trim()) + '</ui-check>';
+    $('b-code').textContent = html;
+    $('b-preview').innerHTML = html;
+    $('b-color2').disabled = $('b-angle').disabled = !grad;
+  }
+  ['b-variant', 'b-color', 'b-color2', 'b-angle', 'b-shape', 'b-size', 'b-icon', 'b-label'].forEach(function (id) {
+    $(id).addEventListener('input', build);
+    $(id).addEventListener('change', build);
+  });
+  build();
+
+  $('b-copy').addEventListener('click', function () {
+    var text = $('b-code').textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+      .then(function () { showAlert('程式碼已複製。', 'success'); })
+      .catch(function () { showAlert('瀏覽器不允許自動複製，請手動選取程式碼。', 'warning'); });
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
