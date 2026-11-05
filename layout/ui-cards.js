@@ -77,6 +77,18 @@
     .map(([k, v]) => `ui-cards .uic-btn.uic-v-${k}{background:${v};color:${LIGHT_TEXT.has(k) ? PALETTE.vanilla : PALETTE.base};}`)
     .join('\n');
 
+  /* 實心外觀：底色取 --uic-fill，文字色取 --uic-on；卡片樣式與選中樣式共用同一組規則 */
+  const filledCSS = sel => `
+${sel}{background:var(--uic-fill);border-color:var(--uic-fill);color:var(--uic-on);}
+${sel} .uic-label,
+${sel} .uic-note,
+${sel} .uic-foot{color:var(--uic-on);}
+${sel} .uic-media{color:var(--uic-icon, var(--uic-on));}
+${sel} .uic-tag{border-color:var(--uic-on);color:var(--uic-on);}
+${sel} .uic-foot{border-top-color:var(--uic-on);}`;
+  const SEL_FILLED = 'ui-cards card-item[data-style="filled"]';
+  const SEL_ACTIVE_FILLED = 'ui-cards[active-style="filled"] card-item[data-active]';
+
   const CSS = `
 ui-cards{display:block;color:${PALETTE.shell};font-size:1rem;}
 ui-cards:not([data-ready]){visibility:hidden;}
@@ -119,14 +131,11 @@ ui-cards card-item[data-click]:hover{border-color:${PALETTE.focus};}
 ui-cards card-item[data-active]{border-color:var(--uic-accent);box-shadow:0 0 0 2px var(--uic-accent);}
 ui-cards card-item[disabled]{border-style:dashed;cursor:not-allowed;filter:grayscale(1);}
 
-ui-cards[card-style="filled"] card-item{background:var(--uic-c);border-color:var(--uic-c);color:${PALETTE.base};}
-ui-cards[card-style="filled"] .uic-label,
-ui-cards[card-style="filled"] .uic-note,
-ui-cards[card-style="filled"] .uic-foot{color:${PALETTE.base};}
-ui-cards[card-style="filled"] .uic-media{color:var(--uic-icon, ${PALETTE.base});}
-ui-cards[card-style="filled"] .uic-tag{border-color:${PALETTE.base};color:${PALETTE.base};}
-ui-cards[card-style="filled"] .uic-foot{border-top-color:${PALETTE.base};}
-ui-cards[card-style="plain"] card-item{border-color:transparent;background:transparent;}
+${SEL_FILLED}{--uic-fill:var(--uic-c);--uic-on:var(--uic-c-on, ${PALETTE.base});}
+${SEL_ACTIVE_FILLED}{--uic-fill:var(--uic-accent);--uic-on:var(--uic-accent-on, ${PALETTE.base});}
+${filledCSS(SEL_FILLED)}
+${filledCSS(SEL_ACTIVE_FILLED)}
+ui-cards card-item[data-style="plain"]{border-color:transparent;background:transparent;}
 
 ui-cards .uic-panel{position:relative;min-width:0;border:1px solid ${PALETTE.shell};border-radius:8px;padding:16px;box-sizing:border-box;}
 ui-cards .uic-panel.uic-has-badge .uic-head{padding-right:var(--uic-pbadge-w, 96px);}
@@ -183,7 +192,8 @@ ${variantCSS}
         panelBadge: a('panel-badge') || '',
         panelBadgeIcon: a('panel-badge-icon') || '',
         panelBadgeColor: a('panel-badge-color') || '',
-        btnColor: a('button-color') || 'ocean'
+        btnColor: a('button-color') || 'ocean',
+        cardStyle: a('card-style') || ''
       };
       const heading = a('title');
       if (heading != null) this.removeAttribute('title');
@@ -201,6 +211,9 @@ ${variantCSS}
       s.setProperty('--uic-isize', fs(a('icon-size')) || '2rem');
       s.setProperty('--uic-c', color(a('color')) || PALETTE.shell);
       s.setProperty('--uic-accent', color(a('accent')) || PALETTE.ocean);
+      /* 實心時的文字色：依底色亮度自動選擇 */
+      s.setProperty('--uic-c-on', textOn(a('color') || 'shell'));
+      s.setProperty('--uic-accent-on', textOn(a('accent') || 'ocean'));
       if (has('icon-color')) s.setProperty('--uic-icon', color(a('icon-color')));
       s.setProperty('--uic-align', center ? 'center' : 'left');
       s.setProperty('--uic-jc', center ? 'center' : 'flex-start');
@@ -321,7 +334,13 @@ ${variantCSS}
       applyBadgeColor(c, ta('badge-color'));
 
       if (ta('tooltip')) c.title = ta('tooltip');
-      if (ta('color')) c.style.setProperty('--uic-c', color(ta('color')));
+      if (ta('color')) {
+        c.style.setProperty('--uic-c', color(ta('color')));
+        c.style.setProperty('--uic-c-on', textOn(ta('color')));
+      }
+      /* 卡片外觀：自己的 card-style 優先，其次為 ui-cards 的 card-style */
+      const st = (ta('card-style') || this._o.cardStyle).trim();
+      if (['filled', 'plain', 'outline'].includes(st)) c.setAttribute('data-style', st);
       if (ta('icon-color')) c.style.setProperty('--uic-icon', color(ta('icon-color')));
       if (ta('icon-size')) c.style.setProperty('--uic-isize', fs(ta('icon-size')));
       /* 單張卡片字級（覆寫 ui-cards 的設定） */

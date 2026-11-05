@@ -587,9 +587,10 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(28, 202, 
 | `gap` | 數字（px） | `16` | 卡片間距，也是網格與內容區的距離。 |
 | `align` | `center` | 靠左 | 卡片內容置中。 |
 | `bordered` | 布林 | 關閉 | 整個元件加外框。 |
-| `card-style` | `filled`、`plain` | 外框卡片 | `filled` 以 `color` 填滿卡片；`plain` 拿掉外框與底色。 |
+| `card-style` | `filled`、`plain` | 外框卡片 | 整組卡片的外觀。`filled` 以 `color` 填滿卡片；`plain` 拿掉外框與底色。個別卡片可用自己的 `card-style` 覆寫。 |
 | `color` | 顏色 | `shell` | 卡片外框色，`filled` 時為底色。 |
 | `accent` | 顏色 | `ocean` | 選中卡片的外框與光暈色。 |
+| `active-style` | `filled` | 無 | 目前選中的卡片以 `accent` 色實心顯示，其他卡片維持原本外觀。 |
 | `card-padding` | 數字（px） | `16` | 卡片內距。 |
 | `card-radius` | 數字（px） | `8` | 卡片圓角。 |
 | `card-height` | 數字（px） | 自動 | 卡片最小高度。 |
@@ -631,6 +632,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(28, 202, 
 | --- | --- | --- |
 | `label` | 文字 | 卡片標題。 |
 | `note` | 文字 | 標題下方的次要說明。 |
+| `card-style` | `filled`、`plain`、`outline` | 只設定這張卡片的外觀，優先於 `<ui-cards>` 的 `card-style`。整組實心時，可用 `outline` 讓這張恢復外框。 |
 | `tags` | 逗號分隔文字 | 一排小標籤。 |
 | `icon` | Bootstrap Icons 名稱 | 卡片圖示，`star` 或 `bi-star` 皆可。 |
 | `image` | 圖片網址 | 卡片圖片，優先於 `icon`。 |
@@ -675,6 +677,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(28, 202, 
 - **內容來源**：`source`、`detail`、`reveal` 都指向頁面上的 id，建議用 `<template>` 或加上 `hidden` 的 `div`。內容一律複製，同一份來源可以被多張卡片共用。找不到 id 時會在該處顯示紅框警告。
 - **按鈕樣式**：帶 `detail` 或 `reveal` 的元素會自動套用按鈕樣式；已有 Bootstrap `btn` 類別時不覆蓋，並在選中時加上 `active`。
 - **點擊優先順序**：`reveal` 按鈕最優先，其次是帶 `detail` 的元素，最後才是帶 `href` 的卡片。卡片內一般的連結與按鈕不會被卡片攔截。
+- **實心的文字色**：卡片實心時（`card-style="filled"` 或 `active-style="filled"` 的選中卡片），文字、圖示與標籤依底色亮度自動選擇深色或淺色。
 - **巢狀**：內容區裡可以再放 `<ui-cards>` 或其他 ui 元件，複製出來時會自動建立。
 
 ### 範例
@@ -714,6 +717,16 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(28, 202, 
   <card-item label="新會員" icon="person-plus-fill" color="special" detail="sum-b"></card-item>
   <card-item label="退貨申請" icon="arrow-return-left" color="salmon" badge="3" badge-color="warning"></card-item>
   <card-item label="說明" icon="info-circle" color="lavender" href="#help"></card-item>
+</ui-cards>
+```
+
+**單張實心與選中實心**
+
+```html
+<ui-cards cols="3" color="shell" accent="sky" active-style="filled" active-detail="d-open" toggle panel-title="{label}">
+  <card-item icon="chat-quote" label="開場句" detail="d-open"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" detail="d-cross" card-style="filled" color="pink"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" detail="d-link"></card-item>
 </ui-cards>
 ```
 

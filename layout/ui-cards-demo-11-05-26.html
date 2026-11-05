@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 範例：卡片實心與選中實心</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
+    --red: #EF6661; --orange: #F79C40; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --violet: #B484E8; --gray: #86877F;
+  }
+  body { background: var(--bg); color: var(--shell); font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); font-size: 1rem; margin: 0 0 24px 0; }
+  .demo { border: 1px solid #2A2B29; border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { color: var(--shell); font-size: 0.95rem; margin: 0 0 16px 0; }
+  .demo .desc code, .attr-table code { color: var(--yellow); background: transparent; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow: auto; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td { border-bottom: 1px solid #2A2B29; padding: 8px 12px; text-align: left; vertical-align: top; }
+  .attr-table th { color: var(--vanilla); }
+  .tool { display: flex; gap: 12px; align-items: center; margin: 0 0 12px 0; flex-wrap: wrap; }
+  .tool .btn { font-size: 0.9rem; }
+  #alerts { position: fixed; top: 16px; right: 24px; z-index: 1080; width: 380px; }
+</style>
+</head>
+<body>
+<div id="alerts"></div>
+<div class="page">
+  <h1>ui-cards：卡片實心與選中實心</h1>
+  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。</p>
+
+  <section class="demo">
+    <h2>屬性一覽</h2>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>寫在哪裡</th><th>值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>card-style</code></td><td><code>&lt;ui-cards&gt;</code></td><td><code>filled</code>、<code>plain</code></td><td>整組卡片的外觀預設值。</td></tr>
+        <tr><td><code>card-style</code></td><td><code>&lt;card-item&gt;</code></td><td><code>filled</code>、<code>plain</code>、<code>outline</code></td><td>只設定這張卡片，優先於 <code>&lt;ui-cards&gt;</code> 的設定。<code>outline</code> 用來在整組實心時讓某張恢復外框。</td></tr>
+        <tr><td><code>active-style</code></td><td><code>&lt;ui-cards&gt;</code></td><td><code>filled</code></td><td>目前選中的卡片以 <code>accent</code> 色實心顯示，其他卡片維持原本外觀。</td></tr>
+        <tr><td>文字色</td><td>自動</td><td></td><td>實心時依底色亮度自動選擇深色或淺色文字，深色底（例如元件色名 <code>indigo</code>、<code>warning</code>）會改用淺色字。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：只讓某一張卡片實心</h2>
+    <p class="desc">在 <code>&lt;card-item&gt;</code> 上寫 <code>card-style="filled"</code>，只有這張變成實心，顏色取自卡片自己的 <code>color</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：整組實心，其中一張恢復外框</h2>
+    <p class="desc"><code>&lt;ui-cards card-style="filled"&gt;</code> 設定整組，再用 <code>&lt;card-item card-style="outline"&gt;</code> 讓某張例外。每張實心卡片的文字色都依底色亮度自動選擇。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：三欄卡片，選中的那張實心</h2>
+    <p class="desc"><code>active-style="filled"</code> 讓目前選中的卡片以 <code>accent</code> 色實心顯示，其他卡片維持外框。點不同卡片看看切換效果；<code>toggle</code> 讓再點一次可取消選取。</p>
+    <div class="tool">
+      <button type="button" class="btn btn-outline-light" id="btn-which">目前選中哪一張？</button>
+    </div>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex3" id="live-ex3"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：卡片各有顏色，選中時統一實心</h2>
+    <p class="desc">卡片平時用自己的 <code>color</code> 當外框，選中時以 <code>accent</code> 實心顯示。想讓選中的卡片用自己的顏色填滿，把 <code>accent</code> 設成相同顏色即可。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex1">
+<ui-cards cols="3" color="#86877F">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用"
+             color="#5DBAE8" card-style="filled"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex2">
+<ui-cards cols="3" card-style="filled" color="#71CD76">
+  <card-item icon="1-circle" label="Part 1" note="兩三句即可"></card-item>
+  <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#778CE1"></card-item>
+  <card-item icon="3-circle" label="Part 3" note="延伸討論" card-style="outline" color="#F79C40"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex3">
+<ui-cards cols="3" color="#C6C7BD" accent="#5DBAE8"
+          active-style="filled" active-detail="d-open" toggle
+          panel-title="{label}" placeholder="點選一張卡片。">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目" detail="d-open"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用" detail="d-cross"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開" detail="d-link"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex4">
+<ui-cards cols="3" accent="#B484E8" active-style="filled" panel="right" panel-columns="8,4"
+          panel-title="{label}" placeholder="點選一張卡片。">
+  <card-item icon="1-circle" label="Part 1" note="兩三句即可" color="#71CD76" detail="d-p1"></card-item>
+  <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#F79C40" detail="d-p2"></card-item>
+  <card-item icon="3-circle" label="Part 3" note="延伸討論" color="#FF91D7" detail="d-p3"></card-item>
+</ui-cards>
+</template>
+
+<template id="d-open"><p>把題目用字和句型換掉，第一句就開始展現詞彙和語法。</p></template>
+<template id="d-cross"><p>把剛學會的語塊拿到不同的題目裡反覆使用，直到說得出口。</p></template>
+<template id="d-link"><p>從開場句自然接到故事主體，不必再說 I'm going to talk about。</p></template>
+<template id="d-p1"><p>Part 1：兩三句，第一句不照搬題目。</p></template>
+<template id="d-p2"><p>Part 2：開場句帶出故事，再依提示展開。</p></template>
+<template id="d-p3"><p>Part 3：先給立場，再用例子支撐。</p></template>
+
+<script>
+  /* 依 template 同時產生畫面與程式碼，兩邊永遠一致 */
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    var code = document.querySelector('pre[data-code="' + box.dataset.tpl + '"]');
+    code.textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+
+  function showAlert(msg, kind) {
+    var box = document.getElementById('alerts');
+    var div = document.createElement('div');
+    div.className = 'alert alert-' + (kind || 'info') + ' alert-dismissible fade show';
+    div.setAttribute('role', 'alert');
+    div.textContent = msg;
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'btn-close';
+    close.setAttribute('data-bs-dismiss', 'alert');
+    div.appendChild(close);
+    box.appendChild(div);
+    setTimeout(function () { div.classList.remove('show'); setTimeout(function () { div.remove(); }, 200); }, 3200);
+  }
+
+  document.getElementById('btn-which').addEventListener('click', function () {
+    var on = document.querySelector('#live-ex3 card-item[data-active]');
+    showAlert(on ? '目前選中：' + on.getAttribute('label') : '目前沒有選中的卡片。', on ? 'info' : 'warning');
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-cards.js"></script>
+</body>
+</html>
