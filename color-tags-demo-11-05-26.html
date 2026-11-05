@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>色名標籤範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
+    --red: #EF6661; --orange: #F79C40; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --violet: #B484E8; --gray: #86877F;
+  }
+  body { background: var(--bg); color: var(--shell); font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid #2A2B29; border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow: auto; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 1rem; }
+  .tbl th, .tbl td { border-bottom: 1px solid #2A2B29; padding: 8px 12px; text-align: left; }
+  .tbl th { color: var(--vanilla); font-weight: 600; }
+  .sample { font-size: 1.125rem; line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>色名標籤：&lt;c-blue&gt;、&lt;c-pink&gt;……</h1>
+  <p class="lead-note">修改日期 11-05-26。所有元件都支援用色名寫的文字色彩標籤，顏色對齊最新版色票；任何一個元件載入後，整頁都能使用。舊的 <code>&lt;c1&gt;</code>～<code>&lt;c16&gt;</code> 仍保留在原本的三個元件中，但號碼在不同元件代表的顏色不同，新內容請改用色名標籤。</p>
+
+  <section class="demo">
+    <h2>可用的色名</h2>
+    <p class="desc">寫法是 <code>&lt;c-色名&gt;文字&lt;/c-色名&gt;</code>，可以和 <code>&lt;b&gt;</code>、<code>&lt;u&gt;</code> 互相包覆。下表直接讀取元件內的定義產生。</p>
+    <div class="pair">
+      <div><p class="pair-label">新色票</p><table class="tbl" id="tbl-new"><thead><tr><th>標籤</th><th>效果</th></tr></thead><tbody></tbody></table></div>
+      <div><p class="pair-label">舊色名（自動對應到新色）</p><table class="tbl" id="tbl-old"><thead><tr><th>標籤</th><th>對應到</th><th>效果</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：一般段落</h2>
+    <p class="desc">只要頁面載入了任何一個元件，元件外的一般段落也能使用。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：ui-table（含 inverse 格子）</h2>
+    <p class="desc">在 <code>inverse</code> 格子裡，色名標籤會變成深色字加品牌色底，避免看不清楚。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：ui-insight 與 ui-detail-ladder</h2>
+    <p class="desc">原本支援 <code>&lt;c1&gt;</code>～<code>&lt;c16&gt;</code> 的兩個元件，改用色名標籤的寫法。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex3"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：ui-cards、card-toggle、slider-show</h2>
+    <p class="desc">原本不支援色彩標籤的元件，現在也能直接使用。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex1">
+<p class="sample">I've <c-blue>managed to stick to</c-blue> a daily routine, <c-pink>rain or shine</c-pink>, <b><c-orange>thanks to</c-orange></b> a gym <u><c-green>conveniently located</c-green></u> near my place.</p>
+</template>
+
+<template id="ex2">
+<ui-table theme="shell" cell-padding="10px">
+  <ui-row col-widths="1:2">
+    <ui-col>語塊</ui-col>
+    <ui-col>例句</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:2">
+    <ui-col><c-blue>conveniently located</c-blue></ui-col>
+    <ui-col>a gym <c-blue>conveniently located</c-blue> right across from my place</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:2">
+    <ui-col inverse font-color="vanilla"><c-violet>rain or shine</c-violet></ui-col>
+    <ui-col>I go jogging every morning, <c-violet>rain or shine</c-violet>.</ui-col>
+  </ui-row>
+</ui-table>
+</template>
+
+<template id="ex3">
+<ui-insight theme="blue">
+  <ins-line heading="Do you like mornings?">
+    <hl why="自然的開場語氣，<c-yellow>口語</c-yellow>常用">Honestly,</hl> I'm
+    <hl why="比 <c-red>I don't like getting up early</c-red> 更道地">not much of a <c-green>morning person</c-green></hl>.
+  </ins-line>
+</ui-insight>
+
+<ui-detail-ladder>
+  <ladder-step label="籠統說法">
+    <step-title icon="bi-chat-square-quote">原本的說法</step-title>
+    <step-body>I live <c-gray>near</c-gray> my school.</step-body>
+  </ladder-step>
+  <ladder-step label="加上數字">
+    <step-title icon="bi-123">換成可衡量的數字</step-title>
+    <step-body>It's <c-orange>about a ten-minute walk</c-orange> from my place.</step-body>
+  </ladder-step>
+</ui-detail-ladder>
+</template>
+
+<template id="ex4">
+<ui-cards cols="2" color="indigo">
+  <card-item label="橫向練習" note="同一語塊跨題使用">
+    <p>把 <c-blue>a tiny apartment</c-blue> 用在 <c-pink>兩個不同的題目</c-pink>。</p>
+  </card-item>
+  <card-item label="開場句" note="第一句不照搬題目">
+    <p>避免 <c-red>I'm going to talk about</c-red>。</p>
+  </card-item>
+</ui-cards>
+
+<card-toggle color="violet" toggle content="答案：<c-green>pressing issue</c-green>">
+  urgent problem 可以升級成什麼？
+</card-toggle>
+
+<slider-show height="160px" show-part-indicator="false">
+  <div slide><div class="slide-content"><div class="slide-main"><p>第一句 <c-yellow>不照搬題目</c-yellow>，第二句 <c-blue>展開細節</c-blue>。</p></div></div></div>
+</slider-show>
+</template>
+
+<script>
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    document.querySelector('pre[data-code="' + box.dataset.tpl + '"]').textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+</script>
+<script src="tbl/ui-table.js"></script>
+<script src="ladder/ui-insight.js"></script>
+<script src="ladder/ui-detail-ladder.js"></script>
+<script src="layout/ui-cards.js"></script>
+<script src="card-toggle.js"></script>
+<script src="slider-show.js"></script>
+<script>
+  /* 色名表：直接讀取共用樣式的定義 */
+  var T = window.UiColorTags;
+  Object.keys(T.colors).forEach(function (k) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><code>&lt;c-' + k + '&gt;</code></td><td><c-' + k + '>Lexical Resource 詞彙資源</c-' + k + '></td>';
+    document.querySelector('#tbl-new tbody').appendChild(tr);
+  });
+  Object.keys(T.aliases).forEach(function (k) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><code>&lt;c-' + k + '&gt;</code></td><td><code>' + T.aliases[k] + '</code></td><td><c-' + k + '>Fluency 流暢度</c-' + k + '></td>';
+    document.querySelector('#tbl-old tbody').appendChild(tr);
+  });
+</script>
+</body>
+</html>

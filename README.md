@@ -32,9 +32,33 @@
 | `focus` | `vanilla` |
 | `attention` | `yellow` |
 
+## 色名標籤
+
+任何一個元件載入後，整頁都能用 `<c-色名>文字</c-色名>` 設定文字色，元件內外都有效，可以和 `<b>`、`<u>` 互相包覆。色名就是上表的新色名，舊色名也能用，例如 `<c-sky>` 會顯示成 `blue`。
+
+```html
+I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pink>.
+```
+
+| 標籤 | 色碼 | 標籤 | 色碼 |
+| --- | --- | --- | --- |
+| `<c-shell>` | `#C6C7BD` | `<c-green>` | `#71CD76` |
+| `<c-vanilla>` | `#DBEDD8` | `<c-blue>` | `#5DBAE8` |
+| `<c-yellow>` | `#E3D322` | `<c-indigo>` | `#778CE1` |
+| `<c-pink>` | `#FF91D7` | `<c-violet>` | `#B484E8` |
+| `<c-red>` | `#EF6661` | `<c-gray>` | `#86877F` |
+| `<c-orange>` | `#F79C40` | | |
+
+- 樣式只注入一次（`<style id="ui-color-tags">`），同時載入多個元件也不會重複。
+- `ui-table` 的 `inverse` 格子裡，色名標籤會變成深色字加品牌色底。
+- 舊的數字標籤 `<c1>`～`<c16>`（`ui-insight`、`ui-detail-ladder`）與 `<c1>`～`<c21>`（`ui-table`）仍可使用，但同一個號碼在不同元件的顏色不同，新內容請改用色名標籤。
+- 色名與對照表可從 `window.UiColorTags.colors`、`window.UiColorTags.aliases` 讀取。
+- 範例頁：`color-tags-demo-11-05-26.html`。
+
 ## 目錄
 
 - [色名對照](#色名對照)
+- [色名標籤](#色名標籤)
 - [arrow-flow.js](#arrow-flowjs)
 - [bp-stepper.js](#bp-stepperjs)
 - [card-toggle.js](#card-togglejs)
