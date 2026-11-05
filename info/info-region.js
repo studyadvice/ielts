@@ -404,6 +404,34 @@
         grid-template-columns: 1fr;
       }
 
+      /* 填空題 */
+      ir-input { display: block; margin-top: 16px; }
+      .ir-input-row { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+      .ir-input-field {
+        flex: 1 1 240px; min-width: 0;
+        background: ${solid('#FFFFFF', 5, REGION)};
+        border: 1.5px solid ${solid(BrandColors.shell, 22, REGION)};
+        border-radius: 6px; color: ${BrandColors.vanilla};
+        font-size: ${cfg.choiceFontSize ? addUnit(cfg.choiceFontSize, 'rem') : '0.95rem'};
+        padding: ${cfg.choicePadding || '10px 14px'};
+        font-family: inherit; outline: none;
+      }
+      .ir-input-field:focus { border-color: ${BrandColors.sky}; }
+      .ir-input-field:disabled { color: ${BrandColors.shell}; }
+      ir-input[state="correct"] .ir-input-field { border-color: ${BrandColors.safe}; background: ${solid(BrandColors.safe, 12, REGION)}; }
+      ir-input[state="wrong"] .ir-input-field,
+      ir-input[state="retry"] .ir-input-field { border-color: ${BrandColors.warning}; }
+      ir-input[state="wrong"] .ir-input-field { background: ${solid(BrandColors.warning, 12, REGION)}; }
+      .ir-input-row .ir-btn { margin: 0; }
+      .ir-input-row .ir-btn:disabled { opacity: 1; cursor: default; color: ${BrandColors.gray}; border-color: ${solid(BrandColors.shell, 22, REGION)}; }
+      .ir-input-msg { display: none; margin-top: 8px; font-size: 0.9rem; color: ${BrandColors.warning}; }
+      .ir-input-msg.is-visible { display: block; }
+      .ir-input-hint {
+        display: none; margin-top: 10px; padding: 8px 12px; font-size: 0.9rem;
+        border-left: 3px solid ${BrandColors.yellow}; background: ${solid(BrandColors.yellow, 8, REGION)}; color: ${BrandColors.shell};
+      }
+      .ir-input-hint.is-visible { display: block; }
+
       /* 單一選項 */
       ir-choice {
         display: flex;
@@ -803,6 +831,13 @@
       this.querySelector('.ir-quiz-explain')?.remove();
       this.querySelector('.ir-quiz-next-wrap')?.remove();
       this.querySelector('.ir-quiz-retry-wrap')?.remove();
+      /* 填空題：清空輸入與狀態 */
+      const inp = this.querySelector('ir-input');
+      if (inp?._irField) {
+        inp._irField.value = ''; inp._irField.disabled = false; inp._irBtn.disabled = false;
+        inp.removeAttribute('state'); inp._irMsg.classList.remove('is-visible');
+        inp.querySelector('.ir-input-hint')?.classList.remove('is-visible');
+      }
     }
 
     /* ── 測驗模式核心 ── */
@@ -861,11 +896,7 @@
 
           const chosen = (ch.getAttribute('value') || '').trim().toLowerCase();
           const correct = chosen === answer;
-          this._quizAnswered = true;
-
-          /* 通知 group 計分 */
-          const grp = this.closest('info-region-group');
-          if (grp?._recordQuizResult) grp._recordQuizResult(this.id, correct);
+          this._quizAnswered = true;   /* 計分與後續流程在 _quizResolve */
 
           /* 鎖定所有選項 */
           choices.forEach(c => c.setAttribute('disabled', ''));
@@ -878,74 +909,180 @@
               .forEach(c => c.setAttribute('state', 'reveal'));
           }
 
-          /* 解說文字（支援基本 HTML 標籤：<b> <strong> <i> <em> <u> <br> <span> <code> <small>） */
-          const explainEl = document.createElement('div');
-          explainEl.className = `ir-quiz-explain ${correct ? 'is-correct' : 'is-wrong'}`;
-          const msgHtml     = correct ? correctMsg : wrongMsg;
-          const explainHtml = explainTxt ? '　' + explainTxt : '';
-          explainEl.innerHTML = msgHtml + explainHtml;
-          this.appendChild(explainEl);
-          requestAnimationFrame(() => explainEl.classList.add('is-visible'));
-
-          /* 重試按鈕（show-retry 屬性啟用，答對也顯示） */
-          if (showRetry) {
-            const retryWrap = document.createElement('div');
-            retryWrap.className = 'ir-quiz-retry-wrap';
-
-            const retryBtn = document.createElement('button');
-            retryBtn.className = `ir-btn ir-manual-btn ir-btn--${retryColor}`;
-            retryBtn.textContent = retryLabel;
-
-            retryBtn.addEventListener('click', () => {
-              /* 原地重置：還原選項狀態，清除解說與按鈕列，重新執行 _setupQuiz */
-              this._quizAnswered = false;
-              this.querySelectorAll('ir-choice').forEach(c => {
-                c.removeAttribute('state');
-                c.removeAttribute('disabled');
-              });
-              this.querySelector('.ir-quiz-explain')?.remove();
-              this.querySelector('.ir-quiz-next-wrap')?.remove();
-              this.querySelector('.ir-quiz-retry-wrap')?.remove();
-              this._setupQuiz();
-            });
-
-            retryWrap.appendChild(retryBtn);
-            this.appendChild(retryWrap);
-            requestAnimationFrame(() => retryWrap.classList.add('is-visible'));
-          }
-
-          /* 決定下一個 id */
-          const nextId = correct ? correctNext : wrongNext;
-
-          if (autoNext && nextId) {
-            setTimeout(() => this._triggerNextById(nextId), nextDelay);
-          } else if (nextId) {
-            /* 手動繼續按鈕 */
-            const wrap = document.createElement('div');
-            wrap.className = 'ir-quiz-next-wrap';
-            const justifyMap = { left:'flex-start', center:'center', right:'flex-end' };
-            const align = this.getAttribute('manual-align') ||
-                          window.InfoRegionConfig.manualAlign;
-            wrap.style.justifyContent = justifyMap[align] || 'flex-end';
-
-            const btn = document.createElement('button');
-            btn.className = `ir-btn ir-manual-btn ir-btn--${nextColor}`;
-            btn.textContent = nextLabel;
-            btn.addEventListener('click', () => {
-              btn.classList.add('is-leaving');
-              btn.addEventListener('animationend', () => {
-                wrap.remove();
-                this._triggerNextById(nextId);
-              }, { once: true });
-            });
-
-            wrap.appendChild(btn);
-            this.appendChild(wrap);
-            requestAnimationFrame(() => wrap.classList.add('is-visible'));
-          }
-          /* nextId 為 null → 本題為終點，不跳轉 */
+          this._quizResolve(correct);
         }, { once: false });
       });
+
+      /* 填空題：<ir-input> */
+      const inp = this.querySelector('ir-input');
+      if (inp) this._setupInput(inp);
+    }
+
+    /* 讀取作答結果後的共同流程：計分、解說、重試、跳題（選擇題與填空題共用） */
+    _quizResolve(correct, extraHtml) {
+      const correctNext = this.getAttribute('correct-next');
+      const wrongNext   = this.getAttribute('wrong-next');
+      const _nd         = parseInt(this.getAttribute('quiz-next-delay'), 10);
+      const nextDelay   = Number.isNaN(_nd) ? 1200 : _nd;
+      const explainTxt  = this.getAttribute('explain') || '';
+      const correctMsg  = this.getAttribute('correct-msg')  || '✓ 答對了！';
+      const wrongMsg    = this.getAttribute('wrong-msg')    || '✗ 答錯了。';
+      const nextLabel   = this.getAttribute('quiz-next-label') || '繼續 ▶';
+      const nextColor   = this.getAttribute('color') || window.InfoRegionConfig.defaultColor;
+      const autoNext    = !this.hasAttribute('manual-next');
+      const showRetry   = this.hasAttribute('show-retry');
+      const retryLabel  = this.getAttribute('retry-label') || '↺ 重試';
+      const retryColor  = this.getAttribute('retry-color') || 'warning';
+
+      this._quizAnswered = true;
+      const grp = this.closest('info-region-group');
+      if (grp?._recordQuizResult) grp._recordQuizResult(this.id, correct);
+
+      /* 解說文字（支援基本 HTML 標籤：<b> <strong> <i> <em> <u> <br> <span> <code> <small>） */
+      const explainEl = document.createElement('div');
+      explainEl.className = `ir-quiz-explain ${correct ? 'is-correct' : 'is-wrong'}`;
+      const msgHtml     = correct ? correctMsg : wrongMsg;
+      const explainHtml = explainTxt ? '　' + explainTxt : '';
+      explainEl.innerHTML = msgHtml + (extraHtml || '') + explainHtml;
+      this.appendChild(explainEl);
+      requestAnimationFrame(() => explainEl.classList.add('is-visible'));
+
+      /* 重試按鈕（show-retry 屬性啟用，答對也顯示） */
+      if (showRetry) {
+        const retryWrap = document.createElement('div');
+        retryWrap.className = 'ir-quiz-retry-wrap';
+
+        const retryBtn = document.createElement('button');
+        retryBtn.className = `ir-btn ir-manual-btn ir-btn--${retryColor}`;
+        retryBtn.textContent = retryLabel;
+
+        retryBtn.addEventListener('click', () => {
+          /* 原地重置：還原選項狀態，清除解說與按鈕列，重新執行 _setupQuiz */
+          this._quizAnswered = false;
+          this.querySelectorAll('ir-choice').forEach(c => {
+            c.removeAttribute('state');
+            c.removeAttribute('disabled');
+          });
+          this.querySelector('.ir-quiz-explain')?.remove();
+          this.querySelector('.ir-quiz-next-wrap')?.remove();
+          this.querySelector('.ir-quiz-retry-wrap')?.remove();
+          const inp = this.querySelector('ir-input');
+          if (inp?._irField) inp._irField.value = '';
+          this._setupQuiz();
+        });
+
+        retryWrap.appendChild(retryBtn);
+        this.appendChild(retryWrap);
+        requestAnimationFrame(() => retryWrap.classList.add('is-visible'));
+      }
+
+      /* 決定下一個 id */
+      const nextId = correct ? correctNext : wrongNext;
+
+      if (autoNext && nextId) {
+        setTimeout(() => this._triggerNextById(nextId), nextDelay);
+      } else if (nextId) {
+        /* 手動繼續按鈕 */
+        const wrap = document.createElement('div');
+        wrap.className = 'ir-quiz-next-wrap';
+        const justifyMap = { left:'flex-start', center:'center', right:'flex-end' };
+        const align = this.getAttribute('manual-align') ||
+                      window.InfoRegionConfig.manualAlign;
+        wrap.style.justifyContent = justifyMap[align] || 'flex-end';
+
+        const btn = document.createElement('button');
+        btn.className = `ir-btn ir-manual-btn ir-btn--${nextColor}`;
+        btn.textContent = nextLabel;
+        btn.addEventListener('click', () => {
+          btn.classList.add('is-leaving');
+          btn.addEventListener('animationend', () => {
+            wrap.remove();
+            this._triggerNextById(nextId);
+          }, { once: true });
+        });
+
+        wrap.appendChild(btn);
+        this.appendChild(wrap);
+        requestAnimationFrame(() => wrap.classList.add('is-visible'));
+      }
+      /* nextId 為 null → 本題為終點，不跳轉 */
+    }
+
+    /* 填空題：輸入框、提交、提示、嘗試次數 */
+    _setupInput(inp) {
+      const color = this.getAttribute('color') || window.InfoRegionConfig.defaultColor;
+      if (!inp._irBuilt) {
+        inp._irBuilt = true;
+        const row = document.createElement('div');
+        row.className = 'ir-input-row';
+        const field = document.createElement('input');
+        field.type = 'text';
+        field.className = 'ir-input-field';
+        field.placeholder = inp.getAttribute('placeholder') || '請輸入答案';
+        field.setAttribute('autocomplete', 'off');
+        field.setAttribute('spellcheck', 'false');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `ir-btn ir-input-submit ir-btn--${color}`;
+        btn.textContent = inp.getAttribute('submit-label') || '送出';
+        row.append(field, btn);
+        const hintTxt = this.getAttribute('hint');
+        let hintBox = null;
+        if (hintTxt) {
+          const hb = document.createElement('button');
+          hb.type = 'button';
+          hb.className = 'ir-btn ir-input-hint-btn ir-btn--' + (this.getAttribute('hint-color') || 'yellow');
+          hb.textContent = this.getAttribute('hint-label') || '提示';
+          row.append(hb);
+          hintBox = document.createElement('div');
+          hintBox.className = 'ir-input-hint';
+          hintBox.innerHTML = hintTxt;
+          hb.addEventListener('click', () => hintBox.classList.toggle('is-visible'));
+        }
+        const msg = document.createElement('div');
+        msg.className = 'ir-input-msg';
+        inp.append(row);
+        if (hintBox) inp.append(hintBox);
+        inp.append(msg);
+        inp._irField = field; inp._irBtn = btn; inp._irMsg = msg;
+        const submit = () => this._checkInput(inp);
+        btn.addEventListener('click', submit);
+        field.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+      }
+      inp._irTries = 0;
+      inp.removeAttribute('state');
+      inp._irField.disabled = false;
+      inp._irBtn.disabled = false;
+      inp._irMsg.textContent = '';
+      inp._irMsg.classList.remove('is-visible');
+    }
+
+    _checkInput(inp) {
+      if (this._quizAnswered) return;
+      const field = inp._irField;
+      const cs  = this.hasAttribute('case-sensitive');
+      const norm = v => { v = String(v).trim().replace(/\s+/g, ' '); return cs ? v : v.toLowerCase(); };
+      const val = norm(field.value);
+      if (!val) { field.focus(); return; }
+      const answers = (this.getAttribute('answer') || '').split('|').map(a => a.trim()).filter(Boolean);
+      const correct = answers.some(a => norm(a) === val);
+      const max = Math.max(1, parseInt(this.getAttribute('max-attempts'), 10) || 1);
+      inp._irTries = (inp._irTries || 0) + 1;
+      if (!correct && inp._irTries < max) {
+        const left = max - inp._irTries;
+        inp.setAttribute('state', 'retry');
+        inp._irMsg.innerHTML = (this.getAttribute('retry-msg') || '✗ 再想想。') + `（還有 ${left} 次機會）`;
+        inp._irMsg.classList.add('is-visible');
+        field.select();
+        return;
+      }
+      inp._irMsg.classList.remove('is-visible');
+      inp.setAttribute('state', correct ? 'correct' : 'wrong');
+      field.disabled = true;
+      inp._irBtn.disabled = true;
+      const reveal = !correct && answers.length && !this.hasAttribute('hide-answer')
+        ? `正確答案：<b>${answers[0].replace(/</g, '&lt;')}</b>。` : '';
+      this._quizResolve(correct, reveal);
     }
 
     _triggerNextById(id) {
@@ -1336,6 +1473,7 @@
   customElements.define('info-region-group', InfoRegionGroup);
   customElements.define('ir-choices',        IrChoices);
   customElements.define('ir-choice',         IrChoice);
+  if (!customElements.get('ir-input')) customElements.define('ir-input', class extends HTMLElement {});
 
   window.InfoRegion = {
     activate(id) {

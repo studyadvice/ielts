@@ -35,8 +35,8 @@
 <body>
 <div id="alerts"></div>
 <div class="page">
-  <h1>ui-cards：卡片實心、選中實心、框線與滑過效果</h1>
-  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。第二次修改新增框線粗細與滑過效果：<code>border-width</code>、<code>hover-color</code>、<code>hover-width</code>、<code>hover-all</code>，見範例 5 到 7。</p>
+  <h1>ui-cards：卡片實心、選中實心、框線、滑過效果與翻面</h1>
+  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。第二次修改新增框線粗細與滑過效果：<code>border-width</code>、<code>hover-color</code>、<code>hover-width</code>、<code>hover-all</code>，見範例 5 到 7。第三次修改把 card-toggle 的翻面功能整合進來：<code>back</code>、<code>back-source</code>、<code>flip-toggle</code>、<code>auto-flip</code>、<code>flip-color</code>、<code>flip-animation</code>，見範例 8 與 9。</p>
 
   <section class="demo">
     <h2>屬性一覽</h2>
@@ -50,6 +50,11 @@
         <tr><td><code>hover-color</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>品牌色名稱或色碼</td><td>滑鼠移到卡片上的框線色，預設 <code>vanilla</code>。</td></tr>
         <tr><td><code>hover-width</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>數字（px）</td><td>滑過時的框線粗細。往內加粗，卡片大小與內容位置不會跳動。沒設時粗細不變，只換顏色。</td></tr>
         <tr><td><code>hover-all</code></td><td><code>&lt;ui-cards&gt;</code></td><td>布林</td><td>讓純展示的卡片也有滑過效果。沒設時只有帶 <code>detail</code> 或 <code>href</code> 的卡片會反應；停用的卡片一律不反應。</td></tr>
+        <tr><td><code>back</code>、<code>back-source</code></td><td><code>&lt;card-item&gt;</code></td><td>HTML／元素 id</td><td>背面內容。設了就變成翻面卡片，點卡片本身翻面。</td></tr>
+        <tr><td><code>flip-toggle</code></td><td>兩者皆可</td><td>布林</td><td>背面可再點一次翻回。卡片可寫 <code>flip-toggle="false"</code> 例外。</td></tr>
+        <tr><td><code>auto-flip</code></td><td>兩者皆可</td><td>毫秒</td><td>翻面後倒數自動翻回，底部顯示倒數條。</td></tr>
+        <tr><td><code>flip-color</code></td><td>兩者皆可</td><td>顏色</td><td>翻面期間的卡片色。</td></tr>
+        <tr><td><code>flip-animation</code></td><td>兩者皆可</td><td><code>fade</code>、<code>slide</code>、<code>none</code></td><td>翻面動畫，預設 <code>fade</code>。</td></tr>
         <tr><td>文字色</td><td>自動</td><td></td><td>實心時依底色亮度自動選擇深色或淺色文字，深色底（例如元件色名 <code>indigo</code>、<code>warning</code>）會改用淺色字。</td></tr>
       </tbody>
     </table>
@@ -120,7 +125,52 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex7"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 8：翻面字卡</h2>
+    <p class="desc">整組設 <code>flip-toggle</code> 與 <code>flip-color="green"</code>：點卡片看背面，再點一次翻回。第三張用 <code>back-source</code> 讀取 <code>&lt;template&gt;</code>，並用 <code>flip-animation="slide"</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex8"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex8"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 9：倒數自動翻回，卡片內按鈕照常運作</h2>
+    <p class="desc"><code>auto-flip="3000"</code> 翻面三秒後自動翻回，底部有倒數條；<code>flip-toggle="false"</code> 讓倒數期間點擊不會提早翻回。卡片內的「看例句」是 <code>detail</code> 按鈕，按它只開內容區，不會翻面。</p>
+    <div class="tool">
+      <button type="button" class="btn btn-outline-light" id="btn-unflip">全部翻回正面</button>
+    </div>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex9" id="live-ex9"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex9"></pre></div>
+    </div>
+  </section>
 </div>
+
+<template id="ex8">
+<ui-cards cols="3" flip-toggle flip-color="green" align="center">
+  <card-item label="mitigate" note="點卡片看意思" back="<b>減輕、緩和</b><br>mitigate the impact of"></card-item>
+  <card-item label="exacerbate" note="點卡片看意思" back="<b>使惡化</b><br>exacerbate the problem"></card-item>
+  <card-item label="pervasive" note="點卡片看同義字" back-source="bk-pervasive" flip-animation="slide"></card-item>
+</ui-cards>
+
+<template id="bk-pervasive"><p><b>同義字</b></p><p>widespread、prevalent、ubiquitous</p></template>
+</template>
+
+<template id="ex9">
+<ui-cards cols="2" auto-flip="3000" flip-toggle="false" flip-color="orange" panel-title="{label}" placeholder="按「看例句」會在這裡顯示。">
+  <card-item label="Do you like mornings?" back="Honestly, I'm <c-green>not much of a morning person</c-green>.">
+    <button detail="ex-morning" detail-title="例句">看例句</button>
+  </card-item>
+  <card-item label="How do you get to work?" back="It's <c-green>about a twenty-minute ride</c-green> on the MRT.">
+    <button detail="ex-work" detail-title="例句">看例句</button>
+  </card-item>
+</ui-cards>
+
+<template id="ex-morning"><p>I need two cups of coffee before I can function properly.</p></template>
+<template id="ex-work"><p>I catch up on podcasts on the way.</p></template>
+</template>
 
 <template id="ex5">
 <ui-cards cols="3" border-width="2" hover-color="pink" hover-width="4" panel-title="{label}" placeholder="點選一張卡片。">
@@ -213,6 +263,14 @@
     box.appendChild(div);
     setTimeout(function () { div.classList.remove('show'); setTimeout(function () { div.remove(); }, 200); }, 3200);
   }
+
+  document.getElementById('btn-unflip').addEventListener('click', function () {
+    document.querySelector('#live-ex9 ui-cards').unflipAll();
+    showAlert('已全部翻回正面。', 'info');
+  });
+  document.addEventListener('ui-cards:flip', function (e) {
+    if (e.detail.flipped && e.target.closest('#live-ex9')) showAlert('翻面：' + e.detail.card.getAttribute('label'), 'info');
+  });
 
   document.getElementById('btn-which').addEventListener('click', function () {
     var on = document.querySelector('#live-ex3 card-item[data-active]');

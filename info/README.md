@@ -5,7 +5,7 @@
 - 依序淡入的步驟說明
 - 倒數條自動換步、按鈕手動換步
 - 橫向卡片依序登場
-- 選擇題測驗，含解說、重試、計分板、進度條
+- 選擇題與填空題測驗，含解說、重試、計分板、進度條
 - 金色開場與結尾，**金色區塊現在有電流動畫**
 
 不使用 shadow DOM，CSS 由腳本注入一次，沒有任何外部相依。
@@ -18,6 +18,7 @@
   - [顏色清單](#顏色清單)
 - [info-region-group 屬性](#info-region-group-屬性)
 - [測驗模式](#測驗模式)
+  - [填空題](#填空題)
 - [金色電流](#金色電流)
   - [開關與自訂](#開關與自訂)
   - [運作與支援](#運作與支援)
@@ -47,7 +48,7 @@
 
 ## 特色
 
-- 四個語意標籤：`<info-region>`、`<info-region-group>`、`<ir-choices>`、`<ir-choice>`。
+- 五個語意標籤：`<info-region>`、`<info-region-group>`、`<ir-choices>`、`<ir-choice>`、`<ir-input>`。
 - 用 `next` 屬性串接區塊，支援倒數、手動按鈕、一次全部依序登場三種節奏。
 - 測驗模式可以分支：答對與答錯可以進入不同的區塊。
 - 18 種內建顏色，用 `color` 屬性切換，左側色條與按鈕顏色自動跟著變。
@@ -176,6 +177,34 @@
 | `retry-color` | `warning` | 重試按鈕顏色 |
 | `choice-font-size` | `0.95rem` | 選項字體大小，字母圓圈會依比例縮放 |
 | `choice-padding` | `10px 14px` | 選項內距 |
+
+### 填空題
+
+在 `quiz` 區塊裡放 `<ir-input>`，就是填空題。計分、解說、重試、`correct-next` 與 `wrong-next` 都和選擇題相同。取代原本的 `card-toggle` 填空問答。
+
+```html
+<info-region id="f1" quiz quiz-item color="blue" quiz-label="填空"
+             answer="mitigate|alleviate" max-attempts="3" hint="m 開頭，八個字母"
+             correct-next="f2" wrong-next="f2" explain="mitigate the impact of">
+  <p>「使某事不那麼嚴重」的動詞是？</p>
+  <ir-input placeholder="輸入英文"></ir-input>
+</info-region>
+```
+
+| 屬性 | 寫在哪裡 | 預設值 | 說明 |
+|---|---|---|---|
+| `answer` | `info-region` | 無 | 正確答案，多個可接受答案用 `\|` 分隔。比對時忽略前後空白與多餘空格 |
+| `case-sensitive` | `info-region` | 無 | 區分大小寫 |
+| `max-attempts` | `info-region` | `1` | 可嘗試次數。用完前答錯只顯示提示訊息，不計分 |
+| `retry-msg` | `info-region` | `✗ 再想想。` | 還有機會時的訊息，後面自動加上剩餘次數 |
+| `hint` | `info-region` | 無 | 提示內容，有設定才出現提示按鈕 |
+| `hint-label` | `info-region` | `提示` | 提示按鈕文字 |
+| `hint-color` | `info-region` | `yellow` | 提示按鈕顏色 |
+| `hide-answer` | `info-region` | 無 | 最後一次答錯時不顯示正確答案 |
+| `placeholder` | `ir-input` | `請輸入答案` | 輸入框提示文字 |
+| `submit-label` | `ir-input` | `送出` | 送出按鈕文字 |
+
+按 Enter 也能送出。最後一次答錯時，解說前會自動加上「正確答案：…」（取 `answer` 的第一個答案）。
 
 `<ir-choices>` 預設兩欄，加上 `layout="column"` 變成單欄。`<ir-choice>` 的 `value` 是選項的值，字母 A、B、C 會自動加上。選項支援鍵盤，按 Enter 或空白鍵即可選取。
 

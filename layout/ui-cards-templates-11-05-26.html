@@ -41,7 +41,7 @@
 <body>
 <div class="page">
   <h1>ui-cards 版型範本</h1>
-  <p class="lead-note">修改日期 11-05-26。九種資料呈現方式，左邊是畫面，右邊是可以直接複製的程式碼。每個範本只用 <code>&lt;ui-cards&gt;</code> 原有的屬性組合，換掉文字就能用；需要的顏色可以再自己加 <code>color</code>、<code>accent</code>。</p>
+  <p class="lead-note">修改日期 11-05-26。十種資料呈現方式，左邊是畫面，右邊是可以直接複製的程式碼。每個範本只用 <code>&lt;ui-cards&gt;</code> 原有的屬性組合，換掉文字就能用；需要的顏色可以再自己加 <code>color</code>、<code>accent</code>。</p>
   <nav class="toc" id="toc"></nav>
 
   <section class="demo" data-tpl="t-kpi" data-title="1. 數據指標" data-use="分數、時數、進度一眼看完">
@@ -68,7 +68,10 @@
   <section class="demo" data-tpl="t-qa" data-title="8. 問題卡與答案區" data-use="課堂提問、先想再看答案">
     <p class="desc">卡片寫問題，卡片內的按鈕用 <code>detail</code> 在下方內容區顯示答案。<code>toggle</code> 讓同一個按鈕再按一次收起。</p>
   </section>
-  <section class="demo" data-tpl="t-tags" data-title="9. 分類標籤牆" data-use="主題分類、同義詞群組">
+  <section class="demo" data-tpl="t-flip" data-title="9. 翻面字卡" data-use="單字記憶、先想再翻、課堂快問快答">
+    <p class="desc">卡片寫 <code>back</code> 就能點擊翻面。整組設 <code>flip-toggle</code> 可以翻回，<code>flip-color</code> 讓翻面的卡片換色，一眼看出哪些已經翻過。</p>
+  </section>
+  <section class="demo" data-tpl="t-tags" data-title="10. 分類標籤牆" data-use="主題分類、同義詞群組">
     <p class="desc">每張卡片是一個分類，大量內容放在 <code>tags</code>，一眼看到每類有哪些詞。<code>note</code> 寫這一類的使用時機。</p>
   </section>
 </div>
@@ -200,7 +203,17 @@
 <template id="qa-3"><p>Texting, mostly. It lets me <c-green>reply on my own time</c-green>, but I'd rather call when something is urgent.</p></template>
 </template>
 
-<!-- 9. 分類標籤牆 -->
+<!-- 9. 翻面字卡 -->
+<template id="t-flip">
+<ui-cards cols="4" flip-toggle flip-color="green" align="center" card-height="120">
+  <card-item label="mitigate" note="點我翻面" back="<b>減輕、緩和</b><br>mitigate the impact of"></card-item>
+  <card-item label="exacerbate" note="點我翻面" back="<b>使惡化</b><br>exacerbate the problem"></card-item>
+  <card-item label="alleviate" note="點我翻面" back="<b>減輕痛苦</b><br>alleviate pressure on"></card-item>
+  <card-item label="curb" note="點我翻面" back="<b>抑制</b><br>curb emissions"></card-item>
+</ui-cards>
+</template>
+
+<!-- 10. 分類標籤牆 -->
 <template id="t-tags">
 <ui-cards cols="3">
   <card-item label="表達喜歡" note="Part 1 回答偏好題" tags="be into,be a big fan of,can't get enough of,be keen on,have a soft spot for"></card-item>

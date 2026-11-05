@@ -1,3 +1,6 @@
+/* card-toggle.js：已停止維護（11-05-26 起）。
+   翻面卡片請改用 layout/ui-cards.js 的 back 屬性；填空、選擇與題組請改用 info/info-region.js。
+   保留這支檔案是為了讓既有頁面繼續運作。改寫對照見根目錄 README 的 card-toggle 段落。 */
 const CT_CARD_FS  = ['body','number','question','input','submit','aux','feedback','hintbox','flipnote','info','infobox','branch-btn','branch-label','branch-body'];
 const CT_CARD_PAD = ['input','submit','aux','info','infobox'];
 const CT_GROUP_FS  = ['nav','page','counter','result-score','result-text','retry'];

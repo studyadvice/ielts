@@ -146,6 +146,22 @@ ui-cards[hover-all] card-item:not([disabled]):hover{border-color:var(--uic-hc, $
 ui-cards card-item[data-active]{border-color:var(--uic-accent);box-shadow:0 0 0 2px var(--uic-accent);}
 ui-cards card-item[disabled]{border-style:dashed;cursor:not-allowed;filter:grayscale(1);}
 
+/* 翻面：背面平時隱藏；翻面後只留背面、角標與倒數條 */
+ui-cards card-item[data-flip]{cursor:pointer;}
+ui-cards card-item[data-flip]:focus-visible{outline:2px solid ${PALETTE.focus};outline-offset:2px;}
+ui-cards card-item > .uic-back{display:none;padding:var(--uic-pad);grid-column:1 / -1;grid-row:1 / -1;}
+ui-cards card-item[data-flipped] > :not(.uic-back):not(.uic-badge):not(.uic-flipbar){display:none;}
+ui-cards card-item[data-flipped] > .uic-back{display:block;}
+ui-cards card-item[data-flip-anim="fade"][data-flipped] > .uic-back,
+ui-cards card-item[data-flip-anim="fade"].uic-unflip > *{animation:uic-fade .35s ease;}
+ui-cards card-item[data-flip-anim="slide"][data-flipped] > .uic-back,
+ui-cards card-item[data-flip-anim="slide"].uic-unflip > *{animation:uic-slide .35s ease;}
+ui-cards .uic-flip-hint{font-size:0.75rem;color:${PALETTE.info};margin:10px 0 0 0;}
+ui-cards .uic-flipbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--uic-flipbar, var(--uic-c));transform-origin:left center;animation:uic-count linear forwards;}
+@keyframes uic-fade{from{opacity:0}to{opacity:1}}
+@keyframes uic-slide{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes uic-count{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
 ${SEL_FILLED}{--uic-fill:var(--uic-c);--uic-on:var(--uic-c-on, ${PALETTE.base});}
 ${SEL_ACTIVE_FILLED}{--uic-fill:var(--uic-accent);--uic-on:var(--uic-accent-on, ${PALETTE.base});}
 ${filledCSS(SEL_FILLED)}
@@ -283,6 +299,13 @@ ${variantCSS}
 
       /* 事件 */
       wrap.addEventListener('click', e => this._onClick(e));
+      wrap.addEventListener('keydown', e => {
+        const fc = e.target;
+        if ((e.key === 'Enter' || e.key === ' ') && fc.localName === 'card-item' && fc.hasAttribute('data-flip') && !fc.hasAttribute('disabled')) {
+          e.preventDefault();
+          this._flip(fc);
+        }
+      });
       if (o.trigger === 'hover' || o.detailTrigger === 'hover') {
         wrap.addEventListener('mouseover', e => {
           const b = e.target.closest('[detail]');
@@ -345,6 +368,30 @@ ${variantCSS}
       parts.push(main);
 
       if (ta('footer')) parts.push(el('div', 'uic-foot', ta('footer')));
+
+      /* 翻面：back 或 back-source；flip-* 屬性可寫在 ui-cards 上當整組預設 */
+      const fa = n => (c.hasAttribute(n) ? c.getAttribute(n) : this.getAttribute(n));
+      const hasBack = c.hasAttribute('back') || c.hasAttribute('back-source');
+      if (hasBack) {
+        const back = el('div', 'uic-back');
+        const bb = el('div', 'uic-body');
+        if (ta('back-source')) bb.append(cloneOf(ta('back-source')) || alertEl(ta('back-source')));
+        else bb.innerHTML = ta('back') || '';
+        back.append(bb);
+        const tg = fa('flip-toggle');
+        c._flipToggle = tg != null && tg !== 'false';
+        if (c._flipToggle && fa('flip-hint') !== '') back.append(el('div', 'uic-flip-hint', fa('flip-hint') || '點擊翻回'));
+        parts.push(back);
+        c._autoFlip = num(fa('auto-flip'), 0);
+        c._flipColor = fa('flip-color') || '';
+        if (fa('flip-bar-color')) c.style.setProperty('--uic-flipbar', color(fa('flip-bar-color')));
+        const an = fa('flip-animation');
+        c.setAttribute('data-flip-anim', ['fade', 'slide', 'none'].includes(an) ? an : 'fade');
+        c.setAttribute('data-flip', '');
+        if (!c.hasAttribute('tabindex')) c.tabIndex = 0;
+        c.setAttribute('role', 'button');
+        c.setAttribute('aria-pressed', 'false');
+      }
       const bd = badgeEl(ta('badge'), ta('badge-icon'));
       if (bd) parts.push(bd);
       c.replaceChildren(...parts);
@@ -365,7 +412,7 @@ ${variantCSS}
       /* 單張卡片字級（覆寫 ui-cards 的設定） */
       applySizes(c, ta);
       if (ta('span')) c.style.gridColumn = `span ${Math.max(1, parseInt(ta('span'), 10) || 1)}`;
-      if (!c.hasAttribute('disabled') && (ta('detail') || ta('href'))) c.setAttribute('data-click', '');
+      if (!c.hasAttribute('disabled') && (ta('detail') || ta('href') || hasBack)) c.setAttribute('data-click', '');
     }
 
     _onClick(e) {
@@ -377,6 +424,16 @@ ${variantCSS}
         e.stopPropagation();
         this._reveal(r);
         return;
+      }
+      /* 翻面卡片：點卡片本身翻面；卡片內的按鈕、連結、輸入框照常運作 */
+      const fc = e.target.closest('card-item[data-flip]');
+      if (fc && wrap.contains(fc) && !fc.hasAttribute('disabled')) {
+        const inner = e.target.closest('[detail], a[href], button, input, select, textarea, label, summary');
+        if (!inner || inner === fc) {
+          e.preventDefault();
+          this._flip(fc);
+          return;
+        }
       }
       const b = e.target.closest('[detail]');
       if (b && wrap.contains(b)) {
@@ -475,6 +532,52 @@ ${variantCSS}
       p.badge = bd;
       p.col.classList.add('uic-has-badge');
       p.col.style.setProperty('--uic-pbadge-w', (bd.offsetWidth + 16) + 'px');
+    }
+
+    /* 翻面；want 為 true／false 時強制指定狀態（API 與倒數用），省略時切換 */
+    _flip(c, want) {
+      const on = c.hasAttribute('data-flipped');
+      const next = want == null ? !on : !!want;
+      if (next === on) return;
+      if (!next && want == null && !c._flipToggle) return;
+      clearTimeout(c._flipT);
+      c.querySelector(':scope > .uic-flipbar')?.remove();
+      c.classList.remove('uic-unflip');
+      if (next) {
+        c.style.minHeight = c.offsetHeight + 'px';   /* 背面較短時維持高度，避免版面跳動 */
+        c._prevC = [c.style.getPropertyValue('--uic-c'), c.style.getPropertyValue('--uic-c-on')];
+        if (c._flipColor) {
+          c.style.setProperty('--uic-c', color(c._flipColor));
+          c.style.setProperty('--uic-c-on', textOn(c._flipColor));
+        }
+        c.setAttribute('data-flipped', '');
+        if (c._autoFlip > 0) {
+          const bar = el('div', 'uic-flipbar');
+          bar.style.animationDuration = c._autoFlip + 'ms';
+          c.append(bar);
+          c._flipT = setTimeout(() => this._flip(c, false), c._autoFlip);
+        }
+      } else {
+        c.removeAttribute('data-flipped');
+        c.style.minHeight = '';
+        const pc = c._prevC || ['', ''];
+        pc[0] ? c.style.setProperty('--uic-c', pc[0]) : c.style.removeProperty('--uic-c');
+        pc[1] ? c.style.setProperty('--uic-c-on', pc[1]) : c.style.removeProperty('--uic-c-on');
+        c.classList.add('uic-unflip');
+        setTimeout(() => c.classList.remove('uic-unflip'), 400);
+      }
+      c.setAttribute('aria-pressed', String(next));
+      c.dispatchEvent(new CustomEvent('ui-cards:flip', { bubbles: true, detail: { card: c, flipped: next } }));
+    }
+
+    /* API：flip(卡片元素或索引, true／false／省略)、unflipAll() */
+    flip(target, state) {
+      const c = typeof target === 'number' ? (this._cards || [])[target] : target;
+      if (c && c.hasAttribute('data-flip')) this._flip(c, state == null ? !c.hasAttribute('data-flipped') : state);
+    }
+
+    unflipAll() {
+      (this._cards || []).forEach(c => { if (c.hasAttribute('data-flipped')) this._flip(c, false); });
     }
 
     _clear() {

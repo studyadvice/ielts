@@ -342,7 +342,7 @@
       { k: 'fx', l: '電流', t: 'select', o: ['', 'electric', 'off'], ol: ['依外觀', '開啟', '關閉'] },
       { k: '_content', l: '內容 HTML', t: 'area', full: true, h: '測驗題寫題目即可，選項在下方設定' },
       { s: '流程' },
-      { k: '_mode', l: '換到下一步', t: 'select', o: ['auto', 'countdown', 'manual', 'quiz', 'end'], ol: ['顯示後自動', '倒數條跑完', '按按鈕', '測驗題', '終點（不接下一步）'] }
+      { k: '_mode', l: '換到下一步', t: 'select', o: ['auto', 'countdown', 'manual', 'quiz', 'fill', 'end'], ol: ['顯示後自動', '倒數條跑完', '按按鈕', '選擇題', '填空題', '終點（不接下一步）'] }
     ],
     flow_next: [ { k: 'next', l: '下一個區塊', t: 'next' } ],
     flow_auto: [ { k: 'next-interval', l: '等待毫秒', t: 'text', ph: '500' } ],
@@ -369,6 +369,21 @@
       { k: 'show-retry', l: '重試按鈕', t: 'bool' },
       { k: '_item', l: '計入題數', t: 'bool', h: 'quiz-item：進度條與計分只算這些題目' }
     ],
+    flow_fill: [
+      { s: '填空題' },
+      { k: 'quiz-label', l: '題號標籤', t: 'text', ph: '填空' },
+      { k: 'answer', l: '正確答案', t: 'text', ph: 'mitigate|alleviate', h: '多個可接受答案用 | 分隔' },
+      { k: '_ph', l: '輸入框提示', t: 'text', ph: '請輸入答案' },
+      { k: 'max-attempts', l: '可嘗試次數', t: 'text', ph: '1' },
+      { k: 'hint', l: '提示', t: 'text', h: '有內容才出現提示按鈕' },
+      { k: 'case-sensitive', l: '區分大小寫', t: 'bool' },
+      { k: 'explain', l: '解說', t: 'text', h: '支援 <b>、<i>、<u>、<br>' },
+      { k: 'correct-next', l: '答對後到', t: 'next' },
+      { k: 'wrong-next', l: '答錯後到', t: 'next' },
+      { k: 'manual-next', l: '答完按鈕才跳題', t: 'bool' },
+      { k: 'show-retry', l: '重試按鈕', t: 'bool' },
+      { k: '_item', l: '計入題數', t: 'bool', h: 'quiz-item：進度條與計分只算這些題目' }
+    ],
     region_tail: [
       { s: '邊框' },
       { k: 'border-width', l: '四邊寬度', t: 'text', ph: '2' },
@@ -381,11 +396,12 @@
     table: keysOf(F.table), group: keysOf(F.group), row: keysOf(F.row), col: keysOf(F.col), group_ir: keysOf(F.group_ir),
     region: ['id', 'color', 'fx', 'next', 'next-interval', 'countdown', 'countdown-position', 'countdown-color', 'manual',
              'manual-label', 'manual-align', 'manual-color', 'quiz', 'quiz-item', 'quiz-label', 'answer', 'explain',
-             'correct-next', 'wrong-next', 'manual-next', 'show-retry', 'border-width', 'border-top-width', 'border-style']
+             'correct-next', 'wrong-next', 'manual-next', 'show-retry', 'border-width', 'border-top-width', 'border-style',
+             'max-attempts', 'hint', 'case-sensitive']
   };
   var BOOLS = ['tree-line', 'tree-open', 'ini-collapse', 'hidden', 'can-hide', 'inverse', 'expandable', 'mask-invert',
                'arrow-open', 'progress-bar', 'auto-start', 'global-progress', 'show-percent', 'show-score', 'manual',
-               'quiz', 'quiz-item', 'manual-next', 'show-retry'];
+               'quiz', 'quiz-item', 'manual-next', 'show-retry', 'case-sensitive'];
 
   /* 依欄位順序輸出屬性 */
   function attrs(keys, a, extra) {
@@ -606,6 +622,17 @@
       });
       return g;
     },
+    '填空練習': function () {
+      var g = infoDefault(); g.a['show-score'] = true; g.a['global-progress'] = true; g.a['show-percent'] = true;
+      [['「使某事不那麼嚴重」的動詞是？', 'mitigate|alleviate', 'm 開頭', 'mitigate the impact of'],
+       ['「普遍存在的」形容詞是？', 'ubiquitous|pervasive', 'u 開頭', 'Smartphones are ubiquitous.']].forEach(function (q, i) {
+        var r = newRegion(i + 1, 'fill'); r.a.color = 'blue'; r.a['quiz-label'] = '填空 ' + (i + 1);
+        r.content = '<p>' + q[0] + '</p>'; r.a.answer = q[1]; r.a.hint = q[2]; r.a.explain = q[3]; r.a['max-attempts'] = '2'; r.ph = '輸入英文';
+        g.regions.push(r);
+      });
+      var d = newRegion(3, 'end'); d.gold = true; d.a.color = 'gold'; d.content = '<h4>完成</h4>';
+      g.regions.push(d); return g;
+    },
     '答錯補充說明': function () {
       var g = infoDefault(); g.a['show-score'] = true;
       var q = newRegion(1, 'quiz'); q.a.id = 'q1'; q.a['quiz-label'] = '第 1 題'; q.content = '<p>Which is more natural?</p>';
@@ -633,21 +660,23 @@
       var a = { id: r.a.id, color: r.a.color, fx: r.a.fx };
       var keys = ['id'];
       var cls = r.gold ? ' class="ir-gold"' : '';
-      if (r.mode !== 'end' && r.mode !== 'quiz') {
+      var isQ = r.mode === 'quiz' || r.mode === 'fill';
+      if (r.mode !== 'end' && !isQ) {
         a.next = resolveNext(m, i, r.a.next);
         if (r.mode === 'auto') a['next-interval'] = r.a['next-interval'];
         if (r.mode === 'countdown') { a.countdown = r.a.countdown || '3000'; a['countdown-position'] = r.a['countdown-position']; a['countdown-color'] = r.a['countdown-color']; }
         if (r.mode === 'manual') { a.manual = true; a['manual-label'] = r.a['manual-label']; a['manual-align'] = r.a['manual-align']; a['manual-color'] = r.a['manual-color']; }
       }
-      if (r.mode === 'quiz') {
+      if (isQ) {
         a.quiz = true; a['quiz-item'] = r.item !== false; a['quiz-label'] = r.a['quiz-label']; a.answer = r.a.answer;
         a['correct-next'] = resolveNext(m, i, r.a['correct-next']); a['wrong-next'] = resolveNext(m, i, r.a['wrong-next']);
         a.explain = r.a.explain; a['manual-next'] = r.a['manual-next']; a['show-retry'] = r.a['show-retry'];
+        if (r.mode === 'fill') { a['max-attempts'] = r.a['max-attempts']; a.hint = r.a.hint; a['case-sensitive'] = r.a['case-sensitive']; }
       }
       a['border-width'] = r.a['border-width']; a['border-top-width'] = r.a['border-top-width']; a['border-style'] = r.a['border-style'];
       var order = ['id', 'color', 'fx', 'next', 'next-interval', 'countdown', 'countdown-position', 'countdown-color', 'manual', 'manual-label',
-                   'manual-align', 'manual-color', 'quiz', 'quiz-item', 'quiz-label', 'answer', 'correct-next', 'wrong-next', 'explain',
-                   'manual-next', 'show-retry', 'border-width', 'border-top-width', 'border-style'];
+                   'manual-align', 'manual-color', 'quiz', 'quiz-item', 'quiz-label', 'answer', 'max-attempts', 'case-sensitive', 'hint',
+                   'correct-next', 'wrong-next', 'explain', 'manual-next', 'show-retry', 'border-width', 'border-top-width', 'border-style'];
       var at = attrs(order, a, r.extra);
       at = at.replace(/^ id="[^"]*"/, function (s) { return s + cls; });
       L.push('  <info-region' + at + '>');
@@ -657,6 +686,7 @@
         choiceList(r).forEach(function (c, k) { L.push('      <ir-choice value="' + LETTERS[k] + '">' + c + '</ir-choice>'); });
         L.push('    </ir-choices>');
       }
+      if (r.mode === 'fill') L.push('    <ir-input' + (r.ph ? ' placeholder="' + qv(r.ph) + '"' : '') + '></ir-input>');
       L.push('  </info-region>');
     });
     L.push('</info-region-group>');
@@ -681,7 +711,9 @@
       var a = rr.a;
       Object.keys(a).forEach(function (k) { r.a[k] = a[k]; });
       if (!r.a.id) r.a.id = 'r' + (i + 1);
-      if (a.quiz) r.mode = 'quiz';
+      var irIn = el.querySelector('ir-input');
+      if (a.quiz && irIn) { r.mode = 'fill'; r.ph = irIn.getAttribute('placeholder') || ''; irIn.remove(); }
+      else if (a.quiz) r.mode = 'quiz';
       else if (a.countdown) r.mode = 'countdown';
       else if (a.manual) r.mode = 'manual';
       else if (a.next) r.mode = 'auto';
@@ -752,6 +784,7 @@
         var v = r.a[k]; if (v && v[0] !== '@' && !ids[v]) w.push(r.a.id + ' 的 ' + k + ' 指向不存在的 id「' + v + '」。');
       });
       if (r.mode === 'quiz' && !r.a.answer) w.push(r.a.id + ' 是測驗題，但還沒選正確答案。');
+      if (r.mode === 'fill' && !(r.a.answer || '').trim()) w.push(r.a.id + ' 是填空題，但還沒填正確答案。');
       if (r.mode === 'quiz' && choiceList(r).length < 2) w.push(r.a.id + ' 至少需要兩個選項。');
     });
     return w;
@@ -833,7 +866,8 @@
     var m = S.info, sel = S.sel.info, h = [];
     h.push('<div class="st-toolbar">' +
       '<button class="btnx sm" data-act="add-region"><i class="bi bi-plus-lg"></i>區塊</button>' +
-      '<button class="btnx sm" data-act="add-quiz"><i class="bi bi-ui-radios"></i>測驗題</button>' +
+      '<button class="btnx sm" data-act="add-quiz"><i class="bi bi-ui-radios"></i>選擇題</button>' +
+      '<button class="btnx sm" data-act="add-fill"><i class="bi bi-input-cursor-text"></i>填空題</button>' +
       '<button class="btnx sm" data-act="add-gold"><i class="bi bi-stars"></i>金色區塊</button></div>');
     var gChips = [];
     if (m.a.layout === 'horizontal') gChips.push('<span class="chip c-blue">橫向 ' + esc(m.a['cols-per-row'] || 4) + ' 欄</span>');
@@ -846,12 +880,12 @@
     var w = infoWarnings(m);
     if (w.length) h.push('<div class="warn" style="padding:0 0 10px 0">' + w.map(function (x) { return '<div><i class="bi bi-exclamation-triangle"></i>' + esc(x) + '</div>'; }).join('') + '</div>');
     if (!m.regions.length) h.push('<div class="empty-hint">還沒有任何區塊，按上方的「區塊」開始。</div>');
-    var MODE = { auto: '顯示後自動', countdown: '倒數條', manual: '按鈕', quiz: '測驗題', end: '終點' };
+    var MODE = { auto: '顯示後自動', countdown: '倒數條', manual: '按鈕', quiz: '選擇題', fill: '填空題', end: '終點' };
     m.regions.forEach(function (r, i) {
       var isSel = sel.type === 'region' && sel.i === i;
       var col = r.gold ? '#C9973F' : (colorHex(r.a.color) || '#5DBAE8');
       var flow = '';
-      if (r.mode === 'quiz') {
+      if (r.mode === 'quiz' || r.mode === 'fill') {
         var cn = resolveNext(m, i, r.a['correct-next']), wn = resolveNext(m, i, r.a['wrong-next']);
         flow = '答對 → ' + (cn || '結束') + '，答錯 → ' + (wn || '結束');
       } else if (r.mode !== 'end') flow = '→ ' + (resolveNext(m, i, r.a.next) || '結束');
@@ -977,10 +1011,11 @@
           if (!f.k) return null;
           if (f.k === '_content') return r.content; if (f.k === '_mode') return r.mode; if (f.k === '_gold') return r.gold;
           if (f.k === '_choices') return r.choices; if (f.k === '_layout') return r.layout; if (f.k === '_item') return r.item !== false;
+          if (f.k === '_ph') return r.ph || '';
           return r.a[f.k];
         };
         F.region.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
-        if (r.mode !== 'end' && r.mode !== 'quiz') F.flow_next.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
+        if (r.mode !== 'end' && r.mode !== 'quiz' && r.mode !== 'fill') F.flow_next.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
         (F['flow_' + r.mode] || []).forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
         F.region_tail.forEach(function (f) { h.push(fieldHTML(f, val(f), ctx)); });
         h.push(extraHTML(r.extra));
@@ -1017,6 +1052,7 @@
     else if (k === '_choices') { o.choices = v; }
     else if (k === '_layout') o.layout = v;
     else if (k === '_item') o.item = v;
+    else if (k === '_ph') o.ph = v;
     else if (k === 'id' && S.tab === 'info') {
       var old = o.a.id; o.a.id = v.trim();
       /* 其他區塊指向舊 id 的地方一起改名 */
@@ -1094,8 +1130,9 @@
       }
     } else {
       var m = S.info;
-      if (act === 'add-region' || act === 'add-quiz' || act === 'add-gold') {
-        var r2 = newRegion(nextId(m), act === 'add-quiz' ? 'quiz' : act === 'add-gold' ? 'end' : 'manual');
+      if (act === 'add-region' || act === 'add-quiz' || act === 'add-gold' || act === 'add-fill') {
+        var r2 = newRegion(nextId(m), act === 'add-quiz' ? 'quiz' : act === 'add-fill' ? 'fill' : act === 'add-gold' ? 'end' : 'manual');
+        if (act === 'add-fill') { r2.content = '<p>題目</p>'; r2.a.answer = ''; r2.ph = '請輸入答案'; r2.a['quiz-label'] = '填空'; }
         if (act === 'add-quiz') { r2.content = '<p>題目</p>'; r2.choices = '選項一\n選項二\n選項三'; r2.a['quiz-label'] = '第 ' + (m.regions.filter(function (x) { return x.mode === 'quiz'; }).length + 1) + ' 題'; r2.layout = 'column'; }
         if (act === 'add-gold') { r2.gold = true; r2.a.color = 'gold'; r2.content = '<h4>完成</h4>'; }
         var s3 = S.sel.info, at3 = s3.type === 'region' ? s3.i + 1 : m.regions.length;

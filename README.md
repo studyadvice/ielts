@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 |
 | `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 |
-| `card-toggle.js` | `<card-toggle>` `<card-toggle-group>` | 可翻面的卡片，支援問答、選項分支與題組。 |
+| `card-toggle.js` | `<card-toggle>` `<card-toggle-group>` | **已停止維護**，新內容請改用 `ui-cards` 翻面與 `info-region` 測驗，見下方對照。舊頁面仍可正常使用。 |
 | `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 |
 | `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 |
 | `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 |
@@ -60,7 +60,7 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 | 檔案 | 用途 |
 | --- | --- |
 | [`builder/layout-builder-11-05-26.html`](builder/layout-builder-11-05-26.html) | `ui-table` 與 `info-region` 的視覺化編輯器：點格子或區塊調整屬性，即時預覽，複製程式碼，也能匯入既有程式碼繼續編輯。 |
-| [`layout/ui-cards-templates-11-05-26.html`](layout/ui-cards-templates-11-05-26.html) | `ui-cards` 九種資料呈現版型，每個版型附可複製的程式碼。 |
+| [`layout/ui-cards-templates-11-05-26.html`](layout/ui-cards-templates-11-05-26.html) | `ui-cards` 十種資料呈現版型，每個版型附可複製的程式碼。 |
 
 ## 目錄
 
@@ -431,6 +431,28 @@ BPStepper.THEMES;                       // 主題設定
 ---
 
 ## card-toggle.js
+
+> **已停止維護（11-05-26 起）。** 功能已拆到兩個元件：翻面卡片改用 `layout/ui-cards.js`，填空、選擇與題組改用 `info/info-region.js`。這支檔案仍保留在 repo 與 CDN 上，已經使用它的頁面不受影響，但不再新增功能。
+
+**改寫對照**
+
+| card-toggle | 改用 | 寫法 |
+| --- | --- | --- |
+| `content`、`source` | ui-cards | `<card-item back="…">`、`back-source="id"` |
+| `toggle` | ui-cards | `flip-toggle` |
+| `auto-flip`、`flip-bar-color` | ui-cards | `auto-flip`、`flip-bar-color` |
+| `color-after` | ui-cards | `flip-color` |
+| `animation` | ui-cards | `flip-animation` |
+| `number` | ui-cards | `badge="1"` |
+| `question` + `answer` 填空 | info-region | `<info-region quiz answer="…">` 內放 `<ir-input>` |
+| `max-attempts`、`hint`、`case-sensitive`、`placeholder` | info-region | 同名屬性；`placeholder` 寫在 `<ir-input>` |
+| `success-source`、`content`（答對解說） | info-region | `explain`，或用 `correct-next` 接到解說區塊 |
+| 選項分支 `branch-options`、`correct-option` | info-region | `<ir-choices>`、`<ir-choice value>` 加 `answer` |
+| `branch-correct`、`branch-wrong` | info-region | `correct-next`、`wrong-next` 指向不同區塊 |
+| `branch-retry` | info-region | `show-retry` |
+| `<card-toggle-group>` 的 `show-result` | info-region | 群組加 `show-score` |
+| `<card-toggle-group mode="grid">` | ui-cards | `cols` 網格 |
+| `<card-toggle-group mode="slide">`、頁碼、`lock-nav` | 無直接對應 | info-region 依序顯示題目，沒有上一題、下一題翻頁；需要翻頁時可繼續使用 card-toggle |
 
 可翻面的卡片。點擊正面後換成背面內容，也可以做成填空問答、選項分支題，或用群組串成一組題目。標籤載入後自動初始化。
 

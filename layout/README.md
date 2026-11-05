@@ -656,6 +656,26 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `disabled` | 布林 | 停用，外框改虛線並轉灰。 |
 | `toggle` | 布林 | 再點一次這張卡片時收起細節。 |
 
+### 翻面屬性
+
+`<card-item>` 加上 `back` 或 `back-source` 就變成翻面卡片：點卡片本身換成背面，卡片內的按鈕、連結與輸入框照常運作。取代原本的 `card-toggle` 一般翻面。
+
+| 屬性 | 寫在哪裡 | 值 | 說明 |
+| --- | --- | --- | --- |
+| `back` | `<card-item>` | HTML | 背面內容。 |
+| `back-source` | `<card-item>` | 元素 id | 以該元素（建議用 `<template>`）的內容當背面，優先於 `back`。 |
+| `flip-toggle` | 兩者皆可 | 布林 | 背面可再點一次翻回正面，並顯示「點擊翻回」。沒設時翻面後固定。卡片可寫 `flip-toggle="false"` 例外。 |
+| `flip-hint` | 兩者皆可 | 文字 | 翻回提示文字，預設「點擊翻回」；設空字串不顯示。 |
+| `auto-flip` | 兩者皆可 | 毫秒 | 翻面後倒數自動翻回，卡片底部顯示倒數條。 |
+| `flip-bar-color` | 兩者皆可 | 顏色 | 倒數條顏色，預設跟隨卡片色。 |
+| `flip-color` | 兩者皆可 | 顏色 | 翻面期間的卡片色，翻回時恢復。 |
+| `flip-animation` | 兩者皆可 | `fade`、`slide`、`none` | 翻面動畫，預設 `fade`。 |
+
+- 寫在 `<ui-cards>` 上的 `flip-*` 是整組預設值，卡片自己的設定優先。
+- 翻面時卡片維持原本高度，背面較短也不會讓版面跳動。
+- 翻面卡片可以用 Tab 取得焦點，按 Enter 或空白鍵翻面。
+- 翻面卡片本身的 `detail`、`href` 不作用；要開細節請在卡片內放 `detail` 按鈕。
+
 ### 細節按鈕屬性
 
 | 屬性 | 值 | 說明 |
@@ -745,6 +765,16 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 </ui-cards>
 ```
 
+**翻面字卡**
+
+```html
+<ui-cards cols="3" flip-toggle flip-color="green">
+  <card-item label="mitigate" note="點卡片看意思" back="<b>減輕、緩和</b><br>mitigate the impact of"></card-item>
+  <card-item label="pervasive" back-source="bk-pervasive" auto-flip="4000" flip-toggle="false"></card-item>
+</ui-cards>
+<template id="bk-pervasive"><p>widespread、prevalent</p></template>
+```
+
 **顯示按鈕與內容區角標**
 
 ```html
@@ -764,6 +794,14 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | 事件 | 發出位置 | `detail` | 觸發時機 |
 | --- | --- | --- | --- |
 | `ui-cards:reveal` | 被顯示的區塊（會冒泡） | `{ id, removed, button }` | `reveal` 按鈕顯示區塊時。 |
+| `ui-cards:flip` | 被翻面的卡片（會冒泡） | `{ card, flipped }` | 卡片翻面或翻回時。 |
+
+```js
+const uc = document.querySelector('ui-cards');
+uc.flip(0);          // 第一張卡片翻面或翻回；也可以傳入 card-item 元素
+uc.flip(0, false);   // 強制翻回
+uc.unflipAll();      // 全部翻回正面
+```
 
 ---
 
