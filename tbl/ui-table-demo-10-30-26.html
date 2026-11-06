@@ -10,21 +10,21 @@
   :root {
     --bg: #0C0D0C;
     --shell: #C6C7BD;
-    --lavender: #C3A5E5;
-    --sky: #82C8E5;
-    --warning: #E6374B;
-    --salmon: #E5C3B3;
-    --ocean: #1CCAE8;
-    --safe: #27AE60;
-    --teal: #0DA591;
+    --violet: #B484E8;
+    --blue: #5DBAE8;
+    --warning: #EF6661;
+    --orange: #F79C40;
+    --blue: #5DBAE8;
+    --green: #71CD76;
+    --green: #71CD76;
     --vanilla: #DBEDD8;
     --yellow: #E3D322;
-    --focus: #D4FFFC;
-    --special: #B3DE73;
-    --info: #4171BF;
-    --indigo: #7849C9;
+    --focus: #DBEDD8;
+    --green: #71CD76;
+    --info: #778CE1;
+    --indigo: #778CE1;
     --pink: #FF91D7;
-    --orange: #EDA109;
+    --orange: #F79C40;
   }
   body {
     background: var(--bg);
@@ -33,8 +33,8 @@
     padding: 32px 40px 80px;
   }
   .page { max-width: 1680px; margin: 0 auto; }
-  h1 { font-size: 2rem; color: var(--lavender); margin: 0 0 8px; }
-  h2 { font-size: 1.35rem; color: var(--sky); margin: 0 0 12px; }
+  h1 { font-size: 2rem; color: var(--violet); margin: 0 0 8px; }
+  h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 12px; }
   .lead-txt { color: var(--shell); font-size: 1.05rem; margin: 0 0 24px; }
   .demo-sec {
     border: 1px solid #3A3B38;
@@ -50,7 +50,7 @@
   .lbl {
     font-size: 0.8rem;
     letter-spacing: 0.08em;
-    color: var(--teal);
+    color: var(--green);
     margin: 0 0 8px;
     font-weight: 600;
   }
@@ -81,12 +81,12 @@
   }
   .btn-shell {
     background: transparent;
-    color: var(--ocean);
-    border: 1px solid var(--ocean);
+    color: var(--blue);
+    border: 1px solid var(--blue);
     font-size: 0.95rem;
     padding: 6px 16px;
   }
-  .btn-shell:hover { background: var(--ocean); color: var(--bg); }
+  .btn-shell:hover { background: var(--blue); color: var(--bg); }
   #logBox { min-height: 0; flex: 1; }
   #logBox .alert {
     margin: 0;
@@ -110,13 +110,13 @@
     color: var(--shell);
     background: transparent;
   }
-  table.ref th { color: var(--lavender); font-weight: 600; }
+  table.ref th { color: var(--violet); font-weight: 600; }
   table.ref td:first-child { white-space: nowrap; color: var(--yellow); font-family: monospace; }
-  .note { color: var(--salmon); font-size: 0.92rem; margin: 12px 0 0; }
+  .note { color: var(--orange); font-size: 0.92rem; margin: 12px 0 0; }
   .rev-head {
     font-size: 1.1rem;
     color: var(--bg);
-    background: var(--lavender);
+    background: var(--violet);
     padding: 8px 16px;
     margin: 40px 0 24px;
     font-weight: 700;
@@ -158,8 +158,8 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code1">
-<ui-table id="tb1" theme="sky" row-border="1px solid">
-  <ui-row-enhance col-widths="1:2:2" font-color="lavender">
+<ui-table id="tb1" theme="blue" row-border="1px solid">
+  <ui-row-enhance col-widths="1:2:2" font-color="violet">
     <ui-col>Word</ui-col>
     <ui-col>Meaning</ui-col>
     <ui-col>Collocation</ui-col>
@@ -197,7 +197,7 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code2">
-<ui-table id="tb2" theme="special" row-border="1px solid" col-border="1px solid">
+<ui-table id="tb2" theme="green" row-border="1px solid" col-border="1px solid">
   <ui-row-enhance can-hide="1">
     <ui-col>Part 2 cue card</ui-col>
     <ui-col extra-info="xi-cue">Describe a skill you learned</ui-col>
@@ -227,7 +227,7 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code3">
-<ui-table id="tb3" theme="ocean" tree-line tree-open row-border="1px solid">
+<ui-table id="tb3" theme="blue" tree-line tree-open row-border="1px solid">
   <ui-row-enhance can-hide>
     <ui-col>Fluency and Coherence</ui-col>
     <ui-col>口說評分項目</ui-col>
@@ -266,7 +266,7 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code4">
-<ui-table id="tb4" theme="lavender" row-border="1px solid" cell-padding="10px">
+<ui-table id="tb4" theme="violet" row-border="1px solid" cell-padding="10px">
   <ui-row-enhance can-hide can-hide-size="1.3rem" can-hide-color="pink">
     <ui-col>inverse 格子</ui-col>
     <ui-col inverse>眼睛在反色底上自動改成深色</ui-col>
@@ -308,13 +308,13 @@
 <script>
   window.demoJson = {
     rows: [
-      { enhance: true, fontColor: 'sky', cols: [{ content: 'Band' }, { content: 'Descriptor' }] },
+      { enhance: true, fontColor: 'blue', cols: [{ content: 'Band' }, { content: 'Descriptor' }] },
       { enhance: true, canHide: true,  cols: [{ content: '7' }, { content: 'uses less common vocabulary' }] },
       { enhance: true, canHide: 2, canHideColor: 'orange', cols: [{ content: '8' }, { content: 'skilfully uses uncommon items' }] }
     ]
   };
 </script>
-<ui-table id="tb5" theme="teal" data-id="demoJson" row-border="1px solid"></ui-table>
+<ui-table id="tb5" theme="green" data-id="demoJson" row-border="1px solid"></ui-table>
         </div>
       </div>
       <div>
@@ -362,19 +362,19 @@
 <ui-table id="tb7" theme="shell" row-border="1px solid">
   <ui-row col-widths="1:3">
     <ui-col>ui-col</ui-col>
-    <ui-col>The government should <c13>invest</c13> in <c6>public transport</c6> rather than <c4><u>build more roads</u></c4>.</ui-col>
+    <ui-col>The government should <c-pink>invest</c-pink> in <c-blue>public transport</c-blue> rather than <c-red><u>build more roads</u></c-red>.</ui-col>
   </ui-row>
   <ui-row col-widths="1:3">
     <ui-col>cell-item</ui-col>
     <ui-col carousel-interval="2600" progress-bar>
-      <cell-item>Band 6：<c15>It is good</c15> for people.</cell-item>
-      <cell-item>Band 7：<c3>It is beneficial</c3> to <c7>commuters</c7>.</cell-item>
-      <cell-item>Band 8：<c2><b>It brings tangible benefits</b></c2> to <c7>daily commuters</c7>.</cell-item>
+      <cell-item>Band 6：<c-orange>It is good</c-orange> for people.</cell-item>
+      <cell-item>Band 7：<c-green>It is beneficial</c-green> to <c-blue>commuters</c-blue>.</cell-item>
+      <cell-item>Band 8：<c-violet><b>It brings tangible benefits</b></c-violet> to <c-blue>daily commuters</c-blue>.</cell-item>
     </ui-col>
   </ui-row>
   <ui-row col-widths="1:3">
     <ui-col>inverse</ui-col>
-    <ui-col inverse>Collocation：<c11>heavy</c11> traffic, <c12>severe</c12> congestion</ui-col>
+    <ui-col inverse>Collocation：<c-indigo>heavy</c-indigo> traffic, <c-indigo>severe</c-indigo> congestion</ui-col>
   </ui-row>
   <ui-row col-widths="1:3">
     <ui-col>extra-info</ui-col>
@@ -382,7 +382,7 @@
   </ui-row>
 </ui-table>
 <div id="xi-c" hidden>
-  <p><c10>Topic sentence</c10> first, then <c8>support</c8>, then an <c13>example</c13>.</p>
+  <p><c-yellow>Topic sentence</c-yellow> first, then <c-green>support</c-green>, then an <c-pink>example</c-pink>.</p>
 </div>
         </div>
       </div>
@@ -401,14 +401,14 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code8">
-<ui-table id="tb8" theme="ocean" cell-min-height="48px" vertical-alignment="middle"
+<ui-table id="tb8" theme="blue" cell-min-height="48px" vertical-alignment="middle"
           row-border="1px solid" col-border="1px solid">
   <ui-row>
     <ui-col>一般列</ui-col>
     <ui-col>沿用 cell-min-height="48px"</ui-col>
   </ui-row>
   <ui-row min-height="220px">
-    <ui-col><c10>Writing Task 2</c10></ui-col>
+    <ui-col><c-yellow>Writing Task 2</c-yellow></ui-col>
     <ui-col>這一列最小高度 220px，內容垂直置中，適合錄影時放大展示一個重點</ui-col>
   </ui-row>
   <ui-row min-height="96">
@@ -444,15 +444,15 @@
 <script>
   window.demoJson2 = {
     rows: [
-      { cols: [{ content: 'Paraphrase' }, { content: '<c4>important</c4> → <c3>significant</c3>' }] },
+      { cols: [{ content: 'Paraphrase' }, { content: '<c-red>important</c-red> → <c-green>significant</c-green>' }] },
       { minHeight: '160px', cols: [
           { content: 'Rotate' },
-          { carouselInterval: 2200, items: ['<c13>increase</c13>', '<c6>rise</c6>', '<c15>surge</c15>'] }
+          { carouselInterval: 2200, items: ['<c-pink>increase</c-pink>', '<c-blue>rise</c-blue>', '<c-orange>surge</c-orange>'] }
       ] }
     ]
   };
 </script>
-<ui-table id="tb9" theme="lavender" data-id="demoJson2" vertical-alignment="middle" row-border="1px solid"></ui-table>
+<ui-table id="tb9" theme="violet" data-id="demoJson2" vertical-alignment="middle" row-border="1px solid"></ui-table>
         </div>
       </div>
       <div>
@@ -486,7 +486,7 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code10">
-<ui-table id="tb10" theme="sky" row-border="1px solid" col-border="1px solid" cell-padding="12px">
+<ui-table id="tb10" theme="blue" row-border="1px solid" col-border="1px solid" cell-padding="12px">
   <ui-row>
     <ui-col id="w-mitigate">mitigate</ui-col>
     <ui-col>減輕、緩和</ui-col>
@@ -501,7 +501,7 @@
 <p>
   <ui-flash target="w-mitigate"></ui-flash>
   <ui-flash target="w-exacerbate" flash-width="6" flash-speed="900" flash-loops="3" color="pink">粗一點、快一點</ui-flash>
-  <ui-flash target="w-colloc" color="ocean">用格子自己的設定</ui-flash>
+  <ui-flash target="w-colloc" color="blue">用格子自己的設定</ui-flash>
 </p>
         </div>
       </div>
@@ -520,17 +520,17 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code11">
-<ui-table id="tb11" theme="lavender" row-border="1px solid" col-border="1px solid"
+<ui-table id="tb11" theme="violet" row-border="1px solid" col-border="1px solid"
           cell-min-height="72px" vertical-alignment="middle">
   <ui-row>
-    <ui-col>題目：Some people think <c10>technology</c10> makes life more complex.</ui-col>
-    <ui-col id="ans-mask" mask-text="點我看範例句">Technology has, <c3>paradoxically</c3>, added layers of complexity.</ui-col>
+    <ui-col>題目：Some people think <c-yellow>technology</c-yellow> makes life more complex.</ui-col>
+    <ui-col id="ans-mask" mask-text="點我看範例句">Technology has, <c-green>paradoxically</c-green>, added layers of complexity.</ui-col>
   </ui-row>
   <ui-row>
     <ui-col>
-      先看遮罩 <ui-flash target="ans-mask" color="special"></ui-flash>
+      先看遮罩 <ui-flash target="ans-mask" color="green"></ui-flash>
       再看反色格 <ui-flash target="ans-inv" color="orange"></ui-flash>
-      跳到第 10 節 <ui-flash target="w-mitigate" color="sky"></ui-flash>
+      跳到第 10 節 <ui-flash target="w-mitigate" color="blue"></ui-flash>
     </ui-col>
     <ui-col id="ans-inv" inverse flash-width="5">inverse 格子上的光帶</ui-col>
   </ui-row>
@@ -557,12 +557,12 @@
     rows: [
       { cols: [
         { content: 'Band 9', id: 'band9', flashWidth: 4, flashLoops: 3 },
-        { content: 'uses a full range of structures <c2>naturally</c2>' }
+        { content: 'uses a full range of structures <c-violet>naturally</c-violet>' }
       ] }
     ]
   };
 </script>
-<ui-table id="tb12" theme="teal" data-id="demoJson3" row-border="1px solid" cell-padding="12px"></ui-table>
+<ui-table id="tb12" theme="green" data-id="demoJson3" row-border="1px solid" cell-padding="12px"></ui-table>
 <p>
   <ui-flash target="band9">JSON 格子</ui-flash>
   <button type="button" class="btn btn-shell" id="btnApi">用 API 播放（慢速 3 秒一圈）</button>
@@ -616,9 +616,9 @@
   When I first moved to Taipei, I rented
   <ui-trans source="tr-flat">a tiny flat</ui-trans>
   near the station. It was
-  <ui-trans source="tr-cramped" hint-style="pill-fill" theme="salmon">a bit cramped</ui-trans>,
+  <ui-trans source="tr-cramped" hint-style="pill-fill" theme="orange">a bit cramped</ui-trans>,
   but the rent was
-  <ui-trans source="tr-reasonable" hint-style="pill-outline" theme="special">pretty reasonable</ui-trans>,
+  <ui-trans source="tr-reasonable" hint-style="pill-outline" theme="green">pretty reasonable</ui-trans>,
   and I could
   <ui-trans source="tr-walk" hint-style="square-fill" theme="yellow">walk to work</ui-trans>
   in ten minutes, which was
@@ -630,7 +630,7 @@
 <div id="tr-walk"><b>走路去上班</b></div>
 <div id="tr-godsend">
   <p><b>天賜的好事、救星</b></p>
-  <p>Band 7 以上常見的 <c10>idiomatic language</c10>，口說時語氣要自然。</p>
+  <p>Band 7 以上常見的 <c-yellow>idiomatic language</c-yellow>，口說時語氣要自然。</p>
 </div>
         </div>
       </div>
@@ -649,15 +649,15 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code14">
-<ui-table id="tb14" theme="lavender" row-border="1px solid" col-border="1px solid" cell-padding="12px">
+<ui-table id="tb14" theme="violet" row-border="1px solid" col-border="1px solid" cell-padding="12px">
   <ui-row>
     <ui-col>格子</ui-col>
-    <ui-col>The city is <ui-trans source="tr-bustling" theme="ocean">bustling</ui-trans> all year round.</ui-col>
+    <ui-col>The city is <ui-trans source="tr-bustling" theme="blue">bustling</ui-trans> all year round.</ui-col>
   </ui-row>
   <ui-row>
     <ui-col>輪播</ui-col>
     <ui-col carousel-interval="3200" progress-bar>
-      <cell-item>It is <ui-trans source="tr-bustling" hint-style="pill-outline" theme="ocean">bustling</ui-trans>.</cell-item>
+      <cell-item>It is <ui-trans source="tr-bustling" hint-style="pill-outline" theme="blue">bustling</ui-trans>.</cell-item>
       <cell-item>It is <ui-trans source="tr-vibrant" hint-style="pill-outline" theme="orange">vibrant</ui-trans>.</cell-item>
     </ui-col>
   </ui-row>
@@ -686,7 +686,7 @@
       <thead><tr><th>名稱</th><th>寫在哪裡</th><th>說明</th></tr></thead>
       <tbody>
         <tr><td>source</td><td>ui-trans</td><td>必填，來源區塊的 id。滑鼠移入當下才讀取內容，所以之後用程式改了來源區塊，也會顯示最新的。找不到時主控台出現錯誤，不顯示 popover。</td></tr>
-        <tr><td>theme</td><td>ui-trans</td><td>標示與 popover 的色彩，色票名稱（例如 sky）或色碼，預設 sky。</td></tr>
+        <tr><td>theme</td><td>ui-trans</td><td>標示與 popover 的色彩，色票名稱（例如 blue）或色碼，預設 blue。</td></tr>
         <tr><td>hint-style</td><td>ui-trans</td><td><code class="inl">dashed</code>（預設，虛底線，移入時變實線）、<code class="inl">pill-fill</code>（實心膠囊）、<code class="inl">pill-outline</code>（空心膠囊）、<code class="inl">square-fill</code>（實心方塊）、<code class="inl">icon</code>（文字正上方顯示 bi-translate 圖示，行高自動留空間）。無效值會改用 dashed。</td></tr>
         <tr><td>來源區塊</td><td>頁面任何地方</td><td>一般的 div 即可，載入時自動隱藏；也可以自己加 <code class="inl">hidden</code>。內容可以用 &lt;b&gt;、&lt;p&gt;、連結，以及色彩標籤 &lt;c1&gt;～&lt;c16&gt;。</td></tr>
         <tr><td>UiTableConfig</td><td>JavaScript</td><td><code class="inl">transTheme</code>、<code class="inl">transHintStyle</code> 改全頁預設值；<code class="inl">transDelay</code> 是移入後多久顯示（毫秒，預設 60），避免滑鼠路過時閃一下。</td></tr>
@@ -709,7 +709,7 @@
 <p style="font-size:1.15rem;line-height:2">
   預設：<ui-trans source="tr-long">a double-edged sword</ui-trans><br>
   窄一點、字小一點：<ui-trans source="tr-long" hint-width="180px" hint-font-size="0.9rem">a double-edged sword</ui-trans><br>
-  寬版、大字（錄影放大用）：<ui-trans source="tr-long" hint-width="560px" hint-font-size="1.4rem" hint-style="pill-fill" theme="special">a double-edged sword</ui-trans><br>
+  寬版、大字（錄影放大用）：<ui-trans source="tr-long" hint-width="560px" hint-font-size="1.4rem" hint-style="pill-fill" theme="green">a double-edged sword</ui-trans><br>
   純數字視為 px：<ui-trans source="tr-long" hint-width="240" hint-font-size="15" hint-style="icon" theme="pink">a double-edged sword</ui-trans>
 </p>
 <div id="tr-long">
@@ -748,19 +748,19 @@
       <div>
         <div class="lbl">範例</div>
         <div class="demo-src" data-code="code16">
-<ui-table id="tb16" theme="sky" row-border="1px solid" col-border="1px solid"
+<ui-table id="tb16" theme="blue" row-border="1px solid" col-border="1px solid"
           cell-padding="12px" cell-min-height="64px">
   <ui-row>
     <ui-col>outline（預設）</ui-col>
     <ui-col carousel-interval="2600" progress-bar item-number>
       <cell-item>Describe a place you visited.</cell-item>
-      <cell-item>Describe a person who <c13>inspired</c13> you.</cell-item>
+      <cell-item>Describe a person who <c-pink>inspired</c-pink> you.</cell-item>
       <cell-item>Describe a skill you learned.</cell-item>
     </ui-col>
   </ui-row>
   <ui-row>
     <ui-col>fill，手動輪播</ui-col>
-    <ui-col carousel-interval="0" progress-bar item-number="fill" progress-bar-color1="lavender" progress-bar-color2="pink">
+    <ui-col carousel-interval="0" progress-bar item-number="fill" progress-bar-color1="violet" progress-bar-color2="pink">
       <cell-item>先說結論，再補一個原因。</cell-item>
       <cell-item>用具體例子支撐原因。</cell-item>
       <cell-item>最後回扣題目，收尾。</cell-item>

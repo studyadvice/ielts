@@ -11,18 +11,18 @@
   :root {
     --bg:      #0C0D0C;
     --shell:   #C6C7BD;
-    --lavender:#C3A5E5;
-    --sky:     #95c9de;
-    --ocean:   #0ABDC6;
-    --teal:    #0DA591;
-    --yellow:  #DECA4B;
-    --orange:  #EDA109;
-    --salmon:  #E5C3B3;
-    --safe:    #299459;
-    --info:    #1E65C7;
-    --pink:    #FFB3D9;
-    --warning: #F08080;
-    --focus:   #e0be79;
+    --violet:#B484E8;
+    --blue:     #5DBAE8;
+    --blue:   #5DBAE8;
+    --green:    #71CD76;
+    --yellow:  #E3D322;
+    --orange:  #F79C40;
+    --orange:  #F79C40;
+    --green:    #71CD76;
+    --info:    #778CE1;
+    --pink:    #FF91D7;
+    --warning: #EF6661;
+    --focus:   #DBEDD8;
   }
   *, *::before, *::after { box-sizing: border-box; }
   html { font-size: 18px; }
@@ -44,7 +44,7 @@
   }
   h1 {
     font-size: 1.6rem;
-    color: var(--lavender);
+    color: var(--violet);
     font-weight: 700;
     margin: 0 0 6px;
   }
@@ -56,7 +56,7 @@
   }
   h2 {
     font-size: 1.1rem;
-    color: var(--ocean);
+    color: var(--blue);
     font-weight: 600;
     margin: 0 0 10px;
     padding-bottom: 6px;
@@ -93,7 +93,7 @@
   }
   code {
     background: rgba(195,165,229,0.10);
-    color: var(--lavender);
+    color: var(--violet);
     border-radius: 4px;
     padding: 1px 6px;
     font-family: 'Cascadia Code', 'Fira Code', monospace;
@@ -109,7 +109,7 @@
   }
   .api-table th {
     text-align: left;
-    color: var(--ocean);
+    color: var(--blue);
     border-bottom: 1px solid rgba(10,189,198,0.30);
     padding: 6px 10px;
     font-weight: 600;
@@ -121,7 +121,7 @@
   }
   .api-table tr:last-child td { border-bottom: none; }
   .api-table .col-attr { color: var(--yellow); font-family: monospace; }
-  .api-table .col-default { color: var(--teal); font-family: monospace; }
+  .api-table .col-default { color: var(--green); font-family: monospace; }
   .api-table .col-desc { color: var(--shell); opacity: 0.85; }
 
   /* ── 互動按鈕 ───────────────────────────────── */
@@ -130,10 +130,10 @@
     align-items: center;
     gap: 6px;
     padding: 6px 16px;
-    border: 1.5px solid var(--ocean);
+    border: 1.5px solid var(--blue);
     border-radius: 20px;
     background: rgba(10,189,198,0.10);
-    color: var(--ocean);
+    color: var(--blue);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -142,9 +142,9 @@
     margin-bottom: 16px;
   }
   .demo-btn:hover {
-    background: var(--ocean);
+    background: var(--blue);
     color: #0C0D0C;
-    box-shadow: 0 0 10px -2px var(--ocean);
+    box-shadow: 0 0 10px -2px var(--blue);
   }
 </style>
 </head>
@@ -165,7 +165,7 @@
     <div class="compare-grid">
       <div>
         <div class="compare-label">未啟用（預設）</div>
-        <bp-stepper data-theme="sky" data-layout="vertical" data-card-width="360px"
+        <bp-stepper data-theme="blue" data-layout="vertical" data-card-width="360px"
                     data-auto-number="true">
           <bp-step>
             <span class="bp-step-icon">🔍</span>
@@ -187,7 +187,7 @@
 
       <div>
         <div class="compare-label">data-compact-header（新功能）</div>
-        <bp-stepper data-theme="sky" data-layout="vertical" data-card-width="360px"
+        <bp-stepper data-theme="blue" data-layout="vertical" data-card-width="360px"
                     data-auto-number="true"
                     data-compact-header>
           <bp-step>
@@ -216,7 +216,7 @@
     <div class="attr-note">
       橫線顏色跟隨步驟狀態（active → active 主色 / done → done 主色 / error → error 主色）
     </div>
-    <bp-stepper data-theme="lavender" data-compact-header
+    <bp-stepper data-theme="violet" data-compact-header
                 data-card-width="240px" data-gap="48px">
       <bp-step data-state="done">
         <span class="bp-step-icon"><i class="bi bi-check2-circle"></i></span>
@@ -251,7 +251,7 @@
     <h2>③ 各主題 · compact-header 效果</h2>
     <div style="display:flex;flex-direction:column;gap:24px;">
 
-      <bp-stepper data-theme="teal" data-compact-header data-gap="40px"
+      <bp-stepper data-theme="green" data-compact-header data-gap="40px"
                   data-card-width="220px">
         <bp-step data-state="done">
           <span class="bp-step-icon">📦</span>
@@ -331,7 +331,7 @@
       data-header-pad-y="0px"  data-header-gap="10px"
       &nbsp;—&nbsp; header 行上下 padding 歸零，圖示與標題間距放寬
     </div>
-    <bp-stepper data-theme="focus" data-compact-header
+    <bp-stepper data-theme="vanilla" data-compact-header
                 data-header-pad-y="0px"
                 data-header-gap="10px"
                 data-card-width="230px"

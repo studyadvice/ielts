@@ -29,22 +29,11 @@
     bg:       '#0C0D0C',
     region:   '#333333',
     shell:    '#C6C7BD',
-    lavender: '#B484E8',
-    sky:      '#5DBAE8',
-    warning:  '#EF6661',
-    salmon:   '#F79C40',
-    ocean:    '#5DBAE8',
-    safe:     '#71CD76',
-    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#DBEDD8',
-    info:     '#778CE1',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#F79C40',
-    special:  '#71CD76',
-    stone:    '#5DBAE8',
+    orange:   '#FF5530',
     gold:     '#C9973F',
     /* 新色票 */
     red: '#EF6661',
@@ -52,11 +41,18 @@
     blue: '#5DBAE8',
     violet: '#B484E8',
     gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63',
   };
 
   /* ── 全域預設值 ── */
   const defaults = {
-    defaultColor:       'sky',
+    defaultColor:       'blue',
     animDuration:       500,
     horizontalAnimDur:  380,
     defaultInterval:    500,
@@ -115,7 +111,7 @@
     const cfg    = window.InfoRegionConfig;
     const vDur   = cfg.animDuration + 'ms';
     const hDur   = cfg.horizontalAnimDur + 'ms';
-    const defClr = BrandColors[cfg.defaultColor] || BrandColors.sky;
+    const defClr = BrandColors[cfg.defaultColor] || BrandColors.blue;
     const REGION = cfg.bgColor;     /* 區塊底色，測驗選項與解說的混色基準 */
     const PAGE   = BrandColors.bg;  /* 頁面底色，計分板的混色基準 */
 
@@ -416,15 +412,15 @@
         padding: ${cfg.choicePadding || '10px 14px'};
         font-family: inherit; outline: none;
       }
-      .ir-input-field:focus { border-color: ${BrandColors.sky}; }
+      .ir-input-field:focus { border-color: ${BrandColors.blue}; }
       .ir-input-field:disabled { color: ${BrandColors.shell}; }
-      ir-input[state="correct"] .ir-input-field { border-color: ${BrandColors.safe}; background: ${solid(BrandColors.safe, 12, REGION)}; }
+      ir-input[state="correct"] .ir-input-field { border-color: ${BrandColors.green}; background: ${solid(BrandColors.green, 12, REGION)}; }
       ir-input[state="wrong"] .ir-input-field,
-      ir-input[state="retry"] .ir-input-field { border-color: ${BrandColors.warning}; }
-      ir-input[state="wrong"] .ir-input-field { background: ${solid(BrandColors.warning, 12, REGION)}; }
+      ir-input[state="retry"] .ir-input-field { border-color: ${BrandColors.red}; }
+      ir-input[state="wrong"] .ir-input-field { background: ${solid(BrandColors.red, 12, REGION)}; }
       .ir-input-row .ir-btn { margin: 0; }
       .ir-input-row .ir-btn:disabled { opacity: 1; cursor: default; color: ${BrandColors.gray}; border-color: ${solid(BrandColors.shell, 22, REGION)}; }
-      .ir-input-msg { display: none; margin-top: 8px; font-size: 0.9rem; color: ${BrandColors.warning}; }
+      .ir-input-msg { display: none; margin-top: 8px; font-size: 0.9rem; color: ${BrandColors.red}; }
       .ir-input-msg.is-visible { display: block; }
       .ir-input-hint {
         display: none; margin-top: 10px; padding: 8px 12px; font-size: 0.9rem;
@@ -451,8 +447,8 @@
         user-select: none;
       }
       ir-choice:hover:not([disabled]) {
-        background: ${solid(BrandColors.sky, 12, REGION)};
-        border-color: ${solid(BrandColors.sky, 55, REGION)};
+        background: ${solid(BrandColors.blue, 12, REGION)};
+        border-color: ${solid(BrandColors.blue, 55, REGION)};
       }
       ir-choice[disabled] { cursor: default; }
 
@@ -475,34 +471,34 @@
 
       /* 答對 */
       ir-choice[state="correct"] {
-        background: ${solid(BrandColors.safe, 15, REGION)};
-        border-color: ${BrandColors.safe};
+        background: ${solid(BrandColors.green, 15, REGION)};
+        border-color: ${BrandColors.green};
       }
       ir-choice[state="correct"] .ir-choice-key {
-        background: ${BrandColors.safe};
-        border-color: ${BrandColors.safe};
+        background: ${BrandColors.green};
+        border-color: ${BrandColors.green};
         color: #0C0D0C;
       }
 
       /* 答錯（被選的那個） */
       ir-choice[state="wrong"] {
-        background: ${solid(BrandColors.warning, 15, REGION)};
-        border-color: ${BrandColors.warning};
+        background: ${solid(BrandColors.red, 15, REGION)};
+        border-color: ${BrandColors.red};
       }
       ir-choice[state="wrong"] .ir-choice-key {
-        background: ${BrandColors.warning};
-        border-color: ${BrandColors.warning};
+        background: ${BrandColors.red};
+        border-color: ${BrandColors.red};
         color: #fff;
       }
 
       /* 其他未選但正確的選項（顯示正解） */
       ir-choice[state="reveal"] {
-        background: ${solid(BrandColors.safe, 8, REGION)};
-        border-color: ${solid(BrandColors.safe, 45, REGION)};
+        background: ${solid(BrandColors.green, 8, REGION)};
+        border-color: ${solid(BrandColors.green, 45, REGION)};
       }
       ir-choice[state="reveal"] .ir-choice-key {
-        border-color: ${BrandColors.safe};
-        color: ${BrandColors.safe};
+        border-color: ${BrandColors.green};
+        color: ${BrandColors.green};
       }
 
       /* 解說區塊 */
@@ -523,13 +519,13 @@
         pointer-events: auto;
       }
       .ir-quiz-explain.is-correct {
-        background: ${solid(BrandColors.safe, 12, REGION)};
-        border: 1px solid ${solid(BrandColors.safe, 40, REGION)};
+        background: ${solid(BrandColors.green, 12, REGION)};
+        border: 1px solid ${solid(BrandColors.green, 40, REGION)};
         color: #a5e6bc;
       }
       .ir-quiz-explain.is-wrong {
-        background: ${solid(BrandColors.warning, 12, REGION)};
-        border: 1px solid ${solid(BrandColors.warning, 40, REGION)};
+        background: ${solid(BrandColors.red, 12, REGION)};
+        border: 1px solid ${solid(BrandColors.red, 40, REGION)};
         color: #f0a0a8;
       }
       .ir-quiz-explain code {
@@ -681,7 +677,7 @@
 
     _applyBorderStyles() {
       const cfg  = window.InfoRegionConfig;
-      const hex  = BrandColors[this.getAttribute('color') || cfg.defaultColor] || BrandColors.sky;
+      const hex  = BrandColors[this.getAttribute('color') || cfg.defaultColor] || BrandColors.blue;
       const allW = this.getAttribute('border-width');
       const allS = this.getAttribute('border-style');
 
@@ -726,9 +722,9 @@
 
       const edge = gold
         ? BrandColors.gold
-        : (BrandColors[this.getAttribute('color') || cfg.defaultColor] || BrandColors.sky);
+        : (BrandColors[this.getAttribute('color') || cfg.defaultColor] || BrandColors.blue);
       const dim  = this.getAttribute('fx-dim')  || (gold ? '#6B4F12' : solid('#000000', 55, edge));
-      const core = this.getAttribute('fx-core') || BrandColors.focus;
+      const core = this.getAttribute('fx-core') || BrandColors.vanilla;
 
       this.setAttribute('data-ir-fx', 'electric');
       this.style.setProperty('--ir-fx-edge', edge);
@@ -777,7 +773,7 @@
       const position = this.getAttribute('countdown-position') || cfg.countdownPosition;
       const height   = parseInt(this.getAttribute('countdown-height'), 10) || cfg.countdownHeight;
       const color    = this.getAttribute('countdown-color') || this.getAttribute('color') || cfg.defaultColor;
-      const colorHex = BrandColors[color] || BrandColors.sky;
+      const colorHex = BrandColors[color] || BrandColors.blue;
 
       const old = this.querySelector('.ir-countdown-bar');
       if (old) old.remove();
@@ -857,7 +853,7 @@
       const autoNext    = !this.hasAttribute('manual-next');  /* 預設自動跳題 */
       const showRetry   = this.hasAttribute('show-retry');
       const retryLabel  = this.getAttribute('retry-label') || '↺ 重試';
-      const retryColor  = this.getAttribute('retry-color') || 'warning';
+      const retryColor  = this.getAttribute('retry-color') || 'red';
 
       /* 題號標籤（可選） */
       const labelTxt = this.getAttribute('quiz-label');
@@ -932,7 +928,7 @@
       const autoNext    = !this.hasAttribute('manual-next');
       const showRetry   = this.hasAttribute('show-retry');
       const retryLabel  = this.getAttribute('retry-label') || '↺ 重試';
-      const retryColor  = this.getAttribute('retry-color') || 'warning';
+      const retryColor  = this.getAttribute('retry-color') || 'red';
 
       this._quizAnswered = true;
       const grp = this.closest('info-region-group');
@@ -1144,7 +1140,7 @@
       } else {
         /* 答錯且本題從未答對過，才累加 wrong */
         if (!this._answeredSet.has(id)) {
-          this._quizScore.wrong++;
+          this._quizScore.red++;
         }
       }
       this._updateScoreboard();
@@ -1176,8 +1172,8 @@
       const { item: cItem, val: cVal } = mkItem('0', '答對');
       const { item: wItem, val: wVal } = mkItem('0', '答錯');
       const { item: tItem, val: tVal } = mkItem('0', '總題數');
-      cVal.style.color = BrandColors.safe;
-      wVal.style.color = BrandColors.warning;
+      cVal.style.color = BrandColors.green;
+      wVal.style.color = BrandColors.red;
 
       board.append(cItem, divider(), wItem, divider(), tItem);
       this._scoreboardEl = { board, cVal, wVal, tVal };
@@ -1191,9 +1187,9 @@
     _updateScoreboard() {
       if (!this._scoreboardEl) return;
       const { cVal, wVal, tVal } = this._scoreboardEl;
-      const total = this._quizScore.correct + this._quizScore.wrong;
+      const total = this._quizScore.correct + this._quizScore.red;
       cVal.textContent = String(this._quizScore.correct);
-      wVal.textContent = String(this._quizScore.wrong);
+      wVal.textContent = String(this._quizScore.red);
       tVal.textContent = String(total);
     }
 
@@ -1226,11 +1222,11 @@
 
       const startBtn = mkBtn(
         this.getAttribute('start-label') || '▶ 開始',
-        this.getAttribute('start-color') || 'sky'
+        this.getAttribute('start-color') || 'blue'
       );
       const resetBtn = mkBtn(
         this.getAttribute('reset-label') || '↺ 重設',
-        this.getAttribute('reset-color') || 'warning'
+        this.getAttribute('reset-color') || 'red'
       );
 
       startBtn.addEventListener('click', () => this._start());
@@ -1271,7 +1267,7 @@
       const position = this.getAttribute('progress-position') || cfg.progressPosition;
       const height   = parseInt(this.getAttribute('progress-height'), 10) || cfg.progressHeight;
       const color    = this.getAttribute('progress-color') || cfg.defaultColor;
-      const colorHex = BrandColors[color] || BrandColors.sky;
+      const colorHex = BrandColors[color] || BrandColors.blue;
       const showPct  = this.hasAttribute('show-percent');
 
       const wrap  = document.createElement('div');
@@ -1491,29 +1487,14 @@
   };
 
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

@@ -261,27 +261,25 @@ chunk-demo { display: block; }
   const DEFAULTS = {
     themes: {
       shell:    { border: '#C6C7BD', text: '#C6C7BD', bg: 'rgba(198,199,189,.09)' },
-      lavender: { border: '#B484E8', text: '#B484E8', bg: 'rgba(180,132,232,.09)' },
-      special:  { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)' },
-      warning:  { border: '#EF6661', text: '#EF6661', bg: 'rgba(239,102,97,.09)'   },
-      salmon:   { border: '#F79C40', text: '#F79C40', bg: 'rgba(247,156,64,.09)' },
-      sky:      { border: '#5DBAE8', text: '#5DBAE8', bg: 'rgba(93,186,232,.09)' },
-      safe:     { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)'   },
       vanilla:  { border: '#DBEDD8', text: '#DBEDD8', bg: 'rgba(219,237,216,.09)' },
-      focus:    { border: '#DBEDD8', text: '#DBEDD8', bg: 'rgba(219,237,216,.09)'  },
       yellow:   { border: '#E3D322', text: '#E3D322', bg: 'rgba(227,211,34,.09)'  },
-      info:     { border: '#778CE1', text: '#778CE1', bg: 'rgba(119,140,225,.09)'   },
       indigo:   { border: '#778CE1', text: '#778CE1', bg: 'rgba(119,140,225,.09)'  },
       pink:     { border: '#FF91D7', text: '#FF91D7', bg: 'rgba(255,145,215,.09)' },
-      orange:   { border: '#F79C40', text: '#F79C40', bg: 'rgba(247,156,64,.09)'   },
+      orange:   { border: '#FF5530', text: '#FF5530', bg: 'rgba(255,85,48,.09)'   },
       /* 新色票 */
       red:      { border: '#EF6661', text: '#EF6661', bg: 'rgba(239,102,97,.09)'   },
       green:    { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)'  },
       blue:     { border: '#5DBAE8', text: '#5DBAE8', bg: 'rgba(93,186,232,.09)'   },
+      key:      { border: '#51DBCF', text: '#51DBCF', bg: '#12201E' },
+      'key-deep':{ border: '#176878', text: '#176878', bg: '#0D1516' },
+      calm:     { border: '#A3C4BC', text: '#A3C4BC', bg: '#1A1D1C' },
+      quiet:    { border: '#A9B8E0', text: '#A9B8E0', bg: '#1A1C1F' },
+      playful:  { border: '#FFA987', text: '#FFA987', bg: '#221B17' },
+      urgent:   { border: '#FF2E63', text: '#FF2E63', bg: '#221014' },
       violet:   { border: '#B484E8', text: '#B484E8', bg: 'rgba(180,132,232,.09)'  },
       gray:     { border: '#86877F', text: '#86877F', bg: 'rgba(134,135,127,.09)'  },
     },
-    defaultTheme:     'special',
+    defaultTheme:     'green',
     chunkBorderWidth: '1.5px',
     chunkBorderStyle: 'solid',
 
@@ -291,7 +289,7 @@ chunk-demo { display: block; }
       3: '#B484E8',
       4: '#5DBAE8',
       5: '#EF6661',
-      6: '#F79C40',
+      6: '#FF5530',
       7: '#FF91D7',
       8: '#778CE1',
     },
@@ -413,8 +411,8 @@ chunk-demo { display: block; }
         levelDotColors: { ...DEFAULTS.levelDotColors, ...(G.levelDotColors || {}), ...(E.levelDotColors || {}) },
       };
 
-      const name  = this.getAttribute('theme') || cfg.defaultTheme || 'special';
-      cfg._theme  = cfg.themes[name] || cfg.themes.special || DEFAULTS.themes.special;
+      const name  = this.getAttribute('theme') || cfg.defaultTheme || 'green';
+      cfg._theme  = cfg.themes[name] || cfg.themes.green || DEFAULTS.themes.green;
 
       if (this.getAttribute('border-width')) cfg.chunkBorderWidth = this.getAttribute('border-width');
       if (this.getAttribute('border-style')) cfg.chunkBorderStyle = this.getAttribute('border-style');
@@ -1183,29 +1181,14 @@ chunk-demo { display: block; }
   }
 
 }(window, document));
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

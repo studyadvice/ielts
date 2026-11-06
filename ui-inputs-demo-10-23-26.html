@@ -15,8 +15,8 @@
     margin:40px auto;
     padding:0 24px 80px;
   }
-  h1{ color:#C3A5E5; }
-  h2{ color:#82C8E5; margin-top:48px; font-size:1.3rem; }
+  h1{ color:#B484E8; }
+  h2{ color:#5DBAE8; margin-top:48px; font-size:1.3rem; }
   p.desc{ color:rgba(198,199,189,0.85); max-width:640px; }
   code{ color:#E3D322; }
   .panel{ margin:16px 0 8px; }
@@ -42,17 +42,17 @@
 
 <h2>1. 預設（numeric，6 碼，無分組）</h2>
 <div class="panel">
-  <ui-otp length="6" accent-color="sky"></ui-otp>
+  <ui-otp length="6" accent-color="blue"></ui-otp>
 </div>
 
 <h2>2. 分組 + 分隔符（groups="3,3"，比照 Bootstrap 6 截圖效果）</h2>
 <div class="panel">
-  <ui-otp length="6" groups="3,3" separator="-" accent-color="lavender"></ui-otp>
+  <ui-otp length="6" groups="3,3" separator="-" accent-color="violet"></ui-otp>
 </div>
 
 <h2>3. 英文字母、強制大寫</h2>
 <div class="panel">
-  <ui-otp length="4" type="alpha" case="upper" accent-color="special" cell-size="52px"></ui-otp>
+  <ui-otp length="4" type="alpha" case="upper" accent-color="green" cell-size="52px"></ui-otp>
   <p class="hint">type="alpha" case="upper"：只接受英文字母，自動轉大寫。</p>
 </div>
 
@@ -64,9 +64,9 @@
     expected-value="123456"
     label-invalid="驗證碼錯誤，請重新輸入。"
     label-valid="驗證成功！"
-    accent-color="sky"
-    valid-color="safe"
-    error-color="warning"
+    accent-color="blue"
+    valid-color="green"
+    error-color="red"
   ></ui-otp>
   <p class="hint">填滿 6 碼即自動比對；答對顯示綠框＋成功訊息，答錯顯示紅框＋錯誤訊息。</p>
 </div>
@@ -80,7 +80,7 @@
     clear-delay="700"
     label-invalid="驗證碼錯誤，請重新輸入一次。"
     accent-color="orange"
-    error-color="warning"
+    error-color="red"
   ></ui-otp>
   <p class="hint">正確答案是 000000；輸入其他任何 6 碼都會先閃紅框，約 0.7 秒後（clear-delay="700"）自動清空讓你重打。</p>
 </div>
@@ -99,7 +99,7 @@
 
 <h2>8. 遮蔽模式（mask，顯示圓點而非實際字元）</h2>
 <div class="panel">
-  <ui-otp length="6" mask accent-color="teal"></ui-otp>
+  <ui-otp length="6" mask accent-color="green"></ui-otp>
 </div>
 
 <h2>9. disabled</h2>
@@ -112,13 +112,13 @@
 
 <h2>1. 基本生成（預設 16 碼、exclude-ambiguous 預設開啟）</h2>
 <div class="panel">
-  <ui-otp mode="generate" groups="4,4,4,4" accent-color="sky"></ui-otp>
+  <ui-otp mode="generate" groups="4,4,4,4" accent-color="blue"></ui-otp>
   <p class="hint">每次重新整理頁面都會是不同的一組碼；已自動排除 0/O、1/I/l 這類容易看錯的字元。</p>
 </div>
 
 <h2>2. format 自訂版型（優先於 length/groups）</h2>
 <div class="panel">
-  <ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO" type="alnum" accent-color="lavender"></ui-otp>
+  <ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO" type="alnum" accent-color="violet"></ui-otp>
 </div>
 
 <h2>3. 關閉 exclude-ambiguous + 指定字元集</h2>
@@ -129,12 +129,12 @@
 
 <h2>4. 複製按鈕自訂（文字、位置、圖示）</h2>
 <div class="panel">
-  <ui-otp mode="generate" length="8" groups="4,4" copy-text="複製" copy-position="left" copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill" accent-color="special"></ui-otp>
+  <ui-otp mode="generate" length="8" groups="4,4" copy-text="複製" copy-position="left" copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill" accent-color="green"></ui-otp>
 </div>
 
 <h2>5. check-url 後端查重（這裡用假的 fetch 模擬，實際請指到你的 PHP）</h2>
 <div class="panel">
-  <ui-otp id="checkGen" mode="generate" length="6" type="numeric" check-url="/fake/check_code.php" check-max-retries="5" accent-color="teal"></ui-otp>
+  <ui-otp id="checkGen" mode="generate" length="6" type="numeric" check-url="/fake/check_code.php" check-max-retries="5" accent-color="green"></ui-otp>
   <p class="hint" id="checkGenHint">模擬後端：前兩次回報「已存在」自動重骰，第三次才通過。打開主控台可以看到 otp-check-* 事件紀錄。</p>
 </div>
 
@@ -171,7 +171,7 @@
     placeholder="請輸入答案"
     expected-value="apple"
     button-icon="bi-send"
-    accent-color="sky"
+    accent-color="blue"
     label-invalid="答案不正確，請再試一次。"
     label-valid="答對了！"
   ></ui-blank>
@@ -186,9 +186,9 @@
     button-icon="bi-check2-circle"
     button-text="檢查"
     button-position="icon-left"
-    accent-color="lavender"
-    valid-color="safe"
-    error-color="warning"
+    accent-color="violet"
+    valid-color="green"
+    error-color="red"
   ></ui-blank>
 </div>
 
@@ -211,7 +211,7 @@
     expected-value="2024"
     normalize-width
     button-icon="bi-send"
-    accent-color="teal"
+    accent-color="green"
   ></ui-blank>
   <p class="hint">用全形輸入法打「２０２４」送出，比對前會自動轉成半形再跟 2024 比對。</p>
 </div>
@@ -219,23 +219,23 @@
 <h2>5. message-style 五種樣式</h2>
 <div class="panel">
   <p class="hint">plain（預設）</p>
-  <ui-blank id="msgPlain" placeholder="輸入 ok" expected-value="ok" message-style="plain" label-valid="答對了！" button-icon="bi-send" accent-color="sky"></ui-blank>
+  <ui-blank id="msgPlain" placeholder="輸入 ok" expected-value="ok" message-style="plain" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
 </div>
 <div class="panel">
   <p class="hint">bordered</p>
-  <ui-blank id="msgBordered" placeholder="輸入 ok" expected-value="ok" message-style="bordered" label-valid="答對了！" button-icon="bi-send" accent-color="sky"></ui-blank>
+  <ui-blank id="msgBordered" placeholder="輸入 ok" expected-value="ok" message-style="bordered" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
 </div>
 <div class="panel">
   <p class="hint">filled</p>
-  <ui-blank id="msgFilled" placeholder="輸入 ok" expected-value="ok" message-style="filled" label-valid="答對了！" button-icon="bi-send" accent-color="sky"></ui-blank>
+  <ui-blank id="msgFilled" placeholder="輸入 ok" expected-value="ok" message-style="filled" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
 </div>
 <div class="panel">
   <p class="hint">accent-bar</p>
-  <ui-blank id="msgAccentBar" placeholder="輸入 ok" expected-value="ok" message-style="accent-bar" label-valid="答對了！" button-icon="bi-send" accent-color="sky"></ui-blank>
+  <ui-blank id="msgAccentBar" placeholder="輸入 ok" expected-value="ok" message-style="accent-bar" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
 </div>
 <div class="panel">
   <p class="hint">icon-banner</p>
-  <ui-blank id="msgIconBanner" placeholder="輸入 ok" expected-value="ok" message-style="icon-banner" label-valid="答對了！" button-icon="bi-send" accent-color="sky"></ui-blank>
+  <ui-blank id="msgIconBanner" placeholder="輸入 ok" expected-value="ok" message-style="icon-banner" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
 </div>
 
 <h2>6. message-target（訊息顯示在頁面上別的 div，不套用元件樣式）</h2>

@@ -124,9 +124,9 @@
 ### `<dot-go>` 跳轉圓點
 
 ```html
-<dot-go href="#part2" theme="sky" dot-style="star-fill">Part 2</dot-go>
+<dot-go href="#part2" theme="blue" dot-style="star-fill">Part 2</dot-go>
 <dot-go href="lesson-02.html" theme="pink" dot-style="square">下一課</dot-go>
-<dot-go href="#part3" theme="ocean" dot-style="icon" icon="bi-translate">翻譯練習</dot-go>
+<dot-go href="#part3" theme="blue" dot-style="icon" icon="bi-translate">翻譯練習</dot-go>
 <dot-go href="https://www.ielts.org/" dot-style="icon" icon="bi-box-arrow-up-right" target="_blank"></dot-go>
 ```
 
@@ -135,7 +135,7 @@
 | 屬性 | 值 | 預設 | 說明 |
 |---|---|---|---|
 | `href` | `#id` 或網址 | 無 | `#id` 為同頁平滑捲動，並讓目標閃一下外框；其餘當網址跳轉。未設定時圓點停用 |
-| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `sky` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`special`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
+| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `blue` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `dot-style` | `circle`、`circle-fill`、`star`、`star-fill`、`square`、`square-fill`、`icon` | `circle-fill` | 圖示樣式 |
 | `icon` | Bootstrap Icons 名稱 | 無 | `dot-style="icon"` 時使用，寫 `bi-translate`、`translate` 或 `bi bi-translate` 皆可 |
 | `size` | 10 至 48 | 18 | 圖示大小（px） |

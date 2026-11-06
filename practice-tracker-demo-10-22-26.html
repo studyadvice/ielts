@@ -8,21 +8,21 @@
 :root {
   --bg:      #0C0D0C;
   --shell:   #C6C7BD;
-  --lavender:#C3A5E5;
-  --sky:     #82C8E5;
-  --warning: #E6374B;
-  --salmon:  #E5C3B3;
-  --ocean:   #1CCAE8;
-  --safe:    #27AE60;
-  --teal:    #0DA591;
+  --violet:#B484E8;
+  --blue:     #5DBAE8;
+  --warning: #EF6661;
+  --orange:  #F79C40;
+  --blue:   #5DBAE8;
+  --green:    #71CD76;
+  --green:    #71CD76;
   --vanilla: #DBEDD8;
   --yellow:  #E3D322;
-  --focus:   #D4FFFC;
-  --special: #B3DE73;
-  --info:    #4171BF;
-  --indigo:  #7849C9;
+  --focus:   #DBEDD8;
+  --green: #71CD76;
+  --info:    #778CE1;
+  --indigo:  #778CE1;
   --pink:    #FF91D7;
-  --orange:  #EDA109;
+  --orange:  #F79C40;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,7 +51,7 @@ body {
 }
 .site-header h1 {
   font-size: 1.4rem;
-  color: var(--lavender);
+  color: var(--violet);
   letter-spacing: 0.04em;
   font-weight: 700;
 }
@@ -68,7 +68,7 @@ body {
   padding: 1px 8px;
   font-size: 0.72rem;
   font-family: monospace;
-  color: var(--lavender);
+  color: var(--violet);
   margin-left: 10px;
   vertical-align: middle;
   letter-spacing: 0.03em;
@@ -82,7 +82,7 @@ body {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  color: var(--ocean);
+  color: var(--blue);
   margin-bottom: 22px;
   padding-bottom: 9px;
   border-bottom: 1px solid rgba(28,202,232,0.18);
@@ -114,7 +114,7 @@ body {
   --pt-cell:    22px;
   --pt-radius:  4px;
   --pt-pending: #2a2b2a;
-  --pt-done:    #27AE60;
+  --pt-done:    #71CD76;
   --pt-anim:    0s;
 }
 .shape-cells.lg {
@@ -134,7 +134,7 @@ body {
   padding: 18px 22px;
   font-size: 0.88rem;
   line-height: 1.7;
-  color: var(--sky);
+  color: var(--blue);
 }
 .callout strong { color: var(--focus); }
 .callout code {
@@ -143,7 +143,7 @@ body {
   padding: 1px 6px;
   font-size: 0.80rem;
   font-family: monospace;
-  color: var(--lavender);
+  color: var(--violet);
 }
 
 /* ── 形狀切換按鈕 ── */
@@ -172,7 +172,7 @@ body {
 .shape-btn.active {
   background: rgba(179,222,115,0.13);
   border-color: rgba(179,222,115,0.55);
-  color: var(--special);
+  color: var(--green);
 }
 .shape-hint {
   font-size: 0.78rem;
@@ -217,7 +217,7 @@ body {
 }
 .stage-item.done .stage-num {
   background: rgba(39,174,96,0.22);
-  color: var(--safe);
+  color: var(--green);
 }
 .stage-label {
   flex: 1;
@@ -234,7 +234,7 @@ body {
   border-radius: 5px;
   border: 1px solid rgba(39,174,96,0.32);
   background: rgba(39,174,96,0.07);
-  color: var(--safe);
+  color: var(--green);
   font-size: 0.80rem;
   font-family: inherit;
   cursor: pointer;
@@ -268,7 +268,7 @@ body {
 }
 .api-table td:first-child {
   font-family: monospace;
-  color: var(--lavender);
+  color: var(--violet);
   white-space: nowrap;
 }
 .api-table td:nth-child(2) {

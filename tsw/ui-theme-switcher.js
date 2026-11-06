@@ -13,7 +13,7 @@
  *
  * API：UIThemeSwitcher.get() / set({ mode, color }) / register(def) / roles / themes / brand / addBrand(name, hex, label)
  *
- * 品牌色：固定色碼，不隨主題與亮暗切換，以 --brand-名稱 輸出，例如 --brand-lavender。
+ * 品牌色：固定色碼，不隨主題與亮暗切換，以 --brand-名稱 輸出，例如 --brand-violet。
  *
  * 建議放在 <head> 最前面載入，頁面會在繪製前套用已儲存的主題，避免閃爍。
  */
@@ -35,7 +35,7 @@
     ['accent', '主要強調色'],
     ['accent-2', '次要強調色'],
     ['warning', '警告與危險'],
-    ['safe', '成功與安全'],
+    ['green', '成功與安全'],
     ['info', '資訊'],
     ['caution', '注意'],
     ['focus', '焦點與高亮'],
@@ -46,27 +46,23 @@
   var BRAND = [
     ['bg', '#0C0D0C', '底層背景'],
     ['shell', '#C6C7BD', '主要文字'],
-    ['lavender', '#B484E8', '薰衣草紫'],
-    ['sky', '#5DBAE8', '天空藍'],
-    ['warning', '#EF6661', '警告紅'],
-    ['salmon', '#F79C40', '鮭魚粉'],
-    ['ocean', '#5DBAE8', '海洋藍'],
-    ['safe', '#71CD76', '安全綠'],
-    ['teal', '#71CD76', '藍綠'],
     ['vanilla', '#DBEDD8', '香草綠白'],
     ['yellow', '#E3D322', '黃'],
-    ['focus', '#DBEDD8', '焦點淺青'],
-    ['special', '#71CD76', '特別黃綠'],
-    ['info', '#778CE1', '資訊藍'],
     ['indigo', '#778CE1', '靛紫'],
     ['pink', '#FF91D7', '粉紅'],
-    ['orange', '#F79C40', '橘'],
+    ['orange', '#FF5530', '橘'],
     /* 新色票 */
     ['red', '#EF6661', '紅'],
     ['green', '#71CD76', '綠'],
     ['blue', '#5DBAE8', '藍'],
     ['violet', '#B484E8', '紫'],
-    ['gray', '#86877F', '灰']
+    ['gray', '#86877F', '灰'],
+    ['key', '#51DBCF', '重點亮青'],
+    ['key-deep', '#176878', '重點深青'],
+    ['calm', '#A3C4BC', '平靜灰綠'],
+    ['quiet', '#A9B8E0', '安靜霧藍'],
+    ['playful', '#FFA987', '輕鬆蜜桃'],
+    ['urgent', '#FF2E63', '緊急緋紅']
   ];
 
   function pal(a) {
@@ -79,12 +75,12 @@
   var THEMES = [
     {
       id: 'shell', name: 'Shell',
-      dark: pal(['#0C0D0C', '#161816', '#232623', '#C6C7BD', '#8F9088', '#3A3D3A', '#5DBAE8', '#B484E8', '#EF6661', '#71CD76', '#778CE1', '#F79C40', '#DBEDD8', '#0C0D0C']),
+      dark: pal(['#0C0D0C', '#161816', '#232623', '#C6C7BD', '#8F9088', '#3A3D3A', '#5DBAE8', '#B484E8', '#EF6661', '#71CD76', '#778CE1', '#FF5530', '#DBEDD8', '#0C0D0C']),
       light: pal(['#F3F4EE', '#FFFFFF', '#E4E6DC', '#1B1D1A', '#5C5F58', '#B9BCB0', '#1A7FA8', '#7849C9', '#C4182C', '#1E8449', '#2F5AA6', '#B87800', '#0DA591', '#FFFFFF'])
     },
     {
       id: 'evernight', name: 'Evernight',
-      dark: pal(['#1A1217', '#241920', '#32232C', '#E8DDE2', '#A8939D', '#4A3641', '#E57A8C', '#B484E8', '#FF5A6E', '#4CC38A', '#6FA3F0', '#F79C40', '#FFD1DA', '#1A1217']),
+      dark: pal(['#1A1217', '#241920', '#32232C', '#E8DDE2', '#A8939D', '#4A3641', '#E57A8C', '#B484E8', '#FF5A6E', '#4CC38A', '#6FA3F0', '#FF5530', '#FFD1DA', '#1A1217']),
       light: pal(['#FBF3F5', '#FFFFFF', '#F3E1E6', '#2A1A20', '#75585F', '#DDBFC7', '#C2455B', '#7849C9', '#C4182C', '#1E8449', '#2F5AA6', '#B87800', '#C2455B', '#FFFFFF'])
     },
     {
@@ -404,29 +400,14 @@
 
   window.UIThemeSwitcher = api;
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

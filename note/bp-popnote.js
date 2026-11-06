@@ -2,21 +2,11 @@
   'use strict';
 
   var PALETTE = {
-    lavender : '#B484E8',
-    sky      : '#5DBAE8',
-    ocean    : '#5DBAE8',
-    safe     : '#71CD76',
-    special  : '#71CD76',
     yellow   : '#E3D322',
-    salmon   : '#F79C40',
     pink     : '#FF91D7',
-    orange   : '#F79C40',
+    orange   : '#FF5530',
     vanilla  : '#DBEDD8',
-    teal     : '#71CD76',
-    focus    : '#DBEDD8',
     indigo   : '#778CE1',
-    info     : '#778CE1',
-    wrong    : '#EF6661',
     shell    : '#C6C7BD',
     gold     : '#C9973F',
     /* 新色票 */
@@ -25,25 +15,21 @@
     blue: '#5DBAE8',
     violet: '#B484E8',
     gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63',
   };
 
   var NOTICE_COLOR_MAP = {
-    lavender : PALETTE.lavender,
-    sky      : PALETTE.sky,
-    ocean    : PALETTE.ocean,
-    safe     : PALETTE.safe,
-    special  : PALETTE.special,
     yellow   : PALETTE.yellow,
-    salmon   : PALETTE.salmon,
     pink     : PALETTE.pink,
     orange   : PALETTE.orange,
     vanilla  : PALETTE.vanilla,
-    teal     : PALETTE.teal,
-    focus    : PALETTE.focus,
     indigo   : PALETTE.indigo,
-    info     : PALETTE.info,
-    wrong    : PALETTE.wrong,
-    warning  : PALETTE.yellow,
     /* 新色票 */
     red      : PALETTE.red,
     green    : PALETTE.green,
@@ -61,7 +47,7 @@
       text       : 'var(--shell,#C6C7BD)',
       bg         : 'var(--area,#1a1b1a)',
       border     : 'var(--card-border,#2e2f2e)',
-      accent     : PALETTE.sky,   // 預設邊框強調色
+      accent     : PALETTE.blue,   // 預設邊框強調色
       ctaBg      : PALETTE.yellow,
       ctaText    : '#0C0D0C',
       closeColor : 'rgba(198,199,189,0.78)',
@@ -867,37 +853,32 @@
   `;
 
   const THEMES = {
-    dark      : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
-    lavender  : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
-    sky       : { bg: '#071318', titleColor: PALETTE.sky,      borderColor: PALETTE.sky      },
-    ocean     : { bg: '#041418', titleColor: PALETTE.ocean,    borderColor: PALETTE.ocean    },
-    warning   : { bg: '#190d0d', titleColor: PALETTE.wrong,    borderColor: PALETTE.wrong    },
-    success   : { bg: '#091508', titleColor: PALETTE.safe,     borderColor: PALETTE.safe     },
-    safe      : { bg: '#091508', titleColor: PALETTE.safe,     borderColor: PALETTE.safe     },
-    special   : { bg: '#111605', titleColor: PALETTE.special,  borderColor: PALETTE.special  },
-    highlight : { bg: '#111605', titleColor: PALETTE.special,  borderColor: PALETTE.special  },
+    dark      : { bg: '#130e1e', titleColor: PALETTE.violet, borderColor: PALETTE.violet },
+    success   : { bg: '#091508', titleColor: PALETTE.green,     borderColor: PALETTE.green     },
+    highlight : { bg: '#111605', titleColor: PALETTE.green,  borderColor: PALETTE.green  },
     note      : { bg: '#141200', titleColor: PALETTE.yellow,   borderColor: PALETTE.yellow   },
     yellow    : { bg: '#141200', titleColor: PALETTE.yellow,   borderColor: PALETTE.yellow   },
-    salmon    : { bg: '#180e0a', titleColor: PALETTE.salmon,   borderColor: PALETTE.salmon   },
     pink      : { bg: '#180a12', titleColor: PALETTE.pink,     borderColor: PALETTE.pink     },
     orange    : { bg: '#181005', titleColor: PALETTE.orange,   borderColor: PALETTE.orange   },
     vanilla   : { bg: '#171815', titleColor: PALETTE.vanilla,  borderColor: PALETTE.vanilla  },
-    teal      : { bg: '#061412', titleColor: PALETTE.teal,     borderColor: PALETTE.teal     },
-    focus     : { bg: '#070d16', titleColor: PALETTE.focus,    borderColor: PALETTE.focus    },
     indigo    : { bg: '#0e0a18', titleColor: PALETTE.indigo,   borderColor: PALETTE.indigo   },
-    info      : { bg: '#060c1c', titleColor: PALETTE.info,     borderColor: PALETTE.info     },
-    wrong     : { bg: '#190d0d', titleColor: PALETTE.wrong,    borderColor: PALETTE.wrong    },
-    correct   : { bg: '#091508', titleColor: PALETTE.safe,     borderColor: PALETTE.safe     },
-    accent    : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
+    correct   : { bg: '#091508', titleColor: PALETTE.green,     borderColor: PALETTE.green     },
+    accent    : { bg: '#130e1e', titleColor: PALETTE.violet, borderColor: PALETTE.violet },
     /* 新色票 */
     blue      : { bg: '#071318', titleColor: PALETTE.blue,     borderColor: PALETTE.blue     },
     green     : { bg: '#091508', titleColor: PALETTE.green,    borderColor: PALETTE.green    },
     red       : { bg: '#190d0d', titleColor: PALETTE.red,      borderColor: PALETTE.red      },
     violet    : { bg: '#130e1e', titleColor: PALETTE.violet,   borderColor: PALETTE.violet   },
     gray      : { bg: '#121311', titleColor: PALETTE.gray,     borderColor: PALETTE.gray     },
+    key       : { bg: '#12201E', titleColor: PALETTE['key'], borderColor: PALETTE['key'] },
+    'key-deep': { bg: '#0D1516', titleColor: PALETTE['key-deep'], borderColor: PALETTE['key-deep'] },
+    calm      : { bg: '#1A1D1C', titleColor: PALETTE['calm'], borderColor: PALETTE['calm'] },
+    quiet     : { bg: '#1A1C1F', titleColor: PALETTE['quiet'], borderColor: PALETTE['quiet'] },
+    playful   : { bg: '#221B17', titleColor: PALETTE['playful'], borderColor: PALETTE['playful'] },
+    urgent    : { bg: '#221014', titleColor: PALETTE['urgent'], borderColor: PALETTE['urgent'] },
     /* 金色電流：fx 為動畫種類，fxCore 是電流亮點色，fxDim 是電流環的暗部色 */
     gold      : { bg: '#1A1200', titleColor: '#EFD9A2', borderColor: PALETTE.gold,
-                  fx: 'electric', fxCore: PALETTE.focus, fxDim: '#6B4F12' },
+                  fx: 'electric', fxCore: PALETTE.vanilla, fxDim: '#6B4F12' },
   };
 
   let config = {
@@ -952,7 +933,7 @@
     }
     el.setAttribute('data-fx', fx);
     el.style.setProperty('--xpop-border-color', theme.borderColor);
-    el.style.setProperty('--xpop-fx-core', theme.fxCore || PALETTE.focus);
+    el.style.setProperty('--xpop-fx-core', theme.fxCore || PALETTE.vanilla);
     el.style.setProperty('--xpop-fx-dim',  theme.fxDim  ||
       'color-mix(in srgb, ' + theme.borderColor + ' 45%, #000)');
   }
@@ -1688,29 +1669,14 @@
   }
 
 })(window);
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

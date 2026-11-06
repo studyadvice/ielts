@@ -79,21 +79,21 @@ class CardToggle extends HTMLElement {
                 --ct-bg-primary:      #0C0D0C;
                 --ct-bg-secondary:    color-mix(in srgb, var(--ct-bg-primary) 94%, var(--ct-color-shell));
                 --ct-color-shell:     #C6C7BD;
-                --ct-color-lavender:  #B484E8;
-                --ct-color-sky:       #5DBAE8;
+                --ct-color-violet:  #B484E8;
+                --ct-color-blue:       #5DBAE8;
                 --ct-color-warning:   #EF6661;
-                --ct-color-salmon:    #F79C40;
-                --ct-color-ocean:     #5DBAE8;
-                --ct-color-safe:      #71CD76;
-                --ct-color-teal:      #71CD76;
+                --ct-color-orange:    #FF5530;
+                --ct-color-blue:     #5DBAE8;
+                --ct-color-green:      #71CD76;
+                --ct-color-green:      #71CD76;
                 --ct-color-vanilla:   #DBEDD8;
                 --ct-color-yellow:    #E3D322;
                 --ct-color-focus:     #DBEDD8;
-                --ct-color-special:   #71CD76;
+                --ct-color-green:   #71CD76;
                 --ct-color-info:      #778CE1;
                 --ct-color-indigo:    #778CE1;
                 --ct-color-pink:      #FF91D7;
-                --ct-color-orange:    #F79C40;
+                --ct-color-orange:    #FF5530;
                 /* 新色票 */
                 --ct-color-red:       #EF6661;
                 --ct-color-green:     #71CD76;
@@ -101,13 +101,13 @@ class CardToggle extends HTMLElement {
                 --ct-color-violet:    #B484E8;
                 --ct-color-gray:      #86877F;
                 /* 舊名稱別名，既有頁面不必修改屬性 */
-                --ct-color-attention: var(--ct-color-yellow);
-                --ct-color-stone:     var(--ct-color-sky);
+                --ct-color-yellow: var(--ct-color-yellow);
+                --ct-color-blue:     var(--ct-color-blue);
                 /* 左側 bar 寬度 */
                 --ct-bar-width:       3px;
                 --ct-bar-width-hover: 5px;
                 /* 預設動態顏色變數 */
-                --ct-active-color: var(--ct-color-special);
+                --ct-active-color: var(--ct-color-green);
                 
                 --ct-fs-body:         1rem;
                 --ct-fs-number:       1rem;
@@ -197,24 +197,24 @@ class CardToggle extends HTMLElement {
                 border-width: 1px;
             }
 
-            card-toggle[dashed][color="safe"]      { border-color: color-mix(in srgb, var(--ct-color-safe) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="green"]      { border-color: color-mix(in srgb, var(--ct-color-green) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="green"]      { border-color: color-mix(in srgb, var(--ct-color-green) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="warning"]   { border-color: color-mix(in srgb, var(--ct-color-warning) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="red"]   { border-color: color-mix(in srgb, var(--ct-color-red) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="info"]      { border-color: color-mix(in srgb, var(--ct-color-info) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="special"]   { border-color: color-mix(in srgb, var(--ct-color-special) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="sky"]       { border-color: color-mix(in srgb, var(--ct-color-sky) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="green"]   { border-color: color-mix(in srgb, var(--ct-color-green) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="blue"]       { border-color: color-mix(in srgb, var(--ct-color-blue) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="lavender"]  { border-color: color-mix(in srgb, var(--ct-color-lavender) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="blue"]       { border-color: color-mix(in srgb, var(--ct-color-blue) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="violet"]  { border-color: color-mix(in srgb, var(--ct-color-violet) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="attention"] { border-color: color-mix(in srgb, var(--ct-color-yellow) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="violet"]  { border-color: color-mix(in srgb, var(--ct-color-violet) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="yellow"] { border-color: color-mix(in srgb, var(--ct-color-yellow) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="salmon"]    { border-color: color-mix(in srgb, var(--ct-color-salmon) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="yellow"] { border-color: color-mix(in srgb, var(--ct-color-yellow) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="orange"]    { border-color: color-mix(in srgb, var(--ct-color-orange) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="pink"]      { border-color: color-mix(in srgb, var(--ct-color-pink) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="orange"]    { border-color: color-mix(in srgb, var(--ct-color-orange) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="stone"]     { border-color: color-mix(in srgb, var(--ct-color-sky) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="ocean"]    { border-color: color-mix(in srgb, var(--ct-color-ocean) 55%, var(--ct-bg-primary)); }
-            card-toggle[dashed][color="teal"]     { border-color: color-mix(in srgb, var(--ct-color-teal) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="blue"]     { border-color: color-mix(in srgb, var(--ct-color-blue) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="blue"]    { border-color: color-mix(in srgb, var(--ct-color-blue) 55%, var(--ct-bg-primary)); }
+            card-toggle[dashed][color="green"]     { border-color: color-mix(in srgb, var(--ct-color-green) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="focus"]    { border-color: color-mix(in srgb, var(--ct-color-focus) 55%, var(--ct-bg-primary)); }
             card-toggle[dashed][color="indigo"]   { border-color: color-mix(in srgb, var(--ct-color-indigo) 55%, var(--ct-bg-primary)); }
 
@@ -223,11 +223,11 @@ class CardToggle extends HTMLElement {
             card-toggle[size="lg"]  { padding: 13px 20px 13px 18px; }
             card-toggle[size="xlg"] { padding: 16px 24px 16px 22px; }
 
-            card-toggle[color="safe"]::before { background-color: var(--ct-color-safe); }
             card-toggle[color="green"]::before { background-color: var(--ct-color-green); }
-            card-toggle[color="safe"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-safe) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-safe) 20%, var(--ct-bg-primary));
+            card-toggle[color="green"]::before { background-color: var(--ct-color-green); }
+            card-toggle[color="green"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-green) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-green) 20%, var(--ct-bg-primary));
             }
             card-toggle[color="green"]:hover {
                 background-color: color-mix(in srgb, var(--ct-color-green) 5%, var(--ct-bg-primary));
@@ -251,37 +251,37 @@ class CardToggle extends HTMLElement {
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-info) 20%, var(--ct-bg-primary));
             }
 
-            card-toggle[color="special"]::before { background-color: var(--ct-color-special); }
-            card-toggle[color="special"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-special) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-special) 20%, var(--ct-bg-primary));
+            card-toggle[color="green"]::before { background-color: var(--ct-color-green); }
+            card-toggle[color="green"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-green) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-green) 20%, var(--ct-bg-primary));
             }
 
-            card-toggle[color="sky"]::before { background-color: var(--ct-color-sky); }
             card-toggle[color="blue"]::before { background-color: var(--ct-color-blue); }
-            card-toggle[color="sky"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-sky) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-sky) 20%, var(--ct-bg-primary));
+            card-toggle[color="blue"]::before { background-color: var(--ct-color-blue); }
+            card-toggle[color="blue"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-blue) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-blue) 20%, var(--ct-bg-primary));
             }
             card-toggle[color="blue"]:hover {
                 background-color: color-mix(in srgb, var(--ct-color-blue) 5%, var(--ct-bg-primary));
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-blue) 20%, var(--ct-bg-primary));
             }
 
-            card-toggle[color="lavender"]::before { background-color: var(--ct-color-lavender); }
             card-toggle[color="violet"]::before { background-color: var(--ct-color-violet); }
-            card-toggle[color="lavender"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-lavender) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-lavender) 20%, var(--ct-bg-primary));
+            card-toggle[color="violet"]::before { background-color: var(--ct-color-violet); }
+            card-toggle[color="violet"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-violet) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-violet) 20%, var(--ct-bg-primary));
             }
             card-toggle[color="violet"]:hover {
                 background-color: color-mix(in srgb, var(--ct-color-violet) 5%, var(--ct-bg-primary));
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-violet) 20%, var(--ct-bg-primary));
             }
 
-            card-toggle[color="attention"]::before { background-color: var(--ct-color-attention); }
             card-toggle[color="yellow"]::before { background-color: var(--ct-color-yellow); }
-            card-toggle[color="attention"]:hover {
+            card-toggle[color="yellow"]::before { background-color: var(--ct-color-yellow); }
+            card-toggle[color="yellow"]:hover {
                 background-color: color-mix(in srgb, var(--ct-color-yellow) 5%, var(--ct-bg-primary));
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-yellow) 20%, var(--ct-bg-primary));
             }
@@ -290,10 +290,10 @@ class CardToggle extends HTMLElement {
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-yellow) 20%, var(--ct-bg-primary));
             }
 
-            card-toggle[color="salmon"]::before { background-color: var(--ct-color-salmon); }
-            card-toggle[color="salmon"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-salmon) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-salmon) 20%, var(--ct-bg-primary));
+            card-toggle[color="orange"]::before { background-color: var(--ct-color-orange); }
+            card-toggle[color="orange"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-orange) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-orange) 20%, var(--ct-bg-primary));
             }
 
             card-toggle[color="shell"]::before { background-color: var(--ct-color-shell); }
@@ -324,20 +324,20 @@ class CardToggle extends HTMLElement {
                 box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-orange) 20%, var(--ct-bg-primary));
             }
 
-            card-toggle[color="stone"]::before { background-color: var(--ct-color-stone); }
-            card-toggle[color="stone"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-sky) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-sky) 20%, var(--ct-bg-primary));
+            card-toggle[color="blue"]::before { background-color: var(--ct-color-blue); }
+            card-toggle[color="blue"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-blue) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-blue) 20%, var(--ct-bg-primary));
             }
-            card-toggle[color="ocean"]::before { background-color: var(--ct-color-ocean); }
-            card-toggle[color="ocean"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-ocean) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-ocean) 20%, var(--ct-bg-primary));
+            card-toggle[color="blue"]::before { background-color: var(--ct-color-blue); }
+            card-toggle[color="blue"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-blue) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-blue) 20%, var(--ct-bg-primary));
             }
-            card-toggle[color="teal"]::before { background-color: var(--ct-color-teal); }
-            card-toggle[color="teal"]:hover {
-                background-color: color-mix(in srgb, var(--ct-color-teal) 5%, var(--ct-bg-primary));
-                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-teal) 20%, var(--ct-bg-primary));
+            card-toggle[color="green"]::before { background-color: var(--ct-color-green); }
+            card-toggle[color="green"]:hover {
+                background-color: color-mix(in srgb, var(--ct-color-green) 5%, var(--ct-bg-primary));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--ct-color-green) 20%, var(--ct-bg-primary));
             }
             card-toggle[color="focus"]::before { background-color: var(--ct-color-focus); }
             card-toggle[color="focus"]:hover {
@@ -406,7 +406,7 @@ class CardToggle extends HTMLElement {
 
             .ct-quiz-input:focus {
                 outline: none;
-                border-color: var(--ct-color-special);
+                border-color: var(--ct-color-green);
             }
 
             /* 提交按鈕 */
@@ -414,7 +414,7 @@ class CardToggle extends HTMLElement {
                 padding: var(--ct-pad-submit);
                 border: none;
                 border-radius: 5px;
-                background-color: var(--ct-color-special);
+                background-color: var(--ct-color-green);
                 color: var(--ct-bg-primary);
                 font-size: var(--ct-fs-submit);
                 font-family: var(--ct-ff-submit, inherit);
@@ -426,9 +426,9 @@ class CardToggle extends HTMLElement {
             }
 
             .ct-quiz-button:hover {
-                background-color: var(--ct-color-sky);
+                background-color: var(--ct-color-blue);
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px color-mix(in srgb, var(--ct-color-sky) 30%, var(--ct-bg-primary));
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--ct-color-blue) 30%, var(--ct-bg-primary));
             }
 
             .ct-quiz-button:active {
@@ -438,10 +438,10 @@ class CardToggle extends HTMLElement {
             /* 提示 / 重置按鈕 */
             .ct-reset-button {
                 padding: var(--ct-pad-aux);
-                border: 1px solid var(--ct-color-lavender);
+                border: 1px solid var(--ct-color-violet);
                 border-radius: 5px;
                 background-color: transparent;
-                color: var(--ct-color-lavender);
+                color: var(--ct-color-violet);
                 font-size: var(--ct-fs-aux);
                 font-family: var(--ct-ff-aux, inherit);
                 line-height: 1.3;
@@ -452,16 +452,16 @@ class CardToggle extends HTMLElement {
             }
 
             .ct-reset-button:hover {
-                background-color: color-mix(in srgb, var(--ct-color-lavender) 10%, var(--ct-bg-primary));
+                background-color: color-mix(in srgb, var(--ct-color-violet) 10%, var(--ct-bg-primary));
             }
 
             /* 額外資訊按鈕與面板 */
             .ct-info-button {
                 padding: var(--ct-pad-info);
-                border: 1px solid var(--ct-info-color, var(--ct-color-sky));
+                border: 1px solid var(--ct-info-color, var(--ct-color-blue));
                 border-radius: 5px;
                 background-color: transparent;
-                color: var(--ct-info-color, var(--ct-color-sky));
+                color: var(--ct-info-color, var(--ct-color-blue));
                 font-size: var(--ct-fs-info);
                 font-family: var(--ct-ff-info, inherit);
                 line-height: 1.3;
@@ -473,15 +473,15 @@ class CardToggle extends HTMLElement {
 
             .ct-info-button:hover,
             .ct-info-button.ct-open {
-                background-color: color-mix(in srgb, var(--ct-info-color, var(--ct-color-sky)) 14%, var(--ct-bg-primary));
+                background-color: color-mix(in srgb, var(--ct-info-color, var(--ct-color-blue)) 14%, var(--ct-bg-primary));
             }
 
             .ct-info-panel {
                 margin-top: 8px;
                 padding: var(--ct-pad-infobox);
-                border-left: 3px solid var(--ct-info-color, var(--ct-color-sky));
+                border-left: 3px solid var(--ct-info-color, var(--ct-color-blue));
                 border-radius: 0 5px 5px 0;
-                background-color: var(--ct-info-bg, color-mix(in srgb, var(--ct-info-color, var(--ct-color-sky)) 10%, var(--ct-bg-primary)));
+                background-color: var(--ct-info-bg, color-mix(in srgb, var(--ct-info-color, var(--ct-color-blue)) 10%, var(--ct-bg-primary)));
                 color: var(--ct-info-fg, var(--ct-color-shell));
                 font-size: var(--ct-fs-infobox);
                 font-family: var(--ct-ff-infobox, inherit);
@@ -509,7 +509,7 @@ class CardToggle extends HTMLElement {
             }
 
             .ct-success {
-                color: var(--ct-color-safe);
+                color: var(--ct-color-green);
                 font-size: var(--ct-fs-feedback);
                 font-family: var(--ct-ff-feedback, inherit);
             }
@@ -619,14 +619,14 @@ class CardToggle extends HTMLElement {
 
             /* 答題狀態頁碼 */
             .ct-page-btn.answered-correct {
-                border-color: color-mix(in srgb, var(--ct-color-safe) 60%, var(--ct-bg-primary));
-                color: var(--ct-color-safe);
-                background-color: color-mix(in srgb, var(--ct-color-safe) 8%, var(--ct-bg-primary));
+                border-color: color-mix(in srgb, var(--ct-color-green) 60%, var(--ct-bg-primary));
+                color: var(--ct-color-green);
+                background-color: color-mix(in srgb, var(--ct-color-green) 8%, var(--ct-bg-primary));
             }
             .ct-page-btn.answered-correct.active {
-                background-color: var(--ct-color-safe);
+                background-color: var(--ct-color-green);
                 color: var(--ct-bg-primary);
-                border-color: var(--ct-color-safe);
+                border-color: var(--ct-color-green);
             }
             .ct-page-btn.answered-wrong {
                 border-color: color-mix(in srgb, var(--ct-color-orange) 60%, var(--ct-bg-primary));
@@ -688,7 +688,7 @@ class CardToggle extends HTMLElement {
                 font-family: var(--ct-ff-result-text, inherit);
                 line-height: 1.4;
             }
-            .ct-result-correct { color: var(--ct-color-safe); }
+            .ct-result-correct { color: var(--ct-color-green); }
             .ct-result-wrong   { color: var(--ct-color-orange); }
             .ct-result-skipped { color: color-mix(in srgb, var(--ct-color-shell) 78%, var(--ct-bg-primary)); }
             .ct-result-retry {
@@ -710,11 +710,11 @@ class CardToggle extends HTMLElement {
             /* 提示區域樣式 */
             .ct-hint-display {
                 padding: 9px 14px;
-                background-color: color-mix(in srgb, var(--ct-color-lavender) 10%, var(--ct-bg-primary));
-                border-left: 2px solid var(--ct-color-lavender);
+                background-color: color-mix(in srgb, var(--ct-color-violet) 10%, var(--ct-bg-primary));
+                border-left: 2px solid var(--ct-color-violet);
                 border-radius: 0 4px 4px 0;
                 margin-top: 10px;
-                color: var(--ct-color-lavender);
+                color: var(--ct-color-violet);
                 font-size: var(--ct-fs-hintbox);
                 font-family: var(--ct-ff-hintbox, inherit);
                 line-height: 1.4;
@@ -736,7 +736,7 @@ class CardToggle extends HTMLElement {
             .ct-countdown-inner {
                 height: 100%;
                 width: 100%;
-                background-color: var(--ct-color-sky);
+                background-color: var(--ct-color-blue);
                 transform-origin: left center;
                 animation: ct-countdown linear forwards;
             }
@@ -753,7 +753,7 @@ class CardToggle extends HTMLElement {
                 font-size: var(--ct-fs-flipnote);
                 font-family: var(--ct-ff-flipnote, inherit);
                 line-height: 1.4;
-                color: var(--ct-color-stone);
+                color: var(--ct-color-blue);
                 opacity: 0.78;
                 user-select: none;
             }
@@ -806,10 +806,10 @@ class CardToggle extends HTMLElement {
             /* blueprint：雙密度格線（天藍調） */
             card-toggle[skin="blueprint"] {
                 background-image:
-                    linear-gradient(color-mix(in srgb, var(--ct-color-sky) 10%, var(--ct-bg-primary))  1px, transparent 1px),
-                    linear-gradient(90deg, color-mix(in srgb, var(--ct-color-sky) 10%, var(--ct-bg-primary))  1px, transparent 1px),
-                    linear-gradient(color-mix(in srgb, var(--ct-color-sky) 4%, var(--ct-bg-primary)) 1px, transparent 1px),
-                    linear-gradient(90deg, color-mix(in srgb, var(--ct-color-sky) 4%, var(--ct-bg-primary)) 1px, transparent 1px);
+                    linear-gradient(color-mix(in srgb, var(--ct-color-blue) 10%, var(--ct-bg-primary))  1px, transparent 1px),
+                    linear-gradient(90deg, color-mix(in srgb, var(--ct-color-blue) 10%, var(--ct-bg-primary))  1px, transparent 1px),
+                    linear-gradient(color-mix(in srgb, var(--ct-color-blue) 4%, var(--ct-bg-primary)) 1px, transparent 1px),
+                    linear-gradient(90deg, color-mix(in srgb, var(--ct-color-blue) 4%, var(--ct-bg-primary)) 1px, transparent 1px);
                 background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
             }
 
@@ -835,16 +835,16 @@ class CardToggle extends HTMLElement {
             }
 
             /* skin × color：grid / ruled 線條跟隨色票 */
-            card-toggle[skin="grid"][color="sky"],
-            card-toggle[skin="ruled"][color="sky"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-sky) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="blue"],
             card-toggle[skin="ruled"][color="blue"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-blue) 10%, var(--ct-bg-primary)); }
-            card-toggle[skin="grid"][color="lavender"],
-            card-toggle[skin="ruled"][color="lavender"]  { --ct-skin-line: color-mix(in srgb, var(--ct-color-lavender) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="blue"],
+            card-toggle[skin="ruled"][color="blue"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-blue) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="violet"],
             card-toggle[skin="ruled"][color="violet"]  { --ct-skin-line: color-mix(in srgb, var(--ct-color-violet) 10%, var(--ct-bg-primary)); }
-            card-toggle[skin="grid"][color="safe"],
-            card-toggle[skin="ruled"][color="safe"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-safe) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="violet"],
+            card-toggle[skin="ruled"][color="violet"]  { --ct-skin-line: color-mix(in srgb, var(--ct-color-violet) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="green"],
+            card-toggle[skin="ruled"][color="green"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-green) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="green"],
             card-toggle[skin="ruled"][color="green"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-green) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="warning"],
@@ -857,18 +857,18 @@ class CardToggle extends HTMLElement {
             card-toggle[skin="ruled"][color="orange"]    { --ct-skin-line: color-mix(in srgb, var(--ct-color-orange) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="focus"],
             card-toggle[skin="ruled"][color="focus"]     { --ct-skin-line: color-mix(in srgb, var(--ct-color-focus) 10%, var(--ct-bg-primary)); }
-            card-toggle[skin="grid"][color="teal"],
-            card-toggle[skin="ruled"][color="teal"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-teal) 10%, var(--ct-bg-primary)); }
-            card-toggle[skin="grid"][color="ocean"],
-            card-toggle[skin="ruled"][color="ocean"]     { --ct-skin-line: color-mix(in srgb, var(--ct-color-ocean) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="green"],
+            card-toggle[skin="ruled"][color="green"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-green) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="blue"],
+            card-toggle[skin="ruled"][color="blue"]     { --ct-skin-line: color-mix(in srgb, var(--ct-color-blue) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="indigo"],
             card-toggle[skin="ruled"][color="indigo"]    { --ct-skin-line: color-mix(in srgb, var(--ct-color-indigo) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="pink"],
             card-toggle[skin="ruled"][color="pink"]      { --ct-skin-line: color-mix(in srgb, var(--ct-color-pink) 10%, var(--ct-bg-primary)); }
-            card-toggle[skin="grid"][color="salmon"],
-            card-toggle[skin="ruled"][color="salmon"]    { --ct-skin-line: color-mix(in srgb, var(--ct-color-salmon) 10%, var(--ct-bg-primary)); }
-            card-toggle[skin="grid"][color="special"],
-            card-toggle[skin="ruled"][color="special"]   { --ct-skin-line: color-mix(in srgb, var(--ct-color-special) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="orange"],
+            card-toggle[skin="ruled"][color="orange"]    { --ct-skin-line: color-mix(in srgb, var(--ct-color-orange) 10%, var(--ct-bg-primary)); }
+            card-toggle[skin="grid"][color="green"],
+            card-toggle[skin="ruled"][color="green"]   { --ct-skin-line: color-mix(in srgb, var(--ct-color-green) 10%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="shell"],
             card-toggle[skin="ruled"][color="shell"]     { --ct-skin-line: color-mix(in srgb, var(--ct-color-shell) 13%, var(--ct-bg-primary)); }
             card-toggle[skin="grid"][color="vanilla"],
@@ -886,9 +886,9 @@ class CardToggle extends HTMLElement {
             .ct-branch-btn {
                 padding: 5px 16px;
                 border-radius: 4px;
-                border: 2px solid var(--ct-branch-btn-clr, var(--ct-color-special));
+                border: 2px solid var(--ct-branch-btn-clr, var(--ct-color-green));
                 background: transparent;
-                color: var(--ct-branch-btn-clr, var(--ct-color-special));
+                color: var(--ct-branch-btn-clr, var(--ct-color-green));
                 font-size: var(--ct-fs-branch-btn);
                 font-family: var(--ct-ff-branch-btn, inherit);
                 font-weight: 600;
@@ -897,11 +897,11 @@ class CardToggle extends HTMLElement {
                 transition: background 0.18s ease, color 0.18s ease;
             }
             .ct-branch-btn:hover {
-                background: var(--ct-branch-btn-clr, var(--ct-color-special));
+                background: var(--ct-branch-btn-clr, var(--ct-color-green));
                 color: var(--ct-bg-primary);
             }
             .ct-branch-btn.ct-branch-selected {
-                background: var(--ct-branch-btn-clr, var(--ct-color-special));
+                background: var(--ct-branch-btn-clr, var(--ct-color-green));
                 color: var(--ct-bg-primary);
                 pointer-events: none;
             }
@@ -911,7 +911,7 @@ class CardToggle extends HTMLElement {
             }
             /* 分支翻面：答對背面標記條 */
             .ct-branch-face.ct-branch-correct {
-                border-left: 3px solid var(--ct-color-safe);
+                border-left: 3px solid var(--ct-color-green);
                 padding-left: 10px;
                 margin-top: 4px;
             }
@@ -929,8 +929,8 @@ class CardToggle extends HTMLElement {
                 margin-bottom: 6px;
                 line-height: 1.3;
             }
-            .ct-branch-label.correct { color: var(--ct-color-safe); }
-            .ct-branch-label.wrong   { color: var(--ct-color-warning); }
+            .ct-branch-label.correct { color: var(--ct-color-green); }
+            .ct-branch-label.red   { color: var(--ct-color-warning); }
             /* 分支翻面：背面內容本體 */
             .ct-branch-body-content {
                 font-size: var(--ct-fs-branch-body);
@@ -1340,21 +1340,21 @@ class CardToggle extends HTMLElement {
     _resolveColor(name) {
         const map = {
             shell:     'var(--ct-color-shell)',
-            lavender:  'var(--ct-color-lavender)',
-            special:   'var(--ct-color-special)',
+            violet:  'var(--ct-color-violet)',
+            green:   'var(--ct-color-green)',
             warning:   'var(--ct-color-warning)',
-            salmon:    'var(--ct-color-salmon)',
-            attention: 'var(--ct-color-attention)',
-            sky:       'var(--ct-color-sky)',
-            safe:      'var(--ct-color-safe)',
+            orange:    'var(--ct-color-orange)',
+            yellow: 'var(--ct-color-yellow)',
+            blue:       'var(--ct-color-blue)',
+            green:      'var(--ct-color-green)',
             vanilla:   'var(--ct-color-vanilla)',
             yellow:    'var(--ct-color-yellow)',
             info:      'var(--ct-color-info)',
-            stone:     'var(--ct-color-stone)',
+            blue:     'var(--ct-color-blue)',
             pink:      'var(--ct-color-pink)',
             orange:    'var(--ct-color-orange)',
-            ocean:     'var(--ct-color-ocean)',
-            teal:      'var(--ct-color-teal)',
+            blue:     'var(--ct-color-blue)',
+            green:      'var(--ct-color-green)',
             focus:     'var(--ct-color-focus)',
             indigo:    'var(--ct-color-indigo)',
             red:       'var(--ct-color-red)',
@@ -1386,12 +1386,12 @@ class CardToggle extends HTMLElement {
         //   1. flip-bar-color 屬性（明確指定）
         //   2. color-after 屬性（翻面後顏色）
         //   3. color 屬性（正面顏色）
-        //   4. 預設 sky
+        //   4. 預設 blue
         const barColorName =
             this.getAttribute('flip-bar-color') ||
             this.getAttribute('color-after')    ||
             this.getAttribute('color')          ||
-            'sky';
+            'blue';
         const barColor = this._resolveColor(barColorName);
         if (barColor) inner.style.backgroundColor = barColor;
 
@@ -1458,7 +1458,7 @@ class CardToggle extends HTMLElement {
         const successMessage = this.getAttribute('success-message') || '答對了！';
         const errorMessage = this.getAttribute('error-message') || '答錯了，請再試一次';
         const successSource = this.getAttribute('success-source');
-        const successColor = this.getAttribute('success-color') || 'safe';
+        const successColor = this.getAttribute('success-color') || 'green';
         const autoNext = this.hasAttribute('auto-next');
 
         if (!correctAnswer) {
@@ -1502,7 +1502,7 @@ class CardToggle extends HTMLElement {
        question="題目文字"          必填，顯示在卡片正面的題目
        branch-options="A,B,C,D"    選項文字，逗號分隔（預設 "是,否"）
        correct-option="A"          正確答案選項文字（與選項文字完全比對）
-       branch-btn-color="safe"     選項按鈕顏色（palette key 或 hex，預設 special）
+       branch-btn-color="green"     選項按鈕顏色（palette key 或 hex，預設 special）
 
        答對後背面內容（優先順序）：
          branch-correct="html"       直接寫 HTML
@@ -1512,7 +1512,7 @@ class CardToggle extends HTMLElement {
          branch-wrong="html"         直接寫 HTML
          branch-wrong-source="id"    讀取 DOM 元素的 innerHTML
 
-       branch-correct-color="safe"   答對後卡片色（預設 safe）
+       branch-correct-color="green"   答對後卡片色（預設 safe）
        branch-wrong-color="warning"  答錯後卡片色（預設 warning）
        branch-correct-label="答對了！" 答對背面標題文字
        branch-wrong-label="答錯了"    答錯背面標題文字
@@ -1577,7 +1577,7 @@ class CardToggle extends HTMLElement {
     /** 答對 → 翻面顯示 branch-correct 內容 */
     _flipBranchCorrect(animation) {
         const label   = this.getAttribute('branch-correct-label') || '答對了！';
-        const color   = this.getAttribute('branch-correct-color') || 'safe';
+        const color   = this.getAttribute('branch-correct-color') || 'green';
         const canRetry = false;   // 答對不提供重試
 
         const bodyHTML = this._resolveBranchContent('correct');
@@ -1828,8 +1828,8 @@ class CardToggleGroup extends HTMLElement {
         if (theme) {
             this.style.setProperty('--ct-active-color', `var(--ct-color-${theme})`);
         } else {
-            // 回退到預設的 special 色彩
-            this.style.setProperty('--ct-active-color', `var(--ct-color-special)`);
+            // 回退到預設的 green 色彩
+            this.style.setProperty('--ct-active-color', `var(--ct-color-green)`);
         }
 
         ctApplyTypography(this, CT_GROUP_FS.concat(CT_CARD_FS), CT_GROUP_PAD.concat(CT_CARD_PAD));
@@ -2102,29 +2102,14 @@ class CardToggleGroup extends HTMLElement {
 
 customElements.define('card-toggle', CardToggle);
 customElements.define('card-toggle-group', CardToggleGroup);
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

@@ -12,7 +12,7 @@ body {
   font-family: 'Inter','Noto Sans TC',system-ui;
   min-width: 1080px; padding: 28px 36px; line-height: 1.5;
 }
-.page-title { color: #82C8E5; font-size: 1.55rem; font-weight: 700; margin-bottom: 2px; }
+.page-title { color: #5DBAE8; font-size: 1.55rem; font-weight: 700; margin-bottom: 2px; }
 .page-sub   { color: #9a9b96; font-size: 0.8rem; margin-bottom: 32px; letter-spacing: 0.05em; }
 
 .section-head {
@@ -28,26 +28,26 @@ body {
 .demo-title { font-size: 1rem; font-weight: 600; color: #C6C7BD; margin-bottom: 4px; }
 .demo-desc  { font-size: 0.8rem; color: #9a9b96; margin-bottom: 14px; line-height: 1.4; }
 .demo-desc code {
-  background: #1e1f1e; color: #B3DE73; padding: 1px 5px;
+  background: #1e1f1e; color: #71CD76; padding: 1px 5px;
   border-radius: 3px; font-size: 0.76rem;
 }
 .pool-note {
-  font-size: 0.78rem; color: #82C8E5; background: #111d2b;
-  border-left: 3px solid #4171BF; padding: 6px 12px;
+  font-size: 0.78rem; color: #5DBAE8; background: #111d2b;
+  border-left: 3px solid #778CE1; padding: 6px 12px;
   border-radius: 0 4px 4px 0; margin-bottom: 14px; line-height: 1.5;
 }
-.pool-note code { color: #B3DE73; background: none; font-size: 0.76rem; }
+.pool-note code { color: #71CD76; background: none; font-size: 0.76rem; }
 
 .ref-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin-top:8px; }
-.ref-table th { background:#1e1f1e; color:#82C8E5; padding:5px 10px;
+.ref-table th { background:#1e1f1e; color:#5DBAE8; padding:5px 10px;
                 text-align:left; font-weight:600; border-bottom:1px solid #2e2f2e; }
 .ref-table td { padding:4px 10px; border-bottom:1px solid #222322; color:#C6C7BD; vertical-align:top; }
 .ref-table tr:last-child td { border-bottom:none; }
-.ref-table td:first-child  { color:#B3DE73; font-family:monospace; white-space:nowrap; }
+.ref-table td:first-child  { color:#71CD76; font-family:monospace; white-space:nowrap; }
 .ref-table td:nth-child(2) { color:#9a9b96; }
 .ref-table td:nth-child(3) { color:#E3D322; font-family:monospace; white-space:nowrap; }
 .ref-table tr.new td { background:#141f14; }
-.ref-table tr.new td:first-child::after { content:' ★'; color:#B3DE73; font-size:.65rem; }
+.ref-table tr.new td:first-child::after { content:' ★'; color:#71CD76; font-size:.65rem; }
 </style>
 </head>
 <body>
@@ -60,13 +60,13 @@ body {
 <div class="demo-grid">
 
   <div class="demo-block">
-    <div class="demo-badge" style="background:#82C8E5;color:#0C0D0C;">① 點選 · sky</div>
+    <div class="demo-badge" style="background:#5DBAE8;color:#0C0D0C;">① 點選 · blue</div>
     <div class="demo-title">基本點選模式</div>
     <div class="demo-desc">
       點擊語塊加入答題區，再點可移回。<br>
       <code>mode="click"</code> <code>show-count</code>
     </div>
-    <sentence-build theme="sky" label-pool="語塊庫" label-zone="組合你的句子"
+    <sentence-build theme="blue" label-pool="語塊庫" label-zone="組合你的句子"
       show-count msg-answered="語法標籤已顯示">
       <chunk-item label="主詞">Cities</chunk-item>
       <chunk-item label="現在分詞片語（後位修飾）">investing in public transport</chunk-item>
@@ -77,13 +77,13 @@ body {
   </div>
 
   <div class="demo-block">
-    <div class="demo-badge" style="background:#1CCAE8;color:#0C0D0C;">② 拖曳 · ocean</div>
+    <div class="demo-badge" style="background:#5DBAE8;color:#0C0D0C;">② 拖曳 · blue</div>
     <div class="demo-title">拖曳 + 方塊樣式 + 提示</div>
     <div class="demo-desc">
       拖曳至答題區，可在區內調整順序，或拖回語塊庫。<br>
       <code>mode="drag"</code> <code>chunk-style="box"</code>
     </div>
-    <sentence-build theme="ocean" mode="drag" chunk-style="box"
+    <sentence-build theme="blue" mode="drag" chunk-style="box"
       chunk-padding="3px 14px" zone-min-height="52px"
       btn-hint="提示" hint-text="S（含後位修飾）+ be + 主語補語">
       <chunk-item label="主詞">The major challenge</chunk-item>
@@ -94,12 +94,12 @@ body {
   </div>
 
   <div class="demo-block">
-    <div class="demo-badge" style="background:#E5C3B3;color:#0C0D0C;">③ 計時 · salmon</div>
+    <div class="demo-badge" style="background:#F79C40;color:#0C0D0C;">③ 計時 · orange</div>
     <div class="demo-title">倒數 30 秒，到期自動送出</div>
     <div class="demo-desc">
       <code>timer="30"</code> <code>timer-action="submit"</code> <code>timer-warn="8"</code>
     </div>
-    <sentence-build theme="salmon" timer="30" timer-warn="8"
+    <sentence-build theme="orange" timer="30" timer-warn="8"
       timer-action="submit" timer-label="剩餘" max-attempts="2"
       msg-correct="時間內完成！" msg-wrong="注意後位修飾的位置">
       <chunk-item label="主詞">Many employees</chunk-item>
@@ -111,12 +111,12 @@ body {
   </div>
 
   <div class="demo-block">
-    <div class="demo-badge" style="background:#B3DE73;color:#0C0D0C;">④ 立即回饋 · special</div>
+    <div class="demo-badge" style="background:#71CD76;color:#0C0D0C;">④ 立即回饋 · green</div>
     <div class="demo-title">立即回饋 + 干擾選項</div>
     <div class="demo-desc">
       每放入一塊即時標色。<code>check-mode="immediate"</code> + <code>decoy</code>
     </div>
-    <sentence-build theme="special" check-mode="immediate" chunk-padding="3px 12px"
+    <sentence-build theme="green" check-mode="immediate" chunk-padding="3px 12px"
       btn-hint="提示"
       hint-text="&lt;b&gt;from rural areas&lt;/b&gt; 是介系詞片語，做後位修飾">
       <chunk-item label="主詞">A growing number of young people</chunk-item>
@@ -129,12 +129,12 @@ body {
   </div>
 
   <div class="demo-block">
-    <div class="demo-badge" style="background:#0DA591;color:#C6C7BD;">⑤ 自動驗證 · teal</div>
+    <div class="demo-badge" style="background:#71CD76;color:#C6C7BD;">⑤ 自動驗證 · green</div>
     <div class="demo-title">全部放入即自動驗證 + 標籤樣式</div>
     <div class="demo-desc">
       <code>auto-check</code> <code>mode="both"</code> <code>chunk-style="tag"</code>
     </div>
-    <sentence-build theme="teal" mode="both" auto-check chunk-style="tag"
+    <sentence-build theme="green" mode="both" auto-check chunk-style="tag"
       chunk-padding="4px 10px 4px 7px" zone-min-height="52px"
       show-count msg-correct="完美！" msg-wrong="順序不對，試著重新排列">
       <chunk-item label="副詞子句（時間）">When I landed my first paid job,</chunk-item>
@@ -144,7 +144,7 @@ body {
   </div>
 
   <div class="demo-block">
-    <div class="demo-badge" style="background:#7849C9;color:#C6C7BD;">⑥ 鎖定 · indigo</div>
+    <div class="demo-badge" style="background:#778CE1;color:#C6C7BD;">⑥ 鎖定 · indigo</div>
     <div class="demo-title">倒數歸零鎖定，答錯一次顯示「看答案」</div>
     <div class="demo-desc">
       <code>timer-action="lock"</code> <code>max-attempts="1"</code>
@@ -176,7 +176,7 @@ body {
 
   <!-- ⑦ Pool 亂數 · next-on="done" -->
   <div class="demo-block">
-    <div class="demo-badge" style="background:#82C8E5;color:#0C0D0C;">⑦ Pool 亂數 · sky</div>
+    <div class="demo-badge" style="background:#5DBAE8;color:#0C0D0C;">⑦ Pool 亂數 · blue</div>
     <div class="demo-title">形容詞語塊 5 題 — 答完才能換題</div>
     <div class="demo-desc">
       <code>pool-src="#pool-adj"</code> <code>pool-select="random"</code><br>
@@ -188,7 +188,7 @@ body {
       pool-select="random"
       show-progress
       next-on="done"
-      theme="sky"
+      theme="blue"
       label-pool="語塊庫"
       label-zone="組合你的句子"
       show-count
@@ -199,7 +199,7 @@ body {
 
   <!-- ⑧ Pool 循序 · next-on="always" + 每題提示 -->
   <div class="demo-block">
-    <div class="demo-badge" style="background:#1CCAE8;color:#0C0D0C;">⑧ Pool 循序 · ocean</div>
+    <div class="demo-badge" style="background:#5DBAE8;color:#0C0D0C;">⑧ Pool 循序 · blue</div>
     <div class="demo-title">時態 3 題（按序）— 隨時可換題</div>
     <div class="demo-desc">
       <code>pool-src="#pool-tense"</code> <code>pool-select="sequence"</code><br>
@@ -211,7 +211,7 @@ body {
       pool-select="sequence"
       show-progress
       next-on="always"
-      theme="ocean"
+      theme="blue"
       mode="drag"
       chunk-style="box"
       chunk-padding="3px 14px"
@@ -256,7 +256,7 @@ body {
       <tr><td>hint-text</td><td>string / HTML（元件層預設）</td><td>""</td></tr>
       <tr class="new"><td>btn-next</td><td>string（空=隱藏；pool 模式預設「下一題」）</td><td>下一題 *</td></tr>
       <tr class="new"><td>next-on</td><td>done / always</td><td>done</td></tr>
-      <tr><td>theme</td><td>palette keyword / hex</td><td>sky</td></tr>
+      <tr><td>theme</td><td>palette keyword / hex</td><td>blue</td></tr>
       <tr><td>chunk-style</td><td>pill / box / tag</td><td>pill</td></tr>
       <tr><td>chunk-font-size</td><td>rem</td><td>1rem</td></tr>
       <tr><td>chunk-padding</td><td>CSS shorthand</td><td>2px 10px</td></tr>
@@ -316,7 +316,7 @@ body {
     </table>
 
     <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">Pool 模式 HTML 結構</div>
-    <pre style="background:#1a1b1a;color:#B3DE73;font-size:.72rem;padding:10px 14px;border-radius:6px;line-height:1.6;overflow-x:auto;">&lt;div id="my-pool" hidden&gt;
+    <pre style="background:#1a1b1a;color:#71CD76;font-size:.72rem;padding:10px 14px;border-radius:6px;line-height:1.6;overflow-x:auto;">&lt;div id="my-pool" hidden&gt;
 
   &lt;div data-item data-hint="第一題的提示"&gt;
     &lt;chunk-item label="主詞"&gt;Cities&lt;/chunk-item&gt;
@@ -338,7 +338,7 @@ body {
   pool-select="random"
   show-progress
   next-on="done"
-  theme="sky"&gt;
+  theme="blue"&gt;
 &lt;/sentence-build&gt;</pre>
 
     <div class="demo-badge" style="background:#252625;color:#9a9b96;margin-top:16px;">亂數防重複機制</div>

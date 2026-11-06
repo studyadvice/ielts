@@ -49,7 +49,7 @@
 ## 快速開始
 
 ```html
-<ui-table theme="sky">
+<ui-table theme="blue">
   <ui-row col-widths="1:3" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
     <ui-col>題目</ui-col>
     <ui-col>Describe a skill you learned as an adult.</ui-col>
@@ -77,7 +77,7 @@
 | `<cell-item>` | 輪播項目，寫在設了 `carousel-interval` 的 `<ui-col>` 裡。 |
 | `<ui-flash>` | 閃電按鈕，可放在頁面任何地方，按下後讓指定格子播放注意力動畫。 |
 | `<ui-trans>` | 行內翻譯，滑鼠移入時以 浮動框 顯示來源區塊的內容。可放在格子內或一般段落。 |
-| `<c-blue>` 等、`<c1>`～`<c21>` | 文字色彩標籤，見[文字色彩標籤](#文字色彩標籤)。 |
+| `<c-blue>` 等 17 個色名標籤 | 文字色彩標籤，見[文字色彩標籤](#文字色彩標籤)。 |
 
 ```
 ui-table
@@ -242,7 +242,7 @@ ui-table
 ### 群組
 
 ```html
-<ui-table theme="lavender">
+<ui-table theme="violet">
   <ui-group title-left="Part 1" title-right="4 題" ini-collapse>
     <ui-row>...</ui-row>
   </ui-group>
@@ -338,7 +338,7 @@ ui-table
 `carousel-interval="0"` 搭配 `progress-bar` 就是手動輪播：
 
 ```html
-<ui-col carousel-interval="0" progress-bar progress-bar-color="sky">
+<ui-col carousel-interval="0" progress-bar progress-bar-color="blue">
   <cell-item>開場</cell-item>
   <cell-item>契機</cell-item>
   <cell-item>困難</cell-item>
@@ -399,7 +399,7 @@ ui-table
 替 `<ui-row-enhance>` 加上 `can-hide`，格子右側出現眼睛圖示，滑鼠移上去變成劃掉的眼睛，點擊後整列收合隱藏，適合螢幕錄影時逐列帶過。
 
 ```html
-<ui-table theme="sky">
+<ui-table theme="blue">
   <ui-row><ui-col>Word</ui-col><ui-col>Meaning</ui-col><ui-col>Collocation</ui-col></ui-row>
   <ui-row-enhance can-hide col-widths="1:2:2">
     <ui-col>mitigate</ui-col><ui-col>減輕、緩和</ui-col><ui-col>mitigate the impact of</ui-col>
@@ -418,34 +418,19 @@ ui-table
 
 ### 文字色彩標籤
 
-在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c-色名>文字</c-色名>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成深色字加品牌色底。`mask-text` 是屬性文字，不支援標籤。色名清單見根目錄 README 的「色名標籤」。
+在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c-色名>文字</c-色名>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成品牌色底的小標籤（`key-deep` 用白字，其他用深色字）。`mask-text` 是屬性文字，不支援標籤。色名清單見根目錄 README 的「色名標籤」。
 
 ```html
 <ui-col>The government should <c-pink>invest in</c-pink> public transport.</ui-col>
 <ui-col inverse><c-violet>rain or shine</c-violet></ui-col>
 ```
 
-舊的數字標籤 `<c1>`～`<c21>` 仍可使用，對應如下：
-
-| 標籤 | 顏色 | 標籤 | 顏色 | 標籤 | 顏色 |
-|---|---|---|---|---|---|
-| `<c1>` | shell | `<c9>` | vanilla | `<c17>` | red |
-| `<c2>` | violet | `<c10>` | yellow | `<c18>` | green |
-| `<c3>` | green | `<c11>` | indigo | `<c19>` | blue |
-| `<c4>` | red | `<c12>` | indigo | `<c20>` | violet |
-| `<c5>` | orange | `<c13>` | pink | `<c21>` | gray |
-| `<c6>` | blue | `<c14>` | vanilla | | |
-| `<c7>` | blue | `<c15>` | orange | | |
-| `<c8>` | green | `<c16>` | green | | |
-
-`<c1>`～`<c16>` 原本對應舊色票的 16 色，改用新色票後部分標籤顏色相同；新內容請改用色名標籤。
-
 ### 注意力動畫：ui-flash
 
 一段彩虹光帶從格子左上角出發，沿著內緣順時針繞圈。格子要有 `id`，`<ui-flash target="格子id">` 會變成閃電按鈕，標籤裡的文字當按鈕文字。
 
 ```html
-<ui-table theme="teal">
+<ui-table theme="green">
   <ui-row><ui-col id="w-mitigate" flash-speed="1200">mitigate</ui-col><ui-col>減輕、緩和</ui-col></ui-row>
 </ui-table>
 
@@ -469,7 +454,7 @@ ui-table
 滑鼠移到標示的字上，讀取 `source` 區塊的內容，以 浮動框 顯示在字的下方（空間不夠時改到上方）。觸控裝置點一下顯示。來源區塊載入時自動隱藏。
 
 ```html
-<p>I rented <ui-trans source="t-flat" theme="sky">a tiny flat</ui-trans> near the station,
+<p>I rented <ui-trans source="t-flat" theme="blue">a tiny flat</ui-trans> near the station,
    and it was <ui-trans source="t-godsend" hint-style="icon" hint-width="240">a real godsend</ui-trans>.</p>
 
 <div id="t-flat">一間小公寓</div>
@@ -479,7 +464,7 @@ ui-table
 | 屬性 | 說明 |
 |---|---|
 | `source` | 必填，來源區塊的 id。移入當下才讀取內容，之後修改來源也會顯示最新內容。 |
-| `theme` | 標示與 浮動框 的色彩，預設 `sky`。 |
+| `theme` | 標示與 浮動框 的色彩，預設 `blue`。 |
 | `hint-style` | `dashed`（預設，虛底線）、`pill-fill`、`pill-outline`、`square-fill`、`icon`（文字正上方顯示翻譯圖示）。 |
 | `hint-width` | 浮動框 寬度，純數字視為 px，也接受 `rem`、`em`、`vw`。沒寫時依內容自動，最寬 420px。 |
 | `hint-font-size` | 浮動框 字級，純數字視為 px，也接受 `rem`、`em`。沒寫時跟隨標示文字。 |
@@ -491,7 +476,7 @@ ui-table
 把子列直接寫在父列裡面，父列就會出現展開鈕，點擊後子列由上往下滑順展開，層數不限。只有展開鈕會切換，不會觸發儲存格的其他點擊。
 
 ```html
-<ui-table id="tree-pm" theme="sky" tree-line>
+<ui-table id="tree-pm" theme="blue" tree-line>
   <ui-row-enhance col-widths="3:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px" tree-open>
     <ui-col>雅思口說課程改版</ui-col><ui-col>講師</ui-col><ui-col>進行中</ui-col>
     <ui-row-enhance>
@@ -562,9 +547,9 @@ ui-table
     }]
   };
 </script>
-<ui-table theme="teal" data-id="demoData"></ui-table>
+<ui-table theme="green" data-id="demoData"></ui-table>
 
-<ui-table theme="sky" src="data/table.json"></ui-table>
+<ui-table theme="blue" src="data/table.json"></ui-table>
 ```
 
 `theme` 寫在 `<ui-table>` 元素上，不在 JSON 裡。
@@ -642,7 +627,7 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 ```html
 <script>
   window.UiTableConfig = {
-    theme: 'lavender',
+    theme: 'violet',
     cellPadding: '10px 14px',
     treeIndent: '24px'
   };
@@ -674,7 +659,7 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 | `flashSpeed` | `1600` | 注意力動畫繞一圈的毫秒數。 |
 | `flashLoops` | `2` | 注意力動畫繞幾圈。 |
 | `flashLength` | `0.22` | 光帶長度佔周長的比例。 |
-| `transTheme` | `'sky'` | ui-trans 預設色彩。 |
+| `transTheme` | `'blue'` | ui-trans 預設色彩。 |
 | `transHintStyle` | `'dashed'` | ui-trans 預設標示樣式。 |
 | `transDelay` | `60` | ui-trans 移入後多久顯示（毫秒）。 |
 | `transWidth` | `''` | ui-trans 浮動框 寬度，空字串為自動。 |

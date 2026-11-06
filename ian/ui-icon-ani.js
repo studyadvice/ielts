@@ -31,7 +31,7 @@
  * 按鈕模式（設定 button-text 或 button-icon 即啟用）：
  *   button-text     點擊前顯示的按鈕文字，例如「開始」
  *   button-icon     按鈕文字前的圖示，例如 bi-play-fill
- *   button-color    按鈕色彩，配色名稱或 HEX，預設 sky
+ *   button-color    按鈕色彩，配色名稱或 HEX，預設 blue
  *   button-keep     保留按鈕外框，動畫在按鈕內播放；未設定時按鈕消失，由動畫取代
  *   button-restore  播放結束後回到按鈕狀態，可再次點擊（loop="false" 且未 remove-on-end 時生效）
  *
@@ -65,17 +65,23 @@
   if (customElements.get('ui-icon-anim')) return;
 
   const PALETTE = {
-    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
-    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
-    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', bluebell: '#778CE1',
-    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#F79C40',
+    base: '#0C0D0C', shell: '#C6C7BD',
+    vanilla: '#DBEDD8', yellow: '#E3D322',
+    indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
-    gray: '#86877F'
+    gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
   const SIZE_PRESETS = { sm: '1.25rem', md: '2rem', lg: '3rem', xl: '4.5rem' };
   const EFFECTS = ['fade', 'scale', 'flip', 'none'];
@@ -131,11 +137,11 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
 .uia-reveal-slide{animation:uia-slide-in 500ms ease both;}
 
 .uia-sys-alert{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;
-  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #F79C40;color:#F79C40;
+  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #FF5530;color:#FF5530;
   border-radius:8px;padding:12px 44px 12px 16px;font-size:0.95rem;line-height:1.6;}
 .uia-sys-alert code{color:#E3D322;font-size:0.85rem;word-break:break-all;}
 .uia-sys-alert .uia-close{position:absolute;top:8px;right:10px;background:none;border:0;
-  color:#F79C40;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
+  color:#FF5530;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
 `;
 
   /* ---------- 工具函式 ---------- */
@@ -397,7 +403,7 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
         this._label.className = 'uia-btn-label';
         this._btn.addEventListener('click', () => this._onButtonClick());
       }
-      this._btn.style.setProperty('--uia-btn-color', resolveColor((this.getAttribute('button-color') || 'sky').trim()));
+      this._btn.style.setProperty('--uia-btn-color', resolveColor((this.getAttribute('button-color') || 'blue').trim()));
 
       const parts = [];
       const icon = (this.getAttribute('button-icon') || '').trim();
@@ -737,29 +743,14 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
   window.UiIconAnim = UiIconAnim;
   window.UiIconAnim.PALETTE = PALETTE;
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

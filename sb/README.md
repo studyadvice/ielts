@@ -71,7 +71,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 品牌色名稱或色碼 | `sky` | 語塊與按鈕的主色，文字色依底色亮度自動決定。 |
+| `theme` | 品牌色名稱或色碼 | `blue` | 語塊與按鈕的主色，文字色依底色亮度自動決定。 |
 | `chunk-style` | `pill`、`box`、`tag` | `pill` | 語塊外形：膠囊、方塊、左側加深色條的標籤。 |
 | `chunk-font-size` | 長度 | `1rem` | 語塊字級。 |
 | `chunk-padding` | CSS `padding` 值 | `2px 8px` | 語塊內距。 |
@@ -118,7 +118,7 @@
 **基本點選組句**
 
 ```html
-<sentence-build theme="sky" label-pool="語塊庫" label-zone="組合你的句子" show-count>
+<sentence-build theme="blue" label-pool="語塊庫" label-zone="組合你的句子" show-count>
   <chunk-item label="主詞">The number of students</chunk-item>
   <chunk-item label="動詞">has risen</chunk-item>
   <chunk-item label="副詞">sharply</chunk-item>
@@ -129,7 +129,7 @@
 **拖曳、方塊外形與標點**
 
 ```html
-<sentence-build theme="ocean" mode="drag" chunk-style="box" chunk-padding="3px 12px">
+<sentence-build theme="blue" mode="drag" chunk-style="box" chunk-padding="3px 12px">
   <chunk-item>However</chunk-item>
   <chunk-item fixed theme="shell">,</chunk-item>
   <chunk-item>the plan failed</chunk-item>
@@ -140,7 +140,7 @@
 **即時批改、自動檢查與提示**
 
 ```html
-<sentence-build theme="teal" mode="both" check-mode="immediate" auto-check chunk-style="tag"
+<sentence-build theme="green" mode="both" check-mode="immediate" auto-check chunk-style="tag"
                 btn-hint="提示" hint-text="先找主詞" max-attempts="2" msg-answered="這是參考答案">
   <chunk-item>Not only</chunk-item>
   <chunk-item>did he</chunk-item>
@@ -151,7 +151,7 @@
 **倒數計時**
 
 ```html
-<sentence-build theme="salmon" timer="30" timer-warn="8" timer-action="answer" timer-label="剩餘時間">
+<sentence-build theme="orange" timer="30" timer-warn="8" timer-action="answer" timer-label="剩餘時間">
   <chunk-item>I'd say</chunk-item>
   <chunk-item>it depends on</chunk-item>
   <chunk-item>the situation</chunk-item>

@@ -9,17 +9,17 @@
   :root {
     --bg:       #0C0D0C;
     --shell:    #C6C7BD;
-    --lavender: #C3A5E5;
-    --sky:      #82C8E5;
-    --teal:     #0DA591;
-    --salmon:   #E5C3B3;
-    --indigo:   #7849C9;
-    --ocean:    #1CCAE8;
-    --safe:     #27AE60;
-    --special:  #B3DE73;
-    --orange:   #EDA109;
+    --violet: #B484E8;
+    --blue:      #5DBAE8;
+    --green:     #71CD76;
+    --orange:   #F79C40;
+    --indigo:   #778CE1;
+    --blue:    #5DBAE8;
+    --green:     #71CD76;
+    --green:  #71CD76;
+    --orange:   #F79C40;
     --yellow:   #E3D322;
-    --warning:  #E6374B;
+    --warning:  #EF6661;
     --pink:     #FF91D7;
   }
   html, body { background: var(--bg); color: var(--shell); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 18px; }
@@ -28,9 +28,9 @@
 
   /* ── 頁首 ── */
   .pg-header { padding: 48px 0 40px; border-bottom: 1px solid rgba(198,199,189,0.14); margin-bottom: 48px; }
-  .pg-header h1 { font-size: 2.2rem; font-weight: 800; color: var(--sky); letter-spacing: -0.01em; }
+  .pg-header h1 { font-size: 2.2rem; font-weight: 800; color: var(--blue); letter-spacing: -0.01em; }
   .pg-header p  { font-size: 1rem; color: rgba(198,199,189,0.70); margin-top: 8px; }
-  .ver-badge { display: inline-block; background: rgba(130,200,229,0.12); border: 1px solid rgba(130,200,229,0.30); color: var(--sky); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px; margin-right: 10px; }
+  .ver-badge { display: inline-block; background: rgba(130,200,229,0.12); border: 1px solid rgba(130,200,229,0.30); color: var(--blue); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px; margin-right: 10px; }
 
   /* ── 段落標題 ── */
   .section { margin-bottom: 60px; }
@@ -47,14 +47,14 @@
   .chip {
     font-size: 0.75rem; font-family: 'Courier New', monospace;
     background: rgba(195,165,229,0.10); border: 1px solid rgba(195,165,229,0.25);
-    color: var(--lavender); padding: 3px 9px; border-radius: 3px; white-space: nowrap;
+    color: var(--violet); padding: 3px 9px; border-radius: 3px; white-space: nowrap;
   }
 
   /* ── 完成提示 ── */
   .done-msg {
     margin-top: 20px; padding: 14px 20px;
-    background: rgba(39,174,96,0.10); border-left: 3px solid var(--safe);
-    color: var(--safe); font-size: 1rem; font-weight: 600;
+    background: rgba(39,174,96,0.10); border-left: 3px solid var(--green);
+    color: var(--green); font-size: 1rem; font-weight: 600;
     display: none;
   }
 
@@ -65,8 +65,8 @@
   .ref-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 16px; }
   .ref-table th { background: rgba(198,199,189,0.07); color: var(--shell); font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(198,199,189,0.14); }
   .ref-table td { padding: 9px 14px; border-bottom: 1px solid rgba(198,199,189,0.06); vertical-align: top; color: rgba(198,199,189,0.80); line-height: 1.4; }
-  .ref-table td:first-child { font-family: 'Courier New', monospace; color: var(--lavender); white-space: nowrap; }
-  .ref-table td:nth-child(2) { color: var(--sky); font-family: 'Courier New', monospace; font-size: 0.82rem; }
+  .ref-table td:first-child { font-family: 'Courier New', monospace; color: var(--violet); white-space: nowrap; }
+  .ref-table td:nth-child(2) { color: var(--blue); font-family: 'Courier New', monospace; font-size: 0.82rem; }
 </style>
 </head>
 <body>
@@ -89,11 +89,11 @@
     <h2 class="section-h2">預設樣式（最少屬性）</h2>
     <p class="section-desc">僅設定 <code>theme</code>，其餘全部使用全域預設值。</p>
     <div class="chip-row">
-      <span class="chip">theme="sky"</span>
+      <span class="chip">theme="blue"</span>
       <span class="chip">reveal="cumulative"</span>
     </div>
 
-    <arrow-flow theme="sky" reveal="cumulative" on-complete="done-1">
+    <arrow-flow theme="blue" reveal="cumulative" on-complete="done-1">
       <flow-step title="需求確認">收集使用者需求，確認範疇與優先順序。</flow-step>
       <flow-step title="設計規劃">輸出線框稿與設計規格文件。</flow-step>
       <flow-step title="開發實作">依規格進行前後端開發。</flow-step>
@@ -113,7 +113,7 @@
     <h2 class="section-h2">完整樣式屬性展示</h2>
     <p class="section-desc">header 漸層、左側強調線、箭頭發光、自訂陰影、字距、行高全部開啟。</p>
     <div class="chip-row">
-      <span class="chip">theme="lavender"</span>
+      <span class="chip">theme="violet"</span>
       <span class="chip">header-gradient="down"</span>
       <span class="chip">header-accent-line="left"</span>
       <span class="chip">arrow-glow</span>
@@ -128,7 +128,7 @@
     </div>
 
     <arrow-flow
-      theme="lavender"
+      theme="violet"
       header-gradient="down"
       header-accent-line="left"
       arrow-glow
@@ -146,7 +146,7 @@
       <flow-step title="原料入庫" header-color="indigo" border-color="indigo">
         掃描條碼並核對採購單，不符規格者立即退貨。
       </flow-step>
-      <flow-step title="品質檢驗" header-color="lavender">
+      <flow-step title="品質檢驗" header-color="violet">
         依 ISO 標準進行抽樣，合格率需達 99.5% 以上。
       </flow-step>
       <flow-step title="生產製造">
@@ -169,7 +169,7 @@
       <code>header-accent-line="top"</code> 在 header 頂部加橫線。<code>reveal="single"</code> 讓前一步驟淡出。<code>step-width="260px"</code> 固定每欄寬度。
     </p>
     <div class="chip-row">
-      <span class="chip">theme="teal"</span>
+      <span class="chip">theme="green"</span>
       <span class="chip">header-accent-line="top"</span>
       <span class="chip">header-gradient="up"</span>
       <span class="chip">reveal="single"</span>
@@ -178,7 +178,7 @@
     </div>
 
     <arrow-flow
-      theme="teal"
+      theme="green"
       header-accent-line="top"
       header-gradient="up"
       reveal="single"
@@ -214,7 +214,7 @@
     </div>
 
     <arrow-flow
-      theme="sky"
+      theme="blue"
       branch-label-theme="orange"
       branch-dim="0.22"
       header-gradient="down"
@@ -222,13 +222,13 @@
       on-complete="done-4">
       <flow-step title="客戶提出需求">業務收到詢問並建立案件。</flow-step>
       <flow-branch>
-        <branch-option label="標準產品" theme="teal">
+        <branch-option label="標準產品" theme="green">
           <flow-step title="確認型號">核對產品目錄，確認庫存。</flow-step>
           <flow-step title="開立報價">依標準售價產出報價單。</flow-step>
           <flow-step title="客戶簽回">獲得書面確認後進入出貨流程。</flow-step>
         </branch-option>
-        <branch-option label="客製訂單" theme="salmon">
-          <flow-step title="需求訪談" header-color="salmon" border-color="salmon">深入訪談，輸出規格書草案。</flow-step>
+        <branch-option label="客製訂單" theme="orange">
+          <flow-step title="需求訪談" header-color="orange" border-color="orange">深入訪談，輸出規格書草案。</flow-step>
           <flow-step title="工程評估">研發部門評估可行性與成本。</flow-step>
           <flow-step title="報價審核">業務主管核准後送交客戶。</flow-step>
           <flow-step title="訂單確認">簽署合約後排程生產。</flow-step>
@@ -257,8 +257,8 @@
     </div>
 
     <arrow-flow
-      theme="special"
-      branch-label-theme="special"
+      theme="green"
+      branch-label-theme="green"
       branch-dim="0.20"
       header-gradient="down"
       header-accent-line="left"
@@ -272,7 +272,7 @@
       </flow-step>
 
       <flow-branch>
-        <branch-option label="線上快速審核" theme="sky">
+        <branch-option label="線上快速審核" theme="blue">
           <flow-step title="自動比對">系統比對資料庫，30 秒內完成初核。</flow-step>
           <flow-step title="線上簽核">主管電子簽名後立即生效。</flow-step>
         </branch-option>
@@ -281,8 +281,8 @@
           <flow-step title="實地查核">必要時安排實地訪查（2-5 個工作天）。</flow-step>
           <flow-step title="委員會決議">超過授權額度案件提交委員會。</flow-step>
         </branch-option>
-        <branch-option label="補件退回" theme="warning">
-          <flow-step title="通知缺件" header-color="warning" border-color="warning">
+        <branch-option label="補件退回" theme="red">
+          <flow-step title="通知缺件" header-color="red" border-color="red">
             系統發送 Email／SMS 說明缺件項目及補件期限。
           </flow-step>
           <flow-step title="等待補件">申請人於 10 個工作天內補齊資料。</flow-step>
@@ -340,7 +340,7 @@
         <tr><td>header-letter-spacing</td><td>"0"</td><td>header 字距（em 單位建議）</td></tr>
         <tr><td>content-font-size</td><td>"1.125rem"</td><td>內容區文字大小</td></tr>
         <tr><td>content-line-height</td><td>"1.5"</td><td>內容區行高</td></tr>
-        <tr><td>branch-label-theme</td><td>"teal"</td><td>分支選擇按鈕顏色，palette key 或 hex</td></tr>
+        <tr><td>branch-label-theme</td><td>"green"</td><td>分支選擇按鈕顏色，palette key 或 hex</td></tr>
         <tr><td>branch-dim</td><td>"0.80"</td><td>未選中分支路徑的透明度</td></tr>
         <tr><td>on-complete</td><td>null</td><td>流程全部完成後顯示的元素 id</td></tr>
       </tbody>

@@ -12,20 +12,20 @@
     --shell:#C6C7BD;
     --area:#141514;
     --card-border:#2E2F2E;
-    --lavender:#C3A5E5;
-    --sky:#82C8E5;
-    --ocean:#1CCAE8;
-    --safe:#27AE60;
-    --special:#B3DE73;
+    --violet:#B484E8;
+    --blue:#5DBAE8;
+    --blue:#5DBAE8;
+    --green:#71CD76;
+    --green:#71CD76;
     --yellow:#E3D322;
-    --salmon:#E5C3B3;
+    --orange:#F79C40;
     --pink:#FF91D7;
-    --orange:#EDA109;
-    --teal:#0DA591;
-    --focus:#D4FFFC;
-    --indigo:#7849C9;
-    --info:#4171BF;
-    --warning:#E6374B;
+    --orange:#F79C40;
+    --green:#71CD76;
+    --focus:#DBEDD8;
+    --indigo:#778CE1;
+    --info:#778CE1;
+    --warning:#EF6661;
   }
   body{
     background:var(--bg);
@@ -36,14 +36,14 @@
     padding:32px 40px 80px;
   }
   .wrap{max-width:100%;}
-  h1{font-size:1.75rem;color:var(--lavender);font-weight:700;margin-bottom:6px;}
+  h1{font-size:1.75rem;color:var(--violet);font-weight:700;margin-bottom:6px;}
   h2{
-    font-size:1.25rem;color:var(--sky);font-weight:700;
+    font-size:1.25rem;color:var(--blue);font-weight:700;
     margin-top:44px;margin-bottom:14px;
     padding-bottom:8px;border-bottom:1px solid var(--card-border);
   }
-  h3{font-size:1.02rem;color:var(--special);font-weight:600;margin:24px 0 10px;}
-  .lead-note{font-size:.94rem;color:var(--salmon);margin-bottom:8px;}
+  h3{font-size:1.02rem;color:var(--green);font-weight:600;margin:24px 0 10px;}
+  .lead-note{font-size:.94rem;color:var(--orange);margin-bottom:8px;}
   .card-x{
     background:var(--area);
     border:1px solid var(--card-border);
@@ -60,7 +60,7 @@
   @media (max-width:1100px){ .demo-row{grid-template-columns:minmax(0,1fr);} }
   .pane-label{
     font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--teal);margin-bottom:8px;
+    color:var(--green);margin-bottom:8px;
   }
   pre{
     background:#0A0B0A;
@@ -82,7 +82,7 @@
     vertical-align:top;
   }
   .attr-table th{background:#1A1B1A;color:var(--yellow);text-align:left;font-weight:600;}
-  .attr-table code{color:var(--sky);}
+  .attr-table code{color:var(--blue);}
   #side-panel{min-height:120px;}
   .panel-hint{font-size:.82rem;color:#7E8077;}
   .changelog{font-size:.88rem;}
@@ -105,7 +105,7 @@
           <mark
             data-popover-title="Long Turn"
             data-popover-content="考生抽題卡後有 1 分鐘準備，接著不中斷地講 1 至 2 分鐘。"
-            data-popover-theme="lavender"
+            data-popover-theme="violet"
             data-popover-url="https://www.ielts.org/for-test-takers/test-format"
             style="background:none;color:inherit;">Long Turn</mark>，
           也有人直接叫它 cue card。
@@ -117,7 +117,7 @@
 <pre><code>&lt;mark
   data-popover-title="Long Turn"
   data-popover-content="考生抽題卡後有 1 分鐘準備…"
-  data-popover-theme="lavender"
+  data-popover-theme="violet"
   data-popover-url="https://www.ielts.org/for-test-takers/test-format"&gt;Long Turn&lt;/mark&gt;</code></pre>
       </div>
     </div>
@@ -132,7 +132,7 @@
           <mark
             data-popover-title="Band Descriptors"
             data-popover-content="官方公開的四項評分標準：流暢度與連貫性、詞彙資源、文法範圍與正確性、發音。"
-            data-popover-theme="sky"
+            data-popover-theme="blue"
             data-popover-url="https://www.ielts.org/for-test-takers/how-to-prepare"
             data-popover-url-text="下載官方評分表"
             style="background:none;color:inherit;">評分標準</mark>
@@ -143,7 +143,7 @@
           <mark
             data-popover-title="Part 3 延伸討論"
             data-popover-content="考官會就 Part 2 的主題往抽象層面追問，答題長度約 30 至 45 秒。"
-            data-popover-theme="teal"
+            data-popover-theme="green"
             data-popover-url="/lessons/part3.html"
             data-popover-url-text="前往第三部分課程"
             data-popover-url-align="center"
@@ -170,7 +170,7 @@
 &lt;mark
   data-popover-title="Band Descriptors"
   data-popover-content="官方公開的四項評分標準…"
-  data-popover-theme="sky"
+  data-popover-theme="blue"
   data-popover-url="https://www.ielts.org/for-test-takers/how-to-prepare"
   data-popover-url-text="下載官方評分表"&gt;評分標準&lt;/mark&gt;
 
@@ -178,7 +178,7 @@
 &lt;mark
   data-popover-title="Part 3 延伸討論"
   data-popover-content="考官會就 Part 2 的主題往抽象層面追問…"
-  data-popover-theme="teal"
+  data-popover-theme="green"
   data-popover-url="/lessons/part3.html"
   data-popover-url-text="前往第三部分課程"
   data-popover-url-align="center"&gt;Part 3&lt;/mark&gt;
@@ -206,7 +206,7 @@
           <mark
             data-popover-title="Fluency and Coherence"
             data-popover-content="&lt;p&gt;評估說話的連貫度、停頓位置與自我修正的頻率。&lt;/p&gt;&lt;p&gt;常見失分點是以背誦句型填補思考時間。&lt;/p&gt;"
-            data-popover-theme="special"
+            data-popover-theme="green"
             data-popover-panel="#side-panel"
             data-popover-label="評分項目"
             data-popover-url="https://example.com/fluency"
@@ -241,7 +241,7 @@
 &lt;mark
   data-popover-title="Fluency and Coherence"
   data-popover-content="&amp;lt;p&amp;gt;評估說話的連貫度…&amp;lt;/p&amp;gt;"
-  data-popover-theme="special"
+  data-popover-theme="green"
   data-popover-panel="#side-panel"
   data-popover-label="評分項目"
   data-popover-url="https://example.com/fluency"

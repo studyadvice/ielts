@@ -17,42 +17,43 @@
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題。 |
 | `ui-plus.js` | `<ui-cluster>` `<read-pulse>` `<chalk-mark>` `<col-pair>` `<chunk-spot>` `<ui-btn>` | 概念聚合圖、閱讀輔助標記與展開按鈕。 |
 
-## 色名對照
+## 色票
 
-所有元件（含子資料夾）使用同一套色名：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`。舊色名仍可使用，會自動對應到新色：
+所有元件（含子資料夾）共用 17 個色名，頁面底色為 `#0C0D0C`。11-06-26 起不再支援舊色名（`lavender`、`sky`、`ocean` 等）與數字色彩標籤（`<c1>`～`<c21>`）。
 
-| 舊色名 | 對應到 |
-| --- | --- |
-| `sky`、`ocean`、`stone` | `blue` |
-| `safe`、`teal`、`special` | `green` |
-| `warning` | `red` |
-| `lavender` | `violet` |
-| `info`、`bluebell` | `indigo` |
-| `salmon` | `orange` |
-| `focus` | `vanilla` |
-| `attention` | `yellow` |
+| 色名 | 色碼 | 用途 |
+| --- | --- | --- |
+| `shell` | `#C6C7BD` | 主要文字 |
+| `vanilla` | `#DBEDD8` | 強調文字 |
+| `yellow` | `#E3D322` | 黃 |
+| `pink` | `#FF91D7` | 粉紅 |
+| `red` | `#EF6661` | 紅，答錯 |
+| `orange` | `#FF5530` | 朱紅，一般強調 |
+| `green` | `#71CD76` | 綠，答對 |
+| `blue` | `#5DBAE8` | 藍 |
+| `indigo` | `#778CE1` | 靛 |
+| `violet` | `#B484E8` | 紫 |
+| `gray` | `#86877F` | 灰 |
+| `key` | `#51DBCF` | 深底上的亮色重點文字 |
+| `key-deep` | `#176878` | 配白字的深色重點底 |
+| `calm` | `#A3C4BC` | 平靜，放鬆的提示 |
+| `quiet` | `#A9B8E0` | 安靜，備註與次要資訊 |
+| `playful` | `#FFA987` | 輕鬆，遊戲與活動 |
+| `urgent` | `#FF2E63` | 緊急，截止與限時 |
+
+`key-deep` 底色很深，當底色時請配白字；其餘 16 色當底色時配深色字。
 
 ## 色名標籤
 
-任何一個元件載入後，整頁都能用 `<c-色名>文字</c-色名>` 設定文字色，元件內外都有效，可以和 `<b>`、`<u>` 互相包覆。色名就是上表的新色名，舊色名也能用，例如 `<c-sky>` 會顯示成 `blue`。
+任何一個元件載入後，整頁都能用 `<c-色名>文字</c-色名>` 設定文字色，元件內外都有效，可以和 `<b>`、`<u>` 互相包覆。色名就是上表的 17 個名稱。
 
 ```html
-I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pink>.
+I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-playful>.
 ```
 
-| 標籤 | 色碼 | 標籤 | 色碼 |
-| --- | --- | --- | --- |
-| `<c-shell>` | `#C6C7BD` | `<c-green>` | `#71CD76` |
-| `<c-vanilla>` | `#DBEDD8` | `<c-blue>` | `#5DBAE8` |
-| `<c-yellow>` | `#E3D322` | `<c-indigo>` | `#778CE1` |
-| `<c-pink>` | `#FF91D7` | `<c-violet>` | `#B484E8` |
-| `<c-red>` | `#EF6661` | `<c-gray>` | `#86877F` |
-| `<c-orange>` | `#F79C40` | | |
-
 - 樣式只注入一次（`<style id="ui-color-tags">`），同時載入多個元件也不會重複。
-- `ui-table` 的 `inverse` 格子裡，色名標籤會變成深色字加品牌色底。
-- 舊的數字標籤 `<c1>`～`<c16>`（`ui-insight`、`ui-detail-ladder`）與 `<c1>`～`<c21>`（`ui-table`）仍可使用，但同一個號碼在不同元件的顏色不同，新內容請改用色名標籤。
-- 色名與對照表可從 `window.UiColorTags.colors`、`window.UiColorTags.aliases` 讀取。
+- `ui-table` 的 `inverse` 格子裡，色名標籤會變成品牌色底的小標籤。
+- 色名與色碼可從 `window.UiColorTags.colors` 讀取。
 - 範例頁：`color-tags-demo-11-05-26.html`。
 
 ## 工具頁
@@ -64,7 +65,7 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 
 ## 目錄
 
-- [色名對照](#色名對照)
+- [色票](#色票)
 - [色名標籤](#色名標籤)
 - [工具頁](#工具頁)
 - [arrow-flow.js](#arrow-flowjs)
@@ -127,7 +128,7 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 | `header-letter-spacing` | 長度 | `0` | 標題字距。 |
 | `content-font-size` | 長度 | `1.125rem` | 內文字級。 |
 | `content-line-height` | 數字 | `1.5` | 內文行高。 |
-| `branch-label-theme` | 品牌色名稱或色碼 | `teal` | 分支選項按鈕的顏色。 |
+| `branch-label-theme` | 品牌色名稱或色碼 | `green` | 分支選項按鈕的顏色。 |
 | `branch-dim` | `0.78` 到 `1` | `0.80` | 沒被選中的分支變淡後的不透明度。 |
 
 ### `<flow-step>` 屬性
@@ -158,7 +159,7 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 **基本流程**
 
 ```html
-<arrow-flow theme="sky" gap="72px">
+<arrow-flow theme="blue" gap="72px">
   <flow-step title="讀題">先圈出題目的關鍵字。</flow-step>
   <flow-step title="定位">回到文章找出對應段落。</flow-step>
   <flow-step title="作答">比對同義改寫後作答。</flow-step>
@@ -168,9 +169,9 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 **逐步取代、滑入動畫與完成後顯示結論**
 
 ```html
-<arrow-flow theme="salmon" reveal="single" animation="slide" gap="64px" on-complete="done-1">
+<arrow-flow theme="orange" reveal="single" animation="slide" gap="64px" on-complete="done-1">
   <flow-step title="Step 1">第一步內容</flow-step>
-  <flow-step title="Step 2" header-color="lavender" border-color="indigo">第二步內容</flow-step>
+  <flow-step title="Step 2" header-color="violet" border-color="indigo">第二步內容</flow-step>
   <flow-step title="Step 3">第三步內容</flow-step>
 </arrow-flow>
 <div id="done-1">流程完成，接著做練習題。</div>
@@ -179,14 +180,14 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 **分支與合流**
 
 ```html
-<arrow-flow theme="teal" arrow-tip="lg" branch-label-theme="orange" branch-dim="0.85">
+<arrow-flow theme="green" arrow-tip="lg" branch-label-theme="orange" branch-dim="0.85">
   <flow-step title="確認題型">判斷是圖表題還是流程題。</flow-step>
   <flow-branch>
-    <branch-option label="圖表題" theme="sky">
+    <branch-option label="圖表題" theme="blue">
       <flow-step title="找趨勢">先看最高點與最低點。</flow-step>
       <flow-step title="找比較">挑兩組資料互相比較。</flow-step>
     </branch-option>
-    <branch-option label="流程題" theme="salmon">
+    <branch-option label="流程題" theme="orange">
       <flow-step title="找階段">依順序列出每個階段。</flow-step>
     </branch-option>
   </flow-branch>
@@ -221,7 +222,7 @@ I've <c-blue>managed to stick to</c-blue> a routine, <c-pink>rain or shine</c-pi
 `ArrowFlow.config()` 設定全頁預設值，鍵名用駝峰式，元素上的屬性仍然優先。
 
 ```js
-ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'down', arrowGlow: true });
+ArrowFlow.config({ theme: 'blue', arrowTip: 'lg', gap: '80px', headerGradient: 'down', arrowGlow: true });
 ```
 
 ---
@@ -275,16 +276,16 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 
 ### `<bp-stepper>` 屬性：外觀
 
-顏色類屬性可直接填品牌色名稱，例如 `data-color-active="ocean"`。
+顏色類屬性可直接填品牌色名稱，例如 `data-color-active="blue"`。
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `data-color` | `lavender` | 一般狀態的邊框、連接線與編號圓圈色。 |
+| `data-color` | `violet` | 一般狀態的邊框、連接線與編號圓圈色。 |
 | `data-color-active` | `blue` | 進行中狀態的顏色。 |
-| `data-color-done` | `safe` | 完成狀態的顏色。 |
+| `data-color-done` | `green` | 完成狀態的顏色。 |
 | `data-color-error` | `warning` | 錯誤狀態的顏色。 |
 | `data-text-color` | `shell` | 內文顏色。 |
-| `data-title-color` | `lavender` | 標題顏色。 |
+| `data-title-color` | `violet` | 標題顏色。 |
 | `data-badge-bg` | `rgba(180,132,232,0.15)` | 編號圓圈底色。 |
 | `data-card-bg` | `rgba(12,13,12,0.55)` | 一般卡片底色。 |
 | `data-card-bg-active` | 自動推算 | 進行中卡片底色。 |
@@ -327,7 +328,7 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 
 ### 屬性解說
 
-- **主題**：`data-theme` 一次設定一般色、進行中色、完成色、標題色與編號圓圈底色。可用名稱有 `lavender`、`sky`、`info`、`indigo`、`ocean`、`teal`、`safe`、`yellow`、`orange`、`focus`、`special`、`pink`、`salmon`、`warning`、`shell`、`vanilla`。套用主題後，個別的 `data-color-*` 仍可再覆寫。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
+- **主題**：`data-theme` 一次設定一般色、進行中色、完成色、標題色與編號圓圈底色。可用名稱有 `violet`、`blue`、`indigo`、`green`、`yellow`、`orange`、`pink`、`shell`、`vanilla`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。套用主題後，個別的 `data-color-*` 仍可再覆寫。
 - **卡片底色自動推算**：只覆寫 `data-color-active`、`data-color-done` 或 `data-color-error`，而沒有指定對應的 `data-card-bg-*` 時，元件會依該色推算淡色卡片底色，讓顏色保持一致。
 - **推進模式**：`mode="progress"` 會在每張卡片右下角放推進按鈕，按下即把下一步設為進行中；按下最後一步則全部標記完成並觸發 `bps:complete`。`mode="progress-show"` 行為相同，但尚未輪到的步驟完全隱藏，按下按鈕才以動畫逐張出現。推進模式不會自動設定起點，請在第一個 `<bp-step>` 加上 `data-state="active"`。
 - **推進按鈕形狀**：只有圖示時是正圓形，只有文字或圖文並列時是膠囊形，圖示與文字都為空時不放按鈕。
@@ -339,7 +340,7 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 **基本流程與總標題**
 
 ```html
-<bp-stepper data-theme="sky" data-ui-title="<strong>Task 2 寫作流程</strong>">
+<bp-stepper data-theme="blue" data-ui-title="<strong>Task 2 寫作流程</strong>">
   <bp-step data-state="done">
     <span class="bp-step-icon">🔍</span>
     <bp-step-title>審題</bp-step-title>
@@ -359,7 +360,7 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 **垂直排列與虛線連接**
 
 ```html
-<bp-stepper data-theme="salmon" data-layout="vertical" data-connector="dashed" data-card-width="280px">
+<bp-stepper data-theme="orange" data-layout="vertical" data-connector="dashed" data-card-width="280px">
   <bp-step><bp-step-title>聽題</bp-step-title><bp-step-content>記下關鍵字。</bp-step-content></bp-step>
   <bp-step><bp-step-title>回答</bp-step-title><bp-step-content>先給結論再補理由。</bp-step-content></bp-step>
 </bp-stepper>
@@ -368,7 +369,7 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 **兩列換行與連接線說明**
 
 ```html
-<bp-stepper data-theme="teal" data-wrap="3" data-connector-label="接著">
+<bp-stepper data-theme="green" data-wrap="3" data-connector-label="接著">
   <bp-step><bp-step-title>一</bp-step-title></bp-step>
   <bp-step><bp-step-title>二</bp-step-title></bp-step>
   <bp-step data-connector-label="換行" data-connector-label-color="yellow"><bp-step-title>三</bp-step-title></bp-step>
@@ -396,7 +397,7 @@ ArrowFlow.config({ theme: 'sky', arrowTip: 'lg', gap: '80px', headerGradient: 'd
 **點擊切換、精簡標題列與自訂按鈕**
 
 ```html
-<bp-stepper data-theme="lavender" data-clickable="true" data-compact-header>
+<bp-stepper data-theme="violet" data-clickable="true" data-compact-header>
   <bp-step data-state="active"><bp-step-title>草稿</bp-step-title></bp-step>
   <bp-step btn-js="BPStepper.setError(stepper, 1)" btn-js-label="標記錯誤" btn-js-icon-class="bi bi-x-lg">
     <bp-step-title>校對</bp-step-title>
@@ -472,7 +473,7 @@ BPStepper.THEMES;                       // 主題設定
 | `animation` | `fade`、`slide`、`none` | 翻面動畫。預設 `fade`。 |
 | `toggle` | 布林 | 背面可再點擊翻回正面，並顯示「點擊翻回」提示。未設定時翻面後即固定。 |
 | `auto-flip` | 毫秒 | 翻面後倒數自動翻回，卡片底部顯示倒數條。 |
-| `flip-bar-color` | 色盤名稱或 CSS 顏色 | 倒數條顏色。未設定時依序取 `color-after`、`color`、`sky`。 |
+| `flip-bar-color` | 色盤名稱或 CSS 顏色 | 倒數條顏色。未設定時依序取 `color-after`、`color`、`blue`。 |
 | `color-after` | 色盤名稱 | 翻面後改用的卡片色，翻回時恢復原色。 |
 
 正面內容在第一次點擊時才擷取，因此頁面載入後用程式修改正面內容也會被保留。
@@ -494,7 +495,7 @@ BPStepper.THEMES;                       // 主題設定
 | `number` | 文字 | 在正面最前方加上「N. 」編號。 |
 | `number-size` / `number-weight` / `number-opacity` | CSS 值 | 編號的字級、粗細、透明度。 |
 
-`color` 可用的名稱：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`。舊名稱 `lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`info`、`focus`、`warning`、`salmon`、`attention`、`stone` 仍可使用，對應見文件開頭的「色名對照」。
+`color` 可用的名稱：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
 
 ### 填空問答
 
@@ -511,7 +512,7 @@ BPStepper.THEMES;                       // 主題設定
 | `error-message` | 文字 | 答錯時的訊息。 |
 | `success-source` | 元素 id | 答對後的背面內容，優先順序最高。 |
 | `source` / `content` | 元素 id / HTML | 在問答模式中作為答對後的解說背面。 |
-| `success-color` | 色盤名稱 | 答對後的卡片色。預設 `safe`。 |
+| `success-color` | 色盤名稱 | 答對後的卡片色。預設 `green`。 |
 | `auto-next` | 布林 | 在群組輪播模式中，答對 1.5 秒後自動前往下一題。 |
 | `submit-text` / `hide-submit` | 文字 / 布林 | 提交按鈕文字，或隱藏提交按鈕。 |
 | `reset-text` / `hide-reset` | 文字 / 布林 | 重置按鈕文字，或隱藏重置按鈕。 |
@@ -536,7 +537,7 @@ BPStepper.THEMES;                       // 主題設定
 | `info-target` | 元素 id | 面板顯示的位置。未設定時顯示在卡片內。 |
 | `info-text` | 文字 | 按鈕文字。預設「額外資訊」。 |
 | `hide-info` | 布林 | 隱藏資訊按鈕。 |
-| `info-color` | 色盤名稱或 CSS 顏色 | 按鈕與面板左線的顏色。預設 `sky`。 |
+| `info-color` | 色盤名稱或 CSS 顏色 | 按鈕與面板左線的顏色。預設 `blue`。 |
 | `info-bg` | 色盤名稱或 CSS 顏色 | 面板底色。 |
 | `info-fg` | 色盤名稱或 CSS 顏色 | 面板文字色。 |
 
@@ -548,14 +549,14 @@ BPStepper.THEMES;                       // 主題設定
 | --- | --- | --- |
 | `branch-options` | 逗號分隔文字 | 選項。預設 `是,否`。 |
 | `correct-option` | 文字 | 正確選項，需與選項文字完全相同（預設不分大小寫）。 |
-| `branch-btn-color` | 色盤名稱或 CSS 顏色 | 選項按鈕顏色。預設 `special`。 |
+| `branch-btn-color` | 色盤名稱或 CSS 顏色 | 選項按鈕顏色。預設 `green`。 |
 | `branch-correct` | HTML | 選對後的背面內容。 |
 | `branch-correct-source` | 元素 id | 讀取該元素的內容作為選對背面，優先於 `branch-correct`。 |
 | `branch-wrong` | HTML | 選錯後的背面內容。 |
 | `branch-wrong-source` | 元素 id | 讀取該元素的內容作為選錯背面，優先於 `branch-wrong`。 |
 | `branch-correct-label` | 文字 | 選對背面的標題。預設「答對了！」。 |
 | `branch-wrong-label` | 文字 | 選錯背面的標題。預設會帶出使用者選的選項。 |
-| `branch-correct-color` | 色盤名稱 | 選對後的卡片色。預設 `safe`。 |
+| `branch-correct-color` | 色盤名稱 | 選對後的卡片色。預設 `green`。 |
 | `branch-wrong-color` | 色盤名稱 | 選錯後的卡片色。預設 `warning`。 |
 | `branch-retry` | 布林 | 選錯時顯示重試按鈕。 |
 | `branch-retry-text` | 文字 | 重試按鈕文字。預設「↺ 再試一次」。 |
@@ -588,7 +589,7 @@ BPStepper.THEMES;                       // 主題設定
 | --- | --- | --- |
 | `mode` | `stack`、`slide`、`grid`、`grid:間距` | 堆疊、一次一張輪播、或網格排列。網格預設間距 `12px`，例如 `grid:20px`。預設 `stack`。 |
 | `cols` | 數字 | 網格欄數。預設等於卡片數。 |
-| `theme` | 色盤名稱 | 導覽按鈕、頁碼、計數器與結果畫面的強調色。預設 `special`。 |
+| `theme` | 色盤名稱 | 導覽按鈕、頁碼、計數器與結果畫面的強調色。預設 `green`。 |
 | `hide-counter` | 布林 | 輪播模式下隱藏「1 / N」計數器。 |
 | `hide-nav-buttons` | 布林 | 隱藏「上一張」「下一張」按鈕。 |
 | `show-pages` | 布林 | 顯示頁碼按鈕，並以顏色標示每題答對或答錯。 |
@@ -609,7 +610,7 @@ BPStepper.THEMES;                       // 主題設定
 `info-color`、`info-bg`、`info-fg` 設在群組上同樣會套用到所有卡片。
 
 ```html
-<card-toggle-group mode="slide" theme="sky" show-pages lock-nav show-result>
+<card-toggle-group mode="slide" theme="blue" show-pages lock-nav show-result>
   <card-toggle question="Q1 ..." answer="..." auto-next></card-toggle>
   <card-toggle question="Q2 ..." answer="..." auto-next></card-toggle>
   <card-toggle question="Q3 ..." branch-options="A,B,C" correct-option="B"
@@ -623,12 +624,12 @@ BPStepper.THEMES;                       // 主題設定
 
 ```html
 <!-- 一般翻面 -->
-<card-toggle color="sky" toggle content="<strong>mitigate</strong>：減輕、緩和">
+<card-toggle color="blue" toggle content="<strong>mitigate</strong>：減輕、緩和">
   mitigate 是什麼意思？
 </card-toggle>
 
 <!-- 填空問答 -->
-<card-toggle color="lavender"
+<card-toggle color="violet"
              question="「使某事不那麼嚴重」的動詞是？"
              answer="mitigate"
              hint="m 開頭，八個字母">
@@ -647,7 +648,7 @@ BPStepper.THEMES;                       // 主題設定
 **倒數自動翻回與翻面換色**
 
 ```html
-<card-toggle color="sky" toggle auto-flip="4000" color-after="special" flip-bar-color="yellow"
+<card-toggle color="blue" toggle auto-flip="4000" color-after="green" flip-bar-color="yellow"
              source="ans-1" skin="ruled" top-line number="1">
   pervasive 的同義字？
 </card-toggle>
@@ -657,7 +658,7 @@ BPStepper.THEMES;                       // 主題設定
 **問答卡的提示與額外資訊**
 
 ```html
-<card-toggle color="lavender" question="「普遍存在的」的形容詞？" answer="ubiquitous"
+<card-toggle color="violet" question="「普遍存在的」的形容詞？" answer="ubiquitous"
              max-attempts="3" hint="u 開頭" hint-target="hint-box"
              info-source="note-1" info-text="字源" info-color="orange">
 </card-toggle>
@@ -724,7 +725,7 @@ document.querySelector('card-toggle').reset();  // 清除作答狀態與提示�
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 主題名稱 | `special` | 意群按鈕的配色。可用 `shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`safe`、`vanilla`、`focus`、`yellow`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
+| `theme` | 主題名稱 | `green` | 意群按鈕的配色。可用 `shell`、`violet`、`green`、`orange`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `level-colors` | 逗號分隔的顏色 | 內建八色 | 依序覆寫第 1、2、3 級的圓點顏色。 |
 | `border-width` | 長度 | `1.5px` | 意群按鈕的邊框粗細。 |
 | `border-style` | CSS 邊框樣式 | `solid` | 意群按鈕的邊框樣式。 |
@@ -768,7 +769,7 @@ document.querySelector('card-toggle').reset();  // 清除作答狀態與提示�
 **基本用法**
 
 ```html
-<chunk-demo sentence="She {0} to the market {1}." theme="sky">
+<chunk-demo sentence="She {0} to the market {1}." theme="blue">
   <cd-chunk id="0" label="動詞">
     <cd-level level="1">went</cd-level>
     <cd-level level="2">hurried</cd-level>
@@ -788,7 +789,7 @@ document.querySelector('card-toggle').reset();  // 清除作答狀態與提示�
             translation="我{1}{0}功課。"
             note="程度越高，語氣越正式。"
             show-preview="true" show-translation="true" show-note="true"
-            theme="lavender" level-colors="#EF6661, #71CD76, #5DBAE8">
+            theme="violet" level-colors="#EF6661, #71CD76, #5DBAE8">
   <cd-chunk id="0" label="動詞片語">
     <cd-level level="1" trans="寫">do</cd-level>
     <cd-level level="2" trans="仔細完成">carefully complete</cd-level>
@@ -804,7 +805,7 @@ document.querySelector('card-toggle').reset();  // 清除作答狀態與提示�
 
 ```html
 <chunk-demo id="cd-1" sentence="{0} is a key skill for {1} learners."
-            mode="dots-ext" dots-pos="top" mask-mode="true" lock-chunks="1" theme="focus">
+            mode="dots-ext" dots-pos="top" mask-mode="true" lock-chunks="1" theme="vanilla">
   <cd-chunk id="0" label="主題">
     <cd-level>Listening</cd-level>
     <cd-level>Active listening with note-taking</cd-level>
@@ -833,7 +834,7 @@ cd.unlockChunk(1);   // 解鎖 id 為 1 的意群
 cd.lockChunk(0);     // 鎖定 id 為 0 的意群
 
 // 全頁預設值，要在元素初始化前設定
-window.ChunkDemoConfig = { defaultTheme: 'sky', showPreview: true, mode: 'dots' };
+window.ChunkDemoConfig = { defaultTheme: 'blue', showPreview: true, mode: 'dots' };
 ```
 
 ---
@@ -854,7 +855,7 @@ window.ChunkDemoConfig = { defaultTheme: 'sky', showPreview: true, mode: 'dots' 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
 | `color-left` | 品牌色名稱、色碼或 `transparent` | `yellow` | 左段顏色。 |
-| `color-right` | 品牌色名稱、色碼或 `transparent` | `sky` | 右段顏色。 |
+| `color-right` | 品牌色名稱、色碼或 `transparent` | `blue` | 右段顏色。 |
 | `ratio` | `左:右` | `5:5` | 兩段長度比例，例如 `3:7`。 |
 | `thickness` | 長度 | `1px` | 線條粗細。 |
 | `margin` | CSS `margin` 值 | `8px 0` | 外距。 |
@@ -870,7 +871,7 @@ window.ChunkDemoConfig = { defaultTheme: 'sky', showPreview: true, mode: 'dots' 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
 | `color-top` | 品牌色名稱、色碼或 `transparent` | `yellow` | 上段顏色，也可寫成 `color-left`。 |
-| `color-bottom` | 品牌色名稱、色碼或 `transparent` | `sky` | 下段顏色，也可寫成 `color-right`。 |
+| `color-bottom` | 品牌色名稱、色碼或 `transparent` | `blue` | 下段顏色，也可寫成 `color-right`。 |
 | `ratio` | `上:下` | `5:5` | 兩段長度比例。 |
 | `thickness` | 長度 | `1px` | 線條粗細。 |
 | `height` | 長度 | `80px` | 總高度。 |
@@ -911,7 +912,7 @@ window.ChunkDemoConfig = { defaultTheme: 'sky', showPreview: true, mode: 'dots' 
 ```html
 <p>
   左欄文字
-  <dual-vr height="1.5rem" color-top="yellow" color-bottom="warning" thickness="2px"></dual-vr>
+  <dual-vr height="1.5rem" color-top="yellow" color-bottom="red" thickness="2px"></dual-vr>
   右欄文字
 </p>
 <dual-vr height="120px" ratio="6:4" arrow="bottom" line-style="dashed"></dual-vr>
@@ -921,7 +922,7 @@ window.ChunkDemoConfig = { defaultTheme: 'sky', showPreview: true, mode: 'dots' 
 
 ```html
 <style>.sec-line { margin: 24px 0; }</style>
-<dual-hr extraclass="sec-line" color-left="lavender" color-right="special"></dual-hr>
+<dual-hr extraclass="sec-line" color-left="violet" color-right="green"></dual-hr>
 ```
 
 ### JavaScript API
@@ -982,7 +983,7 @@ DualLine.palette;                                        // 目前的色盤
 | 屬性 | 值 | 說明 |
 | --- | --- | --- |
 | `from` | 色盤名稱或 CSS 顏色 | 漸層起始色。預設 `indigo`。 |
-| `to` | 色盤名稱或 CSS 顏色 | 漸層結束色。預設 `ocean`。 |
+| `to` | 色盤名稱或 CSS 顏色 | 漸層結束色。預設 `blue`。 |
 | `dir` | CSS 角度 | 漸層方向。預設 `135deg`。 |
 | `href` | URL 或 `#錨點` | 整列變成連結，行為與原生 `<a href>` 相同。 |
 | `link-target` | `_blank` 等 | 連結開啟位置。外部連結會自動加上 `rel="noopener"`。 |
@@ -1038,7 +1039,7 @@ DualLine.palette;                                        // 目前的色盤
 ```html
 <script>
   NumericList.setup({
-    themeColor:     'lavender',
+    themeColor:     'violet',
     hoverFX:        'lift',
     fontSize:       '1rem',
     numberFontSize: '2.5rem'
@@ -1087,7 +1088,7 @@ DualLine.palette;                                        // 目前的色盤
 **基本清單、廣告列與點擊載入內容**
 
 ```html
-<ui-list theme-color="sky" hover-fx="glow">
+<ui-list theme-color="blue" hover-fx="glow">
   <list-item>先讀題，圈出關鍵字。</list-item>
   <list-item>回答要直接，第一句就給出答案。</list-item>
   <list-item-ad href="#course">想系統練習？看看完整課程 →</list-item-ad>
@@ -1104,16 +1105,16 @@ DualLine.palette;                                        // 目前的色盤
 <ui-list mode="icon" cols="2" last-span theme-color="orange" hover-fx="lift" width="80%/480px">
   <list-item icon="lightbulb">先想例子再下筆。</list-item>
   <list-item icon="clock">每段控制在五分鐘內。</list-item>
-  <list-item icon="check2-circle" accent="special" hover-fx="zoom">最後一列橫跨整排。</list-item>
+  <list-item icon="check2-circle" accent="green" hover-fx="zoom">最後一列橫跨整排。</list-item>
 </ui-list>
 ```
 
 **自訂編號與漸層廣告列**
 
 ```html
-<ui-list theme-color="lavender" gap="8px" hover="pink" active="yellow">
+<ui-list theme-color="violet" gap="8px" hover="pink" active="yellow">
   <list-item number="A">第一個重點</list-item>
-  <list-item number="B" fx-color="sky" hover-fx="bar">第二個重點</list-item>
+  <list-item number="B" fx-color="blue" hover-fx="bar">第二個重點</list-item>
   <list-item-ad from="pink" to="indigo" dir="90deg" href="https://example.com" link-target="_blank">外部資源</list-item-ad>
 </ui-list>
 ```
@@ -1156,7 +1157,7 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 | --- | --- | --- | --- |
 | `data-phrase` | 文字 | 必填 | 片語本身，也是收藏時的識別鍵與卡片標題。 |
 | `data-label` | 文字 | 片語本身 | 膠囊上顯示的文字。沒設時取 `<phrase-card>` 以外的文字內容，再沒有才用 `data-phrase`。 |
-| `data-theme` | 品牌色名稱 | `ocean` | 膠囊顏色。 |
+| `data-theme` | 品牌色名稱 | `blue` | 膠囊顏色。 |
 | `data-size` | `sm`、`md`、`lg` | `md` | 膠囊大小。 |
 | `data-shape` | `pill`、`rounded`、`underline` | `pill` | 膠囊形狀；`underline` 只留底線。 |
 | `data-icon` | Bootstrap Icons 名稱 | 無 | 文字前的圖示，不加 `bi-` 前綴。 |
@@ -1178,7 +1179,7 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 | `data-anim` | `strike-fade`、`crossfade`、`slide-up`、`flip`、`typewriter` | `strike-fade` | 換到下一個說法的動畫。 |
 | `data-anim-duration` | 秒或毫秒，例如 `1.2s` | `0.9s` | 動畫長度，`typewriter` 不使用。 |
 | `data-typewriter-speed` | 毫秒 | `55` | `typewriter` 每個字元的間隔。 |
-| `data-theme` | 品牌色名稱 | `ocean` | 強調色。 |
+| `data-theme` | 品牌色名稱 | `blue` | 強調色。 |
 | `data-hide-hint` | 布林 | 關閉 | 隱藏右側的「可點擊」提示圖示。 |
 | `data-hint-icon` | Bootstrap Icons 名稱 | `arrow-repeat` | 提示圖示，不加 `bi-` 前綴。 |
 
@@ -1194,7 +1195,7 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 - **收藏同步**：收藏以 `data-phrase` 為鍵。同一頁有多顆相同片語的膠囊時，任何一顆收藏後全部標示為已收藏。
 - **收藏事件**：收藏時在 `document` 上發出事件，`detail` 為 `{ phrase, theme, exampleHTML, translationText }`。`practice-tracker.js` 會監聽預設的 `pt:phrase-collected` 建立收藏清單。
 - **升級只能前進**：`<phrase-upgrade>` 每點一下前進一個階段，到最後一個階段就停住，不會循環。
-- **全頁預設值**：在載入前設定 `window.PhraseChipConfig`，鍵名同屬性去掉 `data-` 後的駝峰式，例如 `{ theme: 'sky', cardWidth: '360px' }`。
+- **全頁預設值**：在載入前設定 `window.PhraseChipConfig`，鍵名同屬性去掉 `data-` 後的駝峰式，例如 `{ theme: 'blue', cardWidth: '360px' }`。
 
 ### 範例
 
@@ -1203,7 +1204,7 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 ```html
 <p>
   I need to
-  <phrase-chip data-phrase="catch up with" data-theme="sky" data-icon="chat-dots-fill">
+  <phrase-chip data-phrase="catch up with" data-theme="blue" data-icon="chat-dots-fill">
     catch up with
     <phrase-card>
       <phrase-example>I need to <b>catch up with</b> my old classmates.</phrase-example>
@@ -1218,14 +1219,14 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 
 ```html
 <phrase-chip data-phrase="recharge my batteries" data-theme="pink" data-shape="rounded" data-size="lg" data-icon="stars"></phrase-chip>
-<phrase-chip data-phrase="set aside" data-theme="salmon" data-shape="underline" data-hide-translation="true">
+<phrase-chip data-phrase="set aside" data-theme="orange" data-shape="underline" data-hide-translation="true">
   set aside
   <phrase-card>
     <phrase-example>I <b>set aside</b> an hour every day for reading.</phrase-example>
     <phrase-translation>我每天留一小時閱讀。</phrase-translation>
   </phrase-card>
 </phrase-chip>
-<phrase-chip data-phrase="pop up out of nowhere" data-theme="teal" data-disable-collect="true"></phrase-chip>
+<phrase-chip data-phrase="pop up out of nowhere" data-theme="green" data-disable-collect="true"></phrase-chip>
 ```
 
 **片語升級**
@@ -1233,11 +1234,11 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 ```html
 <phrase-upgrade data-anim="strike-fade" data-theme="yellow" data-anim-duration="1.2s">
   <phrase-stage text-color="shell">very tired</phrase-stage>
-  <phrase-stage text-color="salmon">exhausted</phrase-stage>
-  <phrase-stage text-color="special">running on empty</phrase-stage>
+  <phrase-stage text-color="orange">exhausted</phrase-stage>
+  <phrase-stage text-color="green">running on empty</phrase-stage>
 </phrase-upgrade>
 
-<phrase-upgrade data-anim="typewriter" data-theme="teal" data-typewriter-speed="60">
+<phrase-upgrade data-anim="typewriter" data-theme="green" data-typewriter-speed="60">
   <phrase-stage>I think</phrase-stage>
   <phrase-stage>From my perspective</phrase-stage>
 </phrase-upgrade>
@@ -1333,7 +1334,7 @@ PhraseChip.isCollected('set aside');  // 是否已收藏
 | `data-btn-padding` | 空 | 自訂內距，蓋過 `size`。 |
 | `data-btn-width` | 空 | 自訂寬度；`block` 預設 `100%`。 |
 | `data-btn-radius` | 空 | 自訂圓角。 |
-| `data-btn-color` | `ocean` | 品牌色名稱或色碼。 |
+| `data-btn-color` | `blue` | 品牌色名稱或色碼。 |
 | `data-btn-align` | `start` | `start`、`center`、`end`。 |
 | `data-btn-event-name` | `pt:section-done` | 每個 `<section>` 第一次完成時發出的事件名稱；空字串表示不發。 |
 
@@ -1392,7 +1393,7 @@ PhraseChip.isCollected('set aside');  // 是否已收藏
 
 ```html
 <section id="ex-intro" data-btn-text="標記完成">...</section>
-<section id="ex-part1" data-btn-style="pill" data-btn-text="我讀完了" data-btn-color="special" data-btn-size="lg">...</section>
+<section id="ex-part1" data-btn-style="pill" data-btn-text="我讀完了" data-btn-color="green" data-btn-size="lg">...</section>
 <section id="ex-part2">
   <p>...</p>
   <pt-done-btn data-btn-style="check" data-btn-color="pink" data-btn-width="48px"></pt-done-btn>
@@ -1400,7 +1401,7 @@ PhraseChip.isCollected('set aside');  // 是否已收藏
 </section>
 
 <practice-tracker data-prefix="ex-" data-click-go="true" data-cell-shape="star"
-                  data-btn-style="solid" data-btn-color="teal"></practice-tracker>
+                  data-btn-style="solid" data-btn-color="green"></practice-tracker>
 ```
 
 **嵌在頁面中、每列十格**
@@ -1416,7 +1417,7 @@ PhraseChip.isCollected('set aside');  // 是否已收藏
 **搭配片語收藏**
 
 ```html
-<p>I was <phrase-chip data-phrase="tied up with" data-theme="ocean">tied up with</phrase-chip> work.</p>
+<p>I was <phrase-chip data-phrase="tied up with" data-theme="blue">tied up with</phrase-chip> work.</p>
 
 <practice-tracker data-prefix="ex-" data-phrase-title="本課片語"
                   data-phrase-list-placement="start" data-phrase-list-theme="pink"></practice-tracker>
@@ -1535,12 +1536,12 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `fontcolor-subtitle` | `lavender` | `.slide-subtitle` 文字色。 |
+| `fontcolor-subtitle` | `violet` | `.slide-subtitle` 文字色。 |
 | `fontcolor-main` | `shell` | `.slide-main` 文字色。 |
-| `fontcolor-footer` | `sky` | `.slide-footer` 文字色。 |
+| `fontcolor-footer` | `blue` | `.slide-footer` 文字色。 |
 | `fill-color` | `fill`（`#1A1B1A`） | `.slide-content`、補充說明與填空格的底色。 |
 | `start-style` / `end-style` | 有對應 `role` 時為 `accent-frame` | 起始與結束畫面的裝飾：`accent-frame`（單色粗框）、`gradient-border`（漸層框）、`gradient-bg`（漸層底）、`top-bottom-bar`（上下色條）、`corner-tag`（左上角三角標）、`none`。 |
-| `start-colors` | `lavender,sky` | 起始畫面的兩個裝飾色，以逗號分隔。 |
+| `start-colors` | `violet,blue` | 起始畫面的兩個裝飾色，以逗號分隔。 |
 | `end-colors` | `green,blue` | 結束畫面的兩個裝飾色。 |
 
 ### 投影片內的互動內容
@@ -1555,7 +1556,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 | `source` | 內容來源，必填。填元素 id 時讀取該元素的 HTML；找不到該 id 時，直接把屬性值當成內容。來源元素不會自動隱藏，請自行加上 `style="display:none"`。 |
 | `prefix`、`postfix` | 加在文字前後的內容。`prefix` 中若含 `bi-` 開頭的類別名稱，會轉成 Bootstrap Icons 圖示，例如 `prefix="bi-info-circle "`。 |
 
-`<slider-show>` 上的 `extra-note-prefix`、`extra-note-postfix` 設定所有補充說明的預設前後綴，`extra-note-hover-color`（預設 `special`）設定滑過時的顏色。
+`<slider-show>` 上的 `extra-note-prefix`、`extra-note-postfix` 設定所有補充說明的預設前後綴，`extra-note-hover-color`（預設 `green`）設定滑過時的顏色。
 
 **防劇透遮罩**
 
@@ -1596,7 +1597,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 **基本結構、補充說明、遮罩與填空**
 
 ```html
-<slider-show theme="lavender" height="420px" progress-style="stepper">
+<slider-show theme="violet" height="420px" progress-style="stepper">
 
   <div slide part="1" role="start">
     <div class="slide-content">
@@ -1635,7 +1636,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 **跨部分進度列與鍵盤換頁**
 
 ```html
-<slider-show theme="sky" height="360px" progress-style="numbers" progress-scope="all"
+<slider-show theme="blue" height="360px" progress-style="numbers" progress-scope="all"
              keyboard-nav part-transition="fade" next-part-btn-position="flex-end">
   <div slide part="1"><div class="slide-content"><div class="slide-main">1-1</div></div></div>
   <div slide part="1"><div class="slide-content"><div class="slide-main">1-2</div></div></div>
@@ -1647,7 +1648,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 
 ```html
 <slider-show theme="orange" start-style="gradient-border" start-colors="pink,indigo"
-             end-style="corner-tag" end-colors="safe,yellow"
+             end-style="corner-tag" end-colors="green,yellow"
              next-part-btn-text="繼續" finish-btn-text="結束練習" show-restart="false"
              update-title="true" title-template="第 {slide} / {total} 張">
   <div slide part="1" role="start"><div class="slide-content"><div class="slide-main">開始</div></div></div>
@@ -1658,7 +1659,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 **全部投影片加遮罩**
 
 ```html
-<slider-show spoiler-mode="true" spoiler-text="先想一想再點開" spoiler-color="lavender">
+<slider-show spoiler-mode="true" spoiler-text="先想一想再點開" spoiler-color="violet">
   <div slide><div class="slide-content"><div class="slide-main">參考答案 A</div></div></div>
   <div slide><div class="slide-content"><div class="slide-main">參考答案 B</div></div></div>
 </slider-show>
@@ -1772,14 +1773,14 @@ s.setAttribute('current-part', '2');  // 跳到第二部分
 
 ### 屬性：顏色
 
-每個部位用 `部位-color` 設定，例如 `accent-color="sky"`。
+每個部位用 `部位-color` 設定，例如 `accent-color="blue"`。
 
 | 屬性 | 預設 | 作用範圍 |
 | --- | --- | --- |
 | `bg-color` | `base`（`#0C0D0C`） | 元件底色。 |
 | `text-color` | `shell` | 文字色。 |
 | `accent-color` | `shell` | 強調色，也是下列多數部位的預設值。 |
-| `ok-color` | `safe` | 答對的顏色。 |
+| `ok-color` | `green` | 答對的顏色。 |
 | `bad-color` | `warning` | 答錯的顏色。 |
 | `blank-color` | 跟隨 `accent-color` | 空格外框與文字。 |
 | `picked-color` | 跟隨 `blank-color` | 已選答案的空格底色。 |
@@ -1789,7 +1790,7 @@ s.setAttribute('current-part', '2');  // 跳到第二部分
 | `btn-color` | 跟隨 `accent-color` | 按鈕外框，主要按鈕的底色。 |
 | `alert-color` | 跟隨 `accent-color` | 批改完成提示框的顏色。 |
 
-顏色值可以是品牌色名稱（不分大小寫，`bg` 與 `background` 都等於 `base`）、`名稱/不透明度`（例如 `sky/0.9`）、`#hex`、`rgb()`、`rgba()`、`hsl()` 或 CSS 顏色關鍵字。不透明度低於 0.78 的 `rgba()` 會被忽略，`名稱/不透明度` 會被提高到 0.78。無法辨識的值會在主控台警告並改用預設色。可用的品牌色名稱有 `base`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`bluebell`、`special`、`info`、`indigo`、`pink`、`orange`。
+顏色值可以是品牌色名稱（不分大小寫，`bg` 與 `background` 都等於 `base`）、`名稱/不透明度`（例如 `blue/0.9`）、`#hex`、`rgb()`、`rgba()`、`hsl()` 或 CSS 顏色關鍵字。不透明度低於 0.78 的 `rgba()` 會被忽略，`名稱/不透明度` 會被提高到 0.78。無法辨識的值會在主控台警告並改用預設色。可用的品牌色名稱有 `base`、`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
 
 ### 互動方式
 
@@ -1840,7 +1841,7 @@ s.setAttribute('current-part', '2');  // 跳到第二部分
 **自訂配色**
 
 ```html
-<ui-fillin accent-color="sky" ok-color="teal" bad-color="pink" line-color="lavender" head-color="yellow">
+<ui-fillin accent-color="blue" ok-color="green" bad-color="pink" line-color="violet" head-color="yellow">
   <main-box source="q3"></main-box>
 </ui-fillin>
 ```
@@ -1877,7 +1878,7 @@ f.closeMenu();  // 關閉開啟中的選單
 const UF = customElements.get('ui-fillin');
 UF.brand;               // 品牌色票副本
 UF.colorParts;          // 可設定顏色的部位
-UF.resolveColor('sky/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時回傳 null
+UF.resolveColor('blue/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時回傳 null
 ```
 
 ---
@@ -2014,7 +2015,7 @@ UF.resolveColor('sky/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時�
 
 ```html
 <ui-otp length="6" groups="3,3" expected-value="123456"
-        label-valid="驗證成功" clear-on-invalid accent-color="lavender"></ui-otp>
+        label-valid="驗證成功" clear-on-invalid accent-color="violet"></ui-otp>
 ```
 
 **英數驗證碼、遮罩與外部驗證**
@@ -2108,19 +2109,19 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 ```html
 <!-- 單層：點擊圓圈直接展開清單 -->
-<ui-cluster theme="sky" label="常見轉折詞">
+<ui-cluster theme="blue" label="常見轉折詞">
   <cluster-item>however</cluster-item>
   <cluster-item>nevertheless</cluster-item>
   <cluster-item>on the other hand</cluster-item>
 </ui-cluster>
 
 <!-- 雙層：主圓圈展開成節點，每個節點再展開各自的清單 -->
-<ui-cluster theme="lavender" label="Task 2 題型" reset>
+<ui-cluster theme="violet" label="Task 2 題型" reset>
   <cluster-node label="Opinion" theme="pink">
     <cluster-item>To what extent do you agree or disagree?</cluster-item>
     <cluster-item>Do you agree or disagree?</cluster-item>
   </cluster-node>
-  <cluster-node label="Discussion" theme="ocean">
+  <cluster-node label="Discussion" theme="blue">
     <cluster-item>Discuss both views and give your own opinion.</cluster-item>
   </cluster-node>
 </ui-cluster>
@@ -2163,14 +2164,14 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 把一段內容包起來，左側會有一條色條由上往下跑過，提示學生「現在讀這段」。
 
 ```html
-<read-pulse color="teal" style="glow" trigger="visible">
+<read-pulse color="green" style="glow" trigger="visible">
   <p>Over the past decade, the number of students studying abroad has risen sharply.</p>
 </read-pulse>
 ```
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `color` | `teal` | 色條顏色。 |
+| `color` | `green` | 色條顏色。 |
 | `color2` | 空 | 第二色。`gradient` 樣式的漸層終點色，或 `double` 樣式第二條色條的顏色。 |
 | `style` | `solid` | 色條樣式：`solid`、`gradient`（漸層）、`glow`（光暈）、`segmented`（虛線）、`double`（雙色條）。 |
 | `speed` | `2800` | 色條跑完全程的毫秒數。 |
@@ -2222,7 +2223,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 ```html
 <chunk-spot extra-info="點圓點可聚焦單一意群，再點一次取消。">
-  <chunk-item theme="sky" label="主詞片語">The number of students</chunk-item>
+  <chunk-item theme="blue" label="主詞片語">The number of students</chunk-item>
   <chunk-item theme="yellow" label="#note-verb">has risen sharply</chunk-item>
   <chunk-item label="時間">over the <chunk-subitem label="期間長度">past decade</chunk-subitem></chunk-item>.
 </chunk-spot>
@@ -2261,7 +2262,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 | 鍵 | 預設 | 對應屬性 |
 | --- | --- | --- |
-| `pulseColor`、`pulseColor2` | `teal`、空 | `read-pulse` 的 `color`、`color2` |
+| `pulseColor`、`pulseColor2` | `green`、空 | `read-pulse` 的 `color`、`color2` |
 | `pulseStyle` | `solid` | `read-pulse` 的 `style` |
 | `pulseSpeed` | `2800` | `read-pulse` 的 `speed` |
 | `pulseWidth`、`pulseWidth2` | `3px`、`2px` | `read-pulse` 的 `pulse-width`、`pulse-width-2` |
@@ -2326,7 +2327,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `alert` | 空 | 點擊時在畫面頂端或底部跳出的訊息。 |
-| `alert-theme` | `safe` | 提示底色。 |
+| `alert-theme` | `green` | 提示底色。 |
 | `alert-position` | `top` | `top` 或 `bottom`。 |
 | `alert-duration` | `3000` | 顯示毫秒數，`0` 表示不會自動消失。 |
 | `alert-width` | 自動 | 固定寬度，只接受 `px` 或 `%`，例如 `400px`。 |
@@ -2350,7 +2351,7 @@ UiBtn.init();       // 處理新插入的 <ui-btn>
 
 // 直接跳出浮動提示（與 ui-btn 的 alert 屬性相同外觀）
 const a = UiBtn.alert('已儲存', {
-  theme: 'safe', position: 'top', duration: 3000, width: '360px', icon: 'bi-check-circle'
+  theme: 'green', position: 'top', duration: 3000, width: '360px', icon: 'bi-check-circle'
 });
 a.dismiss();        // 手動關閉這一則
 UiBtn.alert.clear(); // 清除所有提示

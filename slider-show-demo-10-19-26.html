@@ -10,21 +10,21 @@
   :root {
     --bg: #0C0D0C;
     --shell: #C6C7BD;
-    --lavender: #C3A5E5;
-    --sky: #82C8E5;
-    --warning: #E6374B;
-    --salmon: #E5C3B3;
-    --ocean: #1CCAE8;
-    --safe: #27AE60;
-    --teal: #0DA591;
+    --violet: #B484E8;
+    --blue: #5DBAE8;
+    --warning: #EF6661;
+    --orange: #F79C40;
+    --blue: #5DBAE8;
+    --green: #71CD76;
+    --green: #71CD76;
     --vanilla: #DBEDD8;
     --yellow: #E3D322;
-    --focus: #D4FFFC;
-    --special: #B3DE73;
-    --info: #4171BF;
-    --indigo: #7849C9;
+    --focus: #DBEDD8;
+    --green: #71CD76;
+    --info: #778CE1;
+    --indigo: #778CE1;
     --pink: #FF91D7;
-    --orange: #EDA109;
+    --orange: #F79C40;
     --fill: #1A1B1A;
     --fill2: #242524;
   }
@@ -56,7 +56,7 @@
   .page-header h1 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--lavender);
+    color: var(--violet);
     letter-spacing: 0.02em;
   }
   .page-header .version-tag {
@@ -78,7 +78,7 @@
   .section-label {
     font-size: 0.78rem;
     font-weight: 600;
-    color: var(--ocean);
+    color: var(--blue);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-bottom: 8px;
@@ -137,7 +137,7 @@
   }
   .attr-table th {
     text-align: left;
-    color: var(--sky);
+    color: var(--blue);
     padding: 6px 10px;
     border-bottom: 1px solid rgba(130, 200, 229, 0.82);
     font-weight: 600;
@@ -149,7 +149,7 @@
     vertical-align: top;
   }
   .attr-table td:first-child {
-    color: var(--special);
+    color: var(--green);
     font-family: 'Cascadia Code', 'Consolas', monospace;
     white-space: nowrap;
   }
@@ -173,7 +173,7 @@
   }
   .s-top {
     font-size: 0.85rem;
-    color: var(--lavender);
+    color: var(--violet);
     font-weight: 600;
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(195, 165, 229, 0.82);
@@ -190,16 +190,16 @@
   }
   .s-foot {
     font-size: 0.8rem;
-    color: var(--sky);
+    color: var(--blue);
     padding-top: 6px;
     border-top: 1px solid rgba(130, 200, 229, 0.82);
   }
 
-  .highlight { color: var(--special); font-weight: 700; }
-  .hi-ocean  { color: var(--ocean); }
+  .highlight { color: var(--green); font-weight: 700; }
+  .hi-blue  { color: var(--blue); }
   .hi-pink   { color: var(--pink); }
   .hi-orange { color: var(--orange); }
-  .hi-safe   { color: var(--safe); }
+  .hi-green   { color: var(--green); }
   .hi-warn   { color: var(--warning); }
 
   /* code block */
@@ -209,7 +209,7 @@
     border-radius: 6px;
     padding: 14px 16px;
     font-size: 0.82rem;
-    color: var(--special);
+    color: var(--green);
     font-family: 'Cascadia Code', 'Consolas', monospace;
     line-height: 1.5;
     overflow-x: auto;
@@ -251,33 +251,33 @@
     <div class="palette-chip"><div class="swatch" style="background:#0C0D0C"></div><span class="chip-name">bg</span></div>
     <div class="palette-chip"><div class="swatch" style="background:#1A1B1A"></div><span class="chip-name">fill</span></div>
     <div class="palette-chip"><div class="swatch" style="background:#C6C7BD"></div><span class="chip-name">shell</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#C3A5E5"></div><span class="chip-name">lavender</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#82C8E5"></div><span class="chip-name">sky</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#E6374B"></div><span class="chip-name">warning</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#E5C3B3"></div><span class="chip-name">salmon</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#1CCAE8"></div><span class="chip-name">ocean</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#27AE60"></div><span class="chip-name">safe</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#0DA591"></div><span class="chip-name">teal</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#B484E8"></div><span class="chip-name">violet</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#5DBAE8"></div><span class="chip-name">blue</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#EF6661"></div><span class="chip-name">warning</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#F79C40"></div><span class="chip-name">orange</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#5DBAE8"></div><span class="chip-name">blue</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#71CD76"></div><span class="chip-name">green</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#71CD76"></div><span class="chip-name">green</span></div>
     <div class="palette-chip"><div class="swatch" style="background:#DBEDD8"></div><span class="chip-name">vanilla</span></div>
     <div class="palette-chip"><div class="swatch" style="background:#E3D322"></div><span class="chip-name">yellow</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#D4FFFC"></div><span class="chip-name">focus</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#B3DE73"></div><span class="chip-name">special</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#4171BF"></div><span class="chip-name">info</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#7849C9"></div><span class="chip-name">indigo</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#DBEDD8"></div><span class="chip-name">focus</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#71CD76"></div><span class="chip-name">green</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#778CE1"></div><span class="chip-name">info</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#778CE1"></div><span class="chip-name">indigo</span></div>
     <div class="palette-chip"><div class="swatch" style="background:#FF91D7"></div><span class="chip-name">pink</span></div>
-    <div class="palette-chip"><div class="swatch" style="background:#EDA109"></div><span class="chip-name">orange</span></div>
+    <div class="palette-chip"><div class="swatch" style="background:#F79C40"></div><span class="chip-name">orange</span></div>
   </div>
 </section>
 
 <hr class="divider" style="max-width:960px;margin:24px auto 0;">
 
-<!-- ─── Demo 1：基本幻燈片（lavender 主題） ─── -->
+<!-- ─── Demo 1：基本幻燈片（violet 主題） ─── -->
 <section class="demo-section">
   <p class="section-label">Demo 01</p>
-  <p class="section-title">基本幻燈片，theme=lavender</p>
+  <p class="section-title">基本幻燈片，theme=violet</p>
   <p class="section-desc">最常見用法：單一 part，含 subtitle / main / footer 結構，keyboard ← → 可切換。</p>
 
-  <slider-show theme="lavender" height="220px" show-part-indicator="false">
+  <slider-show theme="violet" height="220px" show-part-indicator="false">
     <div slide part="1">
       <div class="s-content">
         <div class="s-top">單元一：品牌色概念</div>
@@ -288,7 +288,7 @@
     <div slide part="1">
       <div class="s-content">
         <div class="s-top">單元一：品牌色概念</div>
-        <div class="s-body"><span class="hi-ocean">ocean</span>、<span class="hi-safe">safe</span>、<span class="hi-warn">warning</span><br>語意色讓元件自我描述</div>
+        <div class="s-body"><span class="hi-blue">blue</span>、<span class="hi-green">green</span>、<span class="hi-warn">warning</span><br>語意色讓元件自我描述</div>
         <div class="s-foot">第 2 / 3 頁</div>
       </div>
     </div>
@@ -304,13 +304,13 @@
 
 <hr class="divider" style="max-width:960px;margin:24px auto 0;">
 
-<!-- ─── Demo 2：多 Part，sky 主題，auto-show-part-buttons ─── -->
+<!-- ─── Demo 2：多 Part，blue 主題，auto-show-part-buttons ─── -->
 <section class="demo-section">
   <p class="section-label">Demo 02</p>
-  <p class="section-title">多 Part 分組，theme=sky，page-numbers</p>
+  <p class="section-title">多 Part 分組，theme=blue，page-numbers</p>
   <p class="section-desc">分為兩個 part，最後一頁自動顯示「下一部分」按鈕，顯示全域頁碼。</p>
 
-  <slider-show theme="sky" height="210px"
+  <slider-show theme="blue" height="210px"
     auto-show-part-buttons="true"
     show-page-numbers="true"
     show-finish="true"
@@ -318,14 +318,14 @@
     part-transition="fade">
     <div slide part="1">
       <div class="s-content">
-        <div class="s-top"><span class="hi-ocean">Part 1</span>：元件架構</div>
+        <div class="s-top"><span class="hi-blue">Part 1</span>：元件架構</div>
         <div class="s-body">透過 HTML attribute 控制行為<br>無需 JavaScript 設定</div>
         <div class="s-foot">Part 1 · 第 1 / 2 頁</div>
       </div>
     </div>
     <div slide part="1">
       <div class="s-content">
-        <div class="s-top"><span class="hi-ocean">Part 1</span>：元件架構</div>
+        <div class="s-top"><span class="hi-blue">Part 1</span>：元件架構</div>
         <div class="s-body"><span class="highlight">analyzeParts()</span> 自動解析<br><code>[slide]</code> 與 <code>[part]</code> 屬性</div>
         <div class="s-foot">Part 1 · 第 2 / 2 頁（末頁）</div>
       </div>
@@ -363,21 +363,21 @@
     <div slide part="1">
       <div class="s-content">
         <div class="s-top">答案一</div>
-        <div class="s-body"><span class="hi-orange">orange</span> = <span class="highlight">#EDA109</span><br>品牌色更新自舊版 #f69653</div>
+        <div class="s-body"><span class="hi-orange">orange</span> = <span class="highlight">#F79C40</span><br>品牌色更新自舊版 #f69653</div>
         <div class="s-foot">點擊遮罩後可見</div>
       </div>
     </div>
     <div slide part="1">
       <div class="s-content">
         <div class="s-top">答案二</div>
-        <div class="s-body"><span class="hi-safe">safe</span> = <span class="highlight">#27AE60</span><br>品牌色更新自舊版 #73d192</div>
+        <div class="s-body"><span class="hi-green">green</span> = <span class="highlight">#71CD76</span><br>品牌色更新自舊版 #73d192</div>
         <div class="s-foot">點擊遮罩後可見</div>
       </div>
     </div>
     <div slide part="1">
       <div class="s-content">
         <div class="s-top">答案三</div>
-        <div class="s-body"><span class="hi-warn">warning</span> = <span class="highlight">#E6374B</span><br>品牌色更新自舊版 #d98079</div>
+        <div class="s-body"><span class="hi-warn">warning</span> = <span class="highlight">#EF6661</span><br>品牌色更新自舊版 #d98079</div>
         <div class="s-foot">點擊遮罩後可見</div>
       </div>
     </div>
@@ -389,10 +389,10 @@
 <!-- ─── Demo 4：填空題 Quiz ─── -->
 <section class="demo-section">
   <p class="section-label">Demo 04</p>
-  <p class="section-title">填空題 &lt;quiz&gt;，theme=special</p>
+  <p class="section-title">填空題 &lt;quiz&gt;，theme=green</p>
   <p class="section-desc">填完所有空格後才能切換到下一頁，下一頁自動顯示批改結果。</p>
 
-  <slider-show theme="special" height="240px"
+  <slider-show theme="green" height="240px"
     quiz-require-complete="true"
     show-part-indicator="false">
     <div slide part="1">
@@ -400,8 +400,8 @@
         <div class="s-top">填空練習</div>
         <div class="s-body">
           <div class="quiz-text">
-            <quiz>sky 的品牌色十六進位為 {{#82C8E5}}，</quiz><br>
-            <quiz>safe 的品牌色十六進位為 {{#27AE60}}。</quiz>
+            <quiz>blue 的品牌色十六進位為 {{#5DBAE8}}，</quiz><br>
+            <quiz>green 的品牌色十六進位為 {{#71CD76}}。</quiz>
           </div>
         </div>
         <div class="s-foot">填完後方可前進 →</div>
@@ -429,22 +429,22 @@
     點擊下方幻燈片內的底線詞彙，補充說明將顯示於此。
   </div>
 
-  <div id="note-ocean">
-    <strong style="color:#1CCAE8">ocean</strong> 是品牌新增色，色號 <code>#1CCAE8</code>，適合做強調線條與 icon 高亮。
+  <div id="note-blue">
+    <strong style="color:#5DBAE8">blue</strong> 是品牌新增色，色號 <code>#5DBAE8</code>，適合做強調線條與 icon 高亮。
   </div>
   <div id="note-indigo">
-    <strong style="color:#7849C9">indigo</strong> 色號 <code>#7849C9</code>，深紫調，適用於 badge、tag 或次級按鈕。
+    <strong style="color:#778CE1">indigo</strong> 色號 <code>#778CE1</code>，深紫調，適用於 badge、tag 或次級按鈕。
   </div>
 
   <slider-show theme="indigo" height="200px"
-    extra-note-hover-color="special"
+    extra-note-hover-color="green"
     show-part-indicator="false">
     <div slide part="1">
       <div class="s-content">
         <div class="s-top">新增品牌色</div>
         <div class="s-body" style="font-size:1.05rem;text-align:left;padding:0 8px;">
           本次新增了
-          <extra-note target="indigo-note-target" source="note-ocean" prefix="bi-circle-fill ">ocean</extra-note>
+          <extra-note target="indigo-note-target" source="note-blue" prefix="bi-circle-fill ">blue</extra-note>
           與
           <extra-note target="indigo-note-target" source="note-indigo" prefix="bi-circle-fill ">indigo</extra-note>
           兩個語意色。
@@ -456,7 +456,7 @@
       <div class="s-content">
         <div class="s-top">新增品牌色（續）</div>
         <div class="s-body" style="font-size:1rem;text-align:left;padding:0 8px;">
-          同樣新增了 <span class="hi-safe">teal</span>、<span class="highlight">vanilla</span>、<span style="color:var(--yellow)">yellow</span>、<span style="color:var(--focus)">focus</span> 四個輔助語意色。
+          同樣新增了 <span class="hi-green">green</span>、<span class="highlight">vanilla</span>、<span style="color:var(--yellow)">yellow</span>、<span style="color:var(--focus)">focus</span> 四個輔助語意色。
         </div>
         <div class="s-foot">完整色盤見頂部總覽</div>
       </div>
@@ -487,9 +487,9 @@
       <tr><td>spoiler-text</td><td>點擊查看內容</td><td>遮罩提示文字</td></tr>
       <tr><td>quiz-require-complete</td><td>true</td><td>填空題全填才可換頁</td></tr>
       <tr><td>extra-note-prefix</td><td>—</td><td>全局 extra-note 前置符號</td></tr>
-      <tr><td>fontcolor-subtitle</td><td>lavender</td><td>slide-subtitle 文字色</td></tr>
+      <tr><td>fontcolor-subtitle</td><td>violet</td><td>slide-subtitle 文字色</td></tr>
       <tr><td>fontcolor-main</td><td>shell</td><td>slide-main 文字色</td></tr>
-      <tr><td>fontcolor-footer</td><td>sky</td><td>slide-footer 文字色</td></tr>
+      <tr><td>fontcolor-footer</td><td>blue</td><td>slide-footer 文字色</td></tr>
     </tbody>
   </table>
 </section>

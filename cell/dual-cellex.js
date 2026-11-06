@@ -82,17 +82,9 @@ class DualCell {
 
   static getThemeConfig(name) {
     const T = {
-      lavender:  { borderColor:'#B484E8', cellBgColor:'#2a2435', hoverBgColor:'#3d344a', textColor:'#e8dff5', menuButtonColor:'#B484E8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#B484E8' },
-      special:   { borderColor:'#71CD76', cellBgColor:'#2a2e1a', hoverBgColor:'#3d4329', textColor:'#edf0d9', menuButtonColor:'#71CD76', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#71CD76' },
-      warning:   { borderColor:'#EF6661', cellBgColor:'#2e2422', hoverBgColor:'#443532', textColor:'#f5e8e6', menuButtonColor:'#EF6661', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#EF6661' },
-      sky:       { borderColor:'#5DBAE8', cellBgColor:'#182e30', hoverBgColor:'#244044', textColor:'#d9f4f5', menuButtonColor:'#5DBAE8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#5DBAE8' },
-      safe:      { borderColor:'#71CD76', cellBgColor:'#1e2d25', hoverBgColor:'#2c4035', textColor:'#daf5ec', menuButtonColor:'#71CD76', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#71CD76' },
-      salmon:    { borderColor:'#F79C40', cellBgColor:'#2e2824', hoverBgColor:'#443d36', textColor:'#f5ede8', menuButtonColor:'#F79C40', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#F79C40' },
       pink:      { borderColor:'#FF91D7', cellBgColor:'#2e2228', hoverBgColor:'#44323d', textColor:'#ffe8f5', menuButtonColor:'#FF91D7', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FF91D7' },
-      orange:    { borderColor:'#F79C40', cellBgColor:'#2d2510', hoverBgColor:'#42381a', textColor:'#f5ece0', menuButtonColor:'#F79C40', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#F79C40' },
+      orange:    { borderColor:'#FF5530', cellBgColor:'#2d2510', hoverBgColor:'#42381a', textColor:'#f5ece0', menuButtonColor:'#FF5530', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FF5530' },
       yellow:    { borderColor:'#E3D322', cellBgColor:'#2c2d10', hoverBgColor:'#403f1a', textColor:'#f5f2d9', menuButtonColor:'#E3D322', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#E3D322' },
-      info:      { borderColor:'#778CE1', cellBgColor:'#1a2540', hoverBgColor:'#263a58', textColor:'#d9e8ff', menuButtonColor:'#778CE1', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#778CE1' },
-      stone:     { borderColor:'#5DBAE8', cellBgColor:'#1e2830', hoverBgColor:'#2c3d48', textColor:'#daeaf5', menuButtonColor:'#5DBAE8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#5DBAE8' },
       vanilla:   { borderColor:'#DBEDD8', cellBgColor:'#1e2b1e', hoverBgColor:'#2b3d2a', textColor:'#e8f5e5', menuButtonColor:'#DBEDD8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#DBEDD8' },
       indigo:    { borderColor:'#778CE1', cellBgColor:'#221838', hoverBgColor:'#33254e', textColor:'#eedff8', menuButtonColor:'#778CE1', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#778CE1' },
       /* 新色票 */
@@ -101,6 +93,12 @@ class DualCell {
       red:       { borderColor:'#EF6661', cellBgColor:'#2e2422', hoverBgColor:'#443532', textColor:'#f5e8e6', menuButtonColor:'#EF6661', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#EF6661' },
       violet:    { borderColor:'#B484E8', cellBgColor:'#2a2435', hoverBgColor:'#3d344a', textColor:'#e8dff5', menuButtonColor:'#B484E8', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#B484E8' },
       gray:      { borderColor:'#86877F', cellBgColor:'#2a2b28', hoverBgColor:'#3a3b37', textColor:'#e2e3dc', menuButtonColor:'#86877F', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#86877F' },
+      key:       { borderColor:'#51DBCF', cellBgColor:'#223333', hoverBgColor:'#2F4A48', textColor:'#E5FAF8', menuButtonColor:'#51DBCF', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#51DBCF' },
+      'key-deep':{ borderColor:'#176878', cellBgColor:'#1B2529', hoverBgColor:'#233336', textColor:'#D9F0F2', menuButtonColor:'#176878', groupTitleColor:'#FFFFFF', groupTitleBgColor:'#176878' },
+      calm:      { borderColor:'#A3C4BC', cellBgColor:'#2C3031', hoverBgColor:'#3F4644', textColor:'#F1F6F5', menuButtonColor:'#A3C4BC', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#A3C4BC' },
+      quiet:     { borderColor:'#A9B8E0', cellBgColor:'#2D2F35', hoverBgColor:'#40434B', textColor:'#F2F4FA', menuButtonColor:'#A9B8E0', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#A9B8E0' },
+      playful:   { borderColor:'#FFA987', cellBgColor:'#372D2B', hoverBgColor:'#514039', textColor:'#FFF2ED', menuButtonColor:'#FFA987', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FFA987' },
+      urgent:    { borderColor:'#FF2E63', cellBgColor:'#371E26', hoverBgColor:'#512832', textColor:'#FFE0E8', menuButtonColor:'#FF2E63', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#FF2E63' },
       default:   { borderColor:'#C6C7BD', cellBgColor:'#333333', hoverBgColor:'#404040', textColor:'#C6C7BD', menuButtonColor:'#C6C7BD', groupTitleColor:'#1C1C1E', groupTitleBgColor:'#C6C7BD' },
     };
     return T[name?.toLowerCase()] || T.default;
@@ -110,19 +108,14 @@ class DualCell {
     if (!color) return null;
     const M = {
       shell:     '#C6C7BD',
-      lavender:  '#B484E8',
-      special:   '#71CD76',
-      warning:   '#EF6661',
-      salmon:    '#F79C40',
-      sky:       '#5DBAE8',   // ★ #5DBAE8 → #5DBAE8
-      safe:      '#71CD76',
+      // ★ #5DBAE8 → #5DBAE8
       vanilla:   '#DBEDD8',   // ★ #DBEDD8 → #DBEDD8
       yellow:    '#E3D322',
-      info:      '#778CE1',   // ★ #778CE1 → #778CE1
-      stone:     '#5DBAE8',   // ★ #7090A8 → #5DBAE8
+      // ★ #778CE1 → #778CE1
+      // ★ #7090A8 → #5DBAE8
       indigo:    '#778CE1',   // ★ #778CE1 → #778CE1
       pink:      '#FF91D7',
-      orange:    '#F79C40',
+      orange:    '#FF5530',
       bg:        '#0C0D0C',
       area:      '#333333',
       /* 新色票 */
@@ -131,6 +124,13 @@ class DualCell {
       blue: '#5DBAE8',
       violet: '#B484E8',
       gray: '#86877F',
+      /* 新增色 */
+      key: '#51DBCF',
+      'key-deep': '#176878',
+      calm: '#A3C4BC',
+      quiet: '#A9B8E0',
+      playful: '#FFA987',
+      urgent: '#FF2E63',
     };
     return M[color.toLowerCase()] || color;
   }
@@ -987,29 +987,14 @@ document.addEventListener('DOMContentLoaded', () => {
     el.dualCellInstance = new DualCell(el.id, opt);
   });
 });
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

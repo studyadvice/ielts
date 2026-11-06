@@ -8,42 +8,42 @@
 <script src="ui-fillin.js"></script>
 <style>
   :root{
-    --base:#0C0D0C;--shell:#C6C7BD;--lavender:#C3A5E5;--sky:#82C8E5;--warning:#E6374B;--salmon:#E5C3B3;
-    --ocean:#1CCAE8;--safe:#27AE60;--teal:#0DA591;--vanilla:#DBEDD8;--yellow:#E3D322;--bluebell:#7589D9;
-    --special:#B3DE73;--info:#92B5E0;--indigo:#7849C9;--pink:#FF91D7;--orange:#EDA109;
+    --base:#0C0D0C;--shell:#C6C7BD;--violet:#B484E8;--blue:#5DBAE8;--warning:#EF6661;--orange:#F79C40;
+    --blue:#5DBAE8;--green:#71CD76;--green:#71CD76;--vanilla:#DBEDD8;--yellow:#E3D322;--indigo:#778CE1;
+    --green:#71CD76;--info:#778CE1;--indigo:#778CE1;--pink:#FF91D7;--orange:#F79C40;
   }
   html{font-size:16px}
   body{background:var(--base);color:var(--shell);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem;margin:0;padding:0}
   .page{max-width:1600px;margin:0 auto;padding:32px 40px 64px}
-  h1{font-size:2rem;color:var(--sky);margin:0 0 8px}
-  h2{font-size:1.4rem;color:var(--lavender);margin:40px 0 12px;padding:0 0 6px;border-bottom:1px solid rgba(198,199,189,0.78)}
+  h1{font-size:2rem;color:var(--blue);margin:0 0 8px}
+  h2{font-size:1.4rem;color:var(--violet);margin:40px 0 12px;padding:0 0 6px;border-bottom:1px solid rgba(198,199,189,0.78)}
   h3{font-size:1.1rem;color:var(--vanilla);margin:16px 0 8px}
   p.lead-note{font-size:1rem;color:var(--shell);margin:0 0 16px}
   code{color:var(--orange);font-size:0.95rem}
-  pre.code{background:#151715;color:var(--vanilla);border:1px solid var(--bluebell);border-radius:6px;padding:12px 16px;margin:10px 0 0;font-size:0.9rem;white-space:pre-wrap}
+  pre.code{background:#151715;color:var(--vanilla);border:1px solid var(--indigo);border-radius:6px;padding:12px 16px;margin:10px 0 0;font-size:0.9rem;white-space:pre-wrap}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .sw{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(198,199,189,0.78);border-radius:6px;cursor:pointer;background:transparent;color:var(--shell);font-size:0.95rem;text-align:left}
-  .sw:hover{border-color:var(--sky)}
+  .sw:hover{border-color:var(--blue)}
   .sw i{display:block;width:28px;height:28px;border-radius:4px;border:1px solid var(--shell);flex:none}
   .sw small{display:block;color:var(--info);font-size:0.78rem}
-  .panel{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:0 0 16px;padding:16px;border:1px solid var(--bluebell);border-radius:8px}
+  .panel{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:0 0 16px;padding:16px;border:1px solid var(--indigo);border-radius:8px}
   .panel label{display:block;font-size:0.9rem;color:var(--info);margin:0 0 4px}
   .panel select{width:100%;background:var(--base);color:var(--shell);border:1px solid var(--shell);border-radius:4px;padding:4px 8px;font-size:0.95rem}
   table.attrs{width:100%;border-collapse:collapse;font-size:0.95rem}
   table.attrs th,table.attrs td{border:1px solid rgba(198,199,189,0.78);padding:6px 10px;vertical-align:top}
-  table.attrs th{color:var(--sky);text-align:left}
+  table.attrs th{color:var(--blue);text-align:left}
   .alert-zone .alert{margin:12px 0 0;padding:8px 14px;font-size:0.95rem}
-  .alert-zone .alert-success{background:var(--safe);color:var(--base);border-color:var(--safe)}
+  .alert-zone .alert-success{background:var(--green);color:var(--base);border-color:var(--green)}
   .alert-zone .alert-info{background:var(--info);color:var(--base);border-color:var(--info)}
-  .btn-copy{background:transparent;color:var(--sky);border:1px solid var(--sky);border-radius:4px;padding:3px 12px;font-size:0.9rem;margin:10px 0 0}
-  .btn-copy:hover{background:var(--sky);color:var(--base)}
+  .btn-copy{background:transparent;color:var(--blue);border:1px solid var(--blue);border-radius:4px;padding:3px 12px;font-size:0.9rem;margin:10px 0 0}
+  .btn-copy:hover{background:var(--blue);color:var(--base)}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>ui-fillin：用品牌色名稱設定各部位色彩</h1>
-  <p class="lead-note">所有 <code>*-color</code> 屬性與 <code>line-color</code> 現在都可以直接寫品牌色名稱，例如 <code>accent-color="sky"</code>。名稱後面加 <code>/透明度</code> 可指定透明度，例如 <code>accent-color="orange/0.85"</code>，低於 0.78 會自動提高到 0.78。</p>
+  <p class="lead-note">所有 <code>*-color</code> 屬性與 <code>line-color</code> 現在都可以直接寫品牌色名稱，例如 <code>accent-color="blue"</code>。名稱後面加 <code>/透明度</code> 可指定透明度，例如 <code>accent-color="orange/0.85"</code>，低於 0.78 會自動提高到 0.78。</p>
 
   <h2>品牌色票</h2>
   <p class="lead-note">點擊色塊可複製名稱。</p>
@@ -60,16 +60,16 @@
           <li>下列哪些是直轄市？{*桃園市|*台中市|新竹市|*高雄市}</li>
         </ol>
       </div>
-      <ui-fillin accent-color="sky" ok-color="teal" bad-color="pink" line-color="lavender" head-color="yellow">
+      <ui-fillin accent-color="blue" ok-color="green" bad-color="pink" line-color="violet" head-color="yellow">
         <main-box source="src1"></main-box>
       </ui-fillin>
     </div>
     <div>
 <pre class="code">&lt;ui-fillin
-  accent-color="sky"
-  ok-color="teal"
+  accent-color="blue"
+  ok-color="green"
   bad-color="pink"
-  line-color="lavender"
+  line-color="violet"
   head-color="yellow"&gt;
   &lt;main-box source="src1"&gt;&lt;/main-box&gt;
 &lt;/ui-fillin&gt;</pre>
@@ -83,19 +83,19 @@
         <p>The early bird {*catches|catch|caught} the worm. Practice {*makes|make|made} perfect.</p>
         <p>Actions speak louder {*than|then} words.</p>
       </div>
-      <ui-fillin accent-color="orange/0.85" blank-color="salmon" picked-color="special" hover-color="ocean"
-                 btn-color="bluebell" alert-color="info" line-color="indigo/0.9" menu-color="#151715">
+      <ui-fillin accent-color="orange/0.85" blank-color="orange" picked-color="green" hover-color="blue"
+                 btn-color="indigo" alert-color="indigo" line-color="indigo/0.9" menu-color="#151715">
         <main-box source="src2"></main-box>
       </ui-fillin>
     </div>
     <div>
 <pre class="code">&lt;ui-fillin
   accent-color="orange/0.85"
-  blank-color="salmon"
-  picked-color="special"
-  hover-color="ocean"
-  btn-color="bluebell"
-  alert-color="info"
+  blank-color="orange"
+  picked-color="green"
+  hover-color="blue"
+  btn-color="indigo"
+  alert-color="indigo"
   line-color="indigo/0.9"
   menu-color="#151715"&gt;
   &lt;main-box source="src2"&gt;&lt;/main-box&gt;
@@ -130,7 +130,7 @@
       <tr><td><code>bg-color</code></td><td>元件底色，也是反白文字色</td><td>base</td></tr>
       <tr><td><code>text-color</code></td><td>主要文字</td><td>shell</td></tr>
       <tr><td><code>accent-color</code></td><td>主色調，下列未設定的部位都會沿用</td><td>shell</td></tr>
-      <tr><td><code>ok-color</code></td><td>答對</td><td>safe</td></tr>
+      <tr><td><code>ok-color</code></td><td>答對</td><td>green</td></tr>
       <tr><td><code>bad-color</code></td><td>答錯、錯誤訊息</td><td>warning</td></tr>
       <tr><td><code>blank-color</code></td><td>挖空格的框線與文字</td><td>沿用 accent</td></tr>
       <tr><td><code>picked-color</code></td><td>已作答挖空格的底色</td><td>沿用 blank</td></tr>
@@ -142,7 +142,7 @@
       <tr><td><code>line-color</code></td><td>外框、表格線、分隔線（另可用 <code>line-alpha</code>）</td><td>shell</td></tr>
     </tbody>
   </table>
-  <p class="lead-note" style="margin-top:12px">可用值：品牌色名稱（不分大小寫，<code>bg</code> 與 <code>background</code> 是 <code>base</code> 的別名）、<code>色名/透明度</code>、hex、rgba（透明度不得低於 0.78）、hsl。<code>orange</code>、<code>pink</code> 等與 CSS 內建色名同名者，一律採用品牌色。無法辨識的值會改用預設色，並在 console 顯示警告。另可透過 <code>customElements.get('ui-fillin').brand</code> 取得色票，或用 CSS 變數 <code>var(--uf-c-sky)</code> 在元件內自訂樣式。</p>
+  <p class="lead-note" style="margin-top:12px">可用值：品牌色名稱（不分大小寫，<code>bg</code> 與 <code>background</code> 是 <code>base</code> 的別名）、<code>色名/透明度</code>、hex、rgba（透明度不得低於 0.78）、hsl。<code>orange</code>、<code>pink</code> 等與 CSS 內建色名同名者，一律採用品牌色。無法辨識的值會改用預設色，並在 console 顯示警告。另可透過 <code>customElements.get('ui-fillin').brand</code> 取得色票，或用 CSS 變數 <code>var(--uf-c-blue)</code> 在元件內自訂樣式。</p>
 </div>
 
 <script>
@@ -185,7 +185,7 @@
   const live = document.getElementById('live');
   const parts = UF.colorParts;
   const panel = document.getElementById('panel');
-  const preset = { accent: 'sky', ok: 'safe', bad: 'warning', line: 'bluebell' };
+  const preset = { accent: 'blue', ok: 'green', bad: 'warning', line: 'indigo' };
 
   parts.forEach((part) => {
     const attr = part + '-color';

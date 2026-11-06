@@ -3,17 +3,23 @@
   if (customElements.get('layer-switch')) return;
 
   const PALETTE = {
-    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
-    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
-    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#DBEDD8',
-    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#F79C40',
+    base: '#0C0D0C', shell: '#C6C7BD',
+    vanilla: '#DBEDD8', yellow: '#E3D322',
+    indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
-    gray: '#86877F'
+    gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
   const BG = PALETTE.base;
   const LS_PALETTE = ['blue', 'yellow', 'violet', 'orange', 'green', 'pink', 'indigo', 'red', 'vanilla', 'gray'];
@@ -125,15 +131,15 @@
 layer-switch:not([data-ready]),collocation-map:not([data-ready]),cm-group:not([data-ready]),ui-spotlight:not([data-ready]){visibility:hidden;}
 spotlight{display:none;}
 [data-urm-src]{display:none!important;}
-.urm-title{font-size:1.2rem;font-weight:700;color:${PALETTE.lavender};margin:0 0 12px 0;}
+.urm-title{font-size:1.2rem;font-weight:700;color:${PALETTE.violet};margin:0 0 12px 0;}
 .urm-panel{margin:16px 0 0 0;border:1px solid ${PALETTE.shell};border-radius:8px;padding:16px;color:${PALETTE.shell};}
-.urm-head{font-size:1.05rem;font-weight:700;color:${PALETTE.lavender};margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid ${PALETTE.lavender};}
+.urm-head{font-size:1.05rem;font-weight:700;color:${PALETTE.violet};margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid ${PALETTE.violet};}
 .urm-head:empty{display:none;}
 .urm-body{line-height:1.7;}
 .urm-body > :first-child{margin-top:0;}
 .urm-body > :last-child{margin-bottom:0;}
-.urm-ph{color:${PALETTE.info};font-size:0.95rem;text-align:center;border:1px dashed ${PALETTE.info};border-radius:8px;padding:20px 16px;}
-.urm-alert{background:${BG};border:1px solid ${PALETTE.warning};color:${PALETTE.warning};border-radius:6px;padding:12px 16px;margin:0;font-size:0.95rem;}
+.urm-ph{color:${PALETTE.indigo};font-size:0.95rem;text-align:center;border:1px dashed ${PALETTE.indigo};border-radius:8px;padding:20px 16px;}
+.urm-alert{background:${BG};border:1px solid ${PALETTE.red};color:${PALETTE.red};border-radius:6px;padding:12px 16px;margin:0;font-size:0.95rem;}
 
 layer-switch{display:block;color:${PALETTE.shell};}
 layer-switch[bordered]{border:1px solid ${PALETTE.shell};border-radius:8px;padding:16px;}
@@ -149,7 +155,7 @@ layer-switch[toggle-position="bottom"] .urm-ls-ctrl{margin:14px 0 0 0;}
 layer-switch[detail-trigger="click"] .urm-ls-hasdetail{cursor:pointer;}
 .urm-ls-mark-ul{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px;padding:0;}
 .urm-ls-mark-box{outline:2px solid transparent;outline-offset:1px;}
-.urm-ls-locked{box-shadow:0 0 0 2px ${PALETTE.focus};}
+.urm-ls-locked{box-shadow:0 0 0 2px ${PALETTE.vanilla};}
 
 ui-spotlight{display:block;position:relative;cursor:pointer;}
 .urm-sp-ring{position:absolute;pointer-events:none;display:none;}
@@ -459,7 +465,7 @@ collocation-map{display:inline-block;vertical-align:middle;color:${PALETTE.shell
   class UiSpotlight extends Base {
     _build() {
       const a = n => this.getAttribute(n);
-      const c = color(attr(this, 'color', 'theme'), PALETTE.focus);
+      const c = color(attr(this, 'color', 'theme'), PALETTE.vanilla);
       this.classList.add('urm-sp');
       this._spDim = String(num(a('dim'), 0.15));
       // 遮罩透明度不低於 0.78
@@ -702,29 +708,14 @@ collocation-map{display:inline-block;vertical-align:middle;color:${PALETTE.shell
 
   window.UiReading2 = { init: () => upgradeLegacy(document), colors: PALETTE };
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

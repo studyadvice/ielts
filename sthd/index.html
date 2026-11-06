@@ -11,15 +11,15 @@
 	font-size: 16px;
 	--bg: #0C0D0C;
 	--shell: #C6C7BD;
-	--ocean: #1CCAE8;
-	--sky: #82C8E5;
+	--blue: #5DBAE8;
+	--blue: #5DBAE8;
 	--vanilla: #DBEDD8;
 	--yellow: #E3D322;
-	--special: #B3DE73;
-	--salmon: #E5C3B3;
-	--lavender: #C3A5E5;
-	--orange: #EDA109;
-	--safe: #27AE60;
+	--green: #71CD76;
+	--orange: #F79C40;
+	--violet: #B484E8;
+	--orange: #F79C40;
+	--green: #71CD76;
 }
 html { scroll-behavior: smooth; }
 body {
@@ -55,7 +55,7 @@ h3 { font-size: 1.375rem; line-height: 1.4; }
 	padding: 3px 12px;
 	border-radius: 999px;
 	border: 1px solid rgba(130, 200, 229, 0.86);
-	color: var(--sky);
+	color: var(--blue);
 	font-size: 1rem;
 	line-height: 1.4;
 	margin-bottom: 12px;
@@ -67,7 +67,7 @@ h3 { font-size: 1.375rem; line-height: 1.4; }
 	display: inline-block;
 	margin-bottom: 12px;
 }
-.hl { color: var(--ocean); }
+.hl { color: var(--blue); }
 .filler { color: rgba(198, 199, 189, 0.88); }
 .code-box {
 	background-color: rgba(198, 199, 189, 0.1);
@@ -79,7 +79,7 @@ h3 { font-size: 1.375rem; line-height: 1.4; }
 	line-height: 1.5;
 	white-space: pre;
 	overflow-x: auto;
-	color: var(--special);
+	color: var(--green);
 }
 table.attr-table {
 	width: 100%;
@@ -94,7 +94,7 @@ table.attr-table td {
 	vertical-align: top;
 	text-align: left;
 }
-table.attr-table th { color: var(--ocean); }
+table.attr-table th { color: var(--blue); }
 table.attr-table code { color: var(--yellow); }
 #event-log {
 	position: fixed;
@@ -111,7 +111,7 @@ table.attr-table code { color: var(--yellow); }
 	line-height: 1.5;
 	z-index: 200;
 }
-#event-log b { color: var(--ocean); }
+#event-log b { color: var(--blue); }
 </style>
 </head>
 <body>
@@ -121,14 +121,14 @@ table.attr-table code { color: var(--yellow); }
 	<p class="lead-note">
 		捲動時 section 標題自動吸頂、縮小字級、換上半透明底色，並顯示章節標籤、回頂鈕與本節閱讀進度。<br>
 		下方六個 section 示範不同參數組合，右下角會即時記錄吸頂事件。<br>
-		<span style="color: var(--special);">v1.1.0：外框高度鎖定，縮放只發生在內層，捲動期間文件總高度固定不變，閃爍問題已排除。</span>
+		<span style="color: var(--green);">v1.1.0：外框高度鎖定，縮放只發生在內層，捲動期間文件總高度固定不變，閃爍問題已排除。</span>
 	</p>
 </div>
 
 <!-- 1. 預設 -->
 <section id="sec-basic" class="demo-sec">
 	<sticky-head label="Lesson 1" top-btn="回本節">
-		<h2><i class="bi bi-nut-fill"></i> 預設樣式：ocean 強調色</h2>
+		<h2><i class="bi bi-nut-fill"></i> 預設樣式：blue 強調色</h2>
 	</sticky-head>
 	<div class="demo-body">
 		<span class="tag-note">IELTS Speaking Part 1</span><br>
@@ -152,7 +152,7 @@ table.attr-table code { color: var(--yellow); }
 			往下捲動即可看到標題縮成 1.125rem、底色轉為 rgba 0.88 的深色、底部出現進度條。進度條反映的是「目前讀到這一節的幾成」，不是整頁進度。
 		</p>
 		<p class="filler">
-			填充內容：I particularly love freshly made deli food because it's both wholesome and hassle-free. In fact, a small family-run deli a few blocks away from my condo serves a smoked salmon salad that's my ultimate comfort food when I don't feel like cooking.
+			填充內容：I particularly love freshly made deli food because it's both wholesome and hassle-free. In fact, a small family-run deli a few blocks away from my condo serves a smoked orange salad that's my ultimate comfort food when I don't feel like cooking.
 		</p>
 		<p class="filler">
 			填充內容：To be completely honest, I'm often so tied up with work that I don't really do much recycling at home. On the flip side, my office has a dedicated team that handles waste sorting.
@@ -190,14 +190,14 @@ table.attr-table code { color: var(--yellow); }
 
 <!-- 3. 有頂部偏移 -->
 <section id="sec-offset" class="demo-sec">
-	<sticky-head accent="special" top="56px" label="top=56px" top-btn="回本節">
+	<sticky-head accent="green" top="56px" label="top=56px" top-btn="回本節">
 		<h2><i class="bi bi-nut-fill"></i> 頁面已有固定導覽列時：top 偏移</h2>
 	</sticky-head>
 	<div class="demo-body">
 		<p>
 			如果你的頁面頂部已經有一條固定工具列，給 <code>top</code> 一個等於工具列高度的值，吸頂位置就會往下讓開。哨兵判斷與進度計算都會跟著這個偏移走。
 		</p>
-		<div class="code-box">&lt;sticky-head top="56px" accent="special"&gt;</div>
+		<div class="code-box">&lt;sticky-head top="56px" accent="green"&gt;</div>
 		<p class="filler">
 			填充內容：I'd say I prefer eating at home because it's more budget-friendly and gives me greater control over what I eat. That said, I'm always up for eating out when I'm too worn out to cook.
 		</p>
@@ -215,14 +215,14 @@ table.attr-table code { color: var(--yellow); }
 
 <!-- 4. 自動隱藏 -->
 <section id="sec-autohide" class="demo-sec">
-	<sticky-head accent="salmon" auto-hide label="auto-hide" top-btn="回本節">
+	<sticky-head accent="orange" auto-hide label="auto-hide" top-btn="回本節">
 		<h2><i class="bi bi-nut-fill"></i> 向下捲動時自動收起</h2>
 	</sticky-head>
 	<div class="demo-body">
 		<p>
 			加上 <code>auto-hide</code> 後，向下捲動時標題列會滑出畫面，向上捲動立刻滑回來。適合內容很長、希望閱讀時完全不受干擾的精讀章節。
 		</p>
-		<div class="code-box">&lt;sticky-head accent="salmon" auto-hide&gt;</div>
+		<div class="code-box">&lt;sticky-head accent="orange" auto-hide&gt;</div>
 		<p class="filler">
 			填充內容：Not as often as I'd like to. Since I work full-time in Taipei, my weekdays are usually packed with meetings, deadlines, and commuting. By the time Friday rolls around, I'm often too exhausted to make elaborate plans.
 		</p>
@@ -243,7 +243,7 @@ table.attr-table code { color: var(--yellow); }
 
 <!-- 5. 無進度條、無陰影、極簡 -->
 <section id="sec-minimal" class="demo-sec">
-	<sticky-head accent="lavender" progress="false" shadow="false" opacity="0.82"
+	<sticky-head accent="violet" progress="false" shadow="false" opacity="0.82"
 		size="1.5rem" size-stuck="1.125rem" padding="12px 20px" padding-stuck="6px 20px">
 		<h2><i class="bi bi-nut-fill"></i> 極簡版：關掉進度條與陰影</h2>
 	</sticky-head>
@@ -251,7 +251,7 @@ table.attr-table code { color: var(--yellow); }
 		<p>
 			沒有 <code>label</code> 與 <code>top-btn</code> 時右側區塊自動省略。<code>opacity</code> 最低只會套用到 0.78，低於此值會被自動提高。
 		</p>
-		<div class="code-box">&lt;sticky-head accent="lavender" progress="false" shadow="false"
+		<div class="code-box">&lt;sticky-head accent="violet" progress="false" shadow="false"
   opacity="0.82" size="1.5rem" size-stuck="1.125rem"
   padding="12px 20px" padding-stuck="6px 20px"&gt;</div>
 		<p class="filler">
@@ -268,7 +268,7 @@ table.attr-table code { color: var(--yellow); }
 
 <!-- 6. 屬性總表 -->
 <section id="sec-api" class="demo-sec">
-	<sticky-head accent="sky" label="API" top-btn="回本節">
+	<sticky-head accent="blue" label="API" top-btn="回本節">
 		<h2><i class="bi bi-nut-fill"></i> 屬性與事件總表</h2>
 	</sticky-head>
 	<div class="demo-body">
@@ -278,7 +278,7 @@ table.attr-table code { color: var(--yellow); }
 			</thead>
 			<tbody>
 				<tr><td><code>top</code></td><td>0px</td><td>吸頂位置的頂部偏移，支援 px 與 rem</td></tr>
-				<tr><td><code>accent</code></td><td>ocean</td><td>強調色，套用於下框線、chip、按鈕、進度條</td></tr>
+				<tr><td><code>accent</code></td><td>blue</td><td>強調色，套用於下框線、chip、按鈕、進度條</td></tr>
 				<tr><td><code>color</code></td><td>shell</td><td>標題文字色</td></tr>
 				<tr><td><code>bg</code></td><td>#0C0D0C</td><td>吸頂後的底色（未吸頂時為透明）</td></tr>
 				<tr><td><code>opacity</code></td><td>0.88</td><td>底色透明度，低於 0.78 會被自動提高</td></tr>
@@ -318,7 +318,7 @@ StickyHead.all()      // 取得所有實例</div>
 			把原本寫在 section 內的標題區包起來即可，不需要改動其他結構：
 		</p>
 		<div class="code-box">&lt;section id="ielts-ex-vocabulary"&gt;
-  &lt;sticky-head label="Lesson 1" top-btn="回本節" accent="ocean"&gt;
+  &lt;sticky-head label="Lesson 1" top-btn="回本節" accent="blue"&gt;
     &lt;div class="fs-1"&gt;&lt;i class="bi bi-nut-fill"&gt;&lt;/i&gt; 從優質範例擴大詞彙資源&lt;/div&gt;
   &lt;/sticky-head&gt;
   &lt;div class="mx-3 px-3"&gt; ... &lt;/div&gt;

@@ -39,7 +39,7 @@
   table.attrs{ width:100%; border-collapse:collapse; margin:10px 0 22px; font-size:0.9rem; }
   table.attrs th, table.attrs td{ border:1px solid var(--line); padding:6px 10px; text-align:left; vertical-align:top; }
   table.attrs th{ background:var(--panel); font-weight:700; }
-  table.attrs code{ background:var(--code-bg); color:#82C8E5; padding:1px 5px; border-radius:3px; font-size:0.85em; }
+  table.attrs code{ background:var(--code-bg); color:#5DBAE8; padding:1px 5px; border-radius:3px; font-size:0.85em; }
   .row{
     display:grid; grid-template-columns: minmax(280px,440px) 1fr;
     gap:18px; align-items:start; padding:18px 0; border-bottom:1px solid var(--line);
@@ -102,7 +102,7 @@
     <h3>length="8"</h3>
     <pre><code>&lt;ui-otp length="8"&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
-  <div class="demo"><ui-otp length="8" accent-color="sky"></ui-otp></div>
+  <div class="demo"><ui-otp length="8" accent-color="blue"></ui-otp></div>
 </div>
 
 <div class="row">
@@ -110,7 +110,7 @@
     <h3>groups="2,3,3" + separator="·"</h3>
     <pre><code>&lt;ui-otp length="8" groups="2,3,3" separator="·"&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
-  <div class="demo"><ui-otp length="8" groups="2,3,3" separator="·" accent-color="lavender"></ui-otp></div>
+  <div class="demo"><ui-otp length="8" groups="2,3,3" separator="·" accent-color="violet"></ui-otp></div>
 </div>
 
 <h2 id="otp-content">2. 內容限制</h2>
@@ -127,7 +127,7 @@
     <pre><code>&lt;ui-otp length="6" type="alnum" case="upper"&gt;&lt;/ui-otp&gt;</code></pre>
     <p>英數混合，自動轉大寫。</p>
   </div>
-  <div class="demo"><ui-otp length="6" type="alnum" case="upper" accent-color="special"></ui-otp></div>
+  <div class="demo"><ui-otp length="6" type="alnum" case="upper" accent-color="green"></ui-otp></div>
 </div>
 
 <div class="row">
@@ -135,7 +135,7 @@
     <h3>mask</h3>
     <pre><code>&lt;ui-otp length="6" mask&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
-  <div class="demo"><ui-otp length="6" mask accent-color="teal"></ui-otp></div>
+  <div class="demo"><ui-otp length="6" mask accent-color="green"></ui-otp></div>
 </div>
 
 <h2 id="otp-size">3. 尺寸外觀</h2>
@@ -176,15 +176,15 @@
 <tr><td><code>error-color</code></td><td>驗證失敗時的外框與訊息色</td></tr>
 <tr><td><code>valid-color</code></td><td>驗證成功時的外框與訊息色</td></tr>
 </table>
-<p class="section-intro">可用色票名稱：background, shell, lavender, sky, warning, salmon, ocean, safe, teal, vanilla, yellow, focus, special, info, indigo, pink, orange（亦可直接填 hex／rgba）。</p>
+<p class="section-intro">可用色票名稱：background, shell, violet, blue, red, orange, green, vanilla, yellow, indigo, pink, gray, key, key-deep, calm, quiet, playful, urgent（亦可直接填 hex／rgba）。</p>
 
 <div class="row">
   <div class="meta">
     <h3>自訂底色與文字色</h3>
-    <pre><code>&lt;ui-otp length="6" bg-color="indigo" text-color="focus"
+    <pre><code>&lt;ui-otp length="6" bg-color="indigo" text-color="vanilla"
   border-color="rgba(255,255,255,.3)" accent-color="pink"&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
-  <div class="demo"><ui-otp length="6" bg-color="indigo" text-color="focus" border-color="rgba(255,255,255,.3)" accent-color="pink"></ui-otp></div>
+  <div class="demo"><ui-otp length="6" bg-color="indigo" text-color="vanilla" border-color="rgba(255,255,255,.3)" accent-color="pink"></ui-otp></div>
 </div>
 
 <h2 id="otp-ring">5. Focus ring</h2>
@@ -197,11 +197,11 @@
 <div class="row">
   <div class="meta">
     <h3>粗、顯眼的 focus ring</h3>
-    <pre><code>&lt;ui-otp length="6" accent-color="warning"
-  focus-ring-width="6px" focus-ring-color="warning"&gt;&lt;/ui-otp&gt;</code></pre>
+    <pre><code>&lt;ui-otp length="6" accent-color="red"
+  focus-ring-width="6px" focus-ring-color="red"&gt;&lt;/ui-otp&gt;</code></pre>
     <p>點擊任一格聚焦即可看到效果。</p>
   </div>
-  <div class="demo"><ui-otp length="6" accent-color="warning" focus-ring-width="6px" focus-ring-color="warning"></ui-otp></div>
+  <div class="demo"><ui-otp length="6" accent-color="red" focus-ring-width="6px" focus-ring-color="red"></ui-otp></div>
 </div>
 
 <h2 id="otp-valid">6. 驗證</h2>
@@ -216,10 +216,10 @@
   <div class="meta">
     <h3>expected-value="654321"</h3>
     <pre><code>&lt;ui-otp length="6" expected-value="654321"
-  valid-color="safe" error-color="warning"&gt;&lt;/ui-otp&gt;</code></pre>
+  valid-color="green" error-color="red"&gt;&lt;/ui-otp&gt;</code></pre>
     <p>填滿 6 碼即自動比對。</p>
   </div>
-  <div class="demo"><ui-otp length="6" expected-value="654321" valid-color="safe" error-color="warning"></ui-otp></div>
+  <div class="demo"><ui-otp length="6" expected-value="654321" valid-color="green" error-color="red"></ui-otp></div>
 </div>
 
 <div class="row">
@@ -229,7 +229,7 @@
   clear-on-invalid clear-delay="1200"&gt;&lt;/ui-otp&gt;</code></pre>
     <p>答錯 1.2 秒後自動清空（比預設的 700ms 慢）。</p>
   </div>
-  <div class="demo"><ui-otp length="6" expected-value="111111" clear-on-invalid clear-delay="1200" accent-color="ocean"></ui-otp></div>
+  <div class="demo"><ui-otp length="6" expected-value="111111" clear-on-invalid clear-delay="1200" accent-color="blue"></ui-otp></div>
 </div>
 
 <h2 id="otp-label">7. 文字標籤與行為</h2>
@@ -266,13 +266,13 @@
     <pre><code>&lt;ui-otp
   length="6" groups="3,3" separator="-"
   cell-size="52px" gap="10px" font-size="1.3rem" radius="10px"
-  accent-color="teal" valid-color="safe" error-color="warning"
+  accent-color="green" valid-color="green" error-color="red"
   focus-ring-width="4px"
   expected-value="246810" clear-on-invalid clear-delay="900"
   label-invalid="驗證碼錯誤" label-valid="驗證成功"&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
   <div class="demo">
-    <ui-otp length="6" groups="3,3" separator="-" cell-size="52px" gap="10px" font-size="1.3rem" radius="10px" accent-color="teal" valid-color="safe" error-color="warning" focus-ring-width="4px" expected-value="246810" clear-on-invalid clear-delay="900" label-invalid="驗證碼錯誤" label-valid="驗證成功"></ui-otp>
+    <ui-otp length="6" groups="3,3" separator="-" cell-size="52px" gap="10px" font-size="1.3rem" radius="10px" accent-color="green" valid-color="green" error-color="red" focus-ring-width="4px" expected-value="246810" clear-on-invalid clear-delay="900" label-invalid="驗證碼錯誤" label-valid="驗證成功"></ui-otp>
   </div>
 </div>
 
@@ -296,9 +296,9 @@
   <div class="meta">
     <h3>format 版型 + alnum 字元集</h3>
     <pre><code>&lt;ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO"
-  type="alnum" accent-color="lavender"&gt;&lt;/ui-otp&gt;</code></pre>
+  type="alnum" accent-color="violet"&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
-  <div class="demo"><ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO" type="alnum" accent-color="lavender"></ui-otp></div>
+  <div class="demo"><ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO" type="alnum" accent-color="violet"></ui-otp></div>
 </div>
 
 <div class="row">
@@ -326,9 +326,9 @@
     <pre><code>&lt;ui-otp mode="generate" length="10" groups="5,5"
   copy-position="left" copy-text="複製"
   copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill"
-  accent-color="special"&gt;&lt;/ui-otp&gt;</code></pre>
+  accent-color="green"&gt;&lt;/ui-otp&gt;</code></pre>
   </div>
-  <div class="demo"><ui-otp mode="generate" length="10" groups="5,5" copy-position="left" copy-text="複製" copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill" accent-color="special"></ui-otp></div>
+  <div class="demo"><ui-otp mode="generate" length="10" groups="5,5" copy-position="left" copy-text="複製" copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill" accent-color="green"></ui-otp></div>
 </div>
 
 <h2 id="otp-gen-check">11. 後端查重（check-url，generate／input 共用）</h2>
@@ -347,10 +347,10 @@
     <h3>generate 模式自動查重（下方用假 fetch 模擬後端）</h3>
     <pre><code>&lt;ui-otp mode="generate" length="6" type="numeric"
   check-url="/your/check_code.php"
-  check-max-retries="5" accent-color="teal"&gt;&lt;/ui-otp&gt;</code></pre>
+  check-max-retries="5" accent-color="green"&gt;&lt;/ui-otp&gt;</code></pre>
     <p>實際使用時把 <code>check-url</code> 換成你自己的 PHP 端點即可，這裡的假後端只是讓示範頁能獨立運作。</p>
   </div>
-  <div class="demo"><ui-otp id="refCheckGen" mode="generate" length="6" type="numeric" check-url="/fake/ref_check.php" check-max-retries="5" accent-color="teal"></ui-otp></div>
+  <div class="demo"><ui-otp id="refCheckGen" mode="generate" length="6" type="numeric" check-url="/fake/ref_check.php" check-max-retries="5" accent-color="green"></ui-otp></div>
 </div>
 
 <script>
@@ -386,7 +386,7 @@
     <pre><code>&lt;ui-blank expected-value="cat|Cat"
   placeholder="輸入 cat 或 Cat"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="cat|Cat" placeholder="輸入 cat 或 Cat" button-icon="bi-send" accent-color="sky"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="cat|Cat" placeholder="輸入 cat 或 Cat" button-icon="bi-send" accent-color="blue"></ui-blank></div>
 </div>
 
 <div class="row">
@@ -395,7 +395,7 @@
     <pre><code>&lt;ui-blank expected-value="2024" normalize-width
   placeholder="可用全形輸入法打數字"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="2024" normalize-width placeholder="可用全形輸入法打數字" button-icon="bi-send" accent-color="lavender"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="2024" normalize-width placeholder="可用全形輸入法打數字" button-icon="bi-send" accent-color="violet"></ui-blank></div>
 </div>
 
 <h2 id="blank-button">2. 送出按鈕</h2>
@@ -414,7 +414,7 @@
   button-icon="bi-arrow-right-circle" button-text="送出"
   button-position="icon-left"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="go" button-icon="bi-arrow-right-circle" button-text="送出" button-position="icon-left" accent-color="special"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="go" button-icon="bi-arrow-right-circle" button-text="送出" button-position="icon-left" accent-color="green"></ui-blank></div>
 </div>
 
 <div class="row">
@@ -424,7 +424,7 @@
   button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
     <p>按 Enter 不會送出，必須點按鈕。</p>
   </div>
-  <div class="demo"><ui-blank expected-value="go" disable-enter-submit button-icon="bi-send" accent-color="teal"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="go" disable-enter-submit button-icon="bi-send" accent-color="green"></ui-blank></div>
 </div>
 
 <h2 id="blank-size">3. 尺寸外觀</h2>
@@ -473,11 +473,11 @@
   <div class="meta">
     <h3>自訂按鈕配色 + 粗 focus ring</h3>
     <pre><code>&lt;ui-blank expected-value="hi"
-  btn-bg="indigo" btn-color="focus"
+  btn-bg="indigo" btn-color="vanilla"
   focus-ring-width="5px" focus-ring-color="indigo"
   button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="hi" btn-bg="indigo" btn-color="focus" focus-ring-width="5px" focus-ring-color="indigo" button-icon="bi-send"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="hi" btn-bg="indigo" btn-color="vanilla" focus-ring-width="5px" focus-ring-color="indigo" button-icon="bi-send"></ui-blank></div>
 </div>
 
 <h2 id="blank-valid">5. 驗證行為</h2>
@@ -494,7 +494,7 @@
     <pre><code>&lt;ui-blank expected-value="dog" clear-on-invalid
   clear-delay="1500" button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="dog" clear-on-invalid clear-delay="1500" button-icon="bi-send" accent-color="warning"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="dog" clear-on-invalid clear-delay="1500" button-icon="bi-send" accent-color="red"></ui-blank></div>
 </div>
 
 <div class="row">
@@ -528,7 +528,7 @@
   label-valid="答對了！" label-invalid="不對喔"
   button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="ok" message-style="bordered" label-valid="答對了！" label-invalid="不對喔" button-icon="bi-send" accent-color="sky"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="ok" message-style="bordered" label-valid="答對了！" label-invalid="不對喔" button-icon="bi-send" accent-color="blue"></ui-blank></div>
 </div>
 
 <div class="row">
@@ -540,7 +540,7 @@
   label-valid="太棒了！" label-invalid="再想想"
   button-icon="bi-send"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
-  <div class="demo"><ui-blank expected-value="ok" message-style="icon-banner" message-icon-valid="bi-emoji-smile" message-icon-invalid="bi-emoji-frown" label-valid="太棒了！" label-invalid="再想想" button-icon="bi-send" accent-color="lavender"></ui-blank></div>
+  <div class="demo"><ui-blank expected-value="ok" message-style="icon-banner" message-icon-valid="bi-emoji-smile" message-icon-invalid="bi-emoji-frown" label-valid="太棒了！" label-invalid="再想想" button-icon="bi-send" accent-color="violet"></ui-blank></div>
 </div>
 
 <div class="row">
@@ -551,7 +551,7 @@
 &lt;div id="refMsgBox" style="font-weight:700;margin-top:6px;"&gt;&lt;/div&gt;</code></pre>
   </div>
   <div class="demo" style="flex-direction:column;align-items:flex-start;gap:6px;">
-    <ui-blank expected-value="ok" message-target="refMsgBox" label-valid="答對了！" button-icon="bi-send" accent-color="teal"></ui-blank>
+    <ui-blank expected-value="ok" message-target="refMsgBox" label-valid="答對了！" button-icon="bi-send" accent-color="green"></ui-blank>
     <div id="refMsgBox" style="font-weight:700;"></div>
   </div>
 </div>
@@ -563,7 +563,7 @@
     <pre><code>&lt;ui-blank
   expected-value="apple|Apple" trim-whitespace normalize-width
   width="260px" font-size="1rem" padding="8px 12px" radius="8px"
-  accent-color="teal" valid-color="safe" error-color="warning"
+  accent-color="green" valid-color="green" error-color="red"
   focus-ring-width="4px"
   button-icon="bi-send" button-text="確認" button-position="icon-left"
   clear-on-invalid clear-delay="900"
@@ -571,7 +571,7 @@
   label-valid="答對了！" label-invalid="再檢查一次"&gt;&lt;/ui-blank&gt;</code></pre>
   </div>
   <div class="demo">
-    <ui-blank expected-value="apple|Apple" trim-whitespace normalize-width width="260px" font-size="1rem" padding="8px 12px" radius="8px" accent-color="teal" valid-color="safe" error-color="warning" focus-ring-width="4px" button-icon="bi-send" button-text="確認" button-position="icon-left" clear-on-invalid clear-delay="900" message-style="filled" label-valid="答對了！" label-invalid="再檢查一次"></ui-blank>
+    <ui-blank expected-value="apple|Apple" trim-whitespace normalize-width width="260px" font-size="1rem" padding="8px 12px" radius="8px" accent-color="green" valid-color="green" error-color="red" focus-ring-width="4px" button-icon="bi-send" button-text="確認" button-position="icon-left" clear-on-invalid clear-delay="900" message-style="filled" label-valid="答對了！" label-invalid="再檢查一次"></ui-blank>
   </div>
 </div>
 

@@ -53,7 +53,7 @@
 - 不使用 Shadow DOM，可以直接用外部 CSS 覆寫。
 - 以語意標籤撰寫：`<ui-drill>`、`<drill-tile>`、`<rightup-item>`。
 - 支援三欄、頁籤、上下堆疊（收件匣）三種版面。
-- 所有色彩屬性都可直接寫品牌色名稱，例如 `accent="sky"`。
+- 所有色彩屬性都可直接寫品牌色名稱，例如 `accent="blue"`。
 
 ### 快速開始
 
@@ -126,13 +126,13 @@
 #### 2. 方塊分組、徽章、停用與外部連結
 
 ```html
-<ui-drill title="系統設定" tile-shape="rounded" tile-cols="3" accent="lavender"
+<ui-drill title="系統設定" tile-shape="rounded" tile-cols="3" accent="violet"
           tile-color="vanilla" icon-color="base" mid-title="{label}">
   <drill-tile group="帳號" icon="person" label="個人資料" source="set-profile"></drill-tile>
   <drill-tile group="帳號" icon="shield-lock" label="安全性" source="set-security" badge="2"></drill-tile>
   <drill-tile group="帳號" icon="credit-card" label="付款" disabled></drill-tile>
 
-  <drill-tile group="其他" icon="palette" label="外觀" source="set-theme" color="salmon" active-color="pink"></drill-tile>
+  <drill-tile group="其他" icon="palette" label="外觀" source="set-theme" color="orange" active-color="pink"></drill-tile>
   <drill-tile group="其他" icon="question-circle" label="說明中心" href="https://example.com/help" target="_blank"></drill-tile>
 </ui-drill>
 
@@ -156,17 +156,17 @@
 
 #### 3. 細節按鈕的顏色與 Bootstrap 按鈕
 
-中欄的細節按鈕預設使用 `ocean` 底色。可在元件上用 `button-color` 統一設定，也可在個別按鈕上用 `color` 覆寫。按鈕若已經帶有 Bootstrap 的 `btn` 或 `btn-*` 類別，元件就不會套用自己的樣式。
+中欄的細節按鈕預設使用 `blue` 底色。可在元件上用 `button-color` 統一設定，也可在個別按鈕上用 `color` 覆寫。按鈕若已經帶有 Bootstrap 的 `btn` 或 `btn-*` 類別，元件就不會套用自己的樣式。
 
 ```html
-<ui-drill title="專案狀態" button-color="sky" mid-title="{label}" right-title="{label}">
+<ui-drill title="專案狀態" button-color="blue" mid-title="{label}" right-title="{label}">
   <drill-tile icon="kanban" label="進行中" source="proj-doing"></drill-tile>
 </ui-drill>
 
 <template id="proj-doing">
   <button detail="pj-a" label="官網改版">官網改版</button>
   <button detail="pj-b" color="orange" label="App 2.0">App 2.0</button>
-  <button detail="pj-c" color="warning" label="延遲專案">延遲專案</button>
+  <button detail="pj-c" color="red" label="延遲專案">延遲專案</button>
   <button detail="pj-d" color="#71CD76" detail-title="自訂右欄標題">自訂色</button>
   <button detail="pj-e" class="btn btn-outline-info">Bootstrap 按鈕</button>
   <a href="#" detail="pj-f" toggle>可收合（再點一次清空右欄）</a>
@@ -181,7 +181,7 @@
 <template id="pj-f"><p>帶 toggle 的按鈕，再點一次會清空右欄。</p></template>
 ```
 
-`warning`、`indigo`、`teal`、`safe` 這四種深色底會自動改用淺色文字。`label` 屬性決定右欄標題中 `{label}` 的值，沒有設定時會使用按鈕文字。
+`warning`、`indigo`、`green`、`green` 這四種深色底會自動改用淺色文字。`label` 屬性決定右欄標題中 `{label}` 的值，沒有設定時會使用按鈕文字。
 
 #### 4. 欄間箭頭
 
@@ -193,12 +193,12 @@
 
 <!-- 只顯示第一個箭頭、V 形、置中 -->
 <ui-drill arrows="first" arrow-shape="chevron" arrow-position="middle"
-          arrow-color="info" arrow-active-color="yellow" arrow-size="28">
+          arrow-color="indigo" arrow-active-color="yellow" arrow-size="28">
   <drill-tile icon="folder" label="文件" source="docs-list"></drill-tile>
 </ui-drill>
 
 <!-- 圓形外框、使用 Bootstrap Icons -->
-<ui-drill arrows arrow-style="circle" arrow-icon="arrow-right-short" arrow-size="32" arrow-offset="24" accent="special">
+<ui-drill arrows arrow-style="circle" arrow-icon="arrow-right-short" arrow-size="32" arrow-offset="24" accent="green">
   <drill-tile icon="folder" label="文件" source="docs-list"></drill-tile>
 </ui-drill>
 
@@ -226,7 +226,7 @@
 
 ```html
 <ui-drill bordered columns="1,2,3" gap="0" height="360" tile-cols="2" tile-size="56" tile-gap="12" icon-size="1.8"
-          tile-shape="circle" accent="teal" mid-title="{label}" right-title="細節">
+          tile-shape="circle" accent="green" mid-title="{label}" right-title="細節">
   <drill-tile icon="cup-hot" label="飲品" source="menu-drink"></drill-tile>
   <drill-tile icon="egg-fried" label="早餐" source="menu-breakfast"></drill-tile>
 </ui-drill>
@@ -253,10 +253,10 @@
 ```html
 <ui-drill tile-shape="tab-trapezoid" columns="0,5,7" tab-align="start" bordered
           mid-title="{label}" right-title="{label}">
-  <drill-tile icon="house" label="首頁" source="tab-home" color="sky"></drill-tile>
-  <drill-tile icon="bar-chart" label="報表" source="tab-report" color="special" badge="3"></drill-tile>
-  <drill-tile icon="gear" label="設定" source="tab-set" color="lavender"></drill-tile>
-  <drill-tile icon="lock" label="管理" color="salmon" disabled></drill-tile>
+  <drill-tile icon="house" label="首頁" source="tab-home" color="blue"></drill-tile>
+  <drill-tile icon="bar-chart" label="報表" source="tab-report" color="green" badge="3"></drill-tile>
+  <drill-tile icon="gear" label="設定" source="tab-set" color="violet"></drill-tile>
+  <drill-tile icon="lock" label="管理" color="orange" disabled></drill-tile>
 </ui-drill>
 
 <template id="tab-home"><button detail="h-news">最新公告</button></template>
@@ -286,7 +286,7 @@
 ```html
 <ui-drill tile-shape="tab-pill" tab-align="stretch" tab-font-size="1.05" tab-padding="24"
           tab-dim="0.6" tab-bar="0" tile-size="44">
-  <drill-tile label="全部" source="tab-home" color="ocean"></drill-tile>
+  <drill-tile label="全部" source="tab-home" color="blue"></drill-tile>
   <drill-tile label="報表" source="tab-report" color="yellow"></drill-tile>
 </ui-drill>
 
@@ -312,7 +312,7 @@
 ```html
 <ui-drill layout="stack" title="收件匣" bordered height="520" stack-ratio="2,3" columns="2,5,5"
           tile-cols="1" tile-shape="rounded" tile-count="unread" mark-read auto-open
-          rightup-label="top" rightup-lines="2" rightup-divider="dashed" rightup-divider-color="info"
+          rightup-label="top" rightup-lines="2" rightup-divider="dashed" rightup-divider-color="indigo"
           mid-title="{label}" right-title="{label}" list-empty="這個資料夾目前是空的。">
 
   <drill-tile icon="inbox" label="收件匣" source="folder-inbox">
@@ -450,7 +450,7 @@
 | `gap` | 欄間距（px） | `16` |
 | `height`／`min-height` | 高度、最小高度（px） | 自動 |
 | `bordered` | 顯示外框與分隔線 | 關 |
-| `accent` | 選取狀態的主色 | `ocean` |
+| `accent` | 選取狀態的主色 | `blue` |
 | `tile-shape` | `rounded`、`circle`，或 `tab-*` 頁籤造型 | 方形 |
 | `tile-cols` | 方塊每列數量 | `3` |
 | `tile-size` | 方塊尺寸（px） | `48`，頁籤為 `40` |
@@ -466,7 +466,7 @@
 | `mid-placeholder` | 中欄提示文字，設為空字串可隱藏 | `請點選左側方塊。` |
 | `right-placeholder` | 右欄提示文字 | `請點選中欄按鈕。`，堆疊模式為 `請點選上方清單。` |
 | `hide-empty-right` | 右欄沒有內容時隱藏 | 關 |
-| `button-color` | 細節按鈕預設色（別名 `button-variant`） | `ocean` |
+| `button-color` | 細節按鈕預設色（別名 `button-variant`） | `blue` |
 | `toggle` | 再點一次已選方塊時取消選取 | 關 |
 | `keyboard` | 啟用鍵盤操作 | 關 |
 | `active` | 預先選取的方塊 `source` | 無 |
@@ -582,14 +582,14 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | --- | --- | --- | --- |
 | `title` | 文字 | 無 | 元件大標題。 |
 | `title-size` | 數字（rem）或長度 | `1.2rem` | 大標題字級。 |
-| `title-color` | 顏色 | `lavender` | 大標題顏色。 |
+| `title-color` | 顏色 | `violet` | 大標題顏色。 |
 | `cols` | 整數 | `3` | 每列卡片數。 |
 | `gap` | 數字（px） | `16` | 卡片間距，也是網格與內容區的距離。 |
 | `align` | `center` | 靠左 | 卡片內容置中。 |
 | `bordered` | 布林 | 關閉 | 整個元件加外框。 |
 | `card-style` | `filled`、`plain` | 外框卡片 | 整組卡片的外觀。`filled` 以 `color` 填滿卡片；`plain` 拿掉外框與底色。個別卡片可用自己的 `card-style` 覆寫。 |
 | `color` | 顏色 | `shell` | 卡片外框色，`filled` 時為底色。 |
-| `accent` | 顏色 | `ocean` | 選中卡片的外框與光暈色。 |
+| `accent` | 顏色 | `blue` | 選中卡片的外框與光暈色。 |
 | `active-style` | `filled` | 無 | 目前選中的卡片以 `accent` 色實心顯示，其他卡片維持原本外觀。 |
 | `card-padding` | 數字（px） | `16` | 卡片內距。 |
 | `card-radius` | 數字（px） | `8` | 卡片圓角。 |
@@ -617,7 +617,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `panel-height` | 數字（px） | 自動 | 內容區最大高度，超過時捲動。 |
 | `panel-title` | 文字 | 空 | 內容區標題，可用 `{label}` 代入卡片的 `label`。 |
 | `panel-title-size` | 數字（rem）或長度 | `1.1rem` | 內容區標題字級。 |
-| `panel-title-color` | 顏色 | `lavender` | 內容區標題顏色。 |
+| `panel-title-color` | 顏色 | `violet` | 內容區標題顏色。 |
 | `panel-title-line` | 顏色或 `none` | 跟隨標題色 | 標題底線顏色；`none` 移除底線。 |
 | `placeholder` | 文字 | `請點選卡片。` | 尚未選擇時的提示；設空字串則不顯示。 |
 | `hide-empty-panel` | 布林 | 關閉 | 尚未選擇時隱藏內容區。 |
@@ -628,7 +628,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `detail-trigger` | `click`、`hover` | `click` | 細節按鈕開啟細節的方式。 |
 | `toggle` | 布林 | 關閉 | 再點一次已選的卡片或按鈕時收起細節。 |
 | `active-detail` | 元素 id | 無 | 載入時就開啟的細節。 |
-| `button-color` | 顏色 | `ocean` | 細節按鈕的預設底色。 |
+| `button-color` | 顏色 | `blue` | 細節按鈕的預設底色。 |
 
 ### `<card-item>` 屬性
 
@@ -710,7 +710,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 **展示用卡片**
 
 ```html
-<ui-cards title="本課重點" cols="3" color="sky" divider="dashed">
+<ui-cards title="本課重點" cols="3" color="blue" divider="dashed">
   <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目" tags="Part 2,Part 3" footer="約 1 分鐘"></card-item>
   <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用" badge="新"></card-item>
   <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開"></card-item>
@@ -738,17 +738,17 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 ```html
 <ui-cards cols="4" card-style="filled" media-position="left" media-width="64" icon-size="1.6"
           active-detail="sum-a" hide-empty-panel>
-  <card-item label="今日訂單" icon="cart-check-fill" color="ocean" detail="sum-a"></card-item>
-  <card-item label="新會員" icon="person-plus-fill" color="special" detail="sum-b"></card-item>
-  <card-item label="退貨申請" icon="arrow-return-left" color="salmon" badge="3" badge-color="warning"></card-item>
-  <card-item label="說明" icon="info-circle" color="lavender" href="#help"></card-item>
+  <card-item label="今日訂單" icon="cart-check-fill" color="blue" detail="sum-a"></card-item>
+  <card-item label="新會員" icon="person-plus-fill" color="green" detail="sum-b"></card-item>
+  <card-item label="退貨申請" icon="arrow-return-left" color="orange" badge="3" badge-color="red"></card-item>
+  <card-item label="說明" icon="info-circle" color="violet" href="#help"></card-item>
 </ui-cards>
 ```
 
 **單張實心與選中實心**
 
 ```html
-<ui-cards cols="3" color="shell" accent="sky" active-style="filled" active-detail="d-open" toggle panel-title="{label}">
+<ui-cards cols="3" color="shell" accent="blue" active-style="filled" active-detail="d-open" toggle panel-title="{label}">
   <card-item icon="chat-quote" label="開場句" detail="d-open"></card-item>
   <card-item icon="arrow-left-right" label="橫向練習" detail="d-cross" card-style="filled" color="pink"></card-item>
   <card-item icon="signpost-split" label="銜接敘事" detail="d-link"></card-item>
@@ -780,8 +780,8 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 ```html
 <ui-cards cols="1" panel-badge="範例" panel-badge-icon="stars">
   <card-item icon="door-open" label="準備好了嗎？" note="按下按鈕開始練習">
-    <button reveal="practice-1" remove-cards reveal-scroll color="lavender">開始練習</button>
-    <button detail="intro" detail-badge="說明" detail-badge-color="sky">先看說明</button>
+    <button reveal="practice-1" remove-cards reveal-scroll color="violet">開始練習</button>
+    <button detail="intro" detail-badge="說明" detail-badge-color="blue">先看說明</button>
   </card-item>
 </ui-cards>
 
@@ -839,8 +839,8 @@ uc.unflipAll();      // 全部翻回正面
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `color` | `shell` | 未開始節點的顏色。 |
-| `accent` | `ocean` | 目前節點與選中節點的顏色，也是亮起的連接線與箭頭的預設色。 |
-| `done-color` | `safe` | 完成節點的顏色。 |
+| `accent` | `blue` | 目前節點與選中節點的顏色，也是亮起的連接線與箭頭的預設色。 |
+| `done-color` | `green` | 完成節點的顏色。 |
 | `icon-color` | `base` | 節點內圖示與編號的顏色。 |
 
 ### `<ui-steps>` 屬性：連接線與箭頭
@@ -871,7 +871,7 @@ uc.unflipAll();      // 全部翻回正面
 | `toggle` | 布林 | 關閉 | 再點一次已選步驟時收起內容。 |
 | `active` | 步驟的 `source` | 無 | 載入時就選取的步驟。 |
 | `active-detail` | 元素 id | 無 | 載入時就開啟的細節。 |
-| `button-color` | 顏色 | `ocean` | 細節按鈕的預設底色。 |
+| `button-color` | 顏色 | `blue` | 細節按鈕的預設底色。 |
 
 ### `<step-item>` 屬性
 
@@ -912,7 +912,7 @@ uc.unflipAll();      // 全部翻回正面
 **橫向進度**
 
 ```html
-<ui-steps current="3" numbered line arrows arrow-shape="chevron" done-icon="check-lg" accent="lavender">
+<ui-steps current="3" numbered line arrows arrow-shape="chevron" done-icon="check-lg" accent="violet">
   <step-item label="報名" note="9 月"></step-item>
   <step-item label="分級測驗" note="10 月"></step-item>
   <step-item label="上課" note="11 月"></step-item>
@@ -938,7 +938,7 @@ uc.unflipAll();      // 全部翻回正面
 **指定狀態與連結步驟**
 
 ```html
-<ui-steps line arrows arrow-icon="arrow-right-circle" color="info" done-color="safe">
+<ui-steps line arrows arrow-icon="arrow-right-circle" color="indigo" done-color="green">
   <step-item label="第一課" status="done" href="lesson-1.html"></step-item>
   <step-item label="第二課" status="current" color="orange"></step-item>
   <step-item label="第三課" status="todo" disabled tooltip="尚未開放"></step-item>

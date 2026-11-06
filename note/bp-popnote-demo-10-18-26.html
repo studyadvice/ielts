@@ -10,21 +10,21 @@
 :root {
   --bg:       #0C0D0C;
   --shell:    #C6C7BD;
-  --lavender: #C3A5E5;
-  --sky:      #82C8E5;
-  --warning:  #E6374B;
-  --salmon:   #E5C3B3;
-  --ocean:    #1CCAE8;
-  --safe:     #27AE60;
-  --teal:     #0DA591;
+  --violet: #B484E8;
+  --blue:      #5DBAE8;
+  --warning:  #EF6661;
+  --orange:   #F79C40;
+  --blue:    #5DBAE8;
+  --green:     #71CD76;
+  --green:     #71CD76;
   --vanilla:  #DBEDD8;
   --yellow:   #E3D322;
-  --focus:    #D4FFFC;
-  --special:  #B3DE73;
-  --info:     #4171BF;
-  --indigo:   #7849C9;
+  --focus:    #DBEDD8;
+  --green:  #71CD76;
+  --info:     #778CE1;
+  --indigo:   #778CE1;
   --pink:     #FF91D7;
-  --orange:   #EDA109;
+  --orange:   #F79C40;
   --area:     #141514;
   --card:     #1a1b1a;
 }
@@ -44,9 +44,9 @@ body {
   margin: 0 auto;
   padding: 40px 32px 120px;
 }
-h1 { color: var(--lavender); font-size: 1.55rem; font-weight: 700; margin-bottom: 6px; }
+h1 { color: var(--violet); font-size: 1.55rem; font-weight: 700; margin-bottom: 6px; }
 .subtitle { color: rgba(198,199,189,0.78); font-size: 0.88rem; margin-bottom: 40px; }
-h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
+h2 { color: var(--blue); font-size: 1.1rem; font-weight: 600;
      border-bottom: 1px solid rgba(130,200,229,0.22); padding-bottom: 8px; margin: 40px 0 20px; }
 
 /* ── Demo cards ── */
@@ -67,7 +67,7 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
 .code-badge {
   display: inline-block;
   background: rgba(195,165,229,0.12);
-  color: var(--lavender);
+  color: var(--violet);
   border: 1px solid rgba(195,165,229,0.28);
   border-radius: 4px;
   font-size: 0.75rem;
@@ -105,12 +105,12 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
 /* ── Anchor target sections ── */
 .anchor-section {
   background: var(--area);
-  border-left: 3px solid var(--teal);
+  border-left: 3px solid var(--green);
   border-radius: 0 8px 8px 0;
   padding: 20px 24px;
   margin-top: 16px;
 }
-.anchor-section h3 { color: var(--teal); font-size: 1rem; margin-bottom: 8px; }
+.anchor-section h3 { color: var(--green); font-size: 1rem; margin-bottom: 8px; }
 
 /* ── Tag highlight for trigger words ── */
 [data-popover-content],
@@ -169,11 +169,11 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
   <!-- ③ show-btn + 外部連結 -->
   <h2>③ show-btn + 外部連結（自動 _blank）</h2>
   <div class="demo-card">
-    <div class="demo-label">floating popover · theme=sky · show-btn 跳至外部 URL</div>
+    <div class="demo-label">floating popover · theme=blue · show-btn 跳至外部 URL</div>
     <p class="sentence">
       The IELTS exam uses a <span
         data-popover-content="考官評分時，字彙豐富度與精準度佔 25% 分數。"
-        data-popover-theme="sky"
+        data-popover-theme="blue"
         data-popover-title="詞彙資源（Lexical Resource）"
         data-popover-show-btn="IELTS 官方說明"
         data-popover-btn-href="https://www.ielts.org/about-ielts/what-is-ielts">
@@ -209,14 +209,14 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
   <!-- ⑤ Offcanvas 模式 + show-btn -->
   <h2>⑤ Offcanvas 模式 + show-btn</h2>
   <div class="demo-card">
-    <div class="demo-label">data-popover-modal="end" · theme=teal · show-btn 外部連結</div>
+    <div class="demo-label">data-popover-modal="end" · theme=green · show-btn 外部連結</div>
     <p class="sentence">
       Band 7 requires demonstrating
       <span
         data-popover-title="Cohesion & Coherence"
         data-popover-content="有效使用連接詞、指稱詞與詞彙鏈，使篇章邏輯連貫，而非僅靠列舉。"
         data-popover-modal="end"
-        data-popover-theme="teal"
+        data-popover-theme="green"
         data-popover-show-btn="Band Descriptors"
         data-popover-btn-href="https://www.ielts.org/globalassets/assets/pdf/ielts-writing-band-descriptors-task-2.pdf">
         cohesion and coherence
@@ -232,7 +232,7 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
       過度使用
       <span
         data-popover-content="連接詞如 however、therefore 若濫用，反而顯得生硬不自然。"
-        data-popover-theme="salmon"
+        data-popover-theme="orange"
         data-popover-show-btn=""
         data-popover-btn-href="#grammar-section">
         連接詞
@@ -244,7 +244,7 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
   <!-- ⑦ annotate API 使用 showBtn / btnHref -->
   <h2>⑦ BpPopnote.annotate() API — showBtn + btnHref</h2>
   <div class="demo-card">
-    <div class="demo-label">事後標注 · theme=safe · show-btn 書籤</div>
+    <div class="demo-label">事後標注 · theme=green · show-btn 書籤</div>
     <p class="sentence" id="annotate-target">
       Writing task 2 expects candidates to present a well-structured argument with clear topic sentences and logical conclusions.
     </p>
@@ -259,7 +259,7 @@ h2 { color: var(--sky); font-size: 1.1rem; font-weight: 600;
   BpPopnote.annotate({
     text      : 'topic sentences',
     content   : '每段開頭的主題句應清楚陳述該段論點，避免以細節開場。',
-    theme     : 'safe',
+    theme     : 'green',
     title     : 'Topic Sentence',
     showBtn   : '寫作技巧詳情',
     btnHref   : '#grammar-section',

@@ -23,7 +23,7 @@
 <!-- 原地取代 -->
 <ui-icon-anim icons="bi-sun,bi-cloud-sun,bi-cloud,bi-cloud-rain"
   interval="800" effect="fade" size="lg"
-  colors="yellow,orange,shell,sky"></ui-icon-anim>
+  colors="yellow,orange,shell,blue"></ui-icon-anim>
 
 <!-- 由左至右排出 -->
 <ui-icon-anim mode="sequence" icons="bi-star-fill,bi-star-fill,bi-star-fill"
@@ -46,9 +46,9 @@
 加上 `button-keep` 會保留按鈕外框，動畫在按鈕內播放，適合「送出中」這類情境：
 
 ```html
-<ui-icon-anim button-text="送出表單" button-color="safe" button-keep
+<ui-icon-anim button-text="送出表單" button-color="green" button-keep
   icons="bi-arrow-clockwise,bi-arrow-repeat,bi-check-lg"
-  interval="450" size="1.25" colors="safe"
+  interval="450" size="1.25" colors="green"
   loop="false" button-restore></ui-icon-anim>
 ```
 
@@ -60,7 +60,7 @@
 <div id="global_icon_list" hidden>bi-star, bi-square, bi-circle</div>
 
 <!-- 未設定 icons 與 icons-from，自動讀取 #global_icon_list -->
-<ui-icon-anim size="lg" colors="yellow,sky,pink"></ui-icon-anim>
+<ui-icon-anim size="lg" colors="yellow,blue,pink"></ui-icon-anim>
 ```
 
 指定其他來源：
@@ -71,7 +71,7 @@
   bi-cloud-sun
   bi-cloud-rain-heavy
 </div>
-<div id="weatherColors" hidden>yellow, orange, sky</div>
+<div id="weatherColors" hidden>yellow, orange, blue</div>
 
 <ui-icon-anim icons-from="weatherIcons" colors-from="#weatherColors"></ui-icon-anim>
 ```
@@ -82,7 +82,7 @@
 
 ```html
 <ui-icon-anim icons="bi-arrow-clockwise,bi-arrow-repeat,bi-cloud-check-fill"
-  interval="500" size="xl" colors="ocean,ocean,safe"
+  interval="500" size="xl" colors="blue,blue,green"
   loop="false" remove-on-end remove-delay="500"
   reveal-on-end="result" reveal-effect="slide"></ui-icon-anim>
 
@@ -123,7 +123,7 @@ document.addEventListener('before-navigate', e => {
 | `interval` | `1000` | 切換間隔（毫秒），最小 100 |
 | `mode` | `replace` | `replace` 原地取代、`sequence` 由左至右排出 |
 | `effect` | `fade` | `fade`、`scale`、`flip`、`none` |
-| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`bluebell`、`special`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
+| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `size` | `md` | `sm`、`md`、`lg`、`xl`、數字（rem）或含單位值 |
 | `gap` | `8` | sequence 模式間距（px） |
 | `hold` | 同 `interval` | sequence 模式排滿後停留時間（毫秒） |
@@ -141,7 +141,7 @@ document.addEventListener('before-navigate', e => {
 | `href-delay` | `0` | 跳轉前延遲（毫秒） |
 | `button-text` | 無 | 按鈕文字，設定後進入按鈕模式 |
 | `button-icon` | 無 | 按鈕文字前的圖示 |
-| `button-color` | `sky` | 按鈕色彩 |
+| `button-color` | `blue` | 按鈕色彩 |
 | `button-keep` | 關閉 | 保留按鈕外框，動畫在按鈕內播放 |
 | `button-restore` | 關閉 | 播完回到按鈕狀態，需 `loop="false"` 且未設定 `remove-on-end` |
 

@@ -12,20 +12,26 @@
 
   /* ---------- 配色與圖形 ---------- */
   const PALETTE = {
-    base: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
-    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
-    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#DBEDD8',
-    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#F79C40',
+    base: '#0C0D0C', shell: '#C6C7BD',
+    vanilla: '#DBEDD8', yellow: '#E3D322',
+    indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
-    gray: '#86877F'
+    gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
   /* 新色票都偏亮，實心底一律用深色字 */
-  const LIGHT_TEXT = new Set([]);
+  const LIGHT_TEXT = new Set(['key-deep']);
   const ARROW_SVG = {
     arrow: '<path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>',
     chevron: '<path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
@@ -53,7 +59,7 @@
   const CSS = `
 ui-steps{display:block;color:${PALETTE.shell};font-size:1rem;}
 ui-steps:not([data-ready]){visibility:hidden;}
-ui-steps .uis-title{font-size:1.2rem;font-weight:700;color:${PALETTE.lavender};margin:0 0 16px 0;}
+ui-steps .uis-title{font-size:1.2rem;font-weight:700;color:${PALETTE.violet};margin:0 0 16px 0;}
 ui-steps .uis-wrap{display:grid;gap:var(--uis-gap);box-sizing:border-box;}
 ui-steps .uis-v.uis-has-panel{grid-template-columns:var(--uis-cols);align-items:start;}
 ui-steps[bordered] .uis-wrap{border:1px solid ${PALETTE.shell};border-radius:8px;padding:var(--uis-pad);}
@@ -73,17 +79,17 @@ ui-steps[node-shape="square"] .uis-node{border-radius:0;}
 ui-steps[node-shape="rounded"] .uis-node{border-radius:8px;}
 ui-steps step-item[data-status="done"] .uis-node{background:var(--uis-done);}
 ui-steps step-item[data-status="current"] .uis-node{background:var(--uis-accent);}
-ui-steps step-item[data-click]:hover .uis-node{border-color:${PALETTE.focus};}
-ui-steps step-item[data-active] .uis-node{border-color:${PALETTE.focus};box-shadow:0 0 0 3px ${PALETTE.focus};}
+ui-steps step-item[data-click]:hover .uis-node{border-color:${PALETTE.vanilla};}
+ui-steps step-item[data-active] .uis-node{border-color:${PALETTE.vanilla};box-shadow:0 0 0 3px ${PALETTE.vanilla};}
 ui-steps step-item[disabled] .uis-node{background:${PALETTE.base};color:${PALETTE.shell};border:2px dashed ${PALETTE.shell};box-shadow:none;}
-ui-steps .uis-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:${PALETTE.warning};color:${PALETTE.vanilla};font-size:0.7rem;font-weight:700;line-height:18px;text-align:center;box-sizing:border-box;}
+ui-steps .uis-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:${PALETTE.red};color:${PALETTE.vanilla};font-size:0.7rem;font-weight:700;line-height:18px;text-align:center;box-sizing:border-box;}
 
 ui-steps .uis-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
 ui-steps .uis-h .uis-text{margin:8px 0 0 0;align-items:center;}
 ui-steps .uis-label{font-size:0.95rem;font-weight:700;line-height:1.4;}
-ui-steps .uis-note{font-size:0.8rem;color:${PALETTE.info};line-height:1.4;}
+ui-steps .uis-note{font-size:0.8rem;color:${PALETTE.indigo};line-height:1.4;}
 ui-steps step-item[data-status="current"] .uis-label{color:var(--uis-accent);}
-ui-steps step-item[data-active] .uis-label{color:${PALETTE.focus};}
+ui-steps step-item[data-active] .uis-label{color:${PALETTE.vanilla};}
 
 ui-steps .uis-link{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 0;color:var(--uis-acolor);}
 ui-steps .uis-h .uis-link{min-width:var(--uis-len);height:var(--uis-size);}
@@ -105,19 +111,19 @@ ui-steps[arrow-style="circle"] .uis-arrow i{font-size:calc(var(--uis-asize) * 0.
 ui-steps .uis-panel{min-width:0;}
 ui-steps[bordered] .uis-h .uis-panel{border-top:1px solid ${PALETTE.shell};padding:16px 0 0 0;}
 ui-steps[bordered] .uis-v .uis-panel{border-left:1px solid ${PALETTE.shell};padding:0 0 0 16px;}
-ui-steps .uis-sub{margin:16px 0 0 0;padding:16px 0 0 0;border-top:1px dashed ${PALETTE.lavender};}
+ui-steps .uis-sub{margin:16px 0 0 0;padding:16px 0 0 0;border-top:1px dashed ${PALETTE.violet};}
 ui-steps .uis-sub[hidden]{display:none;}
-ui-steps .uis-head{font-size:1.1rem;font-weight:700;color:${PALETTE.lavender};margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid ${PALETTE.lavender};}
+ui-steps .uis-head{font-size:1.1rem;font-weight:700;color:${PALETTE.violet};margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid ${PALETTE.violet};}
 ui-steps .uis-head:empty{display:none;}
 ui-steps .uis-body{line-height:1.7;}
 ui-steps .uis-body > :first-child{margin-top:0;}
 ui-steps .uis-body > :last-child{margin-bottom:0;}
-ui-steps .uis-ph{color:${PALETTE.info};font-size:0.95rem;text-align:center;border:1px dashed ${PALETTE.info};border-radius:8px;padding:24px 16px;}
-ui-steps .uis-alert{background:${PALETTE.base};border:1px solid ${PALETTE.warning};color:${PALETTE.warning};border-radius:6px;padding:12px 16px;margin:0;font-size:0.95rem;}
+ui-steps .uis-ph{color:${PALETTE.indigo};font-size:0.95rem;text-align:center;border:1px dashed ${PALETTE.indigo};border-radius:8px;padding:24px 16px;}
+ui-steps .uis-alert{background:${PALETTE.base};border:1px solid ${PALETTE.red};color:${PALETTE.red};border-radius:6px;padding:12px 16px;margin:0;font-size:0.95rem;}
 
 ui-steps .uis-btn{display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;border-radius:6px;padding:6px 14px;margin:4px 8px 4px 0;font-size:0.95rem;font-weight:600;line-height:1.4;cursor:pointer;text-decoration:none;}
-ui-steps .uis-btn:hover{border-color:${PALETTE.focus};}
-ui-steps .uis-btn.uis-on{border-color:${PALETTE.focus};box-shadow:0 0 0 2px ${PALETTE.focus};}
+ui-steps .uis-btn:hover{border-color:${PALETTE.vanilla};}
+ui-steps .uis-btn.uis-on{border-color:${PALETTE.vanilla};box-shadow:0 0 0 2px ${PALETTE.vanilla};}
 ui-steps .uis-btn[disabled]{cursor:not-allowed;filter:grayscale(1);}
 ${variantCSS}
 `;
@@ -156,19 +162,19 @@ ${variantCSS}
         panelTitle: a('panel-title') || '',
         detailTitle: a('detail-title') || '',
         placeholder: has('placeholder') ? a('placeholder') : '請點選步驟。',
-        btnColor: a('button-color') || 'ocean'
+        btnColor: a('button-color') || 'blue'
       };
       const heading = a('title');
       if (heading != null) this.removeAttribute('title');
 
       /* 外觀變數 */
       const s = this.style;
-      const accent = color(a('accent')) || PALETTE.ocean;
+      const accent = color(a('accent')) || PALETTE.blue;
       s.setProperty('--uis-size', num(a('node-size'), 48) + 'px');
       s.setProperty('--uis-isize', num(a('icon-size'), 1.3) + 'rem');
       s.setProperty('--uis-node', color(a('color')) || PALETTE.shell);
       s.setProperty('--uis-accent', accent);
-      s.setProperty('--uis-done', color(a('done-color')) || PALETTE.safe);
+      s.setProperty('--uis-done', color(a('done-color')) || PALETTE.green);
       s.setProperty('--uis-icon', color(a('icon-color')) || PALETTE.base);
       s.setProperty('--uis-gap', num(a('gap'), 24) + 'px');
       s.setProperty('--uis-pad', num(a('padding'), 16) + 'px');
@@ -451,29 +457,14 @@ ${variantCSS}
 
   customElements.define('ui-steps', UiSteps);
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

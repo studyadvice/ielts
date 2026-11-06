@@ -12,7 +12,7 @@
 - 原生 Custom Elements，不依賴任何框架。
 - 不使用 shadow DOM，CSS 由 JS 檔自動注入，一個 `.js` 檔即可使用。
 - 所有部位的配色、字體大小、間距、外框都可用屬性自訂。
-- 支援預設收合、鍵盤切換、`<c-blue>` 等色名標籤（舊的 `<c1>` 到 `<c16>` 仍可用）。
+- 支援預設收合、鍵盤切換、`<c-blue>` 等色名標籤（舊的 `<c-shell>` 到 `<c-orange>` 仍可用）。
 - 寬螢幕排版，適合教學頁與錄影講解。
 
 ```html
@@ -178,7 +178,7 @@
 
 | 屬性 | 預設值 | 說明 |
 |---|---|---|
-| `theme` | `default` | 一次套用整組強調色，可用 `default`、`lavender`、`sky`、`ocean`、`teal`、`safe`、`special`、`yellow`、`orange`、`salmon`、`pink`、`warning`、`indigo`、`info`。名稱不存在時退回 `default`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
+| `theme` | `default` | 一次套用整組強調色，可用 `default`、`violet`、`blue`、`green`、`yellow`、`orange`、`pink`、`indigo`、`shell`、`vanilla`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。名稱不存在時退回 `default`。 |
 | `margin` | `6px 12px` | 元件對外間距。 |
 | `padding` | `6px 12px` | 元件對內間距。 |
 | `bg` | `#0C0D0C` | 元件背景色。 |
@@ -263,10 +263,10 @@
 **主題與顏色**
 
 - `theme` 會改變外框、選取框線、小標題、編號、亮點、解說編號、標籤與收合標題列的顏色。優先順序為：寫在標籤上的個別屬性 > `theme` > 內建預設。
-- 所有顏色屬性都可以直接填品牌色名稱，例如 `hl-hot-bg="sky"`、`hl-hot-color="base"`，不分大小寫，也可以填 `#hex` 或 `rgb()`。
+- 所有顏色屬性都可以直接填品牌色名稱，例如 `hl-hot-bg="blue"`、`hl-hot-color="base"`，不分大小寫，也可以填 `#hex` 或 `rgb()`。
 
 ```html
-<ui-insight theme="lavender" hl-hot-color="base">...</ui-insight>
+<ui-insight theme="violet" hl-hot-color="base">...</ui-insight>
 ```
 
 ### JavaScript 介面
@@ -313,21 +313,6 @@
 <step-body>I'm <c-red>fond of cooking</c-red>.</step-body>
 <hl why="比 <c-gray>I like</c-gray> 更道地">fond of</hl>
 ```
-
-舊的數字標籤 `<c1>` 到 `<c16>` 仍保留，對應如下：
-
-| 標籤 | 顏色 | 標籤 | 顏色 |
-|---|---|---|---|
-| `<c1>` | shell `#C6C7BD` | `<c9>` | vanilla `#DBEDD8` |
-| `<c2>` | violet `#B484E8` | `<c10>` | yellow `#E3D322` |
-| `<c3>` | blue `#5DBAE8` | `<c11>` | vanilla `#DBEDD8` |
-| `<c4>` | red `#EF6661` | `<c12>` | green `#71CD76` |
-| `<c5>` | orange `#F79C40` | `<c13>` | indigo `#778CE1` |
-| `<c6>` | blue `#5DBAE8` | `<c14>` | indigo `#778CE1` |
-| `<c7>` | green `#71CD76` | `<c15>` | pink `#FF91D7` |
-| `<c8>` | green `#71CD76` | `<c16>` | orange `#F79C40` |
-
-這 16 個標籤原本對應舊色票的 16 色，改用新色票後部分標籤顏色相同，新內容請改用色名標籤。
 
 ### 單位慣例
 

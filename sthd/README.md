@@ -30,7 +30,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `accent` | 品牌色名稱或色碼 | `ocean` | 進度條、標籤與按鈕的顏色。 |
+| `accent` | 品牌色名稱或色碼 | `blue` | 進度條、標籤與按鈕的顏色。 |
 | `color` | 品牌色名稱或色碼 | `shell` | 標題文字色。 |
 | `bg` | 品牌色名稱或色碼 | `background` | 標題列底色。 |
 | `opacity` | `0.78` 到 `1` | `0.88` | 標題列底色的不透明度，低於 0.78 時以 0.78 計算。 |
@@ -78,7 +78,7 @@
 ```html
 <nav style="position:fixed;top:0;height:56px">……</nav>
 <section>
-  <sticky-head accent="special" top="56px" label="Part 2" top-btn="回本節" opacity="0.95" blur="0">
+  <sticky-head accent="green" top="56px" label="Part 2" top-btn="回本節" opacity="0.95" blur="0">
     <h2>描述題的結構</h2>
   </sticky-head>
   <p>……</p>
@@ -89,7 +89,7 @@
 
 ```html
 <section>
-  <sticky-head accent="salmon" auto-hide label="Part 3" top-btn="回本節" shadow="false"
+  <sticky-head accent="orange" auto-hide label="Part 3" top-btn="回本節" shadow="false"
                size="2rem" size-stuck="1rem" padding-stuck="6px 16px">
     <h2>延伸討論</h2>
   </sticky-head>

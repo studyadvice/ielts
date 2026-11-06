@@ -37,7 +37,7 @@
 | `heading` | 文字 | 無 | 面板標題。 |
 | `density` | `compact`、`loose` | 一般 | 列高與間距。 |
 | `field-style` | `boxed` | 無框 | 輸入框加上底色與外框。 |
-| `accent` | 品牌色名稱或 `#hex` | `ocean` | 強調色。 |
+| `accent` | 品牌色名稱或 `#hex` | `blue` | 強調色。 |
 | `label-ratio` | `左:右` | `4:6` | 名稱欄與值欄的寬度比例，名稱欄限制在 20% 到 80%。 |
 | `max-height` | 數字（px） | 不限 | 內容區最大高度，超過時捲動。 |
 | `readonly` | 布林 | 關閉 | 整個面板唯讀。 |
@@ -56,7 +56,7 @@
 | `number-start` | 整數 | `1` | 編號起始值。 |
 | `number-prefix` | 文字 | 空 | 編號前綴，例如 `B`。 |
 | `number-suffix` | 文字 | `.` | 編號後綴。 |
-| `number-color` | 品牌色名稱或 `#hex` | `sky` | 編號顏色。 |
+| `number-color` | 品牌色名稱或 `#hex` | `blue` | 編號顏色。 |
 
 ## `<pg-row>` 屬性
 
@@ -112,8 +112,8 @@
 **基本面板與驗證**
 
 ```html
-<ui-progrid id="pg-course" heading="課程設定" show-actions accent="lavender">
-  <pg-cat name="課程" numbering number-color="sky">
+<ui-progrid id="pg-course" heading="課程設定" show-actions accent="violet">
+  <pg-cat name="課程" numbering number-color="blue">
     <pg-row key="c-title" label="課程名稱" required minlength="4" placeholder="至少 4 個字">
       <pg-desc>顯示在課程列表上的名稱。</pg-desc>
     </pg-row>
@@ -151,7 +151,7 @@
 **唯讀的資訊卡**
 
 ```html
-<ui-progrid heading="Unit 2 資訊" readonly density="compact" no-desc accent="lavender" label-ratio="3:7">
+<ui-progrid heading="Unit 2 資訊" readonly density="compact" no-desc accent="violet" label-ratio="3:7">
   <pg-row key="topic" label="主題" value="Describing a change"></pg-row>
   <pg-row key="time" label="長度" type="number" value="32" unit="分鐘"></pg-row>
   <pg-row key="level" label="難度" type="rating" rating-mode="scale" value="4"></pg-row>

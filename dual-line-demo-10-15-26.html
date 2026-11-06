@@ -10,21 +10,21 @@
     :root {
       --bg:       #0C0D0C;
       --shell:    #C6C7BD;
-      --lavender: #C3A5E5;
-      --special:  #B3DE73;
-      --warning:  #E6374B;
-      --salmon:   #E5C3B3;
-      --sky:      #82C8E5;
-      --ocean:    #1CCAE8;
-      --safe:     #27AE60;
-      --teal:     #0DA591;
+      --violet: #B484E8;
+      --green:  #71CD76;
+      --warning:  #EF6661;
+      --orange:   #F79C40;
+      --blue:      #5DBAE8;
+      --blue:    #5DBAE8;
+      --green:     #71CD76;
+      --green:     #71CD76;
       --vanilla:  #DBEDD8;
-      --focus:    #D4FFFC;
+      --focus:    #DBEDD8;
       --yellow:   #E3D322;
-      --info:     #4171BF;
-      --indigo:   #7849C9;
+      --info:     #778CE1;
+      --indigo:   #778CE1;
       --pink:     #FF91D7;
-      --orange:   #EDA109;
+      --orange:   #F79C40;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -35,9 +35,9 @@
       line-height: 1.5;
       margin: 0; padding: 0;
     }
-    h1 { font-size: 2.4rem; color: var(--lavender); letter-spacing: .02em; }
-    h2 { font-size: 1.7rem; color: var(--ocean); margin-top: 72px; margin-bottom: 0; }
-    h3 { font-size: 1.25rem; color: var(--sky); margin-top: 28px; margin-bottom: 6px; }
+    h1 { font-size: 2.4rem; color: var(--violet); letter-spacing: .02em; }
+    h2 { font-size: 1.7rem; color: var(--blue); margin-top: 72px; margin-bottom: 0; }
+    h3 { font-size: 1.25rem; color: var(--blue); margin-top: 28px; margin-bottom: 6px; }
     h4 { font-size: 1.05rem; color: var(--vanilla); margin-bottom: 6px; }
 
     .wrap { max-width: 1300px; margin: 0 auto; padding: 0 48px 100px; }
@@ -46,7 +46,7 @@
     .hero { text-align: center; padding: 64px 0 48px; }
     .hero-badge {
       display: inline-block;
-      background: rgba(195,165,229,.13); color: var(--lavender);
+      background: rgba(195,165,229,.13); color: var(--violet);
       border: 1px solid rgba(195,165,229,.42); border-radius: 4px;
       padding: 3px 14px; font-size: .9rem; margin-bottom: 18px; letter-spacing: .05em;
     }
@@ -93,8 +93,8 @@
 
     /* Content blocks (for spacer demo) */
     .cb { border-radius: 6px; padding: 14px 20px; text-align: center; font-weight: 600; font-size: 1rem; }
-    .cb-a { background: rgba(130,200,229,.12); border: 1px solid rgba(130,200,229,.35); color: var(--sky); }
-    .cb-b { background: rgba(39,174,96,.10);   border: 1px solid rgba(39,174,96,.32);  color: var(--safe); }
+    .cb-a { background: rgba(130,200,229,.12); border: 1px solid rgba(130,200,229,.35); color: var(--blue); }
+    .cb-b { background: rgba(39,174,96,.10);   border: 1px solid rgba(39,174,96,.32);  color: var(--green); }
 
     /* Code block */
     .cb-code {
@@ -103,8 +103,8 @@
       font-family: 'Consolas', 'Monaco', monospace; font-size: .875rem;
       color: var(--vanilla); margin-top: 10px; overflow-x: auto; white-space: pre; line-height: 1.5;
     }
-    .cb-code .k  { color: var(--lavender); }
-    .cb-code .a  { color: var(--sky); }
+    .cb-code .k  { color: var(--violet); }
+    .cb-code .a  { color: var(--blue); }
     .cb-code .v  { color: var(--yellow); }
     .cb-code .c  { color: rgba(198,199,189,.42); }
 
@@ -154,7 +154,7 @@
       border: 1px solid rgba(198,199,189,.22); border-radius: 4px;
       color: var(--shell); padding: 6px 10px; font-size: .95rem; font-family: monospace;
     }
-    .cfg-field select:focus, .cfg-field input:focus { outline: none; border-color: var(--sky); }
+    .cfg-field select:focus, .cfg-field input:focus { outline: none; border-color: var(--blue); }
     .cfg-field select option { background: #1a1b1a; }
     .btn-group-cfg { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
     .cfg-btn {
@@ -163,8 +163,8 @@
       font-size: .875rem; cursor: pointer; font-family: monospace;
       transition: background .15s, border-color .15s;
     }
-    .cfg-btn.active { background: rgba(130,200,229,.2); border-color: var(--sky); color: var(--sky); }
-    .cfg-btn.act-arrow { background: rgba(195,165,229,.2); border-color: var(--lavender); color: var(--lavender); }
+    .cfg-btn.active { background: rgba(130,200,229,.2); border-color: var(--blue); color: var(--blue); }
+    .cfg-btn.act-arrow { background: rgba(195,165,229,.2); border-color: var(--violet); color: var(--violet); }
     .live-preview {
       background: rgba(0,0,0,.3); border: 1px solid rgba(198,199,189,.1);
       border-radius: 6px; padding: 36px 24px; margin-top: 20px;
@@ -179,21 +179,21 @@
     /* Misc */
     .muted { color: rgba(198,199,189,.58); font-size: 1rem; }
     .inline-tag {
-      display: inline-block; background: rgba(195,165,229,.12); color: var(--lavender);
+      display: inline-block; background: rgba(195,165,229,.12); color: var(--violet);
       font-family: monospace; font-size: .9rem; padding: 1px 8px;
       border-radius: 4px; border: 1px solid rgba(195,165,229,.28);
     }
     .new-badge {
-      display: inline-block; background: rgba(39,174,96,.15); color: var(--safe);
+      display: inline-block; background: rgba(39,174,96,.15); color: var(--green);
       font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 10px;
       vertical-align: middle; margin-left: 8px; letter-spacing: .05em;
     }
     .shr { margin-top: 72px; }
-    code { background: rgba(198,199,189,.1); color: var(--sky); padding: 1px 6px; border-radius: 3px; font-size: .9rem; }
+    code { background: rgba(198,199,189,.1); color: var(--blue); padding: 1px 6px; border-radius: 3px; font-size: .9rem; }
 
     /* attr table */
     .attr-table { width: 100%; border-collapse: collapse; font-size: .92rem; font-family: monospace; }
-    .attr-table th { padding: 8px 12px; color: var(--lavender); text-align: left; font-weight: 700; border-bottom: 1px solid rgba(198,199,189,.18); }
+    .attr-table th { padding: 8px 12px; color: var(--violet); text-align: left; font-weight: 700; border-bottom: 1px solid rgba(198,199,189,.18); }
     .attr-table td { padding: 8px 12px; color: var(--shell); border-bottom: 1px solid rgba(198,199,189,.08); }
     .attr-table td:first-child { color: var(--yellow); }
     .attr-table td:nth-child(3) { color: rgba(198,199,189,.58); }
@@ -208,35 +208,35 @@
     <h1>&lt;dual-hr&gt; &amp; &lt;dual-vr&gt;</h1>
     <p>
       雙色分割線語意元件。v2.1 新增
-      <strong style="color:var(--lavender)">箭頭（arrow）</strong>屬性，
+      <strong style="color:var(--violet)">箭頭（arrow）</strong>屬性，
       支援 <strong style="color:var(--yellow)">透明留白模式</strong>（<code>line-style="none"</code>）
-      及 <strong style="color:var(--sky)">extraclass</strong> Bootstrap 整合。
+      及 <strong style="color:var(--blue)">extraclass</strong> Bootstrap 整合。
     </p>
   </div>
-  <dual-hr color-left="lavender" color-right="ocean" thickness="2px" margin="0"></dual-hr>
+  <dual-hr color-left="violet" color-right="blue" thickness="2px" margin="0"></dual-hr>
 
 
   <!-- ══ 色票 ══ -->
   <h2>色票 Palette</h2>
-  <dual-hr color-left="lavender" color-right="sky" thickness="1px" margin="10px 0 20px"></dual-hr>
+  <dual-hr color-left="violet" color-right="blue" thickness="1px" margin="10px 0 20px"></dual-hr>
   <div class="palette-grid">
     <div class="swatch"><div class="swatch-color" style="background:#0C0D0C;border-bottom:1px solid rgba(198,199,189,.14)"></div><div class="swatch-info"><span class="swatch-name">bg</span><span class="swatch-hex">#0C0D0C</span><span class="chg">NEW</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#C6C7BD"></div><div class="swatch-info"><span class="swatch-name">shell</span><span class="swatch-hex">#C6C7BD</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#DBEDD8"></div><div class="swatch-info"><span class="swatch-name">vanilla</span><span class="swatch-hex">#DBEDD8</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#E5C3B3"></div><div class="swatch-info"><span class="swatch-name">salmon</span><span class="swatch-hex">#E5C3B3</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#F79C40"></div><div class="swatch-info"><span class="swatch-name">orange</span><span class="swatch-hex">#F79C40</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#E3D322"></div><div class="swatch-info"><span class="swatch-name">yellow</span><span class="swatch-hex">#E3D322</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#EDA109"></div><div class="swatch-info"><span class="swatch-name">orange</span><span class="swatch-hex">#EDA109</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#82C8E5"></div><div class="swatch-info"><span class="swatch-name">sky</span><span class="swatch-hex">#82C8E5</span><span class="chg">修正</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#1CCAE8"></div><div class="swatch-info"><span class="swatch-name">ocean</span><span class="swatch-hex">#1CCAE8</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#D4FFFC"></div><div class="swatch-info"><span class="swatch-name">focus</span><span class="swatch-hex">#D4FFFC</span><span class="chg">修正</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#0DA591"></div><div class="swatch-info"><span class="swatch-name">teal</span><span class="swatch-hex">#0DA591</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#27AE60"></div><div class="swatch-info"><span class="swatch-name">safe</span><span class="swatch-hex">#27AE60</span><span class="chg">修正</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#B3DE73"></div><div class="swatch-info"><span class="swatch-name">special</span><span class="swatch-hex">#B3DE73</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#C3A5E5"></div><div class="swatch-info"><span class="swatch-name">lavender</span><span class="swatch-hex">#C3A5E5</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#7849C9"></div><div class="swatch-info"><span class="swatch-name">indigo</span><span class="swatch-hex">#7849C9</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#F79C40"></div><div class="swatch-info"><span class="swatch-name">orange</span><span class="swatch-hex">#F79C40</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#5DBAE8"></div><div class="swatch-info"><span class="swatch-name">blue</span><span class="swatch-hex">#5DBAE8</span><span class="chg">修正</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#5DBAE8"></div><div class="swatch-info"><span class="swatch-name">blue</span><span class="swatch-hex">#5DBAE8</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#DBEDD8"></div><div class="swatch-info"><span class="swatch-name">focus</span><span class="swatch-hex">#DBEDD8</span><span class="chg">修正</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#71CD76"></div><div class="swatch-info"><span class="swatch-name">green</span><span class="swatch-hex">#71CD76</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#71CD76"></div><div class="swatch-info"><span class="swatch-name">green</span><span class="swatch-hex">#71CD76</span><span class="chg">修正</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#71CD76"></div><div class="swatch-info"><span class="swatch-name">green</span><span class="swatch-hex">#71CD76</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#B484E8"></div><div class="swatch-info"><span class="swatch-name">violet</span><span class="swatch-hex">#B484E8</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#778CE1"></div><div class="swatch-info"><span class="swatch-name">indigo</span><span class="swatch-hex">#778CE1</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#FF91D7"></div><div class="swatch-info"><span class="swatch-name">pink</span><span class="swatch-hex">#FF91D7</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#E6374B"></div><div class="swatch-info"><span class="swatch-name">warning</span><span class="swatch-hex">#E6374B</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#4171BF"></div><div class="swatch-info"><span class="swatch-name">info</span><span class="swatch-hex">#4171BF</span><span class="chg">修正</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#EF6661"></div><div class="swatch-info"><span class="swatch-name">warning</span><span class="swatch-hex">#EF6661</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#778CE1"></div><div class="swatch-info"><span class="swatch-name">info</span><span class="swatch-hex">#778CE1</span><span class="chg">修正</span></div></div>
     <div class="swatch"><div class="swatch-color transparent-check"></div><div class="swatch-info"><span class="swatch-name">transparent</span><span class="swatch-hex">'transparent'</span><span class="chg">NEW</span></div></div>
   </div>
 
@@ -245,7 +245,7 @@
   <div class="shr">
     <h2><span class="inline-tag">arrow</span> 箭頭屬性 <span class="new-badge">NEW v2.1</span></h2>
   </div>
-  <dual-hr color-left="lavender" color-right="pink" thickness="1px" margin="10px 0 20px"></dual-hr>
+  <dual-hr color-left="violet" color-right="pink" thickness="1px" margin="10px 0 20px"></dual-hr>
 
   <p class="muted" style="margin-bottom:20px">
     箭頭顏色自動跟隨端點的線條色。<code>arrow-size</code> 預設 <strong style="color:var(--yellow)">8</strong>（px），
@@ -269,23 +269,23 @@
   <div class="dp">
     <div class="arrow-row">
       <div class="arrow-tag">無箭頭（對照）</div>
-      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="sky" thickness="2px" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="blue" thickness="2px" margin="0"></dual-hr></div>
     </div>
     <div class="arrow-row">
       <div class="arrow-tag"><em>arrow="end"</em>（預設 8px）</div>
-      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="sky" thickness="2px" arrow="end" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="blue" thickness="2px" arrow="end" margin="0"></dual-hr></div>
     </div>
     <div class="arrow-row">
       <div class="arrow-tag"><em>arrow="start"</em></div>
-      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="sky" thickness="2px" arrow="start" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="blue" thickness="2px" arrow="start" margin="0"></dual-hr></div>
     </div>
     <div class="arrow-row">
       <div class="arrow-tag"><em>arrow="both"</em></div>
-      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="sky" thickness="2px" arrow="both" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="yellow" color-right="blue" thickness="2px" arrow="both" margin="0"></dual-hr></div>
     </div>
     <div class="arrow-row">
       <div class="arrow-tag"><em>arrow="end" arrow-size="14"</em></div>
-      <div class="arrow-preview"><dual-hr color-left="teal" color-right="ocean" thickness="3px" arrow="end" arrow-size="14" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="green" color-right="blue" thickness="3px" arrow="end" arrow-size="14" margin="0"></dual-hr></div>
     </div>
     <div class="arrow-row">
       <div class="arrow-tag"><em>arrow="both" arrow-size="20"</em></div>
@@ -293,11 +293,11 @@
     </div>
     <div class="arrow-row">
       <div class="arrow-tag"><em>arrow="end"</em> ratio="2:8"</div>
-      <div class="arrow-preview"><dual-hr color-left="lavender" color-right="warning" ratio="2:8" thickness="3px" arrow="end" arrow-size="12" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="violet" color-right="red" ratio="2:8" thickness="3px" arrow="end" arrow-size="12" margin="0"></dual-hr></div>
     </div>
     <div class="arrow-row" style="border:none">
       <div class="arrow-tag"><em>arrow="both"</em> dashed</div>
-      <div class="arrow-preview"><dual-hr color-left="sky" color-right="orange" line-style="dashed" dash="10px" gap="6px" thickness="2px" arrow="both" arrow-size="10" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="blue" color-right="orange" line-style="dashed" dash="10px" gap="6px" thickness="2px" arrow="both" arrow-size="10" margin="0"></dual-hr></div>
     </div>
   </div>
 
@@ -308,32 +308,32 @@
 
       <div style="text-align:center">
         <div class="dlabel" style="margin:0 0 6px">無箭頭</div>
-        <dual-vr color-top="yellow" color-bottom="sky" height="80px" thickness="2px" margin="0 auto"></dual-vr>
+        <dual-vr color-top="yellow" color-bottom="blue" height="80px" thickness="2px" margin="0 auto"></dual-vr>
       </div>
 
       <div style="text-align:center; margin-left:24px">
         <div class="dlabel" style="margin:0 0 6px"><span>arrow="end"</span></div>
-        <dual-vr color-top="yellow" color-bottom="sky" height="80px" thickness="2px" arrow="end" margin="0 auto"></dual-vr>
+        <dual-vr color-top="yellow" color-bottom="blue" height="80px" thickness="2px" arrow="end" margin="0 auto"></dual-vr>
       </div>
 
       <div style="text-align:center; margin-left:24px">
         <div class="dlabel" style="margin:0 0 6px"><span>arrow="start"</span></div>
-        <dual-vr color-top="yellow" color-bottom="sky" height="80px" thickness="2px" arrow="start" margin="0 auto"></dual-vr>
+        <dual-vr color-top="yellow" color-bottom="blue" height="80px" thickness="2px" arrow="start" margin="0 auto"></dual-vr>
       </div>
 
       <div style="text-align:center; margin-left:24px">
         <div class="dlabel" style="margin:0 0 6px"><span>arrow="both"</span></div>
-        <dual-vr color-top="yellow" color-bottom="sky" height="80px" thickness="2px" arrow="both" margin="0 auto"></dual-vr>
+        <dual-vr color-top="yellow" color-bottom="blue" height="80px" thickness="2px" arrow="both" margin="0 auto"></dual-vr>
       </div>
 
       <div style="text-align:center; margin-left:24px">
         <div class="dlabel" style="margin:0 0 6px"><span>arrow="both" arrow-size="14"</span></div>
-        <dual-vr color-top="lavender" color-bottom="pink" height="80px" thickness="3px" arrow="both" arrow-size="14" margin="0 auto"></dual-vr>
+        <dual-vr color-top="violet" color-bottom="pink" height="80px" thickness="3px" arrow="both" arrow-size="14" margin="0 auto"></dual-vr>
       </div>
 
       <div style="text-align:center; margin-left:24px">
         <div class="dlabel" style="margin:0 0 6px"><span>arrow="end" dashed</span></div>
-        <dual-vr color-top="teal" color-bottom="ocean" height="80px" thickness="2px" line-style="dashed" dash="8px" gap="5px" arrow="end" arrow-size="12" margin="0 auto"></dual-vr>
+        <dual-vr color-top="green" color-bottom="blue" height="80px" thickness="2px" line-style="dashed" dash="8px" gap="5px" arrow="end" arrow-size="12" margin="0 auto"></dual-vr>
       </div>
 
     </div>
@@ -344,21 +344,21 @@
   <p class="muted">線條完全透明，只留箭頭，可配合比例（ratio）控制箭頭左右位置的視覺重心。</p>
   <div class="dp">
     <div class="sa-row">
-      <div class="sa-label"><em>line-style="none" arrow="end"</em><br>color-right="warning"</div>
+      <div class="sa-label"><em>line-style="none" arrow="end"</em><br>color-right="red"</div>
       <div style="flex:1">
-        <dual-hr color-left="transparent" color-right="warning" line-style="none" thickness="0" arrow="end" arrow-size="12" margin="0"></dual-hr>
+        <dual-hr color-left="transparent" color-right="red" line-style="none" thickness="0" arrow="end" arrow-size="12" margin="0"></dual-hr>
       </div>
     </div>
     <div class="sa-row">
-      <div class="sa-label"><em>line-style="none" arrow="both"</em><br>color-left="teal" color-right="pink"</div>
+      <div class="sa-label"><em>line-style="none" arrow="both"</em><br>color-left="green" color-right="pink"</div>
       <div style="flex:1">
-        <dual-hr color-left="teal" color-right="pink" line-style="none" thickness="0" arrow="both" arrow-size="12" margin="0"></dual-hr>
+        <dual-hr color-left="green" color-right="pink" line-style="none" thickness="0" arrow="both" arrow-size="12" margin="0"></dual-hr>
       </div>
     </div>
     <div class="sa-row">
-      <div class="sa-label"><em>line-style="none" arrow="end" arrow-size="20"</em><br>color-right="lavender" ratio="9:1"</div>
+      <div class="sa-label"><em>line-style="none" arrow="end" arrow-size="20"</em><br>color-right="violet" ratio="9:1"</div>
       <div style="flex:1">
-        <dual-hr color-left="transparent" color-right="lavender" ratio="9:1" line-style="none" thickness="0" arrow="end" arrow-size="20" margin="0"></dual-hr>
+        <dual-hr color-left="transparent" color-right="violet" ratio="9:1" line-style="none" thickness="0" arrow="end" arrow-size="20" margin="0"></dual-hr>
       </div>
     </div>
     <div class="sa-row" style="border:none">
@@ -374,38 +374,38 @@
   <div class="shr">
     <h2><span class="inline-tag">&lt;dual-hr&gt;</span> 線條樣式</h2>
   </div>
-  <dual-hr color-left="ocean" color-right="teal" thickness="1px" margin="10px 0 20px"></dual-hr>
+  <dual-hr color-left="blue" color-right="green" thickness="1px" margin="10px 0 20px"></dual-hr>
 
   <h3>Solid</h3>
   <div class="dp">
-    <div class="dlabel">預設 <span>yellow / sky</span></div>
+    <div class="dlabel">預設 <span>yellow / blue</span></div>
     <dual-hr></dual-hr>
-    <div class="dlabel" style="margin-top:16px"><span>lavender / pink · ratio 3:7 · 2px</span></div>
-    <dual-hr color-left="lavender" color-right="pink" ratio="3:7" thickness="2px"></dual-hr>
-    <div class="dlabel" style="margin-top:16px"><span>teal / safe · ratio 7:3 · 3px</span></div>
-    <dual-hr color-left="teal" color-right="safe" ratio="7:3" thickness="3px"></dual-hr>
-    <div class="dlabel" style="margin-top:16px"><span>indigo / lavender · 6px</span></div>
-    <dual-hr color-left="indigo" color-right="lavender" thickness="6px"></dual-hr>
+    <div class="dlabel" style="margin-top:16px"><span>violet / pink · ratio 3:7 · 2px</span></div>
+    <dual-hr color-left="violet" color-right="pink" ratio="3:7" thickness="2px"></dual-hr>
+    <div class="dlabel" style="margin-top:16px"><span>green / green · ratio 7:3 · 3px</span></div>
+    <dual-hr color-left="green" color-right="green" ratio="7:3" thickness="3px"></dual-hr>
+    <div class="dlabel" style="margin-top:16px"><span>indigo / violet · 6px</span></div>
+    <dual-hr color-left="indigo" color-right="violet" thickness="6px"></dual-hr>
   </div>
 
   <h3>Dashed</h3>
   <div class="dp">
-    <div class="dlabel"><span>sky / lavender · dash 12px gap 6px</span></div>
-    <dual-hr color-left="sky" color-right="lavender" line-style="dashed" dash="12px" gap="6px" thickness="2px"></dual-hr>
-    <div class="dlabel" style="margin-top:16px"><span>ocean / warning · dash 20px gap 8px · 3px</span></div>
-    <dual-hr color-left="ocean" color-right="warning" line-style="dashed" dash="20px" gap="8px" thickness="3px"></dual-hr>
+    <div class="dlabel"><span>blue / violet · dash 12px gap 6px</span></div>
+    <dual-hr color-left="blue" color-right="violet" line-style="dashed" dash="12px" gap="6px" thickness="2px"></dual-hr>
+    <div class="dlabel" style="margin-top:16px"><span>blue / warning · dash 20px gap 8px · 3px</span></div>
+    <dual-hr color-left="blue" color-right="red" line-style="dashed" dash="20px" gap="8px" thickness="3px"></dual-hr>
     <div class="dlabel" style="margin-top:16px"><span>pink / indigo · dash 6px gap 12px</span></div>
     <dual-hr color-left="pink" color-right="indigo" line-style="dashed" dash="6px" gap="12px" thickness="2px"></dual-hr>
   </div>
 
   <h3>Dotted</h3>
   <div class="dp">
-    <div class="dlabel"><span>orange / teal · dot 8px gap 6px</span></div>
-    <dual-hr color-left="orange" color-right="teal" line-style="dotted" dash="8px" gap="6px" thickness="8px"></dual-hr>
-    <div class="dlabel" style="margin-top:16px"><span>sky / pink · dot 10px gap 4px</span></div>
-    <dual-hr color-left="sky" color-right="pink" line-style="dotted" dash="10px" gap="4px" thickness="10px"></dual-hr>
-    <div class="dlabel" style="margin-top:16px"><span>special / ocean · dot 4px gap 10px</span></div>
-    <dual-hr color-left="special" color-right="ocean" line-style="dotted" dash="4px" gap="10px" thickness="4px"></dual-hr>
+    <div class="dlabel"><span>orange / green · dot 8px gap 6px</span></div>
+    <dual-hr color-left="orange" color-right="green" line-style="dotted" dash="8px" gap="6px" thickness="8px"></dual-hr>
+    <div class="dlabel" style="margin-top:16px"><span>blue / pink · dot 10px gap 4px</span></div>
+    <dual-hr color-left="blue" color-right="pink" line-style="dotted" dash="10px" gap="4px" thickness="10px"></dual-hr>
+    <div class="dlabel" style="margin-top:16px"><span>green / blue · dot 4px gap 10px</span></div>
+    <dual-hr color-left="green" color-right="blue" line-style="dotted" dash="4px" gap="10px" thickness="4px"></dual-hr>
   </div>
 
 
@@ -413,20 +413,20 @@
   <div class="shr">
     <h2><span class="inline-tag">&lt;dual-vr&gt;</span> 垂直分割線</h2>
   </div>
-  <dual-hr color-left="teal" color-right="special" thickness="1px" margin="10px 0 20px"></dual-hr>
+  <dual-hr color-left="green" color-right="green" thickness="1px" margin="10px 0 20px"></dual-hr>
 
   <div class="dp">
     <div class="vr-row">
       <span class="vr-text">A</span>
-      <dual-vr color-top="yellow" color-bottom="sky" height="60px" thickness="2px"></dual-vr>
+      <dual-vr color-top="yellow" color-bottom="blue" height="60px" thickness="2px"></dual-vr>
       <span class="vr-text">B</span>
-      <dual-vr color-top="lavender" color-bottom="pink" ratio="3:7" height="60px" thickness="2px"></dual-vr>
+      <dual-vr color-top="violet" color-bottom="pink" ratio="3:7" height="60px" thickness="2px"></dual-vr>
       <span class="vr-text">C</span>
-      <dual-vr color-top="teal" color-bottom="safe" ratio="7:3" height="60px" thickness="3px"></dual-vr>
+      <dual-vr color-top="green" color-bottom="green" ratio="7:3" height="60px" thickness="3px"></dual-vr>
       <span class="vr-text">D</span>
-      <dual-vr color-top="sky" color-bottom="indigo" line-style="dashed" dash="10px" gap="5px" height="60px" thickness="2px"></dual-vr>
+      <dual-vr color-top="blue" color-bottom="indigo" line-style="dashed" dash="10px" gap="5px" height="60px" thickness="2px"></dual-vr>
       <span class="vr-text">E</span>
-      <dual-vr color-top="orange" color-bottom="teal" line-style="dotted" dash="8px" gap="6px" height="60px" thickness="8px"></dual-vr>
+      <dual-vr color-top="orange" color-bottom="green" line-style="dotted" dash="8px" gap="6px" height="60px" thickness="8px"></dual-vr>
       <span class="vr-text">F</span>
     </div>
   </div>
@@ -436,7 +436,7 @@
   <div class="shr">
     <h2>透明線條 · 留白方法</h2>
   </div>
-  <dual-hr color-left="yellow" color-right="safe" thickness="1px" margin="10px 0 20px"></dual-hr>
+  <dual-hr color-left="yellow" color-right="green" thickness="1px" margin="10px 0 20px"></dual-hr>
   <div class="row g-4 mt-1">
     <div class="col-md-4">
       <h4>① 無留白</h4>
@@ -484,11 +484,11 @@
       <div class="cfg-field">
         <label>color-left</label>
         <select id="cfg-cl">
-          <option value="yellow" selected>yellow</option><option value="sky">sky</option>
-          <option value="lavender">lavender</option><option value="ocean">ocean</option>
-          <option value="teal">teal</option><option value="safe">safe</option>
-          <option value="special">special</option><option value="warning">warning</option>
-          <option value="salmon">salmon</option><option value="orange">orange</option>
+          <option value="yellow" selected>yellow</option><option value="blue">blue</option>
+          <option value="violet">violet</option><option value="blue">blue</option>
+          <option value="green">green</option><option value="green">green</option>
+          <option value="green">green</option><option value="warning">warning</option>
+          <option value="orange">orange</option><option value="orange">orange</option>
           <option value="pink">pink</option><option value="indigo">indigo</option>
           <option value="info">info</option><option value="vanilla">vanilla</option>
           <option value="shell">shell</option><option value="focus">focus</option>
@@ -498,11 +498,11 @@
       <div class="cfg-field">
         <label>color-right</label>
         <select id="cfg-cr">
-          <option value="yellow">yellow</option><option value="sky" selected>sky</option>
-          <option value="lavender">lavender</option><option value="ocean">ocean</option>
-          <option value="teal">teal</option><option value="safe">safe</option>
-          <option value="special">special</option><option value="warning">warning</option>
-          <option value="salmon">salmon</option><option value="orange">orange</option>
+          <option value="yellow">yellow</option><option value="blue" selected>blue</option>
+          <option value="violet">violet</option><option value="blue">blue</option>
+          <option value="green">green</option><option value="green">green</option>
+          <option value="green">green</option><option value="warning">warning</option>
+          <option value="orange">orange</option><option value="orange">orange</option>
           <option value="pink">pink</option><option value="indigo">indigo</option>
           <option value="info">info</option><option value="vanilla">vanilla</option>
           <option value="shell">shell</option><option value="focus">focus</option>
@@ -553,7 +553,7 @@
 
     <div class="live-preview">
       <dual-hr id="live-hr"
-        color-left="yellow" color-right="sky"
+        color-left="yellow" color-right="blue"
         thickness="2px" line-style="solid"
         ratio="5:5" dash="8px" gap="5px" margin="0">
       </dual-hr>

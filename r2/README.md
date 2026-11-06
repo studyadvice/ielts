@@ -28,7 +28,7 @@
     <ls-mark layer="c1" detail="note-c1">Like their peers,</ls-mark>
     <ls-mark layer="c2">adults</ls-mark> often report high levels of stress.
   </ls-text>
-  <ls-layer name="c1" label="介系詞片語" source="tip-c1" color="ocean"></ls-layer>
+  <ls-layer name="c1" label="介系詞片語" source="tip-c1" color="blue"></ls-layer>
   <ls-layer name="c2" label="主詞" source="tip-c2" color="yellow"></ls-layer>
 </layer-switch>
 
@@ -41,7 +41,7 @@
 
 數字型的尺寸屬性單位為 px，字體大小屬性單位為 rem；也可以直接填任何 CSS 值。顏色屬性可填配色名稱或色碼。
 
-配色名稱：`shell`、`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`special`、`info`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
+配色名稱：`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
 
 ### `<layer-switch>`
 
@@ -149,7 +149,7 @@
 ```html
 <ui-drill tile-shape="tab-trapezoid" icon-color="vanilla" bordered min-height="300"
   hide-empty-right active="k-read">
-  <drill-tile source="k-read" label="課文分析" color="teal" icon="book-half"></drill-tile>
+  <drill-tile source="k-read" label="課文分析" color="green" icon="book-half"></drill-tile>
   <drill-tile source="k-words" label="搭配詞" color="indigo" icon="diagram-3-fill"></drill-tile>
   <drill-tile source="k-focus" label="重點段落" color="orange" icon="bullseye"></drill-tile>
 </ui-drill>
@@ -161,7 +161,7 @@
       in <ls-mark layer="o">public transport</ls-mark>.
     </ls-text>
     <ls-layer name="s" label="主詞" source="k-s" color="yellow"></ls-layer>
-    <ls-layer name="v" label="動詞" source="k-v" color="ocean"></ls-layer>
+    <ls-layer name="v" label="動詞" source="k-v" color="blue"></ls-layer>
     <ls-layer name="o" label="受詞" source="k-o" color="pink"></ls-layer>
   </layer-switch>
 </template>
@@ -208,7 +208,7 @@
 <template id="p1">
   <layer-switch mark-style="underline">
     <ls-text><ls-mark layer="n">Cities</ls-mark> <ls-mark layer="v">invest</ls-mark> in <ls-mark layer="n">buses</ls-mark>.</ls-text>
-    <ls-layer name="n" label="名詞" color="sky"></ls-layer>
+    <ls-layer name="n" label="名詞" color="blue"></ls-layer>
     <ls-layer name="v" label="動詞" color="orange"></ls-layer>
   </layer-switch>
 </template>
@@ -231,7 +231,7 @@
 <template id="st-words">
   <ui-cards cols="3" panel-title="{label}" toggle>
     <card-item label="make" note="動詞" icon="hammer" color="yellow" detail="wc-make"></card-item>
-    <card-item label="undermine" note="動詞" icon="arrow-down-circle" color="lavender" detail="wc-under"></card-item>
+    <card-item label="undermine" note="動詞" icon="arrow-down-circle" color="violet" detail="wc-under"></card-item>
   </ui-cards>
 </template>
 <template id="st-read">
@@ -270,15 +270,15 @@
 <template id="lesson-a">
   <layer-switch active="v" panel="none">
     <ls-text>The scandal <ls-mark layer="v">undermined</ls-mark> public <ls-mark layer="n">confidence</ls-mark>.</ls-text>
-    <ls-layer name="v" label="動詞" color="ocean"></ls-layer>
+    <ls-layer name="v" label="動詞" color="blue"></ls-layer>
     <ls-layer name="n" label="名詞" color="pink"></ls-layer>
   </layer-switch>
-  <button detail="map-undermine" color="lavender">看 undermine 的搭配詞</button>
+  <button detail="map-undermine" color="violet">看 undermine 的搭配詞</button>
 </template>
 
 <template id="map-undermine">
   <collocation-map trigger="both" panel-title="{label}">
-    <cm-point color="lavender">undermine</cm-point>
+    <cm-point color="violet">undermine</cm-point>
     <cm-item detail="ex-trust">trust</cm-item>
     <cm-item detail="ex-confidence">confidence</cm-item>
   </collocation-map>
@@ -294,8 +294,8 @@
 <ui-cards title="本週單字" cols="3" card-style="filled" align="center" icon-size="2"
   panel="right" panel-columns="7,5" panel-title="{label}" placeholder="點選單字卡。">
   <card-item label="make" icon="hammer" color="yellow" detail="wc-make"></card-item>
-  <card-item label="undermine" icon="arrow-down-circle" color="lavender" detail="wc-under"></card-item>
-  <card-item label="invest" icon="graph-up-arrow" color="teal" detail="wc-invest"></card-item>
+  <card-item label="undermine" icon="arrow-down-circle" color="violet" detail="wc-under"></card-item>
+  <card-item label="invest" icon="graph-up-arrow" color="green" detail="wc-invest"></card-item>
 </ui-cards>
 <!-- wc-make、wc-under 同範例 3 -->
 ```
@@ -312,7 +312,7 @@
 
 <layer-switch target="shared-panel" toggle-style="dot" mark-style="box">
   <ls-text><ls-mark layer="b">Second</ls-mark> sentence.</ls-text>
-  <ls-layer name="b" label="重點" source="tip-b" color="teal"></ls-layer>
+  <ls-layer name="b" label="重點" source="tip-b" color="green"></ls-layer>
 </layer-switch>
 
 <div id="shared-panel" class="my-panel"></div>

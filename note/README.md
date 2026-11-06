@@ -143,18 +143,18 @@
 
 | 主題名稱 | 邊框色 | 備註 |
 |---|---|---|
-| `dark`、`lavender`、`accent` | `#B484E8` | 預設主題 |
-| `sky` | `#5DBAE8` | |
-| `ocean` | `#5DBAE8` | |
+| `dark`、`violet`、`accent` | `#B484E8` | 預設主題 |
+| `blue` | `#5DBAE8` | |
+| `blue` | `#5DBAE8` | |
 | `warning`、`wrong` | `#EF6661` | |
-| `success`、`safe`、`correct` | `#71CD76` | |
-| `special`、`highlight` | `#71CD76` | |
+| `success`、`green`、`correct` | `#71CD76` | |
+| `green`、`highlight` | `#71CD76` | |
 | `note`、`yellow` | `#E3D322` | |
-| `salmon` | `#F79C40` | |
+| `orange` | `#FF5530` | |
 | `pink` | `#FF91D7` | |
-| `orange` | `#F79C40` | |
+| `orange` | `#FF5530` | |
 | `vanilla` | `#DBEDD8` | |
-| `teal` | `#71CD76` | |
+| `green` | `#71CD76` | |
 | `focus` | `#DBEDD8` | |
 | `indigo` | `#778CE1` | |
 | `info` | `#778CE1` | |
@@ -281,7 +281,7 @@ PopoverConfig.addTheme('emerald-volt', {
 
 預設圖示：`announcement` 為 `bi-megaphone-fill`，`promo` 為 `bi-tag-fill`，`sticky` 為 `bi-info-circle-fill`。
 
-`color` 可以填的名稱有 `lavender`、`sky`、`ocean`、`safe`、`special`、`yellow`、`salmon`、`pink`、`orange`、`vanilla`、`teal`、`focus`、`indigo`、`info`、`wrong`、`warning`（等同 `yellow`）以及 `gold`。`gold` 有深金底色與緩慢掃過的閃光。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
+`color` 可以填的名稱有 `violet`、`blue`、`green`、`yellow`、`orange`、`pink`、`vanilla`、`indigo`、`shell`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent` 以及 `gold`。`gold` 有深金底色與緩慢掃過的閃光。
 
 ### 事件
 
@@ -326,12 +326,12 @@ BpNotice._reCSS();
   in daily life.</p>
 ```
 
-一般單字用 `sky`，需要特別強調的用 `gold`，讀者一眼就能分出層次。
+一般單字用 `blue`，需要特別強調的用 `gold`，讀者一眼就能分出層次。
 
 ### 2. 文法規則輪播
 
 ```html
-<span data-popover-theme="info" data-popover-color="info"
+<span data-popover-theme="indigo" data-popover-color="indigo"
       data-popover-title="現在完成式" data-popover-target="#tpl-pp"
       data-popover-interval="0">現在完成式</span>
 
@@ -348,7 +348,7 @@ BpNotice._reCSS();
 
 ```html
 <p>1. She ___ here since 2020.
-  <span data-popover-theme="success" data-popover-color="safe"
+  <span data-popover-theme="success" data-popover-color="green"
         data-popover-title="解析" data-popover-label="第 1 題"
         data-popover-panel="#ans-1"
         data-popover-content="答案是 has lived。since 搭配現在完成式。">看解析</span>
@@ -392,7 +392,7 @@ PopoverConfig.set({ modal: 'end', modalSize: '420px' });
 BpPopnote.annotate([
   { text: 'ubiquitous', within: '#article', theme: 'gold', color: 'gold',
     title: 'ubiquitous', content: 'adj. 無所不在的' },
-  { text: 'smartphones', within: '#article', theme: 'sky', color: 'sky',
+  { text: 'smartphones', within: '#article', theme: 'blue', color: 'blue',
     title: 'smartphone', content: 'n. 智慧型手機' }
 ]);
 ```
@@ -435,7 +435,7 @@ function loadUnit(id) {
 
 | 種類 | 主題 | 用途 |
 |---|---|---|
-| 詞彙 | `sky` | 單字與搭配詞 |
+| 詞彙 | `blue` | 單字與搭配詞 |
 | 文法 | `info` | 句型與規則 |
 | 常見錯誤 | `warning` | 容易寫錯的地方 |
 | 加分重點 | `gold` | 想特別強調的內容，帶電流 |
@@ -469,7 +469,7 @@ PopoverConfig.addTheme('member', {
 
 ```html
 <!-- 置頂公告，關閉後不再出現 -->
-<bp-notice type="announcement" color="sky" dismissible notice-id="maintenance"
+<bp-notice type="announcement" color="blue" dismissible notice-id="maintenance"
            icon="bi-tools">本週六凌晨 2 點到 4 點系統維護。</bp-notice>
 
 <!-- 促銷列，附行動按鈕 -->
@@ -479,7 +479,7 @@ PopoverConfig.addTheme('member', {
 </bp-notice>
 
 <!-- 黏在視窗底部，十秒後自動消失 -->
-<bp-notice type="sticky" position="bottom" color="safe" auto-dismiss="10"
+<bp-notice type="sticky" position="bottom" color="green" auto-dismiss="10"
            icon="bi-check-circle-fill">設定已儲存。</bp-notice>
 ```
 
@@ -516,8 +516,8 @@ $h = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 // $word['note_html'] 是後台編輯器輸出，寫入資料庫前已用白名單過濾
 ?>
 <?php foreach ($words as $word): ?>
-  <span data-popover-theme="<?= $word['is_key'] ? 'gold' : 'sky' ?>"
-        data-popover-color="<?= $word['is_key'] ? 'gold' : 'sky' ?>"
+  <span data-popover-theme="<?= $word['is_key'] ? 'gold' : 'blue' ?>"
+        data-popover-color="<?= $word['is_key'] ? 'gold' : 'blue' ?>"
         data-popover-title="<?= $h($word['text']) ?>"
         data-popover-content="<?= $h($word['note_html']) ?>"><?= $h($word['text']) ?></span>
 <?php endforeach; ?>

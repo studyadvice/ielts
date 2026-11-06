@@ -29,11 +29,11 @@
       --border:  #2c2d2c;
       --shell:   #C6C7BD;
       --muted:   #6a6b66;
-      --accent:  #1E65C7;   /* info  — 主色 */
-      --hi:      #b3de73;   /* special — 副色 */
-      --safe:    #299459;
-      --warning: #F08080;
-      --stone:   #95c9de;
+      --accent:  #778CE1;   /* info  — 主色 */
+      --hi:      #71CD76;   /* green — 副色 */
+      --green:    #71CD76;
+      --warning: #EF6661;
+      --blue:   #5DBAE8;
       --region:  #2a2b2a;
     }
 
@@ -167,7 +167,7 @@
 
     .badge-ac  { background: rgba(30,101,199,0.13);  color: var(--accent); }
     .badge-hi  { background: rgba(179,222,115,0.13);  color: var(--hi); }
-    .badge-sf  { background: rgba(41,148,89,0.13);  color: var(--safe); }
+    .badge-sf  { background: rgba(41,148,89,0.13);  color: var(--green); }
 
     /* ── Section ────────────────────────────────────────────── */
     section h2 {
@@ -228,18 +228,18 @@
       font-size: inherit !important;
     }
 
-    /* info + special 配色 */
+    /* info + green 配色 */
     .token.tag, .token.selector        { color: var(--accent) !important; }
-    .token.attr-name                   { color: var(--stone) !important; }
+    .token.attr-name                   { color: var(--blue) !important; }
     .token.attr-value, .token.string   { color: var(--hi) !important; }
     .token.comment, .token.prolog      { color: #4a5050 !important; font-style: italic; }
-    .token.keyword                     { color: #C3A5E5 !important; }
-    .token.number, .token.boolean      { color: var(--safe) !important; }
+    .token.keyword                     { color: #B484E8 !important; }
+    .token.number, .token.boolean      { color: var(--green) !important; }
     .token.punctuation                 { color: #484949 !important; }
     .token.function                    { color: var(--accent) !important; }
     .token.class-name                  { color: var(--hi) !important; }
     .token.operator                    { color: var(--shell) !important; }
-    .token.property                    { color: var(--stone) !important; }
+    .token.property                    { color: var(--blue) !important; }
 
     /* ── Example Card ───────────────────────────────────────── */
     .ex {
@@ -307,10 +307,10 @@
 
     .callout b { display: block; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
 
-    .tip   { border-color: var(--safe);    background: rgba(41,148,89,0.07); }
-    .tip b { color: var(--safe); }
-    .note  { border-color: var(--stone);   background: rgba(149,201,222,0.07); }
-    .note b{ color: var(--stone); }
+    .tip   { border-color: var(--green);    background: rgba(41,148,89,0.07); }
+    .tip b { color: var(--green); }
+    .note  { border-color: var(--blue);   background: rgba(149,201,222,0.07); }
+    .note b{ color: var(--blue); }
     .warn  { border-color: var(--warning); background: rgba(240,128,128,0.07); }
     .warn b{ color: var(--warning); }
 
@@ -324,7 +324,7 @@
     .rtable tr:hover td { background: rgba(255,255,255,0.015); }
 
     .t-attr    { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--hi); white-space: nowrap; }
-    .t-default { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--safe); }
+    .t-default { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--green); }
     .t-desc    { color: var(--shell); }
 
     /* ── Demo helpers ───────────────────────────────────────── */
@@ -350,7 +350,7 @@
       border: 1px solid var(--border);
       border-radius: 6px;
       font-size: 0.88rem;
-      color: var(--stone);
+      color: var(--blue);
       font-family: 'JetBrains Mono', monospace;
       min-height: 36px;
     }
@@ -465,13 +465,13 @@
     <div class="ex">
       <div class="ex-preview">
         <card-badge text="Hello"></card-badge>
-        <card-badge text="標籤" theme="info"></card-badge>
-        <card-badge text="完成" theme="safe"></card-badge>
+        <card-badge text="標籤" theme="indigo"></card-badge>
+        <card-badge text="完成" theme="green"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;card-badge text="Hello"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="標籤" theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="完成" theme="safe"&gt;&lt;/card-badge&gt;</code></pre>
+&lt;card-badge text="標籤" theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="完成" theme="green"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
   </section>
 
@@ -484,7 +484,7 @@
 
     <div class="ex">
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">渲染後的 DOM 結構</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="範例" theme="info" data-badge-id="cb-a3f9k2m"&gt;
+      <pre class="language-html"><code>&lt;card-badge text="範例" theme="indigo" data-badge-id="cb-a3f9k2m"&gt;
   &lt;div class="cb-render-root" style="display: contents;"&gt;
     &lt;style&gt;
       [data-badge-id="cb-a3f9k2m"] { display: inline-block; ... }
@@ -515,34 +515,34 @@
         <span class="ex-lv">入門</span>
       </div>
       <div class="ex-preview">
-        <card-badge text="已完成" icon="✅" theme="safe"></card-badge>
-        <card-badge text="警告" icon="⚠️" theme="warning"></card-badge>
-        <card-badge text="新功能" icon="🚀" theme="info"></card-badge>
-        <card-badge icon="📌" theme="special"></card-badge>
+        <card-badge text="已完成" icon="✅" theme="green"></card-badge>
+        <card-badge text="警告" icon="⚠️" theme="red"></card-badge>
+        <card-badge text="新功能" icon="🚀" theme="indigo"></card-badge>
+        <card-badge icon="📌" theme="green"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="已完成" icon="✅" theme="safe"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="警告"   icon="⚠️" theme="warning"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="新功能" icon="🚀" theme="info"&gt;&lt;/card-badge&gt;
+      <pre class="language-html"><code>&lt;card-badge text="已完成" icon="✅" theme="green"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="警告"   icon="⚠️" theme="red"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="新功能" icon="🚀" theme="indigo"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 只有圖示、無文字 --&gt;
-&lt;card-badge icon="📌" theme="special"&gt;&lt;/card-badge&gt;</code></pre>
+&lt;card-badge icon="📌" theme="green"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
 
     <!-- Example 2 -->
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 2 &nbsp;Bootstrap Icons（bi- 前綴）</span></div>
       <div class="ex-preview">
-        <card-badge text="收藏" icon="bi-heart-fill" theme="warning"></card-badge>
-        <card-badge text="下載" icon="bi-download"  theme="info"></card-badge>
-        <card-badge text="設定" icon="bi-gear"       theme="stone"></card-badge>
+        <card-badge text="收藏" icon="bi-heart-fill" theme="red"></card-badge>
+        <card-badge text="下載" icon="bi-download"  theme="indigo"></card-badge>
+        <card-badge text="設定" icon="bi-gear"       theme="blue"></card-badge>
         <card-badge icon="bi-star-fill" theme="yellow"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- icon 值以 "bi-" 開頭，自動渲染為 &lt;i class="bi bi-xxx"&gt; --&gt;
-&lt;card-badge text="收藏" icon="bi-heart-fill" theme="warning"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="下載" icon="bi-download"  theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="設定" icon="bi-gear"       theme="stone"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="收藏" icon="bi-heart-fill" theme="red"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="下載" icon="bi-download"  theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="設定" icon="bi-gear"       theme="blue"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 只有圖示 --&gt;
 &lt;card-badge icon="bi-star-fill" theme="yellow"&gt;&lt;/card-badge&gt;</code></pre>
@@ -552,31 +552,31 @@
   <!-- ── 4. Theme ──────────────────────────────────────────────── -->
   <section id="theme">
     <h2>主題與外框</h2>
-    <p><code>theme</code> 屬性接受品牌色鍵名（如 <code>info</code>、<code>safe</code>）或任意十六進位色碼。在色鍵後加 <code>-outline</code> 切換為外框樣式，或直接用 <code>outline="true"</code> 屬性。</p>
+    <p><code>theme</code> 屬性接受品牌色鍵名（如 <code>info</code>、<code>green</code>）或任意十六進位色碼。在色鍵後加 <code>-outline</code> 切換為外框樣式，或直接用 <code>outline="true"</code> 屬性。</p>
 
     <!-- Example 3 -->
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 3 &nbsp;品牌色一覽</span></div>
       <div class="ex-preview">
-        <card-badge text="info"     theme="info"></card-badge>
-        <card-badge text="special"  theme="special"></card-badge>
-        <card-badge text="safe"     theme="safe"></card-badge>
-        <card-badge text="warning"  theme="warning"></card-badge>
-        <card-badge text="lavender" theme="lavender"></card-badge>
-        <card-badge text="sky"      theme="sky"></card-badge>
-        <card-badge text="stone"    theme="stone"></card-badge>
+        <card-badge text="indigo"     theme="indigo"></card-badge>
+        <card-badge text="green"  theme="green"></card-badge>
+        <card-badge text="green"     theme="green"></card-badge>
+        <card-badge text="red"  theme="red"></card-badge>
+        <card-badge text="violet" theme="violet"></card-badge>
+        <card-badge text="blue"      theme="blue"></card-badge>
+        <card-badge text="blue"    theme="blue"></card-badge>
         <card-badge text="indigo"   theme="indigo"></card-badge>
         <card-badge text="pink"     theme="pink"></card-badge>
         <card-badge text="orange"   theme="orange"></card-badge>
         <card-badge text="yellow"   theme="yellow"></card-badge>
-        <card-badge text="salmon"   theme="salmon"></card-badge>
+        <card-badge text="orange"   theme="orange"></card-badge>
         <card-badge text="vanilla"  theme="vanilla"></card-badge>
         <card-badge text="shell"    theme="shell"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="info"    theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="special" theme="special"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="safe"    theme="safe"&gt;&lt;/card-badge&gt;
+      <pre class="language-html"><code>&lt;card-badge text="indigo"    theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="green" theme="green"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="green"    theme="green"&gt;&lt;/card-badge&gt;
 &lt;!-- … 其餘色鍵同樣格式 --&gt;
 
 &lt;!-- 也可直接用 hex 色碼 --&gt;
@@ -587,25 +587,25 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 4 &nbsp;Outline（外框）樣式</span></div>
       <div class="ex-preview">
-        <card-badge text="info-outline"    theme="info-outline"></card-badge>
-        <card-badge text="special-outline" theme="special-outline"></card-badge>
-        <card-badge text="safe-outline"    theme="safe-outline"></card-badge>
-        <card-badge text="warning-outline" theme="warning-outline"></card-badge>
+        <card-badge text="indigo-outline"    theme="indigo-outline"></card-badge>
+        <card-badge text="green-outline" theme="green-outline"></card-badge>
+        <card-badge text="green-outline"    theme="green-outline"></card-badge>
+        <card-badge text="red-outline" theme="red-outline"></card-badge>
         <card-badge text="indigo-outline"  theme="indigo-outline"></card-badge>
-        <card-badge text="outline 屬性"    theme="sky" outline="true"></card-badge>
+        <card-badge text="outline 屬性"    theme="blue" outline="true"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- 方式 1：theme 加 -outline 後綴 --&gt;
-&lt;card-badge text="info-outline"    theme="info-outline"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="special-outline" theme="special-outline"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="indigo-outline"    theme="indigo-outline"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="green-outline" theme="green-outline"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 方式 2：theme 不變，加上 outline="true" 屬性 --&gt;
-&lt;card-badge text="outline 屬性" theme="sky" outline="true"&gt;&lt;/card-badge&gt;</code></pre>
+&lt;card-badge text="outline 屬性" theme="blue" outline="true"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
 
     <div class="callout tip">
       <b>提示</b>
-      Outline 模式下，背景會設為主題色的 12% 透明度，邊框為 1px solid 主題色，文字也使用主題色。亮色背景（如 <code>special</code>、<code>vanilla</code>）在 outline 模式下視覺效果特別清晰。
+      Outline 模式下，背景會設為主題色的 12% 透明度，邊框為 1px solid 主題色，文字也使用主題色。亮色背景（如 <code>green</code>、<code>vanilla</code>）在 outline 模式下視覺效果特別清晰。
     </div>
   </section>
 
@@ -622,21 +622,21 @@
       </div>
       <div class="ex-preview">
         <div class="size-row">
-          <card-badge text="xs" size="xs" theme="info"></card-badge>
-          <card-badge text="sm" size="sm" theme="info"></card-badge>
-          <card-badge text="md" size="md" theme="info"></card-badge>
-          <card-badge text="re（預設）" size="re" theme="info"></card-badge>
-          <card-badge text="lg" size="lg" theme="info"></card-badge>
-          <card-badge text="xl" size="xl" theme="info"></card-badge>
+          <card-badge text="xs" size="xs" theme="indigo"></card-badge>
+          <card-badge text="sm" size="sm" theme="indigo"></card-badge>
+          <card-badge text="md" size="md" theme="indigo"></card-badge>
+          <card-badge text="re（預設）" size="re" theme="indigo"></card-badge>
+          <card-badge text="lg" size="lg" theme="indigo"></card-badge>
+          <card-badge text="xl" size="xl" theme="indigo"></card-badge>
         </div>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="xs" size="xs" theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="sm" size="sm" theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="md" size="md" theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="re（預設）" size="re" theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="lg" size="lg" theme="info"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="xl" size="xl" theme="info"&gt;&lt;/card-badge&gt;</code></pre>
+      <pre class="language-html"><code>&lt;card-badge text="xs" size="xs" theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="sm" size="sm" theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="md" size="md" theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="re（預設）" size="re" theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="lg" size="lg" theme="indigo"&gt;&lt;/card-badge&gt;
+&lt;card-badge text="xl" size="xl" theme="indigo"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
 
     <div class="table-wrap">
@@ -656,12 +656,12 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 6 &nbsp;自訂字體大小與內距</span></div>
       <div class="ex-preview">
-        <card-badge text="自訂尺寸" theme="info" font-size="1.1rem" padding="6px 18px"></card-badge>
+        <card-badge text="自訂尺寸" theme="indigo" font-size="1.1rem" padding="6px 18px"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- font-size 和 padding 的值需自帶單位 --&gt;
 &lt;card-badge text="自訂尺寸"
-            theme="info"
+            theme="indigo"
             font-size="1.1rem"
             padding="6px 18px"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
@@ -679,21 +679,21 @@
         <span class="ex-lv">常用</span>
       </div>
       <div class="ex-preview">
-        <card-badge type="date"     value="2025-08-15"          theme="info"    icon="📅"></card-badge>
-        <card-badge type="date"     value="2025-08-15" format="MM/DD" theme="stone"   icon="📅"></card-badge>
-        <card-badge type="time"     value="09:30:00"             theme="special" icon="🕘"></card-badge>
+        <card-badge type="date"     value="2025-08-15"          theme="indigo"    icon="📅"></card-badge>
+        <card-badge type="date"     value="2025-08-15" format="MM/DD" theme="blue"   icon="📅"></card-badge>
+        <card-badge type="time"     value="09:30:00"             theme="green" icon="🕘"></card-badge>
         <card-badge type="datetime" value="2025-08-15T14:30:00"  theme="indigo"  icon="🗓️"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- type="date"，預設格式 YYYY-MM-DD --&gt;
-&lt;card-badge type="date" value="2025-08-15" theme="info" icon="📅"&gt;&lt;/card-badge&gt;
+&lt;card-badge type="date" value="2025-08-15" theme="indigo" icon="📅"&gt;&lt;/card-badge&gt;
 
 &lt;!-- format 可選 YYYY-MM-DD / MM/DD / MM-DD --&gt;
 &lt;card-badge type="date" value="2025-08-15" format="MM/DD"
-            theme="stone" icon="📅"&gt;&lt;/card-badge&gt;
+            theme="blue" icon="📅"&gt;&lt;/card-badge&gt;
 
 &lt;!-- type="time"，顯示 HH:mm --&gt;
-&lt;card-badge type="time" value="09:30:00" theme="special" icon="🕘"&gt;&lt;/card-badge&gt;
+&lt;card-badge type="time" value="09:30:00" theme="green" icon="🕘"&gt;&lt;/card-badge&gt;
 
 &lt;!-- type="datetime"，預設格式 MM/DD HH:mm --&gt;
 &lt;card-badge type="datetime" value="2025-08-15T14:30:00"
@@ -713,21 +713,21 @@
         <span class="ex-lv">常用</span>
       </div>
       <div class="ex-preview">
-        <card-badge type="deadline" value="2020-01-01" theme="info"></card-badge>
-        <card-badge type="deadline" value="2099-12-30" warning-days="30" theme="info"></card-badge>
-        <card-badge type="deadline" value="2099-12-30" warning-days="999" theme="info"></card-badge>
+        <card-badge type="deadline" value="2020-01-01" theme="indigo"></card-badge>
+        <card-badge type="deadline" value="2099-12-30" warning-days="30" theme="indigo"></card-badge>
+        <card-badge type="deadline" value="2099-12-30" warning-days="999" theme="indigo"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- 已逾期 → warning 色 + ⚠️ 圖示 --&gt;
-&lt;card-badge type="deadline" value="2020-01-01" theme="info"&gt;&lt;/card-badge&gt;
+&lt;card-badge type="deadline" value="2020-01-01" theme="indigo"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 距截止 ≤ warning-days → yellow 色；預設 warning-days="3" --&gt;
 &lt;card-badge type="deadline" value="2099-12-30"
-            warning-days="30" theme="info"&gt;&lt;/card-badge&gt;
+            warning-days="30" theme="indigo"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 剩餘天數 > warning-days → 使用 theme 色 --&gt;
 &lt;card-badge type="deadline" value="2099-12-30"
-            warning-days="5" theme="info"&gt;&lt;/card-badge&gt;</code></pre>
+            warning-days="5" theme="indigo"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
 
     <div class="table-wrap">
@@ -735,8 +735,8 @@
         <thead><tr><th>狀態</th><th>色彩</th><th>圖示</th></tr></thead>
         <tbody>
           <tr><td class="t-desc">已逾期（diffDays &lt; 0）</td><td class="t-default">warning</td><td class="t-default">⚠️（自動加入）</td></tr>
-          <tr><td class="t-desc">今天到期（diffDays = 0）</td><td class="t-default">attention（= yellow）</td><td class="t-default">📅</td></tr>
-          <tr><td class="t-desc">≤ warning-days</td><td class="t-default">attention（= yellow）</td><td class="t-default">📅</td></tr>
+          <tr><td class="t-desc">今天到期（diffDays = 0）</td><td class="t-default">yellow（= yellow）</td><td class="t-default">📅</td></tr>
+          <tr><td class="t-desc">≤ warning-days</td><td class="t-default">yellow（= yellow）</td><td class="t-default">📅</td></tr>
           <tr><td class="t-desc">正常範圍</td><td class="t-default">與 theme 屬性同</td><td class="t-default">📅</td></tr>
         </tbody>
       </table>
@@ -755,34 +755,34 @@
         <span class="ex-lv">常用</span>
       </div>
       <div class="ex-preview">
-        <card-badge count="5"   theme="warning"                        size="md"></card-badge>
-        <card-badge count="100" theme="info"    max-count="99"         size="md"></card-badge>
-        <card-badge count="3"   theme="safe"    dot-mode="true"        size="md"></card-badge>
-        <card-badge count="0"   theme="special" show-zero="true"       size="md"></card-badge>
-        <card-badge count="8"   theme="info"    icon="bi-bell"         size="md"></card-badge>
+        <card-badge count="5"   theme="red"                        size="md"></card-badge>
+        <card-badge count="100" theme="indigo"    max-count="99"         size="md"></card-badge>
+        <card-badge count="3"   theme="green"    dot-mode="true"        size="md"></card-badge>
+        <card-badge count="0"   theme="green" show-zero="true"       size="md"></card-badge>
+        <card-badge count="8"   theme="indigo"    icon="bi-bell"         size="md"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- 基本數量 --&gt;
-&lt;card-badge count="5" theme="warning"&gt;&lt;/card-badge&gt;
+&lt;card-badge count="5" theme="red"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 超過 max-count 顯示 99+ --&gt;
-&lt;card-badge count="100" theme="info" max-count="99"&gt;&lt;/card-badge&gt;
+&lt;card-badge count="100" theme="indigo" max-count="99"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 圓點模式（只顯示色點） --&gt;
-&lt;card-badge count="3" theme="safe" dot-mode="true"&gt;&lt;/card-badge&gt;
+&lt;card-badge count="3" theme="green" dot-mode="true"&gt;&lt;/card-badge&gt;
 
 &lt;!-- count=0 時預設隱藏，show-zero="true" 強制顯示 --&gt;
-&lt;card-badge count="0" theme="special" show-zero="true"&gt;&lt;/card-badge&gt;
+&lt;card-badge count="0" theme="green" show-zero="true"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 搭配圖示 --&gt;
-&lt;card-badge count="8" theme="info" icon="bi-bell"&gt;&lt;/card-badge&gt;</code></pre>
+&lt;card-badge count="8" theme="indigo" icon="bi-bell"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
 
     <h3>動態更新數量</h3>
     <div class="ex">
       <div class="ex-preview block">
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <card-badge id="cnt-demo" count="0" theme="info" show-zero="true" count-animate="true" size="lg"></card-badge>
+          <card-badge id="cnt-demo" count="0" theme="indigo" show-zero="true" count-animate="true" size="lg"></card-badge>
           <div class="dbtn-row" style="margin-top:0">
             <button class="dbtn" onclick="
               const el = document.getElementById('cnt-demo');
@@ -796,7 +796,7 @@
         </div>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML + JS</span></div>
-      <pre class="language-html"><code>&lt;card-badge id="badge" count="0" theme="info"
+      <pre class="language-html"><code>&lt;card-badge id="badge" count="0" theme="indigo"
             show-zero="true" count-animate="true"&gt;&lt;/card-badge&gt;
 
 &lt;script&gt;
@@ -825,20 +825,20 @@
         <span class="ex-lv">常用</span>
       </div>
       <div class="ex-preview">
-        <card-badge text="lift（預設）" theme="info"    clickable="true" hover-effect="lift"></card-badge>
-        <card-badge text="scale"       theme="special" clickable="true" hover-effect="scale"></card-badge>
-        <card-badge text="glow"        theme="safe"    clickable="true" hover-effect="glow"></card-badge>
+        <card-badge text="lift（預設）" theme="indigo"    clickable="true" hover-effect="lift"></card-badge>
+        <card-badge text="scale"       theme="green" clickable="true" hover-effect="scale"></card-badge>
+        <card-badge text="glow"        theme="green"    clickable="true" hover-effect="glow"></card-badge>
         <card-badge text="pulse"       theme="indigo"  clickable="true" hover-effect="pulse"></card-badge>
         <card-badge text="rotate"      theme="orange"  clickable="true" hover-effect="rotate"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="lift（預設）" theme="info"
+      <pre class="language-html"><code>&lt;card-badge text="lift（預設）" theme="indigo"
             clickable="true" hover-effect="lift"&gt;&lt;/card-badge&gt;
 
-&lt;card-badge text="scale"  theme="special"
+&lt;card-badge text="scale"  theme="green"
             clickable="true" hover-effect="scale"&gt;&lt;/card-badge&gt;
 
-&lt;card-badge text="glow"   theme="safe"
+&lt;card-badge text="glow"   theme="green"
             clickable="true" hover-effect="glow"&gt;&lt;/card-badge&gt;
 
 &lt;card-badge text="pulse"  theme="indigo"
@@ -876,13 +876,13 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 11 &nbsp;連結跳轉</span></div>
       <div class="ex-preview">
-        <card-badge text="前往 GitHub" icon="bi-github" theme="info"
+        <card-badge text="前往 GitHub" icon="bi-github" theme="indigo"
                     href="https://github.com" href-target="_blank"
                     clickable="true" hover-effect="lift"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;card-badge text="前往 GitHub" icon="bi-github"
-            theme="info"
+            theme="indigo"
             href="https://github.com"
             href-target="_blank"
             clickable="true"&gt;&lt;/card-badge&gt;</code></pre>
@@ -892,15 +892,15 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 12 &nbsp;點擊後自我移除</span></div>
       <div class="ex-preview" id="removeself-preview">
-        <card-badge text="× 點我消失" theme="warning" clickable="true"
+        <card-badge text="× 點我消失" theme="red" clickable="true"
                     removeself="true" hover-effect="scale"></card-badge>
-        <card-badge text="× 我也會消失" theme="info" clickable="true"
+        <card-badge text="× 我也會消失" theme="indigo" clickable="true"
                     removeself="true" hover-effect="scale"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- removeself="true" 讓徽章點擊後以動畫淡出並從 DOM 移除 --&gt;
 &lt;card-badge text="× 點我消失"
-            theme="warning"
+            theme="red"
             clickable="true"
             removeself="true"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
@@ -919,7 +919,7 @@
       </div>
       <div class="ex-preview block">
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <card-badge text="複製連結" icon="bi-clipboard" theme="info"
+          <card-badge text="複製連結" icon="bi-clipboard" theme="indigo"
                       clickable="true" action="copy"
                       alert-message="連結已複製！" alert-type="success"
                       hover-effect="lift"></card-badge>
@@ -929,7 +929,7 @@
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- text 屬性也是複製的來源文字 --&gt;
 &lt;card-badge text="複製連結" icon="bi-clipboard"
-            theme="info" clickable="true"
+            theme="indigo" clickable="true"
             action="copy"
             alert-message="連結已複製！" alert-type="success"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
@@ -942,7 +942,7 @@
           <input id="copy-src" type="text" value="這段文字會被複製"
             style="background:var(--card); border:1px solid var(--border); color:var(--shell); padding:6px 10px; border-radius:6px; width:240px; font-size:0.9rem;">
         </div>
-        <card-badge text="複製輸入框內容" icon="bi-copy" theme="special"
+        <card-badge text="複製輸入框內容" icon="bi-copy" theme="green"
                     clickable="true" action="copy"
                     source="copy-src"
                     alert-message="已複製！" alert-type="success"
@@ -953,7 +953,7 @@
 
 &lt;!-- source 指向來源元素 id --&gt;
 &lt;card-badge text="複製輸入框內容" icon="bi-copy"
-            theme="special" clickable="true"
+            theme="green" clickable="true"
             action="copy" source="my-input"
             alert-message="已複製！" alert-type="success"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
@@ -985,7 +985,7 @@
       <div class="ex-preview block">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <strong style="color:var(--shell); font-size:0.9rem">詳細說明</strong>
-          <card-badge icon="bi-chevron-down" theme="info-outline"
+          <card-badge icon="bi-chevron-down" theme="indigo-outline"
                       clickable="true" toggle-target="toggle-section"
                       hover-effect="none"></card-badge>
         </div>
@@ -999,7 +999,7 @@
 
   &lt;!-- toggle-target 指向要折疊的元素 id --&gt;
   &lt;card-badge icon="bi-chevron-down"
-              theme="info-outline"
+              theme="indigo-outline"
               clickable="true"
               toggle-target="detail-section"
               hover-effect="none"&gt;&lt;/card-badge&gt;
@@ -1029,9 +1029,9 @@
       </div>
       <div class="ex-preview block">
         <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px;">
-          <card-badge text="全部"  theme="info"    clickable="true" action="filter" data-filter="all"      size="sm"></card-badge>
-          <card-badge text="前端"  theme="special" clickable="true" action="filter" data-filter="frontend" size="sm"></card-badge>
-          <card-badge text="後端"  theme="safe"    clickable="true" action="filter" data-filter="backend"  size="sm"></card-badge>
+          <card-badge text="全部"  theme="indigo"    clickable="true" action="filter" data-filter="all"      size="sm"></card-badge>
+          <card-badge text="前端"  theme="green" clickable="true" action="filter" data-filter="frontend" size="sm"></card-badge>
+          <card-badge text="後端"  theme="green"    clickable="true" action="filter" data-filter="backend"  size="sm"></card-badge>
           <card-badge text="設計"  theme="indigo"  clickable="true" action="filter" data-filter="design"   size="sm"></card-badge>
         </div>
         <div class="filter-items">
@@ -1045,11 +1045,11 @@
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- 過濾器徽章 --&gt;
-&lt;card-badge text="全部" theme="info"    clickable="true"
+&lt;card-badge text="全部" theme="indigo"    clickable="true"
             action="filter" data-filter="all"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="前端" theme="special" clickable="true"
+&lt;card-badge text="前端" theme="green" clickable="true"
             action="filter" data-filter="frontend"&gt;&lt;/card-badge&gt;
-&lt;card-badge text="後端" theme="safe"    clickable="true"
+&lt;card-badge text="後端" theme="green"    clickable="true"
             action="filter" data-filter="backend"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 被過濾的內容元素 --&gt;
@@ -1085,7 +1085,7 @@
       </div>
       <div class="ex-preview block">
         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
-          <card-badge text="顯示訣竅" icon="💡" theme="info"
+          <card-badge text="顯示訣竅" icon="💡" theme="indigo"
                       clickable="true" action="rotate-content"
                       target="rotate-out" hover-effect="lift">
             <badge-item>訣竅 1：多用 outline 模式，視覺更輕量。</badge-item>
@@ -1097,7 +1097,7 @@
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;card-badge text="顯示訣竅" icon="💡"
-            theme="info" clickable="true"
+            theme="indigo" clickable="true"
             action="rotate-content"
             target="output-area"&gt;
 
@@ -1115,21 +1115,21 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 18 &nbsp;rotate-self：徽章本身切換外觀</span></div>
       <div class="ex-preview">
-        <card-badge text="狀態 A" theme="info" clickable="true"
+        <card-badge text="狀態 A" theme="indigo" clickable="true"
                     action="rotate-self" hover-effect="scale">
-          <badge-item text="狀態 A" theme="info"    icon="🔵"></badge-item>
-          <badge-item text="狀態 B" theme="special" icon="🟡"></badge-item>
-          <badge-item text="狀態 C" theme="safe"    icon="🟢"></badge-item>
+          <badge-item text="狀態 A" theme="indigo"    icon="🔵"></badge-item>
+          <badge-item text="狀態 B" theme="green" icon="🟡"></badge-item>
+          <badge-item text="狀態 C" theme="green"    icon="🟢"></badge-item>
         </card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="狀態 A" theme="info"
+      <pre class="language-html"><code>&lt;card-badge text="狀態 A" theme="indigo"
             clickable="true" action="rotate-self"&gt;
 
   &lt;!-- badge-item 用 text / icon / theme 屬性指定各輪播外觀 --&gt;
-  &lt;badge-item text="狀態 A" theme="info"    icon="🔵"&gt;&lt;/badge-item&gt;
-  &lt;badge-item text="狀態 B" theme="special" icon="🟡"&gt;&lt;/badge-item&gt;
-  &lt;badge-item text="狀態 C" theme="safe"    icon="🟢"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="狀態 A" theme="indigo"    icon="🔵"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="狀態 B" theme="green" icon="🟡"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="狀態 C" theme="green"    icon="🟢"&gt;&lt;/badge-item&gt;
 
 &lt;/card-badge&gt;</code></pre>
     </div>
@@ -1138,23 +1138,23 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 19 &nbsp;rotate-self-auto：自動計時輪播</span></div>
       <div class="ex-preview">
-        <card-badge text="自動輪播" theme="info" action="rotate-self-auto" interval="2s">
-          <badge-item text="Vue.js"   theme="safe"    icon="💚"></badge-item>
-          <badge-item text="React"    theme="info"    icon="⚛️"></badge-item>
-          <badge-item text="Angular"  theme="warning" icon="🔴"></badge-item>
+        <card-badge text="自動輪播" theme="indigo" action="rotate-self-auto" interval="2s">
+          <badge-item text="Vue.js"   theme="green"    icon="💚"></badge-item>
+          <badge-item text="React"    theme="indigo"    icon="⚛️"></badge-item>
+          <badge-item text="Angular"  theme="red" icon="🔴"></badge-item>
           <badge-item text="Svelte"   theme="orange"  icon="🔥"></badge-item>
         </card-badge>
         <span style="color:var(--muted); font-size:0.82rem; margin-left:8px">每 2 秒自動切換</span>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
       <pre class="language-html"><code>&lt;!-- interval 支援秒（s）和分（m），如 "2s"、"0.5m" --&gt;
-&lt;card-badge text="自動輪播" theme="info"
+&lt;card-badge text="自動輪播" theme="indigo"
             action="rotate-self-auto"
             interval="2s"&gt;
 
-  &lt;badge-item text="Vue.js"  theme="safe"    icon="💚"&gt;&lt;/badge-item&gt;
-  &lt;badge-item text="React"   theme="info"    icon="⚛️"&gt;&lt;/badge-item&gt;
-  &lt;badge-item text="Angular" theme="warning" icon="🔴"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="Vue.js"  theme="green"    icon="💚"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="React"   theme="indigo"    icon="⚛️"&gt;&lt;/badge-item&gt;
+  &lt;badge-item text="Angular" theme="red" icon="🔴"&gt;&lt;/badge-item&gt;
   &lt;badge-item text="Svelte"  theme="orange"  icon="🔥"&gt;&lt;/badge-item&gt;
 
 &lt;/card-badge&gt;</code></pre>
@@ -1174,9 +1174,9 @@
       </div>
       <div class="ex-preview block">
         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-          <card-badge text="A+" theme="info"    clickable="true"
+          <card-badge text="A+" theme="indigo"    clickable="true"
                       action="font-increase" font-control="font-demo" font-step="2" hover-effect="lift"></card-badge>
-          <card-badge text="A-" theme="stone"   clickable="true"
+          <card-badge text="A-" theme="blue"   clickable="true"
                       action="font-decrease" font-control="font-demo" font-step="2" hover-effect="lift"></card-badge>
           <card-badge text="重設" theme="region" clickable="true"
                       action="font-reset"    font-control="font-demo"                hover-effect="lift"></card-badge>
@@ -1184,13 +1184,13 @@
         <p id="font-demo" style="color:var(--shell);">這段文字的大小會被上方徽章控制。最小 12px，最大 32px。</p>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="A+" theme="info"
+      <pre class="language-html"><code>&lt;card-badge text="A+" theme="indigo"
             clickable="true"
             action="font-increase"
             font-control="target-text"
             font-step="2"&gt;&lt;/card-badge&gt;
 
-&lt;card-badge text="A-" theme="stone"
+&lt;card-badge text="A-" theme="blue"
             clickable="true"
             action="font-decrease"
             font-control="target-text"
@@ -1217,27 +1217,27 @@
         <span class="ex-lv">常用</span>
       </div>
       <div class="ex-preview">
-        <card-badge text="成功訊息" theme="safe"    clickable="true"
+        <card-badge text="成功訊息" theme="green"    clickable="true"
                     alert-message="操作成功！" alert-type="success"
                     alert-position="top" alert-duration="3000" hover-effect="lift"></card-badge>
-        <card-badge text="一般資訊" theme="info"    clickable="true"
+        <card-badge text="一般資訊" theme="indigo"    clickable="true"
                     alert-message="這是一則資訊提示。" alert-type="info"
                     alert-position="top-right" alert-duration="3000" hover-effect="lift"></card-badge>
         <card-badge text="注意警告" theme="yellow"  clickable="true"
                     alert-message="請注意這個操作！" alert-type="warning"
                     alert-position="top" alert-duration="3000" hover-effect="lift"></card-badge>
-        <card-badge text="錯誤訊息" theme="warning" clickable="true"
+        <card-badge text="錯誤訊息" theme="red" clickable="true"
                     alert-message="發生錯誤，請重試。" alert-type="danger"
                     alert-position="top" alert-duration="3000" hover-effect="lift"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="成功訊息" theme="safe" clickable="true"
+      <pre class="language-html"><code>&lt;card-badge text="成功訊息" theme="green" clickable="true"
             alert-message="操作成功！"
             alert-type="success"
             alert-position="top"
             alert-duration="3000"&gt;&lt;/card-badge&gt;
 
-&lt;card-badge text="一般資訊" theme="info" clickable="true"
+&lt;card-badge text="一般資訊" theme="indigo" clickable="true"
             alert-message="這是一則資訊提示。"
             alert-type="info"
             alert-position="top-right"&gt;&lt;/card-badge&gt;
@@ -1246,7 +1246,7 @@
             alert-message="請注意這個操作！"
             alert-type="warning"&gt;&lt;/card-badge&gt;
 
-&lt;card-badge text="錯誤訊息" theme="warning" clickable="true"
+&lt;card-badge text="錯誤訊息" theme="red" clickable="true"
             alert-message="發生錯誤，請重試。"
             alert-type="danger"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
@@ -1259,7 +1259,7 @@
           <input id="alert-src" type="text" value="輸入要顯示的訊息"
             style="background:var(--card); border:1px solid var(--border); color:var(--shell); padding:6px 10px; border-radius:6px; width:240px; font-size:0.9rem;">
         </div>
-        <card-badge text="顯示訊息" icon="📢" theme="info"
+        <card-badge text="顯示訊息" icon="📢" theme="indigo"
                     clickable="true" alert-source="alert-src"
                     alert-type="info" hover-effect="lift"></card-badge>
       </div>
@@ -1268,7 +1268,7 @@
 
 &lt;!-- alert-source 指向來源元素 id，動態讀取其 value 或 textContent --&gt;
 &lt;card-badge text="顯示訊息" icon="📢"
-            theme="info" clickable="true"
+            theme="indigo" clickable="true"
             alert-source="msg-input"
             alert-type="info"&gt;&lt;/card-badge&gt;</code></pre>
     </div>
@@ -1296,7 +1296,7 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 23 &nbsp;監聽 badge-click</span></div>
       <div class="ex-preview block">
-        <card-badge id="ev-demo" text="點我記錄" theme="info"
+        <card-badge id="ev-demo" text="點我記錄" theme="indigo"
                     clickable="true" hover-effect="lift"></card-badge>
         <div id="ev-log" class="demo-output" style="margin-top:10px">等待事件…</div>
         <script>
@@ -1349,16 +1349,16 @@
     <div class="ex">
       <div class="ex-head"><span class="ex-title">範例 24 &nbsp;正常與停用對比</span></div>
       <div class="ex-preview">
-        <card-badge text="正常" icon="✅" theme="info"    clickable="true" hover-effect="lift"></card-badge>
-        <card-badge text="停用" icon="🚫" theme="info"    clickable="true" disabled="true"></card-badge>
-        <card-badge text="正常外框" theme="special-outline" clickable="true" hover-effect="lift"></card-badge>
-        <card-badge text="停用外框" theme="special-outline" clickable="true" disabled="true"></card-badge>
+        <card-badge text="正常" icon="✅" theme="indigo"    clickable="true" hover-effect="lift"></card-badge>
+        <card-badge text="停用" icon="🚫" theme="indigo"    clickable="true" disabled="true"></card-badge>
+        <card-badge text="正常外框" theme="green-outline" clickable="true" hover-effect="lift"></card-badge>
+        <card-badge text="停用外框" theme="green-outline" clickable="true" disabled="true"></card-badge>
       </div>
       <div class="ex-code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lang">HTML</span></div>
-      <pre class="language-html"><code>&lt;card-badge text="正常" theme="info" clickable="true"&gt;&lt;/card-badge&gt;
+      <pre class="language-html"><code>&lt;card-badge text="正常" theme="indigo" clickable="true"&gt;&lt;/card-badge&gt;
 
 &lt;!-- disabled="true" 灰化外觀、阻止所有互動 --&gt;
-&lt;card-badge text="停用" theme="info"
+&lt;card-badge text="停用" theme="indigo"
             clickable="true" disabled="true"&gt;&lt;/card-badge&gt;
 
 &lt;!-- 也可在執行時動態切換 --&gt;

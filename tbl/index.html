@@ -10,21 +10,21 @@
   :root {
     --bg: #0C0D0C;
     --shell: #C6C7BD;
-    --lavender: #C3A5E5;
-    --sky: #82C8E5;
-    --warning: #E6374B;
-    --salmon: #E5C3B3;
-    --ocean: #1CCAE8;
-    --safe: #27AE60;
-    --teal: #0DA591;
+    --violet: #B484E8;
+    --blue: #5DBAE8;
+    --warning: #EF6661;
+    --orange: #F79C40;
+    --blue: #5DBAE8;
+    --green: #71CD76;
+    --green: #71CD76;
     --vanilla: #DBEDD8;
     --yellow: #E3D322;
-    --focus: #D4FFFC;
-    --special: #B3DE73;
-    --info: #4171BF;
-    --indigo: #7849C9;
+    --focus: #DBEDD8;
+    --green: #71CD76;
+    --info: #778CE1;
+    --indigo: #778CE1;
     --pink: #FF91D7;
-    --orange: #EDA109;
+    --orange: #F79C40;
   }
   html, body { background: var(--bg); color: var(--shell); }
   body {
@@ -34,12 +34,12 @@
     margin: 0;
     padding: 32px 40px 80px;
   }
-  h1 { font-size: 1.85rem; color: var(--lavender); margin: 0 0 8px; font-weight: 700; }
-  h2 { font-size: 1.3rem; color: var(--sky); margin: 0 0 6px; font-weight: 700; }
+  h1 { font-size: 1.85rem; color: var(--violet); margin: 0 0 8px; font-weight: 700; }
+  h2 { font-size: 1.3rem; color: var(--blue); margin: 0 0 6px; font-weight: 700; }
   h3 { font-size: 1.05rem; color: var(--vanilla); margin: 0 0 8px; font-weight: 600; }
   p { margin: 0 0 10px; }
   code { color: var(--yellow); font-size: 0.92rem; }
-  a { color: var(--ocean); }
+  a { color: var(--blue); }
 
   .page-sub { color: var(--shell); margin-bottom: 24px; font-size: 1.05rem; }
 
@@ -47,7 +47,7 @@
   .chg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
   .chg { border: 1px solid var(--shell); padding: 14px 16px; }
   .chg .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 1px 8px; margin-bottom: 8px; color: var(--bg); }
-  .chg .tag.add { background: var(--safe); }
+  .chg .tag.add { background: var(--green); }
   .chg .tag.mod { background: var(--orange); }
   .chg .tag.del { background: var(--warning); }
   .chg p { font-size: 0.95rem; margin: 0; }
@@ -73,13 +73,13 @@
     overflow-y: auto;
   }
   .demo-code .hl { color: var(--bg); background: var(--yellow); font-weight: 700; padding: 0 2px; }
-  .demo-note { font-size: 0.92rem; margin-top: 10px; color: var(--salmon); }
+  .demo-note { font-size: 0.92rem; margin-top: 10px; color: var(--orange); }
 
   /* 屬性對照表 */
   .ref { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
   .ref th, .ref td { border: 1px solid var(--shell); padding: 8px 12px; vertical-align: top; }
   .ref th { background: var(--shell); color: var(--bg); text-align: left; font-weight: 700; }
-  .ref td.st-add { color: var(--safe); font-weight: 700; white-space: nowrap; }
+  .ref td.st-add { color: var(--green); font-weight: 700; white-space: nowrap; }
   .ref td.st-mod { color: var(--orange); font-weight: 700; white-space: nowrap; }
   .ref td.st-del { color: var(--warning); font-weight: 700; white-space: nowrap; }
   .ref tr.removed td:not(.st-del) { text-decoration: line-through; color: var(--shell); }
@@ -104,19 +104,19 @@
 
   /* 增修紀錄導覽 */
   .rev-nav { display: flex; gap: 12px; margin-bottom: 28px; }
-  .rev-nav a { display: inline-block; padding: 6px 16px; border: 1px solid var(--lavender); color: var(--lavender); text-decoration: none; font-size: 0.95rem; }
-  .rev-nav a:hover { background: var(--lavender); color: var(--bg); }
-  .rev-head { border-top: 3px solid var(--lavender); padding-top: 28px; margin-top: 24px; }
+  .rev-nav a { display: inline-block; padding: 6px 16px; border: 1px solid var(--violet); color: var(--violet); text-decoration: none; font-size: 0.95rem; }
+  .rev-nav a:hover { background: var(--violet); color: var(--bg); }
+  .rev-head { border-top: 3px solid var(--violet); padding-top: 28px; margin-top: 24px; }
   .rev-head h1 { font-size: 1.6rem; }
 
   /* 第 2 次增修：樹狀範例用 */
   .tree-btns { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .btn-uit { background: var(--bg); color: var(--sky); border: 1px solid var(--sky); padding: 5px 16px; font-size: 0.92rem; cursor: pointer; line-height: 1.4; }
-  .btn-uit:hover { background: var(--sky); color: var(--bg); }
+  .btn-uit { background: var(--bg); color: var(--blue); border: 1px solid var(--blue); padding: 5px 16px; font-size: 0.92rem; cursor: pointer; line-height: 1.4; }
+  .btn-uit:hover { background: var(--blue); color: var(--bg); }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
   .tree-log { margin-top: 12px; }
   .tree-log .alert { background: var(--bg); color: var(--shell); border: 1px solid var(--info); border-left: 6px solid var(--info); border-radius: 0; font-size: 0.92rem; padding: 10px 16px; margin: 0; }
-  .tree-log .alert b { color: var(--sky); }
+  .tree-log .alert b { color: var(--blue); }
 </style>
 </head>
 <body>
@@ -149,10 +149,10 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="sky">
+<ui-table theme="blue">
   <ui-row col-widths="1:3" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
     <ui-col>Part 2 題目<br>Describe a skill you learned as an adult.</ui-col>
-    <ui-col carousel-interval="0" progress-bar progress-bar-color="sky">
+    <ui-col carousel-interval="0" progress-bar progress-bar-color="blue">
       <cell-item>開場：I picked up basic carpentry about three years ago.</cell-item>
       <cell-item>契機：My landlord refused to fix a broken shelf, so I decided to do it myself.</cell-item>
       <cell-item>困難：Measuring accurately was much harder than I expected.</cell-item>
@@ -177,16 +177,16 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="lavender">
+<ui-table theme="violet">
   <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
-    <ui-col carousel-interval="0" progress-bar progress-bar-color1="lavender" progress-bar-color2="ocean">
+    <ui-col carousel-interval="0" progress-bar progress-bar-color1="violet" progress-bar-color2="blue">
       <cell-item>important：最常用，但重複太多次會顯得單調。</cell-item>
       <cell-item>significant：語氣比較正式，適合描述影響或改變。</cell-item>
       <cell-item>crucial：強調「少了它就不行」的關鍵性。</cell-item>
       <cell-item>pivotal：強調轉折點，常搭配 role 或 moment。</cell-item>
       <cell-item>paramount：最高程度，口說時少用，寫作較常見。</cell-item>
     </ui-col>
-    <ui-col inverse font-color="salmon" carousel-interval="0" progress-bar progress-bar-color1="indigo" progress-bar-color2="warning">
+    <ui-col inverse font-color="orange" carousel-interval="0" progress-bar progress-bar-color1="indigo" progress-bar-color2="warning">
       <cell-item>It plays a crucial role in my daily routine.</cell-item>
       <cell-item>That conversation was a pivotal moment for me.</cell-item>
       <cell-item>Safety is of paramount importance in this job.</cell-item>
@@ -218,7 +218,7 @@
       <cell-item>Grammar：句型變化要在掌控範圍內。</cell-item>
       <cell-item>Pronunciation：重音與節奏比口音重要。</cell-item>
     </ui-col>
-    <ui-col carousel-interval="3500" progress-bar progress-bar-color="teal">
+    <ui-col carousel-interval="3500" progress-bar progress-bar-color="green">
       <cell-item>單色進度條：progress-bar-color</cell-item>
       <cell-item>沒有設定 color1 與 color2 時使用這個顏色。</cell-item>
     </ui-col>
@@ -241,13 +241,13 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="salmon">
+<ui-table theme="orange">
   <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
     <ui-col carousel-interval="0">
       <cell-item>只會看到這一個項目。</cell-item>
       <cell-item>這個項目不會出現。</cell-item>
     </ui-col>
-    <ui-col carousel-interval="0" progress-bar progress-bar-color1="special">
+    <ui-col carousel-interval="0" progress-bar progress-bar-color1="green">
       <cell-item>只有 color1：當單色使用。</cell-item>
       <cell-item>第二個畫面。</cell-item>
     </ui-col>
@@ -276,10 +276,10 @@
     <ui-col extra-info="xi-default">預設：跟隨文字與 theme</ui-col>
     <ui-col extra-info="xi-pink" extra-info-size="1.5rem" extra-info-color="pink">1.5rem，pink</ui-col>
     <ui-col extra-info="xi-yellow" extra-info-size="28" extra-info-color="yellow">28（px），yellow</ui-col>
-    <ui-col inverse font-color="sky" extra-info="xi-inv" extra-info-color="indigo">inverse 格子，indigo</ui-col>
+    <ui-col inverse font-color="blue" extra-info="xi-inv" extra-info-color="indigo">inverse 格子，indigo</ui-col>
   </ui-row>
-  <ui-row border="1px solid" col-border="1px solid" cell-padding="12px 16px" extra-info-size="1.25rem" extra-info-color="ocean">
-    <ui-col extra-info="xi-row">整列設定：1.25rem，ocean</ui-col>
+  <ui-row border="1px solid" col-border="1px solid" cell-padding="12px 16px" extra-info-size="1.25rem" extra-info-color="blue">
+    <ui-col extra-info="xi-row">整列設定：1.25rem，blue</ui-col>
     <ui-col extra-info="xi-row">繼承整列設定</ui-col>
     <ui-col extra-info="xi-row" extra-info-color="orange">只覆寫色彩：orange</ui-col>
     <ui-col extra-info="xi-row" extra-info-size="0.8rem">只覆寫尺寸：0.8rem</ui-col>
@@ -309,7 +309,7 @@
       <div class="demo-src">
 <script>
   window.demoJson = {
-    extraInfoColor: 'special',
+    extraInfoColor: 'green',
     groups: [{
       titleLeft: 'Collocations',
       titleRight: '手動輪播 + 握把',
@@ -323,8 +323,8 @@
           {
             carouselInterval: 0,
             progressBar: true,
-            progressBarColor1: 'teal',
-            progressBarColor2: 'special',
+            progressBarColor1: 'green',
+            progressBarColor2: 'green',
             items: [
               'make a decision',
               'make progress',
@@ -337,7 +337,7 @@
     }]
   };
 </script>
-<ui-table theme="teal" data-id="demoJson"></ui-table>
+<ui-table theme="green" data-id="demoJson"></ui-table>
 <div id="xi-json" hidden><p>make 偏向「產生、做出結果」，do 偏向「執行、從事活動」。</p></div>
       </div>
     </div>
@@ -394,7 +394,7 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table id="tree-pm" theme="sky" tree-line>
+<ui-table id="tree-pm" theme="blue" tree-line>
   <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px">
     <ui-col inverse>任務</ui-col>
     <ui-col inverse>負責人</ui-col>
@@ -409,7 +409,7 @@
     <ui-row-enhance>
       <ui-col>Part 1 題庫整理</ui-col>
       <ui-col>講師</ui-col>
-      <ui-col font-color="safe">完成</ui-col>
+      <ui-col font-color="green">完成</ui-col>
       <ui-col>10-15</ui-col>
     </ui-row-enhance>
     <ui-row-enhance>
@@ -420,7 +420,7 @@
       <ui-row-enhance>
         <ui-col>人物類 12 題</ui-col>
         <ui-col>助教</ui-col>
-        <ui-col font-color="safe">完成</ui-col>
+        <ui-col font-color="green">完成</ui-col>
         <ui-col>10-28</ui-col>
       </ui-row-enhance>
       <ui-row-enhance>
@@ -433,7 +433,7 @@
     <ui-row-enhance>
       <ui-col>Part 3 延伸問答</ui-col>
       <ui-col>講師</ui-col>
-      <ui-col font-color="warning">未開始</ui-col>
+      <ui-col font-color="red">未開始</ui-col>
       <ui-col>11-30</ui-col>
     </ui-row-enhance>
   </ui-row-enhance>
@@ -450,21 +450,21 @@
       <ui-row-enhance>
         <ui-col>邀請碼驗證</ui-col>
         <ui-col>工程</ui-col>
-        <ui-col font-color="safe">完成</ui-col>
+        <ui-col font-color="green">完成</ui-col>
         <ui-col>10-25</ui-col>
       </ui-row-enhance>
     </ui-row-enhance>
     <ui-row-enhance>
       <ui-col>課程頁面版型</ui-col>
       <ui-col>美編</ui-col>
-      <ui-col font-color="warning">未開始</ui-col>
+      <ui-col font-color="red">未開始</ui-col>
       <ui-col>12-20</ui-col>
     </ui-row-enhance>
   </ui-row-enhance>
   <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px">
     <ui-col>年度報稅</ui-col>
     <ui-col>行政</ui-col>
-    <ui-col font-color="warning">未開始</ui-col>
+    <ui-col font-color="red">未開始</ui-col>
     <ui-col>05-31</ui-col>
   </ui-row-enhance>
 </ui-table>
@@ -570,7 +570,7 @@
       <ui-col><div class="num">10.2%</div></ui-col>
     </ui-row-enhance>
   </ui-row-enhance>
-  <ui-row-enhance col-widths="3:2:1" border="1px solid" col-border="1px solid" cell-padding="8px 14px" font-color="special">
+  <ui-row-enhance col-widths="3:2:1" border="1px solid" col-border="1px solid" cell-padding="8px 14px" font-color="green">
     <ui-col>本期淨利</ui-col>
     <ui-col><div class="num">420,000</div></ui-col>
     <ui-col><div class="num">32.8%</div></ui-col>
@@ -599,7 +599,7 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table id="tree-menu" theme="lavender" tree-icon="caret" tree-indent="18" tree-accordion tree-line tree-line-color="indigo">
+<ui-table id="tree-menu" theme="violet" tree-icon="caret" tree-indent="18" tree-accordion tree-line tree-line-color="indigo">
   <ui-row-enhance border="1px solid" cell-padding="8px 14px">
     <ui-col>雅思口說</ui-col>
     <ui-row-enhance>
@@ -680,7 +680,7 @@
     }]
   };
 </script>
-<ui-table theme="teal" data-id="treeJson"></ui-table>
+<ui-table theme="green" data-id="treeJson"></ui-table>
       </div>
     </div>
     <div>
@@ -739,12 +739,12 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="ocean">
+<ui-table theme="blue">
   <ui-row-enhance border="1px solid" col-border="1px solid" cell-padding="14px 16px">
     <ui-col icons-list="bi-arrow-right-square, bi-arrow-right-square, bi-arrow-right-square, bi-arrow-right-square, bi-arrow-right-square-fill" icons-list-interval="500">
       五個圖示，每 0.5 秒一個，共 2.5 秒。
     </ui-col>
-    <ui-col icons-list="bi-1-circle, bi-2-circle, bi-3-circle, bi-check-circle-fill" icons-list-interval="300" font-color="special">
+    <ui-col icons-list="bi-1-circle, bi-2-circle, bi-3-circle, bi-check-circle-fill" icons-list-interval="300" font-color="green">
       數字圖示，每 0.3 秒一個。
     </ui-col>
     <ui-col inverse font-color="yellow" icons-list="bi-lightbulb, bi-lightbulb, bi-lightbulb-fill" icons-list-interval="600">
@@ -772,7 +772,7 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="lavender" tree-line>
+<ui-table theme="violet" tree-line>
   <ui-row-enhance col-widths="2:3" border="1px solid" col-border="1px solid" cell-padding="10px 14px" tree-open>
     <ui-col icons-list="bi-mic, bi-mic, bi-mic-fill" icons-list-interval="400">口說練習</ui-col>
     <ui-col icons-list="bi-chevron-right, bi-chevron-right, bi-chevron-double-right" icons-list-interval="350">滑過這格看箭頭往前推進</ui-col>
@@ -803,7 +803,7 @@
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="salmon">
+<ui-table theme="orange">
   <ui-row-enhance border="1px solid" col-border="1px solid" cell-padding="12px 16px">
     <ui-col mask-text="點我揭曉" icons-list="bi-star, bi-star-fill">遮罩優先</ui-col>
     <ui-col carousel-interval="2000" icons-list="bi-star, bi-star-fill">
@@ -854,7 +854,7 @@
     }]
   };
 </script>
-<ui-table theme="teal" data-id="iconsJson"></ui-table>
+<ui-table theme="green" data-id="iconsJson"></ui-table>
       </div>
     </div>
     <div>

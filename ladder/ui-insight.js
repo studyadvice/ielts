@@ -3,45 +3,37 @@
  * 用途：左側為一句一句的卡片，右側顯示所選句子中亮點字詞的解說，雙向對照。
  * 不使用 shadow DOM，CSS 由本檔自動注入。需要 Bootstrap Icons（bi-*）。
  * v1.1：所有顏色屬性（含 hl-hot-bg、hl-hot-color、tag-color）可直接填品牌色名稱，
- *       例如 hl-hot-bg="sky"、hl-hot-color="base"，名稱不分大小寫，也仍可填 #hex 或 rgb()。
- * v1.2：新增 theme 屬性，例如 theme="lavender"。影響外觀色彩的個別屬性預設都跟著 theme，
+ *       例如 hl-hot-bg="blue"、hl-hot-color="base"，名稱不分大小寫，也仍可填 #hex 或 rgb()。
+ * v1.2：新增 theme 屬性，例如 theme="violet"。影響外觀色彩的個別屬性預設都跟著 theme，
  *       有明確指定的屬性才會覆蓋 theme 的顏色。優先順序：個別屬性 > theme > 內建預設。
- *       可用主題：default、lavender、sky、ocean、teal、safe、special、yellow、orange、
- *       salmon、pink、warning、indigo、info。名稱不存在時退回 default。
+ *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、orange、green、
+ *       blue、indigo、violet、gray、key、key-deep、calm、quiet、playful、urgent）。名稱不存在時退回 default。
  */
 (() => {
   if (customElements.get('ui-insight')) return;
-
-  const PALETTE = [
-    '#C6C7BD', '#B484E8', '#5DBAE8', '#EF6661', '#F79C40', '#5DBAE8', '#71CD76', '#71CD76',
-    '#DBEDD8', '#E3D322', '#DBEDD8', '#71CD76', '#778CE1', '#778CE1', '#FF91D7', '#F79C40'
-  ];
 
   /* 品牌色名稱對照：顏色屬性可直接填名稱（不分大小寫） */
   const COLOR_NAMES = {
     base: '#0C0D0C',
     shell: '#C6C7BD',
-    lavender: '#B484E8',
-    sky: '#5DBAE8',
-    warning: '#EF6661',
-    salmon: '#F79C40',
-    ocean: '#5DBAE8',
-    safe: '#71CD76',
-    teal: '#71CD76',
     vanilla: '#DBEDD8',
     yellow: '#E3D322',
-    focus: '#DBEDD8',
-    special: '#71CD76',
-    info: '#778CE1',
     indigo: '#778CE1',
     pink: '#FF91D7',
-    orange: '#F79C40',
+    orange: '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
-    gray: '#86877F'
+    gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
 
   /* CSS_ATTRS 之中屬於顏色的屬性，值會先經過品牌色名稱轉換 */
@@ -84,26 +76,24 @@
 
   const THEMES = {
     default: {},
-    lavender: accentTheme('lavender'),
-    sky: accentTheme('sky'),
-    ocean: accentTheme('ocean'),
-    teal: accentTheme('teal'),
-    safe: accentTheme('safe'),
-    special: accentTheme('special'),
     yellow: accentTheme('yellow'),
     orange: accentTheme('orange'),
-    salmon: accentTheme('salmon'),
     pink: accentTheme('pink'),
-    warning: accentTheme('warning'),
     indigo: accentTheme('indigo'),
-    info: accentTheme('info'),
     /* 新色票 */
     red: accentTheme('red'),
     green: accentTheme('green'),
     blue: accentTheme('blue'),
     violet: accentTheme('violet'),
     gray: accentTheme('gray'),
-    vanilla: accentTheme('vanilla')
+    vanilla: accentTheme('vanilla'),
+    shell: accentTheme('shell'),
+    key: accentTheme('key'),
+    'key-deep': accentTheme('key-deep'),
+    calm: accentTheme('calm'),
+    quiet: accentTheme('quiet'),
+    playful: accentTheme('playful'),
+    urgent: accentTheme('urgent')
   };
 
   /* 內建標籤：tag="lr" 等簡寫會轉成中文文字與預設顏色 */
@@ -111,7 +101,7 @@
     lr: { text: '詞彙', color: '#71CD76' },
     gra: { text: '文法', color: '#B484E8' },
     fc: { text: '連貫', color: '#5DBAE8' },
-    p: { text: '發音', color: '#F79C40' }
+    p: { text: '發音', color: '#FF5530' }
   };
 
   /* 會轉成 CSS 變數的屬性與預設值 */
@@ -231,7 +221,6 @@ ui-insight.uin-open .uin-head .uin-chev{transform:rotate(180deg)}
 ui-insight.uin-collapsible.uin-open .uin-wrap{margin:14px 0 0 0;animation:uin-fade .3s ease}
 ui-insight.uin-collapsible:not(.uin-open) .uin-wrap{display:none}
 ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-active-border);outline-offset:3px}
-${PALETTE.map((c, i) => `ui-insight c${i + 1}{color:${c}}`).join('\n')}
 `;
 
   if (!document.getElementById('ui-insight-style')) {
@@ -521,29 +510,14 @@ ${PALETTE.map((c, i) => `ui-insight c${i + 1}{color:${c}}`).join('\n')}
 
   customElements.define('ui-insight', UiInsight);
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

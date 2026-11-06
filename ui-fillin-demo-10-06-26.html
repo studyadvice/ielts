@@ -7,26 +7,26 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <style>
 :root{
-  --bg:#0C0D0C;--shell:#C6C7BD;--focus:#D4FFFC;--sky:#82C8E5;--teal:#0DA591;--lavender:#C3A5E5;
-  --ok:#27AE60;--bad:#E6374B;--orange:#EDA109;--line:rgba(198,199,189,0.78);
+  --bg:#0C0D0C;--shell:#C6C7BD;--focus:#DBEDD8;--blue:#5DBAE8;--green:#71CD76;--violet:#B484E8;
+  --ok:#71CD76;--bad:#EF6661;--orange:#F79C40;--line:rgba(198,199,189,0.78);
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Mono CJK TC",monospace;
 }
 html{font-size:112.5%}
 body{margin:0;padding:24px;background:var(--bg);color:var(--shell);font:1rem/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
 h1{margin:0 0 12px;color:var(--focus);font-size:2rem;line-height:1.25}
 h2{margin:0 0 12px;color:var(--focus);font-size:1.5rem;line-height:1.25}
-h3{margin:0 0 12px;color:var(--teal);font-size:1rem;line-height:1.5}
+h3{margin:0 0 12px;color:var(--green);font-size:1rem;line-height:1.5}
 p{margin:0 0 12px}
-code{padding:2px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--sky);font:1rem/1.5 var(--mono)}
+code{padding:2px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--blue);font:1rem/1.5 var(--mono)}
 pre{margin:0;padding:12px;overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--shell);font:1rem/1.5 var(--mono);white-space:pre-wrap;word-break:break-word}
 pre code{padding:0;border:0}
-a{color:var(--sky)}
+a{color:var(--blue)}
 a:hover{color:var(--focus)}
 
 .top{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--line)}
 .nav{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 0;padding:0;list-style:none}
-.nav a{display:block;padding:8px 12px;border:1px solid var(--sky);border-radius:6px;text-decoration:none}
-.nav a:hover{background:var(--sky);color:var(--bg)}
+.nav a{display:block;padding:8px 12px;border:1px solid var(--blue);border-radius:6px;text-decoration:none}
+.nav a:hover{background:var(--blue);color:var(--bg)}
 
 .demo{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--line)}
 .note{max-width:80rem}
@@ -39,15 +39,15 @@ a:hover{color:var(--focus)}
 .panel{margin-bottom:12px;padding:12px;border:1px solid var(--line);border-radius:6px}
 .pad-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:12px;margin-bottom:12px}
 .pad-grid label{display:flex;flex-direction:column;gap:6px;margin:0}
-.pad-grid .nm{color:var(--sky);font-family:var(--mono)}
+.pad-grid .nm{color:var(--blue);font-family:var(--mono)}
 input[type="text"]{box-sizing:border-box;width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--shell);font:1rem/1.5 var(--mono)}
 input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 .btns{display:flex;flex-wrap:wrap;gap:12px}
-.dbtn{appearance:none;padding:12px 24px;border:1px solid var(--sky);border-radius:6px;background:transparent;color:var(--shell);font:inherit;cursor:pointer}
-.dbtn:hover{background:var(--sky);color:var(--bg)}
-.dbtn.on{background:var(--lavender);border-color:var(--lavender);color:var(--bg)}
+.dbtn{appearance:none;padding:12px 24px;border:1px solid var(--blue);border-radius:6px;background:transparent;color:var(--shell);font:inherit;cursor:pointer}
+.dbtn:hover{background:var(--blue);color:var(--bg)}
+.dbtn.on{background:var(--violet);border-color:var(--violet);color:var(--bg)}
 .fs-row{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
-.fs-row .nm{color:var(--sky);font-family:var(--mono)}
+.fs-row .nm{color:var(--blue);font-family:var(--mono)}
 .demo-alert{margin:12px 0 0;padding:12px;border:1px solid var(--orange);border-radius:6px;background:var(--orange);color:var(--bg)}
 .demo-alert[hidden]{display:none}
 
@@ -58,7 +58,7 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 
 .ref{width:100%;margin-bottom:12px;border-collapse:collapse}
 .ref th,.ref td{padding:12px;border:1px solid var(--line);text-align:left;vertical-align:top}
-.ref th{color:var(--teal)}
+.ref th{color:var(--green)}
 .ref-wrap{overflow-x:auto}
 </style>
 </head>
@@ -208,16 +208,16 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 <!-- 六、主題 -->
 <section id="s6" class="demo">
   <h2>六、主題變數</h2>
-  <p class="note">一個主題就是一個顏色：元件只用 <code>--uf-accent</code> 一個主題色，下拉選單、題號、空格、按鈕、表頭與提示全部相同。對錯固定用綠色與紅色，不隨主題改變。按下面的按鈕，會在 <code>ui-fillin</code> 上覆寫這個變數，你也可以在樣式表寫 <code>ui-fillin{--uf-accent:#1CCAE8}</code>，效果相同。</p>
+  <p class="note">一個主題就是一個顏色：元件只用 <code>--uf-accent</code> 一個主題色，下拉選單、題號、空格、按鈕、表頭與提示全部相同。對錯固定用綠色與紅色，不隨主題改變。按下面的按鈕，會在 <code>ui-fillin</code> 上覆寫這個變數，你也可以在樣式表寫 <code>ui-fillin{--uf-accent:#5DBAE8}</code>，效果相同。</p>
   <div class="cols">
     <div class="pane">
       <h3>實際效果</h3>
       <div class="btns" style="margin-bottom:12px">
-        <button type="button" class="dbtn on" data-theme="default">天空 sky</button>
-        <button type="button" class="dbtn" data-theme="lavender">薰衣草 lavender</button>
-        <button type="button" class="dbtn" data-theme="ocean">海洋 ocean</button>
-        <button type="button" class="dbtn" data-theme="salmon">鮭魚 salmon</button>
-        <button type="button" class="dbtn" data-theme="teal">藍綠 teal</button>
+        <button type="button" class="dbtn on" data-theme="default">天空 blue</button>
+        <button type="button" class="dbtn" data-theme="violet">薰衣草 violet</button>
+        <button type="button" class="dbtn" data-theme="blue">海洋 blue</button>
+        <button type="button" class="dbtn" data-theme="orange">鮭魚 orange</button>
+        <button type="button" class="dbtn" data-theme="green">藍綠 green</button>
         <button type="button" class="dbtn" data-theme="pink">粉紅 pink</button>
       </div>
       <div id="s6-live"></div>
@@ -341,8 +341,8 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 #q4-results [data-uf-results]{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
 #q4-results [data-uf-results]:empty::before{content:"提交後，結果會出現在這裡。"}
 #q4-results .uf-result{padding:12px;border:1px solid;border-radius:6px}
-#q4-results [data-state="correct"]{color:#27AE60}
-#q4-results [data-state="incorrect"]{color:#E6374B}
+#q4-results [data-state="correct"]{color:#71CD76}
+#q4-results [data-state="incorrect"]{color:#EF6661}
 #q4-results [data-answered="false"]{border-style:dashed}
 </script>
 
@@ -511,7 +511,7 @@ customElements.define('demo-tick', class extends HTMLElement {
 
 /* ---------- 六、主題切換 ---------- */
 (function () {
-  var THEMES = { 'default': '#82C8E5', lavender: '#C3A5E5', ocean: '#1CCAE8', salmon: '#E5C3B3', teal: '#0DA591', pink: '#FF91D7' };
+  var THEMES = { 'default': '#5DBAE8', violet: '#B484E8', blue: '#5DBAE8', orange: '#F79C40', green: '#71CD76', pink: '#FF91D7' };
   var target = document.getElementById('theme-demo');
   var tag = document.getElementById('theme-tag');
   var btns = Array.prototype.slice.call(document.querySelectorAll('[data-theme]'));

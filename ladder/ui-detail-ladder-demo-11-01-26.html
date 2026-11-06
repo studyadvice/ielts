@@ -9,20 +9,20 @@
 <style>
   body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
   .page{max-width:1400px;margin:0 auto;padding:32px 40px}
-  h1{color:#82C8E5;font-size:1.6rem;margin:0 0 8px 0}
-  h2{color:#C3A5E5;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
-  h3{color:#1CCAE8;font-size:1rem;margin:24px 0 8px 0}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{color:#5DBAE8;font-size:1rem;margin:24px 0 8px 0}
   p.lead-text{color:#C6C7BD;font-size:.95rem}
   .demo-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
   pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
   table.ref{width:100%;border-collapse:collapse;font-size:.85rem}
-  table.ref th{background:#1a1c1a;color:#82C8E5;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
+  table.ref th{background:#1a1c1a;color:#5DBAE8;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
   table.ref td{padding:7px 10px;border-bottom:1px solid #222422;vertical-align:top}
   table.ref td:first-child{color:#E3D322;font-family:Consolas,monospace;white-space:nowrap}
-  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#E5C3B3;white-space:nowrap}
+  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#F79C40;white-space:nowrap}
   .swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;font-size:.8rem}
   .swatches span{background:#161816;border-radius:6px;padding:6px 8px}
-  .alert-dark-custom{background:#161816;border:1px solid #4171BF;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
+  .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
   code{color:#FF91D7}
 </style>
 </head>
@@ -31,8 +31,8 @@
 
 <h1>&lt;ui-detail-ladder&gt; 細節階梯元件</h1>
 <p class="lead-text">把籠統說法逐階升級成具體說法。左側為階梯軌道，右側依序為 pill、次標題、本文、註腳、進度條與按鈕，全部可由屬性自訂。</p>
-<div class="alert alert-dark-custom" style="margin:12px 0 0 0;border-color:#C3A5E5">
-  <i class="bi bi-clock-history" style="color:#C3A5E5"></i>
+<div class="alert alert-dark-custom" style="margin:12px 0 0 0;border-color:#B484E8">
+  <i class="bi bi-clock-history" style="color:#B484E8"></i>
   版本紀錄：v1.0 首版（範例一到三）；v1.1 新增預設收合、鍵盤切換、次標題圖示（見頁面下方「v1.1 更新」）。
 </div>
 
@@ -84,7 +84,7 @@
   <ui-detail-ladder
     direction="down"
     border="true"
-    border-color="#4171BF"
+    border-color="#778CE1"
     padding="16px 20px"
     step-gap="22px"
     step-font-size="0.9rem"
@@ -92,14 +92,14 @@
     line-width="2px"
     show-divider="true"
     divider-style="dotted"
-    divider-color="#7849C9"
+    divider-color="#778CE1"
     progress-height="10px"
-    progress-color="#1CCAE8"
-    progress-color-end="#C3A5E5"
+    progress-color="#5DBAE8"
+    progress-color-end="#B484E8"
     progress-text="第 {n} 階，共 {total} 階"
-    progress-text-color="#82C8E5"
+    progress-text-color="#5DBAE8"
     next-text="下一階"
-    pill-bg="#E5C3B3">
+    pill-bg="#F79C40">
     <ladder-step label="籠統說法">
       <step-title>原本的說法</step-title>
       <step-body>The bus was <mark>so crowded</mark>.</step-body>
@@ -118,16 +118,16 @@
   </ui-detail-ladder>
 <pre>&lt;ui-detail-ladder
   direction="down"
-  border="true" border-color="#4171BF"
+  border="true" border-color="#778CE1"
   padding="16px 20px"
   step-gap="22px" step-font-size="0.9rem"
   line-style="dashed" line-width="2px"
-  show-divider="true" divider-style="dotted" divider-color="#7849C9"
+  show-divider="true" divider-style="dotted" divider-color="#778CE1"
   progress-height="10px"
-  progress-color="#1CCAE8" progress-color-end="#C3A5E5"
+  progress-color="#5DBAE8" progress-color-end="#B484E8"
   progress-text="第 {n} 階，共 {total} 階"
   next-text="下一階"
-  pill-bg="#E5C3B3"&gt;
+  pill-bg="#F79C40"&gt;
   ...
 &lt;/ui-detail-ladder&gt;</pre>
 </div>
@@ -143,28 +143,28 @@
     step-font-size="1rem"
     line-style="double"
     line-width="4px"
-    line-active-color="#B3DE73"
+    line-active-color="#71CD76"
     current-color="#FF91D7"
     body-font-size="1.25rem"
-    title-color="#EDA109"
-    note-color="#E5C3B3"
+    title-color="#F79C40"
+    note-color="#F79C40"
     hl-bg="#E3D322"
     progress-color="#FF91D7"
     start="2">
     <ladder-step label="籠統說法">
       <step-title>原本的說法</step-title>
-      <step-body>I'm <c4>fond of cooking</c4>.</step-body>
-      <step-note>標籤示範：<c4>c4 warning</c4> 標出要被換掉的空泛說法。</step-note>
+      <step-body>I'm <c-red>fond of cooking</c-red>.</step-body>
+      <step-note>標籤示範：<c-red>c4 warning</c-red> 標出要被換掉的空泛說法。</step-note>
     </ladder-step>
     <ladder-step label="加上對象">
       <step-title>說出為誰而做</step-title>
-      <step-body>I don't mind <c3>cooking dinner</c3> <mark>for my family</mark>.</step-body>
-      <step-note>標籤示範：<c3>c3 sky</c3> 標出動作。</step-note>
+      <step-body>I don't mind <c-blue>cooking dinner</c-blue> <mark>for my family</mark>.</step-body>
+      <step-note>標籤示範：<c-blue>c3 blue</c-blue> 標出動作。</step-note>
     </ladder-step>
     <ladder-step label="加上情境">
       <step-title>放進真實的一天</step-title>
-      <step-body>I don't mind cooking dinner for my family, <mark>even after a hectic day</mark> with <c15>back-to-back meetings</c15>.</step-body>
-      <step-note>標籤示範：<c15>c15 pink</c15> 標出可借用的搭配詞。</step-note>
+      <step-body>I don't mind cooking dinner for my family, <mark>even after a hectic day</mark> with <c-pink>back-to-back meetings</c-pink>.</step-body>
+      <step-note>標籤示範：<c-pink>c15 pink</c-pink> 標出可借用的搭配詞。</step-note>
     </ladder-step>
   </ui-detail-ladder>
 <pre>&lt;ui-detail-ladder
@@ -172,7 +172,7 @@
   rail-width="240px" dot-size="28px"
   step-font-size="1rem"
   line-style="double" line-width="4px"
-  line-active-color="#B3DE73"
+  line-active-color="#71CD76"
   current-color="#FF91D7"
   body-font-size="1.25rem"
   start="2"&gt;
@@ -186,12 +186,12 @@
 </div>
 
 <!-- ========== v1.1 更新 ========== -->
-<h2 style="color:#B3DE73;border-bottom-color:#B3DE73">v1.1 更新：預設收合、鍵盤切換、次標題圖示</h2>
+<h2 style="color:#71CD76;border-bottom-color:#71CD76">v1.1 更新：預設收合、鍵盤切換、次標題圖示</h2>
 <p class="lead-text">以下每組左邊是 v1.1 實際效果，右邊是 v1.0 與 v1.1 的寫法對照。</p>
 
 <h3>1. ini-collapse 預設收合</h3>
 <div class="demo-row">
-  <ui-detail-ladder id="demo4" ini-collapse ini-title="預設收合，點擊展開" border="true" border-color="#4171BF" padding="12px 16px">
+  <ui-detail-ladder id="demo4" ini-collapse ini-title="預設收合，點擊展開" border="true" border-color="#778CE1" padding="12px 16px">
     <ladder-step label="籠統說法">
       <step-title icon="bi-chat-square-quote">原本的說法</step-title>
       <step-body>Exercise is <mark>crucial</mark> for me.</step-body>
@@ -208,12 +208,12 @@
       <step-note>我一週跑三次，通常是上班前沿著河堤跑。</step-note>
     </ladder-step>
   </ui-detail-ladder>
-<pre><span style="color:#E5C3B3">/* v1.0：沒有收合功能，元件一律展開 */</span>
+<pre><span style="color:#F79C40">/* v1.0：沒有收合功能，元件一律展開 */</span>
 &lt;ui-detail-ladder border="true"&gt;
   ...
 &lt;/ui-detail-ladder&gt;
 
-<span style="color:#B3DE73">/* v1.1：加上 ini-collapse 即預設收合 */</span>
+<span style="color:#71CD76">/* v1.1：加上 ini-collapse 即預設收合 */</span>
 &lt;ui-detail-ladder ini-collapse
   ini-title="預設收合，點擊展開"
   border="true"&gt;
@@ -248,9 +248,9 @@ ini-collapse 不必給值；寫成 ini-collapse="false" 等同不收合。
       <i class="bi bi-keyboard"></i> 把游標移到元件上（或點一下元件），再按 Ctrl+Shift+↑ 或 Ctrl+Shift+↓。
     </div>
   </div>
-<pre><span style="color:#E5C3B3">/* v1.0：只能用滑鼠點階梯或按鈕 */</span>
+<pre><span style="color:#F79C40">/* v1.0：只能用滑鼠點階梯或按鈕 */</span>
 
-<span style="color:#B3DE73">/* v1.1：預設啟用鍵盤，不需任何設定 */</span>
+<span style="color:#71CD76">/* v1.1：預設啟用鍵盤，不需任何設定 */</span>
 &lt;ui-detail-ladder direction="down"&gt;
   ...
 &lt;/ui-detail-ladder&gt;
@@ -281,14 +281,14 @@ ini-collapse 不必給值；寫成 ini-collapse="false" 等同不收合。
       <step-body>There's <mark>a night market two streets away</mark>.</step-body>
     </ladder-step>
     <ladder-step label="加上感官">
-      <step-title icon="bi bi-fire" icon-color="#EDA109">完整寫法也可以（bi bi-fire）</step-title>
+      <step-title icon="bi bi-fire" icon-color="#F79C40">完整寫法也可以（bi bi-fire）</step-title>
       <step-body>There's a night market two streets away, <mark>and you can smell the grilled squid from my balcony</mark>.</step-body>
     </ladder-step>
   </ui-detail-ladder>
-<pre><span style="color:#E5C3B3">/* v1.0：圖示要自己寫在標題裡 */</span>
+<pre><span style="color:#F79C40">/* v1.0：圖示要自己寫在標題裡 */</span>
 &lt;step-title&gt;&lt;i class="bi bi-star-fill"&gt;&lt;/i&gt; 標題&lt;/step-title&gt;
 
-<span style="color:#B3DE73">/* v1.1：直接用 icon 屬性 */</span>
+<span style="color:#71CD76">/* v1.1：直接用 icon 屬性 */</span>
 &lt;step-title icon="bi-star-fill"&gt;標題&lt;/step-title&gt;
 
 /* 三種寫法都可以 */
@@ -297,7 +297,7 @@ icon="star-fill"
 icon="bi bi-star-fill"
 
 /* 單一圖示改色 */
-&lt;step-title icon="bi-fire" icon-color="#EDA109"&gt;
+&lt;step-title icon="bi-fire" icon-color="#F79C40"&gt;
 
 /* 整個元件的圖示統一改色（預設 #E3D322） */
 &lt;ui-detail-ladder title-icon-color="#FF91D7"&gt;</pre>
@@ -318,22 +318,22 @@ icon="bi bi-star-fill"
 
 <h3>快速色彩標籤 &lt;c1&gt; 到 &lt;c16&gt;</h3>
 <div class="swatches">
-  <span><c1 style="color:#C6C7BD">c1 shell</c1></span>
-  <span style="color:#C3A5E5">c2 lavender</span>
-  <span style="color:#82C8E5">c3 sky</span>
-  <span style="color:#E6374B">c4 warning</span>
-  <span style="color:#E5C3B3">c5 salmon</span>
-  <span style="color:#1CCAE8">c6 ocean</span>
-  <span style="color:#27AE60">c7 safe</span>
-  <span style="color:#0DA591">c8 teal</span>
+  <span><c1 style="color:#C6C7BD">c1 shell</c-shell></span>
+  <span style="color:#B484E8">c2 violet</span>
+  <span style="color:#5DBAE8">c3 blue</span>
+  <span style="color:#EF6661">c4 warning</span>
+  <span style="color:#F79C40">c5 orange</span>
+  <span style="color:#5DBAE8">c6 blue</span>
+  <span style="color:#71CD76">c7 green</span>
+  <span style="color:#71CD76">c8 green</span>
   <span style="color:#DBEDD8">c9 vanilla</span>
   <span style="color:#E3D322">c10 yellow</span>
-  <span style="color:#D4FFFC">c11 focus</span>
-  <span style="color:#B3DE73">c12 special</span>
-  <span style="color:#4171BF">c13 info</span>
-  <span style="color:#7849C9">c14 indigo</span>
+  <span style="color:#DBEDD8">c11 focus</span>
+  <span style="color:#71CD76">c12 green</span>
+  <span style="color:#778CE1">c13 info</span>
+  <span style="color:#778CE1">c14 indigo</span>
   <span style="color:#FF91D7">c15 pink</span>
-  <span style="color:#EDA109">c16 orange</span>
+  <span style="color:#F79C40">c16 orange</span>
 </div>
 
 <!-- ========== 屬性表 ========== -->
@@ -355,7 +355,7 @@ icon="bi bi-star-fill"
   <tr><td>ini-collapse</td><td>（無）</td><td>v1.1 新增。出現此屬性即預設收合，點擊標題列展開或收合。</td></tr>
   <tr><td>ini-title</td><td>點擊展開</td><td>v1.1 新增。收合標題列的文字。</td></tr>
   <tr><td>ini-title-size</td><td>1rem</td><td>v1.1 新增。標題列字體大小。</td></tr>
-  <tr><td>ini-title-color</td><td>#82C8E5</td><td>v1.1 新增。標題列文字與圖示顏色。</td></tr>
+  <tr><td>ini-title-color</td><td>#5DBAE8</td><td>v1.1 新增。標題列文字與圖示顏色。</td></tr>
   <tr><td>ini-title-bg</td><td>#161816</td><td>v1.1 新增。標題列底色。</td></tr>
   <tr><td>keyboard</td><td>true</td><td>v1.1 新增。是否啟用 Ctrl+Shift+上下方向鍵切換階梯。</td></tr>
 </table>
@@ -369,12 +369,12 @@ icon="bi bi-star-fill"
   <tr><td>dot-size</td><td>22px</td><td>數字圓點直徑。</td></tr>
   <tr><td>dot-font-size</td><td>0.6875rem</td><td>圓點內數字大小。</td></tr>
   <tr><td>label-color</td><td>#C6C7BD</td><td>尚未到達的階梯文字與圓點框線顏色。</td></tr>
-  <tr><td>active-color</td><td>#82C8E5</td><td>已經過的階梯顏色，也是「下一階」按鈕底色。</td></tr>
-  <tr><td>current-color</td><td>#1CCAE8</td><td>目前所在階梯的顏色。</td></tr>
+  <tr><td>active-color</td><td>#5DBAE8</td><td>已經過的階梯顏色，也是「下一階」按鈕底色。</td></tr>
+  <tr><td>current-color</td><td>#5DBAE8</td><td>目前所在階梯的顏色。</td></tr>
   <tr><td>line-style</td><td>solid</td><td>垂直線類型：solid、dashed、dotted、double。</td></tr>
   <tr><td>line-width</td><td>2px</td><td>垂直線粗細。double 建議 3px 以上。</td></tr>
   <tr><td>line-color</td><td>#C6C7BD</td><td>垂直線未到達段的顏色。</td></tr>
-  <tr><td>line-active-color</td><td>#82C8E5</td><td>垂直線已到達段的顏色。</td></tr>
+  <tr><td>line-active-color</td><td>#5DBAE8</td><td>垂直線已到達段的顏色。</td></tr>
 </table>
 
 <h3>Pill、次標題、本文、註腳</h3>
@@ -382,10 +382,10 @@ icon="bi bi-star-fill"
   <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
   <tr><td>show-pill</td><td>true</td><td>是否顯示 pill。</td></tr>
   <tr><td>pill-font-size</td><td>0.85rem</td><td>pill 字體大小。</td></tr>
-  <tr><td>pill-bg</td><td>#C3A5E5</td><td>pill 底色。</td></tr>
+  <tr><td>pill-bg</td><td>#B484E8</td><td>pill 底色。</td></tr>
   <tr><td>pill-color</td><td>#0C0D0C</td><td>pill 文字色。</td></tr>
   <tr><td>title-font-size</td><td>1.0625rem</td><td>次標題字體大小。</td></tr>
-  <tr><td>title-color</td><td>#82C8E5</td><td>次標題顏色。</td></tr>
+  <tr><td>title-color</td><td>#5DBAE8</td><td>次標題顏色。</td></tr>
   <tr><td>title-icon-color</td><td>#E3D322</td><td>v1.1 新增。次標題圖示的統一顏色。</td></tr>
   <tr><td>body-font-size</td><td>1rem</td><td>本文字體大小。</td></tr>
   <tr><td>body-color</td><td>#C6C7BD</td><td>本文顏色。</td></tr>
@@ -395,7 +395,7 @@ icon="bi bi-star-fill"
   <tr><td>divider-style</td><td>solid</td><td>分隔線類型：solid、dashed、dotted、double。</td></tr>
   <tr><td>divider-width</td><td>1px</td><td>分隔線粗細。</td></tr>
   <tr><td>divider-color</td><td>#C6C7BD</td><td>分隔線顏色。</td></tr>
-  <tr><td>hl-bg</td><td>#B3DE73</td><td>&lt;mark&gt; 新增片段的底色。</td></tr>
+  <tr><td>hl-bg</td><td>#71CD76</td><td>&lt;mark&gt; 新增片段的底色。</td></tr>
   <tr><td>hl-color</td><td>#0C0D0C</td><td>&lt;mark&gt; 新增片段的文字色。</td></tr>
 </table>
 
@@ -404,7 +404,7 @@ icon="bi bi-star-fill"
   <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
   <tr><td>show-progress</td><td>true</td><td>是否顯示進度條與下方文字。</td></tr>
   <tr><td>progress-height</td><td>6px</td><td>進度條粗細。</td></tr>
-  <tr><td>progress-color</td><td>#B3DE73</td><td>進度條顏色；搭配 progress-color-end 時為漸層起點。</td></tr>
+  <tr><td>progress-color</td><td>#71CD76</td><td>進度條顏色；搭配 progress-color-end 時為漸層起點。</td></tr>
   <tr><td>progress-color-end</td><td>（空）</td><td>設定後進度條變成由左到右的雙色漸層。</td></tr>
   <tr><td>progress-track</td><td>#262826</td><td>進度條底軌顏色，也是「重來」按鈕底色。</td></tr>
   <tr><td>progress-text</td><td>具體程度 {p}%</td><td>下方文字範本。{p} 為百分比，{n} 為目前階數，{total} 為總階數。</td></tr>

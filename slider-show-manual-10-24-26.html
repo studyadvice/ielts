@@ -30,13 +30,13 @@ nav.toc .sub { color: #C6C7BD; font-size: 1.125rem; margin-bottom: 20px; }
 nav.toc ol { list-style: none; margin: 0; padding: 0; }
 nav.toc li { margin: 0; }
 nav.toc a { display: block; padding: 6px 12px; border-radius: 6px; color: #C6C7BD; text-decoration: none; font-size: 1.125rem; line-height: 1.5; }
-nav.toc a:hover { background: #1f201f; color: #D4FFFC; }
+nav.toc a:hover { background: #1f201f; color: #DBEDD8; }
 main { padding: 40px 64px 120px; max-width: 1300px; }
-h1 { margin: 0 0 8px; color: #1CCAE8; font-size: 2.25rem; line-height: 1.4; }
+h1 { margin: 0 0 8px; color: #5DBAE8; font-size: 2.25rem; line-height: 1.4; }
 .lead { color: #DBEDD8; margin: 0 0 32px; }
 section.doc { margin: 0 0 56px; padding-bottom: 16px; }
-h2 { margin: 0 0 20px; padding-bottom: 8px; color: #82C8E5; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #0DA591; }
-h3 { margin: 32px 0 12px; color: #E5C3B3; font-size: 1.375rem; line-height: 1.4; }
+h2 { margin: 0 0 20px; padding-bottom: 8px; color: #5DBAE8; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #71CD76; }
+h3 { margin: 32px 0 12px; color: #F79C40; font-size: 1.375rem; line-height: 1.4; }
 p, li { font-size: 1.125rem; line-height: 1.5; }
 p { margin: 0 0 14px; }
 ul, ol { margin: 0 0 16px; padding-left: 28px; }
@@ -44,11 +44,11 @@ li { margin: 6px 0; }
 code { color: #E3D322; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size: 1.125rem; }
 pre {
   margin: 0 0 20px; padding: 16px 20px;
-  background: #141514; border-left: 4px solid #0DA591; border-radius: 6px;
+  background: #141514; border-left: 4px solid #71CD76; border-radius: 6px;
   overflow-x: auto;
 }
-pre code { color: #D4FFFC; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
-.code-title { margin: 16px 0 6px; color: #B3DE73; font-weight: 700; }
+pre code { color: #DBEDD8; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
+.code-title { margin: 16px 0 6px; color: #71CD76; font-weight: 700; }
 .tbl { overflow-x: auto; margin: 0 0 24px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px 14px; text-align: left; vertical-align: top; border: 1px solid #2f302f; font-size: 1.125rem; line-height: 1.5; }
@@ -57,13 +57,13 @@ td:first-child { white-space: normal; max-width: 340px; overflow-wrap: anywhere;
 td:last-child { min-width: 360px; }
 th { white-space: normal; }
 tbody tr:nth-child(even) td { background: #111211; }
-.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #4171BF; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
-.note b { color: #D4FFFC; }
-.note-tip  { border-left-color: #27AE60; }
-.note-warn { border-left-color: #EDA109; }
-.note-bug  { border-left-color: #E6374B; }
-.note-bug b { color: #E6374B; }
-.note-info { border-left-color: #4171BF; }
+.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #778CE1; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
+.note b { color: #DBEDD8; }
+.note-tip  { border-left-color: #71CD76; }
+.note-warn { border-left-color: #F79C40; }
+.note-bug  { border-left-color: #EF6661; }
+.note-bug b { color: #EF6661; }
+.note-info { border-left-color: #778CE1; }
 
 nav.toc { padding: 24px 14px; }
 nav.toc .brand, nav.toc .sub, nav.toc a { font-size: 0.75rem; line-height: 1.5; }
@@ -117,7 +117,7 @@ nav.toc a { padding: 4px 10px; }
 <section class="doc" id="quickstart">
 <h2>1. 快速開始</h2>
 <h3>1.1 最小範例</h3>
-<pre><code>&lt;slider-show theme="sky" height="320px"&gt;
+<pre><code>&lt;slider-show theme="blue" height="320px"&gt;
   &lt;div slide&gt;
     &lt;div class="slide-content"&gt;
       &lt;div class="slide-subtitle"&gt;小標&lt;/div&gt;
@@ -184,9 +184,9 @@ nav.toc a { padding: 4px 10px; }
 <tr><td><code>theme</code></td><td><code>shell</code></td><td>主色，影響箭頭、進度點、分部按鈕底色、頁碼啟用色、補充說明底線、填空底線、防劇透遮罩、右上角部分指示。接受色票名稱或 CSS 色碼，詳見第 6 節。</td></tr>
 <tr><td><code>bg-color</code></td><td><code>background</code>（#0C0D0C）</td><td>只用於 <code>triangle</code> 進度樣式的空心挖空色，需與頁面背景相同。</td></tr>
 <tr><td><code>fill-color</code></td><td><code>fill</code>（#1A1B1A）</td><td><code>.slide-content</code>、補充說明框、填空框、頁碼按鈕的底色。</td></tr>
-<tr><td><code>fontcolor-subtitle</code></td><td><code>lavender</code></td><td><code>.slide-subtitle</code> 文字色。</td></tr>
+<tr><td><code>fontcolor-subtitle</code></td><td><code>violet</code></td><td><code>.slide-subtitle</code> 文字色。</td></tr>
 <tr><td><code>fontcolor-main</code></td><td><code>shell</code></td><td><code>.slide-main</code> 文字色。</td></tr>
-<tr><td><code>fontcolor-footer</code></td><td><code>sky</code></td><td><code>.slide-footer</code> 文字色。</td></tr>
+<tr><td><code>fontcolor-footer</code></td><td><code>blue</code></td><td><code>.slide-footer</code> 文字色。</td></tr>
 <tr><td><code>current-part</code></td><td>無</td><td>指定目前部分。載入時當起始部分；執行期修改會立即切換並回到該部分第 1 頁，<b>無轉場、不發事件</b>。</td></tr>
 </tbody></table></div>
 <h3>3.2 導覽與進度</h3>
@@ -233,8 +233,8 @@ nav.toc a { padding: 4px 10px; }
 <tbody>
 <tr><td><code>start-style</code></td><td>有 <code>role="start"</code> 的投影片時為 <code>accent-frame</code>，否則 <code>none</code></td><td><code>gradient-border</code>、<code>gradient-bg</code>、<code>accent-frame</code>、<code>top-bottom-bar</code>、<code>corner-tag</code>、<code>none</code>。</td></tr>
 <tr><td><code>end-style</code></td><td>同上，對應 <code>role="end"</code></td><td>同上。</td></tr>
-<tr><td><code>start-colors</code></td><td><code>lavender,sky</code></td><td>「A,B」兩色，色票名稱或色碼，<b>不要用 rgba() 等含逗號的寫法</b>。</td></tr>
-<tr><td><code>end-colors</code></td><td><code>safe,teal</code></td><td>同上。</td></tr>
+<tr><td><code>start-colors</code></td><td><code>violet,blue</code></td><td>「A,B」兩色，色票名稱或色碼，<b>不要用 rgba() 等含逗號的寫法</b>。</td></tr>
+<tr><td><code>end-colors</code></td><td><code>green,green</code></td><td>同上。</td></tr>
 </tbody></table></div>
 <h3>3.5 頁首與標題同步</h3>
 <div class="tbl"><table>
@@ -249,7 +249,7 @@ nav.toc a { padding: 4px 10px; }
 <div class="tbl"><table>
 <thead><tr><th>屬性</th><th>預設值</th><th>說明</th></tr></thead>
 <tbody>
-<tr><td><code>extra-note-hover-color</code></td><td><code>special</code></td><td>補充說明連結滑過時的顏色。</td></tr>
+<tr><td><code>extra-note-hover-color</code></td><td><code>green</code></td><td>補充說明連結滑過時的顏色。</td></tr>
 <tr><td><code>extra-note-prefix</code></td><td>空</td><td>所有補充說明連結前面加的文字，可含 Bootstrap Icons 的 <code>bi-xxx</code> 類別名稱。</td></tr>
 <tr><td><code>extra-note-postfix</code></td><td>空</td><td>連結後面加的文字，原樣加入。</td></tr>
 <tr><td><code>spoiler-mode</code></td><td>關</td><td><code>true</code> 或 <code>full</code>：每一頁都先蓋上遮罩。</td></tr>
@@ -331,18 +331,18 @@ nav.toc a { padding: 4px 10px; }
 <thead><tr><th>名稱</th><th>色碼</th><th>名稱</th><th>色碼</th></tr></thead>
 <tbody>
 <tr><td><code>background</code></td><td><code>#0C0D0C</code></td><td><code>fill</code></td><td><code>#1A1B1A</code></td></tr>
-<tr><td><code>shell</code></td><td><code>#C6C7BD</code></td><td><code>lavender</code></td><td><code>#C3A5E5</code></td></tr>
-<tr><td><code>sky</code></td><td><code>#82C8E5</code></td><td><code>warning</code></td><td><code>#E6374B</code></td></tr>
-<tr><td><code>salmon</code></td><td><code>#E5C3B3</code></td><td><code>ocean</code></td><td><code>#1CCAE8</code></td></tr>
-<tr><td><code>safe</code></td><td><code>#27AE60</code></td><td><code>teal</code></td><td><code>#0DA591</code></td></tr>
+<tr><td><code>shell</code></td><td><code>#C6C7BD</code></td><td><code>violet</code></td><td><code>#B484E8</code></td></tr>
+<tr><td><code>blue</code></td><td><code>#5DBAE8</code></td><td><code>warning</code></td><td><code>#EF6661</code></td></tr>
+<tr><td><code>orange</code></td><td><code>#F79C40</code></td><td><code>blue</code></td><td><code>#5DBAE8</code></td></tr>
+<tr><td><code>green</code></td><td><code>#71CD76</code></td><td><code>green</code></td><td><code>#71CD76</code></td></tr>
 <tr><td><code>vanilla</code></td><td><code>#DBEDD8</code></td><td><code>yellow</code></td><td><code>#E3D322</code></td></tr>
-<tr><td><code>focus</code></td><td><code>#D4FFFC</code></td><td><code>special</code></td><td><code>#B3DE73</code></td></tr>
-<tr><td><code>info</code></td><td><code>#4171BF</code></td><td><code>indigo</code></td><td><code>#7849C9</code></td></tr>
-<tr><td><code>pink</code></td><td><code>#FF91D7</code></td><td><code>orange</code></td><td><code>#EDA109</code></td></tr>
+<tr><td><code>focus</code></td><td><code>#DBEDD8</code></td><td><code>green</code></td><td><code>#71CD76</code></td></tr>
+<tr><td><code>info</code></td><td><code>#778CE1</code></td><td><code>indigo</code></td><td><code>#778CE1</code></td></tr>
+<tr><td><code>pink</code></td><td><code>#FF91D7</code></td><td><code>orange</code></td><td><code>#F79C40</code></td></tr>
 </tbody></table></div>
 <ul>
-<li><b>自動對比色只認 6 碼十六進位與色票名稱。</b> 按鈕文字色（<code>part-btn-color</code> 沒寫時）會依 theme 亮度挑黑或淺色。實測 <code>theme="red"</code>、<code>#fc0</code>（3 碼）、<code>#336699</code> 都因為算不出亮度而一律用淺色文字 <code>#C6C7BD</code>；<code>sky</code>、<code>shell</code> 等亮色則用深色文字。</li>
-<li><code>theme="teal-outline"</code> 之類的 <code>-outline</code> 結尾只會被去掉，<b>沒有任何外框樣式</b>，等於 <code>teal</code>。</li>
+<li><b>自動對比色只認 6 碼十六進位與色票名稱。</b> 按鈕文字色（<code>part-btn-color</code> 沒寫時）會依 theme 亮度挑黑或淺色。實測 <code>theme="red"</code>、<code>#fc0</code>（3 碼）、<code>#336699</code> 都因為算不出亮度而一律用淺色文字 <code>#C6C7BD</code>；<code>blue</code>、<code>shell</code> 等亮色則用深色文字。</li>
+<li><code>theme="green-outline"</code> 之類的 <code>-outline</code> 結尾只會被去掉，<b>沒有任何外框樣式</b>，等於 <code>green</code>。</li>
 <li>寫了不存在的色票名稱（例如 <code>foo</code>）會原樣當作 CSS 色值，瀏覽器不認得就無效。</li>
 <li>元件把顏色寫成 CSS 變數放在自己身上：<code>--theme-color</code>、<code>--arrow-color</code>、<code>--arrow-bg</code>、<code>--dot-color</code>、<code>--active-dot-color</code>、<code>--part-btn-*</code>、<code>--finish-btn-*</code>、<code>--restart-btn-*</code>、<code>--fontcolor-*</code>、<code>--fill-color</code>、<code>--bg-color</code>、<code>--extra-note-hover-color</code>、<code>--start-color-a/b</code>、<code>--end-color-a/b</code>。屬性每次重畫時會重寫這些變數，所以直接改變數不會持久，請改屬性。</li>
 </ul>
@@ -359,8 +359,8 @@ nav.toc a { padding: 4px 10px; }
 <tr><td><code>corner-tag</code></td><td>左上角直角三角形標籤</td><td>只用 A 色</td></tr>
 <tr><td><code>gradient-bg</code></td><td>投影片本身的漸層底色</td><td>A 到 B</td></tr>
 </tbody></table></div>
-<pre><code>&lt;slider-show start-style="gradient-border" start-colors="lavender,sky"
-             end-style="top-bottom-bar" end-colors="safe,teal"&gt;
+<pre><code>&lt;slider-show start-style="gradient-border" start-colors="violet,blue"
+             end-style="top-bottom-bar" end-colors="green,green"&gt;
   &lt;div slide role="start"&gt;封面&lt;/div&gt;
   &lt;div slide&gt;內容&lt;/div&gt;
   &lt;div slide role="end"&gt;結語&lt;/div&gt;

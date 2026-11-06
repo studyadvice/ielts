@@ -30,7 +30,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 品牌色名稱或色碼 | `lavender` | 主色，用於色條與外框。舊名稱 `attention` 等於 `yellow`，`brown` 等於 `salmon`。 |
+| `theme` | 品牌色名稱或色碼 | `violet` | 主色，用於色條與外框。 |
 | `mode` | `single`、`auto`、`fixed`、`carousel` | `single` | `single` 單行，超出以省略號表示；`auto` 自動換行；`fixed` 固定高度，超出可捲動；`carousel` 自動輪播。 |
 | `level` | 整數 | `0` | 一開始顯示的層級（0 起算）。 |
 | `height` | 長度 | `auto` | `fixed` 模式的高度，例如 `80px`。 |
@@ -100,7 +100,7 @@
 **基本分層**
 
 ```html
-<cell-drawer theme="sky" show-dots>
+<cell-drawer theme="blue" show-dots>
   <cell-level>mitigate</cell-level>
   <cell-level>mitigate：減輕、緩和</cell-level>
   <cell-level>mitigate the impact of climate change</cell-level>
@@ -120,7 +120,7 @@
 **固定高度與外部內容**
 
 ```html
-<cell-drawer theme="info" mode="fixed" height="120px">
+<cell-drawer theme="indigo" mode="fixed" height="120px">
   <cell-level src="tip-long"></cell-level>
   <cell-level mode="single">一行摘要</cell-level>
 </cell-drawer>
@@ -143,7 +143,7 @@
 
 ```html
 <span id="q1">120</span> <span id="q2">80</span>
-<cell-drawer theme="teal" mode="auto">
+<cell-drawer theme="green" mode="auto">
   <cell-level>合計：{{= sum(q1, q2) }}，第一季佔 {{= pct(q1, total-q, 1) }}</cell-level>
 </cell-drawer>
 <span id="total-q" hidden>200</span>
@@ -165,7 +165,7 @@ d.next(); d.prev();
 d.currentLevel;       // 目前層級
 d.startCarousel(); d.stopCarousel();
 
-CellDrawer.configure({ theme: 'sky', stripWidth: 6, slideFontSize: '1rem' });  // 改全頁預設值
+CellDrawer.configure({ theme: 'blue', stripWidth: 6, slideFontSize: '1rem' });  // 改全頁預設值
 CellDrawer.colors;    // 品牌色
 CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 ```
@@ -193,7 +193,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | `lavender`、`special`、`warning`、`sky`、`safe`、`salmon`、`pink`、`orange`、`yellow`、`info`、`stone`、`vanilla`、`indigo` | 中性灰 | 一次套用外框、格子底色、文字、按鈕與群組標題的配色。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
+| `theme` | `violet`、`green`、`blue`、`orange`、`pink`、`yellow`、`vanilla`、`indigo`、`shell`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent` | 中性灰 | 一次套用外框、格子底色、文字、按鈕與群組標題的配色。 |
 | `cols` | 整數 | `2` | 未用 `<dual-row>` 時，每列幾格。 |
 | `col-widths` | 例如 `1:2` | 平均 | 欄寬比例。 |
 | `cell-min-height` | 長度 | `40px` | 格子最小高度。 |
@@ -278,7 +278,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 - **八種動作**：`push` 把格子內容放進外部目標；`pull` 把外部目標的內容拉進格子；`copy` 複製格子文字；`swap` 與右側（最後一格則左側）格子交換內容；`clear` 確認後清空；`toggle` 在列下方展開或收起附屬內容（優先使用 `<dual-slot>`，沒有時讀取 `target`）；`put` 把內容放進 id 為 `target` 的另一格；`show-next` 顯示下一個隱藏列。
 - **雙層遮罩**：設了 `overlay-1-text` 的格子先被遮住，點一下移除第一層；有第二層時再點一下才完全揭曉。
 - **兩種逐列揭示**：`auto-reveal-interval` 從載入開始，依固定間隔逐列顯示；`auto-reveal-delay` 則是某一列被顯示（例如按了 `show-next`）之後，接著自動顯示下一列。
-- **顏色名稱**：顏色屬性可填 `shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`safe`、`vanilla`、`yellow`、`info`、`stone`、`indigo`、`pink`、`orange`、`bg`、`area` 或任意色碼。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
+- **顏色名稱**：顏色屬性可填 `shell`、`violet`、`green`、`orange`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`bg`、`area`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent` 或任意色碼。
 - **建立時機**：屬性只在連到畫面時讀取一次。
 
 ### 範例
@@ -286,7 +286,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 **推送到外部區塊**
 
 ```html
-<dual-cell id="dc-1" theme="sky" target-id="preview" menu-button-icon-push="bi-box-arrow-right">
+<dual-cell id="dc-1" theme="blue" target-id="preview" menu-button-icon-push="bi-box-arrow-right">
   <dual-col>mitigate</dual-col>
   <dual-col>減輕、緩和</dual-col>
   <dual-col>exacerbate</dual-col>
@@ -298,7 +298,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 **各種動作、附屬內容與遮罩**
 
 ```html
-<dual-cell id="dc-2" theme="lavender" col-widths="1:2"
+<dual-cell id="dc-2" theme="violet" col-widths="1:2"
            menu-button-icon-copy="bi-clipboard" menu-button-icon-swap="bi-arrow-left-right"
            menu-button-icon-toggle="bi-chevron-down" menu-button-icon-toggle-expanded="bi-chevron-up">
   <dual-row>
@@ -346,7 +346,7 @@ CellDrawerTPL.eval('sum', 'q1, q2');   // 直接計算樣板函式
 
 ```js
 const dc = new DualCell('my-box', {
-  theme: 'safe', cols: 2, targetId: 'preview',
+  theme: 'green', cols: 2, targetId: 'preview',
   onCellClick: (row, col) => console.log(row, col),
   onMenuClick: (action, row, col) => console.log(action),
   onContentPush: (row, col, html) => {},

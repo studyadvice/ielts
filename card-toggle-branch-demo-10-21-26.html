@@ -17,7 +17,7 @@
   .page { max-width: 960px; margin: 0 auto; padding: 40px 28px 80px; }
 
   .pg-header { padding: 44px 0 36px; border-bottom: 1px solid rgba(198,199,189,0.12); margin-bottom: 44px; }
-  .pg-header h1 { font-size: 2rem; font-weight: 800; color: #82C8E5; }
+  .pg-header h1 { font-size: 2rem; font-weight: 800; color: #5DBAE8; }
   .pg-header p  { font-size: 1rem; color: rgba(198,199,189,0.65); margin-top: 6px; }
 
   .section { margin-bottom: 52px; }
@@ -26,8 +26,8 @@
   .sec-desc  { font-size: 0.95rem; color: rgba(198,199,189,0.58); margin-bottom: 18px; line-height: 1.5; }
 
   .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-  .chip { font-size: 0.73rem; font-family: 'Courier New', monospace; background: rgba(195,165,229,0.09); border: 1px solid rgba(195,165,229,0.22); color: #C3A5E5; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
-  .chip.new { background: rgba(179,222,115,0.10); border-color: rgba(179,222,115,0.28); color: #B3DE73; }
+  .chip { font-size: 0.73rem; font-family: 'Courier New', monospace; background: rgba(195,165,229,0.09); border: 1px solid rgba(195,165,229,0.22); color: #B484E8; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+  .chip.new { background: rgba(179,222,115,0.10); border-color: rgba(179,222,115,0.28); color: #71CD76; }
 
   hr.div { border: none; border-top: 1px solid rgba(198,199,189,0.10); margin: 48px 0; }
 
@@ -41,9 +41,9 @@
   .ref-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 14px; }
   .ref-table th { background: rgba(198,199,189,0.07); color: #C6C7BD; font-weight: 700; padding: 9px 12px; text-align: left; border-bottom: 1px solid rgba(198,199,189,0.13); }
   .ref-table td { padding: 8px 12px; border-bottom: 1px solid rgba(198,199,189,0.06); color: rgba(198,199,189,0.80); vertical-align: top; line-height: 1.4; }
-  .ref-table td:first-child { font-family: 'Courier New', monospace; color: #C3A5E5; white-space: nowrap; }
-  .ref-table td:nth-child(2) { font-family: 'Courier New', monospace; font-size: 0.82rem; color: #82C8E5; }
-  .badge-new { display: inline-block; background: rgba(179,222,115,0.12); border: 1px solid rgba(179,222,115,0.28); color: #B3DE73; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+  .ref-table td:first-child { font-family: 'Courier New', monospace; color: #B484E8; white-space: nowrap; }
+  .ref-table td:nth-child(2) { font-family: 'Courier New', monospace; font-size: 0.82rem; color: #5DBAE8; }
+  .badge-new { display: inline-block; background: rgba(179,222,115,0.12); border: 1px solid rgba(179,222,115,0.28); color: #71CD76; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -73,11 +73,11 @@
     </div>
 
     <card-toggle
-      color="sky"
+      color="blue"
       question="光在真空中的速度約為每秒 30 萬公里。"
       branch-options="對,錯"
       correct-option="對"
-      branch-correct="<strong style='color:var(--ct-color-safe)'>正確。</strong>光速約 299,792,458 m/s，物理學中常簡化為 3×10⁸ m/s。"
+      branch-correct="<strong style='color:var(--ct-color-green)'>正確。</strong>光速約 299,792,458 m/s，物理學中常簡化為 3×10⁸ m/s。"
       branch-wrong="<strong style='color:var(--ct-color-warning)'>錯誤。</strong>光速約 299,792,458 m/s，這是宇宙中已知最快的速度上限。"
       animation="fade">
     </card-toggle>
@@ -99,21 +99,21 @@
       <span class="chip new">branch-options="A,B,C,D"</span>
       <span class="chip new">branch-retry</span>
       <span class="chip new">branch-retry-text="再選一次"</span>
-      <span class="chip">branch-btn-color="lavender"</span>
+      <span class="chip">branch-btn-color="violet"</span>
     </div>
 
     <card-toggle
-      color="lavender"
+      color="violet"
       question="下列哪一個元素的原子序最小？"
       branch-options="氦 (He),氫 (H),鋰 (Li),碳 (C)"
       correct-option="氫 (H)"
-      branch-correct="<p><strong style='color:var(--ct-color-safe)'><i class='bi bi-check-circle-fill'></i> 答對了！</strong></p><p style='margin-top:6px'>氫（H）的原子序為 1，是週期表中最輕也是宇宙中含量最多的元素。</p>"
+      branch-correct="<p><strong style='color:var(--ct-color-green)'><i class='bi bi-check-circle-fill'></i> 答對了！</strong></p><p style='margin-top:6px'>氫（H）的原子序為 1，是週期表中最輕也是宇宙中含量最多的元素。</p>"
       branch-wrong="<p><strong style='color:var(--ct-color-warning)'><i class='bi bi-x-circle-fill'></i> 答錯了。</strong></p><p style='margin-top:6px'>正確答案是「氫（H）」，原子序 1。其他選項：氦 2、鋰 3、碳 6。</p>"
-      branch-btn-color="lavender"
+      branch-btn-color="violet"
       branch-retry
       branch-retry-text="↺ 再選一次"
-      branch-correct-color="safe"
-      branch-wrong-color="warning"
+      branch-correct-color="green"
+      branch-wrong-color="red"
       animation="slide">
     </card-toggle>
   </section>
@@ -133,12 +133,12 @@
     <div class="chip-row">
       <span class="chip new">branch-correct-source="tpl-correct-3"</span>
       <span class="chip new">branch-wrong-source="tpl-wrong-3"</span>
-      <span class="chip">branch-btn-color="teal"</span>
+      <span class="chip">branch-btn-color="green"</span>
     </div>
 
     <!-- 答對背面模板 -->
     <div id="tpl-correct-3" class="tpl">
-      <p style="color:var(--ct-color-safe);font-weight:700;margin-bottom:8px">
+      <p style="color:var(--ct-color-green);font-weight:700;margin-bottom:8px">
         <i class="bi bi-check-circle-fill"></i> 完全正確！
       </p>
       <p>TCP（傳輸控制協定）是面向連線的協定，透過三向交握（SYN → SYN-ACK → ACK）建立連線，確保資料可靠、有序地傳輸。</p>
@@ -153,13 +153,13 @@
     </div>
 
     <card-toggle
-      color="teal"
+      color="green"
       question="TCP（傳輸控制協定）是一種需要事先建立連線的協定。"
       branch-options="正確,錯誤"
       correct-option="正確"
       branch-correct-source="tpl-correct-3"
       branch-wrong-source="tpl-wrong-3"
-      branch-btn-color="teal"
+      branch-btn-color="green"
       branch-correct-label="答對了！"
       branch-wrong-label="答錯了，請參考說明"
       branch-retry
@@ -187,55 +187,55 @@
       <span class="chip new">branch-options + correct-option</span>
     </div>
 
-    <card-toggle-group mode="slide" lock-nav show-pages show-result theme="special">
+    <card-toggle-group mode="slide" lock-nav show-pages show-result theme="green">
 
       <!-- Q1 -->
       <card-toggle
-        color="sky"
+        color="blue"
         question="Python 是一種編譯型語言。"
         branch-options="正確,錯誤"
         correct-option="錯誤"
-        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 對！</p><p style='margin-top:4px'>Python 是直譯型（interpreted）語言，原始碼由直譯器逐行執行，不需預先編譯成機器碼。</p>"
+        branch-correct="<p style='color:var(--ct-color-green);font-weight:700'><i class='bi bi-check-circle-fill'></i> 對！</p><p style='margin-top:4px'>Python 是直譯型（interpreted）語言，原始碼由直譯器逐行執行，不需預先編譯成機器碼。</p>"
         branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 不對。</p><p style='margin-top:4px'>Python 是直譯型語言。Java 或 C++ 才是需要編譯的語言。</p>"
-        branch-btn-color="sky"
+        branch-btn-color="blue"
         animation="fade">
       </card-toggle>
 
       <!-- Q2 -->
       <card-toggle
-        color="lavender"
+        color="violet"
         question="HTTP 的預設通訊埠為何？"
         branch-options="80,443,8080,22"
         correct-option="80"
-        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 正確！</p><p style='margin-top:4px'>HTTP 預設使用 Port 80；HTTPS 使用 443；8080 常為替代 HTTP；22 是 SSH。</p>"
+        branch-correct="<p style='color:var(--ct-color-green);font-weight:700'><i class='bi bi-check-circle-fill'></i> 正確！</p><p style='margin-top:4px'>HTTP 預設使用 Port 80；HTTPS 使用 443；8080 常為替代 HTTP；22 是 SSH。</p>"
         branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 答錯了。</p><p style='margin-top:4px'>HTTP 預設 Port 為 <strong>80</strong>。HTTPS 才是 443，SSH 是 22，8080 是常見的 HTTP 替代埠。</p>"
-        branch-btn-color="lavender"
+        branch-btn-color="violet"
         branch-retry
         animation="slide">
       </card-toggle>
 
       <!-- Q3 -->
       <card-toggle
-        color="teal"
+        color="green"
         question="SQL 中，下列哪個指令用來新增資料列？"
         branch-options="INSERT,UPDATE,SELECT,ALTER"
         correct-option="INSERT"
-        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 完全正確！</p><p style='margin-top:4px'><code>INSERT INTO table VALUES (…)</code> 用於新增資料列。UPDATE 修改現有列，SELECT 查詢，ALTER 修改表格結構。</p>"
+        branch-correct="<p style='color:var(--ct-color-green);font-weight:700'><i class='bi bi-check-circle-fill'></i> 完全正確！</p><p style='margin-top:4px'><code>INSERT INTO table VALUES (…)</code> 用於新增資料列。UPDATE 修改現有列，SELECT 查詢，ALTER 修改表格結構。</p>"
         branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 答錯了。</p><p style='margin-top:4px'>正確答案是 <strong>INSERT</strong>。UPDATE 修改現有列，SELECT 讀取，ALTER 改表格結構。</p>"
-        branch-btn-color="teal"
+        branch-btn-color="green"
         branch-retry
         animation="fade">
       </card-toggle>
 
       <!-- Q4 -->
       <card-toggle
-        color="special"
+        color="green"
         question="Git 中，將遠端更新合併到本機當前分支的指令是 git pull。"
         branch-options="對,錯"
         correct-option="對"
-        branch-correct="<p style='color:var(--ct-color-safe);font-weight:700'><i class='bi bi-check-circle-fill'></i> 正確！</p><p style='margin-top:4px'><code>git pull</code> 等同於 <code>git fetch</code> 加上 <code>git merge</code>，會把遠端最新提交合併到目前分支。</p>"
+        branch-correct="<p style='color:var(--ct-color-green);font-weight:700'><i class='bi bi-check-circle-fill'></i> 正確！</p><p style='margin-top:4px'><code>git pull</code> 等同於 <code>git fetch</code> 加上 <code>git merge</code>，會把遠端最新提交合併到目前分支。</p>"
         branch-wrong="<p style='color:var(--ct-color-warning);font-weight:700'><i class='bi bi-x-circle-fill'></i> 再想想。</p><p style='margin-top:4px'><code>git pull</code> 確實是將遠端更新合併到本機分支。<code>git fetch</code> 只下載不合併，<code>git push</code> 是推送到遠端。</p>"
-        branch-btn-color="special"
+        branch-btn-color="green"
         animation="fade">
       </card-toggle>
 
@@ -257,7 +257,7 @@
     <div class="chip-row">
       <span class="chip new">branch-correct-label="太棒了，完全正確！"</span>
       <span class="chip new">branch-wrong-label="這次沒選對，來看說明"</span>
-      <span class="chip new">branch-btn-color="#EDA109"</span>
+      <span class="chip new">branch-btn-color="#F79C40"</span>
     </div>
 
     <card-toggle
@@ -269,7 +269,7 @@
       branch-wrong="正確答案是「花蓮縣」（約 4,628 km²）。南投縣約 4,106 km² 為第二，台東縣約 3,515 km² 第三，高雄市約 2,952 km²。"
       branch-correct-label="太棒了，完全正確！"
       branch-wrong-label="這次沒選對，來看說明"
-      branch-btn-color="#EDA109"
+      branch-btn-color="#F79C40"
       branch-retry
       animation="slide">
     </card-toggle>
@@ -335,7 +335,7 @@
         </tr>
         <tr>
           <td>branch-correct-color <span class="badge-new">NEW</span></td>
-          <td>"safe"</td>
+          <td>"green"</td>
           <td>答對後卡片側邊線顏色（palette key 或 hex）。</td>
         </tr>
         <tr>
@@ -345,7 +345,7 @@
         </tr>
         <tr>
           <td>branch-btn-color <span class="badge-new">NEW</span></td>
-          <td>（繼承 special）</td>
+          <td>（繼承 green）</td>
           <td>選項按鈕的邊框與文字顏色（palette key 或任意 hex）。</td>
         </tr>
         <tr>

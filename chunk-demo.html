@@ -7,7 +7,7 @@
 
   <script>
     window.ChunkDemoConfig = {
-      defaultTheme:     'special',
+      defaultTheme:     'green',
       chunkBorderWidth: '1.5px',
       chunkBorderStyle: 'solid',
       previewBorderColor: null,   /* null = 自動跟隨 theme 色 */
@@ -24,17 +24,17 @@
       font-size: 1rem; line-height: 1.65; min-height: 100vh;
     }
     .pg-title {
-      font-size: 1.4rem; font-weight: 700; color: #b3de73;
+      font-size: 1.4rem; font-weight: 700; color: #71CD76;
       margin: 0 0 4px; letter-spacing: -0.01em;
     }
-    .pg-title .sub { color: #9B72CF; font-weight: 400; }
-    .pg-desc { font-size: .88rem; color: #95c9de; margin: 0 0 52px; }
+    .pg-title .sub { color: #778CE1; font-weight: 400; }
+    .pg-desc { font-size: .88rem; color: #5DBAE8; margin: 0 0 52px; }
 
     .section  { margin-bottom: 52px; }
     .sec-tag  {
       font-size: .67rem; font-weight: 700;
       letter-spacing: .13em; text-transform: uppercase;
-      color: #9B72CF; margin-bottom: 12px;
+      color: #778CE1; margin-bottom: 12px;
     }
     .examples { display: flex; flex-direction: column; gap: 20px; }
 
@@ -75,9 +75,9 @@
       font-size: .78rem; line-height: 1.85;
       overflow-x: auto; white-space: pre;
     }
-    .ck { color: #C3A5E5; }
-    .cv { color: #299459; }
-    .ct { color: #b3de73; }
+    .ck { color: #B484E8; }
+    .cv { color: #71CD76; }
+    .ct { color: #71CD76; }
     .cc { color: #3a3e3a; font-style: italic; }
   </style>
 </head>
@@ -92,7 +92,7 @@
   <div class="examples">
 
     <!-- Example 1 · 兩個語塊，有 label -->
-    <chunk-demo theme="sky" sentence="The cafe {0} is really {1}." show-preview="true">
+    <chunk-demo theme="blue" sentence="The cafe {0} is really {1}." show-preview="true">
       <cd-chunk id="0" icon="📍" label="Location">
         <cd-level>near my condo</cd-level>
         <cd-level>around the corner of my place</cd-level>
@@ -106,7 +106,7 @@
     </chunk-demo>
 
     <!-- Example 2 · 無 label（不顯示下拉標頭）、週末習慣 -->
-    <chunk-demo theme="lavender" sentence="I {0} on weekends to {1}." show-preview="true">
+    <chunk-demo theme="violet" sentence="I {0} on weekends to {1}." show-preview="true">
       <cd-chunk id="0" icon="🏃">
         <cd-level>go running</cd-level>
         <cd-level>hit the jogging track</cd-level>
@@ -136,7 +136,7 @@
     </chunk-demo>
 
     <!-- Example 4 · 省略 id，自動對應 {0} {1}、家鄉描述 -->
-    <chunk-demo theme="safe"
+    <chunk-demo theme="green"
                 sentence="My hometown is {0} and the people there are {1}."
                 show-preview="true">
       <cd-chunk icon="🏙️">
@@ -153,7 +153,7 @@
 
     <!-- Example 5 · cd-level 內含 HTML 標籤 -->
     <chunk-demo theme="orange" sentence="She has a {0} personality." show-preview="true"
-      data-config='{"previewTextColor":"#EDA109","previewBg":"rgba(237,161,9,.07)"}'>
+      data-config='{"previewTextColor":"#F79C40","previewBg":"rgba(237,161,9,.07)"}'>
       <cd-chunk id="0" icon="🌟" label="Character">
         <cd-level><strong>bright</strong></cd-level>
         <cd-level>truly <em>radiant</em> and uplifting</cd-level>
@@ -161,11 +161,11 @@
       </cd-chunk>
     </chunk-demo>
 
-    <!-- Example 6 · preview 自訂顏色（lavender 主題搭自訂 preview 色） -->
+    <!-- Example 6 · preview 自訂顏色（violet 主題搭自訂 preview 色） -->
     <chunk-demo theme="pink"
                 sentence="The weekend trip to {0} was {1}."
                 show-preview="true"
-                data-config='{"previewTextColor":"#FFB3D9","previewBg":"rgba(255,179,217,.07)"}'>
+                data-config='{"previewTextColor":"#FF91D7","previewBg":"rgba(255,179,217,.07)"}'>
       <cd-chunk id="0" icon="🗺️">
         <cd-level>Taipei</cd-level>
         <cd-level>the northern coast</cd-level>
@@ -197,14 +197,14 @@
 
   <div class="code-box" style="margin-bottom:16px">
     <div class="code-title">
-      <span class="dot" style="background:#F08080"></span>
-      <span class="dot" style="background:#DECA4B"></span>
-      <span class="dot" style="background:#299459"></span>
+      <span class="dot" style="background:#EF6661"></span>
+      <span class="dot" style="background:#E3D322"></span>
+      <span class="dot" style="background:#71CD76"></span>
       子元素語法（推薦）
     </div>
     <pre><span class="cc">&lt;!-- sentence 中 {n} 對應 cd-chunk 的 id 或出現順序 --&gt;</span>
 &lt;<span class="ck">chunk-demo</span>
-  <span class="ck">theme</span>=<span class="cv">"sky"</span>
+  <span class="ck">theme</span>=<span class="cv">"blue"</span>
   <span class="ck">sentence</span>=<span class="cv">"She {0} every morning to {1}."</span>
   <span class="ck">show-preview</span>=<span class="cv">"true"</span>&gt;
 
@@ -227,14 +227,14 @@
 
   <div class="code-box" style="margin-bottom:16px">
     <div class="code-title">
-      <span class="dot" style="background:#F08080"></span>
-      <span class="dot" style="background:#DECA4B"></span>
-      <span class="dot" style="background:#299459"></span>
+      <span class="dot" style="background:#EF6661"></span>
+      <span class="dot" style="background:#E3D322"></span>
+      <span class="dot" style="background:#71CD76"></span>
       Preview 顏色自訂（data-config 或全域 ChunkDemoConfig）
     </div>
     <pre><span class="cc">&lt;!-- per-element：透過 data-config 覆蓋 --&gt;</span>
 &lt;<span class="ck">chunk-demo</span> <span class="ck">theme</span>=<span class="cv">"orange"</span> <span class="ck">show-preview</span>=<span class="cv">"true"</span>
-  <span class="ck">data-config</span>=<span class="cv">'{"previewTextColor":"#EDA109","previewBg":"rgba(237,161,9,.07)"}'</span>
+  <span class="ck">data-config</span>=<span class="cv">'{"previewTextColor":"#F79C40","previewBg":"rgba(237,161,9,.07)"}'</span>
   <span class="ck">sentence</span>=<span class="cv">"..."</span> <span class="ck">chunks</span>=<span class="cv">'[...]'</span>&gt;&lt;/<span class="ck">chunk-demo</span>&gt;
 
 <span class="cc">// 全域設定</span>
@@ -247,9 +247,9 @@ window.<span class="ck">ChunkDemoConfig</span> = {
 
   <div class="code-box" style="margin-bottom:16px">
     <div class="code-title">
-      <span class="dot" style="background:#F08080"></span>
-      <span class="dot" style="background:#DECA4B"></span>
-      <span class="dot" style="background:#299459"></span>
+      <span class="dot" style="background:#EF6661"></span>
+      <span class="dot" style="background:#E3D322"></span>
+      <span class="dot" style="background:#71CD76"></span>
       cd-level 內含 HTML 標籤
     </div>
     <pre><span class="cc">&lt;!-- cd-level 的文字內容以 innerHTML 解析，可使用任意 HTML --&gt;</span>
@@ -266,12 +266,12 @@ window.<span class="ck">ChunkDemoConfig</span> = {
 
   <div class="code-box">
     <div class="code-title">
-      <span class="dot" style="background:#F08080"></span>
-      <span class="dot" style="background:#DECA4B"></span>
-      <span class="dot" style="background:#299459"></span>
+      <span class="dot" style="background:#EF6661"></span>
+      <span class="dot" style="background:#E3D322"></span>
+      <span class="dot" style="background:#71CD76"></span>
       JSON Attribute 語法（向下相容）
     </div>
-    <pre>&lt;<span class="ck">chunk-demo</span> <span class="ck">theme</span>=<span class="cv">"sky"</span> <span class="ck">sentence</span>=<span class="cv">"She {0} every morning."</span>
+    <pre>&lt;<span class="ck">chunk-demo</span> <span class="ck">theme</span>=<span class="cv">"blue"</span> <span class="ck">sentence</span>=<span class="cv">"She {0} every morning."</span>
   <span class="ck">chunks</span>=<span class="cv">'[{"id":0,"icon":"☀️","label":"Activity","levels":[
     {"level":1,"text":"goes for a walk"},
     {"level":2,"text":"hits the jogging track"},
@@ -286,19 +286,19 @@ window.<span class="ck">ChunkDemoConfig</span> = {
 <script>
   const THEMES = [
     { name: 'shell',    hex: '#C6C7BD' },
-    { name: 'lavender', hex: '#C3A5E5' },
-    { name: 'special',  hex: '#b3de73' },
-    { name: 'warning',  hex: '#F08080' },
-    { name: 'salmon',   hex: '#E5C3B3' },
-    { name: 'sky',      hex: '#95c9de' },
-    { name: 'safe',     hex: '#299459' },
+    { name: 'violet', hex: '#B484E8' },
+    { name: 'green',  hex: '#71CD76' },
+    { name: 'warning',  hex: '#EF6661' },
+    { name: 'orange',   hex: '#F79C40' },
+    { name: 'blue',      hex: '#5DBAE8' },
+    { name: 'green',     hex: '#71CD76' },
     { name: 'vanilla',  hex: '#DBEDD8' },
-    { name: 'yellow',   hex: '#DECA4B' },
-    { name: 'info',     hex: '#1E65C7' },
-    { name: 'stone',    hex: '#95c9de' },
-    { name: 'indigo',   hex: '#9B72CF' },
-    { name: 'pink',     hex: '#FFB3D9' },
-    { name: 'orange',   hex: '#EDA109' },
+    { name: 'yellow',   hex: '#E3D322' },
+    { name: 'info',     hex: '#778CE1' },
+    { name: 'blue',    hex: '#5DBAE8' },
+    { name: 'indigo',   hex: '#778CE1' },
+    { name: 'pink',     hex: '#FF91D7' },
+    { name: 'orange',   hex: '#F79C40' },
   ];
 
   const grid = document.getElementById('themeGrid');

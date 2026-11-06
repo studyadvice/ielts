@@ -13,19 +13,19 @@
     --bg       : #0C0D0C;
     --fill     : #161716;
     --shell    : #C6C7BD;
-    --lavender : #C3A5E5;
-    --special  : #b3de73;
-    --warning  : #F08080;
-    --salmon   : #E5C3B3;
-    --sky      : #95c9de;
-    --safe     : #299459;
+    --violet : #B484E8;
+    --green  : #71CD76;
+    --warning  : #EF6661;
+    --orange   : #F79C40;
+    --blue      : #5DBAE8;
+    --green     : #71CD76;
     --vanilla  : #DBEDD8;
-    --yellow   : #DECA4B;
-    --info     : #1E65C7;
-    --stone    : #95c9de;
-    --indigo   : #9B72CF;
-    --pink     : #FFB3D9;
-    --orange   : #EDA109;
+    --yellow   : #E3D322;
+    --info     : #778CE1;
+    --blue    : #5DBAE8;
+    --indigo   : #778CE1;
+    --pink     : #FF91D7;
+    --orange   : #F79C40;
   }
 
   body {
@@ -41,7 +41,7 @@
   h1 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--special);
+    color: var(--green);
     margin-bottom: 4px;
     letter-spacing: 0.02em;
   }
@@ -60,7 +60,7 @@
   h2 {
     font-size: 1.05rem;
     font-weight: 600;
-    color: var(--lavender);
+    color: var(--violet);
     margin-bottom: 14px;
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(195, 165, 229, 0.2);
@@ -78,7 +78,7 @@
 
   .label {
     font-size: 0.78rem;
-    color: var(--stone);
+    color: var(--blue);
     min-width: 72px;
     letter-spacing: 0.03em;
   }
@@ -135,7 +135,7 @@
   /* changelog 區塊 */
   .changelog {
     background: var(--fill);
-    border-left: 3px solid var(--special);
+    border-left: 3px solid var(--green);
     border-radius: 0 10px 10px 0;
     padding: 16px 20px;
     font-size: 0.88rem;
@@ -144,9 +144,9 @@
   }
 
   .changelog li { list-style: none; padding-left: 4px; }
-  .changelog li::before { content: "✦ "; color: var(--special); }
+  .changelog li::before { content: "✦ "; color: var(--green); }
   .changelog .tag-old { color: var(--warning); text-decoration: line-through; opacity: 0.7; font-size: 0.82rem; }
-  .changelog .tag-new { color: var(--safe); font-weight: 600; }
+  .changelog .tag-new { color: var(--green); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -168,11 +168,11 @@
       </li>
       <li>
         <code>info</code>：
-        <span class="tag-old">#1E65C7</span> →
-        <span class="tag-new">#1E65C7</span>
+        <span class="tag-old">#778CE1</span> →
+        <span class="tag-new">#778CE1</span>
         &nbsp;（對齊 Google Blue 風格藍）
       </li>
-      <li>新增 <span class="tag-new">indigo #9B72CF</span></li>
+      <li>新增 <span class="tag-new">indigo #778CE1</span></li>
       <li><code>@keyframes</code> 名稱帶入實例 UID，多個元件並存不衝突</li>
       <li><code>getHoverEffect(scope)</code> 接受作用域參數，告別全域選擇器污染</li>
     </ul>
@@ -186,19 +186,19 @@
   <h2>品牌配色系統</h2>
   <div class="swatch-grid">
     <div class="swatch" style="background:#C6C7BD;color:#0C0D0C"><span class="name">shell</span><span class="hex">#C6C7BD</span></div>
-    <div class="swatch" style="background:#C3A5E5;color:#0C0D0C"><span class="name">lavender</span><span class="hex">#C3A5E5</span></div>
-    <div class="swatch" style="background:#b3de73;color:#0C0D0C"><span class="name">special</span><span class="hex">#b3de73</span></div>
-    <div class="swatch" style="background:#F08080;color:#0C0D0C"><span class="name">warning</span><span class="hex">#F08080</span></div>
-    <div class="swatch" style="background:#E5C3B3;color:#0C0D0C"><span class="name">salmon</span><span class="hex">#E5C3B3</span></div>
-    <div class="swatch" style="background:#95c9de;color:#0C0D0C"><span class="name">sky</span><span class="hex">#95c9de</span></div>
-    <div class="swatch" style="background:#299459;color:#0C0D0C"><span class="name">safe</span><span class="hex">#299459</span></div>
+    <div class="swatch" style="background:#B484E8;color:#0C0D0C"><span class="name">violet</span><span class="hex">#B484E8</span></div>
+    <div class="swatch" style="background:#71CD76;color:#0C0D0C"><span class="name">green</span><span class="hex">#71CD76</span></div>
+    <div class="swatch" style="background:#EF6661;color:#0C0D0C"><span class="name">warning</span><span class="hex">#EF6661</span></div>
+    <div class="swatch" style="background:#F79C40;color:#0C0D0C"><span class="name">orange</span><span class="hex">#F79C40</span></div>
+    <div class="swatch" style="background:#5DBAE8;color:#0C0D0C"><span class="name">blue</span><span class="hex">#5DBAE8</span></div>
+    <div class="swatch" style="background:#71CD76;color:#0C0D0C"><span class="name">green</span><span class="hex">#71CD76</span></div>
     <div class="swatch" style="background:#DBEDD8;color:#0C0D0C"><span class="name">vanilla ★</span><span class="hex">#DBEDD8</span></div>
-    <div class="swatch" style="background:#DECA4B;color:#0C0D0C"><span class="name">yellow</span><span class="hex">#DECA4B</span></div>
-    <div class="swatch" style="background:#1E65C7;color:#fff"><span class="name">info ★</span><span class="hex">#1E65C7</span></div>
-    <div class="swatch" style="background:#95c9de;color:#0C0D0C"><span class="name">stone</span><span class="hex">#95c9de</span></div>
-    <div class="swatch" style="background:#9B72CF;color:#fff"><span class="name">indigo ✦新</span><span class="hex">#9B72CF</span></div>
-    <div class="swatch" style="background:#FFB3D9;color:#0C0D0C"><span class="name">pink</span><span class="hex">#FFB3D9</span></div>
-    <div class="swatch" style="background:#EDA109;color:#0C0D0C"><span class="name">orange</span><span class="hex">#EDA109</span></div>
+    <div class="swatch" style="background:#E3D322;color:#0C0D0C"><span class="name">yellow</span><span class="hex">#E3D322</span></div>
+    <div class="swatch" style="background:#778CE1;color:#fff"><span class="name">info ★</span><span class="hex">#778CE1</span></div>
+    <div class="swatch" style="background:#5DBAE8;color:#0C0D0C"><span class="name">blue</span><span class="hex">#5DBAE8</span></div>
+    <div class="swatch" style="background:#778CE1;color:#fff"><span class="name">indigo ✦新</span><span class="hex">#778CE1</span></div>
+    <div class="swatch" style="background:#FF91D7;color:#0C0D0C"><span class="name">pink</span><span class="hex">#FF91D7</span></div>
+    <div class="swatch" style="background:#F79C40;color:#0C0D0C"><span class="name">orange</span><span class="hex">#F79C40</span></div>
   </div>
 </section>
 
@@ -209,16 +209,16 @@
   <h2>全部品牌色 — Solid</h2>
   <div class="row">
     <card-badge theme="shell"    text="shell"    size="re"></card-badge>
-    <card-badge theme="lavender" text="lavender" size="re"></card-badge>
-    <card-badge theme="special"  text="special"  size="re"></card-badge>
-    <card-badge theme="warning"  text="warning"  size="re"></card-badge>
-    <card-badge theme="salmon"   text="salmon"   size="re"></card-badge>
-    <card-badge theme="sky"      text="sky"      size="re"></card-badge>
-    <card-badge theme="safe"     text="safe"     size="re"></card-badge>
+    <card-badge theme="violet" text="violet" size="re"></card-badge>
+    <card-badge theme="green"  text="green"  size="re"></card-badge>
+    <card-badge theme="red"  text="red"  size="re"></card-badge>
+    <card-badge theme="orange"   text="orange"   size="re"></card-badge>
+    <card-badge theme="blue"      text="blue"      size="re"></card-badge>
+    <card-badge theme="green"     text="green"     size="re"></card-badge>
     <card-badge theme="vanilla"  text="vanilla ★" size="re"></card-badge>
     <card-badge theme="yellow"   text="yellow"   size="re"></card-badge>
-    <card-badge theme="info"     text="info ★"   size="re"></card-badge>
-    <card-badge theme="stone"    text="stone"    size="re"></card-badge>
+    <card-badge theme="indigo"     text="indigo ★"   size="re"></card-badge>
+    <card-badge theme="blue"    text="blue"    size="re"></card-badge>
     <card-badge theme="indigo"   text="indigo ✦" size="re"></card-badge>
     <card-badge theme="pink"     text="pink"     size="re"></card-badge>
     <card-badge theme="orange"   text="orange"   size="re"></card-badge>
@@ -229,14 +229,14 @@
 <section>
   <h2>全部品牌色 — Outline</h2>
   <div class="row">
-    <card-badge theme="lavender-outline" text="lavender" size="re"></card-badge>
-    <card-badge theme="special-outline"  text="special"  size="re"></card-badge>
-    <card-badge theme="sky-outline"      text="sky"      size="re"></card-badge>
-    <card-badge theme="safe-outline"     text="safe"     size="re"></card-badge>
+    <card-badge theme="violet-outline" text="violet" size="re"></card-badge>
+    <card-badge theme="green-outline"  text="green"  size="re"></card-badge>
+    <card-badge theme="blue-outline"      text="blue"      size="re"></card-badge>
+    <card-badge theme="green-outline"     text="green"     size="re"></card-badge>
     <card-badge theme="vanilla-outline"  text="vanilla ★" size="re"></card-badge>
-    <card-badge theme="info-outline"     text="info ★"   size="re"></card-badge>
+    <card-badge theme="indigo-outline"     text="indigo ★"   size="re"></card-badge>
     <card-badge theme="indigo-outline"   text="indigo ✦" size="re"></card-badge>
-    <card-badge theme="warning-outline"  text="warning"  size="re"></card-badge>
+    <card-badge theme="red-outline"  text="red"  size="re"></card-badge>
     <card-badge theme="pink-outline"     text="pink"     size="re"></card-badge>
     <card-badge theme="orange-outline"   text="orange"   size="re"></card-badge>
   </div>
@@ -248,13 +248,13 @@
 <section>
   <h2>圖示 · Bootstrap Icons</h2>
   <div class="row">
-    <card-badge theme="info"    icon="bi-info-circle" text="資訊"   size="re"></card-badge>
-    <card-badge theme="safe"    icon="bi-check2-circle" text="完成" size="re"></card-badge>
-    <card-badge theme="warning" icon="bi-exclamation-triangle" text="警告" size="re"></card-badge>
-    <card-badge theme="sky"     icon="bi-cloud-upload" text="上傳"  size="re"></card-badge>
+    <card-badge theme="indigo"    icon="bi-info-circle" text="資訊"   size="re"></card-badge>
+    <card-badge theme="green"    icon="bi-check2-circle" text="完成" size="re"></card-badge>
+    <card-badge theme="red" icon="bi-exclamation-triangle" text="警告" size="re"></card-badge>
+    <card-badge theme="blue"     icon="bi-cloud-upload" text="上傳"  size="re"></card-badge>
     <card-badge theme="indigo"  icon="bi-stars"        text="精選"  size="re"></card-badge>
     <card-badge theme="orange"  icon="bi-lightning-charge" text="快速" size="re"></card-badge>
-    <card-badge theme="lavender" icon="bi-heart"       text="收藏"  size="re"></card-badge>
+    <card-badge theme="violet" icon="bi-heart"       text="收藏"  size="re"></card-badge>
     <card-badge theme="pink"    icon="bi-gift"         text="禮物"  size="re"></card-badge>
   </div>
 </section>
@@ -280,11 +280,11 @@
 <section>
   <h2>格式化類型</h2>
   <div class="row">
-    <card-badge type="date"     value="2026-07-25" theme="stone"   size="re" icon="bi-calendar"></card-badge>
-    <card-badge type="time"     value="14:30:00"   theme="sky"     size="re" icon="bi-clock"></card-badge>
-    <card-badge type="datetime" value="2026-07-25T14:30:00" theme="lavender" size="re"></card-badge>
-    <card-badge type="deadline" value="2026-07-26" theme="safe"    size="re" warning-days="3"></card-badge>
-    <card-badge type="deadline" value="2026-07-24" theme="warning" size="re" warning-days="3"></card-badge>
+    <card-badge type="date"     value="2026-07-25" theme="blue"   size="re" icon="bi-calendar"></card-badge>
+    <card-badge type="time"     value="14:30:00"   theme="blue"     size="re" icon="bi-clock"></card-badge>
+    <card-badge type="datetime" value="2026-07-25T14:30:00" theme="violet" size="re"></card-badge>
+    <card-badge type="deadline" value="2026-07-26" theme="green"    size="re" warning-days="3"></card-badge>
+    <card-badge type="deadline" value="2026-07-24" theme="red" size="re" warning-days="3"></card-badge>
   </div>
 </section>
 
@@ -294,10 +294,10 @@
 <section>
   <h2>計數型 Badge</h2>
   <div id="count-demo">
-    <card-badge id="cnt" theme="warning" count="5" size="re" icon="bi-bell" count-animate="true"></card-badge>
+    <card-badge id="cnt" theme="red" count="5" size="re" icon="bi-bell" count-animate="true"></card-badge>
     <button onclick="addCount(-1)">－</button>
     <button onclick="addCount(1)">＋</button>
-    <card-badge theme="sky" count="0" show-zero="false" size="re" text="hide-zero"></card-badge>
+    <card-badge theme="blue" count="0" show-zero="false" size="re" text="hide-zero"></card-badge>
     <card-badge theme="pink" count="0" show-zero="true" size="re" text="show-zero"></card-badge>
     <card-badge theme="orange" count="150" max-count="99" size="re" icon="bi-chat"></card-badge>
     <card-badge theme="indigo" dot-mode="true" count="1" size="re"></card-badge>
@@ -319,16 +319,16 @@
 
   <div class="row" style="margin-bottom:18px">
     <span class="label">hover效果</span>
-    <card-badge theme="lavender" text="lift (預設)" clickable="true" hover-effect="lift"   size="re"></card-badge>
-    <card-badge theme="sky"      text="scale"      clickable="true" hover-effect="scale"  size="re"></card-badge>
-    <card-badge theme="special"  text="glow"       clickable="true" hover-effect="glow"   size="re"></card-badge>
+    <card-badge theme="violet" text="lift (預設)" clickable="true" hover-effect="lift"   size="re"></card-badge>
+    <card-badge theme="blue"      text="scale"      clickable="true" hover-effect="scale"  size="re"></card-badge>
+    <card-badge theme="green"  text="glow"       clickable="true" hover-effect="glow"   size="re"></card-badge>
     <card-badge theme="pink"     text="pulse"      clickable="true" hover-effect="pulse"  size="re"></card-badge>
     <card-badge theme="indigo"   text="rotate"     clickable="true" hover-effect="rotate" size="re"></card-badge>
   </div>
 
   <div class="row" style="margin-bottom:18px">
     <span class="label">折疊</span>
-    <card-badge theme="lavender" icon="bi-chevron-down" text="展開 / 折疊"
+    <card-badge theme="violet" icon="bi-chevron-down" text="展開 / 折疊"
       toggle-target="collapse-target" hover-effect="scale" size="re"></card-badge>
   </div>
   <div id="collapse-target">
@@ -337,16 +337,16 @@
 
   <div class="row" style="margin-top:18px">
     <span class="label">提示訊息</span>
-    <card-badge theme="info"   text="info"    clickable="true" alert-message="這是 Info 提示！"    alert-type="info"    size="re"></card-badge>
-    <card-badge theme="safe"   text="success" clickable="true" alert-message="操作成功！"           alert-type="success" size="re"></card-badge>
-    <card-badge theme="yellow" text="warning" clickable="true" alert-message="請注意！"             alert-type="warning" size="re"></card-badge>
-    <card-badge theme="warning" text="danger" clickable="true" alert-message="發生錯誤，請重試。"   alert-type="danger"  size="re"></card-badge>
+    <card-badge theme="indigo"   text="indigo"    clickable="true" alert-message="這是 Info 提示！"    alert-type="info"    size="re"></card-badge>
+    <card-badge theme="green"   text="success" clickable="true" alert-message="操作成功！"           alert-type="success" size="re"></card-badge>
+    <card-badge theme="yellow" text="red" clickable="true" alert-message="請注意！"             alert-type="warning" size="re"></card-badge>
+    <card-badge theme="red" text="danger" clickable="true" alert-message="發生錯誤，請重試。"   alert-type="danger"  size="re"></card-badge>
   </div>
 
   <div class="row" style="margin-top:18px">
     <span class="label">disabled</span>
     <card-badge theme="indigo" text="不可點擊" disabled="true" size="re"></card-badge>
-    <card-badge theme="safe"   text="正常" clickable="true" size="re" hover-effect="scale"></card-badge>
+    <card-badge theme="green"   text="正常" clickable="true" size="re" hover-effect="scale"></card-badge>
   </div>
 </section>
 
@@ -358,18 +358,18 @@
   <div class="row">
     <span class="label">點擊輪替</span>
     <card-badge action="rotate-self" clickable="true" hover-effect="scale" size="re">
-      <badge-item text="設計"   theme="lavender" icon="bi-palette"></badge-item>
-      <badge-item text="開發"   theme="sky"      icon="bi-code-slash"></badge-item>
-      <badge-item text="分析"   theme="special"  icon="bi-bar-chart"></badge-item>
+      <badge-item text="設計"   theme="violet" icon="bi-palette"></badge-item>
+      <badge-item text="開發"   theme="blue"      icon="bi-code-slash"></badge-item>
+      <badge-item text="分析"   theme="green"  icon="bi-bar-chart"></badge-item>
       <badge-item text="企劃"   theme="indigo"   icon="bi-lightbulb"></badge-item>
     </card-badge>
   </div>
   <div class="row" style="margin-top:10px">
     <span class="label">自動輪替</span>
     <card-badge action="rotate-self-auto" interval="2s" size="re">
-      <badge-item text="lavender" theme="lavender"></badge-item>
-      <badge-item text="sky"      theme="sky"></badge-item>
-      <badge-item text="safe"     theme="safe"></badge-item>
+      <badge-item text="violet" theme="violet"></badge-item>
+      <badge-item text="blue"      theme="blue"></badge-item>
+      <badge-item text="green"     theme="green"></badge-item>
       <badge-item text="indigo"   theme="indigo"></badge-item>
       <badge-item text="orange"   theme="orange"></badge-item>
     </card-badge>

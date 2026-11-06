@@ -16,19 +16,19 @@
   --bd:      rgba(198,199,189,.12);
   --bd2:     rgba(198,199,189,.22);
   --shell:   #C6C7BD;
-  --lavender:#C3A5E5;
-  --special: #b3de73;
-  --warning: #F08080;
-  --salmon:  #E5C3B3;
-  --sky:     #95c9de;
-  --safe:    #299459;
+  --violet:#B484E8;
+  --green: #71CD76;
+  --warning: #EF6661;
+  --orange:  #F79C40;
+  --blue:     #5DBAE8;
+  --green:    #71CD76;
   --vanilla: #DBEDD8;
-  --yellow:  #DECA4B;
-  --info:    #1E65C7;
-  --stone:   #95c9de;
-  --indigo:  #9B72CF;
-  --pink:    #FFB3D9;
-  --orange:  #EDA109;
+  --yellow:  #E3D322;
+  --info:    #778CE1;
+  --blue:   #5DBAE8;
+  --indigo:  #778CE1;
+  --pink:    #FF91D7;
+  --orange:  #F79C40;
   --mono: 'Cascadia Code','JetBrains Mono','Consolas',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -37,15 +37,15 @@ body{background:var(--bg);color:var(--shell);font-family:'Segoe UI','PingFang TC
 
 /* ── Header ──────────────────────────────────────────── */
 header{background:var(--fill);border-bottom:1px solid var(--bd);padding:18px 40px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-header h1{font-size:1.5rem;font-weight:700;color:var(--special);letter-spacing:.03em;display:flex;align-items:center;gap:10px}
-header h1 span{font-size:.75rem;font-weight:500;color:var(--stone);background:var(--fill2);border:1px solid var(--bd);border-radius:6px;padding:2px 8px;letter-spacing:.04em}
-header p{color:var(--stone);font-size:.85rem;margin-left:auto}
+header h1{font-size:1.5rem;font-weight:700;color:var(--green);letter-spacing:.03em;display:flex;align-items:center;gap:10px}
+header h1 span{font-size:.75rem;font-weight:500;color:var(--blue);background:var(--fill2);border:1px solid var(--bd);border-radius:6px;padding:2px 8px;letter-spacing:.04em}
+header p{color:var(--blue);font-size:.85rem;margin-left:auto}
 
 /* ── Tab Nav ─────────────────────────────────────────── */
 .tab-nav{background:var(--fill);border-bottom:1px solid var(--bd);padding:0 40px;display:flex;gap:0;position:sticky;top:0;z-index:200}
-.tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--stone);cursor:pointer;font-size:.83rem;font-weight:500;padding:11px 20px;transition:color .18s,border-color .18s;letter-spacing:.04em;font-family:inherit}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--blue);cursor:pointer;font-size:.83rem;font-weight:500;padding:11px 20px;transition:color .18s,border-color .18s;letter-spacing:.04em;font-family:inherit}
 .tab-btn:hover{color:var(--shell)}
-.tab-btn.active{color:var(--special);border-bottom-color:var(--special)}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
 
 /* ── Panels ──────────────────────────────────────────── */
 .tab-panel{display:none}
@@ -53,15 +53,15 @@ header p{color:var(--stone);font-size:.85rem;margin-left:auto}
 
 /* ── Section ─────────────────────────────────────────── */
 .section{padding:32px 40px;border-bottom:1px solid var(--bd)}
-.section-h{font-size:1.05rem;font-weight:600;color:var(--lavender);margin-bottom:18px;display:flex;align-items:center;gap:10px}
-.section-h::before{content:'';display:inline-block;width:3px;height:1em;background:var(--lavender);border-radius:2px;flex-shrink:0}
+.section-h{font-size:1.05rem;font-weight:600;color:var(--violet);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-h::before{content:'';display:inline-block;width:3px;height:1em;background:var(--violet);border-radius:2px;flex-shrink:0}
 .sub-h{font-size:.78rem;font-weight:600;color:var(--vanilla);text-transform:uppercase;letter-spacing:.07em;margin:18px 0 10px}
 
 /* ── Code blocks ─────────────────────────────────────── */
 .code-block{background:var(--fill2);border:1px solid var(--bd);border-left:3px solid var(--indigo);border-radius:0 10px 10px 0;padding:14px 18px;font-family:var(--mono);font-size:.8rem;line-height:1.85;color:var(--shell);overflow-x:auto;margin:10px 0}
-.code-block .t{color:var(--sky)}
-.code-block .a{color:var(--lavender)}
-.code-block .v{color:var(--special)}
+.code-block .t{color:var(--blue)}
+.code-block .a{color:var(--violet)}
+.code-block .v{color:var(--green)}
 .code-block .c{color:rgba(198,199,189,.38)}
 
 /* ── Badge row ───────────────────────────────────────── */
@@ -86,46 +86,46 @@ header p{color:var(--stone);font-size:.85rem;margin-left:auto}
 /* Preview pane */
 .preview-pane{padding:28px 36px;border-right:1px solid var(--bd)}
 .preview-stage{background:var(--fill2);border:1px solid var(--bd);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:110px;padding:20px;margin-bottom:14px}
-.preview-label{font-size:.72rem;color:var(--stone);text-align:center;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
+.preview-label{font-size:.72rem;color:var(--blue);text-align:center;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
 
 /* Code pane */
 .code-pane{padding:28px 36px}
 .code-box{background:var(--fill2);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.code-box-hd{background:rgba(195,165,229,.06);border-bottom:1px solid var(--bd);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--stone);letter-spacing:.04em}
+.code-box-hd{background:rgba(195,165,229,.06);border-bottom:1px solid var(--bd);padding:7px 14px;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--blue);letter-spacing:.04em}
 .code-box-body{padding:14px 18px;font-family:var(--mono);font-size:.8rem;line-height:2;color:var(--shell);min-height:80px;white-space:pre-wrap;word-break:break-all}
-.code-box-body .sy-tag{color:var(--sky)}
-.code-box-body .sy-aname{color:var(--lavender)}
-.code-box-body .sy-eq{color:var(--stone)}
-.code-box-body .sy-aval{color:var(--special)}
+.code-box-body .sy-tag{color:var(--blue)}
+.code-box-body .sy-aname{color:var(--violet)}
+.code-box-body .sy-eq{color:var(--blue)}
+.code-box-body .sy-aval{color:var(--green)}
 
 /* Controls grid */
 .ctrl-grid{padding:24px 36px;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;border-bottom:1px solid var(--bd)}
 .ctrl-card{background:var(--fill2);border:1px solid var(--bd);border-radius:10px;padding:15px 18px}
-.ctrl-card-h{font-size:.72rem;font-weight:600;color:var(--lavender);text-transform:uppercase;letter-spacing:.08em;margin-bottom:13px;display:flex;align-items:center;gap:6px}
+.ctrl-card-h{font-size:.72rem;font-weight:600;color:var(--violet);text-transform:uppercase;letter-spacing:.08em;margin-bottom:13px;display:flex;align-items:center;gap:6px}
 .ctrl-row{display:flex;align-items:center;gap:9px;margin-bottom:9px}
-.ctrl-lbl{font-size:.77rem;color:var(--stone);min-width:64px;flex-shrink:0}
+.ctrl-lbl{font-size:.77rem;color:var(--blue);min-width:64px;flex-shrink:0}
 .ctrl-input,.ctrl-select{background:var(--fill);border:1px solid var(--bd);border-radius:6px;color:var(--shell);font-size:.78rem;padding:5px 9px;flex:1;min-width:0;outline:none;transition:border-color .15s;font-family:inherit}
-.ctrl-input:focus,.ctrl-select:focus{border-color:var(--lavender)}
+.ctrl-input:focus,.ctrl-select:focus{border-color:var(--violet)}
 input[type=number].ctrl-input{flex:none;width:72px}
 
 /* Toggle */
-.tog-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.78rem;color:var(--stone);user-select:none}
+.tog-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.78rem;color:var(--blue);user-select:none}
 .tog{position:relative;width:34px;height:19px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0;position:absolute}
 .tog-sl{position:absolute;inset:0;background:rgba(198,199,189,.13);border-radius:10px;transition:background .2s;cursor:pointer}
-.tog-sl::after{content:'';position:absolute;left:3px;top:3px;width:13px;height:13px;background:var(--stone);border-radius:50%;transition:transform .2s,background .2s}
-.tog input:checked+.tog-sl{background:var(--lavender)}
+.tog-sl::after{content:'';position:absolute;left:3px;top:3px;width:13px;height:13px;background:var(--blue);border-radius:50%;transition:transform .2s,background .2s}
+.tog input:checked+.tog-sl{background:var(--violet)}
 .tog input:checked+.tog-sl::after{transform:translateX(15px);background:#0C0D0C}
 
 /* Size buttons */
 .size-btns{display:flex;gap:4px;flex-wrap:wrap}
-.sz-btn{background:var(--fill);border:1px solid var(--bd);border-radius:5px;color:var(--stone);cursor:pointer;font-size:.72rem;padding:3px 9px;transition:all .15s;font-family:inherit}
+.sz-btn{background:var(--fill);border:1px solid var(--bd);border-radius:5px;color:var(--blue);cursor:pointer;font-size:.72rem;padding:3px 9px;transition:all .15s;font-family:inherit}
 .sz-btn:hover{color:var(--shell);border-color:var(--bd2)}
-.sz-btn.active{background:var(--lavender);color:#0C0D0C;border-color:var(--lavender);font-weight:700}
+.sz-btn.active{background:var(--violet);color:#0C0D0C;border-color:var(--violet);font-weight:700}
 
 /* Mode buttons */
 .mode-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
-.mode-btn{background:var(--fill);border:1px solid var(--bd);border-radius:6px;color:var(--stone);cursor:pointer;font-size:.78rem;padding:4px 13px;transition:all .15s;font-family:inherit}
+.mode-btn{background:var(--fill);border:1px solid var(--bd);border-radius:6px;color:var(--blue);cursor:pointer;font-size:.78rem;padding:4px 13px;transition:all .15s;font-family:inherit}
 .mode-btn.active{background:var(--indigo);color:#fff;border-color:var(--indigo);font-weight:600}
 
 /* Color dots */
@@ -139,13 +139,13 @@ input[type=number].ctrl-input{flex:none;width:72px}
 
 /* Icon presets */
 .icon-presets{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.ip-btn{background:var(--fill);border:1px solid var(--bd);border-radius:5px;color:var(--stone);cursor:pointer;font-size:.9rem;padding:3px 7px;transition:all .15s;line-height:1}
-.ip-btn:hover{background:rgba(195,165,229,.12);color:var(--lavender);border-color:rgba(195,165,229,.3)}
+.ip-btn{background:var(--fill);border:1px solid var(--bd);border-radius:5px;color:var(--blue);cursor:pointer;font-size:.9rem;padding:3px 7px;transition:all .15s;line-height:1}
+.ip-btn:hover{background:rgba(195,165,229,.12);color:var(--violet);border-color:rgba(195,165,229,.3)}
 
 /* Copy button */
-.copy-btn{background:rgba(195,165,229,.1);border:1px solid rgba(195,165,229,.25);border-radius:5px;color:var(--lavender);cursor:pointer;font-size:.72rem;padding:3px 10px;transition:all .15s;display:flex;align-items:center;gap:4px;font-family:inherit}
+.copy-btn{background:rgba(195,165,229,.1);border:1px solid rgba(195,165,229,.25);border-radius:5px;color:var(--violet);cursor:pointer;font-size:.72rem;padding:3px 10px;transition:all .15s;display:flex;align-items:center;gap:4px;font-family:inherit}
 .copy-btn:hover{background:rgba(195,165,229,.2)}
-.copy-btn.ok{color:var(--safe);border-color:rgba(41,148,89,.3);background:rgba(41,148,89,.08)}
+.copy-btn.ok{color:var(--green);border-color:rgba(41,148,89,.3);background:rgba(41,148,89,.08)}
 
 /* Mode-specific ctrl sections */
 .mode-type,.mode-count{display:none}
@@ -154,41 +154,41 @@ input[type=number].ctrl-input{flex:none;width:72px}
 /* ══ ATTR TABLE ══════════════════════════════════════ */
 .attr-bar{padding:20px 40px;border-bottom:1px solid var(--bd);position:sticky;top:42px;background:var(--bg);z-index:50;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .attr-search{background:var(--fill2);border:1px solid var(--bd);border-radius:7px;color:var(--shell);font-size:.85rem;padding:7px 14px;outline:none;transition:border-color .15s;width:280px;font-family:inherit}
-.attr-search:focus{border-color:var(--lavender)}
-.attr-count{font-size:.78rem;color:var(--stone)}
+.attr-search:focus{border-color:var(--violet)}
+.attr-count{font-size:.78rem;color:var(--blue)}
 
 .attr-section{padding:28px 40px 0}
-.attr-section-h{font-size:.85rem;font-weight:600;color:var(--lavender);margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:.04em}
+.attr-section-h{font-size:.85rem;font-weight:600;color:var(--violet);margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:.04em}
 .attr-section-h i{opacity:.7}
 table.at{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:32px}
 table.at th{background:var(--fill2);color:var(--vanilla);font-weight:600;padding:9px 14px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd)}
 table.at td{padding:9px 14px;border-bottom:1px solid rgba(198,199,189,.055);vertical-align:top}
 table.at tr:hover td{background:rgba(198,199,189,.025)}
 table.at tr.hide{display:none}
-.an{font-family:var(--mono);color:var(--lavender);font-size:.8rem;white-space:nowrap}
-.at2{font-family:var(--mono);color:var(--sky);font-size:.75rem}
-.ad{font-family:var(--mono);color:var(--special);font-size:.75rem}
+.an{font-family:var(--mono);color:var(--violet);font-size:.8rem;white-space:nowrap}
+.at2{font-family:var(--mono);color:var(--blue);font-size:.75rem}
+.ad{font-family:var(--mono);color:var(--green);font-size:.75rem}
 .adesc{color:var(--vanilla);font-size:.8rem;line-height:1.55}
-.adesc small{color:var(--stone);display:block;margin-top:2px;font-size:.73rem}
+.adesc small{color:var(--blue);display:block;margin-top:2px;font-size:.73rem}
 
 /* ══ DEMOS ═══════════════════════════════════════════ */
 .demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;padding:28px 40px}
 .demo-card{background:var(--fill2);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
 .demo-card-hd{padding:10px 16px;border-bottom:1px solid var(--bd);font-size:.78rem;font-weight:600;color:var(--vanilla);display:flex;align-items:center;gap:7px}
-.demo-card-hd i{color:var(--lavender);font-size:.9rem}
+.demo-card-hd i{color:var(--violet);font-size:.9rem}
 .demo-card-body{padding:18px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:5px;min-height:68px}
 .demo-card-body.col{flex-direction:column;align-items:flex-start}
-.demo-card-code{padding:8px 16px;border-top:1px solid var(--bd);font-family:var(--mono);font-size:.7rem;color:var(--stone);overflow-x:auto;white-space:nowrap;background:rgba(0,0,0,.18)}
+.demo-card-code{padding:8px 16px;border-top:1px solid var(--bd);font-family:var(--mono);font-size:.7rem;color:var(--blue);overflow-x:auto;white-space:nowrap;background:rgba(0,0,0,.18)}
 
 /* Action target area */
-.action-area{background:var(--fill);border:1px dashed rgba(198,199,189,.18);border-radius:7px;padding:10px 14px;font-size:.8rem;color:var(--stone);margin-top:8px;min-height:38px;word-break:break-all;width:100%}
+.action-area{background:var(--fill);border:1px dashed rgba(198,199,189,.18);border-radius:7px;padding:10px 14px;font-size:.8rem;color:var(--blue);margin-top:8px;min-height:38px;word-break:break-all;width:100%}
 
 /* Filter items */
 .filter-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;width:100%}
-.filter-item{background:var(--fill);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;font-size:.75rem;color:var(--stone)}
-[data-filter-group="design"]{border-color:rgba(195,165,229,.35);color:var(--lavender)}
-[data-filter-group="dev"]{border-color:rgba(149,201,222,.35);color:var(--sky)}
-[data-filter-group="data"]{border-color:rgba(179,222,115,.35);color:var(--special)}
+.filter-item{background:var(--fill);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;font-size:.75rem;color:var(--blue)}
+[data-filter-group="design"]{border-color:rgba(195,165,229,.35);color:var(--violet)}
+[data-filter-group="dev"]{border-color:rgba(149,201,222,.35);color:var(--blue)}
+[data-filter-group="data"]{border-color:rgba(179,222,115,.35);color:var(--green)}
 
 /* Count demo */
 .count-controls{display:flex;align-items:center;gap:10px;margin-top:6px}
@@ -221,8 +221,8 @@ table.at tr.hide{display:none}
 
 <!-- ── Header ─────────────────────────────────────────── -->
 <header>
-  <h1><i class="bi bi-tag-fill" style="color:var(--lavender)"></i> card-badge <span>v2 · 品牌主題</span></h1>
-  <p>需在同目錄放置 <code style="color:var(--special);font-family:var(--mono)">card-badge.js</code></p>
+  <h1><i class="bi bi-tag-fill" style="color:var(--violet)"></i> card-badge <span>v2 · 品牌主題</span></h1>
+  <p>需在同目錄放置 <code style="color:var(--green);font-family:var(--mono)">card-badge.js</code></p>
 </header>
 
 <!-- ── Nav ───────────────────────────────────────────── -->
@@ -247,25 +247,25 @@ table.at tr.hide{display:none}
 
 <span class="c">&lt;!-- 2. 載入元件（放在 &lt;/body&gt; 前，或 head 加 defer）--&gt;</span>
 <span class="t">&lt;script</span> <span class="a">src</span><span class="v">="card-badge.js"</span><span class="t">&gt;&lt;/script&gt;</span></div>
-    <div class="info-box">元件採用 <strong>Light DOM</strong>，不使用 Shadow DOM，外部 CSS 可直接作用於 <code style="color:var(--special);font-family:var(--mono)">.badge</code> 元素。每個實例透過 <code style="color:var(--special);font-family:var(--mono)">data-badge-id</code> 屬性作 CSS 作用域隔離。</div>
+    <div class="info-box">元件採用 <strong>Light DOM</strong>，不使用 Shadow DOM，外部 CSS 可直接作用於 <code style="color:var(--green);font-family:var(--mono)">.badge</code> 元素。每個實例透過 <code style="color:var(--green);font-family:var(--mono)">data-badge-id</code> 屬性作 CSS 作用域隔離。</div>
   </div>
 
   <!-- 基本語法 -->
   <div class="section">
     <p class="section-h">基本語法</p>
     <div class="code-block"><span class="c">&lt;!-- 最簡單用法：文字 + 主題色 --&gt;</span>
-<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"lavender"</span> <span class="a">text</span>=<span class="v">"標籤"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"violet"</span> <span class="a">text</span>=<span class="v">"標籤"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
 
 <span class="c">&lt;!-- 加圖示 --&gt;</span>
-<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"sky"</span> <span class="a">icon</span>=<span class="v">"bi-bell"</span> <span class="a">text</span>=<span class="v">"通知"</span> <span class="a">size</span>=<span class="v">"re"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"blue"</span> <span class="a">icon</span>=<span class="v">"bi-bell"</span> <span class="a">text</span>=<span class="v">"通知"</span> <span class="a">size</span>=<span class="v">"re"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
 
 <span class="c">&lt;!-- 外框樣式：theme 加 -outline，或加 outline="true" --&gt;</span>
-<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"safe-outline"</span> <span class="a">text</span>=<span class="v">"完成"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
-<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"safe"</span> <span class="a">outline</span>=<span class="v">"true"</span> <span class="a">text</span>=<span class="v">"完成"</span><span class="t">&gt;&lt;/card-badge&gt;</span></div>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"green-outline"</span> <span class="a">text</span>=<span class="v">"完成"</span><span class="t">&gt;&lt;/card-badge&gt;</span>
+<span class="t">&lt;card-badge</span> <span class="a">theme</span>=<span class="v">"green"</span> <span class="a">outline</span>=<span class="v">"true"</span> <span class="a">text</span>=<span class="v">"完成"</span><span class="t">&gt;&lt;/card-badge&gt;</span></div>
     <div class="badge-row">
-      <card-badge theme="lavender" text="標籤"></card-badge>
-      <card-badge theme="sky" icon="bi-bell" text="通知" size="re"></card-badge>
-      <card-badge theme="safe-outline" text="完成"></card-badge>
+      <card-badge theme="violet" text="標籤"></card-badge>
+      <card-badge theme="blue" icon="bi-bell" text="通知" size="re"></card-badge>
+      <card-badge theme="green-outline" text="完成"></card-badge>
       <card-badge theme="indigo" icon="bi-stars" text="精選"></card-badge>
       <card-badge theme="orange" icon="bi-lightning-charge" text="快速"></card-badge>
     </div>
@@ -277,29 +277,29 @@ table.at tr.hide{display:none}
     <div class="sub-h">Solid — 實色</div>
     <div class="swatch-grid">
       <div class="swatch" style="background:#C6C7BD;color:#0C0D0C"><span class="sw-name">shell</span><span class="sw-hex">#C6C7BD</span></div>
-      <div class="swatch" style="background:#C3A5E5;color:#0C0D0C"><span class="sw-name">lavender</span><span class="sw-hex">#C3A5E5</span></div>
-      <div class="swatch" style="background:#b3de73;color:#0C0D0C"><span class="sw-name">special</span><span class="sw-hex">#b3de73</span></div>
-      <div class="swatch" style="background:#F08080;color:#0C0D0C"><span class="sw-name">warning</span><span class="sw-hex">#F08080</span></div>
-      <div class="swatch" style="background:#E5C3B3;color:#0C0D0C"><span class="sw-name">salmon</span><span class="sw-hex">#E5C3B3</span></div>
-      <div class="swatch" style="background:#95c9de;color:#0C0D0C"><span class="sw-name">sky</span><span class="sw-hex">#95c9de</span></div>
-      <div class="swatch" style="background:#299459;color:#0C0D0C"><span class="sw-name">safe</span><span class="sw-hex">#299459</span></div>
+      <div class="swatch" style="background:#B484E8;color:#0C0D0C"><span class="sw-name">violet</span><span class="sw-hex">#B484E8</span></div>
+      <div class="swatch" style="background:#71CD76;color:#0C0D0C"><span class="sw-name">green</span><span class="sw-hex">#71CD76</span></div>
+      <div class="swatch" style="background:#EF6661;color:#0C0D0C"><span class="sw-name">warning</span><span class="sw-hex">#EF6661</span></div>
+      <div class="swatch" style="background:#F79C40;color:#0C0D0C"><span class="sw-name">orange</span><span class="sw-hex">#F79C40</span></div>
+      <div class="swatch" style="background:#5DBAE8;color:#0C0D0C"><span class="sw-name">blue</span><span class="sw-hex">#5DBAE8</span></div>
+      <div class="swatch" style="background:#71CD76;color:#0C0D0C"><span class="sw-name">green</span><span class="sw-hex">#71CD76</span></div>
       <div class="swatch" style="background:#DBEDD8;color:#0C0D0C"><span class="sw-name">vanilla</span><span class="sw-hex">#DBEDD8</span></div>
-      <div class="swatch" style="background:#DECA4B;color:#0C0D0C"><span class="sw-name">yellow</span><span class="sw-hex">#DECA4B</span></div>
-      <div class="swatch" style="background:#1E65C7;color:#fff"><span class="sw-name">info</span><span class="sw-hex">#1E65C7</span></div>
-      <div class="swatch" style="background:#95c9de;color:#0C0D0C"><span class="sw-name">stone</span><span class="sw-hex">#95c9de</span></div>
-      <div class="swatch new" style="background:#9B72CF;color:#fff"><span class="sw-name">indigo</span><span class="sw-hex">#9B72CF</span></div>
-      <div class="swatch" style="background:#FFB3D9;color:#0C0D0C"><span class="sw-name">pink</span><span class="sw-hex">#FFB3D9</span></div>
-      <div class="swatch" style="background:#EDA109;color:#0C0D0C"><span class="sw-name">orange</span><span class="sw-hex">#EDA109</span></div>
+      <div class="swatch" style="background:#E3D322;color:#0C0D0C"><span class="sw-name">yellow</span><span class="sw-hex">#E3D322</span></div>
+      <div class="swatch" style="background:#778CE1;color:#fff"><span class="sw-name">info</span><span class="sw-hex">#778CE1</span></div>
+      <div class="swatch" style="background:#5DBAE8;color:#0C0D0C"><span class="sw-name">blue</span><span class="sw-hex">#5DBAE8</span></div>
+      <div class="swatch new" style="background:#778CE1;color:#fff"><span class="sw-name">indigo</span><span class="sw-hex">#778CE1</span></div>
+      <div class="swatch" style="background:#FF91D7;color:#0C0D0C"><span class="sw-name">pink</span><span class="sw-hex">#FF91D7</span></div>
+      <div class="swatch" style="background:#F79C40;color:#0C0D0C"><span class="sw-name">orange</span><span class="sw-hex">#F79C40</span></div>
     </div>
     <div class="badge-row" style="margin-top:16px">
       <card-badge theme="shell" text="shell"></card-badge>
-      <card-badge theme="lavender" text="lavender"></card-badge>
-      <card-badge theme="special" text="special"></card-badge>
-      <card-badge theme="warning" text="warning"></card-badge>
-      <card-badge theme="sky" text="sky"></card-badge>
-      <card-badge theme="safe" text="safe"></card-badge>
+      <card-badge theme="violet" text="violet"></card-badge>
+      <card-badge theme="green" text="green"></card-badge>
+      <card-badge theme="red" text="red"></card-badge>
+      <card-badge theme="blue" text="blue"></card-badge>
+      <card-badge theme="green" text="green"></card-badge>
       <card-badge theme="vanilla" text="vanilla"></card-badge>
-      <card-badge theme="info" text="info"></card-badge>
+      <card-badge theme="indigo" text="indigo"></card-badge>
       <card-badge theme="indigo" text="indigo ✦"></card-badge>
       <card-badge theme="pink" text="pink"></card-badge>
       <card-badge theme="orange" text="orange"></card-badge>
@@ -307,12 +307,12 @@ table.at tr.hide{display:none}
 
     <div class="sub-h">Outline — 外框</div>
     <div class="badge-row">
-      <card-badge theme="lavender-outline" text="lavender"></card-badge>
-      <card-badge theme="sky-outline" text="sky"></card-badge>
-      <card-badge theme="safe-outline" text="safe"></card-badge>
-      <card-badge theme="warning-outline" text="warning"></card-badge>
+      <card-badge theme="violet-outline" text="violet"></card-badge>
+      <card-badge theme="blue-outline" text="blue"></card-badge>
+      <card-badge theme="green-outline" text="green"></card-badge>
+      <card-badge theme="red-outline" text="red"></card-badge>
       <card-badge theme="indigo-outline" text="indigo"></card-badge>
-      <card-badge theme="info-outline" text="info"></card-badge>
+      <card-badge theme="indigo-outline" text="indigo"></card-badge>
       <card-badge theme="orange-outline" text="orange"></card-badge>
       <card-badge theme="pink-outline" text="pink"></card-badge>
     </div>
@@ -345,7 +345,7 @@ table.at tr.hide{display:none}
     <div class="preview-pane">
       <p class="preview-label">即時預覽</p>
       <div class="preview-stage" id="preview-stage">
-        <card-badge theme="lavender" text="預覽" size="re"></card-badge>
+        <card-badge theme="violet" text="預覽" size="re"></card-badge>
       </div>
     </div>
     <div class="code-pane">
@@ -559,7 +559,7 @@ table.at tr.hide{display:none}
     <table class="at">
       <thead><tr><th style="width:140px">屬性</th><th style="width:200px">值</th><th style="width:80px">預設</th><th>說明</th></tr></thead>
       <tbody>
-        <tr class="attr-row"><td class="an">theme</td><td class="at2">string</td><td class="ad">shell</td><td class="adesc">主題色。可用品牌色名稱（lavender、sky、safe…）或任意 hex。<br>加 <code style="font-family:var(--mono)">-outline</code> 後綴切換外框模式（如 <code style="font-family:var(--mono)">sky-outline</code>）。</td></tr>
+        <tr class="attr-row"><td class="an">theme</td><td class="at2">string</td><td class="ad">shell</td><td class="adesc">主題色。可用品牌色名稱（violet、blue、green…）或任意 hex。<br>加 <code style="font-family:var(--mono)">-outline</code> 後綴切換外框模式（如 <code style="font-family:var(--mono)">blue-outline</code>）。</td></tr>
         <tr class="attr-row"><td class="an">outline</td><td class="at2">boolean</td><td class="ad">false</td><td class="adesc">外框樣式，與 <code style="font-family:var(--mono)">theme="xxx-outline"</code> 效果相同。</td></tr>
         <tr class="attr-row"><td class="an">size</td><td class="at2">xs|sm|md|re|lg|xl</td><td class="ad">re</td><td class="adesc">預設尺寸。re = 1.01rem / lg = 1.363rem / xl = 1.758rem。<small>md 保留向後相容（0.838rem）。</small></td></tr>
         <tr class="attr-row"><td class="an">font-size</td><td class="at2">string</td><td class="ad">—</td><td class="adesc">自訂字體大小，覆蓋 size 的字體設定。例如 <code style="font-family:var(--mono)">"0.9rem"</code>。</td></tr>
@@ -663,22 +663,22 @@ table.at tr.hide{display:none}
     <div class="demo-card-hd"><i class="bi bi-calendar3"></i> 格式化類型（type）</div>
     <div class="demo-card-body col">
       <div class="badge-row">
-        <span style="font-size:.75rem;color:var(--stone);min-width:68px">date</span>
-        <card-badge type="date" value="2026-07-25" theme="stone" size="re" icon="bi-calendar"></card-badge>
-        <card-badge type="date" value="2026-07-25" theme="stone" size="re" icon="bi-calendar" format="MM/DD"></card-badge>
+        <span style="font-size:.75rem;color:var(--blue);min-width:68px">date</span>
+        <card-badge type="date" value="2026-07-25" theme="blue" size="re" icon="bi-calendar"></card-badge>
+        <card-badge type="date" value="2026-07-25" theme="blue" size="re" icon="bi-calendar" format="MM/DD"></card-badge>
       </div>
       <div class="badge-row">
-        <span style="font-size:.75rem;color:var(--stone);min-width:68px">time</span>
-        <card-badge type="time" value="14:30:00" theme="sky" size="re" icon="bi-clock"></card-badge>
+        <span style="font-size:.75rem;color:var(--blue);min-width:68px">time</span>
+        <card-badge type="time" value="14:30:00" theme="blue" size="re" icon="bi-clock"></card-badge>
       </div>
       <div class="badge-row">
-        <span style="font-size:.75rem;color:var(--stone);min-width:68px">datetime</span>
-        <card-badge type="datetime" value="2026-07-25T14:30:00" theme="lavender" size="re"></card-badge>
+        <span style="font-size:.75rem;color:var(--blue);min-width:68px">datetime</span>
+        <card-badge type="datetime" value="2026-07-25T14:30:00" theme="violet" size="re"></card-badge>
       </div>
       <div class="badge-row">
-        <span style="font-size:.75rem;color:var(--stone);min-width:68px">deadline</span>
-        <card-badge type="deadline" value="2026-07-26" theme="safe" size="re" warning-days="3"></card-badge>
-        <card-badge type="deadline" value="2026-07-24" theme="safe" size="re" warning-days="3"></card-badge>
+        <span style="font-size:.75rem;color:var(--blue);min-width:68px">deadline</span>
+        <card-badge type="deadline" value="2026-07-26" theme="green" size="re" warning-days="3"></card-badge>
+        <card-badge type="deadline" value="2026-07-24" theme="green" size="re" warning-days="3"></card-badge>
       </div>
     </div>
     <div class="demo-card-code">type="date" value="2026-07-25"  |  type="deadline" value="..."</div>
@@ -689,23 +689,23 @@ table.at tr.hide{display:none}
     <div class="demo-card-hd"><i class="bi bi-123"></i> 計數 badge（count）</div>
     <div class="demo-card-body col">
       <div class="count-controls">
-        <card-badge id="demo-cnt" theme="warning" count="5" size="re" icon="bi-bell" count-animate="true"></card-badge>
+        <card-badge id="demo-cnt" theme="red" count="5" size="re" icon="bi-bell" count-animate="true"></card-badge>
         <button class="cnt-btn" onclick="document.getElementById('demo-cnt').setAttribute('count',Math.max(0,(+document.getElementById('demo-cnt').getAttribute('count')||0)-1))">－</button>
         <button class="cnt-btn" onclick="document.getElementById('demo-cnt').setAttribute('count',(+document.getElementById('demo-cnt').getAttribute('count')||0)+1))">＋</button>
       </div>
       <div class="badge-row" style="margin-top:8px">
-        <card-badge theme="sky" count="0" show-zero="false" size="re"></card-badge>
-        <span style="font-size:.72rem;color:var(--stone)">count=0 隱藏</span>
+        <card-badge theme="blue" count="0" show-zero="false" size="re"></card-badge>
+        <span style="font-size:.72rem;color:var(--blue)">count=0 隱藏</span>
         <card-badge theme="pink" count="0" show-zero="true" size="re"></card-badge>
-        <span style="font-size:.72rem;color:var(--stone)">show-zero</span>
+        <span style="font-size:.72rem;color:var(--blue)">show-zero</span>
       </div>
       <div class="badge-row">
         <card-badge theme="orange" count="150" max-count="99" size="re" icon="bi-chat"></card-badge>
-        <span style="font-size:.72rem;color:var(--stone)">max-count=99 → 99+</span>
+        <span style="font-size:.72rem;color:var(--blue)">max-count=99 → 99+</span>
       </div>
       <div class="badge-row">
         <card-badge theme="indigo" dot-mode="true" count="1" size="re"></card-badge>
-        <span style="font-size:.72rem;color:var(--stone)">dot-mode 小圓點</span>
+        <span style="font-size:.72rem;color:var(--blue)">dot-mode 小圓點</span>
       </div>
     </div>
     <div class="demo-card-code">count="5" icon="bi-bell"  |  dot-mode="true" count="1"</div>
@@ -715,9 +715,9 @@ table.at tr.hide{display:none}
   <div class="demo-card">
     <div class="demo-card-hd"><i class="bi bi-hand-index"></i> Hover 效果（hover-effect）</div>
     <div class="demo-card-body">
-      <card-badge theme="lavender" text="lift" clickable="true" hover-effect="lift" size="re"></card-badge>
-      <card-badge theme="sky" text="scale" clickable="true" hover-effect="scale" size="re"></card-badge>
-      <card-badge theme="special" text="glow" clickable="true" hover-effect="glow" size="re"></card-badge>
+      <card-badge theme="violet" text="lift" clickable="true" hover-effect="lift" size="re"></card-badge>
+      <card-badge theme="blue" text="scale" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="green" text="glow" clickable="true" hover-effect="glow" size="re"></card-badge>
       <card-badge theme="pink" text="pulse" clickable="true" hover-effect="pulse" size="re"></card-badge>
       <card-badge theme="indigo" text="rotate" clickable="true" hover-effect="rotate" size="re"></card-badge>
     </div>
@@ -728,7 +728,7 @@ table.at tr.hide{display:none}
   <div class="demo-card">
     <div class="demo-card-hd"><i class="bi bi-chevron-contract"></i> 折疊（toggle-target）</div>
     <div class="demo-card-body col">
-      <card-badge theme="lavender" icon="bi-chevron-down" text="展開 / 折疊" toggle-target="demo-collapse" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="violet" icon="bi-chevron-down" text="展開 / 折疊" toggle-target="demo-collapse" hover-effect="scale" size="re"></card-badge>
       <div class="collapse-target" id="demo-collapse">
         這是可折疊的內容區塊。<br>帶有 0.3s 高度動畫，icon 自動旋轉 180°。
       </div>
@@ -740,10 +740,10 @@ table.at tr.hide{display:none}
   <div class="demo-card">
     <div class="demo-card-hd"><i class="bi bi-chat-square-text"></i> 提示訊息（alert-message）</div>
     <div class="demo-card-body">
-      <card-badge theme="info"    text="info"    clickable="true" alert-message="這是 Info 訊息"    alert-type="info"    size="re"></card-badge>
-      <card-badge theme="safe"    text="success" clickable="true" alert-message="操作成功！"          alert-type="success" size="re"></card-badge>
-      <card-badge theme="yellow"  text="warning" clickable="true" alert-message="請注意！"            alert-type="warning" size="re"></card-badge>
-      <card-badge theme="warning" text="danger"  clickable="true" alert-message="發生錯誤，請重試。"  alert-type="danger"  size="re"></card-badge>
+      <card-badge theme="indigo"    text="indigo"    clickable="true" alert-message="這是 Info 訊息"    alert-type="info"    size="re"></card-badge>
+      <card-badge theme="green"    text="success" clickable="true" alert-message="操作成功！"          alert-type="success" size="re"></card-badge>
+      <card-badge theme="yellow"  text="red" clickable="true" alert-message="請注意！"            alert-type="warning" size="re"></card-badge>
+      <card-badge theme="red" text="danger"  clickable="true" alert-message="發生錯誤，請重試。"  alert-type="danger"  size="re"></card-badge>
     </div>
     <div class="demo-card-code">alert-message="..." alert-type="success"</div>
   </div>
@@ -754,7 +754,7 @@ table.at tr.hide{display:none}
     <div class="demo-card-body col">
       <div style="display:flex;align-items:center;gap:8px;width:100%">
         <span id="demo-copy-src" style="background:var(--fill);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;font-size:.82rem;color:var(--shell);flex:1">這段文字可以被複製</span>
-        <card-badge theme="sky" icon="bi-copy" text="複製" action="copy" source="demo-copy-src" target="demo-copy-tgt" alert-message="已複製！" alert-type="success" alert-duration="1500" clickable="true" size="re"></card-badge>
+        <card-badge theme="blue" icon="bi-copy" text="複製" action="copy" source="demo-copy-src" target="demo-copy-tgt" alert-message="已複製！" alert-type="success" alert-duration="1500" clickable="true" size="re"></card-badge>
       </div>
       <div class="action-area" id="demo-copy-tgt">複製後的內容會出現在這裡</div>
     </div>
@@ -767,9 +767,9 @@ table.at tr.hide{display:none}
     <div class="demo-card-body col">
       <div class="badge-row">
         <card-badge theme="shell" text="全部" action="filter" data-filter="all" clickable="true" size="re"></card-badge>
-        <card-badge theme="lavender" text="設計" action="filter" data-filter="design" clickable="true" size="re"></card-badge>
-        <card-badge theme="sky" text="開發" action="filter" data-filter="dev" clickable="true" size="re"></card-badge>
-        <card-badge theme="special" text="資料" action="filter" data-filter="data" clickable="true" size="re"></card-badge>
+        <card-badge theme="violet" text="設計" action="filter" data-filter="design" clickable="true" size="re"></card-badge>
+        <card-badge theme="blue" text="開發" action="filter" data-filter="dev" clickable="true" size="re"></card-badge>
+        <card-badge theme="green" text="資料" action="filter" data-filter="data" clickable="true" size="re"></card-badge>
       </div>
       <div class="filter-items">
         <div class="filter-item" data-filter-group="design">UI 設計</div>
@@ -787,8 +787,8 @@ table.at tr.hide{display:none}
   <div class="demo-card">
     <div class="demo-card-hd"><i class="bi bi-trash3"></i> 點擊移除（removeself）</div>
     <div class="demo-card-body" id="demo-remove-body">
-      <card-badge theme="warning" text="點擊移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
-      <card-badge theme="salmon" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="red" text="點擊移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="orange" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
       <card-badge theme="indigo" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
       <card-badge theme="orange" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
     </div>
@@ -800,9 +800,9 @@ table.at tr.hide{display:none}
     <div class="demo-card-hd"><i class="bi bi-fonts"></i> 字體控制（font-control）</div>
     <div class="demo-card-body col">
       <div class="badge-row">
-        <card-badge theme="safe"   icon="bi-zoom-in"    action="font-increase" font-control="demo-font-target" font-step="2" clickable="true" size="re"></card-badge>
-        <card-badge theme="warning" icon="bi-zoom-out"  action="font-decrease" font-control="demo-font-target" font-step="2" clickable="true" size="re"></card-badge>
-        <card-badge theme="stone"  icon="bi-arrow-counterclockwise" action="font-reset" font-control="demo-font-target" clickable="true" size="re"></card-badge>
+        <card-badge theme="green"   icon="bi-zoom-in"    action="font-increase" font-control="demo-font-target" font-step="2" clickable="true" size="re"></card-badge>
+        <card-badge theme="red" icon="bi-zoom-out"  action="font-decrease" font-control="demo-font-target" font-step="2" clickable="true" size="re"></card-badge>
+        <card-badge theme="blue"  icon="bi-arrow-counterclockwise" action="font-reset" font-control="demo-font-target" clickable="true" size="re"></card-badge>
       </div>
       <div class="action-area" id="demo-font-target">這段文字的大小可以被調整</div>
     </div>
@@ -814,12 +814,12 @@ table.at tr.hide{display:none}
     <div class="demo-card-hd"><i class="bi bi-arrow-repeat"></i> 點擊輪替（rotate-self）</div>
     <div class="demo-card-body">
       <card-badge action="rotate-self" clickable="true" hover-effect="scale" size="re">
-        <badge-item text="設計" theme="lavender" icon="bi-palette"></badge-item>
-        <badge-item text="開發" theme="sky"      icon="bi-code-slash"></badge-item>
-        <badge-item text="分析" theme="special"  icon="bi-bar-chart"></badge-item>
+        <badge-item text="設計" theme="violet" icon="bi-palette"></badge-item>
+        <badge-item text="開發" theme="blue"      icon="bi-code-slash"></badge-item>
+        <badge-item text="分析" theme="green"  icon="bi-bar-chart"></badge-item>
         <badge-item text="企劃" theme="indigo"   icon="bi-lightbulb"></badge-item>
       </card-badge>
-      <span style="font-size:.78rem;color:var(--stone)">點擊輪替</span>
+      <span style="font-size:.78rem;color:var(--blue)">點擊輪替</span>
     </div>
     <div class="demo-card-code">action="rotate-self"  +  &lt;badge-item text="..." theme="..."&gt;</div>
   </div>
@@ -830,13 +830,13 @@ table.at tr.hide{display:none}
     <div class="demo-card-body col">
       <div class="badge-row">
         <card-badge action="rotate-self-auto" interval="1.8s" size="re">
-          <badge-item text="lavender" theme="lavender"></badge-item>
-          <badge-item text="sky"      theme="sky"></badge-item>
-          <badge-item text="safe"     theme="safe"></badge-item>
+          <badge-item text="violet" theme="violet"></badge-item>
+          <badge-item text="blue"      theme="blue"></badge-item>
+          <badge-item text="green"     theme="green"></badge-item>
           <badge-item text="indigo"   theme="indigo"></badge-item>
           <badge-item text="orange"   theme="orange"></badge-item>
         </card-badge>
-        <span style="font-size:.78rem;color:var(--stone)">每 1.8s 自動切換</span>
+        <span style="font-size:.78rem;color:var(--blue)">每 1.8s 自動切換</span>
       </div>
     </div>
     <div class="demo-card-code">action="rotate-self-auto" interval="1.8s"</div>
@@ -846,9 +846,9 @@ table.at tr.hide{display:none}
   <div class="demo-card">
     <div class="demo-card-hd"><i class="bi bi-box-arrow-up-right"></i> 連結（href）</div>
     <div class="demo-card-body">
-      <card-badge theme="sky" icon="bi-github" text="GitHub" href="https://github.com" href-target="_blank" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="blue" icon="bi-github" text="GitHub" href="https://github.com" href-target="_blank" hover-effect="scale" size="re"></card-badge>
       <card-badge theme="indigo" icon="bi-box-arrow-up-right" text="外部連結" href="https://example.com" href-target="_blank" hover-effect="lift" size="re"></card-badge>
-      <card-badge theme="lavender-outline" icon="bi-arrow-right" text="頁內跳轉" href="#tab-guide" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="violet-outline" icon="bi-arrow-right" text="頁內跳轉" href="#tab-guide" hover-effect="scale" size="re"></card-badge>
     </div>
     <div class="demo-card-code">href="https://..." href-target="_blank"</div>
   </div>
@@ -871,19 +871,19 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 /* ── Brand Colors ───────────────────────────────── */
 const COLORS = [
   {name:'shell',   hex:'#C6C7BD'},
-  {name:'lavender',hex:'#C3A5E5'},
-  {name:'special', hex:'#b3de73'},
-  {name:'warning', hex:'#F08080'},
-  {name:'salmon',  hex:'#E5C3B3'},
-  {name:'sky',     hex:'#95c9de'},
-  {name:'safe',    hex:'#299459'},
+  {name:'violet',hex:'#B484E8'},
+  {name:'green', hex:'#71CD76'},
+  {name:'warning', hex:'#EF6661'},
+  {name:'orange',  hex:'#F79C40'},
+  {name:'blue',     hex:'#5DBAE8'},
+  {name:'green',    hex:'#71CD76'},
   {name:'vanilla', hex:'#DBEDD8'},
-  {name:'yellow',  hex:'#DECA4B'},
-  {name:'info',    hex:'#1E65C7'},
-  {name:'stone',   hex:'#95c9de'},
-  {name:'indigo',  hex:'#9B72CF'},
-  {name:'pink',    hex:'#FFB3D9'},
-  {name:'orange',  hex:'#EDA109'},
+  {name:'yellow',  hex:'#E3D322'},
+  {name:'info',    hex:'#778CE1'},
+  {name:'blue',   hex:'#5DBAE8'},
+  {name:'indigo',  hex:'#778CE1'},
+  {name:'pink',    hex:'#FF91D7'},
+  {name:'orange',  hex:'#F79C40'},
 ];
 
 const ICONS = [
@@ -895,7 +895,7 @@ const ICONS = [
   'bi-bar-chart','bi-pie-chart','bi-graph-up','bi-palette','bi-code-slash',
 ];
 
-let currentTheme = 'lavender';
+let currentTheme = 'violet';
 
 /* ── Build color dots ─────────────────────────── */
 const dotsEl = document.getElementById('color-dots');

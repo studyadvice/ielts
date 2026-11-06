@@ -16,8 +16,8 @@
     padding: 32px 40px 160px;
     line-height: 1.5;
   }
-  h1 { color: #82C8E5; font-size: 1.8rem; margin-bottom: 8px; }
-  h2 { color: #1CCAE8; font-size: 1.3rem; margin: 40px 0 6px; }
+  h1 { color: #5DBAE8; font-size: 1.8rem; margin-bottom: 8px; }
+  h2 { color: #5DBAE8; font-size: 1.3rem; margin: 40px 0 6px; }
   p.lead-note { opacity: 0.75; font-size: 1rem; margin-bottom: 28px; }
   section {
     border-left: 2px dotted #2a2b2a;
@@ -43,7 +43,7 @@
   <h2>第一段：一般收藏型 phrase-chip</h2>
   <div class="passage">
     I'd love to go hiking with my friends this weekend, but I'm completely
-    <phrase-chip data-phrase="tied up with" data-theme="ocean">
+    <phrase-chip data-phrase="tied up with" data-theme="blue">
       tied up with
       <phrase-card>
         <phrase-example>I'd love to go hiking with my friends this weekend, but I'm completely <mark>tied up with</mark> an urgent project deadline.</phrase-example>
@@ -51,7 +51,7 @@
       </phrase-card>
     </phrase-chip>
     an urgent project deadline, so I probably won't be able to join this time. On the flip side, I can
-    <phrase-chip data-phrase="catch up with" data-theme="sky" data-icon="chat-dots-fill">
+    <phrase-chip data-phrase="catch up with" data-theme="blue" data-icon="chat-dots-fill">
       catch up with
       <phrase-card>
         <phrase-example>I haven't seen my university friends in ages, so we're planning to <mark>catch up with</mark> each other over dinner this Friday.</phrase-example>
@@ -60,7 +60,7 @@
     </phrase-chip>
     everyone next week instead.
   </div>
-  <div class="attr-note">以上兩個皆為預設收藏模式：<code>data-theme</code> 分別為 ocean、sky；第二個加了 <code>data-icon="chat-dots-fill"</code>。</div>
+  <div class="attr-note">以上兩個皆為預設收藏模式：<code>data-theme</code> 分別為 blue、blue；第二個加了 <code>data-icon="chat-dots-fill"</code>。</div>
   <button type="button" class="btn btn-sm btn-info btn-done" onclick="handleDone('demo-vocab-1', this)">標記完成</button>
 </section>
 
@@ -76,7 +76,7 @@
       </phrase-card>
     </phrase-chip>
     before Monday arrives. I try to
-    <phrase-chip data-phrase="set aside" data-theme="salmon" data-shape="underline" data-hide-translation="true">
+    <phrase-chip data-phrase="set aside" data-theme="orange" data-shape="underline" data-hide-translation="true">
       set aside
       <phrase-card>
         <phrase-example>I try to <mark>set aside</mark> some money each month for emergencies and future travel plans.</phrase-example>
@@ -84,7 +84,7 @@
       </phrase-card>
     </phrase-chip>
     some time for that, and it also helps to look up a few words in the
-    <phrase-chip data-phrase="pop up out of nowhere" data-theme="teal" data-disable-collect="true" data-icon="book-half">
+    <phrase-chip data-phrase="pop up out of nowhere" data-theme="green" data-disable-collect="true" data-icon="book-half">
       glossary only
       <phrase-card>
         <phrase-example>I was trying to read an article when a full-screen advertisement <mark>popped up out of nowhere</mark>.</phrase-example>
@@ -104,7 +104,7 @@
   <h2>第三段：重複片語的去重測試</h2>
   <div class="passage">
     When it comes to electronics, I usually
-    <phrase-chip data-phrase="catch up with" data-theme="sky" data-icon="chat-dots-fill">
+    <phrase-chip data-phrase="catch up with" data-theme="blue" data-icon="chat-dots-fill">
       catch up with
       <phrase-card>
         <phrase-example>I haven't seen my university friends in ages, so we're planning to <mark>catch up with</mark> each other over dinner this Friday.</phrase-example>
@@ -123,17 +123,17 @@
     Every day, rain or shine, I hit the gym
     <phrase-upgrade data-anim="strike-fade" data-theme="yellow" data-anim-duration="1.2s">
       <phrase-stage text-color="shell">near my office</phrase-stage>
-      <phrase-stage text-color="salmon">a few blocks away from my office</phrase-stage>
-      <phrase-stage text-color="special">just a five-minute walk from my office</phrase-stage>
+      <phrase-stage text-color="orange">a few blocks away from my office</phrase-stage>
+      <phrase-stage text-color="green">just a five-minute walk from my office</phrase-stage>
     </phrase-upgrade>
     to keep my waistline in check.
   </div>
-  <div class="attr-note">點擊上面那個詞兩次，會依序升級：near my office → a few blocks away from my office → just a five-minute walk from my office，到最後一階段就不能再點了（單向前進，不能點回去）。三個階段各自用 <code>text-color</code> 覆蓋了不同文字顏色（shell、salmon、special），但底線顏色固定是 <code>data-theme="yellow"</code>，不隨階段改變。這裡額外用 <code>data-anim-duration="1.2s"</code> 放慢速度；滑鼠移到右側那個旋轉圖示上也會放大。</div>
+  <div class="attr-note">點擊上面那個詞兩次，會依序升級：near my office → a few blocks away from my office → just a five-minute walk from my office，到最後一階段就不能再點了（單向前進，不能點回去）。三個階段各自用 <code>text-color</code> 覆蓋了不同文字顏色（shell、orange、green），但底線顏色固定是 <code>data-theme="yellow"</code>，不隨階段改變。這裡額外用 <code>data-anim-duration="1.2s"</code> 放慢速度；滑鼠移到右側那個旋轉圖示上也會放大。</div>
 
-  <h3 style="font-size:1.05rem; color:#C3A5E5; margin-top:28px;">五種內建動畫比較（各自獨立，點了只會動自己）</h3>
+  <h3 style="font-size:1.05rem; color:#B484E8; margin-top:28px;">五種內建動畫比較（各自獨立，點了只會動自己）</h3>
   <div class="demo-row">
     <div>strike-fade（預設）：I do
-      <phrase-upgrade data-anim="strike-fade" data-theme="ocean">
+      <phrase-upgrade data-anim="strike-fade" data-theme="blue">
         <phrase-stage>exercise</phrase-stage>
         <phrase-stage>weight training</phrase-stage>
       </phrase-upgrade>
@@ -142,7 +142,7 @@
   </div>
   <div class="demo-row">
     <div>crossfade：It's
-      <phrase-upgrade data-anim="crossfade" data-theme="sky">
+      <phrase-upgrade data-anim="crossfade" data-theme="blue">
         <phrase-stage>near my office</phrase-stage>
         <phrase-stage>just two blocks from my office</phrase-stage>
       </phrase-upgrade>
@@ -151,7 +151,7 @@
   </div>
   <div class="demo-row">
     <div>slide-up：I usually go there
-      <phrase-upgrade data-anim="slide-up" data-theme="special">
+      <phrase-upgrade data-anim="slide-up" data-theme="green">
         <phrase-stage>a lot</phrase-stage>
         <phrase-stage>two or three times a week</phrase-stage>
       </phrase-upgrade>
@@ -169,7 +169,7 @@
   </div>
   <div class="demo-row">
     <div>typewriter：I need some time to
-      <phrase-upgrade data-anim="typewriter" data-theme="teal" data-typewriter-speed="60">
+      <phrase-upgrade data-anim="typewriter" data-theme="green" data-typewriter-speed="60">
         <phrase-stage>relax</phrase-stage>
         <phrase-stage>recharge my batteries</phrase-stage>
       </phrase-upgrade>

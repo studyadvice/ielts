@@ -61,12 +61,12 @@
 
 ```html
 <info-region-group>
-  <info-region id="s1" color="sky" next="s2" countdown="2500">
+  <info-region id="s1" color="blue" next="s2" countdown="2500">
     <h3>第一步</h3>
     <p>讀完這段，倒數條跑完後會自動進入下一步。</p>
   </info-region>
 
-  <info-region id="s2" color="teal" next="s3" manual manual-label="▶ 下一步">
+  <info-region id="s2" color="green" next="s3" manual manual-label="▶ 下一步">
     <h3>第二步</h3>
     <p>按下按鈕才會繼續。</p>
   </info-region>
@@ -86,7 +86,7 @@
 |---|---|---|
 | `id` | 無 | 被 `next` 串接的區塊需要有 id |
 | `active` | 無 | 設為 `true` 時顯示。通常由群組或上一個區塊自動設定 |
-| `color` | `sky` | 左側色條與按鈕顏色，可用名稱見[顏色清單](#顏色清單) |
+| `color` | `blue` | 左側色條與按鈕顏色，可用名稱見[顏色清單](#顏色清單) |
 | `class="ir-gold"` | 無 | 金箔外觀，並預設開啟電流 |
 | `next` | 無 | 下一個區塊的 id |
 | `next-interval` | `500` | 顯示後幾毫秒才進入下一個區塊 |
@@ -110,7 +110,7 @@
 
 ### 顏色清單
 
-`lavender`、`sky`、`warning`、`salmon`、`ocean`、`safe`、`teal`、`vanilla`、`yellow`、`focus`、`info`、`indigo`、`pink`、`orange`、`special`、`stone`、`gold`、`shell`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。
+`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`gold`、`shell`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
 
 按鈕也有對應的顏色類別 `ir-btn--顏色`。要新增顏色，修改檔案開頭的 `BrandColors` 物件即可，相關樣式會自動產生。
 
@@ -121,7 +121,7 @@
 | `auto-start` | 無 | 載入後自動開始 |
 | `show-controls` | 顯示 | 設為 `false` 隱藏開始與重設按鈕 |
 | `start-label` | `▶ 開始` | 開始按鈕文字 |
-| `start-color` | `sky` | 開始按鈕顏色 |
+| `start-color` | `blue` | 開始按鈕顏色 |
 | `reset-label` | `↺ 重設` | 重設按鈕文字 |
 | `reset-color` | `warning` | 重設按鈕顏色 |
 | `start-width`、`start-height`、`start-font-size`、`start-padding` | 無 | 開始按鈕尺寸，字體單位預設為 rem |
@@ -146,7 +146,7 @@
 在 `<info-region>` 加上 `quiz`，裡面放 `<ir-choices>` 與 `<ir-choice>`：
 
 ```html
-<info-region id="q1" quiz quiz-item color="sky" quiz-label="第 1 題"
+<info-region id="q1" quiz quiz-item color="blue" quiz-label="第 1 題"
              answer="b" correct-next="q2" wrong-next="q2"
              explain="主詞是第三人稱單數，動詞要加 <b>s</b>。">
   <p>哪一句是正確的？</p>
@@ -228,7 +228,7 @@
 |---|---|
 | `class="ir-gold"` | 金箔加電流 |
 | `class="ir-gold" fx="off"` | 只要金箔與掃光，不要電流 |
-| `color="teal" fx="electric"` | 任何顏色都可以加電流，暗部色由該顏色混黑自動算出 |
+| `color="green" fx="electric"` | 任何顏色都可以加電流，暗部色由該顏色混黑自動算出 |
 | `fx-core="#FFFFFF" fx-dim="#5A1F47"` | 自訂亮點色與暗部色 |
 | `InfoRegionConfig.fx = false` | 全域關閉，下一次區塊啟動時生效 |
 
@@ -275,7 +275,7 @@
 
 ```js
 window.InfoRegionConfig = {
-  defaultColor: 'sky',
+  defaultColor: 'blue',
   animDuration: 500,
   /* ...其餘見下表 */
 };
@@ -285,7 +285,7 @@ window.InfoRegionConfig = {
 
 | 設定 | 預設值 | 說明 |
 |---|---|---|
-| `defaultColor` | `sky` | 預設顏色 |
+| `defaultColor` | `blue` | 預設顏色 |
 | `animDuration` | `500` | 垂直展開的動畫毫秒數 |
 | `horizontalAnimDur` | `380` | 橫向排列的動畫毫秒數 |
 | `defaultInterval` | `500` | `next-interval` 的預設值 |
@@ -340,9 +340,9 @@ g.reset();                            // 重設整個群組
 
 ```html
 <info-region-group auto-start show-controls="false">
-  <info-region id="a1" color="sky" next="a2" next-interval="1200">第一步：準備材料。</info-region>
-  <info-region id="a2" color="sky" next="a3" next-interval="1200">第二步：混合均勻。</info-region>
-  <info-region id="a3" color="safe">第三步：完成。</info-region>
+  <info-region id="a1" color="blue" next="a2" next-interval="1200">第一步：準備材料。</info-region>
+  <info-region id="a2" color="blue" next="a3" next-interval="1200">第二步：混合均勻。</info-region>
+  <info-region id="a3" color="green">第三步：完成。</info-region>
 </info-region-group>
 ```
 
@@ -359,7 +359,7 @@ g.reset();                            // 重設整個群組
 ### 3. 讀者自己控制節奏
 
 ```html
-<info-region id="c1" color="teal" next="c2" manual manual-label="我看懂了，下一步 ▶" manual-align="center">
+<info-region id="c1" color="green" next="c2" manual manual-label="我看懂了，下一步 ▶" manual-align="center">
   先讀完這段再按按鈕。
 </info-region>
 ```
@@ -371,7 +371,7 @@ g.reset();                            // 重設整個群組
   <info-region id="d1" class="ir-gold" color="gold" next="d2" countdown="3000">
     <h3>歡迎來到第一單元</h3>
   </info-region>
-  <info-region id="d2" color="sky" next="d3" manual>中間是普通內容。</info-region>
+  <info-region id="d2" color="blue" next="d3" manual>中間是普通內容。</info-region>
   <info-region id="d3" class="ir-gold" color="gold">
     <h3>單元完成</h3>
   </info-region>
@@ -385,8 +385,8 @@ g.reset();                            // 重設整個群組
 ```html
 <info-region-group layout="horizontal" cols-per-row="3" cascade-interval="250"
                    show-controls="false" auto-start>
-  <info-region color="sky"><h4>聽力</h4><p>四個段落，三十分鐘。</p></info-region>
-  <info-region color="teal"><h4>閱讀</h4><p>三篇文章，六十分鐘。</p></info-region>
+  <info-region color="blue"><h4>聽力</h4><p>四個段落，三十分鐘。</p></info-region>
+  <info-region color="green"><h4>閱讀</h4><p>三篇文章，六十分鐘。</p></info-region>
   <info-region color="orange"><h4>寫作</h4><p>兩個任務，六十分鐘。</p></info-region>
 </info-region-group>
 ```
@@ -394,10 +394,10 @@ g.reset();                            // 重設整個群組
 ### 6. 整體進度條加手動步驟
 
 ```html
-<info-region-group global-progress show-percent progress-color="teal" progress-position="top">
-  <info-region id="e1" color="sky" next="e2" manual>第 1 步</info-region>
-  <info-region id="e2" color="sky" next="e3" manual>第 2 步</info-region>
-  <info-region id="e3" color="sky">第 3 步</info-region>
+<info-region-group global-progress show-percent progress-color="green" progress-position="top">
+  <info-region id="e1" color="blue" next="e2" manual>第 1 步</info-region>
+  <info-region id="e2" color="blue" next="e3" manual>第 2 步</info-region>
+  <info-region id="e3" color="blue">第 3 步</info-region>
 </info-region-group>
 ```
 
@@ -411,7 +411,7 @@ g.reset();                            // 重設整個群組
 
 ```html
 <info-region-group show-score global-progress show-percent>
-  <info-region id="q1" quiz quiz-item color="sky" answer="b"
+  <info-region id="q1" quiz quiz-item color="blue" answer="b"
                correct-next="q2" wrong-next="q1-help"
                explain="注意第三人稱單數。">
     <p>She ___ to school every day.</p>
@@ -427,7 +427,7 @@ g.reset();                            // 重設整個群組
     <p>主詞是 he、she、it 時，動詞要加 s 或 es。</p>
   </info-region>
 
-  <info-region id="q2" quiz quiz-item color="sky" answer="a">
+  <info-region id="q2" quiz quiz-item color="blue" answer="a">
     <p>They ___ football on Sundays.</p>
     <ir-choices>
       <ir-choice value="a">play</ir-choice>
@@ -466,7 +466,7 @@ g.reset();                            // 重設整個群組
 ### 11. 自訂邊框
 
 ```html
-<info-region color="special" border-width="2" border-top-width="6" border-style="dashed">
+<info-region color="green" border-width="2" border-top-width="6" border-style="dashed">
   上邊框較粗的虛線區塊。
 </info-region>
 ```
@@ -478,7 +478,7 @@ g.reset();                            // 重設整個群組
 ```html
 <script>
   window.InfoRegionConfig = {
-    defaultColor: 'teal',
+    defaultColor: 'green',
     animDuration: 700,
     padding: '12px 16px',
     choiceFontSize: 1.05,
@@ -508,8 +508,8 @@ g.reset();                            // 重設整個群組
 ### 15. 讓其他顏色也有電流
 
 ```html
-<info-region color="safe" fx="electric">通關成功，綠色電流。</info-region>
-<info-region color="warning" fx="electric" fx-dim="#4A0F18">警告，紅色電流。</info-region>
+<info-region color="green" fx="electric">通關成功，綠色電流。</info-region>
+<info-region color="red" fx="electric" fx-dim="#4A0F18">警告，紅色電流。</info-region>
 ```
 
 ### 16. 依使用者偏好關閉全部動畫
@@ -534,7 +534,7 @@ $n = count($questions);
   $id   = 'q' . ($i + 1);
   $next = $i + 1 < $n ? 'q' . ($i + 2) : 'done';
 ?>
-  <info-region id="<?= $id ?>" quiz quiz-item color="sky"
+  <info-region id="<?= $id ?>" quiz quiz-item color="blue"
                quiz-label="第 <?= $i + 1 ?> 題"
                answer="<?= $h($q['answer']) ?>"
                correct-next="<?= $next ?>" wrong-next="<?= $next ?>"
@@ -558,7 +558,7 @@ $n = count($questions);
 區塊內容是一般 HTML，可以放入任何元件，例如搭配 bp-popnote 的提示框：
 
 ```html
-<info-region color="lavender">
+<info-region color="violet">
   <p>This word is
     <span data-popover-theme="gold" data-popover-color="gold"
           data-popover-title="ubiquitous" data-popover-content="adj. 無所不在的">ubiquitous</span>.

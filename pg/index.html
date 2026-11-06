@@ -9,11 +9,11 @@
 <script src="ui-progrid.js"></script>
 <style>
   :root {
-    --c-bg: #0C0D0C; --c-shell: #C6C7BD; --c-lavender: #C3A5E5; --c-sky: #82C8E5;
-    --c-warning: #E6374B; --c-salmon: #E5C3B3; --c-ocean: #1CCAE8; --c-safe: #27AE60;
-    --c-teal: #0DA591; --c-vanilla: #DBEDD8; --c-yellow: #E3D322; --c-focus: #D4FFFC;
-    --c-special: #B3DE73; --c-info: #4171BF; --c-indigo: #7849C9; --c-pink: #FF91D7;
-    --c-orange: #EDA109;
+    --c-bg: #0C0D0C; --c-shell: #C6C7BD; --c-violet: #B484E8; --c-blue: #5DBAE8;
+    --c-warning: #EF6661; --c-orange: #F79C40; --c-blue: #5DBAE8; --c-green: #71CD76;
+    --c-green: #71CD76; --c-vanilla: #DBEDD8; --c-yellow: #E3D322; --c-focus: #DBEDD8;
+    --c-green: #71CD76; --c-info: #778CE1; --c-indigo: #778CE1; --c-pink: #FF91D7;
+    --c-orange: #F79C40;
   }
   html { font-size: 16px; }
   body {
@@ -23,8 +23,8 @@
   }
   .wrap { max-width: 1760px; margin: 0 auto; padding: 32px 48px 120px; }
   h1 { font-size: 1.9rem; color: var(--c-focus); margin: 0 0 4px; font-weight: 700; }
-  h2 { font-size: 1.3rem; color: var(--c-ocean); margin: 0 0 6px; font-weight: 600; }
-  h3 { font-size: 1rem; color: var(--c-lavender); margin: 22px 0 10px; font-weight: 600; }
+  h2 { font-size: 1.3rem; color: var(--c-blue); margin: 0 0 6px; font-weight: 600; }
+  h3 { font-size: 1rem; color: var(--c-violet); margin: 22px 0 10px; font-weight: 600; }
   .sub { color: #8E8F87; font-size: 0.95rem; margin: 0 0 18px; }
   .lead-note { color: #8E8F87; margin: 0 0 32px; }
   section.block { margin: 0 0 48px; }
@@ -45,16 +45,16 @@
     background: #0E0F0D; color: var(--c-shell); border: 1px solid #2F302B; border-radius: 6px;
     padding: 5px 8px; font-size: 0.88rem;
   }
-  .ctl input[type=range] { accent-color: var(--c-teal); }
+  .ctl input[type=range] { accent-color: var(--c-green); }
   .checks { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 0; }
   .checks label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; cursor: pointer; }
-  .checks input { accent-color: var(--c-teal); width: 15px; height: 15px; }
+  .checks input { accent-color: var(--c-green); width: 15px; height: 15px; }
   .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
   .dbtn {
     font-size: 0.82rem; padding: 4px 12px; border-radius: 6px; cursor: pointer;
     border: 1px solid #2F302B; background: #1A1B18; color: var(--c-shell);
   }
-  .dbtn:hover { border-color: var(--c-ocean); color: var(--c-ocean); }
+  .dbtn:hover { border-color: var(--c-blue); color: var(--c-blue); }
   .dbtn code { color: inherit; font-size: 0.82rem; }
   pre.out, pre.code {
     margin: 12px 0 0; padding: 12px 14px; border-radius: 8px; background: #0E0F0D;
@@ -65,13 +65,13 @@
   .log { margin: 12px 0 0; font-size: 0.8rem; font-family: Consolas, "Courier New", monospace; }
   .log div { padding: 3px 0; border-bottom: 1px solid #1E1F1C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .log .ev { display: inline-block; min-width: 82px; font-weight: 600; }
-  .log .ev-change { color: var(--c-special); }
-  .log .ev-select { color: var(--c-sky); }
+  .log .ev-change { color: var(--c-green); }
+  .log .ev-select { color: var(--c-blue); }
   .log .ev-invalid { color: var(--c-warning); }
 
   table.ref { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   table.ref th, table.ref td { border-bottom: 1px solid #22231F; padding: 7px 10px; vertical-align: top; }
-  table.ref th { color: var(--c-sky); text-align: left; font-weight: 600; background: #121311; }
+  table.ref th { color: var(--c-blue); text-align: left; font-weight: 600; background: #121311; }
   table.ref td:first-child { white-space: nowrap; }
   table.ref code { color: var(--c-orange); font-size: 0.85rem; }
   .ref-wrap { border: 1px solid #262723; border-radius: 10px; overflow: hidden; }
@@ -192,9 +192,9 @@
     <p class="sub">左邊是放在教材頁裡的唯讀資訊卡，右邊是後台填寫用的表單。差別只在屬性。</p>
     <div class="cols cols-2">
       <div class="lesson-card">
-        <p class="cap"><code>readonly density="compact" no-desc accent="lavender"</code></p>
+        <p class="cap"><code>readonly density="compact" no-desc accent="violet"</code></p>
         <p>This unit focuses on describing a change you experienced, with three model answers.</p>
-        <ui-progrid heading="Unit 2 資訊" readonly density="compact" no-desc accent="lavender" label-ratio="3:7">
+        <ui-progrid heading="Unit 2 資訊" readonly density="compact" no-desc accent="violet" label-ratio="3:7">
           <pg-row key="topic" label="主題" value="Describing a change"></pg-row>
           <pg-row key="part" label="題型" value="描述題 + 延伸討論"></pg-row>
           <pg-row key="level" label="難度" type="rating" rating-mode="scale" value="4"></pg-row>
@@ -208,7 +208,7 @@
       <div>
         <p class="cap"><code>field-style="boxed" show-actions</code>，加上 <code>required</code> 等驗證屬性</p>
         <ui-progrid id="pg-form" heading="新增課程" field-style="boxed" show-actions>
-          <pg-cat name="課程" numbering number-color="sky">
+          <pg-cat name="課程" numbering number-color="blue">
             <pg-row key="c-title" label="課程名稱" required minlength="4" placeholder="至少 4 個字"></pg-row>
             <pg-row key="c-type" label="分類" type="select" placeholder="請選擇" required>
               <pg-opt value="spk">口說</pg-opt>
@@ -349,7 +349,7 @@ ui-progrid[density="loose"] {
             <tr><td><code>density</code></td><td><code>compact</code>（24px）、<code>comfortable</code>（預設，30px）、<code>loose</code>（42px）</td></tr>
             <tr><td><code>field-style</code></td><td><code>ghost</code>（預設）或 <code>boxed</code></td></tr>
             <tr><td><code>readonly</code></td><td>整張唯讀</td></tr>
-            <tr><td><code>accent</code></td><td>強調色，配色表名稱或色碼，預設 ocean</td></tr>
+            <tr><td><code>accent</code></td><td>強調色，配色表名稱或色碼，預設 blue</td></tr>
             <tr><td><code>label-ratio</code></td><td>名稱欄比數值欄，例如 <code>3:7</code>，範圍 2:8 至 8:2</td></tr>
             <tr><td><code>max-height</code></td><td>屬性區最大高度（px）</td></tr>
             <tr><td><code>no-desc</code></td><td>隱藏底部說明區</td></tr>
@@ -363,7 +363,7 @@ ui-progrid[density="loose"] {
             <tr><th>屬性</th><th>說明</th></tr>
             <tr><td><code>name</code></td><td>分類名稱</td></tr>
             <tr><td><code>collapsed</code></td><td>預設摺疊</td></tr>
-            <tr><td><code>color</code></td><td>分類標題顏色，預設 lavender</td></tr>
+            <tr><td><code>color</code></td><td>分類標題顏色，預設 violet</td></tr>
             <tr><td><code>numbering</code></td><td>自動編號，搭配 <code>number-start</code>、<code>number-prefix</code>、<code>number-suffix</code>、<code>number-color</code></td></tr>
           </table>
         </div>
@@ -458,7 +458,7 @@ ui-progrid[density="loose"] {
     var o = document.createElement('option');
     o.value = k;
     o.textContent = k + '　' + UiProgrid.palette[k];
-    if (k === 'ocean') o.selected = true;
+    if (k === 'blue') o.selected = true;
     acc.appendChild(o);
   });
 

@@ -4,7 +4,7 @@
  * No Shadow DOM · No external dependencies
  *
  * ─── 基本用法 ────────────────────────────────────────────────────────────────
- *  <arrow-flow theme="sky" gap="72px" arrow-tip="md"
+ *  <arrow-flow theme="blue" gap="72px" arrow-tip="md"
  *              reveal="cumulative" animation="fade"
  *              equal-height on-complete="result-id" current="0"
  *              box-shadow="0 4px 24px rgba(0,0,0,.55)"
@@ -13,15 +13,15 @@
  *              header-gradient="down" header-accent-line="left"
  *              content-font-size="1.125rem" content-line-height="1.5"
  *              arrow-glow arrow-style="solid"
- *              branch-label-theme="teal" branch-dim="0.30">
+ *              branch-label-theme="green" branch-dim="0.30">
  *    <flow-step title="Step 1">HTML content</flow-step>
- *    <flow-step title="Step 2" header-color="lavender" border-color="indigo">…</flow-step>
+ *    <flow-step title="Step 2" header-color="violet" border-color="indigo">…</flow-step>
  *    <flow-branch>
- *      <branch-option label="方案 A" theme="teal">
+ *      <branch-option label="方案 A" theme="green">
  *        <flow-step title="A-1">…</flow-step>
  *        <flow-step title="A-2">…</flow-step>
  *      </branch-option>
- *      <branch-option label="方案 B" theme="salmon">
+ *      <branch-option label="方案 B" theme="orange">
  *        <flow-step title="B-1">…</flow-step>
  *      </branch-option>
  *    </flow-branch>
@@ -29,12 +29,12 @@
  *  </arrow-flow>
  *
  * ─── 全域設定 ─────────────────────────────────────────────────────────────────
- *  ArrowFlow.config({ theme:'sky', arrowTip:'lg', gap:'80px',
+ *  ArrowFlow.config({ theme:'blue', arrowTip:'lg', gap:'80px',
  *                     boxShadow:'…', borderWidth:'2px', borderRadius:'8px',
  *                     headerGradient:'down', headerAccentLine:'left',
  *                     headerFontSize:'1rem', headerLetterSpacing:'0.04em',
  *                     contentFontSize:'1.125rem', contentLineHeight:'1.5',
- *                     arrowGlow: true, branchLabelTheme:'teal', branchDim:'0.30' })
+ *                     arrowGlow: true, branchLabelTheme:'green', branchDim:'0.30' })
  *
  * ─── 樣式屬性速查（arrow-flow 層級）────────────────────────────────────────────
  *  box-shadow          — 盒子陰影，例如 "0 4px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08)"
@@ -48,7 +48,7 @@
  *  content-line-height — content 行高，預設 "1.5"
  *  arrow-glow          — 布林屬性，啟用箭頭 SVG drop-shadow
  *  arrow-style         — "solid"|"dashed"，預設 "solid"
- *  branch-label-theme  — 分支選項按鈕顏色，預設 "teal"
+ *  branch-label-theme  — 分支選項按鈕顏色，預設 "green"
  *  branch-dim          — 未選中分支的透明度 (0.78~1)，預設 "0.80"
  *
  * ─── flow-step 個別屬性 ────────────────────────────────────────────────────────
@@ -71,18 +71,23 @@
 
   /* ── 色板 ─────────────────────────────────────────────────────────────────── */
   const P = {
-    bg      : '#0C0D0C', shell   : '#C6C7BD', lavender: '#B484E8',
-    sky     : '#5DBAE8', warning : '#EF6661', salmon  : '#F79C40',
-    ocean   : '#5DBAE8', safe    : '#71CD76', teal    : '#71CD76',
-    vanilla : '#DBEDD8', yellow  : '#E3D322', focus   : '#DBEDD8',
-    special : '#71CD76', info    : '#778CE1', indigo  : '#778CE1',
-    pink    : '#FF91D7', orange  : '#F79C40',
+    bg      : '#0C0D0C', shell   : '#C6C7BD',
+    vanilla : '#DBEDD8', yellow  : '#E3D322',
+    indigo  : '#778CE1',
+    pink    : '#FF91D7', orange  : '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
     gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63',
   };
 
   /* ── 箭頭尖端尺寸 ──────────────────────────────────────────────────────────── */
@@ -120,7 +125,7 @@
     contentLineHeight : '1.5',
     arrowGlow         : false,
     /* 分支 */
-    branchLabelTheme  : 'teal',
+    branchLabelTheme  : 'green',
     branchDim         : '0.80',
   };
 
@@ -505,7 +510,7 @@ arrow-flow { display: block; }
       const cntLH       = this._o('content-line-height',   'contentLineHeight',  '1.5');
 
       /* ── 分支樣式屬性 ── */
-      const branchLabelTheme = this._o('branch-label-theme','branchLabelTheme','teal');
+      const branchLabelTheme = this._o('branch-label-theme','branchLabelTheme','green');
       const branchDim        = this._o('branch-dim',        'branchDim',       '0.80');
 
       /* ── 色彩解析 ── */
@@ -513,7 +518,7 @@ arrow-flow { display: block; }
       const baseHB = clr(hcA)   || thHex;
       const baseBD = clr(bcA)   || thHex;
       const arrClr = clr(acA)   || thHex;
-      const brBtnClr = clr(branchLabelTheme) || P.teal;
+      const brBtnClr = clr(branchLabelTheme) || P.green;
 
       /* ── on-complete ── */
       const ocId = this.getAttribute('on-complete');
@@ -1020,29 +1025,14 @@ arrow-flow { display: block; }
     customElements.define('branch-option', class extends HTMLElement {});
 
 }());
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

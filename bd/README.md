@@ -30,7 +30,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 品牌色名稱或色碼，可加 `-outline` 後綴 | `shell` | 主題色，例如 `sky`、`sky-outline`。可用名稱：`shell`、`lavender`、`special`、`warning`、`salmon`、`sky`、`ocean`、`safe`、`vanilla`、`yellow`、`focus`、`info`、`stone`、`teal`、`indigo`、`pink`、`orange`。也可用新色名 `red`、`green`、`blue`、`violet`、`gray`，舊色名會自動對應到新色票。 |
+| `theme` | 品牌色名稱或色碼，可加 `-outline` 後綴 | `shell` | 主題色，例如 `blue`、`blue-outline`。可用名稱：`shell`、`violet`、`green`、`orange`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `outline` | `true` | `false` | 外框樣式，與 `theme="xxx-outline"` 效果相同。 |
 | `size` | `xs`、`sm`、`md`、`re`、`lg`、`xl` | `re` | 尺寸。`re` 為 1.01rem，`lg` 為 1.363rem，`xl` 為 1.758rem，`md` 保留給舊頁面。 |
 | `font-size` | 長度 | 無 | 自訂字級，覆蓋 `size` 的字級。 |
@@ -110,25 +110,25 @@
 **主題、外框與圖示**
 
 ```html
-<card-badge theme="lavender" text="標籤"></card-badge>
-<card-badge theme="sky" icon="bi-bell" text="通知"></card-badge>
-<card-badge theme="safe-outline" text="完成"></card-badge>
+<card-badge theme="violet" text="標籤"></card-badge>
+<card-badge theme="blue" icon="bi-bell" text="通知"></card-badge>
+<card-badge theme="green-outline" text="完成"></card-badge>
 <card-badge theme="orange" size="lg" font-size="1.2rem" padding="4px 16px" text="大尺寸"></card-badge>
 ```
 
 **日期、截止日與計數**
 
 ```html
-<card-badge theme="sky" type="date" value="2026-11-20" format="MM/DD"></card-badge>
+<card-badge theme="blue" type="date" value="2026-11-20" format="MM/DD"></card-badge>
 <card-badge type="deadline" value="2026-11-08" warning-days="5"></card-badge>
 <card-badge theme="pink" icon="bi-bell" count="120" max-count="99"></card-badge>
-<card-badge theme="warning" dot-mode="true" count="1"></card-badge>
+<card-badge theme="red" dot-mode="true" count="1"></card-badge>
 ```
 
 **折疊、過濾與複製**
 
 ```html
-<card-badge theme="sky" icon="bi-chevron-down" text="展開說明" toggle-target="more-1"></card-badge>
+<card-badge theme="blue" icon="bi-chevron-down" text="展開說明" toggle-target="more-1"></card-badge>
 <div id="more-1">可折疊的內容。</div>
 
 <card-badge clickable="true" action="filter" data-filter="all" text="全部"></card-badge>
@@ -150,8 +150,8 @@
 <article id="article-1">這段文字的大小可以被調整。</article>
 
 <card-badge clickable="true" action="rotate-self">
-  <badge-item text="Part 1" theme="sky"></badge-item>
-  <badge-item text="Part 2" theme="lavender"></badge-item>
+  <badge-item text="Part 1" theme="blue"></badge-item>
+  <badge-item text="Part 2" theme="violet"></badge-item>
   <badge-item text="Part 3" theme="pink"></badge-item>
 </card-badge>
 

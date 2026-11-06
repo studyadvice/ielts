@@ -1,4 +1,4 @@
-/* ── 品牌色票（11 色）：shell vanilla yellow pink red orange green blue indigo violet gray ── */
+/* ── 品牌色票（17 色）：shell vanilla yellow pink red orange green blue indigo violet gray key key-deep calm quiet playful urgent ── */
 :root {
   --bp-base:       #0C0D0C;
   --bp-fill:       #333333;
@@ -8,12 +8,18 @@
   --bp-yellow:      #E3D322;
   --bp-pink:        #FF91D7;
   --bp-red:         #EF6661;
-  --bp-orange:      #F79C40;
+  --bp-orange:      #FF5530;
   --bp-green:       #71CD76;
   --bp-blue:        #5DBAE8;
   --bp-indigo:      #778CE1;
   --bp-violet:      #B484E8;
   --bp-gray:        #86877F;
+  --bp-key:           #51DBCF;
+  --bp-key-deep:      #176878;
+  --bp-calm:          #A3C4BC;
+  --bp-quiet:         #A9B8E0;
+  --bp-playful:       #FFA987;
+  --bp-urgent:        #FF2E63;
 }
 
 /* ── 文字色 ── */
@@ -31,6 +37,12 @@
 .bp-text-indigo   { color: var(--bp-indigo); }
 .bp-text-violet   { color: var(--bp-violet); }
 .bp-text-gray     { color: var(--bp-gray); }
+.bp-text-key      { color: var(--bp-key); }
+.bp-text-key-deep { color: var(--bp-key-deep); }
+.bp-text-calm     { color: var(--bp-calm); }
+.bp-text-quiet    { color: var(--bp-quiet); }
+.bp-text-playful  { color: var(--bp-playful); }
+.bp-text-urgent   { color: var(--bp-urgent); }
 
 /* ── 背景色 ── */
 .bp-bg-background { background-color: var(--bp-base); }
@@ -48,6 +60,12 @@
 .bp-bg-indigo   { background-color: var(--bp-indigo); }
 .bp-bg-violet   { background-color: var(--bp-violet); }
 .bp-bg-gray     { background-color: var(--bp-gray); }
+.bp-bg-key      { background-color: var(--bp-key); }
+.bp-bg-key-deep { background-color: var(--bp-key-deep); color: #FFFFFF; }
+.bp-bg-calm     { background-color: var(--bp-calm); }
+.bp-bg-quiet    { background-color: var(--bp-quiet); }
+.bp-bg-playful  { background-color: var(--bp-playful); }
+.bp-bg-urgent   { background-color: var(--bp-urgent); }
 
 /* ── 邊框色 ── */
 .bp-border-base       { border: 1px solid var(--bp-base); }
@@ -64,6 +82,12 @@
 .bp-border-indigo   { border: 1px solid var(--bp-indigo); }
 .bp-border-violet   { border: 1px solid var(--bp-violet); }
 .bp-border-gray     { border: 1px solid var(--bp-gray); }
+.bp-border-key      { border: 1px solid var(--bp-key); }
+.bp-border-key-deep { border: 1px solid var(--bp-key-deep); }
+.bp-border-calm     { border: 1px solid var(--bp-calm); }
+.bp-border-quiet    { border: 1px solid var(--bp-quiet); }
+.bp-border-playful  { border: 1px solid var(--bp-playful); }
+.bp-border-urgent   { border: 1px solid var(--bp-urgent); }
 
 /* ── Font sizes ──────────────────────────── */
 .fs-largest        { font-size: 5.25rem; }
@@ -226,6 +250,12 @@ blockquote::before {
 .bp-hatch-indigo   { --hatch-color: var(--bp-indigo); }
 .bp-hatch-violet   { --hatch-color: var(--bp-violet); }
 .bp-hatch-gray     { --hatch-color: var(--bp-gray); }
+.bp-hatch-key      { --hatch-color: var(--bp-key); }
+.bp-hatch-key-deep { --hatch-color: var(--bp-key-deep); }
+.bp-hatch-calm     { --hatch-color: var(--bp-calm); }
+.bp-hatch-quiet    { --hatch-color: var(--bp-quiet); }
+.bp-hatch-playful  { --hatch-color: var(--bp-playful); }
+.bp-hatch-urgent   { --hatch-color: var(--bp-urgent); }
 
 .bd-blue { font-weight: 800; color: var(--bp-blue); }
 

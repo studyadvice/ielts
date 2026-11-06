@@ -8,50 +8,50 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <style>
 :root{
-  --c-base:#0C0D0C; --c-shell:#C6C7BD; --c-lavender:#C3A5E5; --c-sky:#82C8E5; --c-warning:#E6374B;
-  --c-salmon:#E5C3B3; --c-ocean:#1CCAE8; --c-safe:#27AE60; --c-teal:#0DA591; --c-vanilla:#DBEDD8;
-  --c-yellow:#E3D322; --c-focus:#D4FFFC; --c-special:#B3DE73; --c-info:#4171BF; --c-indigo:#7849C9;
-  --c-pink:#FF91D7; --c-orange:#EDA109;
+  --c-base:#0C0D0C; --c-shell:#C6C7BD; --c-violet:#B484E8; --c-blue:#5DBAE8; --c-warning:#EF6661;
+  --c-orange:#F79C40; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
+  --c-yellow:#E3D322; --c-focus:#DBEDD8; --c-green:#71CD76; --c-info:#778CE1; --c-indigo:#778CE1;
+  --c-pink:#FF91D7; --c-orange:#F79C40;
   --bs-body-bg:#0C0D0C; --bs-body-color:#C6C7BD;
 }
 body{background:var(--c-base);color:var(--c-shell);font-size:1rem}
 .wrap{max-width:1680px;margin:0 auto;padding:24px 32px 64px}
-h1{font-size:1.75rem;color:var(--c-sky);margin:0 0 6px 0}
-h2{font-size:1.25rem;color:var(--c-lavender);margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px dashed #2A2B29}
+h1{font-size:1.75rem;color:var(--c-blue);margin:0 0 6px 0}
+h2{font-size:1.25rem;color:var(--c-violet);margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px dashed #2A2B29}
 .sub{color:var(--c-shell);font-size:0.9rem;margin:0 0 16px 0}
 .badge-date{background:var(--c-indigo);color:var(--c-focus);font-size:0.75rem;padding:4px 10px;border-radius:999px;margin:0 0 0 8px;vertical-align:middle}
 .panel{background:#161816;border:1px solid #2A2B29;border-radius:10px;padding:16px 18px}
 .codebox{background:#111311;border:1px solid #2A2B29;border-radius:8px;padding:14px 16px;margin:0;overflow:auto;font-size:0.8125rem;line-height:1.7;color:var(--c-shell)}
-.codebox .k{color:var(--c-lavender)}
-.codebox .s{color:var(--c-special)}
+.codebox .k{color:var(--c-violet)}
+.codebox .s{color:var(--c-green)}
 .codebox .c{color:#8A8B84}
 .codebox .del{display:block;background:#3A1218;color:#FF9AA6}
 .codebox .add{display:block;background:#10301C;color:#8FE3AE}
 .tag-lbl{display:inline-block;font-size:0.75rem;border-radius:999px;padding:2px 10px;margin:0 0 8px 0;color:var(--c-base)}
 .lbl-before{background:var(--c-warning);color:var(--c-focus)}
-.lbl-after{background:var(--c-safe);color:var(--c-base)}
+.lbl-after{background:var(--c-green);color:var(--c-base)}
 .form-select,.form-control{background-color:#161816;color:var(--c-shell);border-color:#3A3B38}
-.form-select:focus{border-color:var(--c-ocean);box-shadow:none}
+.form-select:focus{border-color:var(--c-blue);box-shadow:none}
 .swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin:0 6px 0 0;vertical-align:-2px;border:1px solid #3A3B38}
 table{font-size:0.875rem}
 .table{--bs-table-bg:transparent;--bs-table-color:var(--c-shell);--bs-table-border-color:#2A2B29}
 .alert{font-size:0.9rem}
 .alert-info{--bs-alert-bg:#1B2A47;--bs-alert-color:#C9DAFF;--bs-alert-border-color:var(--c-info)}
-.alert-success{--bs-alert-bg:#10301C;--bs-alert-color:#B8F0CC;--bs-alert-border-color:var(--c-safe)}
+.alert-success{--bs-alert-bg:#10301C;--bs-alert-color:#B8F0CC;--bs-alert-border-color:var(--c-green)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1><i class="bi bi-lightbulb"></i> ui-insight<span class="badge-date">11-02-26 修正</span><span class="badge-date" style="background:var(--c-teal);color:var(--c-base)">v1.2 theme</span></h1>
-  <p class="sub">修正一（v1.1）：<code>hl-hot-bg</code>、<code>hl-hot-color</code> 以及其他所有顏色屬性，現在都可以直接填品牌色名稱（例如 <code>sky</code>、<code>lavender</code>、<code>base</code>），不分大小寫。</p>
+  <h1><i class="bi bi-lightbulb"></i> ui-insight<span class="badge-date">11-02-26 修正</span><span class="badge-date" style="background:var(--c-green);color:var(--c-base)">v1.2 theme</span></h1>
+  <p class="sub">修正一（v1.1）：<code>hl-hot-bg</code>、<code>hl-hot-color</code> 以及其他所有顏色屬性，現在都可以直接填品牌色名稱（例如 <code>blue</code>、<code>violet</code>、<code>base</code>），不分大小寫。</p>
   <p class="sub">修正二（v1.2）：新增 <code>theme</code> 屬性，請見第 6 節。</p>
 
   <div id="msg"></div>
 
   <h2>1. 原因</h2>
   <div class="panel">
-    <p style="margin:0 0 8px 0">元件把屬性值原封不動寫進 CSS 變數，<code>sky</code> 這類名稱不是合法的 CSS 顏色，瀏覽器會整條規則作廢，所以亮點被游標指到時沒有任何底色變化。<code>hl-hot-color</code> 與 <code>tag-color</code> 也有同樣的問題。</p>
+    <p style="margin:0 0 8px 0">元件把屬性值原封不動寫進 CSS 變數，<code>blue</code> 這類名稱不是合法的 CSS 顏色，瀏覽器會整條規則作廢，所以亮點被游標指到時沒有任何底色變化。<code>hl-hot-color</code> 與 <code>tag-color</code> 也有同樣的問題。</p>
     <p style="margin:0">解法是新增品牌色名稱對照表，所有顏色屬性在寫入 CSS 之前先轉成色碼。找不到對照名稱時，維持原值，所以 <code>#hex</code>、<code>rgb()</code>、CSS 內建顏色名稱仍然有效。</p>
   </div>
 
@@ -64,8 +64,8 @@ table{font-size:0.875rem}
 
   <div class="row g-4">
     <div class="col-12 col-xl-7">
-      <div class="tag-lbl lbl-after">範例 A　hl-hot-bg="sky"　hl-hot-color="base"</div>
-      <ui-insight hl-hot-bg="sky" hl-hot-color="base" hl-line-color="sky" sup-color="sky" start="1">
+      <div class="tag-lbl lbl-after">範例 A　hl-hot-bg="blue"　hl-hot-color="base"</div>
+      <ui-insight hl-hot-bg="blue" hl-hot-color="base" hl-line-color="blue" sup-color="blue" start="1">
         <ins-line heading="Part 2 開場">
           I'd like to talk about a <hl word="turning point" tag="lr" why="名詞片語，指人生的轉捩點，比 an important moment 更具體。">turning point</hl> in my life.
         </ins-line>
@@ -77,8 +77,8 @@ table{font-size:0.875rem}
         </ins-line>
       </ui-insight>
 
-      <div class="tag-lbl lbl-after" style="margin-top:20px">範例 B　hl-hot-bg="lavender"　tag-color="orange"</div>
-      <ui-insight hl-hot-bg="LAVENDER" hl-hot-color="base" hl-line-color="lavender" sup-color="lavender" note-word-color="lavender" note-num-bg="lavender" card-active-border="lavender">
+      <div class="tag-lbl lbl-after" style="margin-top:20px">範例 B　hl-hot-bg="violet"　tag-color="orange"</div>
+      <ui-insight hl-hot-bg="LAVENDER" hl-hot-color="base" hl-line-color="violet" sup-color="violet" note-word-color="violet" note-num-bg="violet" card-active-border="violet">
         <ins-line heading="大小寫不拘">
           She <hl word="took it in her stride" tag="自訂標籤" tag-color="orange" why="tag-color 也能填色名，這裡用 orange。意思是從容面對。">took it in her stride</hl> and kept going.
         </ins-line>
@@ -103,7 +103,7 @@ _tagHtml(nt) {
 
       <div class="tag-lbl lbl-after" style="margin-top:16px">修正後</div>
       <pre class="codebox"><span class="c">// 新增：色名對照與顏色屬性清單</span>
-<span class="add">const COLOR_NAMES = { base:'#0C0D0C', shell:'#C6C7BD', sky:'#82C8E5', ... };
+<span class="add">const COLOR_NAMES = { base:'#0C0D0C', shell:'#C6C7BD', blue:'#5DBAE8', ... };
 const COLOR_ATTRS = new Set(['bg','hl-hot-bg','hl-hot-color', ...]);
 const resolveColor = (v) => { ...查表，找不到就回傳原值 };</span>
 
@@ -132,7 +132,7 @@ _tagHtml(nt) {
         <select id="selFg" class="form-select"></select>
       </div>
       <div class="col-12 col-md-4">
-        <code id="liveCode" style="font-size:0.8125rem;color:var(--c-special)"></code>
+        <code id="liveCode" style="font-size:0.8125rem;color:var(--c-green)"></code>
       </div>
     </div>
   </div>
@@ -147,9 +147,9 @@ _tagHtml(nt) {
   </ui-insight>
 
   <h2>5. 使用方式</h2>
-  <pre class="codebox">&lt;ui-insight hl-hot-bg="sky" hl-hot-color="base"&gt;
+  <pre class="codebox">&lt;ui-insight hl-hot-bg="blue" hl-hot-color="base"&gt;
   &lt;ins-line heading="標題"&gt;
-    It &lt;hl word="dawned on me" tag="gra" tag-color="lavender" why="說明文字"&gt;dawned on me&lt;/hl&gt; that ...
+    It &lt;hl word="dawned on me" tag="gra" tag-color="violet" why="說明文字"&gt;dawned on me&lt;/hl&gt; that ...
   &lt;/ins-line&gt;
 &lt;/ui-insight&gt;</pre>
 
@@ -174,12 +174,12 @@ _tagHtml(nt) {
             <select id="selOver" class="form-select"></select>
           </div>
           <div class="col-12 col-md-4">
-            <code id="themeCode" style="font-size:0.8125rem;color:var(--c-special)"></code>
+            <code id="themeCode" style="font-size:0.8125rem;color:var(--c-green)"></code>
           </div>
         </div>
       </div>
 
-      <ui-insight id="themeLive" theme="lavender">
+      <ui-insight id="themeLive" theme="violet">
         <ins-line heading="游標移到亮點上，觀察 theme 與覆蓋色">
           It <hl word="dawned on me" tag="gra" why="慣用片語，表示突然理解某件事。">dawned on me</hl> that I had been <hl word="avoiding the real problem" tag="lr" why="avoid 後面接動名詞，說明逃避的對象。">avoiding the real problem</hl>.
         </ins-line>
@@ -201,7 +201,7 @@ _css(name) {
       <div class="tag-lbl lbl-after" style="margin-top:16px">修改後（v1.2）</div>
       <pre class="codebox"><span class="c">// 新增：主題表（只列出與預設不同的顏色）</span>
 <span class="add">const accentTheme = (a, on = 'base') => ({ 'hl-hot-bg': a, 'hl-hot-color': on, ... });
-const THEMES = { default: {}, lavender: accentTheme('lavender'), ... };</span>
+const THEMES = { default: {}, violet: accentTheme('violet'), ... };</span>
 
 _css(name) {
   const v = this.getAttribute(name);
@@ -220,9 +220,9 @@ _css(name) {
   <div class="tag-lbl lbl-after" style="margin-top:28px">範例 E　theme 搭配個別屬性覆蓋</div>
   <div class="row g-4">
     <div class="col-12 col-xl-7">
-      <ui-insight theme="teal" hl-hot-bg="pink" card-active-border="orange">
-        <ins-line heading="theme=teal，只覆蓋兩個屬性">
-          She <hl word="took it in her stride" tag="lr" why="亮點底色被覆蓋成 pink，其他顏色（底線、上標、說明編號）仍是 teal。">took it in her stride</hl> and kept going.
+      <ui-insight theme="green" hl-hot-bg="pink" card-active-border="orange">
+        <ins-line heading="theme=green，只覆蓋兩個屬性">
+          She <hl word="took it in her stride" tag="lr" why="亮點底色被覆蓋成 pink，其他顏色（底線、上標、說明編號）仍是 green。">took it in her stride</hl> and kept going.
         </ins-line>
         <ins-line heading="卡片外框被覆蓋成 orange">
           That was <hl word="a blessing in disguise" tag="lr" why="塞翁失馬，表面是壞事，後來變成好事。">a blessing in disguise</hl>.
@@ -230,7 +230,7 @@ _css(name) {
       </ui-insight>
     </div>
     <div class="col-12 col-xl-5">
-      <pre class="codebox">&lt;ui-insight <span class="s">theme="teal"</span>
+      <pre class="codebox">&lt;ui-insight <span class="s">theme="green"</span>
             <span class="s">hl-hot-bg="pink"</span>
             <span class="s">card-active-border="orange"</span>&gt;
   ...
@@ -245,9 +245,9 @@ _css(name) {
 <script>
 (() => {
   const NAMES = {
-    base:'#0C0D0C', shell:'#C6C7BD', lavender:'#C3A5E5', sky:'#82C8E5', warning:'#E6374B', salmon:'#E5C3B3',
-    ocean:'#1CCAE8', safe:'#27AE60', teal:'#0DA591', vanilla:'#DBEDD8', yellow:'#E3D322', focus:'#D4FFFC',
-    special:'#B3DE73', info:'#4171BF', indigo:'#7849C9', pink:'#FF91D7', orange:'#EDA109'
+    base:'#0C0D0C', shell:'#C6C7BD', violet:'#B484E8', blue:'#5DBAE8', red:'#EF6661', orange:'#F79C40',
+    blue:'#5DBAE8', green:'#71CD76', green:'#71CD76', vanilla:'#DBEDD8', yellow:'#E3D322', vanilla:'#DBEDD8',
+    green:'#71CD76', indigo:'#778CE1', indigo:'#778CE1', pink:'#FF91D7', orange:'#F79C40'
   };
 
   const sw = document.getElementById('swatches');
@@ -299,7 +299,7 @@ _css(name) {
   selTheme.innerHTML = THEMES.map((t) => `<option value="${t}">${t}</option>`).join('');
   selOver.innerHTML = '<option value="">（不覆蓋）</option>' +
     Object.keys(NAMES).map((n) => `<option value="${n}">${n}</option>`).join('');
-  selTheme.value = 'lavender';
+  selTheme.value = 'violet';
 
   const syncTheme = (notify) => {
     themeLive.setAttribute('theme', selTheme.value);
@@ -319,7 +319,7 @@ _css(name) {
   const grid = document.getElementById('themeGrid');
   grid.innerHTML = THEMES.map((t) => `
     <div class="col-12 col-xl-6">
-      <div class="tag-lbl" style="background:#2A2B29;color:var(--c-shell)"><code style="color:var(--c-special)">theme="${t}"</code></div>
+      <div class="tag-lbl" style="background:#2A2B29;color:var(--c-shell)"><code style="color:var(--c-green)">theme="${t}"</code></div>
       <ui-insight theme="${t}" margin="0">
         <ins-line heading="${t}">
           It <hl word="dawned on me" tag="gra" why="游標移到亮點上，看看底色與文字色。">dawned on me</hl> that I had been <hl word="avoiding the real problem" tag="lr" why="其他亮點的說明也會跟著主題。">avoiding the real problem</hl>.

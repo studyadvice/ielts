@@ -9,21 +9,21 @@
     color-scheme: dark;
     --c-bg: #0C0D0C;
     --c-shell: #C6C7BD;
-    --c-lavender: #C3A5E5;
-    --c-sky: #82C8E5;
-    --c-warning: #E6374B;
-    --c-salmon: #E5C3B3;
-    --c-ocean: #1CCAE8;
-    --c-safe: #27AE60;
-    --c-teal: #0DA591;
+    --c-violet: #B484E8;
+    --c-blue: #5DBAE8;
+    --c-warning: #EF6661;
+    --c-orange: #F79C40;
+    --c-blue: #5DBAE8;
+    --c-green: #71CD76;
+    --c-green: #71CD76;
     --c-vanilla: #DBEDD8;
     --c-yellow: #E3D322;
-    --c-focus: #D4FFFC;
-    --c-special: #B3DE73;
-    --c-info: #4171BF;
-    --c-indigo: #7849C9;
+    --c-focus: #DBEDD8;
+    --c-green: #71CD76;
+    --c-info: #778CE1;
+    --c-indigo: #778CE1;
     --c-pink: #FF91D7;
-    --c-orange: #EDA109;
+    --c-orange: #F79C40;
   }
   * { box-sizing: border-box; }
   body {
@@ -47,10 +47,10 @@
     background: rgba(32, 33, 25, 0.92); border: 1px solid rgba(58, 59, 55, 0.9);
     color: var(--c-shell);
   }
-  .ver-nav a:hover { border-color: var(--c-ocean); color: var(--c-ocean); }
+  .ver-nav a:hover { border-color: var(--c-blue); color: var(--c-blue); }
 
   .section-title {
-    font-size: 1.25rem; line-height: 1.4; color: var(--c-special);
+    font-size: 1.25rem; line-height: 1.4; color: var(--c-green);
     margin: 64px 0 20px 0; padding-bottom: 8px;
     border-bottom: 1px solid rgba(58, 59, 55, 0.9);
   }
@@ -58,7 +58,7 @@
     margin: 80px 0 24px 0; padding: 18px 24px; border-radius: 10px;
     background: rgba(23, 24, 26, 0.94); border-left: 5px solid var(--c-indigo);
   }
-  .version-band h2 { margin: 0 0 6px 0; font-size: 1.4rem; line-height: 1.3; color: var(--c-lavender); }
+  .version-band h2 { margin: 0 0 6px 0; font-size: 1.4rem; line-height: 1.3; color: var(--c-violet); }
   .version-band p { margin: 0; font-size: 0.95rem; color: #9A9B94; }
 
   .grid-2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: start; }
@@ -71,12 +71,12 @@
     border-radius: 10px;
     padding: 24px 28px;
   }
-  .card h3 { margin: 0 0 14px 0; font-size: 1.05rem; line-height: 1.4; color: var(--c-sky); }
+  .card h3 { margin: 0 0 14px 0; font-size: 1.05rem; line-height: 1.4; color: var(--c-blue); }
   .card p { margin: 0 0 10px 0; font-size: 0.95rem; }
   .card p:last-child { margin-bottom: 0; }
   .card ul, .card ol { margin: 10px 0 0 0; padding-left: 22px; }
   .card li { margin-bottom: 8px; font-size: 0.95rem; }
-  .card b { color: var(--c-sky); }
+  .card b { color: var(--c-blue); }
 
   pre {
     background: rgba(15, 16, 14, 0.95);
@@ -90,9 +90,9 @@
     margin: 0;
   }
   pre.old { border-left: 4px solid rgba(154, 155, 148, 0.82); }
-  pre.new { border-left: 4px solid var(--c-teal); }
+  pre.new { border-left: 4px solid var(--c-green); }
   .code-label { font-size: 0.85rem; color: #9A9B94; margin: 0 0 8px 0; }
-  .code-label.new { color: var(--c-teal); }
+  .code-label.new { color: var(--c-green); }
   code { font-size: 0.9em; color: var(--c-yellow); }
 
   table.keys { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
@@ -113,7 +113,7 @@
   /* 練習用的教材區塊，純靜態，不依賴其他元件 */
   .material { padding: 8px 0; }
   .material .q-title {
-    font-size: 1.1rem; line-height: 1.4; color: var(--c-teal);
+    font-size: 1.1rem; line-height: 1.4; color: var(--c-green);
     margin: 0 0 14px 0; letter-spacing: 1px;
   }
   .material .zh { font-size: 1rem; color: #9A9B94; margin: 0 0 12px 0; }
@@ -133,7 +133,7 @@
   .swatch-row i { width: 14px; height: 14px; border-radius: 50%; display: block; }
 
   .tip {
-    margin-top: 20px; font-size: 0.9rem; color: var(--c-salmon);
+    margin-top: 20px; font-size: 0.9rem; color: var(--c-orange);
     background: rgba(23, 24, 26, 0.94); border-left: 4px solid var(--c-orange);
     border-radius: 8px; padding: 14px 18px;
   }
@@ -143,8 +143,8 @@
     border: 1px solid rgba(58, 59, 55, 0.9); background: rgba(32, 33, 25, 0.92);
     color: var(--c-shell); cursor: pointer; margin-right: 10px;
   }
-  .demo-btn:hover { border-color: var(--c-ocean); color: var(--c-ocean); }
-  .demo-btn.on { background: var(--c-teal); border-color: var(--c-teal); color: #07211D; font-weight: 600; }
+  .demo-btn:hover { border-color: var(--c-blue); color: var(--c-blue); }
+  .demo-btn.on { background: var(--c-green); border-color: var(--c-green); color: #07211D; font-weight: 600; }
   .state-line {
     margin-top: 16px; font-size: 0.9rem; color: var(--c-focus);
     font-variant-numeric: tabular-nums;
@@ -162,7 +162,7 @@
   .cloze:last-child { margin-bottom: 0; }
   .cloze .zh { display: block; font-size: 0.95rem; color: #9A9B94; margin-bottom: 10px; line-height: 1.5; }
   .log {
-    margin-top: 18px; font-size: 0.88rem; line-height: 1.5; color: var(--c-special);
+    margin-top: 18px; font-size: 0.88rem; line-height: 1.5; color: var(--c-green);
     background: rgba(15, 16, 14, 0.95); border: 1px solid rgba(42, 43, 40, 0.9);
     border-radius: 8px; padding: 14px 18px; min-height: 64px;
   }
@@ -248,14 +248,14 @@
   <div class="card">
     <p>下拉選單內建八個顏色，都取自既有配色表。雷射筆固定使用警示紅，不受這裡影響。</p>
     <div class="swatch-row">
-      <span><i style="background:#D4FFFC"></i>霧白 focus</span>
-      <span><i style="background:#1CCAE8"></i>海洋藍 ocean</span>
+      <span><i style="background:#DBEDD8"></i>霧白 focus</span>
+      <span><i style="background:#5DBAE8"></i>海洋藍 blue</span>
       <span><i style="background:#E3D322"></i>黃 yellow</span>
-      <span><i style="background:#B3DE73"></i>嫩綠 special</span>
+      <span><i style="background:#71CD76"></i>嫩綠 green</span>
       <span><i style="background:#FF91D7"></i>粉紅 pink</span>
-      <span><i style="background:#EDA109"></i>橙 orange</span>
-      <span><i style="background:#C3A5E5"></i>薰衣草 lavender</span>
-      <span><i style="background:#82C8E5"></i>天空藍 sky</span>
+      <span><i style="background:#F79C40"></i>橙 orange</span>
+      <span><i style="background:#B484E8"></i>薰衣草 violet</span>
+      <span><i style="background:#5DBAE8"></i>天空藍 blue</span>
     </div>
     <p style="margin-top:18px">粗細輸入框範圍 3 至 12 px，預設 3。觸控筆若回報壓力值，線寬會依壓力在設定值的 0.35 至 1.85 倍之間浮動；用滑鼠畫則維持固定寬度。</p>
   </div>

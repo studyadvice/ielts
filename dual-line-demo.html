@@ -13,17 +13,17 @@
     --bg2:      #111312;
     --bg3:      #161918;
     --shell:    #c6c7bd;
-    --lavender: #C3A5E5;
-    --special:  #b3de73;
-    --warning:  #F08080;
-    --salmon:   #E5C3B3;
-    --sky:      #95c9de;
-    --safe:     #299459;
-    --yellow:   #DECA4B;
-    --info:     #1E65C7;
-    --stone:    #7090A8;
-    --pink:     #FFB3D9;
-    --orange:   #eda109;
+    --violet: #B484E8;
+    --green:  #71CD76;
+    --warning:  #EF6661;
+    --orange:   #F79C40;
+    --blue:      #5DBAE8;
+    --green:     #71CD76;
+    --yellow:   #E3D322;
+    --info:     #778CE1;
+    --blue:    #5DBAE8;
+    --pink:     #FF91D7;
+    --orange:   #F79C40;
     --border:   #1e2320;
   }
 
@@ -43,25 +43,25 @@
     font-size: .72rem;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: var(--stone);
+    color: var(--blue);
     margin-bottom: 6px;
   }
   h1 {
     font-size: 1.8rem;
-    color: var(--special);
+    color: var(--green);
     letter-spacing: .03em;
     line-height: 1.2;
     margin-bottom: 6px;
   }
   .page-sub {
     font-size: .9rem;
-    color: var(--stone);
+    color: var(--blue);
     margin-bottom: 0;
   }
 
   h2 {
     font-size: 1rem;
-    color: var(--lavender);
+    color: var(--violet);
     letter-spacing: .05em;
     text-transform: uppercase;
     margin: 40px 0 16px;
@@ -82,7 +82,7 @@
     color: #3e4a3e;
     margin-bottom: 7px;
   }
-  .demo-label b { color: var(--stone); font-weight: normal; }
+  .demo-label b { color: var(--blue); font-weight: normal; }
 
   /* ── 垂直線示範容器 ── */
   .vr-row {
@@ -123,13 +123,13 @@
     line-height: 1.65;
     margin: 10px 0 0;
   }
-  .kw  { color: var(--lavender); }
-  .str { color: var(--safe); }
+  .kw  { color: var(--violet); }
+  .str { color: var(--green); }
   .cmt { color: #354535; font-style: italic; }
-  .tag { color: var(--sky); }
-  .atr { color: var(--salmon); }
+  .tag { color: var(--blue); }
+  .atr { color: var(--orange); }
   .val { color: var(--yellow); }
-  .fn  { color: var(--special); }
+  .fn  { color: var(--green); }
 
   /* ── 屬性表 ── */
   table {
@@ -140,7 +140,7 @@
   }
   th {
     text-align: left;
-    color: var(--lavender);
+    color: var(--violet);
     font-weight: 600;
     padding: 7px 10px 7px 0;
     border-bottom: 1px solid var(--border);
@@ -154,7 +154,7 @@
     font-size: .83rem;
   }
   td:first-child { color: var(--yellow); font-family: monospace; white-space: nowrap; }
-  td:nth-child(3) { color: var(--stone); font-size: .78rem; }
+  td:nth-child(3) { color: var(--blue); font-size: .78rem; }
 
   /* ── 色票格 ── */
   .palette-grid {
@@ -168,7 +168,7 @@
     align-items: center;
     gap: 6px;
     font-size: .75rem;
-    color: var(--stone);
+    color: var(--blue);
     font-family: monospace;
   }
   .swatch-dot {
@@ -189,9 +189,9 @@
     margin-left: 6px;
     vertical-align: middle;
   }
-  .badge-solid   { background:#1e2820; color: var(--safe); }
-  .badge-dashed  { background:#1e1a28; color: var(--lavender); }
-  .badge-dotted  { background:#28201e; color: var(--salmon); }
+  .badge-solid   { background:#1e2820; color: var(--green); }
+  .badge-dashed  { background:#1e1a28; color: var(--violet); }
+  .badge-dotted  { background:#28201e; color: var(--orange); }
 </style>
 </head>
 <body>
@@ -208,17 +208,17 @@
 
 <!-- solid -->
 <div class="card">
-  <div class="demo-label"><b>solid</b> — yellow : sky = 3:7，1px（預設）</div>
-  <dual-hr color-left="yellow" color-right="sky" ratio="3:7"></dual-hr>
+  <div class="demo-label"><b>solid</b> — yellow : blue = 3:7，1px（預設）</div>
+  <dual-hr color-left="yellow" color-right="blue" ratio="3:7"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>solid</b> — lavender : safe = 1:1，3px</div>
-  <dual-hr color-left="lavender" color-right="safe" ratio="1:1" thickness="3px"></dual-hr>
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — violet : green = 1:1，3px</div>
+  <dual-hr color-left="violet" color-right="green" ratio="1:1" thickness="3px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>solid</b> — warning : stone = 7:3，2px</div>
-  <dual-hr color-left="warning" color-right="stone" ratio="7:3" thickness="2px"></dual-hr>
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — warning : blue = 7:3，2px</div>
+  <dual-hr color-left="red" color-right="blue" ratio="7:3" thickness="2px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>solid</b> — orange : sky = 2:8，4px</div>
-  <dual-hr color-left="orange" color-right="sky" ratio="2:8" thickness="4px"></dual-hr>
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — orange : blue = 2:8，4px</div>
+  <dual-hr color-left="orange" color-right="blue" ratio="2:8" thickness="4px"></dual-hr>
 
   <div class="demo-label" style="margin-top:16px"><b>solid</b> — 自訂 hex：#ff3e80 : #00e5b0 = 5:5，2px</div>
   <dual-hr color-left="#ff3e80" color-right="#00e5b0" ratio="5:5" thickness="2px"></dual-hr>
@@ -226,38 +226,38 @@
 
 <!-- dashed -->
 <div class="card">
-  <div class="demo-label"><b>dashed</b> — yellow : sky = 3:7，1px，dash=8px gap=5px（預設）</div>
-  <dual-hr color-left="yellow" color-right="sky" ratio="3:7" line-style="dashed"></dual-hr>
+  <div class="demo-label"><b>dashed</b> — yellow : blue = 3:7，1px，dash=8px gap=5px（預設）</div>
+  <dual-hr color-left="yellow" color-right="blue" ratio="3:7" line-style="dashed"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — lavender : orange = 1:1，3px，dash=10px gap=6px</div>
-  <dual-hr color-left="lavender" color-right="orange" ratio="1:1" thickness="3px"
+  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — violet : orange = 1:1，3px，dash=10px gap=6px</div>
+  <dual-hr color-left="violet" color-right="orange" ratio="1:1" thickness="3px"
            line-style="dashed" dash="10px" gap="6px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — warning : safe = 7:3，2px，細密 dash=4px gap=3px</div>
-  <dual-hr color-left="warning" color-right="safe" ratio="7:3" thickness="2px"
+  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — warning : green = 7:3，2px，細密 dash=4px gap=3px</div>
+  <dual-hr color-left="red" color-right="green" ratio="7:3" thickness="2px"
            line-style="dashed" dash="4px" gap="3px"></dual-hr>
 
   <div class="demo-label" style="margin-top:16px"><b>dashed</b> — pink : info = 4:6，4px，寬鬆 dash=16px gap=8px</div>
-  <dual-hr color-left="pink" color-right="info" ratio="4:6" thickness="4px"
+  <dual-hr color-left="pink" color-right="indigo" ratio="4:6" thickness="4px"
            line-style="dashed" dash="16px" gap="8px"></dual-hr>
 </div>
 
 <!-- dotted -->
 <div class="card">
-  <div class="demo-label"><b>dotted</b> — yellow : sky = 5:5，4px（圓點建議 thickness ≥ dash）</div>
-  <dual-hr color-left="yellow" color-right="sky" ratio="5:5" thickness="4px"
+  <div class="demo-label"><b>dotted</b> — yellow : blue = 5:5，4px（圓點建議 thickness ≥ dash）</div>
+  <dual-hr color-left="yellow" color-right="blue" ratio="5:5" thickness="4px"
            line-style="dotted" dash="4px" gap="5px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — salmon : lavender = 3:7，8px，大圓點</div>
-  <dual-hr color-left="salmon" color-right="lavender" ratio="3:7" thickness="8px"
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — orange : violet = 3:7，8px，大圓點</div>
+  <dual-hr color-left="orange" color-right="violet" ratio="3:7" thickness="8px"
            line-style="dotted" dash="8px" gap="6px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — safe : orange = 6:4，6px</div>
-  <dual-hr color-left="safe" color-right="orange" ratio="6:4" thickness="6px"
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — green : orange = 6:4，6px</div>
+  <dual-hr color-left="green" color-right="orange" ratio="6:4" thickness="6px"
            line-style="dotted" dash="6px" gap="5px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — 細線 2px（退化為短方塊）— sky : pink = 1:1</div>
-  <dual-hr color-left="sky" color-right="pink" ratio="1:1" thickness="2px"
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — 細線 2px（退化為短方塊）— blue : pink = 1:1</div>
+  <dual-hr color-left="blue" color-right="pink" ratio="1:1" thickness="2px"
            line-style="dotted" dash="4px" gap="4px"></dual-hr>
 </div>
 
@@ -270,20 +270,20 @@
 <!-- solid -->
 <div class="vr-row">
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="yellow" color-bottom="sky" ratio="5:5" height="100px"></dual-vr>
-    <div class="vr-label">yellow:sky<br>5:5 · 1px · solid</div>
+    <dual-vr color-top="yellow" color-bottom="blue" ratio="5:5" height="100px"></dual-vr>
+    <div class="vr-label">yellow:blue<br>5:5 · 1px · solid</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="lavender" color-bottom="orange" ratio="3:7" thickness="3px" height="100px"></dual-vr>
-    <div class="vr-label">lavender:orange<br>3:7 · 3px · solid</div>
+    <dual-vr color-top="violet" color-bottom="orange" ratio="3:7" thickness="3px" height="100px"></dual-vr>
+    <div class="vr-label">violet:orange<br>3:7 · 3px · solid</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="warning" color-bottom="safe" ratio="6:4" thickness="2px" height="100px"></dual-vr>
-    <div class="vr-label">warning:safe<br>6:4 · 2px · solid</div>
+    <dual-vr color-top="red" color-bottom="green" ratio="6:4" thickness="2px" height="100px"></dual-vr>
+    <div class="vr-label">red:green<br>6:4 · 2px · solid</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="pink" color-bottom="stone" ratio="1:1" thickness="4px" height="100px"></dual-vr>
-    <div class="vr-label">pink:stone<br>1:1 · 4px · solid</div>
+    <dual-vr color-top="pink" color-bottom="blue" ratio="1:1" thickness="4px" height="100px"></dual-vr>
+    <div class="vr-label">pink:blue<br>1:1 · 4px · solid</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
     <dual-vr color-top="#ff3e80" color-bottom="#00e5b0" ratio="4:6" thickness="2px" height="100px"></dual-vr>
@@ -294,58 +294,58 @@
 <!-- dashed -->
 <div class="vr-row">
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="yellow" color-bottom="sky" ratio="5:5" height="120px"
+    <dual-vr color-top="yellow" color-bottom="blue" ratio="5:5" height="120px"
              line-style="dashed"></dual-vr>
-    <div class="vr-label">yellow:sky<br>dashed · 預設</div>
+    <div class="vr-label">yellow:blue<br>dashed · 預設</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="lavender" color-bottom="orange" ratio="3:7" thickness="3px" height="120px"
+    <dual-vr color-top="violet" color-bottom="orange" ratio="3:7" thickness="3px" height="120px"
              line-style="dashed" dash="10px" gap="6px"></dual-vr>
-    <div class="vr-label">lavender:orange<br>3:7 · 3px · dashed</div>
+    <div class="vr-label">violet:orange<br>3:7 · 3px · dashed</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="warning" color-bottom="safe" ratio="6:4" thickness="2px" height="120px"
+    <dual-vr color-top="red" color-bottom="green" ratio="6:4" thickness="2px" height="120px"
              line-style="dashed" dash="4px" gap="3px"></dual-vr>
-    <div class="vr-label">warning:safe<br>6:4 · 細密 dashed</div>
+    <div class="vr-label">red:green<br>6:4 · 細密 dashed</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="salmon" color-bottom="info" ratio="1:1" thickness="2px" height="120px"
+    <dual-vr color-top="orange" color-bottom="indigo" ratio="1:1" thickness="2px" height="120px"
              line-style="dashed" dash="16px" gap="8px"></dual-vr>
-    <div class="vr-label">salmon:info<br>1:1 · 寬鬆 dashed</div>
+    <div class="vr-label">orange:indigo<br>1:1 · 寬鬆 dashed</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="special" color-bottom="stone" ratio="7:3" thickness="2px" height="120px"
+    <dual-vr color-top="green" color-bottom="blue" ratio="7:3" thickness="2px" height="120px"
              line-style="dashed" dash="6px" gap="4px"></dual-vr>
-    <div class="vr-label">special:stone<br>7:3 · dashed</div>
+    <div class="vr-label">green:blue<br>7:3 · dashed</div>
   </div>
 </div>
 
 <!-- dotted -->
 <div class="vr-row">
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="yellow" color-bottom="sky" ratio="5:5" thickness="4px" height="120px"
+    <dual-vr color-top="yellow" color-bottom="blue" ratio="5:5" thickness="4px" height="120px"
              line-style="dotted" dash="4px" gap="5px"></dual-vr>
-    <div class="vr-label">yellow:sky<br>4px · dotted</div>
+    <div class="vr-label">yellow:blue<br>4px · dotted</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="salmon" color-bottom="lavender" ratio="3:7" thickness="8px" height="120px"
+    <dual-vr color-top="orange" color-bottom="violet" ratio="3:7" thickness="8px" height="120px"
              line-style="dotted" dash="8px" gap="6px"></dual-vr>
-    <div class="vr-label">salmon:lavender<br>8px · 大圓點</div>
+    <div class="vr-label">orange:violet<br>8px · 大圓點</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="safe" color-bottom="orange" ratio="6:4" thickness="6px" height="120px"
+    <dual-vr color-top="green" color-bottom="orange" ratio="6:4" thickness="6px" height="120px"
              line-style="dotted" dash="6px" gap="5px"></dual-vr>
-    <div class="vr-label">safe:orange<br>6px · dotted</div>
+    <div class="vr-label">green:orange<br>6px · dotted</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="pink" color-bottom="info" ratio="1:1" thickness="10px" height="120px"
+    <dual-vr color-top="pink" color-bottom="indigo" ratio="1:1" thickness="10px" height="120px"
              line-style="dotted" dash="10px" gap="7px"></dual-vr>
     <div class="vr-label">pink:info<br>10px · 大圓點</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="sky" color-bottom="warning" ratio="2:8" thickness="2px" height="120px"
+    <dual-vr color-top="blue" color-bottom="red" ratio="2:8" thickness="2px" height="120px"
              line-style="dotted" dash="4px" gap="4px"></dual-vr>
-    <div class="vr-label">sky:warning<br>2px · dotted（細線）</div>
+    <div class="vr-label">blue:red<br>2px · dotted（細線）</div>
   </div>
 </div>
 
@@ -359,8 +359,8 @@
     &lt;dual-vr&gt; 也接受 <b>color-left</b> / <b>color-right</b>，與 color-top / color-bottom 等效
   </div>
   <div style="display:flex;align-items:center;gap:16px;padding:12px 0">
-    <dual-vr color-left="special" color-right="pink" ratio="4:6" thickness="3px" height="80px"></dual-vr>
-    <span style="font-size:.8rem;color:var(--stone)">← color-left="special" / color-right="pink"</span>
+    <dual-vr color-left="green" color-right="pink" ratio="4:6" thickness="3px" height="80px"></dual-vr>
+    <span style="font-size:.8rem;color:var(--blue)">← color-left="green" / color-right="pink"</span>
   </div>
 </div>
 
@@ -378,15 +378,15 @@
   <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
     <button onclick="setPreset('A')"
       style="background:#1a1c1a;border:1px solid #2e332e;color:var(--yellow);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
-      Preset A：salmon + stone
+      Preset A：orange + blue
     </button>
     <button onclick="setPreset('B')"
-      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--lavender);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
-      Preset B：lavender + sky · dashed
+      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--violet);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
+      Preset B：violet + blue · dashed
     </button>
     <button onclick="setPreset('C')"
-      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--safe);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
-      Preset C：safe + orange · dotted 4px
+      style="background:#1a1c1a;border:1px solid #2e332e;color:var(--green);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
+      Preset C：green + orange · dotted 4px
     </button>
   </div>
 </div>
@@ -394,8 +394,8 @@
 <pre>
 <span class="cmt">// 設定 &lt;dual-hr&gt; 全域預設</span>
 <span class="fn">DualLine</span>.configureHR({
-  colorLeft:  <span class="str">'salmon'</span>,
-  colorRight: <span class="str">'stone'</span>,
+  colorLeft:  <span class="str">'orange'</span>,
+  colorRight: <span class="str">'blue'</span>,
   ratio:      <span class="str">'6:4'</span>,
   thickness:  <span class="str">'2px'</span>,
   lineStyle:  <span class="str">'dashed'</span>,
@@ -415,7 +415,7 @@
 <span class="fn">DualLine</span>.configure({ lineStyle: <span class="str">'dotted'</span>, dash: <span class="str">'4px'</span>, gap: <span class="str">'4px'</span> });
 
 <span class="cmt">// 新增自訂色票</span>
-<span class="fn">DualLine</span>.addColor(<span class="str">'brand'</span>, <span class="str">'#299459'</span>);
+<span class="fn">DualLine</span>.addColor(<span class="str">'brand'</span>, <span class="str">'#71CD76'</span>);
 <span class="cmt">// 之後即可使用 color-left="brand"</span>
 </pre>
 
@@ -426,12 +426,12 @@
 <h2>屬性速查</h2>
 
 <div class="card">
-  <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">&lt;dual-hr&gt; 水平線</p>
+  <p style="font-size:.8rem;color:var(--blue);margin-bottom:12px">&lt;dual-hr&gt; 水平線</p>
   <table>
     <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
     <tbody>
       <tr><td>color-left</td><td>左段色彩（色票名稱或 CSS 色碼）</td><td>yellow</td></tr>
-      <tr><td>color-right</td><td>右段色彩</td><td>sky</td></tr>
+      <tr><td>color-right</td><td>右段色彩</td><td>blue</td></tr>
       <tr><td>ratio</td><td>左:右寬度比，如 3:7</td><td>5:5</td></tr>
       <tr><td>thickness</td><td>線條高度</td><td>1px</td></tr>
       <tr><td>margin</td><td>上下外距</td><td>8px 0</td></tr>
@@ -441,12 +441,12 @@
     </tbody>
   </table>
 
-  <p style="font-size:.8rem;color:var(--stone);margin-top:20px;margin-bottom:12px">&lt;dual-vr&gt; 垂直線</p>
+  <p style="font-size:.8rem;color:var(--blue);margin-top:20px;margin-bottom:12px">&lt;dual-vr&gt; 垂直線</p>
   <table>
     <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
     <tbody>
       <tr><td>color-top</td><td>上段色彩（可用 color-left 別名）</td><td>yellow</td></tr>
-      <tr><td>color-bottom</td><td>下段色彩（可用 color-right 別名）</td><td>sky</td></tr>
+      <tr><td>color-bottom</td><td>下段色彩（可用 color-right 別名）</td><td>blue</td></tr>
       <tr><td>ratio</td><td>上:下高度比</td><td>5:5</td></tr>
       <tr><td>thickness</td><td>線條寬度</td><td>1px</td></tr>
       <tr><td>height</td><td>線條總高度</td><td>80px</td></tr>
@@ -473,10 +473,10 @@
 <script>
   // ── 色票格 ─────────────────────────────────────────────────
   const PALETTE_COLORS = {
-    shell:'#c6c7bd', lavender:'#C3A5E5', special:'#b3de73',
-    warning:'#F08080', salmon:'#E5C3B3', sky:'#95c9de',
-    safe:'#299459', yellow:'#DECA4B', info:'#1E65C7',
-    stone:'#7090A8', pink:'#FFB3D9', orange:'#eda109',
+    shell:'#c6c7bd', violet:'#B484E8', green:'#71CD76',
+    red:'#EF6661', orange:'#F79C40', blue:'#5DBAE8',
+    green:'#71CD76', yellow:'#E3D322', indigo:'#778CE1',
+    blue:'#5DBAE8', pink:'#FF91D7', orange:'#F79C40',
   };
   const grid = document.getElementById('palette-grid');
   Object.entries(PALETTE_COLORS).forEach(([name, hex]) => {
@@ -488,9 +488,9 @@
 
   // ── 全域配置 Demo ──────────────────────────────────────────
   const presets = {
-    A: { colorLeft:'salmon',   colorRight:'stone',    ratio:'6:4', thickness:'2px', lineStyle:'solid'  },
-    B: { colorLeft:'lavender', colorRight:'sky',      ratio:'5:5', thickness:'2px', lineStyle:'dashed', dash:'8px',  gap:'5px' },
-    C: { colorLeft:'safe',     colorRight:'orange',   ratio:'4:6', thickness:'4px', lineStyle:'dotted', dash:'4px',  gap:'4px' },
+    A: { colorLeft:'orange',   colorRight:'blue',    ratio:'6:4', thickness:'2px', lineStyle:'solid'  },
+    B: { colorLeft:'violet', colorRight:'blue',      ratio:'5:5', thickness:'2px', lineStyle:'dashed', dash:'8px',  gap:'5px' },
+    C: { colorLeft:'green',     colorRight:'orange',   ratio:'4:6', thickness:'4px', lineStyle:'dotted', dash:'4px',  gap:'4px' },
   };
   function setPreset(key) {
     // 只更新 #api-demo-hr 這一條，示範動態切換

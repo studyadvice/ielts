@@ -11,20 +11,20 @@
   :root {
     --bg:      #0C0D0C;
     --shell:   #C6C7BD;
-    --sky:     #95c9de;
-    --safe:    #299459;
-    --teal:    #0DA591;
-    --yellow:  #DECA4B;
-    --lavender:#C3A5E5;
-    --salmon:  #E5C3B3;
-    --special: #b3de73;
-    --orange:  #EDA109;
-    --warning: #F08080;
-    --ocean:   #0ABDC6;
-    --info:    #1E65C7;
-    --indigo:  #9B72CF;
-    --pink:    #FFB3D9;
-    --focus:   #E0BE79;
+    --blue:     #5DBAE8;
+    --green:    #71CD76;
+    --green:    #71CD76;
+    --yellow:  #E3D322;
+    --violet:#B484E8;
+    --orange:  #F79C40;
+    --green: #71CD76;
+    --orange:  #F79C40;
+    --warning: #EF6661;
+    --blue:   #5DBAE8;
+    --info:    #778CE1;
+    --indigo:  #778CE1;
+    --pink:    #FF91D7;
+    --focus:   #DBEDD8;
     --vanilla: #DBEDD8;
     --dim:     rgba(198,199,189,.42);
   }
@@ -46,7 +46,7 @@
 
   h1 {
     font-size: 1.5rem; font-weight: 700;
-    color: var(--special);
+    color: var(--green);
     margin-bottom: 4px;
     letter-spacing: .04em;
   }
@@ -67,9 +67,9 @@
     letter-spacing: .1em; text-transform: uppercase;
     padding: 3px 11px; border-radius: 99px; border: 1px solid;
   }
-  .badge-dropdown  { color: var(--sky);     border-color: var(--sky);     background: rgba(149,201,222,.08); }
-  .badge-dots      { color: var(--special); border-color: var(--special); background: rgba(179,222,115,.08); }
-  .badge-dots-ext  { color: var(--lavender);border-color: var(--lavender);background: rgba(195,165,229,.08); }
+  .badge-dropdown  { color: var(--blue);     border-color: var(--blue);     background: rgba(149,201,222,.08); }
+  .badge-dots      { color: var(--green); border-color: var(--green); background: rgba(179,222,115,.08); }
+  .badge-dots-ext  { color: var(--violet);border-color: var(--violet);background: rgba(195,165,229,.08); }
   .badge-combo     { color: var(--orange);  border-color: var(--orange);  background: rgba(237,161,9,.08);   }
 
   .section-title { font-size: 1.05rem; font-weight: 600; color: var(--shell); }
@@ -95,12 +95,12 @@
   .tip-box {
     margin-top: 14px; padding: 11px 16px;
     border-radius: 8px;
-    border-left: 3px solid var(--ocean);
+    border-left: 3px solid var(--blue);
     background: rgba(10,189,198,.07);
     font-size: .88rem; color: rgba(198,199,189,.80);
     line-height: 1.55;
   }
-  .tip-box b { color: var(--ocean); }
+  .tip-box b { color: var(--blue); }
 
   /* 即時切換按鈕 */
   .switcher { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
@@ -120,7 +120,7 @@
   /* dots-pos 切換 */
   .pos-btn.is-active {
     background: rgba(195,165,229,.14);
-    border-color: var(--lavender); color: var(--lavender);
+    border-color: var(--violet); color: var(--violet);
   }
 </style>
 </head>
@@ -145,7 +145,7 @@
     </p>
     <chunk-demo
       mode="dropdown"
-      theme="sky"
+      theme="blue"
       show-preview="true"
       sentence="She {0} to the store because she {1} some milk."
       translation="她去商店，因為她需要一些牛奶。">
@@ -176,7 +176,7 @@
     </p>
     <chunk-demo
       mode="dots"
-      theme="special"
+      theme="green"
       show-preview="true"
       sentence="The report must be {0} by Friday, and all figures should be {1}."
       translation="報告必須在星期五前提交，所有數字都應該被驗證。">
@@ -209,7 +209,7 @@
     <chunk-demo
       mode="dots-ext"
       dots-pos="bottom"
-      theme="lavender"
+      theme="violet"
       show-preview="true"
       show-translation="true"
       sentence="Despite {0} weather, the team {1} the summit before dawn."
@@ -245,7 +245,7 @@
     <chunk-demo
       mode="dots-ext"
       dots-pos="top"
-      theme="warning"
+      theme="red"
       show-preview="true"
       sentence="He spoke in a {0} tone that made everyone feel {1}.">
       <cd-chunk id="0" label="Tone">
@@ -281,7 +281,7 @@
         <chunk-demo
           mode="dots-ext"
           dots-pos="bottom"
-          theme="stone"
+          theme="blue"
           sentence="The data was {0} and the results were {1}.">
           <cd-chunk id="0">
             <cd-level level="1">collected</cd-level>
@@ -300,7 +300,7 @@
         <chunk-demo
           mode="dots-ext"
           dots-pos="bottom"
-          theme="stone"
+          theme="blue"
           sentence="The data was {0} and the results were {1}.">
           <cd-chunk id="0" label="動詞（被動）">
             <cd-level level="1">collected</cd-level>

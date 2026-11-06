@@ -17,8 +17,8 @@ body {
   min-width: 1200px;
   padding: 24px 32px 120px;
 }
-h1 { color: #1CCAE8; font-size: 2rem; line-height: 1.4; margin-bottom: 8px; }
-h2 { color: #82C8E5; font-size: 1.5rem; line-height: 1.4; margin-bottom: 16px; }
+h1 { color: #5DBAE8; font-size: 2rem; line-height: 1.4; margin-bottom: 8px; }
+h2 { color: #5DBAE8; font-size: 1.5rem; line-height: 1.4; margin-bottom: 16px; }
 p, li { font-size: 1.125rem; line-height: 1.5; }
 code { color: #E3D322; font-size: 1.125rem; }
 
@@ -37,7 +37,7 @@ code { color: #E3D322; font-size: 1.125rem; }
   border: 1px solid #C6C7BD;
   border-radius: 10px;
 }
-.demo-status b { color: #D4FFFC; }
+.demo-status b { color: #DBEDD8; }
 .demo-status .demo-gold { color: #D4AF37; font-weight: 700; }
 
 .demo-alerts { min-height: 8px; margin-bottom: 16px; }
@@ -48,21 +48,21 @@ code { color: #E3D322; font-size: 1.125rem; }
   margin: 0 0 24px;
   padding: 24px 32px;
   background: #141514;
-  border-left: 4px solid #0DA591;
+  border-left: 4px solid #71CD76;
   border-radius: 6px;
 }
 .demo-btn {
   padding: 8px 20px;
-  border: 1px solid #1CCAE8;
+  border: 1px solid #5DBAE8;
   border-radius: 6px;
   background: transparent;
-  color: #1CCAE8;
+  color: #5DBAE8;
   font-size: 1.125rem;
   line-height: 1.5;
   cursor: pointer;
 }
-.demo-btn:hover { background: #1CCAE8; color: #0C0D0C; }
-.demo-btn:disabled { border-color: #27AE60; color: #27AE60; background: transparent; cursor: default; }
+.demo-btn:hover { background: #5DBAE8; color: #0C0D0C; }
+.demo-btn:disabled { border-color: #71CD76; color: #71CD76; background: transparent; cursor: default; }
 .demo-btn-gold { border-color: #D4AF37; color: #D4AF37; }
 .demo-btn-gold:hover { background: #D4AF37; color: #0C0D0C; }
 </style>
@@ -87,22 +87,22 @@ code { color: #E3D322; font-size: 1.125rem; }
     <p>section 的可見面積達到門檻（預設 40%），或可見高度佔視窗高度的 40% 以上，且連續停留 2 秒，才算一次有效瀏覽。快速捲過不會被計入。</p>
   </section>
 
-  <section id="demo-s2" class="demo-section" data-btn-style="outline" data-btn-text="標記完成" data-btn-color="teal">
+  <section id="demo-s2" class="demo-section" data-btn-style="outline" data-btn-text="標記完成" data-btn-color="green">
     <h2>第二段：牆鐘時間</h2>
     <p>時間從頁面載入那一刻起算，切換分頁也照常累積。分頁切回來時會立刻重新檢查條件。</p>
   </section>
 
-  <section id="demo-s3" class="demo-section" data-btn-style="pill" data-btn-text="我讀完了" data-btn-color="special" data-btn-size="lg">
+  <section id="demo-s3" class="demo-section" data-btn-style="pill" data-btn-text="我讀完了" data-btn-color="green" data-btn-size="lg">
     <h2>第三段：不打斷閱讀</h2>
     <p>條件達成後，會等到捲動停止約 1.5 秒才彈出。若有其他 Modal 或 offcanvas 正開著，則延後到關閉之後。</p>
   </section>
 
-  <section id="demo-s4" class="demo-section" data-btn-style="ghost" data-btn-text="標記完成" data-btn-color="sky" data-btn-align="end">
+  <section id="demo-s4" class="demo-section" data-btn-style="ghost" data-btn-text="標記完成" data-btn-color="blue" data-btn-align="end">
     <h2>第四段：只顯示一次</h2>
     <p>不使用 sessionStorage 或 localStorage。同一次載入只會自動彈出一次，重新整理頁面後會重新計算。</p>
   </section>
 
-  <section id="demo-s5" class="demo-section" data-btn-style="block" data-btn-text="完成這一段" data-btn-color="lavender">
+  <section id="demo-s5" class="demo-section" data-btn-style="block" data-btn-text="完成這一段" data-btn-color="violet">
     <h2>第五段：只看累計時間</h2>
     <p>把 <code>data-promo-min-sections</code> 設為 0，就不再要求瀏覽 section 數量，只看累計時間，適合 section 很少的頁面。</p>
   </section>

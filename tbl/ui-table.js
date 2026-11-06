@@ -3,50 +3,35 @@
 
   var BRAND = {
     shell:    '#C6C7BD',
-    lavender: '#B484E8',
-    special:  '#71CD76',
-    warning:  '#EF6661',
-    salmon:   '#F79C40',
-    sky:      '#5DBAE8',
-    ocean:    '#5DBAE8',
-    safe:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    info:     '#778CE1',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    focus:    '#DBEDD8',
-    orange:   '#F79C40',
-    teal:     '#71CD76',
+    orange:   '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
-    gray: '#86877F'
+    gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
 
   var BG = '#0C0D0C';
 
-  /* 文字色彩快捷標籤：<c1>～<c21> 依 BRAND 的定義順序對應品牌色彩（括號內為新色票的顏色）
-     c1 shell            c2 lavender(violet)  c3 special(green)  c4 warning(red)
-     c5 salmon(orange)   c6 sky(blue)         c7 ocean(blue)     c8 safe(green)
-     c9 vanilla          c10 yellow           c11 info(indigo)   c12 indigo
-     c13 pink            c14 focus(vanilla)   c15 orange         c16 teal(green)
-     c17 red             c18 green            c19 blue           c20 violet        c21 gray
-     可以寫在 ui-col、cell-item 的內容，以及 extra-info 的來源區塊裡 */
-  var C_TAGS = Object.keys(BRAND);
-
+  /* 色名標籤 <c-blue>、<c-key> 等的文字色由共用樣式提供；
+     inverse 格子的底色是亮色，這裡把色名標籤改成「深色字＋品牌色底」的小標籤，key-deep 底色較深改用白字 */
   function colorTagCSS() {
-    return C_TAGS.map(function (k, i) {
-      var t = 'c' + (i + 1), c = BRAND[k];
-      return '.uit-wrap ' + t + ',.uit-pop ' + t + '{color:' + c + '}\n' +
-        /* inverse 格子的底色是亮色，色彩文字改成「深色字＋品牌色底」的小標籤才看得清楚 */
-        '.uit-wrap .uit-col.is-inv ' + t + '{color:' + BG + ';background:' + c + ';padding:0 4px}';
-    }).concat(Object.keys(BRAND).map(function (k) {
-      /* 色名標籤 <c-blue> 等的顏色由共用樣式提供，這裡只處理 inverse 格子 */
-      return '.uit-wrap .uit-col.is-inv c-' + k + '{color:' + BG + ';background:' + BRAND[k] + ';padding:0 4px}';
-    })).join('\n');
+    return Object.keys(BRAND).map(function (k) {
+      var fg = k === 'key-deep' ? '#FFFFFF' : BG;
+      return '.uit-wrap .uit-col.is-inv c-' + k + '{color:' + fg + ';background:' + BRAND[k] + ';padding:0 4px}';
+    }).join('\n');
   }
 
   var CFG = global.UiTableConfig = Object.assign({
@@ -73,7 +58,7 @@
     flashSpeed:         1600,      /* 注意力動畫：繞一圈的時間（毫秒），數字越小越快 */
     flashLoops:         2,         /* 注意力動畫：繞幾圈 */
     flashLength:        0.22,      /* 注意力動畫：光帶長度佔周長的比例（0.05～0.9） */
-    transTheme:         'sky',     /* ui-trans 預設色彩 */
+    transTheme:         'blue',     /* ui-trans 預設色彩 */
     transHintStyle:     'dashed',  /* ui-trans 預設標示樣式 */
     transDelay:         60,        /* ui-trans 滑鼠移入後多久顯示（毫秒），避免滑過時閃爍 */
     transWidth:         '',        /* ui-trans popover 寬度，空字串 = 依內容自動（最寬 420px） */
@@ -155,7 +140,7 @@
   var MASK_GRADIENTS = {
     '1': 'linear-gradient(135deg,#0d0814 0%,#1e1040 45%,#778CE1 100%)',
     '2': 'linear-gradient(135deg,#041418 0%,#073540 45%,#5DBAE8 100%)',
-    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#F79C40 100%)',
+    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#FF5530 100%)',
     '4': 'linear-gradient(135deg,#1a060e 0%,#5e1535 50%,#FF91D7 100%)',
     '5': 'linear-gradient(135deg,#041208 0%,#083820 50%,#71CD76 100%)',
     '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#778CE1 80%,#778CE1 100%)'
@@ -1270,7 +1255,7 @@
         return colEl.getAttribute(name) || rowEl.getAttribute(name) || '';
       }
       var size  = normSize(pick('arrow-size'), normSize(CFG.arrowSize, '1.5rem'));
-      var color = resolveColor(pick('arrow-color')) || resolveColor(CFG.arrowColor) || BRAND.focus;
+      var color = resolveColor(pick('arrow-color')) || resolveColor(CFG.arrowColor) || BRAND.vanilla;
       var pos   = (pick('arrow-pos') || CFG.arrowPos || 'center').toLowerCase();
       if (pos === 'middle') pos = 'center';
       if (pos !== 'top' && pos !== 'bottom') pos = 'center';
@@ -1925,7 +1910,7 @@
 
   /* ---------- 注意力動畫（彩虹光帶繞格子） ---------- */
 
-  /* 彩虹順序用品牌色：warning 紅、orange 橙、yellow 黃、safe 綠、ocean 青、info 藍、indigo 靛、pink 紫，最後回到紅 */
+  /* 彩虹順序用品牌色：red 紅、orange 橙、yellow 黃、green 綠、blue 青、indigo 藍、violet 紫、pink 粉，最後回到紅 */
   var FLASH_COLORS = [BRAND.red, BRAND.orange, BRAND.yellow, BRAND.green,
                       BRAND.blue, BRAND.indigo, BRAND.violet, BRAND.pink, BRAND.red];
 
@@ -2098,7 +2083,7 @@
   }
 
   /* ---------- ui-trans 行內翻譯 ---------- */
-  /* <ui-trans source="來源div的id" theme="sky" hint-style="dashed">a tiny flat</ui-trans>
+  /* <ui-trans source="來源div的id" theme="blue" hint-style="dashed">a tiny flat</ui-trans>
      滑鼠移入時讀取來源區塊的內容，以 popover 顯示。
      hint-style：dashed（預設，虛底線）、pill-fill、pill-outline、square-fill、icon（文字上方顯示 bi-translate） */
   var HINT_STYLES = ['dashed', 'pill-fill', 'pill-outline', 'square-fill', 'icon'];
@@ -2164,7 +2149,7 @@
       }
       return;
     }
-    var color = anchor._uitTrc || BRAND.sky;
+    var color = anchor._uitTrc || BRAND.blue;
     var el = tpEl();
     el.innerHTML = src.innerHTML;          /* 移入當下才讀取，內容之後有變動也會顯示最新的 */
     el.style.borderColor = color;
@@ -2197,11 +2182,11 @@
     if (el._uitt) return;
     el._uitt = true;
 
-    var theme = el.getAttribute('theme') || CFG.transTheme || 'sky';
+    var theme = el.getAttribute('theme') || CFG.transTheme || 'blue';
     var color = resolveColor(theme);
     if (!color) {
-      console.warn('[ui-table] ui-trans theme="' + theme + '" 不是有效的色彩，已改用 sky。');
-      color = BRAND.sky;
+      console.warn('[ui-table] ui-trans theme="' + theme + '" 不是有效的色彩，已改用 blue。');
+      color = BRAND.blue;
     }
     el._uitTrc = color;
 
@@ -2327,29 +2312,14 @@
   }
 
 })(window);
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

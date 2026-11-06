@@ -19,7 +19,7 @@
 
   h1 {
     font-size: 1.6rem;
-    color: #C3A5E5;
+    color: #B484E8;
     margin-bottom: 8px;
   }
   .subtitle {
@@ -54,7 +54,7 @@
     margin-top: 14px;
     font-size: 0.85rem;
     font-family: monospace;
-    color: #DECA4B;
+    color: #E3D322;
     min-height: 1.4em;
   }
 
@@ -75,7 +75,7 @@
     font-size: 0.85rem;
     transition: border-color .2s, color .2s;
   }
-  .btn:hover { border-color: #C3A5E5; color: #C3A5E5; }
+  .btn:hover { border-color: #B484E8; color: #B484E8; }
 
   /* ── 品牌色票展示 ─────────────────────────────────────────────────────── */
   .palette {
@@ -101,14 +101,14 @@
   .badge-new {
     font-size: 0.62rem;
     background: rgba(41,148,89,0.2);
-    color: #299459;
+    color: #71CD76;
     border-radius: 4px;
     padding: 1px 4px;
   }
   .badge-upd {
     font-size: 0.62rem;
     background: rgba(224,190,121,0.2);
-    color: #E0BE79;
+    color: #DBEDD8;
     border-radius: 4px;
     padding: 1px 4px;
   }
@@ -129,7 +129,7 @@
   <bp-stepper
     id="demo1"
     data-mode="progress"
-    data-theme="lavender"
+    data-theme="violet"
     data-card-width="200px"
     data-gap="40px">
     <bp-step>
@@ -166,7 +166,7 @@
   <bp-stepper
     id="demo2"
     data-mode="progress"
-    data-theme="sky"
+    data-theme="blue"
     data-progress-icon=""
     data-progress-text="繼續"
     data-progress-done-text="完成"
@@ -201,7 +201,7 @@
   <bp-stepper
     id="demo3"
     data-mode="progress"
-    data-theme="teal"
+    data-theme="green"
     data-progress-icon="▶"
     data-progress-text="下一步"
     data-progress-done-icon="✓"
@@ -311,7 +311,7 @@
   <bp-stepper
     id="demo6"
     data-mode="progress-show"
-    data-theme="ocean"
+    data-theme="blue"
     data-progress-icon="&#8250;"
     data-progress-done-icon="&#10003;"
     data-card-width="210px"
@@ -349,7 +349,7 @@
   <bp-stepper
     id="demo7"
     data-mode="progress-show"
-    data-theme="focus"
+    data-theme="vanilla"
     data-progress-icon="&#9654;"
     data-progress-text="展開"
     data-progress-done-icon="&#10003;"
@@ -391,7 +391,7 @@
     id="demo8"
     data-mode="progress-show"
     data-layout="vertical"
-    data-theme="salmon"
+    data-theme="orange"
     data-progress-icon="&#8250;"
     data-progress-text="下一步"
     data-progress-done-icon="&#10003;"
@@ -448,8 +448,8 @@ document.querySelectorAll('bp-stepper').forEach(el => {
 const B = window.BPStepper.BRAND;
 const palette = document.getElementById('palette');
 const meta = {
-  sky:   'upd', ocean: 'new', safe: 'upd',
-  teal:  'new', focus: 'upd', info: 'upd',
+  blue:   'upd', blue: 'new', green: 'upd',
+  green:  'new', vanilla: 'upd', indigo: 'upd',
 };
 Object.entries(B).forEach(([name, hex]) => {
   const wrap = document.createElement('div');

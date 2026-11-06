@@ -41,11 +41,11 @@
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `width` | `100%` | 元件寬度。純數字視為 px，也可寫 `50%`、`40rem`。 |
-| `theme` | `dark` | `dark`、`light`、`ocean`、`lavender`、`teal`、`pink`、`orange`、`salmon`、`sky`、`yellow`。也可用 `blue`、`green`、`red`、`violet`、`indigo`、`gray`、`vanilla`。 |
+| `theme` | `dark` | `dark`、`light`、`blue`、`violet`、`green`、`pink`、`orange`、`yellow`、`shell`、`vanilla`、`red`、`indigo`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。也可用 `blue`、`green`、`red`、`violet`、`indigo`、`gray`、`vanilla`、`shell`、`yellow`、`pink`、`orange`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `padding` | `16` | 內距。純數字視為 px，可寫兩個值，例如 `8 24`。 |
 | `font-size` | `1.125` | 內文字級。純數字視為 rem，標題與按鈕依比例縮放。 |
 | `border` | `1px solid`（主題色） | 寬度、樣式、顏色可任意省略，順序不限。顏色可用色票名稱或 hex。`none` 取消邊框。 |
-| `add-color` | `dark` 系為 `special`，`light` 為 `info` | 增加部分的文字色。 |
+| `add-color` | `dark` 系為 `green`，`light` 為 `info` | 增加部分的文字色。 |
 | `del-color` | `warning` | 減去部分的文字色，並加刪除線。 |
 | `mode` | `manual` | `manual` 為手動切換，`auto` 為自動播放。 |
 | `interval` | `2500` | 自動播放間隔，單位毫秒，最小 300。 |
@@ -137,7 +137,7 @@ document.addEventListener('layerend', () => {
 
 ```html
 <ui-layer-diff theme="light" width="560" padding="24" font-size="1.25"
-               border="2px dashed teal" add-color="indigo" del-color="orange">
+               border="2px dashed green" add-color="indigo" del-color="orange">
   <ui-layer>I use my phone a lot.</ui-layer>
   <ui-layer>I check my phone about fifty times a day.</ui-layer>
 </ui-layer-diff>
@@ -146,7 +146,7 @@ document.addEventListener('layerend', () => {
 ### 中文內容，只留下新增色
 
 ```html
-<ui-layer-diff theme="lavender" show-del="false" legend="false" width="80%">
+<ui-layer-diff theme="violet" show-del="false" legend="false" width="80%">
   <ui-layer>我喜歡看電影。</ui-layer>
   <ui-layer>我每個週末都會去電影院看一場電影。</ui-layer>
 </ui-layer-diff>

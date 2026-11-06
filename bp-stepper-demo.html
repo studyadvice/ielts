@@ -8,17 +8,17 @@
   :root {
     --bg:       #0c0d0c;
     --shell:    #c6c7bd;
-    --lavender: #C3A5E5;
-    --special:  #b3de73;
-    --warning:  #F08080;
-    --salmon:   #E5C3B3;
-    --sky:      #95c9de;
-    --safe:     #299459;
-    --yellow:   #DECA4B;
-    --info:     #1E65C7;
-    --stone:    #7090A8;
-    --pink:     #FFB3D9;
-    --orange:   #eda109;
+    --violet: #B484E8;
+    --green:  #71CD76;
+    --warning:  #EF6661;
+    --orange:   #F79C40;
+    --blue:      #5DBAE8;
+    --green:     #71CD76;
+    --yellow:   #E3D322;
+    --info:     #778CE1;
+    --blue:    #5DBAE8;
+    --pink:     #FF91D7;
+    --orange:   #F79C40;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,10 +41,10 @@
   .page-header h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--lavender);
+    color: var(--violet);
     letter-spacing: -0.02em;
   }
-  .page-header h1 span { color: var(--special); }
+  .page-header h1 span { color: var(--green); }
   .page-header p {
     color: var(--shell);
     opacity: 0.75;
@@ -55,7 +55,7 @@
     display: inline-block;
     background: rgba(195,165,229,0.15);
     border: 1px solid rgba(195,165,229,0.35);
-    color: var(--lavender);
+    color: var(--violet);
     font-size: 0.75rem;
     font-weight: 700;
     padding: 2px 10px;
@@ -77,7 +77,7 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--stone);
+    color: var(--blue);
     margin-bottom: 6px;
   }
   .section-title {
@@ -110,7 +110,7 @@
   .demo-card + .demo-card { margin-top: 0; }
   .demo-label {
     font-size: 0.75rem;
-    color: var(--stone);
+    color: var(--blue);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 12px;
@@ -152,10 +152,10 @@
   }
   .btn:hover { opacity: 0.8; }
   .btn:active { transform: scale(0.97); }
-  .btn-done    { border-color: var(--safe);    color: var(--safe);    }
-  .btn-active  { border-color: var(--special); color: var(--special); }
+  .btn-done    { border-color: var(--green);    color: var(--green);    }
+  .btn-active  { border-color: var(--green); color: var(--green); }
   .btn-error   { border-color: var(--warning); color: var(--warning); }
-  .btn-reset   { border-color: var(--stone);   color: var(--stone);   }
+  .btn-reset   { border-color: var(--blue);   color: var(--blue);   }
 
   /* ── 訊息提示 ── */
   .alert-area { min-height: 36px; margin-top: 14px; }
@@ -167,7 +167,7 @@
     font-weight: 500;
     background: rgba(41,148,89,0.12);
     border: 1px solid rgba(41,148,89,0.3);
-    color: var(--safe);
+    color: var(--green);
     animation: fadeIn .25s ease;
   }
   .alert-msg.err {
@@ -187,7 +187,7 @@
     text-align: left;
     padding: 10px 14px;
     background: rgba(255,255,255,0.04);
-    color: var(--stone);
+    color: var(--blue);
     font-weight: 600;
     font-size: 0.75rem;
     letter-spacing: 0.06em;
@@ -203,12 +203,12 @@
   .attr-table code {
     font-family: 'Consolas', 'Fira Code', monospace;
     font-size: 0.82rem;
-    color: var(--lavender);
+    color: var(--violet);
     background: rgba(195,165,229,0.1);
     padding: 2px 6px;
     border-radius: 4px;
   }
-  .attr-table .val { color: var(--special); }
+  .attr-table .val { color: var(--green); }
   .attr-table .desc { color: var(--shell); opacity: 0.75; }
 
   .two-col {
@@ -249,26 +249,26 @@
     <h1>bp-stepper <span class="badge-version">v 2.0</span></h1>
     <p>橫向／縱向步驟流程元件　·　九種主題　·　多狀態系統　·　彈性全域設定</p>
     <div class="color-swatches" style="margin-top:16px;">
-      <div class="swatch"><div class="swatch-dot" style="background:#C3A5E5"></div>lavender</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#b3de73"></div>special</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#95c9de"></div>sky</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#299459"></div>safe</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#F08080"></div>warning</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#E5C3B3"></div>salmon</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#7090A8"></div>stone</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#FFB3D9"></div>pink</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#eda109"></div>orange</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#B484E8"></div>violet</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#71CD76"></div>green</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#5DBAE8"></div>blue</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#71CD76"></div>green</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#EF6661"></div>warning</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#F79C40"></div>orange</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#5DBAE8"></div>blue</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#FF91D7"></div>pink</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#F79C40"></div>orange</div>
     </div>
   </div>
 </header>
 
 <div class="container">
 
-  <!-- ══ 1. 預設主題（lavender）═══════════════════ -->
+  <!-- ══ 1. 預設主題（violet）═══════════════════ -->
   <div class="section">
     <div class="section-label">Section 01</div>
     <div class="section-title">預設樣式</div>
-    <div class="section-desc">無任何 data 屬性，使用全域 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.defaults</code> 設定。</div>
+    <div class="section-desc">無任何 data 屬性，使用全域 <code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.defaults</code> 設定。</div>
 
     <div class="demo-card">
       <bp-stepper>
@@ -301,13 +301,13 @@
   <div class="section">
     <div class="section-label">Section 02</div>
     <div class="section-title">九種品牌主題</div>
-    <div class="section-desc">透過 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-theme=""</code> 切換。</div>
+    <div class="section-desc">透過 <code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-theme=""</code> 切換。</div>
 
     <div class="theme-grid">
-      <!-- sky -->
+      <!-- blue -->
       <div class="demo-card">
-        <div class="demo-label">data-theme="sky"</div>
-        <bp-stepper data-theme="sky">
+        <div class="demo-label">data-theme="blue"</div>
+        <bp-stepper data-theme="blue">
           <bp-step data-state="done">
             <span class="bp-step-icon">☁️</span>
             <bp-step-title>分析需求</bp-step-title>
@@ -326,10 +326,10 @@
         </bp-stepper>
       </div>
 
-      <!-- special -->
+      <!-- green -->
       <div class="demo-card">
-        <div class="demo-label">data-theme="special"</div>
-        <bp-stepper data-theme="special">
+        <div class="demo-label">data-theme="green"</div>
+        <bp-stepper data-theme="green">
           <bp-step data-state="done">
             <bp-step-title>企劃提案</bp-step-title>
             <bp-step-content>撰寫專案計畫書</bp-step-content>
@@ -345,10 +345,10 @@
         </bp-stepper>
       </div>
 
-      <!-- safe -->
+      <!-- green -->
       <div class="demo-card">
-        <div class="demo-label">data-theme="safe"</div>
-        <bp-stepper data-theme="safe">
+        <div class="demo-label">data-theme="green"</div>
+        <bp-stepper data-theme="green">
           <bp-step data-state="done">
             <bp-step-title>資料備份</bp-step-title>
             <bp-step-content>完整快照</bp-step-content>
@@ -366,8 +366,8 @@
 
       <!-- warning -->
       <div class="demo-card">
-        <div class="demo-label">data-theme="warning"</div>
-        <bp-stepper data-theme="warning">
+        <div class="demo-label">data-theme="red"</div>
+        <bp-stepper data-theme="red">
           <bp-step data-state="done">
             <bp-step-title>偵測異常</bp-step-title>
             <bp-step-content>監控觸發警示</bp-step-content>
@@ -383,10 +383,10 @@
         </bp-stepper>
       </div>
 
-      <!-- salmon（原本錯寫 data-theme="shell"，已修正） -->
+      <!-- orange（原本錯寫 data-theme="shell"，已修正） -->
       <div class="demo-card">
-        <div class="demo-label">data-theme="salmon"</div>
-        <bp-stepper data-theme="salmon">
+        <div class="demo-label">data-theme="orange"</div>
+        <bp-stepper data-theme="orange">
           <bp-step data-state="done">
             <bp-step-title>訂單確認</bp-step-title>
             <bp-step-content>付款成功</bp-step-content>
@@ -421,10 +421,10 @@
         </bp-stepper>
       </div>
 
-      <!-- stone -->
+      <!-- blue -->
       <div class="demo-card">
-        <div class="demo-label">data-theme="stone"</div>
-        <bp-stepper data-theme="stone">
+        <div class="demo-label">data-theme="blue"</div>
+        <bp-stepper data-theme="blue">
           <bp-step data-state="done">
             <bp-step-title>需求訪談</bp-step-title>
             <bp-step-content>使用者研究</bp-step-content>
@@ -466,11 +466,11 @@
   <div class="section">
     <div class="section-label">Section 03</div>
     <div class="section-title">連接線樣式</div>
-    <div class="section-desc">透過 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-connector="dashed | dotted"</code> 切換。</div>
+    <div class="section-desc">透過 <code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-connector="dashed | dotted"</code> 切換。</div>
 
     <div class="demo-card">
       <div class="demo-label">solid（預設）</div>
-      <bp-stepper data-theme="sky">
+      <bp-stepper data-theme="blue">
         <bp-step data-state="done"><bp-step-title>步驟一</bp-step-title></bp-step>
         <bp-step data-state="active"><bp-step-title>步驟二</bp-step-title></bp-step>
         <bp-step><bp-step-title>步驟三</bp-step-title></bp-step>
@@ -480,7 +480,7 @@
 
     <div class="demo-card" style="margin-top:16px;">
       <div class="demo-label">dashed</div>
-      <bp-stepper data-theme="sky" data-connector="dashed">
+      <bp-stepper data-theme="blue" data-connector="dashed">
         <bp-step data-state="done"><bp-step-title>步驟一</bp-step-title></bp-step>
         <bp-step data-state="active"><bp-step-title>步驟二</bp-step-title></bp-step>
         <bp-step><bp-step-title>步驟三</bp-step-title></bp-step>
@@ -490,7 +490,7 @@
 
     <div class="demo-card" style="margin-top:16px;">
       <div class="demo-label">dotted</div>
-      <bp-stepper data-theme="sky" data-connector="dotted">
+      <bp-stepper data-theme="blue" data-connector="dotted">
         <bp-step data-state="done"><bp-step-title>步驟一</bp-step-title></bp-step>
         <bp-step data-state="active"><bp-step-title>步驟二</bp-step-title></bp-step>
         <bp-step><bp-step-title>步驟三</bp-step-title></bp-step>
@@ -504,12 +504,12 @@
   <div class="section">
     <div class="section-label">Section 04</div>
     <div class="section-title">縱向版型</div>
-    <div class="section-desc">加入 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-layout="vertical"</code>。</div>
+    <div class="section-desc">加入 <code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">data-layout="vertical"</code>。</div>
 
     <div class="two-col">
       <div class="demo-card">
-        <div class="demo-label">vertical + stone + dashed</div>
-        <bp-stepper data-theme="stone" data-layout="vertical" data-connector="dashed" data-card-width="280px">
+        <div class="demo-label">vertical + blue + dashed</div>
+        <bp-stepper data-theme="blue" data-layout="vertical" data-connector="dashed" data-card-width="280px">
           <bp-step data-state="done">
             <bp-step-title>需求確認</bp-step-title>
             <bp-step-content>與客戶對齊目標與時程</bp-step-content>
@@ -534,8 +534,8 @@
       </div>
 
       <div class="demo-card">
-        <div class="demo-label">vertical + salmon + error 狀態</div>
-        <bp-stepper data-theme="salmon" data-layout="vertical" data-card-width="280px">
+        <div class="demo-label">vertical + orange + error 狀態</div>
+        <bp-stepper data-theme="orange" data-layout="vertical" data-card-width="280px">
           <bp-step data-state="done">
             <bp-step-title>提交申請</bp-step-title>
             <bp-step-content>填寫線上申請表</bp-step-content>
@@ -567,9 +567,9 @@
     <div class="demo-card">
       <div class="demo-label">自訂色彩、粗細、卡片寬度</div>
       <bp-stepper
-           data-color="#DECA4B"
-           data-color-active="#eda109"
-           data-color-done="#299459"
+           data-color="#E3D322"
+           data-color-active="#F79C40"
+           data-color-done="#71CD76"
            data-stroke="3px"
            data-card-width="200px"
            data-radius="6px"
@@ -596,10 +596,10 @@
   <div class="section">
     <div class="section-label">Section 06</div>
     <div class="section-title">JS API 互動</div>
-    <div class="section-desc">使用 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.setActive(el, index)</code>、<code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">setError(el, index)</code>、<code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">resetStates(el)</code> 動態控制。</div>
+    <div class="section-desc">使用 <code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.setActive(el, index)</code>、<code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">setError(el, index)</code>、<code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">resetStates(el)</code> 動態控制。</div>
 
     <div class="control-panel">
-      <bp-stepper id="api-demo" data-theme="sky">
+      <bp-stepper id="api-demo" data-theme="blue">
         <bp-step>
           <bp-step-title>蒐集資料</bp-step-title>
           <bp-step-content>API 呼叫與解析</bp-step-content>
@@ -641,7 +641,7 @@
   <div class="section">
     <div class="section-label">Section 07</div>
     <div class="section-title">data-* 屬性完整參考</div>
-    <div class="section-desc">所有屬性均可在容器或透過 <code style="color:var(--lavender);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.defaults</code> 設定全域值。</div>
+    <div class="section-desc">所有屬性均可在容器或透過 <code style="color:var(--violet);background:rgba(195,165,229,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">BPStepper.defaults</code> 設定全域值。</div>
 
     <div class="demo-card">
       <table class="attr-table">
@@ -654,16 +654,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td><code>data-theme</code></td><td>—</td><td class="val">null</td><td class="desc">主題名稱：lavender / sky / safe / special / warning / salmon / stone / pink / orange</td></tr>
+          <tr><td><code>data-theme</code></td><td>—</td><td class="val">null</td><td class="desc">主題名稱：violet / blue / green / orange / pink / shell / vanilla / yellow / red / indigo / gray / key / key-deep / calm / quiet / playful / urgent</td></tr>
           <tr><td><code>data-connector</code></td><td>—</td><td class="val">solid</td><td class="desc">連接線樣式：solid / dashed / dotted</td></tr>
           <tr><td><code>data-layout</code></td><td>—</td><td class="val">—</td><td class="desc">版型：vertical（縱向）</td></tr>
           <tr><td><code>data-auto-number</code></td><td>—</td><td class="val">true</td><td class="desc">自動注入步驟號徽章，設 false 關閉</td></tr>
-          <tr><td><code>data-color</code></td><td><code>--bps-color</code></td><td class="val">#C3A5E5</td><td class="desc">主強調色（邊框、連接線、徽章輪廓）</td></tr>
-          <tr><td><code>data-color-active</code></td><td><code>--bps-color-active</code></td><td class="val">#b3de73</td><td class="desc">進行中步驟色</td></tr>
-          <tr><td><code>data-color-done</code></td><td><code>--bps-color-done</code></td><td class="val">#299459</td><td class="desc">已完成步驟色</td></tr>
-          <tr><td><code>data-color-error</code></td><td><code>--bps-color-error</code></td><td class="val">#F08080</td><td class="desc">錯誤步驟色</td></tr>
+          <tr><td><code>data-color</code></td><td><code>--bps-color</code></td><td class="val">#B484E8</td><td class="desc">主強調色（邊框、連接線、徽章輪廓）</td></tr>
+          <tr><td><code>data-color-active</code></td><td><code>--bps-color-active</code></td><td class="val">#71CD76</td><td class="desc">進行中步驟色</td></tr>
+          <tr><td><code>data-color-done</code></td><td><code>--bps-color-done</code></td><td class="val">#71CD76</td><td class="desc">已完成步驟色</td></tr>
+          <tr><td><code>data-color-error</code></td><td><code>--bps-color-error</code></td><td class="val">#EF6661</td><td class="desc">錯誤步驟色</td></tr>
           <tr><td><code>data-text-color</code></td><td><code>--bps-text</code></td><td class="val">#c6c7bd</td><td class="desc">卡片說明文字顏色</td></tr>
-          <tr><td><code>data-title-color</code></td><td><code>--bps-title</code></td><td class="val">#C3A5E5</td><td class="desc">卡片標題顏色</td></tr>
+          <tr><td><code>data-title-color</code></td><td><code>--bps-title</code></td><td class="val">#B484E8</td><td class="desc">卡片標題顏色</td></tr>
           <tr><td><code>data-badge-bg</code></td><td><code>--bps-badge-bg</code></td><td class="val">rgba(...)</td><td class="desc">步驟號徽章背景</td></tr>
           <tr><td><code>data-card-bg</code></td><td><code>--bps-card-bg</code></td><td class="val">rgba(...)</td><td class="desc">卡片背景</td></tr>
           <tr><td><code>data-card-bg-active</code></td><td><code>--bps-card-bg-act</code></td><td class="val">rgba(...)</td><td class="desc">進行中卡片背景</td></tr>

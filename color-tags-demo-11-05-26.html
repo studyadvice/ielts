@@ -9,7 +9,7 @@
 <style>
   :root {
     --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
-    --red: #EF6661; --orange: #F79C40; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --red: #EF6661; --orange: #FF5530; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
     --violet: #B484E8; --gray: #86877F;
   }
   body { background: var(--bg); color: var(--shell); font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; }
@@ -33,14 +33,14 @@
 <body>
 <div class="page">
   <h1>色名標籤：&lt;c-blue&gt;、&lt;c-pink&gt;……</h1>
-  <p class="lead-note">修改日期 11-05-26。所有元件都支援用色名寫的文字色彩標籤，顏色對齊最新版色票；任何一個元件載入後，整頁都能使用。舊的 <code>&lt;c1&gt;</code>～<code>&lt;c16&gt;</code> 仍保留在原本的三個元件中，但號碼在不同元件代表的顏色不同，新內容請改用色名標籤。</p>
+  <p class="lead-note">修改日期 11-05-26。所有元件都支援用色名寫的文字色彩標籤，任何一個元件載入後，整頁都能使用。<br>第二次修改 11-06-26：色票擴充為 17 色，<code>orange</code> 改為朱紅 #FF5530，新增 <code>key</code>、<code>key-deep</code>、<code>calm</code>、<code>quiet</code>、<code>playful</code>、<code>urgent</code>；舊色名與數字標籤 <code>&lt;c1&gt;</code>～<code>&lt;c21&gt;</code> 一律移除，見範例 5。</p>
 
   <section class="demo">
     <h2>可用的色名</h2>
     <p class="desc">寫法是 <code>&lt;c-色名&gt;文字&lt;/c-色名&gt;</code>，可以和 <code>&lt;b&gt;</code>、<code>&lt;u&gt;</code> 互相包覆。下表直接讀取元件內的定義產生。</p>
     <div class="pair">
-      <div><p class="pair-label">新色票</p><table class="tbl" id="tbl-new"><thead><tr><th>標籤</th><th>效果</th></tr></thead><tbody></tbody></table></div>
-      <div><p class="pair-label">舊色名（自動對應到新色）</p><table class="tbl" id="tbl-old"><thead><tr><th>標籤</th><th>對應到</th><th>效果</th></tr></thead><tbody></tbody></table></div>
+      <div><p class="pair-label">17 色（深色底上的文字）</p><table class="tbl" id="tbl-new"><thead><tr><th>標籤</th><th>色碼</th><th>效果</th></tr></thead><tbody></tbody></table></div>
+      <div><p class="pair-label">當底色（key-deep 配白字，其餘配深色字）</p><table class="tbl" id="tbl-bg"><thead><tr><th>色名</th><th>效果</th></tr></thead><tbody></tbody></table></div>
     </div>
   </section>
 
@@ -64,7 +64,7 @@
 
   <section class="demo">
     <h2>範例 3：ui-insight 與 ui-detail-ladder</h2>
-    <p class="desc">原本支援 <code>&lt;c1&gt;</code>～<code>&lt;c16&gt;</code> 的兩個元件，改用色名標籤的寫法。</p>
+    <p class="desc">原本用數字標籤的兩個元件，改用色名標籤的寫法。</p>
     <div class="pair">
       <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex3"></div></div>
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre></div>
@@ -79,7 +79,27 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 5：新增六色的用途</h2>
+    <p class="desc"><code>key</code> 標重點語塊，<code>calm</code> 給放鬆的提示，<code>quiet</code> 寫備註，<code>playful</code> 用在小遊戲，<code>urgent</code> 標截止時間。<code>key-deep</code> 是底色，搭配白字當標題列。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex5"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre></div>
+    </div>
+  </section>
 </div>
+
+<template id="ex5">
+<div style="background:#176878;color:#FFFFFF;padding:10px 16px;border-radius:8px 8px 0 0;font-weight:700">Part 2：描述一個常去的地方</div>
+<div style="border:1px solid #176878;border-top:0;border-radius:0 0 8px 8px;padding:12px 16px">
+  <p class="sample">It's <c-key>a stone's throw from</c-key> my place, so I <c-key>pop in</c-key> almost every day.</p>
+  <p><c-calm>先想十秒，不用急著開口。</c-calm></p>
+  <p><c-quiet>備註：stone's throw 是誇飾，不是真的丟石頭的距離。</c-quiet></p>
+  <p><c-playful>小遊戲：你能想出三個表示「很近」的說法嗎？</c-playful></p>
+  <p><c-urgent>今晚 24:00 前交錄音檔。</c-urgent></p>
+</div>
+</template>
 
 <template id="ex1">
 <p class="sample">I've <c-blue>managed to stick to</c-blue> a daily routine, <c-pink>rain or shine</c-pink>, <b><c-orange>thanks to</c-orange></b> a gym <u><c-green>conveniently located</c-green></u> near my place.</p>
@@ -159,13 +179,14 @@
   var T = window.UiColorTags;
   Object.keys(T.colors).forEach(function (k) {
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td><code>&lt;c-' + k + '&gt;</code></td><td><c-' + k + '>Lexical Resource 詞彙資源</c-' + k + '></td>';
+    tr.innerHTML = '<td><code>&lt;c-' + k + '&gt;</code></td><td><code>' + T.colors[k] + '</code></td><td><c-' + k + '>Lexical Resource 詞彙資源</c-' + k + '></td>';
     document.querySelector('#tbl-new tbody').appendChild(tr);
   });
-  Object.keys(T.aliases).forEach(function (k) {
+  Object.keys(T.colors).forEach(function (k) {
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td><code>&lt;c-' + k + '&gt;</code></td><td><code>' + T.aliases[k] + '</code></td><td><c-' + k + '>Fluency 流暢度</c-' + k + '></td>';
-    document.querySelector('#tbl-old tbody').appendChild(tr);
+    var fg = k === 'key-deep' ? '#FFFFFF' : '#0C0D0C';
+    tr.innerHTML = '<td><code>' + k + '</code></td><td><span style="display:inline-block;padding:2px 10px;border-radius:4px;background:' + T.colors[k] + ';color:' + fg + '">Fluency 流暢度</span></td>';
+    document.querySelector('#tbl-bg tbody').appendChild(tr);
   });
 </script>
 </body>

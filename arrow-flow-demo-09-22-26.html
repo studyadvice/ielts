@@ -12,21 +12,21 @@
     :root {
       --bg:       #0C0D0C;
       --shell:    #C6C7BD;
-      --lavender: #C3A5E5;
-      --sky:      #82C8E5;
-      --warning:  #E6374B;
-      --salmon:   #E5C3B3;
-      --ocean:    #1CCAE8;
-      --safe:     #27AE60;
-      --teal:     #0DA591;
+      --violet: #B484E8;
+      --blue:      #5DBAE8;
+      --warning:  #EF6661;
+      --orange:   #F79C40;
+      --blue:    #5DBAE8;
+      --green:     #71CD76;
+      --green:     #71CD76;
       --vanilla:  #DBEDD8;
       --yellow:   #E3D322;
-      --focus:    #D4FFFC;
-      --special:  #B3DE73;
-      --info:     #2351DB;
-      --indigo:   #7849C9;
+      --focus:    #DBEDD8;
+      --green:  #71CD76;
+      --info:     #778CE1;
+      --indigo:   #778CE1;
       --pink:     #FF91D7;
-      --orange:   #EDA109;
+      --orange:   #F79C40;
     }
 
     html { scroll-behavior: smooth; }
@@ -61,7 +61,7 @@
       font-size: 2.25rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      color: var(--sky);
+      color: var(--blue);
       line-height: 1.1;
     }
     .hdr-left p {
@@ -84,7 +84,7 @@
       letter-spacing: 0.02em;
       background: rgba(130,200,229,0.12);
       border: 1px solid rgba(130,200,229,0.3);
-      color: var(--sky);
+      color: var(--blue);
     }
 
     /* ── Section wrapper ─────────────────────────────────────────── */
@@ -97,7 +97,7 @@
     .sec-title {
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--lavender);
+      color: var(--violet);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -113,7 +113,7 @@
       border: 1.5px solid rgba(195,165,229,0.5);
       font-size: 0.875rem;
       font-weight: 700;
-      color: var(--lavender);
+      color: var(--violet);
       flex-shrink: 0;
     }
     .sec-desc {
@@ -127,7 +127,7 @@
       border-radius: 3px;
       font-family: 'Cascadia Code', 'Fira Code', monospace;
       font-size: 0.9em;
-      color: var(--lavender);
+      color: var(--violet);
     }
 
     /* ── Divider ─────────────────────────────────────────────────── */
@@ -140,14 +140,14 @@
     /* ── Content helpers (inside flow-step bodies) ───────────────── */
     .af-ct ul  { padding-left: 20px; }
     .af-ct li  { margin-bottom: 4px; }
-    .af-ct b, .af-ct strong { color: var(--sky); font-weight: 700; }
-    .af-ct em  { color: var(--lavender); font-style: normal; font-weight: 600; }
-    .af-ct a   { color: var(--ocean); }
+    .af-ct b, .af-ct strong { color: var(--blue); font-weight: 700; }
+    .af-ct em  { color: var(--violet); font-style: normal; font-weight: 600; }
+    .af-ct a   { color: var(--blue); }
     .af-ct code {
       background: rgba(195,165,229,0.12);
       padding: 2px 6px; border-radius: 3px;
       font-family: monospace; font-size: 0.9em;
-      color: var(--lavender);
+      color: var(--violet);
     }
     .af-ct p { margin-top: 8px; }
     .af-ct p:first-child { margin-top: 0; }
@@ -163,7 +163,7 @@
     .result-panel h3 {
       font-size: 1.125rem;
       font-weight: 700;
-      color: var(--safe);
+      color: var(--green);
       margin-bottom: 8px;
     }
     .result-panel p {
@@ -203,15 +203,15 @@
       padding: 18px 20px;
       font-family: 'Cascadia Code', 'Fira Code', monospace;
       font-size: 0.9rem;
-      color: var(--special);
+      color: var(--green);
       flex: 0 0 auto;
       max-width: 380px;
       line-height: 1.5;
     }
-    .config-code .c-key   { color: var(--lavender); }
-    .config-code .c-str   { color: var(--salmon); }
+    .config-code .c-key   { color: var(--violet); }
+    .config-code .c-str   { color: var(--orange); }
     .config-code .c-num   { color: var(--yellow); }
-    .config-code .c-fn    { color: var(--sky); }
+    .config-code .c-fn    { color: var(--blue); }
     .config-code .c-cm    { color: rgba(198,199,189,0.4); }
     .config-result        { flex: 1; min-width: 280px; }
 
@@ -240,12 +240,12 @@
     .ev-step {
       background: rgba(35,81,219,0.16);
       border: 1px solid rgba(35,81,219,0.45);
-      color: var(--sky);
+      color: var(--blue);
     }
     .ev-done {
       background: rgba(39,174,96,0.14);
       border: 1px solid rgba(39,174,96,0.45);
-      color: var(--special);
+      color: var(--green);
     }
     .ev-time {
       font-family: monospace;
@@ -274,11 +274,11 @@
       color: var(--shell);
     }
     .api-block pre { margin: 0; white-space: pre; color: inherit; background: transparent; }
-    .a-attr  { color: var(--sky); }
-    .a-val   { color: var(--salmon); }
+    .a-attr  { color: var(--blue); }
+    .a-val   { color: var(--orange); }
     .a-cm    { color: rgba(198,199,189,0.38); }
-    .a-tag   { color: var(--lavender); }
-    .a-js    { color: var(--special); }
+    .a-tag   { color: var(--violet); }
+    .a-js    { color: var(--green); }
 
     /* ── Palette swatch row ──────────────────────────────────────── */
     .swatch-row {
@@ -342,12 +342,12 @@
           <span class="sec-num">1</span>基本用法
         </h2>
         <p class="sec-desc">
-          <code>theme="sky"</code> · <code>gap="72px"</code> · <code>animation="fade"</code>（預設）·
+          <code>theme="blue"</code> · <code>gap="72px"</code> · <code>animation="fade"</code>（預設）·
           點擊箭頭展開下一步
         </p>
       </div>
 
-      <arrow-flow theme="sky" gap="72px">
+      <arrow-flow theme="blue" gap="72px">
         <flow-step title="填寫申請表">
           上傳所需文件並填寫基本資料。
           <ul>
@@ -376,18 +376,18 @@
           <span class="sec-num">2</span>顏色覆蓋
         </h2>
         <p class="sec-desc">
-          <code>theme="teal"</code> 設定全域色 · 第 2 步驟個別設定
-          <code>header-color="warning"</code> · <code>border-color="orange"</code> ·
+          <code>theme="green"</code> 設定全域色 · 第 2 步驟個別設定
+          <code>header-color="red"</code> · <code>border-color="orange"</code> ·
           <code>arrow-tip="lg"</code>
         </p>
       </div>
 
-      <arrow-flow theme="teal" arrow-tip="lg" gap="80px">
+      <arrow-flow theme="green" arrow-tip="lg" gap="80px">
         <flow-step title="輸入訂單資料">
           填寫收件人資訊及訂購品項。支援多筆批次上傳（CSV 格式），
           單次最多 500 筆。
         </flow-step>
-        <flow-step title="⚠ 付款驗證" header-color="warning" border-color="orange">
+        <flow-step title="⚠ 付款驗證" header-color="red" border-color="orange">
           <strong>請注意：</strong>此步驟將進行信用卡授權確認。
           授權失敗時訂單將自動取消。
           <p>請確認以下事項已完成：</p>
@@ -419,7 +419,7 @@
         </p>
       </div>
 
-      <arrow-flow id="demo3" theme="lavender" arrow-tip="md"
+      <arrow-flow id="demo3" theme="violet" arrow-tip="md"
                   equal-height on-complete="demo3-result">
         <flow-step title="選擇方案">
           請選擇最符合您需求的訂閱方案：
@@ -457,11 +457,11 @@
         </h2>
         <p class="sec-desc">
           <code>reveal="single"</code> 前框淡出保留版面 ·
-          <code>animation="slide"</code> · <code>theme="salmon"</code> · 四步驟行程規劃
+          <code>animation="slide"</code> · <code>theme="orange"</code> · 四步驟行程規劃
         </p>
       </div>
 
-      <arrow-flow theme="salmon" reveal="single" animation="slide" gap="64px">
+      <arrow-flow theme="orange" reveal="single" animation="slide" gap="64px">
         <flow-step title="Day 1 — 抵達">
           入住飯店後整理行李，傍晚步行至鄰近夜市探索在地美食。
           建議早點休息以備隔日滿檔行程。
@@ -545,7 +545,7 @@
         <div class="config-code">
 <span class="c-cm">// 頁面載入後、&lt;arrow-flow&gt; 初始化前呼叫</span>
 <span class="c-fn">ArrowFlow</span>.<span class="c-fn">config</span>({
-  <span class="c-key">theme</span>      : <span class="c-str">'ocean'</span>,
+  <span class="c-key">theme</span>      : <span class="c-str">'blue'</span>,
   <span class="c-key">arrowTip</span>  : <span class="c-str">'xl'</span>,  <span class="c-cm">// or 'arrow-tip'</span>
   <span class="c-key">gap</span>        : <span class="c-str">'88px'</span>,
   <span class="c-key">animation</span> : <span class="c-str">'slide'</span>,
@@ -610,7 +610,7 @@
     <section class="demo-sec">
       <div class="sec-head">
         <h2 class="sec-title">
-          <span class="sec-num" style="background:rgba(28,202,232,0.12);border-color:rgba(28,202,232,0.45);color:var(--ocean)">─</span>虛線箭頭
+          <span class="sec-num" style="background:rgba(28,202,232,0.12);border-color:rgba(28,202,232,0.45);color:var(--blue)">─</span>虛線箭頭
         </h2>
         <p class="sec-desc">
           <code>arrow-style="dashed"</code> · 桿以圓頭虛線繪製，箭頭三角形保持實心 ·
@@ -619,9 +619,9 @@
       </div>
 
       <p class="sec-desc" style="margin-bottom:14px;">
-        ▸ <code>arrow-style="dashed"</code> + <code>theme="ocean"</code> + <code>arrow-tip="lg"</code>
+        ▸ <code>arrow-style="dashed"</code> + <code>theme="blue"</code> + <code>arrow-tip="lg"</code>
       </p>
-      <arrow-flow theme="ocean" arrow-style="dashed" arrow-tip="lg" gap="80px">
+      <arrow-flow theme="blue" arrow-style="dashed" arrow-tip="lg" gap="80px">
         <flow-step title="需求分析">
           與利害關係人訪談，整理功能需求清單並確認優先級。
         </flow-step>
@@ -673,7 +673,7 @@
       <p class="sec-desc" style="margin:24px 0 14px;">
         ▸ 個別 <code>&lt;flow-step width="…"&gt;</code>：各框獨立寬度
       </p>
-      <arrow-flow theme="focus" gap="48px">
+      <arrow-flow theme="vanilla" gap="48px">
         <flow-step title="輸入（窄）" width="160px">
           固定 160px。
         </flow-step>
@@ -699,9 +699,9 @@
         <pre>
 <span class="a-cm">&lt;!-- ─── &lt;arrow-flow&gt; 屬性 ──────────────────────────────────────────────── --&gt;</span>
 <span class="a-tag">&lt;arrow-flow</span>
-  <span class="a-attr">theme</span>=<span class="a-val">"sky"</span>             <span class="a-cm">&lt;!-- 全部框統一品牌色 (預設: shell)               --&gt;</span>
-  <span class="a-attr">header-color</span>=<span class="a-val">"sky"</span>    <span class="a-cm">&lt;!-- 覆蓋所有框 header 底色（優先於 theme）       --&gt;</span>
-  <span class="a-attr">border-color</span>=<span class="a-val">"sky"</span>    <span class="a-cm">&lt;!-- 覆蓋所有框線色                               --&gt;</span>
+  <span class="a-attr">theme</span>=<span class="a-val">"blue"</span>             <span class="a-cm">&lt;!-- 全部框統一品牌色 (預設: shell)               --&gt;</span>
+  <span class="a-attr">header-color</span>=<span class="a-val">"blue"</span>    <span class="a-cm">&lt;!-- 覆蓋所有框 header 底色（優先於 theme）       --&gt;</span>
+  <span class="a-attr">border-color</span>=<span class="a-val">"blue"</span>    <span class="a-cm">&lt;!-- 覆蓋所有框線色                               --&gt;</span>
   <span class="a-attr">arrow-color</span>=<span class="a-val">"shell"</span>  <span class="a-cm">&lt;!-- 箭頭填色（預設繼承 theme）                   --&gt;</span>
   <span class="a-attr">arrow-tip</span>=<span class="a-val">"md"</span>       <span class="a-cm">&lt;!-- sm / md / lg / xl（只改頭部三角形）          --&gt;</span>
   <span class="a-attr">arrow-style</span>=<span class="a-val">"solid"</span>  <span class="a-cm">&lt;!-- solid（預設實線）/ dashed（虛線桿＋實心頭）  --&gt;</span>
@@ -715,7 +715,7 @@
 <span class="a-tag">&gt;</span>
   <span class="a-tag">&lt;flow-step</span>
     <span class="a-attr">title</span>=<span class="a-val">"標題"</span>
-    <span class="a-attr">header-color</span>=<span class="a-val">"lavender"</span>  <span class="a-cm">&lt;!-- 覆蓋此框 header 底色 --&gt;</span>
+    <span class="a-attr">header-color</span>=<span class="a-val">"violet"</span>  <span class="a-cm">&lt;!-- 覆蓋此框 header 底色 --&gt;</span>
     <span class="a-attr">border-color</span>=<span class="a-val">"indigo"</span>    <span class="a-cm">&lt;!-- 覆蓋此框框線色       --&gt;</span>
     <span class="a-attr">width</span>=<span class="a-val">"300px"</span>           <span class="a-cm">&lt;!-- 覆蓋此框寬度（優先於 step-width） --&gt;</span>
   <span class="a-tag">&gt;</span>
@@ -725,7 +725,7 @@
 
 <span class="a-cm">/* ─── 全域設定 ───────────────────────────────────────────────────────── */</span>
 <span class="a-js">ArrowFlow</span>.config({
-  theme      : 'sky',
+  theme      : 'blue',
   arrowTip   : 'lg',    <span class="a-cm">// 同 arrow-tip 屬性，接受 camelCase 或 kebab-case</span>
   gap        : '80px',
   animation  : 'slide',
@@ -740,8 +740,8 @@ el.addEventListener(<span class="a-val">'step-change'</span>,   e =&gt; console.
 el.addEventListener(<span class="a-val">'flow-complete'</span>, e =&gt; console.log(e.detail.totalSteps));
 
 <span class="a-cm">/* ─── 品牌色名 ── 17 色 ─────────────────────────────────────────────── */</span>
-bg  shell  lavender  sky  warning  salmon  ocean  safe  teal
-vanilla  yellow  focus  special  info  indigo  pink  orange</pre>
+bg  shell  violet  blue  warning  orange  blue  green  green
+vanilla  yellow  focus  green  info  indigo  pink  orange</pre>
       </div>
     </section>
 
@@ -756,7 +756,7 @@ vanilla  yellow  focus  special  info  indigo  pink  orange</pre>
   <script>
     /* ── Apply global config for Demo 6 ── */
     ArrowFlow.config({
-      theme    : 'ocean',
+      theme    : 'blue',
       arrowTip : 'xl',
       gap      : '88px',
       animation: 'slide',

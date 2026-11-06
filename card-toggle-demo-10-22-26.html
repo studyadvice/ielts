@@ -27,12 +27,12 @@ body{
 .hero-badge{
   display:inline-block;
   border:1px solid rgba(130,200,229,.35);
-  color:#82C8E5;font-size:.78rem;font-weight:700;
+  color:#5DBAE8;font-size:.78rem;font-weight:700;
   letter-spacing:.08em;padding:3px 10px;border-radius:3px;
   margin-bottom:14px;
 }
 .hero h1{font-size:2.4rem;font-weight:800;color:#C6C7BD;line-height:1.2;margin-bottom:10px}
-.hero h1 span{color:#82C8E5}
+.hero h1 span{color:#5DBAE8}
 .hero-desc{font-size:1rem;color:rgba(198,199,189,.62);max-width:680px;line-height:1.6}
 
 /* ── TOC ─────────────────────────────────────────────────────── */
@@ -45,7 +45,7 @@ body{
   font-size:.85rem;color:rgba(198,199,189,.65);text-decoration:none;
   transition:color .15s;
 }
-.toc a:hover{color:#82C8E5}
+.toc a:hover{color:#5DBAE8}
 
 /* ── Section structure ──────────────────────────────────────── */
 .chapter{margin-bottom:72px}
@@ -61,7 +61,7 @@ body{
 }
 .section{margin-bottom:48px}
 .section-h3{
-  font-size:1.1rem;font-weight:700;color:#82C8E5;
+  font-size:1.1rem;font-weight:700;color:#5DBAE8;
   margin-bottom:6px;
 }
 .section-desc{
@@ -92,9 +92,9 @@ body{
   white-space:pre;
 }
 /* syntax highlight — minimal */
-.dc-code pre .at{color:#C3A5E5}   /* attribute */
-.dc-code pre .vl{color:#B3DE73}   /* value */
-.dc-code pre .tg{color:#82C8E5}   /* tag */
+.dc-code pre .at{color:#B484E8}   /* attribute */
+.dc-code pre .vl{color:#71CD76}   /* value */
+.dc-code pre .tg{color:#5DBAE8}   /* tag */
 .dc-code pre .cm{color:rgba(198,199,189,.38)} /* comment */
 
 /* ── Attr table ─────────────────────────────────────────────── */
@@ -110,22 +110,22 @@ body{
 }
 .attr-table td:first-child{
   font-family:'Cascadia Code','Courier New',monospace;
-  color:#C3A5E5;font-size:.82rem;white-space:nowrap;
+  color:#B484E8;font-size:.82rem;white-space:nowrap;
 }
 .attr-table td:nth-child(2){
   font-family:'Cascadia Code','Courier New',monospace;
-  font-size:.80rem;color:#82C8E5;white-space:nowrap;
+  font-size:.80rem;color:#5DBAE8;white-space:nowrap;
 }
-.attr-table td.bool{color:#0DA591}
+.attr-table td.bool{color:#71CD76}
 .tag-bool{
   display:inline-block;background:rgba(13,165,145,.12);
-  border:1px solid rgba(13,165,145,.30);color:#0DA591;
+  border:1px solid rgba(13,165,145,.30);color:#71CD76;
   font-size:.68rem;font-weight:700;padding:1px 6px;
   border-radius:3px;margin-left:4px;vertical-align:middle;
 }
 .tag-grp{
   display:inline-block;background:rgba(130,200,229,.10);
-  border:1px solid rgba(130,200,229,.25);color:#82C8E5;
+  border:1px solid rgba(130,200,229,.25);color:#5DBAE8;
   font-size:.68rem;font-weight:700;padding:1px 6px;
   border-radius:3px;margin-left:4px;vertical-align:middle;
 }
@@ -193,7 +193,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">點擊卡片後以 <code>content</code> 屬性的 HTML 字串取代正面內容。最簡單的用法。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle content="<strong style='color:var(--ct-color-safe)'>這是背面！</strong> content 屬性直接寫 HTML。">
+        <card-toggle content="<strong style='color:var(--ct-color-green)'>這是背面！</strong> content 屬性直接寫 HTML。">
           點擊我 — content 屬性
         </card-toggle>
       </div>
@@ -215,7 +215,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <div id="src-demo-1" class="tpl">
-          <p style="color:var(--ct-color-lavender);font-weight:700"><i class="bi bi-book-fill"></i> 來自 DOM 元素的內容</p>
+          <p style="color:var(--ct-color-violet);font-weight:700"><i class="bi bi-book-fill"></i> 來自 DOM 元素的內容</p>
           <p style="margin-top:6px">這段文字來自 <code>#src-demo-1</code>，可以包含任意 HTML。</p>
         </div>
         <card-toggle source="src-demo-1">
@@ -251,35 +251,35 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <h3 class="section-h3">color="…" — 正面左側標示色</h3>
     <p class="section-desc">所有 palette key 均可用，也接受任意 hex 值。</p>
     <div class="palette">
-      <div class="swatch"><div class="swatch-dot" style="background:#C3A5E5"></div>lavender</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#82C8E5"></div>sky</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#0DA591"></div>teal</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#27AE60"></div>safe</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#E6374B"></div>warning</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#E5C3B3"></div>salmon</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#1CCAE8"></div>ocean</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#B484E8"></div>violet</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#5DBAE8"></div>blue</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#71CD76"></div>green</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#71CD76"></div>green</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#EF6661"></div>warning</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#F79C40"></div>orange</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#5DBAE8"></div>blue</div>
       <div class="swatch"><div class="swatch-dot" style="background:#DBEDD8"></div>vanilla</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#E3D322"></div>yellow / attention</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#D4FFFC"></div>focus</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#B3DE73"></div>special</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#4171BF"></div>info</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#7849C9"></div>indigo</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#E3D322"></div>yellow / yellow</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#DBEDD8"></div>focus</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#71CD76"></div>green</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#778CE1"></div>info</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#778CE1"></div>indigo</div>
       <div class="swatch"><div class="swatch-dot" style="background:#FF91D7"></div>pink</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#EDA109"></div>orange</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#F79C40"></div>orange</div>
       <div class="swatch"><div class="swatch-dot" style="background:#C6C7BD"></div>shell</div>
-      <div class="swatch"><div class="swatch-dot" style="background:#82C8E5"></div>stone（= sky）</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#5DBAE8"></div>blue（= blue）</div>
     </div>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle color="lavender" content="翻面（lavender）">color="lavender"</card-toggle>
-        <card-toggle color="teal" content="翻面（teal）">color="teal"</card-toggle>
-        <card-toggle color="warning" content="翻面（warning）">color="warning"</card-toggle>
+        <card-toggle color="violet" content="翻面（violet）">color="violet"</card-toggle>
+        <card-toggle color="green" content="翻面（green）">color="green"</card-toggle>
+        <card-toggle color="red" content="翻面（warning）">color="red"</card-toggle>
         <card-toggle color="#FF6B35" content="翻面（hex）">color="#FF6B35" — 自訂 hex</card-toggle>
       </div>
       <div class="dc-code">
         <div class="dc-code-label">HTML</div>
         <pre>
-&lt;<span class="tg">card-toggle</span> <span class="at">color</span>=<span class="vl">"lavender"</span>
+&lt;<span class="tg">card-toggle</span> <span class="at">color</span>=<span class="vl">"violet"</span>
   <span class="at">content</span>=<span class="vl">"…"</span>&gt;正面&lt;/<span class="tg">card-toggle</span>&gt;
 
 &lt;<span class="tg">card-toggle</span> <span class="at">color</span>=<span class="vl">"#FF6B35"</span>
@@ -293,19 +293,19 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">翻面完成後將 <code>color</code> 自動換為指定色票，常與 quiz 答對/答錯搭配。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle color="sky" color-after="safe" content="翻面後側邊線變 safe（綠）">
-          color="sky" → color-after="safe"，翻後變色
+        <card-toggle color="blue" color-after="green" content="翻面後側邊線變 green（綠）">
+          color="blue" → color-after="green"，翻後變色
         </card-toggle>
-        <card-toggle color="shell" color-after="warning" content="翻面後側邊線變 warning（紅）">
-          color="shell" → color-after="warning"
+        <card-toggle color="shell" color-after="red" content="翻面後側邊線變 warning（紅）">
+          color="shell" → color-after="red"
         </card-toggle>
       </div>
       <div class="dc-code">
         <div class="dc-code-label">HTML</div>
         <pre>
 &lt;<span class="tg">card-toggle</span>
-  <span class="at">color</span>=<span class="vl">"sky"</span>
-  <span class="at">color-after</span>=<span class="vl">"safe"</span>
+  <span class="at">color</span>=<span class="vl">"blue"</span>
+  <span class="at">color-after</span>=<span class="vl">"green"</span>
   <span class="at">content</span>=<span class="vl">"…"</span>&gt;
   翻面後側邊線換色
 &lt;/<span class="tg">card-toggle</span>&gt;</pre>
@@ -354,15 +354,15 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <card-toggle dashed content="虛線卡片背面">dashed — 虛線邊框</card-toggle>
-        <card-toggle dashed color="lavender" content="lavender 虛線背面">dashed + color="lavender"</card-toggle>
-        <card-toggle dashed color="teal" content="teal 虛線背面">dashed + color="teal"</card-toggle>
+        <card-toggle dashed color="violet" content="violet 虛線背面">dashed + color="violet"</card-toggle>
+        <card-toggle dashed color="green" content="green 虛線背面">dashed + color="green"</card-toggle>
       </div>
       <div class="dc-code">
         <div class="dc-code-label">HTML</div>
         <pre>
 &lt;<span class="tg">card-toggle</span> <span class="at">dashed</span> …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
 
-&lt;<span class="tg">card-toggle</span> <span class="at">dashed</span> <span class="at">color</span>=<span class="vl">"lavender"</span>
+&lt;<span class="tg">card-toggle</span> <span class="at">dashed</span> <span class="at">color</span>=<span class="vl">"violet"</span>
   …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
       </div>
     </div>
@@ -379,7 +379,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
         <card-toggle skin="blueprint" content="blueprint 背面">skin="blueprint" — 藍圖格</card-toggle>
         <card-toggle skin="split" content="split 背面">skin="split" — 上下分色</card-toggle>
         <card-toggle skin="band" content="band 背面">skin="band" — 頂部色帶</card-toggle>
-        <card-toggle skin="grid" color="sky" content="grid + sky 背面">skin="grid" + color="sky" — 線條跟色</card-toggle>
+        <card-toggle skin="grid" color="blue" content="grid + blue 背面">skin="grid" + color="blue" — 線條跟色</card-toggle>
       </div>
       <div class="dc-code">
         <div class="dc-code-label">HTML</div>
@@ -390,7 +390,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
 &lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"split"</span>     …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
 &lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"band"</span>      …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;
 <span class="cm">&lt;!-- grid + color 線條跟色 --&gt;</span>
-&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"grid"</span> <span class="at">color</span>=<span class="vl">"sky"</span>
+&lt;<span class="tg">card-toggle</span> <span class="at">skin</span>=<span class="vl">"grid"</span> <span class="at">color</span>=<span class="vl">"blue"</span>
   …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
       </div>
     </div>
@@ -402,11 +402,11 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">在卡片前方插入編號，可自訂大小（<code>number-size</code>）、字重（<code>number-weight</code>）、透明度（<code>number-opacity</code>）。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle number="1" color="sky" content="第一題背面">預設 number 標記</card-toggle>
-        <card-toggle number="2" color="lavender" number-size="1.4rem" number-weight="800" number-opacity="1" content="第二題背面">
+        <card-toggle number="1" color="blue" content="第一題背面">預設 number 標記</card-toggle>
+        <card-toggle number="2" color="violet" number-size="1.4rem" number-weight="800" number-opacity="1" content="第二題背面">
           number-size="1.4rem" weight="800" opacity="1"
         </card-toggle>
-        <card-toggle number="3" color="teal" number-opacity="0.4" content="第三題背面">
+        <card-toggle number="3" color="green" number-opacity="0.4" content="第三題背面">
           number-opacity="0.4" — 更淡
         </card-toggle>
       </div>
@@ -431,16 +431,16 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">左側 bar 的寬度與 hover 寬度、上下邊線的粗細與顏色均可個別設定。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle color="ocean" bar-width="6" bar-width-hover="10" content="粗 bar 背面">
+        <card-toggle color="blue" bar-width="6" bar-width-hover="10" content="粗 bar 背面">
           bar-width="6" bar-width-hover="10"
         </card-toggle>
         <card-toggle color="pink" top-line="3" top-line-color="pink" content="頂線背面">
           top-line="3" top-line-color="pink"
         </card-toggle>
-        <card-toggle color="special" bottom-line="2" bottom-line-color="special" content="底線背面">
-          bottom-line="2" bottom-line-color="special"
+        <card-toggle color="green" bottom-line="2" bottom-line-color="green" content="底線背面">
+          bottom-line="2" bottom-line-color="green"
         </card-toggle>
-        <card-toggle color="lavender" top-line="2" bottom-line="2" content="上下線背面">
+        <card-toggle color="violet" top-line="2" bottom-line="2" content="上下線背面">
           top-line + bottom-line 同時啟用
         </card-toggle>
       </div>
@@ -455,7 +455,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
   <span class="at">top-line</span>=<span class="vl">"3"</span>
   <span class="at">top-line-color</span>=<span class="vl">"pink"</span>
   <span class="at">bottom-line</span>=<span class="vl">"2"</span>
-  <span class="at">bottom-line-color</span>=<span class="vl">"special"</span>
+  <span class="at">bottom-line-color</span>=<span class="vl">"green"</span>
   …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
       </div>
     </div>
@@ -476,9 +476,9 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">三種過場：<code>fade</code>（預設）/ <code>slide</code> / <code>none</code>。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle animation="fade" color="sky" content="fade 動畫背面">animation="fade"（預設）</card-toggle>
-        <card-toggle animation="slide" color="lavender" content="slide 動畫背面">animation="slide" — 左滑進入</card-toggle>
-        <card-toggle animation="none" color="teal" content="無動畫背面">animation="none" — 瞬間切換</card-toggle>
+        <card-toggle animation="fade" color="blue" content="fade 動畫背面">animation="fade"（預設）</card-toggle>
+        <card-toggle animation="slide" color="violet" content="slide 動畫背面">animation="slide" — 左滑進入</card-toggle>
+        <card-toggle animation="none" color="green" content="無動畫背面">animation="none" — 瞬間切換</card-toggle>
       </div>
       <div class="dc-code">
         <div class="dc-code-label">HTML</div>
@@ -495,7 +495,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">翻面後倒數指定毫秒自動翻回，底部出現彩色倒數進度條。<code>flip-bar-color</code> 可自訂進度條色。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle color="ocean" auto-flip="2500"
+        <card-toggle color="blue" auto-flip="2500"
           content="2.5 秒後自動翻回，觀察底部進度條…">
           auto-flip="2500" — 點擊後 2.5 秒翻回
         </card-toggle>
@@ -537,11 +537,11 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
   </p>
   <div class="dc">
     <div class="dc-demo">
-      <card-toggle toggle color="lavender"
+      <card-toggle toggle color="violet"
         content="<strong>這是背面。</strong>點擊任意處可以翻回正面。<div class='ct-toggle-hint'><i class='bi bi-arrow-repeat'></i> 點擊翻回</div>">
         toggle 模式 — 點擊翻面，再點翻回
       </card-toggle>
-      <card-toggle toggle color="teal" animation="slide"
+      <card-toggle toggle color="green" animation="slide"
         content="slide 動畫 + toggle，兩面都可以互切。">
         toggle + animation="slide"
       </card-toggle>
@@ -555,7 +555,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <pre>
 &lt;<span class="tg">card-toggle</span>
   <span class="at">toggle</span>
-  <span class="at">color</span>=<span class="vl">"lavender"</span>
+  <span class="at">color</span>=<span class="vl">"violet"</span>
   <span class="at">content</span>=<span class="vl">"背面，點擊翻回"</span>&gt;
   正面
 &lt;/<span class="tg">card-toggle</span>&gt;
@@ -588,13 +588,13 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       答對後翻到 <code>source</code> 或 <code>content</code> 指定的背面，答對後可點卡片翻回重試。
     </p>
     <div id="quiz-back-1" class="tpl">
-      <p style="color:var(--ct-color-safe);font-weight:700"><i class="bi bi-check-circle-fill"></i> 正確！</p>
+      <p style="color:var(--ct-color-green);font-weight:700"><i class="bi bi-check-circle-fill"></i> 正確！</p>
       <p style="margin-top:6px">台灣最高峰是玉山，海拔 3,952 公尺，為東北亞第一高峰。</p>
     </div>
     <div class="dc">
       <div class="dc-demo">
         <card-toggle
-          color="sky"
+          color="blue"
           question="台灣最高峰的名稱是？"
           answer="玉山"
           placeholder="輸入山名…"
@@ -607,7 +607,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
 &lt;<span class="tg">div</span> <span class="at">id</span>=<span class="vl">"back"</span> <span class="at">style</span>=<span class="vl">"display:none"</span>&gt;答對說明&lt;/<span class="tg">div</span>&gt;
 
 &lt;<span class="tg">card-toggle</span>
-  <span class="at">color</span>=<span class="vl">"sky"</span>
+  <span class="at">color</span>=<span class="vl">"blue"</span>
   <span class="at">question</span>=<span class="vl">"台灣最高峰？"</span>
   <span class="at">answer</span>=<span class="vl">"玉山"</span>
   <span class="at">placeholder</span>=<span class="vl">"輸入山名…"</span>
@@ -627,14 +627,14 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <card-toggle
-          color="lavender"
+          color="violet"
           question="CSS 的全名是？（英文縮寫即可）"
           answer="CSS"
           case-sensitive
           max-attempts="3"
           error-message="提示：它控制網頁樣式"
           success-message="CSS = Cascading Style Sheets"
-          success-color="safe">
+          success-color="green">
         </card-toggle>
       </div>
       <div class="dc-code">
@@ -647,7 +647,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
   <span class="at">max-attempts</span>=<span class="vl">"3"</span>
   <span class="at">error-message</span>=<span class="vl">"提示：控制樣式"</span>
   <span class="at">success-message</span>=<span class="vl">"CSS = Cascading…"</span>
-  <span class="at">success-color</span>=<span class="vl">"safe"</span>&gt;
+  <span class="at">success-color</span>=<span class="vl">"green"</span>&gt;
 &lt;/<span class="tg">card-toggle</span>&gt;</pre>
       </div>
     </div>
@@ -665,7 +665,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <div class="dc-demo">
         <div id="hint-area-ext" style="margin-bottom:8px"></div>
         <card-toggle
-          color="teal"
+          color="green"
           question="HTTP 狀態碼 404 代表？"
           answer="找不到頁面"
           hint="這個狀態碼和「找不到」有關"
@@ -673,7 +673,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
           success-message="正確！404 = Not Found">
         </card-toggle>
         <card-toggle
-          color="ocean"
+          color="blue"
           question="JavaScript 的縮寫？"
           answer="JS"
           hint="兩個英文字母"
@@ -723,11 +723,11 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
           success-message="正確！">
         </card-toggle>
         <card-toggle
-          color="lavender"
+          color="violet"
           question="DNA 的中文全名？"
           answer="去氧核糖核酸"
           info-source="info-src-1"
-          info-color="lavender"
+          info-color="violet"
           success-message="答對！">
         </card-toggle>
       </div>
@@ -755,7 +755,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <card-toggle
-          color="special"
+          color="green"
           question="按 Enter 提交（無提交按鈕）"
           answer="OK"
           hide-submit
@@ -763,7 +763,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
           success-message="答對！隱藏了提交和重置按鈕">
         </card-toggle>
         <card-toggle
-          color="salmon"
+          color="orange"
           question="自訂按鈕文字展示"
           answer="demo"
           hint="答案是 demo"
@@ -812,11 +812,11 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <card-toggle
-          color="sky"
+          color="blue"
           question="光在真空中的速度約為每秒 30 萬公里。"
           branch-options="對,錯"
           correct-option="對"
-          branch-correct="<strong style='color:var(--ct-color-safe)'>正確。</strong>光速約 299,792,458 m/s。"
+          branch-correct="<strong style='color:var(--ct-color-green)'>正確。</strong>光速約 299,792,458 m/s。"
           branch-wrong="<strong style='color:var(--ct-color-warning)'>錯誤。</strong>光速約 299,792,458 m/s，並非其他數值。">
         </card-toggle>
       </div>
@@ -845,11 +845,11 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <card-toggle
-          color="lavender"
+          color="violet"
           question="下列哪個元素的原子序最小？"
           branch-options="氦 (He),氫 (H),鋰 (Li),碳 (C)"
           correct-option="氫 (H)"
-          branch-btn-color="lavender"
+          branch-btn-color="violet"
           branch-correct-label="完全正確！"
           branch-wrong-label="再想想，答案就在週期表第一位"
           branch-correct="氫（H）原子序為 1，是最輕的元素，也是宇宙中含量最多的元素。"
@@ -864,7 +864,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
 &lt;<span class="tg">card-toggle</span>
   <span class="at">branch-options</span>=<span class="vl">"氦,氫,鋰,碳"</span>
   <span class="at">correct-option</span>=<span class="vl">"氫 (H)"</span>
-  <span class="at">branch-btn-color</span>=<span class="vl">"lavender"</span>
+  <span class="at">branch-btn-color</span>=<span class="vl">"violet"</span>
   <span class="at">branch-correct-label</span>=<span class="vl">"完全正確！"</span>
   <span class="at">branch-wrong-label</span>=<span class="vl">"再想想"</span>
   <span class="at">branch-correct</span>=<span class="vl">"說明…"</span>
@@ -884,7 +884,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <code>branch-correct-color</code> / <code>branch-wrong-color</code> 自訂答對/錯後的卡片色。
     </p>
     <div id="br-ok" class="tpl">
-      <p style="color:var(--ct-color-safe);font-weight:700"><i class="bi bi-check-circle-fill"></i> 答對了！</p>
+      <p style="color:var(--ct-color-green);font-weight:700"><i class="bi bi-check-circle-fill"></i> 答對了！</p>
       <p style="margin-top:6px">TCP 建立連線時使用三向交握（SYN → SYN-ACK → ACK），確保雙方都準備好傳輸。</p>
       <p style="margin-top:6px;font-size:.92rem;color:rgba(198,199,189,.60)">延伸：UDP 是無連線協定，速度快但不保證順序與可靠性。</p>
     </div>
@@ -895,14 +895,14 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <div class="dc">
       <div class="dc-demo">
         <card-toggle
-          color="teal"
+          color="green"
           question="TCP 是一種需要事先建立連線的協定。"
           branch-options="正確,錯誤"
           correct-option="正確"
           branch-correct-source="br-ok"
           branch-wrong-source="br-ng"
-          branch-correct-color="safe"
-          branch-wrong-color="warning"
+          branch-correct-color="green"
+          branch-wrong-color="red"
           branch-retry
           animation="slide">
         </card-toggle>
@@ -916,7 +916,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
 &lt;<span class="tg">card-toggle</span>
   <span class="at">branch-correct-source</span>=<span class="vl">"br-ok"</span>
   <span class="at">branch-wrong-source</span>=<span class="vl">"br-ng"</span>
-  <span class="at">branch-correct-color</span>=<span class="vl">"safe"</span>
+  <span class="at">branch-correct-color</span>=<span class="vl">"green"</span>
   <span class="at">branch-wrong-color</span>=<span class="vl">"warning"</span>
   <span class="at">branch-retry</span>
   …&gt;…&lt;/<span class="tg">card-toggle</span>&gt;</pre>
@@ -940,16 +940,16 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">預設模式，卡片垂直排列，<code>theme</code> 設定主題色。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle-group theme="sky">
-          <card-toggle color="sky" content="A 背面">stack 卡片 A</card-toggle>
-          <card-toggle color="sky" content="B 背面">stack 卡片 B</card-toggle>
-          <card-toggle color="sky" content="C 背面">stack 卡片 C</card-toggle>
+        <card-toggle-group theme="blue">
+          <card-toggle color="blue" content="A 背面">stack 卡片 A</card-toggle>
+          <card-toggle color="blue" content="B 背面">stack 卡片 B</card-toggle>
+          <card-toggle color="blue" content="C 背面">stack 卡片 C</card-toggle>
         </card-toggle-group>
       </div>
       <div class="dc-code">
         <div class="dc-code-label">HTML</div>
         <pre>
-&lt;<span class="tg">card-toggle-group</span> <span class="at">theme</span>=<span class="vl">"sky"</span>&gt;
+&lt;<span class="tg">card-toggle-group</span> <span class="at">theme</span>=<span class="vl">"blue"</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;A&lt;/<span class="tg">card-toggle</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;B&lt;/<span class="tg">card-toggle</span>&gt;
 &lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
@@ -966,11 +966,11 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     </p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle-group mode="grid:14px" cols="2" theme="lavender">
-          <card-toggle color="lavender" content="1 背面">格線 1</card-toggle>
-          <card-toggle color="lavender" content="2 背面">格線 2</card-toggle>
-          <card-toggle color="lavender" content="3 背面">格線 3</card-toggle>
-          <card-toggle color="lavender" content="4 背面">格線 4</card-toggle>
+        <card-toggle-group mode="grid:14px" cols="2" theme="violet">
+          <card-toggle color="violet" content="1 背面">格線 1</card-toggle>
+          <card-toggle color="violet" content="2 背面">格線 2</card-toggle>
+          <card-toggle color="violet" content="3 背面">格線 3</card-toggle>
+          <card-toggle color="violet" content="4 背面">格線 4</card-toggle>
         </card-toggle-group>
       </div>
       <div class="dc-code">
@@ -979,7 +979,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
 &lt;<span class="tg">card-toggle-group</span>
   <span class="at">mode</span>=<span class="vl">"grid:14px"</span>
   <span class="at">cols</span>=<span class="vl">"2"</span>
-  <span class="at">theme</span>=<span class="vl">"lavender"</span>&gt;
+  <span class="at">theme</span>=<span class="vl">"violet"</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;1&lt;/<span class="tg">card-toggle</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;2&lt;/<span class="tg">card-toggle</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;3&lt;/<span class="tg">card-toggle</span>&gt;
@@ -999,10 +999,10 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     </p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle-group mode="slide" show-pages theme="teal">
-          <card-toggle color="teal" content="第 1 張背面">slide 第 1 張</card-toggle>
-          <card-toggle color="teal" content="第 2 張背面">slide 第 2 張</card-toggle>
-          <card-toggle color="teal" content="第 3 張背面">slide 第 3 張</card-toggle>
+        <card-toggle-group mode="slide" show-pages theme="green">
+          <card-toggle color="green" content="第 1 張背面">slide 第 1 張</card-toggle>
+          <card-toggle color="green" content="第 2 張背面">slide 第 2 張</card-toggle>
+          <card-toggle color="green" content="第 3 張背面">slide 第 3 張</card-toggle>
         </card-toggle-group>
       </div>
       <div class="dc-code">
@@ -1011,7 +1011,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
 &lt;<span class="tg">card-toggle-group</span>
   <span class="at">mode</span>=<span class="vl">"slide"</span>
   <span class="at">show-pages</span>
-  <span class="at">theme</span>=<span class="vl">"teal"</span>&gt;
+  <span class="at">theme</span>=<span class="vl">"green"</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;1&lt;/<span class="tg">card-toggle</span>&gt;
   &lt;<span class="tg">card-toggle</span> …&gt;2&lt;/<span class="tg">card-toggle</span>&gt;
 &lt;/<span class="tg">card-toggle-group</span>&gt;</pre>
@@ -1028,8 +1028,8 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     </p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle-group mode="slide" lock-nav show-pages show-result theme="special">
-          <card-toggle color="sky"
+        <card-toggle-group mode="slide" lock-nav show-pages show-result theme="green">
+          <card-toggle color="blue"
             question="Python 是直譯型語言。"
             branch-options="正確,錯誤"
             correct-option="正確"
@@ -1037,12 +1037,12 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
             branch-wrong="Python 是直譯型（interpreted）語言，不是編譯型。"
             branch-retry>
           </card-toggle>
-          <card-toggle color="lavender"
+          <card-toggle color="violet"
             question="HTTP 預設通訊埠？"
             answer="80"
             success-message="正確！HTTP=80，HTTPS=443。">
           </card-toggle>
-          <card-toggle color="teal"
+          <card-toggle color="green"
             question="git pull 等同於 fetch + merge。"
             branch-options="對,錯"
             correct-option="對"
@@ -1059,7 +1059,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
   <span class="at">lock-nav</span>
   <span class="at">show-pages</span>
   <span class="at">show-result</span>
-  <span class="at">theme</span>=<span class="vl">"special"</span>&gt;
+  <span class="at">theme</span>=<span class="vl">"green"</span>&gt;
   <span class="cm">&lt;!-- quiz 卡 --&gt;</span>
   &lt;<span class="tg">card-toggle</span>
     <span class="at">question</span>=<span class="vl">"…"</span>
@@ -1086,7 +1086,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <code>retry-label</code> 自訂重新作答按鈕文字。
     </p>
     <div id="result-custom" class="tpl">
-      <p style="margin:12px 0 0;color:var(--ct-color-sky)">
+      <p style="margin:12px 0 0;color:var(--ct-color-blue)">
         <i class="bi bi-stars"></i> 不錯！繼續保持。
       </p>
     </div>
@@ -1094,13 +1094,13 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <div class="dc-demo">
         <card-toggle-group mode="slide" show-result
           result-source="result-custom"
-          retry-label="↺ 從頭再來" theme="ocean">
-          <card-toggle color="ocean"
+          retry-label="↺ 從頭再來" theme="blue">
+          <card-toggle color="blue"
             question="HTML 的全名？"
             answer="HyperText Markup Language"
             success-message="正確！">
           </card-toggle>
-          <card-toggle color="ocean"
+          <card-toggle color="blue"
             question="CSS 是縮寫，全名？"
             answer="Cascading Style Sheets"
             success-message="正確！">
@@ -1130,18 +1130,18 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
     <p class="section-desc">卡片上加 <code>auto-next</code>，答對 1.5 秒後自動前往下一張。</p>
     <div class="dc">
       <div class="dc-demo">
-        <card-toggle-group mode="slide" theme="special">
-          <card-toggle color="special" auto-next
+        <card-toggle-group mode="slide" theme="green">
+          <card-toggle color="green" auto-next
             question="1 + 1 = ？"
             answer="2"
             success-message="正確！1.5 秒後自動進下一題">
           </card-toggle>
-          <card-toggle color="special" auto-next
+          <card-toggle color="green" auto-next
             question="2 × 3 = ？"
             answer="6"
             success-message="對！">
           </card-toggle>
-          <card-toggle color="special"
+          <card-toggle color="green"
             question="最後一題：5 - 2 = ？"
             answer="3"
             success-message="全對！">
@@ -1181,7 +1181,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
   <div class="dc">
     <div class="dc-demo">
       <card-toggle
-        color="lavender"
+        color="violet"
         fs-body="1.3"
         fs-question="1.1"
         fs-submit="0.95"
@@ -1197,7 +1197,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       </card-toggle>
 
       <card-toggle
-        color="teal"
+        color="green"
         fs-body="1rem"
         pad-submit="8 20"
         pad-aux="6 14"
@@ -1309,7 +1309,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <tr><td>max-attempts</td><td>數字（預設 999）</td><td>最多嘗試次數，超過顯示錯誤背面</td></tr>
       <tr><td>success-message</td><td>string</td><td>答對時的背面訊息（優先順序最低）</td></tr>
       <tr><td>success-source</td><td>id</td><td>答對後背面內容來源 id（優先）</td></tr>
-      <tr><td>success-color</td><td>palette key（預設 safe）</td><td>答對後側邊線色</td></tr>
+      <tr><td>success-color</td><td>palette key（預設 green）</td><td>答對後側邊線色</td></tr>
       <tr><td>error-message</td><td>string</td><td>答錯或達上限時的訊息</td></tr>
       <tr><td>hint</td><td>string</td><td>提示內容文字</td></tr>
       <tr><td>hint-target</td><td>id</td><td>提示顯示在外部元素（未設 → 卡片內 alert）</td></tr>
@@ -1334,7 +1334,7 @@ hr.div{border:none;border-top:1px solid rgba(198,199,189,.09);margin:60px 0}
       <tr><td>branch-correct</td><td>HTML string</td><td>答對背面內容（內聯）</td></tr>
       <tr><td>branch-correct-source</td><td>id</td><td>答對背面內容來源 id（優先）</td></tr>
       <tr><td>branch-correct-label</td><td>string（預設「答對了！」）</td><td>答對背面標題文字</td></tr>
-      <tr><td>branch-correct-color</td><td>palette key（預設 safe）</td><td>答對後卡片色</td></tr>
+      <tr><td>branch-correct-color</td><td>palette key（預設 green）</td><td>答對後卡片色</td></tr>
       <tr><td>branch-wrong</td><td>HTML string</td><td>答錯背面內容（內聯）</td></tr>
       <tr><td>branch-wrong-source</td><td>id</td><td>答錯背面內容來源 id（優先）</td></tr>
       <tr><td>branch-wrong-label</td><td>string（預設帶入所選選項）</td><td>答錯背面標題文字</td></tr>

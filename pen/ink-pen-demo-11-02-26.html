@@ -9,11 +9,11 @@
 <script src="ink-pen.js"></script>
 <style>
   :root {
-    --c-bg: #0C0D0C; --c-shell: #C6C7BD; --c-lavender: #C3A5E5; --c-sky: #82C8E5;
-    --c-warning: #E6374B; --c-salmon: #E5C3B3; --c-ocean: #1CCAE8; --c-safe: #27AE60;
-    --c-teal: #0DA591; --c-vanilla: #DBEDD8; --c-yellow: #E3D322; --c-focus: #D4FFFC;
-    --c-special: #B3DE73; --c-info: #4171BF; --c-indigo: #7849C9; --c-pink: #FF91D7;
-    --c-orange: #EDA109;
+    --c-bg: #0C0D0C; --c-shell: #C6C7BD; --c-violet: #B484E8; --c-blue: #5DBAE8;
+    --c-warning: #EF6661; --c-orange: #F79C40; --c-blue: #5DBAE8; --c-green: #71CD76;
+    --c-green: #71CD76; --c-vanilla: #DBEDD8; --c-yellow: #E3D322; --c-focus: #DBEDD8;
+    --c-green: #71CD76; --c-info: #778CE1; --c-indigo: #778CE1; --c-pink: #FF91D7;
+    --c-orange: #F79C40;
   }
   html { font-size: 16px; }
   body {
@@ -23,8 +23,8 @@
   }
   .wrap { max-width: 1680px; margin: 0 auto; padding: 32px 48px 160px; }
   h1 { font-size: 2rem; color: var(--c-focus); margin: 0 0 6px; }
-  h2 { font-size: 1.4rem; color: var(--c-ocean); margin: 0 0 16px; }
-  h3 { font-size: 1.1rem; color: var(--c-lavender); margin: 20px 0 10px; }
+  h2 { font-size: 1.4rem; color: var(--c-blue); margin: 0 0 16px; }
+  h3 { font-size: 1.1rem; color: var(--c-violet); margin: 20px 0 10px; }
   .lead-note { font-size: 1rem; color: #9a9b94; margin: 0 0 28px; }
   .panel {
     background: rgba(23, 24, 22, 0.94); border: 1px solid rgba(58, 59, 55, 0.9);
@@ -44,10 +44,10 @@
     padding: 4px 14px; border-radius: 999px; border: 1px solid rgba(58, 59, 55, 0.9);
     background: rgba(32, 33, 25, 0.92);
   }
-  .chip.on-pen { color: #07211D; background: var(--c-teal); border-color: var(--c-teal); }
+  .chip.on-pen { color: #07211D; background: var(--c-green); border-color: var(--c-green); }
   .chip.on-laser { color: #2a0a0e; background: var(--c-warning); border-color: var(--c-warning); }
   .chip.locked { color: #2b2604; background: var(--c-yellow); border-color: var(--c-yellow); }
-  .chip.free { color: var(--c-special); border-color: rgba(179, 222, 115, 0.86); }
+  .chip.free { color: var(--c-green); border-color: rgba(179, 222, 115, 0.86); }
   kbd {
     background: rgba(32, 33, 25, 0.95); color: var(--c-focus); border: 1px solid rgba(90, 91, 85, 0.9);
     border-radius: 6px; padding: 2px 8px; font-size: 0.88rem; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.82);
@@ -57,11 +57,11 @@
     background: rgba(15, 16, 14, 0.95); border: 1px dashed rgba(58, 59, 55, 0.9);
     border-radius: 8px; padding: 14px 18px; min-height: 58px; color: var(--c-shell);
   }
-  .keylog .hit { color: var(--c-special); font-weight: 600; }
+  .keylog .hit { color: var(--c-green); font-weight: 600; }
   .keylog .miss { color: #9a9b94; }
   table.tbl { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
   table.tbl th, table.tbl td { border-bottom: 1px solid rgba(58, 59, 55, 0.9); padding: 10px 12px; vertical-align: top; }
-  table.tbl th { color: var(--c-sky); font-weight: 600; text-align: left; }
+  table.tbl th { color: var(--c-blue); font-weight: 600; text-align: left; }
   table.tbl code { color: var(--c-orange); }
   pre.code {
     background: rgba(15, 16, 14, 0.96); border: 1px solid rgba(58, 59, 55, 0.9); border-radius: 8px;
@@ -75,7 +75,7 @@
   .tag-new { background: rgba(13, 165, 145, 0.9); color: #07211D; font-weight: 600; }
   .lesson p { font-size: 1.15rem; margin: 0 0 18px; }
   .lesson .card-line {
-    background: rgba(26, 27, 24, 0.94); border-left: 4px solid var(--c-lavender);
+    background: rgba(26, 27, 24, 0.94); border-left: 4px solid var(--c-violet);
     border-radius: 8px; padding: 14px 20px; margin: 0 0 14px; font-size: 1.15rem;
   }
   .spacer { height: 520px; display: flex; align-items: center; justify-content: center; color: #6b6c66; font-size: 0.95rem; border: 1px dashed rgba(58, 59, 55, 0.9); border-radius: 12px; margin: 0 0 28px; }
@@ -87,8 +87,8 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.82);
   }
   #toast-zone .alert.a-lock { border-left: 4px solid var(--c-yellow); }
-  #toast-zone .alert.a-free { border-left: 4px solid var(--c-special); }
-  #toast-zone .alert.a-info { border-left: 4px solid var(--c-ocean); }
+  #toast-zone .alert.a-free { border-left: 4px solid var(--c-green); }
+  #toast-zone .alert.a-info { border-left: 4px solid var(--c-blue); }
   #toast-zone .btn-close { filter: invert(1); padding: 14px; }
 </style>
 </head>
@@ -155,7 +155,7 @@
     <div class="card-line">It wasn't the trip itself but the people that <ink-handwrite answer="made it memorable">_______________</ink-handwrite>.</div>
     <div class="card-line">Looking back, I <ink-handwrite answer="should have">__________</ink-handwrite> taken it more seriously.</div>
     <p>開著筆也能用圓點跳轉，落點會變成新的鎖定位置：
-      <dot-go href="#part2" theme="sky" dot-style="star-fill">跳到測試區二</dot-go>
+      <dot-go href="#part2" theme="blue" dot-style="star-fill">跳到測試區二</dot-go>
       <dot-go href="#compare" theme="pink" dot-style="icon" icon="bi-code-slash">跳到修改對照</dot-go>
     </p>
   </section>
@@ -166,7 +166,7 @@
     <h2>測試區二：document 模式</h2>
     <p>把座標模式切到 document，再把鎖定改成「不寫屬性」，手指拖曳會像以前一樣捲動頁面；改回 true 之後，手指拖曳就不再捲動，觸控筆畫線時頁面完全不會跟著晃。</p>
     <div class="card-line">What I value most is having the <ink-handwrite answer="freedom to">__________</ink-handwrite> plan my own day.</div>
-    <p><dot-go href="#top" theme="special" dot-style="circle-fill">回到頂端</dot-go></p>
+    <p><dot-go href="#top" theme="green" dot-style="circle-fill">回到頂端</dot-go></p>
   </section>
 
   <div class="spacer">捲動距離填充區</div>

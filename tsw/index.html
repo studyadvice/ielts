@@ -137,7 +137,7 @@ textarea.form-control { resize: vertical; }
 }
 .c-accent { background: var(--accent); }
 .c-warning { background: var(--warning); }
-.c-safe { background: var(--safe); }
+.c-green { background: var(--green); }
 .c-info { background: var(--info); }
 .c-caution { background: var(--caution); }
 
@@ -166,7 +166,7 @@ pre {
   border-left: 4px solid var(--ac, var(--info));
   border-radius: 8px;
 }
-.alert-success { --ac: var(--safe); }
+.alert-success { --ac: var(--green); }
 .alert-info { --ac: var(--info); }
 .alert-danger { --ac: var(--warning); }
 .alert-warning { --ac: var(--caution); }
@@ -176,7 +176,7 @@ pre {
 .cmp h3 { margin-bottom: 8px; }
 .tag { display: inline-block; padding: 2px 10px; margin-right: 8px; border-radius: 999px; font-size: 0.8rem; color: var(--on-color); }
 .tag-old { background: var(--warning); }
-.tag-new { background: var(--safe); }
+.tag-new { background: var(--green); }
 .log-item { margin-bottom: 24px; }
 .log-item:last-child { margin-bottom: 0; }
 
@@ -299,17 +299,17 @@ pre {
         <div class="scope">
           <h3>跟隨全域</h3>
           <p>沒有加屬性，切換時會一起變。</p>
-          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-safe">safe</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
+          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-green">green</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
         </div>
         <div class="scope" data-jstheme="dark">
           <h3>固定深色</h3>
           <p>容器加上 <code>data-jstheme="dark"</code>。</p>
-          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-safe">safe</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
+          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-green">green</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
         </div>
         <div class="scope" data-jstheme="light">
           <h3>固定淺色</h3>
           <p>容器加上 <code>data-jstheme="light"</code>。</p>
-          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-safe">safe</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
+          <span class="chip c-accent">accent</span><span class="chip c-warning">warning</span><span class="chip c-green">green</span><span class="chip c-info">info</span><span class="chip c-caution">caution</span>
         </div>
       </div>
     </section>
@@ -357,7 +357,7 @@ a       { color: var(--accent); }
 .danger { background: var(--warning); color: var(--on-color); }</pre>
 
         <h3>5. 使用品牌色</h3>
-<pre>.tag-lavender { background: var(--brand-lavender); color: var(--brand-bg); }
+<pre>.tag-violet { background: var(--brand-violet); color: var(--brand-bg); }
 .tag-indigo   { background: var(--brand-indigo);   color: var(--brand-focus); }
 
 /* 新增或覆蓋品牌色，只接受 #rgb 或 #rrggbb */
@@ -378,13 +378,13 @@ UIThemeSwitcher.addBrand('coral', '#FF7F50', '珊瑚橘');</pre>
             <div>
               <div><span class="tag tag-old">舊</span>v1.1.0</div>
 <pre>/* 寫死色碼，或借用會隨主題變的角色 */
-.tag { background: #C3A5E5; }
+.tag { background: #B484E8; }
 .tag { background: var(--accent-2); }</pre>
             </div>
             <div>
               <div><span class="tag tag-new">新</span>v1.2.0</div>
 <pre>/* 固定的品牌色，切換主題也不變 */
-.tag { background: var(--brand-lavender);
+.tag { background: var(--brand-violet);
        color: var(--brand-bg); }</pre>
             </div>
           </div>
@@ -491,7 +491,7 @@ UIThemeSwitcher.addBrand('coral', '#FF7F50', '珊瑚橘');</pre>
 (function () {
   'use strict';
 
-  var FILL = ['accent', 'accent-2', 'warning', 'safe', 'info', 'caution'];
+  var FILL = ['accent', 'accent-2', 'warning', 'green', 'info', 'caution'];
   var BG_ROLES = ['bg-base', 'bg-panel', 'bg-hover'].concat(FILL);
   var TEXT_ROLES = ['text-main', 'text-muted', 'on-color'].concat(FILL);
   var BORDER_ROLES = ['border'].concat(FILL, ['focus']);
@@ -555,9 +555,9 @@ UIThemeSwitcher.addBrand('coral', '#FF7F50', '珊瑚橘');</pre>
     { name: '卡片', set: {} },
     { name: '提示條', set: { bar: 'info', barw: 4, radius: 6, title: '提示訊息', body: '這是一則資訊提示，左側色條使用 info 角色。' } },
     { name: '警告區塊', set: { bg: 'warning', border: 'none', bw: 0, radius: 8, title: '警告', body: '實色底會自動改用 on-color 作為文字顏色。' } },
-    { name: '成功區塊', set: { bg: 'safe', border: 'none', bw: 0, radius: 8, title: '儲存完成', body: '資料已成功寫入。' } },
-    { name: '品牌色條', set: { bar: 'brand-teal', barw: 4, radius: 6, title: '品牌色條', body: '左側色條使用 brand-teal，不論切換哪一組主題，色碼都不變。' } },
-    { name: '品牌實色', set: { bg: 'brand-lavender', border: 'none', bw: 0, radius: 8, title: '品牌實色區塊', body: '背景使用 brand-lavender，文字會自動配上固定的深色。' } },
+    { name: '成功區塊', set: { bg: 'green', border: 'none', bw: 0, radius: 8, title: '儲存完成', body: '資料已成功寫入。' } },
+    { name: '品牌色條', set: { bar: 'brand-green', barw: 4, radius: 6, title: '品牌色條', body: '左側色條使用 brand-green，不論切換哪一組主題，色碼都不變。' } },
+    { name: '品牌實色', set: { bg: 'brand-violet', border: 'none', bw: 0, radius: 8, title: '品牌實色區塊', body: '背景使用 brand-violet，文字會自動配上固定的深色。' } },
     { name: '固定深色', set: { bg: 'bg-base', mode: 'dark', shadow: true, title: '固定深色區塊', body: '不論全域是亮或暗，這個區塊都維持深色。' } },
     { name: '固定淺色', set: { bg: 'bg-panel', mode: 'light', shadow: true, title: '固定淺色區塊', body: '不論全域是亮或暗，這個區塊都維持淺色。' } }
   ];

@@ -20,7 +20,7 @@
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
 | `variant` | `outline`、`solid`、`soft`、`ghost`、`link`、`gradient`、`gradient-outline` | `outline` | 按鈕外觀。寫錯時退回 `outline`。 |
-| `color` | 品牌色名 | `blue` | 主色。可用 `shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`。寫錯時退回預設色。 |
+| `color` | 品牌色名 | `blue` | 主色。可用 `shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。寫錯時退回預設色。 |
 | `color2` | 品牌色名 | `violet` | 漸層的第二色，只在 `gradient`、`gradient-outline` 使用。 |
 | `angle` | `90deg`、`135deg`、`to right` 等 | `135deg` | 漸層方向。 |
 | `shape` | `rounded`、`pill`、`square` | `rounded` | 按鈕外形。 |
@@ -51,7 +51,6 @@
 - **文字色自動選擇**：`solid`、`gradient` 與 `outline` 滑過時的文字色依底色亮度自動選擇；目前的品牌色都偏亮，因此一律使用深色字。
 - **滑過效果**：`outline` 滑過時變成實心；`solid`、`gradient` 滑過時稍微變亮；`soft`、`ghost`、`gradient-outline` 滑過時加深底色；`link` 加粗底線。
 - **已確認**：一律以綠色勾顯示，與原本的 `variant`、`color` 無關。滑鼠停在上面可以看到原本的按鈕文字。
-- **舊色名**：`sky`、`ocean`、`info`、`lavender`、`warning`、`salmon`、`safe`、`teal`、`special`、`focus` 仍可使用，會對應到最接近的新品牌色，例如 `sky` 對應 `blue`、`safe` 對應 `green`。
 - **即時更新**：外觀屬性與 `state` 改變時會立即重畫。
 - **錯誤提示**：送出失敗時，在按鈕下方以 Bootstrap alert 顯示訊息，六秒後自動消失。
 - **樣式範圍**：所有樣式都限定在 `ui-check` 內，class 以 `uck-` 開頭，不會影響其他元件。

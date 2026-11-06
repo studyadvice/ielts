@@ -8,30 +8,30 @@
 <script src="ui-layer-diff.js"></script>
 <style>
 :root{
-  --c-bg:#0C0D0C; --c-shell:#C6C7BD; --c-lavender:#C3A5E5; --c-sky:#82C8E5; --c-warning:#E6374B;
-  --c-salmon:#E5C3B3; --c-ocean:#1CCAE8; --c-safe:#27AE60; --c-teal:#0DA591; --c-vanilla:#DBEDD8;
-  --c-yellow:#E3D322; --c-focus:#D4FFFC; --c-special:#B3DE73; --c-info:#4171BF; --c-indigo:#7849C9;
-  --c-pink:#FF91D7; --c-orange:#EDA109;
+  --c-bg:#0C0D0C; --c-shell:#C6C7BD; --c-violet:#B484E8; --c-blue:#5DBAE8; --c-warning:#EF6661;
+  --c-orange:#F79C40; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
+  --c-yellow:#E3D322; --c-focus:#DBEDD8; --c-green:#71CD76; --c-info:#778CE1; --c-indigo:#778CE1;
+  --c-pink:#FF91D7; --c-orange:#F79C40;
 }
 html{font-size:16px}
 body{margin:0;padding:24px 32px 64px 32px;background:var(--c-bg);color:var(--c-shell);font-size:1rem;line-height:1.5;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
 h1{margin:0 0 8px 0;font-size:1.75rem;line-height:1.5;color:var(--c-vanilla)}
-h2{margin:48px 0 16px 0;padding:0 0 8px 0;font-size:1.25rem;line-height:1.5;color:var(--c-sky);border-bottom:1px solid var(--c-teal)}
-h3{margin:0 0 8px 0;font-size:1rem;line-height:1.5;color:var(--c-lavender)}
+h2{margin:48px 0 16px 0;padding:0 0 8px 0;font-size:1.25rem;line-height:1.5;color:var(--c-blue);border-bottom:1px solid var(--c-green)}
+h3{margin:0 0 8px 0;font-size:1rem;line-height:1.5;color:var(--c-violet)}
 p{margin:0 0 12px 0}
 code{color:var(--c-orange);font-size:0.9375rem}
-.meta{color:var(--c-salmon);font-size:0.875rem}
+.meta{color:var(--c-orange);font-size:0.875rem}
 .pair{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start;margin:0 0 32px 0}
-.case-title{margin:0 0 4px 0;font-size:0.9375rem;color:var(--c-lavender)}
+.case-title{margin:0 0 4px 0;font-size:0.9375rem;color:var(--c-violet)}
 .case-desc{margin:0 0 12px 0;font-size:0.875rem;color:var(--c-shell)}
-pre.code{margin:0;padding:12px 16px;background:var(--c-bg);color:var(--c-vanilla);border:1px solid var(--c-teal);font-size:0.8125rem;line-height:1.5;white-space:pre-wrap;word-break:break-all;overflow:auto}
+pre.code{margin:0;padding:12px 16px;background:var(--c-bg);color:var(--c-vanilla);border:1px solid var(--c-green);font-size:0.8125rem;line-height:1.5;white-space:pre-wrap;word-break:break-all;overflow:auto}
 table.ref{width:100%;border-collapse:collapse;font-size:0.875rem;line-height:1.5}
-table.ref th{padding:8px 12px;text-align:left;color:var(--c-sky);border:1px solid var(--c-teal);background:var(--c-bg)}
-table.ref td{padding:8px 12px;vertical-align:top;border:1px solid var(--c-teal)}
+table.ref th{padding:8px 12px;text-align:left;color:var(--c-blue);border:1px solid var(--c-green);background:var(--c-bg)}
+table.ref td{padding:8px 12px;vertical-align:top;border:1px solid var(--c-green)}
 table.ref td:first-child{white-space:nowrap;color:var(--c-orange)}
 .pg-ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 20px 0}
-.pg-ctl label{display:block;margin:0 0 4px 0;font-size:0.8125rem;color:var(--c-salmon)}
-.form-control,.form-select{padding:4px 8px;font-size:0.875rem;line-height:1.5;color:var(--c-shell);background-color:var(--c-bg);border:1px solid var(--c-teal);border-radius:0}
+.pg-ctl label{display:block;margin:0 0 4px 0;font-size:0.8125rem;color:var(--c-orange)}
+.form-control,.form-select{padding:4px 8px;font-size:0.875rem;line-height:1.5;color:var(--c-shell);background-color:var(--c-bg);border:1px solid var(--c-green);border-radius:0}
 .form-control:focus,.form-select:focus{color:var(--c-shell);background-color:var(--c-bg);border-color:var(--c-focus);box-shadow:0 0 0 2px var(--c-focus)}
 .form-check-input{border-radius:0}
 textarea.form-control{line-height:1.5}
@@ -39,10 +39,10 @@ textarea.form-control{line-height:1.5}
 #alerts{position:fixed;top:16px;right:16px;width:380px;max-width:calc(100% - 32px);z-index:2000}
 #alerts .alert{margin:0 0 8px 0;padding:10px 40px 10px 16px;border-radius:0;font-size:0.875rem;line-height:1.5}
 #alerts .alert .btn-close{padding:14px 12px}
-.alert-info{--bs-alert-color:#0C0D0C;--bs-alert-bg:#82C8E5;--bs-alert-border-color:#82C8E5}
-.alert-success{--bs-alert-color:#0C0D0C;--bs-alert-bg:#27AE60;--bs-alert-border-color:#27AE60}
-.alert-warning{--bs-alert-color:#0C0D0C;--bs-alert-bg:#EDA109;--bs-alert-border-color:#EDA109}
-.alert-danger{--bs-alert-color:#D4FFFC;--bs-alert-bg:#E6374B;--bs-alert-border-color:#E6374B}
+.alert-info{--bs-alert-color:#0C0D0C;--bs-alert-bg:#5DBAE8;--bs-alert-border-color:#5DBAE8}
+.alert-success{--bs-alert-color:#0C0D0C;--bs-alert-bg:#71CD76;--bs-alert-border-color:#71CD76}
+.alert-warning{--bs-alert-color:#0C0D0C;--bs-alert-bg:#F79C40;--bs-alert-border-color:#F79C40}
+.alert-danger{--bs-alert-color:#DBEDD8;--bs-alert-bg:#EF6661;--bs-alert-border-color:#EF6661}
 @media (max-width:900px){.pair{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
@@ -68,7 +68,7 @@ textarea.form-control{line-height:1.5}
 
 <div class="pair">
   <div>
-    <div class="case-title">2. 自動播放、循環、ocean 主題</div>
+    <div class="case-title">2. 自動播放、循環、blue 主題</div>
     <div class="case-desc">mode="auto" 搭配 interval 與 loop。仍可按上一層、下一層或圓點跳轉，並用暫停按鈕控制播放。</div>
     <div class="demo-live" data-src="tpl2"></div>
   </div>
@@ -125,17 +125,17 @@ textarea.form-control{line-height:1.5}
 <div class="pg-ctl">
   <div><label>theme</label>
     <select class="form-select" data-attr="theme">
-      <option>dark</option><option>light</option><option>ocean</option><option>lavender</option>
-      <option>teal</option><option>pink</option><option>orange</option><option>salmon</option>
-      <option>sky</option><option>yellow</option>
+      <option>dark</option><option>light</option><option>blue</option><option>violet</option>
+      <option>green</option><option>pink</option><option>orange</option><option>orange</option>
+      <option>blue</option><option>yellow</option>
     </select></div>
   <div><label>mode</label>
     <select class="form-select" data-attr="mode"><option>manual</option><option>auto</option></select></div>
   <div><label>width</label><input class="form-control" data-attr="width" placeholder="100%，480，40rem"></div>
   <div><label>padding（px）</label><input class="form-control" data-attr="padding" placeholder="16，或 8 24"></div>
   <div><label>font-size（rem）</label><input class="form-control" data-attr="font-size" placeholder="1.125"></div>
-  <div><label>border</label><input class="form-control" data-attr="border" placeholder="2px dashed sky，或 none"></div>
-  <div><label>add-color</label><input class="form-control" data-attr="add-color" list="palette" placeholder="special"></div>
+  <div><label>border</label><input class="form-control" data-attr="border" placeholder="2px dashed blue，或 none"></div>
+  <div><label>add-color</label><input class="form-control" data-attr="add-color" list="palette" placeholder="green"></div>
   <div><label>del-color</label><input class="form-control" data-attr="del-color" list="palette" placeholder="warning"></div>
   <div><label>interval（ms）</label><input class="form-control" type="number" min="300" step="100" data-attr="interval" placeholder="2500"></div>
   <div><label>start（第幾層）</label><input class="form-control" type="number" min="1" data-attr="start" placeholder="1"></div>
@@ -153,9 +153,9 @@ textarea.form-control{line-height:1.5}
   <div class="chk"><input class="form-check-input" type="checkbox" id="chkTick" data-attr="progress-ticks" checked><label for="chkTick" style="margin:0">progress-ticks</label></div>
 </div>
 <datalist id="palette">
-  <option>shell</option><option>lavender</option><option>sky</option><option>warning</option><option>salmon</option>
-  <option>ocean</option><option>safe</option><option>teal</option><option>vanilla</option><option>yellow</option>
-  <option>focus</option><option>special</option><option>info</option><option>indigo</option><option>pink</option><option>orange</option>
+  <option>shell</option><option>violet</option><option>blue</option><option>warning</option><option>orange</option>
+  <option>blue</option><option>green</option><option>green</option><option>vanilla</option><option>yellow</option>
+  <option>focus</option><option>green</option><option>info</option><option>indigo</option><option>pink</option><option>orange</option>
 </datalist>
 
 <div class="pair">
@@ -175,11 +175,11 @@ textarea.form-control{line-height:1.5}
 <table class="ref">
   <tr><th>屬性</th><th>預設</th><th>說明</th></tr>
   <tr><td>width</td><td>100%</td><td>整個元件寬度。純數字視為 px，也可寫 50%、40rem。</td></tr>
-  <tr><td>theme</td><td>dark</td><td>dark、light、ocean、lavender、teal、pink、orange、salmon、sky、yellow。</td></tr>
+  <tr><td>theme</td><td>dark</td><td>dark、light、blue、violet、green、pink、orange、yellow、shell、vanilla、red、indigo、gray、key、key-deep、calm、quiet、playful、urgent。</td></tr>
   <tr><td>padding</td><td>16</td><td>內距。純數字視為 px，可寫兩個值，例如 8 24。</td></tr>
   <tr><td>font-size</td><td>1.125</td><td>內文字級。純數字視為 rem，標題與按鈕會依比例縮放。</td></tr>
   <tr><td>border</td><td>1px solid（主題色）</td><td>寬度、樣式、顏色可任意省略，順序不限。顏色可用色票名稱或 hex。none 取消邊框。</td></tr>
-  <tr><td>add-color</td><td>dark 系為 special，light 為 info</td><td>增加部分的文字色。</td></tr>
+  <tr><td>add-color</td><td>dark 系為 green，light 為 indigo</td><td>增加部分的文字色。</td></tr>
   <tr><td>del-color</td><td>warning</td><td>減去部分的文字色，並加刪除線。</td></tr>
   <tr><td>mode</td><td>manual</td><td>manual 為手動切換，auto 為自動播放。</td></tr>
   <tr><td>interval</td><td>2500</td><td>自動播放的間隔，單位毫秒，最小 300。</td></tr>
@@ -228,7 +228,7 @@ textarea.form-control{line-height:1.5}
 </template>
 
 <template id="tpl2">
-  <ui-layer-diff theme="ocean" mode="auto" interval="2200" loop>
+  <ui-layer-diff theme="blue" mode="auto" interval="2200" loop>
     <ui-layer>There is a lot of traffic.</ui-layer>
     <ui-layer>It takes me forty minutes to drive to work.</ui-layer>
     <ui-layer>It takes me forty minutes to drive eight kilometres in the morning rush.</ui-layer>
@@ -238,7 +238,7 @@ textarea.form-control{line-height:1.5}
 
 <template id="tpl3">
   <ui-layer-diff theme="light" width="560" padding="24" font-size="1.25"
-                 border="2px dashed teal" add-color="indigo" del-color="orange"
+                 border="2px dashed green" add-color="indigo" del-color="orange"
                  add-label="新增的細節" del-label="被取代的模糊字">
     <ui-layer>I use my phone a lot.</ui-layer>
     <ui-layer>I check my phone about fifty times a day.</ui-layer>
@@ -247,7 +247,7 @@ textarea.form-control{line-height:1.5}
 </template>
 
 <template id="tpl4">
-  <ui-layer-diff theme="lavender" show-del="false" legend="false" width="80%">
+  <ui-layer-diff theme="violet" show-del="false" legend="false" width="80%">
     <ui-layer label="第一層">我喜歡看電影。</ui-layer>
     <ui-layer label="第二層">我每個週末都會去電影院看一場電影。</ui-layer>
     <ui-layer label="第三層">我每個週末都會去電影院看一場電影，通常挑晚上最後一場，人比較少。</ui-layer>
@@ -255,7 +255,7 @@ textarea.form-control{line-height:1.5}
 </template>
 
 <template id="tpl5">
-  <ui-layer-diff show-result result-label="現在的完整句子" theme="teal">
+  <ui-layer-diff show-result result-label="現在的完整句子" theme="green">
     <ui-layer>I like my commute.</ui-layer>
     <ui-layer>I like my commute because I walk to the MRT station.</ui-layer>
     <ui-layer>I like my commute because I walk five minutes to the MRT station and usually get a seat.</ui-layer>
@@ -264,7 +264,7 @@ textarea.form-control{line-height:1.5}
 </template>
 
 <template id="tpl6">
-  <ui-layer-diff theme="lavender" progress progress-position="top">
+  <ui-layer-diff theme="violet" progress progress-position="top">
     <ui-layer>I read books.</ui-layer>
     <ui-layer>I read novels before bed.</ui-layer>
     <ui-layer>I read novels for half an hour before bed.</ui-layer>

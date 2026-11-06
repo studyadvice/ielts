@@ -86,10 +86,10 @@
 <div class="row">
   <div class="meta">
     <h3>loop + 自訂主題色</h3>
-    <pre><code>&lt;slider-show height="180px" loop="true" theme="ocean"&gt;</code></pre>
+    <pre><code>&lt;slider-show height="180px" loop="true" theme="blue"&gt;</code></pre>
   </div>
   <div class="demo">
-    <slider-show height="180px" loop="true" theme="ocean">
+    <slider-show height="180px" loop="true" theme="blue">
       <div slide part="1"><div class="slide-content"><div class="slide-main"><p>可循環瀏覽</p></div></div></div>
       <div slide part="1"><div class="slide-content"><div class="slide-main"><p>最後一張</p></div></div></div>
     </slider-show>
@@ -169,7 +169,7 @@
 <tr><th>屬性</th><th>可接受值</th><th>預設值</th><th>說明</th></tr>
 <tr><td><code>role</code>（寫在投影片上）</td><td>start／end</td><td>（無）</td><td>標記這張是起始／結束畫面</td></tr>
 <tr><td><code>start-style</code> / <code>end-style</code></td><td>gradient-border／gradient-bg／accent-frame／top-bottom-bar／corner-tag／none</td><td>有標 role 則為 accent-frame</td><td>裝飾風格，只動外框／底色，不影響投影片內容</td></tr>
-<tr><td><code>start-colors</code> / <code>end-colors</code></td><td>"色票A,色票B"</td><td>lavender,sky／safe,teal</td><td>漸層或邊框用的兩個顏色</td></tr>
+<tr><td><code>start-colors</code> / <code>end-colors</code></td><td>"色票A,色票B"</td><td>violet,blue／green,green</td><td>漸層或邊框用的兩個顏色</td></tr>
 </table>
 
 <div class="row">
@@ -230,12 +230,12 @@
 
 <div class="row">
   <div class="meta"><h3>自訂 start-colors／end-colors</h3><pre><code>&lt;slider-show start-style="gradient-border" end-style="gradient-border"
-  start-colors="indigo,pink" end-colors="ocean,teal"&gt;</code></pre></div>
+  start-colors="indigo,pink" end-colors="blue,green"&gt;</code></pre></div>
   <div class="demo">
-    <slider-show height="160px" start-style="gradient-border" end-style="gradient-border" start-colors="indigo,pink" end-colors="ocean,teal">
+    <slider-show height="160px" start-style="gradient-border" end-style="gradient-border" start-colors="indigo,pink" end-colors="blue,green">
       <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>封面（indigo→pink）</p></div></div></div>
       <div slide part="1"><div class="slide-content"><div class="slide-main"><p>內容頁</p></div></div></div>
-      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾（ocean→teal）</p></div></div></div>
+      <div slide part="1" role="end"><div class="slide-content"><div class="slide-main"><p>結尾（blue→green）</p></div></div></div>
     </slider-show>
   </div>
 </div>
@@ -276,10 +276,10 @@
   auto-show-part-buttons="true"
   next-part-btn-text="繼續 →"
   finish-btn-text="結束課程"
-  finish-btn-bg="safe"&gt;</code></pre>
+  finish-btn-bg="green"&gt;</code></pre>
   </div>
   <div class="demo">
-    <slider-show height="160px" auto-show-part-buttons="true" next-part-btn-text="繼續 →" finish-btn-text="結束課程" finish-btn-bg="safe">
+    <slider-show height="160px" auto-show-part-buttons="true" next-part-btn-text="繼續 →" finish-btn-text="結束課程" finish-btn-bg="green">
       <div slide part="1"><div class="slide-content"><div class="slide-main"><p>唯一一部分、唯一一張</p></div></div></div>
     </slider-show>
   </div>
@@ -293,19 +293,19 @@
 <tr><td><code>bg-color</code></td><td>triangle 進度樣式空心三角形的挖空色（需與頁面背景一致）</td></tr>
 <tr><td><code>extra-note-hover-color</code></td><td>extra-note 底線觸發文字 hover 時的顏色</td></tr>
 </table>
-<p style="color:var(--muted)">可用色票名稱：background, fill, shell, lavender, sky, warning, salmon, ocean, safe, teal, vanilla, yellow, focus, special, info, indigo, pink, orange（亦可直接填 #hex）。</p>
+<p style="color:var(--muted)">可用色票名稱：background, fill, shell, violet, blue, red, orange, green, vanilla, yellow, indigo, pink, gray, key, key-deep, calm, quiet, playful, urgent（亦可直接填 #hex）。</p>
 
 <div class="row">
   <div class="meta">
     <h3>自訂文字色 + 填色區塊色</h3>
     <pre><code>&lt;slider-show
   fontcolor-subtitle="pink"
-  fontcolor-main="focus"
+  fontcolor-main="vanilla"
   fontcolor-footer="yellow"
   fill-color="indigo"&gt;</code></pre>
   </div>
   <div class="demo">
-    <slider-show height="200px" fontcolor-subtitle="pink" fontcolor-main="focus" fontcolor-footer="yellow" fill-color="indigo">
+    <slider-show height="200px" fontcolor-subtitle="pink" fontcolor-main="vanilla" fontcolor-footer="yellow" fill-color="indigo">
       <div slide part="1"><div class="slide-content">
         <div class="slide-subtitle">副標題</div>
         <div class="slide-main"><p>主要內容文字</p></div>
@@ -409,7 +409,7 @@
     <h3>多項屬性同時套用</h3>
     <pre><code>&lt;slider-show
   height="240px"
-  theme="special"
+  theme="green"
   progress-style="triangle"
   auto-show-part-buttons="true"
   part-transition="slide"
@@ -419,7 +419,7 @@
   quiz-require-complete="true"&gt;</code></pre>
   </div>
   <div class="demo">
-    <slider-show height="240px" theme="special" progress-style="triangle" auto-show-part-buttons="true" part-transition="slide" start-style="gradient-border" end-style="gradient-border" fontcolor-main="vanilla" quiz-require-complete="true">
+    <slider-show height="240px" theme="green" progress-style="triangle" auto-show-part-buttons="true" part-transition="slide" start-style="gradient-border" end-style="gradient-border" fontcolor-main="vanilla" quiz-require-complete="true">
       <div slide part="1" role="start"><div class="slide-content"><div class="slide-main"><p>歡迎開始</p></div></div></div>
       <div slide part="1"><div class="slide-content"><div class="slide-main"><p>請填空：<quiz>地球是{{圓形}}的。</quiz></p></div></div></div>
       <div slide part="2" role="end"><div class="slide-content"><div class="slide-main"><p>恭喜完成！</p></div></div></div>

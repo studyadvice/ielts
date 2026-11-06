@@ -9,20 +9,20 @@
 <style>
   body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
   .page{max-width:1600px;margin:0 auto;padding:32px 40px 64px 40px;}
-  h1{font-size:2rem;color:#1CCAE8;margin:0 0 8px 0;}
-  h2{font-size:1.4rem;color:#C3A5E5;margin:48px 0 8px 0;padding:0 0 8px 0;border-bottom:1px solid #C3A5E5;}
-  h3{font-size:1.1rem;color:#82C8E5;margin:24px 0 8px 0;}
-  .lead-text{color:#92B5E0;font-size:1rem;margin:0 0 16px 0;}
+  h1{font-size:2rem;color:#5DBAE8;margin:0 0 8px 0;}
+  h2{font-size:1.4rem;color:#B484E8;margin:48px 0 8px 0;padding:0 0 8px 0;border-bottom:1px solid #B484E8;}
+  h3{font-size:1.1rem;color:#5DBAE8;margin:24px 0 8px 0;}
+  .lead-text{color:#778CE1;font-size:1rem;margin:0 0 16px 0;}
   .note{color:#DBEDD8;font-size:0.95rem;margin:0 0 16px 0;}
   .demo-live{margin:16px 0;}
-  pre.demo-code{background:#0C0D0C;color:#DBEDD8;border:1px solid #82C8E5;border-radius:8px;padding:16px;font-size:0.85rem;max-height:420px;overflow:auto;margin:0;}
-  code{color:#B3DE73;}
-  a{color:#82C8E5;}
+  pre.demo-code{background:#0C0D0C;color:#DBEDD8;border:1px solid #5DBAE8;border-radius:8px;padding:16px;font-size:0.85rem;max-height:420px;overflow:auto;margin:0;}
+  code{color:#71CD76;}
+  a{color:#5DBAE8;}
   .ref{--bs-table-bg:transparent;--bs-table-color:#C6C7BD;--bs-table-border-color:#C6C7BD;font-size:0.9rem;}
   .ref th{color:#E3D322;}
-  .ref td:first-child{color:#B3DE73;font-family:monospace;white-space:nowrap;}
-  .ver{border-left:4px solid #27AE60;padding:8px 16px;margin:8px 0;}
-  .ver strong{color:#27AE60;}
+  .ref td:first-child{color:#71CD76;font-family:monospace;white-space:nowrap;}
+  .ver{border-left:4px solid #71CD76;padding:8px 16px;margin:8px 0;}
+  .ver strong{color:#71CD76;}
 </style>
 </head>
 <body>
@@ -41,12 +41,12 @@
   <pre class="demo-code" id="demo1-code"></pre>
   <script type="text/plain" data-demo="demo1">
 <ui-cards title="服務項目" cols="3" divider="dashed" toggle
-  panel-title="{label}" accent="ocean">
-  <card-item label="網站設計" note="形象網站、活動頁" icon="palette-fill" color="lavender"
+  panel-title="{label}" accent="blue">
+  <card-item label="網站設計" note="形象網站、活動頁" icon="palette-fill" color="violet"
     tags="RWD,SEO" footer="約 4 週" detail="c1-web"></card-item>
-  <card-item label="系統開發" note="後台、會員、金流" icon="cpu-fill" color="sky"
+  <card-item label="系統開發" note="後台、會員、金流" icon="cpu-fill" color="blue"
     tags="PHP,MySQL" footer="約 8 週" detail="c1-sys" badge="熱門"></card-item>
-  <card-item label="維護代管" note="主機、備份、更新" icon="shield-check" color="special"
+  <card-item label="維護代管" note="主機、備份、更新" icon="shield-check" color="green"
     tags="月費" footer="按月計費" detail="c1-care"></card-item>
 </ui-cards>
 
@@ -75,7 +75,7 @@
     <button detail="c2-b-rule" color="orange" detail-title="入住須知">須知</button>
   </card-item>
   <card-item span="2" label="城市旅店" note="台北 · 商務房，步行 3 分鐘到捷運"
-    image="https://picsum.photos/seed/city/400/300" detail="c2-c" color="sky">
+    image="https://picsum.photos/seed/city/400/300" detail="c2-c" color="blue">
     <p>平日每晚 2,600 元，週末 3,000 元。</p>
   </card-item>
   <card-item label="合作平台" note="另開視窗" icon="box-arrow-up-right" color="orange"
@@ -97,10 +97,10 @@
   <script type="text/plain" data-demo="demo3">
 <ui-cards cols="4" gap="12" card-style="filled" align="center" card-height="180" icon-size="2.4"
   card-radius="12" panel="none">
-  <card-item label="今日訂單" icon="cart-check-fill" color="ocean" source="c3-a"></card-item>
-  <card-item label="新會員" icon="person-plus-fill" color="special" source="c3-b"></card-item>
+  <card-item label="今日訂單" icon="cart-check-fill" color="blue" source="c3-a"></card-item>
+  <card-item label="新會員" icon="person-plus-fill" color="green" source="c3-b"></card-item>
   <card-item label="待出貨" icon="box-seam-fill" color="yellow" source="c3-c"></card-item>
-  <card-item label="退貨申請" icon="arrow-return-left" color="salmon" source="c3-d" badge="新"></card-item>
+  <card-item label="退貨申請" icon="arrow-return-left" color="orange" source="c3-d" badge="新"></card-item>
 </ui-cards>
 
 <template id="c3-a"><p style="font-size:1.6rem;font-weight:700;">128</p></template>
@@ -130,7 +130,7 @@
       <tr><td>icon-size</td><td>2</td><td>圖示大小（rem）</td></tr>
       <tr><td>color</td><td>shell</td><td>卡片主色（外框、名稱、圖示，實心時為底色）</td></tr>
       <tr><td>icon-color</td><td>同 color</td><td>圖示顏色；實心卡片預設為底層背景色</td></tr>
-      <tr><td>accent</td><td>ocean</td><td>選中卡片的外框色</td></tr>
+      <tr><td>accent</td><td>blue</td><td>選中卡片的外框色</td></tr>
       <tr><td>divider</td><td>不顯示</td><td>頁尾上方分隔線：solid、dashed、dotted</td></tr>
       <tr><td>divider-color</td><td>同 color</td><td>分隔線顏色</td></tr>
       <tr><td>bordered</td><td>否</td><td>整個元件外框</td></tr>
@@ -143,7 +143,7 @@
       <tr><td>active-detail</td><td>無</td><td>初始開啟的 detail</td></tr>
       <tr><td>trigger、detail-trigger</td><td>click</td><td>卡片、卡片內元素的觸發方式：click、hover</td></tr>
       <tr><td>toggle</td><td>否</td><td>再點一次已開啟的卡片時收起</td></tr>
-      <tr><td>button-color</td><td>ocean</td><td>帶 detail 元素的預設按鈕配色</td></tr>
+      <tr><td>button-color</td><td>blue</td><td>帶 detail 元素的預設按鈕配色</td></tr>
     </tbody>
   </table>
 

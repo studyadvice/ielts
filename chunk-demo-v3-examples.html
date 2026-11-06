@@ -8,8 +8,8 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg: #0C0D0C; --surface: #141514; --border: #242524;
-    --shell: #C6C7BD; --stone: #95c9de; --special: #b3de73;
-    --lavender: #C3A5E5; --sky: #95c9de; --safe: #299459;
+    --shell: #C6C7BD; --blue: #5DBAE8; --green: #71CD76;
+    --violet: #B484E8; --blue: #5DBAE8; --green: #71CD76;
   }
   body {
     background: var(--bg); color: var(--shell);
@@ -18,11 +18,11 @@
   }
 
   .page-header {
-    background: var(--surface); border-bottom: 2px solid var(--special);
+    background: var(--surface); border-bottom: 2px solid var(--green);
     padding: 32px 48px 28px; margin-bottom: 48px;
   }
-  .page-header h1 { font-size: 1.8rem; font-weight: 700; color: var(--special); }
-  .page-header p  { color: var(--stone); margin-top: 6px; font-size: .92rem; }
+  .page-header h1 { font-size: 1.8rem; font-weight: 700; color: var(--green); }
+  .page-header p  { color: var(--blue); margin-top: 6px; font-size: .92rem; }
 
   .wrap { max-width: 860px; margin: 0 auto; padding: 0 48px; }
 
@@ -30,13 +30,13 @@
   .section-label {
     display: inline-block; font-size: .7rem; font-weight: 700;
     letter-spacing: .13em; text-transform: uppercase;
-    background: var(--lavender); color: var(--bg);
+    background: var(--violet); color: var(--bg);
     padding: 2px 9px; border-radius: 3px; margin-bottom: 10px;
   }
-  .section h2  { font-size: 1.1rem; color: var(--lavender); margin-bottom: 6px; }
-  .section .desc { font-size: .88rem; color: var(--stone); margin-bottom: 18px; line-height: 1.6; }
+  .section h2  { font-size: 1.1rem; color: var(--violet); margin-bottom: 6px; }
+  .section .desc { font-size: .88rem; color: var(--blue); margin-bottom: 18px; line-height: 1.6; }
   .section .desc code {
-    background: var(--border); color: var(--special);
+    background: var(--border); color: var(--green);
     padding: 1px 5px; border-radius: 3px; font-size: .85em;
   }
 
@@ -47,11 +47,11 @@
     padding: 16px 18px; font-size: .8rem; overflow-x: auto;
     color: #DBEDD8; line-height: 1.7; margin-top: 14px;
   }
-  pre .c { color: var(--stone); font-style: italic; }
-  pre .k { color: var(--lavender); }
-  pre .s { color: var(--safe); }
-  pre .a { color: #DECA4B; }
-  pre .v { color: var(--special); }
+  pre .c { color: var(--blue); font-style: italic; }
+  pre .k { color: var(--violet); }
+  pre .s { color: var(--green); }
+  pre .a { color: #E3D322; }
+  pre .v { color: var(--green); }
 
   .demo-wrap {
     background: var(--surface); border: 1px solid var(--border);
@@ -78,11 +78,11 @@
     </p>
 
     <div class="demo-wrap">
-      <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">show-dots="true"（預設）</p>
+      <p style="font-size:.8rem;color:var(--blue);margin-bottom:12px">show-dots="true"（預設）</p>
       <chunk-demo
         sentence="She {0} to the market {1}."
         show-dots="true"
-        theme="sky"
+        theme="blue"
       >
         <cd-chunk id="0" label="動詞">
           <cd-level level="1">went</cd-level>
@@ -95,11 +95,11 @@
         </cd-chunk>
       </chunk-demo>
 
-      <p style="font-size:.8rem;color:var(--stone);margin:18px 0 12px">show-dots="false"</p>
+      <p style="font-size:.8rem;color:var(--blue);margin:18px 0 12px">show-dots="false"</p>
       <chunk-demo
         sentence="She {0} to the market {1}."
         show-dots="false"
-        theme="sky"
+        theme="blue"
       >
         <cd-chunk id="0" label="動詞">
           <cd-level level="1">went</cd-level>
@@ -116,7 +116,7 @@
     <pre>&lt;<span class="k">chunk-demo</span>
   <span class="a">sentence</span>=<span class="s">"She {0} to the market {1}."</span>
   <span class="a">show-dots</span>=<span class="v">"false"</span>
-  <span class="a">theme</span>=<span class="s">"sky"</span>
+  <span class="a">theme</span>=<span class="s">"blue"</span>
 &gt;
   &lt;<span class="k">cd-chunk</span> <span class="a">id</span>=<span class="v">"0"</span> <span class="a">label</span>=<span class="s">"動詞"</span>&gt;
     &lt;<span class="k">cd-level</span> <span class="a">level</span>=<span class="v">"1"</span>&gt;went&lt;/<span class="k">cd-level</span>&gt;
@@ -148,7 +148,7 @@
         width="100%"
         dropdown-width="300px"
         button-width="160px"
-        theme="focus"
+        theme="vanilla"
       >
         <cd-chunk id="0" label="主題">
           <cd-level level="1">Listening</cd-level>
@@ -187,13 +187,13 @@
     </p>
 
     <div class="demo-wrap">
-      <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">
-        level-colors="#F08080, #b3de73, #95c9de"（紅 / 黃綠 / 天藍）
+      <p style="font-size:.8rem;color:var(--blue);margin-bottom:12px">
+        level-colors="#EF6661, #71CD76, #5DBAE8"（紅 / 黃綠 / 天藍）
       </p>
       <chunk-demo
         sentence="I {0} my homework {1} every day."
-        level-colors="#F08080, #b3de73, #95c9de"
-        theme="lavender"
+        level-colors="#EF6661, #71CD76, #5DBAE8"
+        theme="violet"
         show-preview="true"
       >
         <cd-chunk id="0" label="動詞片語">
@@ -211,13 +211,13 @@
 
     <pre>&lt;<span class="k">chunk-demo</span>
   <span class="a">sentence</span>=<span class="s">"I {0} my homework {1} every day."</span>
-  <span class="a">level-colors</span>=<span class="v">"#F08080, #b3de73, #95c9de"</span>
-  <span class="a">theme</span>=<span class="s">"lavender"</span>
+  <span class="a">level-colors</span>=<span class="v">"#EF6661, #71CD76, #5DBAE8"</span>
+  <span class="a">theme</span>=<span class="s">"violet"</span>
   <span class="a">show-preview</span>=<span class="v">"true"</span>
 &gt;...&lt;/<span class="k">chunk-demo</span>&gt;
 
 <span class="c">// 等效的 data-config 寫法（可混用，屬性優先）：</span>
-<span class="a">data-config</span>=<span class="s">'{"levelDotColors":{"1":"#F08080","2":"#b3de73","3":"#95c9de"}}'</span></pre>
+<span class="a">data-config</span>=<span class="s">'{"levelDotColors":{"1":"#EF6661","2":"#71CD76","3":"#5DBAE8"}}'</span></pre>
   </section>
 
   <hr class="div">
@@ -234,13 +234,13 @@
     </p>
 
     <div class="demo-wrap">
-      <p style="font-size:.8rem;color:var(--stone);margin-bottom:12px">
+      <p style="font-size:.8rem;color:var(--blue);margin-bottom:12px">
         mask-mode="true"　　點擊各語塊，選取 Level 後揭露內容 ↓
       </p>
       <chunk-demo
         sentence="The {0} of a language {1} on {2} practice."
         mask-mode="true"
-        theme="safe"
+        theme="green"
         show-preview="true"
         button-width="130px"
       >
@@ -265,7 +265,7 @@
     <pre>&lt;<span class="k">chunk-demo</span>
   <span class="a">sentence</span>=<span class="s">"The {0} of a language {1} on {2} practice."</span>
   <span class="a">mask-mode</span>=<span class="v">"true"</span>
-  <span class="a">theme</span>=<span class="s">"safe"</span>
+  <span class="a">theme</span>=<span class="s">"green"</span>
   <span class="a">show-preview</span>=<span class="v">"true"</span>
   <span class="a">button-width</span>=<span class="v">"130px"</span>
 &gt;
@@ -297,7 +297,7 @@
         sentence="Students should {0} their essays {1} submitting them."
         mask-mode="true"
         show-dots="false"
-        level-colors="#EDA109, #299459, #C3A5E5"
+        level-colors="#F79C40, #71CD76, #B484E8"
         button-width="180px"
         dropdown-width="280px"
         width="100%"
@@ -322,7 +322,7 @@
   <span class="a">sentence</span>=<span class="s">"Students should {0} their essays {1} submitting them."</span>
   <span class="a">mask-mode</span>=<span class="v">"true"</span>
   <span class="a">show-dots</span>=<span class="v">"false"</span>
-  <span class="a">level-colors</span>=<span class="v">"#EDA109, #299459, #C3A5E5"</span>
+  <span class="a">level-colors</span>=<span class="v">"#F79C40, #71CD76, #B484E8"</span>
   <span class="a">button-width</span>=<span class="v">"180px"</span>
   <span class="a">dropdown-width</span>=<span class="v">"280px"</span>
   <span class="a">width</span>=<span class="v">"100%"</span>

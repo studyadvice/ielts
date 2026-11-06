@@ -156,27 +156,24 @@ class SliderShow extends HTMLElement {
       'background': '#0C0D0C',
       'fill': '#1A1B1A',
       'shell': '#C6C7BD',
-      'lavender': '#B484E8',
-      'sky': '#5DBAE8',
-      'warning': '#EF6661',
-      'salmon': '#F79C40',
-      'ocean': '#5DBAE8',
-      'safe': '#71CD76',
-      'teal': '#71CD76',
       'vanilla': '#DBEDD8',
       'yellow': '#E3D322',
-      'focus': '#DBEDD8',
-      'special': '#71CD76',
-      'info': '#778CE1',
       'indigo': '#778CE1',
       'pink': '#FF91D7',
-      'orange': '#F79C40',
+      'orange': '#FF5530',
       /* 新色票 */
       'red': '#EF6661',
       'green': '#71CD76',
       'blue': '#5DBAE8',
       'violet': '#B484E8',
-      'gray': '#86877F'
+      'gray': '#86877F',
+      /* 新增色 */
+      'key': '#51DBCF',
+      'key-deep': '#176878',
+      'calm': '#A3C4BC',
+      'quiet': '#A9B8E0',
+      'playful': '#FFA987',
+      'urgent': '#FF2E63'
     };
 
     if (brandColors[colorValue.toLowerCase()]) {
@@ -1067,14 +1064,14 @@ class SliderShow extends HTMLElement {
     const restartBtnBg = this.parseColor(this.getAttribute('restart-btn-bg')) || themeColor;
     const restartBtnColor = this.parseColor(this.getAttribute('restart-btn-color')) || this.getContrastColor(themeColor);
 
-    const fontColorSubtitle = this.parseColor(this.getAttribute('fontcolor-subtitle')) || this.parseColor('lavender');
+    const fontColorSubtitle = this.parseColor(this.getAttribute('fontcolor-subtitle')) || this.parseColor('violet');
     const fontColorMain = this.parseColor(this.getAttribute('fontcolor-main')) || this.parseColor('shell');
-    const fontColorFooter = this.parseColor(this.getAttribute('fontcolor-footer')) || this.parseColor('sky');
+    const fontColorFooter = this.parseColor(this.getAttribute('fontcolor-footer')) || this.parseColor('blue');
     const fillColor = this.parseColor(this.getAttribute('fill-color')) || this.parseColor('fill');
     // bg-color：triangle 進度樣式的「空心」中心挖空色，需與元件所在頁面背景一致才會無縫；預設對應色票 background
     const bgColor = this.parseColor(this.getAttribute('bg-color')) || this.parseColor('background');
 
-    const extraNoteHoverColor = this.parseColor(this.getAttribute('extra-note-hover-color')) || this.parseColor('special');
+    const extraNoteHoverColor = this.parseColor(this.getAttribute('extra-note-hover-color')) || this.parseColor('green');
 
     // 起始／結束畫面：純粹由作者在投影片上標記 role="start" / role="end" 決定，不做位置自動偵測
     const hasStartRole = !!this.querySelector('[slide][role="start"]');
@@ -1084,7 +1081,7 @@ class SliderShow extends HTMLElement {
     if (startStyle !== 'none') this.dataset.startStyle = startStyle; else delete this.dataset.startStyle;
     if (endStyle !== 'none') this.dataset.endStyle = endStyle; else delete this.dataset.endStyle;
 
-    const [startColorA, startColorB] = this.parseColorPair(this.getAttribute('start-colors'), ['lavender', 'sky']);
+    const [startColorA, startColorB] = this.parseColorPair(this.getAttribute('start-colors'), ['violet', 'blue']);
     const [endColorA, endColorB] = this.parseColorPair(this.getAttribute('end-colors'), ['green', 'blue']);
 
     // 使用 CSS 變數設定此元件的顏色
@@ -1743,29 +1740,14 @@ class SliderShow extends HTMLElement {
 SliderShow.activeInstance = null;
 
 customElements.define('slider-show', SliderShow);
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

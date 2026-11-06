@@ -13,20 +13,20 @@ body{margin:0;background:#0C0D0C;color:#C6C7BD;font-family:'Noto Sans TC','PingF
 nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:32px 20px;background:#121312;border-right:1px solid #2a2b2a}
 nav.toc .brand{color:#D4AF37;font-size:1.25rem;font-weight:700;margin-bottom:16px}
 nav.toc a{display:block;padding:6px 12px;border-radius:6px;color:#C6C7BD;text-decoration:none}
-nav.toc a:hover{background:#1f201f;color:#D4FFFC}
+nav.toc a:hover{background:#1f201f;color:#DBEDD8}
 main{padding:40px 64px 120px;max-width:1400px}
-h1{margin:0 0 8px;color:#1CCAE8;font-size:2.25rem;line-height:1.4}
+h1{margin:0 0 8px;color:#5DBAE8;font-size:2.25rem;line-height:1.4}
 .lead{color:#DBEDD8;margin:0 0 32px}
 section.demo{margin:0 0 56px}
-h2{margin:0 0 8px;color:#82C8E5;font-size:1.75rem;line-height:1.4;border-bottom:2px solid #0DA591;padding-bottom:8px}
+h2{margin:0 0 8px;color:#5DBAE8;font-size:1.75rem;line-height:1.4;border-bottom:2px solid #71CD76;padding-bottom:8px}
 .desc{margin:0 0 16px}
 .stage{padding:20px;background:#101110;border:1px solid #2a2b2a;border-radius:8px;margin-bottom:12px;min-height:80px}
 .bar{display:flex;gap:12px;margin-bottom:12px}
-.rbtn{font-size:1.125rem;padding:6px 18px;background:transparent;color:#B3DE73;border:1px solid #B3DE73;border-radius:6px;cursor:pointer}
+.rbtn{font-size:1.125rem;padding:6px 18px;background:transparent;color:#71CD76;border:1px solid #71CD76;border-radius:6px;cursor:pointer}
 .rbtn:hover{background:rgba(179,222,115,.85);color:#0C0D0C}
-details summary{cursor:pointer;color:#E5C3B3;margin-bottom:8px}
-pre{margin:0 0 12px;padding:16px 20px;background:#141514;border-left:4px solid #0DA591;border-radius:6px;overflow-x:auto}
-pre code{color:#D4FFFC;font-family:Consolas,monospace;font-size:1.125rem;line-height:1.5;white-space:pre}
+details summary{cursor:pointer;color:#F79C40;margin-bottom:8px}
+pre{margin:0 0 12px;padding:16px 20px;background:#141514;border-left:4px solid #71CD76;border-radius:6px;overflow-x:auto}
+pre code{color:#DBEDD8;font-family:Consolas,monospace;font-size:1.125rem;line-height:1.5;white-space:pre}
 .alert{font-size:1.125rem}
 
 /* 行距：元件固定為 1.75，沒有設定鍵 */
@@ -54,10 +54,10 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <h2>1. 自動揭露鏈</h2><p class="desc">只有 a 寫 active，其餘由 next 串起。b 的 next-interval 為 1200，最後一個是 ir-gold 收尾。</p>
 <div class="bar"><button class="rbtn" data-replay="d1">↻ 重新播放</button></div>
 <div class="stage" id="stage-d1"></div>
-<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d1-a" active="true" next="d1-b" color="sky"&gt;
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d1-a" active="true" next="d1-b" color="blue"&gt;
   &lt;h5&gt;第一步&lt;/h5&gt;&lt;p&gt;載入就展開，0.5 秒後自動帶出下一段。&lt;/p&gt;
 &lt;/info-region&gt;
-&lt;info-region id="d1-b" next="d1-c" next-interval="1200" color="ocean"&gt;
+&lt;info-region id="d1-b" next="d1-c" next-interval="1200" color="blue"&gt;
   &lt;p&gt;等了 1.2 秒才帶出最後一段。&lt;/p&gt;
 &lt;/info-region&gt;
 &lt;info-region id="d1-c" class="ir-gold"&gt;
@@ -72,20 +72,20 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
              countdown-color="yellow" countdown-height="5" next="d2-b" color="orange"&gt;
   &lt;p&gt;先讀這一段，3 秒後自動下一段。&lt;/p&gt;
 &lt;/info-region&gt;
-&lt;info-region id="d2-b" countdown next="d2-c" color="teal"&gt;
+&lt;info-region id="d2-b" countdown next="d2-c" color="green"&gt;
   &lt;p&gt;只寫 countdown，預設 2 秒。&lt;/p&gt;
 &lt;/info-region&gt;
-&lt;info-region id="d2-c" color="safe"&gt;&lt;p&gt;倒數結束。&lt;/p&gt;&lt;/info-region&gt;</code></pre></details>
+&lt;info-region id="d2-c" color="green"&gt;&lt;p&gt;倒數結束。&lt;/p&gt;&lt;/info-region&gt;</code></pre></details>
 </section>
 <section class="demo" id="d3">
 <h2>3. 手動繼續</h2><p class="desc">按鈕文字、顏色、位置可自訂。按下後按鈕消失，下一段出現。</p>
 <div class="bar"><button class="rbtn" data-replay="d3">↻ 重新播放</button></div>
 <div class="stage" id="stage-d3"></div>
 <details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d3-a" active="true" manual next="d3-b" manual-label="我讀完了"
-             manual-color="special" manual-align="center" color="special"&gt;
+             manual-color="green" manual-align="center" color="green"&gt;
   &lt;p&gt;讀完請按下方按鈕。&lt;/p&gt;
 &lt;/info-region&gt;
-&lt;info-region id="d3-b" manual next="d3-c" manual-align="left" color="lavender"&gt;
+&lt;info-region id="d3-b" manual next="d3-c" manual-align="left" color="violet"&gt;
   &lt;p&gt;預設標籤是「▶ 下一步」，這裡靠左。&lt;/p&gt;
 &lt;/info-region&gt;
 &lt;info-region id="d3-c" color="pink"&gt;&lt;p&gt;完成。&lt;/p&gt;&lt;/info-region&gt;</code></pre></details>
@@ -96,32 +96,32 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <div class="stage" id="stage-d4"></div>
 <details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group layout="horizontal" cols-per-row="4" row-gap="12px" show-controls="false" cascade-interval="80" auto-start&gt;
   &lt;info-region color="shell"&gt;&lt;p&gt;shell&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="lavender"&gt;&lt;p&gt;lavender&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="sky"&gt;&lt;p&gt;sky&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="warning"&gt;&lt;p&gt;warning&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="salmon"&gt;&lt;p&gt;salmon&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="ocean"&gt;&lt;p&gt;ocean&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="safe"&gt;&lt;p&gt;safe&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="teal"&gt;&lt;p&gt;teal&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="violet"&gt;&lt;p&gt;violet&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="blue"&gt;&lt;p&gt;blue&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="red"&gt;&lt;p&gt;warning&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="orange"&gt;&lt;p&gt;orange&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="blue"&gt;&lt;p&gt;blue&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="green"&gt;&lt;p&gt;green&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="green"&gt;&lt;p&gt;green&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="vanilla"&gt;&lt;p&gt;vanilla&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="yellow"&gt;&lt;p&gt;yellow&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="focus"&gt;&lt;p&gt;focus&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="info"&gt;&lt;p&gt;info&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="vanilla"&gt;&lt;p&gt;focus&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="indigo"&gt;&lt;p&gt;info&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="indigo"&gt;&lt;p&gt;indigo&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="pink"&gt;&lt;p&gt;pink&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="orange"&gt;&lt;p&gt;orange&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="special"&gt;&lt;p&gt;special&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="stone"&gt;&lt;p&gt;stone&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="green"&gt;&lt;p&gt;green&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="blue"&gt;&lt;p&gt;blue&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="gold"&gt;&lt;p&gt;gold&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="orange" border-width="2" border-style="dashed"&gt;&lt;p&gt;四邊 2px 虛線&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="teal" border-width="0" border-top-width="6"&gt;&lt;p&gt;只有上邊 6px&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="green" border-width="0" border-top-width="6"&gt;&lt;p&gt;只有上邊 6px&lt;/p&gt;&lt;/info-region&gt;
 &lt;/info-region-group&gt;</code></pre></details>
 </section>
 <section class="demo" id="d5">
 <h2>5. 單題測驗</h2><p class="desc">explain 接受 HTML，show-retry 可重試，答對後 800 毫秒出現說明。選項為 layout=&quot;column&quot;。</p>
 <div class="bar"><button class="rbtn" data-replay="d5">↻ 重新播放</button></div>
 <div class="stage" id="stage-d5"></div>
-<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d5-q" quiz answer="c" active="true" color="sky"
+<details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d5-q" quiz answer="c" active="true" color="blue"
              quiz-label="IELTS Speaking Part 1"
              correct-next="d5-ok" quiz-next-delay="800" show-retry
              explain="補述用法的 &lt;b&gt;which&lt;/b&gt; 可以代替前句，導出原因。"&gt;
@@ -132,10 +132,10 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
     &lt;ir-choice value="c"&gt;which is why&lt;/ir-choice&gt;
   &lt;/ir-choices&gt;
 &lt;/info-region&gt;
-&lt;info-region id="d5-ok" color="safe" manual next="d5-more" manual-label="再看一個例句"&gt;
+&lt;info-region id="d5-ok" color="green" manual next="d5-more" manual-label="再看一個例句"&gt;
   &lt;p&gt;逗號加 which 經常接：shows, indicates, represents。&lt;/p&gt;
 &lt;/info-region&gt;
-&lt;info-region id="d5-more" color="special"&gt;
+&lt;info-region id="d5-more" color="green"&gt;
   &lt;p&gt;The graph shows a sharp rise, &lt;b&gt;which indicates&lt;/b&gt; growing demand.&lt;/p&gt;
 &lt;/info-region&gt;</code></pre></details>
 </section>
@@ -144,8 +144,8 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <div class="bar"><button class="rbtn" data-replay="d6">↻ 重新播放</button></div>
 <div class="stage" id="stage-d6"></div>
 <details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group global-progress show-percent show-score auto-start
-                   progress-color="teal" progress-height="6"&gt;
-  &lt;info-region id="d6-q1" quiz quiz-item answer="b" color="sky" show-retry
+                   progress-color="green" progress-height="6"&gt;
+  &lt;info-region id="d6-q1" quiz quiz-item answer="b" color="blue" show-retry
                correct-next="d6-q2" wrong-next="d6-q2" quiz-next-delay="1000"
                explain="in spite of 後面接名詞或動名詞。"&gt;
     &lt;p&gt;_____ the rain, we went out.&lt;/p&gt;
@@ -155,7 +155,7 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
       &lt;ir-choice value="c"&gt;Because&lt;/ir-choice&gt;
     &lt;/ir-choices&gt;
   &lt;/info-region&gt;
-  &lt;info-region id="d6-q2" quiz quiz-item answer="a" color="ocean" show-retry
+  &lt;info-region id="d6-q2" quiz quiz-item answer="a" color="blue" show-retry
                correct-next="d6-end" wrong-next="d6-end" quiz-next-delay="1000"
                explain="due to 後面接名詞。"&gt;
     &lt;p&gt;The flight was cancelled _____ bad weather.&lt;/p&gt;
@@ -176,11 +176,11 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <div class="stage" id="stage-d7"></div>
 <details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group layout="horizontal" cols-per-row="3" cascade-interval="500"
                    global-progress progress-position="top" show-percent
-                   start-label="▶ 播放" reset-label="↺ 清空" start-color="special"&gt;
-  &lt;info-region color="sky"&gt;&lt;p&gt;第一格&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="ocean"&gt;&lt;p&gt;第二格&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="teal"&gt;&lt;p&gt;第三格&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="lavender"&gt;&lt;p&gt;第四格&lt;/p&gt;&lt;/info-region&gt;
+                   start-label="▶ 播放" reset-label="↺ 清空" start-color="green"&gt;
+  &lt;info-region color="blue"&gt;&lt;p&gt;第一格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="blue"&gt;&lt;p&gt;第二格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="green"&gt;&lt;p&gt;第三格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="violet"&gt;&lt;p&gt;第四格&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="pink"&gt;&lt;p&gt;第五格&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="orange"&gt;&lt;p&gt;第六格&lt;/p&gt;&lt;/info-region&gt;
 &lt;/info-region-group&gt;</code></pre></details>
@@ -190,9 +190,9 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <div class="bar"><button class="rbtn" data-replay="d8">↻ 重新播放</button></div>
 <div class="stage" id="stage-d8"></div>
 <details><summary>顯示原始碼</summary><pre><code>&lt;info-region-group cascade-interval="400" btn-width="140" start-width="220px"
-                   start-font-size="1.25" start-color="safe" reset-color="warning"&gt;
-  &lt;info-region color="safe"&gt;&lt;p&gt;內容 A&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="info"&gt;&lt;p&gt;內容 B&lt;/p&gt;&lt;/info-region&gt;
+                   start-font-size="1.25" start-color="green" reset-color="red"&gt;
+  &lt;info-region color="green"&gt;&lt;p&gt;內容 A&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="indigo"&gt;&lt;p&gt;內容 B&lt;/p&gt;&lt;/info-region&gt;
 &lt;/info-region-group&gt;</code></pre></details>
 </section>
 <section class="demo" id="d9">
@@ -204,8 +204,8 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <button class="rbtn" id="b-r">resetAll</button>
 </div>
 <div id="d9-alert"></div>
-<div class="stage" id="stage-d9"><info-region id="d9-a" color="sky"><p>區塊 A，由按鈕啟用。</p></info-region>
-<info-region id="d9-b" color="lavender"><p>區塊 B，由按鈕啟用。</p></info-region></div>
+<div class="stage" id="stage-d9"><info-region id="d9-a" color="blue"><p>區塊 A，由按鈕啟用。</p></info-region>
+<info-region id="d9-b" color="violet"><p>區塊 B，由按鈕啟用。</p></info-region></div>
 <details><summary>顯示原始碼</summary><pre><code>InfoRegion.activate(&#x27;d9-a&#x27;);
 InfoRegion.activate(&#x27;d9-b&#x27;);
 InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
@@ -213,10 +213,10 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
 </main>
 </div>
 <template id="tpl-d1">
-<info-region id="d1-a" active="true" next="d1-b" color="sky">
+<info-region id="d1-a" active="true" next="d1-b" color="blue">
   <h5>第一步</h5><p>載入就展開，0.5 秒後自動帶出下一段。</p>
 </info-region>
-<info-region id="d1-b" next="d1-c" next-interval="1200" color="ocean">
+<info-region id="d1-b" next="d1-c" next-interval="1200" color="blue">
   <p>等了 1.2 秒才帶出最後一段。</p>
 </info-region>
 <info-region id="d1-c" class="ir-gold">
@@ -228,17 +228,17 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
              countdown-color="yellow" countdown-height="5" next="d2-b" color="orange">
   <p>先讀這一段，3 秒後自動下一段。</p>
 </info-region>
-<info-region id="d2-b" countdown next="d2-c" color="teal">
+<info-region id="d2-b" countdown next="d2-c" color="green">
   <p>只寫 countdown，預設 2 秒。</p>
 </info-region>
-<info-region id="d2-c" color="safe"><p>倒數結束。</p></info-region>
+<info-region id="d2-c" color="green"><p>倒數結束。</p></info-region>
 </template>
 <template id="tpl-d3">
 <info-region id="d3-a" active="true" manual next="d3-b" manual-label="我讀完了"
-             manual-color="special" manual-align="center" color="special">
+             manual-color="green" manual-align="center" color="green">
   <p>讀完請按下方按鈕。</p>
 </info-region>
-<info-region id="d3-b" manual next="d3-c" manual-align="left" color="lavender">
+<info-region id="d3-b" manual next="d3-c" manual-align="left" color="violet">
   <p>預設標籤是「▶ 下一步」，這裡靠左。</p>
 </info-region>
 <info-region id="d3-c" color="pink"><p>完成。</p></info-region>
@@ -246,29 +246,29 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
 <template id="tpl-d4">
 <info-region-group layout="horizontal" cols-per-row="4" row-gap="12px" show-controls="false" cascade-interval="80" auto-start>
   <info-region color="shell"><p>shell</p></info-region>
-  <info-region color="lavender"><p>lavender</p></info-region>
-  <info-region color="sky"><p>sky</p></info-region>
-  <info-region color="warning"><p>warning</p></info-region>
-  <info-region color="salmon"><p>salmon</p></info-region>
-  <info-region color="ocean"><p>ocean</p></info-region>
-  <info-region color="safe"><p>safe</p></info-region>
-  <info-region color="teal"><p>teal</p></info-region>
+  <info-region color="violet"><p>violet</p></info-region>
+  <info-region color="blue"><p>blue</p></info-region>
+  <info-region color="red"><p>warning</p></info-region>
+  <info-region color="orange"><p>orange</p></info-region>
+  <info-region color="blue"><p>blue</p></info-region>
+  <info-region color="green"><p>green</p></info-region>
+  <info-region color="green"><p>green</p></info-region>
   <info-region color="vanilla"><p>vanilla</p></info-region>
   <info-region color="yellow"><p>yellow</p></info-region>
-  <info-region color="focus"><p>focus</p></info-region>
-  <info-region color="info"><p>info</p></info-region>
+  <info-region color="vanilla"><p>focus</p></info-region>
+  <info-region color="indigo"><p>info</p></info-region>
   <info-region color="indigo"><p>indigo</p></info-region>
   <info-region color="pink"><p>pink</p></info-region>
   <info-region color="orange"><p>orange</p></info-region>
-  <info-region color="special"><p>special</p></info-region>
-  <info-region color="stone"><p>stone</p></info-region>
+  <info-region color="green"><p>green</p></info-region>
+  <info-region color="blue"><p>blue</p></info-region>
   <info-region color="gold"><p>gold</p></info-region>
   <info-region color="orange" border-width="2" border-style="dashed"><p>四邊 2px 虛線</p></info-region>
-  <info-region color="teal" border-width="0" border-top-width="6"><p>只有上邊 6px</p></info-region>
+  <info-region color="green" border-width="0" border-top-width="6"><p>只有上邊 6px</p></info-region>
 </info-region-group>
 </template>
 <template id="tpl-d5">
-<info-region id="d5-q" quiz answer="c" active="true" color="sky"
+<info-region id="d5-q" quiz answer="c" active="true" color="blue"
              quiz-label="IELTS Speaking Part 1"
              correct-next="d5-ok" quiz-next-delay="800" show-retry
              explain="補述用法的 <b>which</b> 可以代替前句，導出原因。">
@@ -279,17 +279,17 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
     <ir-choice value="c">which is why</ir-choice>
   </ir-choices>
 </info-region>
-<info-region id="d5-ok" color="safe" manual next="d5-more" manual-label="再看一個例句">
+<info-region id="d5-ok" color="green" manual next="d5-more" manual-label="再看一個例句">
   <p>逗號加 which 經常接：shows, indicates, represents。</p>
 </info-region>
-<info-region id="d5-more" color="special">
+<info-region id="d5-more" color="green">
   <p>The graph shows a sharp rise, <b>which indicates</b> growing demand.</p>
 </info-region>
 </template>
 <template id="tpl-d6">
 <info-region-group global-progress show-percent show-score auto-start
-                   progress-color="teal" progress-height="6">
-  <info-region id="d6-q1" quiz quiz-item answer="b" color="sky" show-retry
+                   progress-color="green" progress-height="6">
+  <info-region id="d6-q1" quiz quiz-item answer="b" color="blue" show-retry
                correct-next="d6-q2" wrong-next="d6-q2" quiz-next-delay="1000"
                explain="in spite of 後面接名詞或動名詞。">
     <p>_____ the rain, we went out.</p>
@@ -299,7 +299,7 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
       <ir-choice value="c">Because</ir-choice>
     </ir-choices>
   </info-region>
-  <info-region id="d6-q2" quiz quiz-item answer="a" color="ocean" show-retry
+  <info-region id="d6-q2" quiz quiz-item answer="a" color="blue" show-retry
                correct-next="d6-end" wrong-next="d6-end" quiz-next-delay="1000"
                explain="due to 後面接名詞。">
     <p>The flight was cancelled _____ bad weather.</p>
@@ -317,20 +317,20 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
 <template id="tpl-d7">
 <info-region-group layout="horizontal" cols-per-row="3" cascade-interval="500"
                    global-progress progress-position="top" show-percent
-                   start-label="▶ 播放" reset-label="↺ 清空" start-color="special">
-  <info-region color="sky"><p>第一格</p></info-region>
-  <info-region color="ocean"><p>第二格</p></info-region>
-  <info-region color="teal"><p>第三格</p></info-region>
-  <info-region color="lavender"><p>第四格</p></info-region>
+                   start-label="▶ 播放" reset-label="↺ 清空" start-color="green">
+  <info-region color="blue"><p>第一格</p></info-region>
+  <info-region color="blue"><p>第二格</p></info-region>
+  <info-region color="green"><p>第三格</p></info-region>
+  <info-region color="violet"><p>第四格</p></info-region>
   <info-region color="pink"><p>第五格</p></info-region>
   <info-region color="orange"><p>第六格</p></info-region>
 </info-region-group>
 </template>
 <template id="tpl-d8">
 <info-region-group cascade-interval="400" btn-width="140" start-width="220px"
-                   start-font-size="1.25" start-color="safe" reset-color="warning">
-  <info-region color="safe"><p>內容 A</p></info-region>
-  <info-region color="info"><p>內容 B</p></info-region>
+                   start-font-size="1.25" start-color="green" reset-color="red">
+  <info-region color="green"><p>內容 A</p></info-region>
+  <info-region color="indigo"><p>內容 B</p></info-region>
 </info-region-group>
 </template>
 

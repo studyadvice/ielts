@@ -5,37 +5,33 @@
 
   const BRAND_COLORS = {
     shell:    '#C6C7BD',
-    lavender: '#B484E8',
-    sky:      '#5DBAE8',
-    warning:  '#EF6661',
-    salmon:   '#F79C40',
-    ocean:    '#5DBAE8',
-    safe:     '#71CD76',
-    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#DBEDD8',
-    special:  '#71CD76',
-    info:     '#778CE1',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#F79C40',
+    orange:   '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
     gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63',
   };
 
   const LEGACY_THEME_ALIASES = {
-    attention: 'yellow',
-    brown:     'salmon',
+    brown:     'orange',
   };
 
 
   const DEFAULTS = {
-    theme:            'lavender',
+    theme:            'violet',
     stripWidth:       8,
     mode:             'single',
     animMs:           260,
@@ -56,7 +52,7 @@
     slideFontFamily:  '',
     surfaceBg:        '',
     dotColor:         'rgba(12,13,12,.78)',
-    dotActiveColor:   BRAND_COLORS.focus,
+    dotActiveColor:   BRAND_COLORS.vanilla,
     badgeColor:       'rgba(198,199,189,.78)',
     startBg:          '',
     startColor:       '',
@@ -125,7 +121,7 @@
         transition: background .2s;
       }
       .cd-strip-dot.active {
-        background: var(--cd-dot-active, ${BRAND_COLORS.focus});
+        background: var(--cd-dot-active, ${BRAND_COLORS.vanilla});
       }
 
       .cd-body {
@@ -348,7 +344,7 @@
         border-radius: 50%;
         background: radial-gradient(
           circle,
-          ${BRAND_COLORS.focus}   0%,
+          ${BRAND_COLORS.vanilla}   0%,
           ${BRAND_COLORS.vanilla} 30%,
           var(--cd-color) 70%,
           var(--cd-color) 100%
@@ -369,7 +365,7 @@
         width:  calc(var(--cd-tip, 7px) * .35);
         height: calc(var(--cd-tip, 7px) * .35);
         border-radius: 50%;
-        background: color-mix(in srgb, var(--cd-color) 70%, ${BRAND_COLORS.focus});
+        background: color-mix(in srgb, var(--cd-color) 70%, ${BRAND_COLORS.vanilla});
         opacity: .7;
         animation: cd-fuse-ember 130ms ease-in-out infinite alternate-reverse;
         will-change: opacity, transform;
@@ -1206,7 +1202,7 @@
       if (!lv) return '';
       if (lv.src) {
         const el = document.getElementById(lv.src);
-        return el ? el.innerHTML : '<em style="color:' + BRAND_COLORS.warning + '">找不到 #' + lv.src + '</em>';
+        return el ? el.innerHTML : '<em style="color:' + BRAND_COLORS.red + '">找不到 #' + lv.src + '</em>';
       }
       return lv.html;
     }
@@ -1320,29 +1316,14 @@
   window.CellDrawer = CellDrawer;
 
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

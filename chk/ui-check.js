@@ -15,7 +15,7 @@
  *   icon     Bootstrap Icons 的 class 名，例如 bi-question-circle。省略就不顯示圖示。
  *   state    伺服器加的，state="done" 代表這位學員已經點過，直接顯示已確認。
  *
- * 舊色名（sky、safe、lavender 等）仍可使用，會對應到最接近的新品牌色。
+ * 只接受 17 個品牌色名或色碼，舊色名（sky、safe、lavender 等）已移除。
  * 不用 shadow DOM，樣式與程式都在這一個檔案裡。
  * 點擊會 POST 到祖先元素的 data-cp-url；找不到設定時只在畫面上切換狀態（給 demo 檔用）。
  */
@@ -29,26 +29,23 @@
     yellow:  '#E3D322',
     pink:    '#FF91D7',
     red:     '#EF6661',
-    orange:  '#F79C40',
+    orange:  '#FF5530',
     green:   '#71CD76',
     blue:    '#5DBAE8',
     indigo:  '#778CE1',
     violet:  '#B484E8',
-    gray:    '#86877F'
+    gray:    '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
 
   /* ── 舊色名：對應到最接近的新品牌色，讓既有內容不會退回預設色 ── */
   var ALIASES = {
-    lavender: 'violet',
-    sky:      'blue',
-    ocean:    'blue',
-    info:     'indigo',
-    warning:  'red',
-    salmon:   'orange',
-    safe:     'green',
-    teal:     'green',
-    special:  'green',
-    focus:    'vanilla'
   };
 
   var BASE          = '#0C0D0C';   /* 底層背景色 */
@@ -372,29 +369,14 @@
   if (!window.customElements || customElements.get('ui-check')) return;
   customElements.define('ui-check', UiCheck);
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

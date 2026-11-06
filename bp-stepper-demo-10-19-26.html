@@ -11,20 +11,20 @@
 :root {
   --bg:       #0C0D0C;
   --shell:    #C6C7BD;
-  --lavender: #C3A5E5;
-  --sky:      #82C8E5;
-  --ocean:    #1CCAE8;
-  --safe:     #27AE60;
-  --teal:     #0DA591;
-  --warning:  #E6374B;
-  --salmon:   #E5C3B3;
+  --violet: #B484E8;
+  --blue:      #5DBAE8;
+  --blue:    #5DBAE8;
+  --green:     #71CD76;
+  --green:     #71CD76;
+  --warning:  #EF6661;
+  --orange:   #F79C40;
   --yellow:   #E3D322;
-  --focus:    #D4FFFC;
-  --special:  #B3DE73;
-  --info:     #4171BF;
-  --indigo:   #7849C9;
+  --focus:    #DBEDD8;
+  --green:  #71CD76;
+  --info:     #778CE1;
+  --indigo:   #778CE1;
   --pink:     #FF91D7;
-  --orange:   #EDA109;
+  --orange:   #F79C40;
 }
 *, *::before, *::after { box-sizing: border-box; }
 html, body {
@@ -47,7 +47,7 @@ body { padding: 0 0 60px; }
 .demo-header h1 {
   font-size: 1.55rem;
   font-weight: 700;
-  color: var(--lavender);
+  color: var(--violet);
   margin: 0 0 4px;
 }
 .demo-header p {
@@ -57,7 +57,7 @@ body { padding: 0 0 60px; }
 }
 .badge-new {
   display: inline-block;
-  background: var(--special);
+  background: var(--green);
   color: #0C0D0C;
   font-size: 0.68rem;
   font-weight: 800;
@@ -76,7 +76,7 @@ body { padding: 0 0 60px; }
 .demo-section h2 {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--ocean);
+  color: var(--blue);
   margin: 0 0 6px;
   letter-spacing: .03em;
 }
@@ -102,21 +102,21 @@ body { padding: 0 0 60px; }
   padding: 14px 18px;
   font-family: 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.82rem;
-  color: var(--salmon);
+  color: var(--orange);
   overflow-x: auto;
   margin-top: 14px;
   line-height: 1.5;
 }
-.code-block .attr  { color: var(--sky); }
-.code-block .val   { color: var(--special); }
-.code-block .tag   { color: var(--lavender); }
+.code-block .attr  { color: var(--blue); }
+.code-block .val   { color: var(--green); }
+.code-block .tag   { color: var(--violet); }
 .code-block .cmt   { color: rgba(198,199,189,0.45); font-style: italic; }
 
 /* ── API 說明表 ── */
 .api-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
 .api-table th {
   background: rgba(195,165,229,0.10);
-  color: var(--lavender);
+  color: var(--violet);
   font-weight: 700;
   text-align: left;
   padding: 8px 14px;
@@ -130,12 +130,12 @@ body { padding: 0 0 60px; }
 }
 .api-table td code {
   background: rgba(130,200,229,0.12);
-  color: var(--sky);
+  color: var(--blue);
   padding: 1px 5px;
   border-radius: 4px;
   font-size: 0.82rem;
 }
-.api-table td.default { color: var(--salmon); font-size: 0.82rem; }
+.api-table td.default { color: var(--orange); font-size: 0.82rem; }
 
 /* ── Bootstrap Alert 覆寫 ── */
 #demo-alert-zone .alert {
@@ -151,7 +151,7 @@ body { padding: 0 0 60px; }
   border-radius: 10px;
   padding: 14px 18px;
   font-size: 0.88rem;
-  color: var(--teal);
+  color: var(--green);
   min-height: 48px;
   margin-top: 16px;
   transition: all .3s;
@@ -162,7 +162,7 @@ body { padding: 0 0 60px; }
 <body>
 
 <header class="demo-header">
-  <h1>bp-stepper <span class="badge-new">NEW</span> <code style="font-size:1rem;color:var(--special)">btn-js</code> 屬性 Demo</h1>
+  <h1>bp-stepper <span class="badge-new">NEW</span> <code style="font-size:1rem;color:var(--green)">btn-js</code> 屬性 Demo</h1>
   <p>在任一 <code>bp-step</code> 加上 <code>btn-js="JS運算式"</code>，即可注入一顆配色繼承自 theme 的自訂呼叫按鈕。</p>
 </header>
 
@@ -172,30 +172,30 @@ body { padding: 0 0 60px; }
   <div id="demo-alert-zone" style="margin-bottom:24px;min-height:52px;"></div>
 
   <!-- ─────────────────────────────────────────────────────────────────────────
-       範例 1：純按鈕呼叫（lavender theme，文字標籤）
+       範例 1：純按鈕呼叫（violet theme，文字標籤）
   ──────────────────────────────────────────────────────────────────────────── -->
   <section class="demo-section">
-    <h2>① 基本用法：文字標籤按鈕（lavender theme）</h2>
+    <h2>① 基本用法：文字標籤按鈕（violet theme）</h2>
     <p class="desc">
       在 <code>bp-step</code> 加上 <code>btn-js="..."</code> 與 <code>btn-js-label="標籤"</code>。<br>
       按鈕固定在卡片左下角，配色跟隨 theme 並因步驟狀態（active / done / error）自動變色。
     </p>
     <div class="demo-box">
-      <bp-stepper data-theme="lavender" data-compact-header>
+      <bp-stepper data-theme="violet" data-compact-header>
         <bp-step
-          btn-js="demoAlert('lavender','已呼叫步驟一的自訂函數！','safe')"
+          btn-js="demoAlert('violet','已呼叫步驟一的自訂函數！','green')"
           btn-js-label="呼叫函數">
           <bp-step-title>步驟一</bp-step-title>
           <bp-step-content>資料驗證完畢，點擊左下按鈕觸發業務函數。</bp-step-content>
         </bp-step>
         <bp-step
-          btn-js="demoAlert('lavender','步驟二執行了 saveData()','ocean')"
+          btn-js="demoAlert('violet','步驟二執行了 saveData()','blue')"
           btn-js-label="儲存資料">
           <bp-step-title>步驟二</bp-step-title>
           <bp-step-content>確認後呼叫儲存邏輯，結果顯示於頁面上方。</bp-step-content>
         </bp-step>
         <bp-step data-state="done"
-          btn-js="demoAlert('lavender','步驟三：已完成狀態仍可觸發','teal')"
+          btn-js="demoAlert('violet','步驟三：已完成狀態仍可觸發','green')"
           btn-js-label="查看報告">
           <bp-step-title>步驟三</bp-step-title>
           <bp-step-content>done 狀態下按鈕半透明，hover 恢復全亮。</bp-step-content>
@@ -212,37 +212,37 @@ body { padding: 0 0 60px; }
   </section>
 
   <!-- ─────────────────────────────────────────────────────────────────────────
-       範例 2：圖示按鈕 + progress 模式（ocean theme）
+       範例 2：圖示按鈕 + progress 模式（blue theme）
   ──────────────────────────────────────────────────────────────────────────── -->
   <section class="demo-section">
-    <h2>② 圖示按鈕 + progress 模式共存（ocean theme）</h2>
+    <h2>② 圖示按鈕 + progress 模式共存（blue theme）</h2>
     <p class="desc">
       同一步驟可同時擁有 progress 推進按鈕（右下）與 btn-js 自訂按鈕（左下）。<br>
       使用 <code>btn-js-icon-class</code> 搭配 Bootstrap Icons，不顯示文字時呈現正圓形。
     </p>
     <div class="demo-box">
       <bp-stepper
-        data-theme="ocean"
+        data-theme="blue"
         data-mode="progress"
         data-progress-icon="›"
         data-progress-text="下一步"
         data-compact-header>
         <bp-step
-          btn-js="demoAlert('ocean','已預覽此步驟內容','sky')"
+          btn-js="demoAlert('blue','已預覽此步驟內容','blue')"
           btn-js-icon-class="bi bi-eye"
           btn-js-label="預覽">
           <bp-step-title>準備資料</bp-step-title>
           <bp-step-content>左下按鈕預覽，右下按鈕推進到下一步。</bp-step-content>
         </bp-step>
         <bp-step
-          btn-js="demoAlert('ocean','已匯出 CSV','yellow')"
+          btn-js="demoAlert('blue','已匯出 CSV','yellow')"
           btn-js-icon-class="bi bi-download"
           btn-js-label="匯出">
           <bp-step-title>處理中</bp-step-title>
           <bp-step-content>btn-js 與 progress 按鈕同時存在，互不干擾。</bp-step-content>
         </bp-step>
         <bp-step
-          btn-js="demoAlert('ocean','已送出最終確認','safe')"
+          btn-js="demoAlert('blue','已送出最終確認','green')"
           btn-js-icon-class="bi bi-send"
           btn-js-label="送出">
           <bp-step-title>完成</bp-step-title>
@@ -294,7 +294,7 @@ body { padding: 0 0 60px; }
         </bp-step>
         <bp-step
           data-step-id="archive"
-          btn-js="BPStepper.resetStates(stepper); demoAlert('indigo','已重置所有步驟狀態','lavender')"
+          btn-js="BPStepper.resetStates(stepper); demoAlert('indigo','已重置所有步驟狀態','violet')"
           btn-js-label="重置"
           btn-js-icon-class="bi bi-arrow-counterclockwise">
           <bp-step-title>歸檔</bp-step-title>
@@ -320,7 +320,7 @@ body { padding: 0 0 60px; }
       只設定 <code>btn-js-icon-class</code>，不設定 <code>btn-js-label</code>（或設為空字串），按鈕呈現正圓形，與 progress 按鈕的圓形 icon 模式一致。
     </p>
     <div class="demo-box">
-      <bp-stepper data-theme="warning" data-compact-header>
+      <bp-stepper data-theme="red" data-compact-header>
         <bp-step
           btn-js="demoAlert('warning','刪除動作需要二次確認','warning')"
           btn-js-icon-class="bi bi-trash3"
@@ -329,7 +329,7 @@ body { padding: 0 0 60px; }
           <bp-step-content>垃圾桶圖示按鈕，左下正圓形。</bp-step-content>
         </bp-step>
         <bp-step data-state="active"
-          btn-js="demoAlert('warning','已複製連結到剪貼簿','salmon')"
+          btn-js="demoAlert('warning','已複製連結到剪貼簿','orange')"
           btn-js-icon-class="bi bi-link-45deg"
           btn-js-label="">
           <bp-step-title>提交審核</bp-step-title>
@@ -411,16 +411,16 @@ body { padding: 0 0 60px; }
 <script>
 /* ── Demo 輔助函數 ── */
 const BRAND_COLORS = {
-  lavender: '#C3A5E5', sky: '#82C8E5', ocean: '#1CCAE8',
-  safe: '#27AE60', teal: '#0DA591', warning: '#E6374B',
-  salmon: '#E5C3B3', yellow: '#E3D322', special: '#B3DE73',
-  info: '#4171BF', indigo: '#7849C9', pink: '#FF91D7',
-  orange: '#EDA109', shell: '#C6C7BD',
+  violet: '#B484E8', blue: '#5DBAE8', blue: '#5DBAE8',
+  green: '#71CD76', green: '#71CD76', red: '#EF6661',
+  orange: '#F79C40', yellow: '#E3D322', green: '#71CD76',
+  info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
+  orange: '#F79C40', shell: '#C6C7BD',
 };
 
 function demoAlert(theme, msg, colorKey) {
   const zone = document.getElementById('demo-alert-zone');
-  const color = BRAND_COLORS[colorKey] || BRAND_COLORS.lavender;
+  const color = BRAND_COLORS[colorKey] || BRAND_COLORS.violet;
   const div = document.createElement('div');
   div.className = 'alert alert-dismissible fade show';
   div.style.cssText = `
@@ -449,11 +449,11 @@ function showStepInfo(step, stepper) {
   const idx   = [...stepper.querySelectorAll('bp-step')].indexOf(step);
   panel.classList.remove('empty');
   panel.innerHTML = `
-    <i class="bi bi-info-circle me-2" style="color:var(--lavender)"></i>
-    <strong style="color:var(--lavender)">step 資訊：</strong>
-    data-step-id = <code style="color:var(--sky)">${id}</code>　
+    <i class="bi bi-info-circle me-2" style="color:var(--violet)"></i>
+    <strong style="color:var(--violet)">step 資訊：</strong>
+    data-step-id = <code style="color:var(--blue)">${id}</code>　
     index = <code style="color:var(--yellow)">${idx}</code>　
-    state = <code style="color:var(--special)">${state}</code>
+    state = <code style="color:var(--green)">${state}</code>
   `;
 }
 </script>

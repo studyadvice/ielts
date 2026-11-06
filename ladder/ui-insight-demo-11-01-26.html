@@ -9,19 +9,19 @@
 <style>
   body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
   .page{max-width:1400px;margin:0 auto;padding:32px 40px}
-  h1{color:#82C8E5;font-size:1.6rem;margin:0 0 8px 0}
-  h2{color:#C3A5E5;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
-  h3{color:#1CCAE8;font-size:1rem;margin:24px 0 8px 0}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{color:#5DBAE8;font-size:1rem;margin:24px 0 8px 0}
   p.lead-text{color:#C6C7BD;font-size:.95rem}
   .demo-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
   pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
-  pre .cm{color:#E5C3B3}
+  pre .cm{color:#F79C40}
   table.ref{width:100%;border-collapse:collapse;font-size:.85rem}
-  table.ref th{background:#1a1c1a;color:#82C8E5;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
+  table.ref th{background:#1a1c1a;color:#5DBAE8;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
   table.ref td{padding:7px 10px;border-bottom:1px solid #222422;vertical-align:top}
   table.ref td:first-child{color:#E3D322;font-family:Consolas,monospace;white-space:nowrap}
-  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#E5C3B3;white-space:nowrap}
-  .alert-dark-custom{background:#161816;border:1px solid #4171BF;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
+  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#F79C40;white-space:nowrap}
+  .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
   .tagdemo span{display:inline-block;border-radius:999px;padding:0 10px;color:#0C0D0C;font-size:.8rem;margin:0 6px 0 0}
 </style>
 </head>
@@ -79,17 +79,17 @@
     ini-collapse
     ini-title="Part 3 範例：城市生活的優缺點"
     border="true"
-    border-color="#4171BF"
+    border-color="#778CE1"
     padding="14px 18px"
     split="50%"
     card-active-border="#FF91D7"
     num-active-bg="#FF91D7"
-    hl-line-color="#82C8E5"
+    hl-line-color="#5DBAE8"
     hl-line-style="dotted"
-    hl-hot-bg="#82C8E5"
-    sup-color="#82C8E5"
-    note-num-bg="#82C8E5"
-    note-word-color="#82C8E5"
+    hl-hot-bg="#5DBAE8"
+    sup-color="#5DBAE8"
+    note-num-bg="#5DBAE8"
+    note-word-color="#5DBAE8"
     note-divider-style="solid"
     sentence-font-size="1.05rem"
     summary-text="Q{n} / {total}：{count} 個值得借用的說法">
@@ -99,7 +99,7 @@
     </ins-line>
     <ins-line heading="What are the downsides?">
       Rent eats up <hl why="用比例取代 expensive，具體又好懂。" tag="lr">almost half of a starting salary</hl>,
-      so a lot of my friends <hl why="生活化的動詞片語，表示和別人合租。" tag="搭配詞" tag-color="#E5C3B3">end up sharing a flat</hl>.
+      so a lot of my friends <hl why="生活化的動詞片語，表示和別人合租。" tag="搭配詞" tag-color="#F79C40">end up sharing a flat</hl>.
     </ins-line>
     <ins-line heading="Will this change in the future?">
       <hl why="未來進行式表達「照現況發展下去」的推測。" tag="gra">If remote work keeps growing</hl>,
@@ -109,20 +109,20 @@
 <pre>&lt;ui-insight
   ini-collapse
   ini-title="Part 3 範例：城市生活的優缺點"
-  border="true" border-color="#4171BF"
+  border="true" border-color="#778CE1"
   padding="14px 18px"
   split="50%"
   card-active-border="#FF91D7"
   num-active-bg="#FF91D7"
-  hl-line-color="#82C8E5" hl-line-style="dotted"
-  hl-hot-bg="#82C8E5" sup-color="#82C8E5"
-  note-num-bg="#82C8E5" note-word-color="#82C8E5"
+  hl-line-color="#5DBAE8" hl-line-style="dotted"
+  hl-hot-bg="#5DBAE8" sup-color="#5DBAE8"
+  note-num-bg="#5DBAE8" note-word-color="#5DBAE8"
   summary-text="Q{n} / {total}：{count} 個值得借用的說法"&gt;
 
   &lt;ins-line heading="What are the downsides?"&gt;
     ...
     &lt;hl why="生活化的動詞片語"
-        tag="搭配詞" tag-color="#E5C3B3"&gt;end up sharing a flat&lt;/hl&gt;
+        tag="搭配詞" tag-color="#F79C40"&gt;end up sharing a flat&lt;/hl&gt;
   &lt;/ins-line&gt;
 &lt;/ui-insight&gt;
 
@@ -150,11 +150,11 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
       hl-hot-bg="#E3D322"
       summary-text="{count} 個亮點">
       <ins-line>
-        I'm <c4>fond of cooking</c4>.
+        I'm <c-red>fond of cooking</c-red>.
       </ins-line>
       <ins-line>
-        I don't mind <hl why="don't mind 比 like 低調，聽起來更真實。<c3>小提醒</c3>：後面接動名詞。">cooking dinner for my family</hl>,
-        <hl why="把動作放進具體情境，可以搭配 <c15>back-to-back meetings</c15>。" tag="lr">even after a hectic day</hl>.
+        I don't mind <hl why="don't mind 比 like 低調，聽起來更真實。<c-blue>小提醒</c-blue>：後面接動名詞。">cooking dinner for my family</hl>,
+        <hl why="把動作放進具體情境，可以搭配 <c-pink>back-to-back meetings</c-pink>。" tag="lr">even after a hectic day</hl>.
       </ins-line>
       <ins-line>
         <hl why="用時間點取代 sometimes，頻率立刻清楚。">On Sunday evenings</hl>, I make a big pot of soup that lasts us till Wednesday.
@@ -202,10 +202,10 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
 
 <h3>內建標籤</h3>
 <p class="tagdemo">
-  <span style="background:#B3DE73">lr 詞彙</span>
-  <span style="background:#C3A5E5">gra 文法</span>
-  <span style="background:#82C8E5">fc 連貫</span>
-  <span style="background:#EDA109">p 發音</span>
+  <span style="background:#71CD76">lr 詞彙</span>
+  <span style="background:#B484E8">gra 文法</span>
+  <span style="background:#5DBAE8">fc 連貫</span>
+  <span style="background:#F79C40">p 發音</span>
   <span style="background:#FF91D7">其他文字（tag-default-bg）</span>
 </p>
 
@@ -228,7 +228,7 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
   <tr><td>ini-collapse</td><td>（無）</td><td>出現此屬性即預設收合，點擊標題列展開或收合。</td></tr>
   <tr><td>ini-title</td><td>點擊展開</td><td>收合標題列的文字。</td></tr>
   <tr><td>ini-title-size</td><td>1rem</td><td>標題列字體大小。</td></tr>
-  <tr><td>ini-title-color</td><td>#82C8E5</td><td>標題列文字與圖示顏色。</td></tr>
+  <tr><td>ini-title-color</td><td>#5DBAE8</td><td>標題列文字與圖示顏色。</td></tr>
   <tr><td>ini-title-bg</td><td>#161816</td><td>標題列底色。</td></tr>
   <tr><td>keyboard</td><td>true</td><td>是否啟用 Ctrl+Shift+上下方向鍵切換句子。</td></tr>
 </table>
@@ -241,31 +241,31 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
   <tr><td>card-bg</td><td>#161816</td><td>卡片底色。</td></tr>
   <tr><td>card-border</td><td>#2A2B29</td><td>卡片框線顏色。</td></tr>
   <tr><td>card-hover-border</td><td>#5A5B56</td><td>滑過卡片時的框線顏色。</td></tr>
-  <tr><td>card-active-border</td><td>#1CCAE8</td><td>選取中卡片的框線顏色。</td></tr>
+  <tr><td>card-active-border</td><td>#5DBAE8</td><td>選取中卡片的框線顏色。</td></tr>
   <tr><td>card-radius</td><td>8px</td><td>卡片圓角。</td></tr>
   <tr><td>heading-font-size</td><td>0.75rem</td><td>卡片小標題字體大小。</td></tr>
-  <tr><td>heading-color</td><td>#C3A5E5</td><td>卡片小標題顏色。</td></tr>
+  <tr><td>heading-color</td><td>#B484E8</td><td>卡片小標題顏色。</td></tr>
   <tr><td>sentence-font-size</td><td>1rem</td><td>句子字體大小。</td></tr>
   <tr><td>sentence-color</td><td>#C6C7BD</td><td>句子顏色。</td></tr>
   <tr><td>sentence-line-height</td><td>2.1</td><td>句子行高，留空間給亮點底線與小編號。</td></tr>
   <tr><td>show-num</td><td>true</td><td>是否顯示句子編號。</td></tr>
   <tr><td>num-bg</td><td>#2A2B29</td><td>句子編號底色。</td></tr>
   <tr><td>num-color</td><td>#C6C7BD</td><td>句子編號文字色。</td></tr>
-  <tr><td>num-active-bg</td><td>#1CCAE8</td><td>選取中句子的編號底色。</td></tr>
+  <tr><td>num-active-bg</td><td>#5DBAE8</td><td>選取中句子的編號底色。</td></tr>
   <tr><td>num-active-color</td><td>#0C0D0C</td><td>選取中句子的編號文字色。</td></tr>
 </table>
 
 <h3>亮點字詞</h3>
 <table class="ref">
   <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
-  <tr><td>hl-line-color</td><td>#B3DE73</td><td>亮點底線顏色（只在選取中的卡片顯示）。</td></tr>
+  <tr><td>hl-line-color</td><td>#71CD76</td><td>亮點底線顏色（只在選取中的卡片顯示）。</td></tr>
   <tr><td>hl-line-style</td><td>solid</td><td>底線類型：solid、dashed、dotted、double。</td></tr>
   <tr><td>hl-line-width</td><td>2px</td><td>底線粗細。</td></tr>
-  <tr><td>hl-hot-bg</td><td>#B3DE73</td><td>對照中亮點的底色。</td></tr>
+  <tr><td>hl-hot-bg</td><td>#71CD76</td><td>對照中亮點的底色。</td></tr>
   <tr><td>hl-hot-color</td><td>#0C0D0C</td><td>對照中亮點的文字色。</td></tr>
   <tr><td>show-sup</td><td>true</td><td>是否顯示亮點右上角的小編號。</td></tr>
   <tr><td>sup-font-size</td><td>0.625rem</td><td>小編號字體大小。</td></tr>
-  <tr><td>sup-color</td><td>#B3DE73</td><td>小編號顏色。</td></tr>
+  <tr><td>sup-color</td><td>#71CD76</td><td>小編號顏色。</td></tr>
 </table>
 
 <h3>右側解說面板</h3>
@@ -280,10 +280,10 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
   <tr><td>summary-text</td><td>第 {n} 句，共 {count} 個亮點</td><td>摘要範本。{n} 目前句數，{total} 總句數，{count} 亮點數。</td></tr>
   <tr><td>summary-font-size</td><td>0.75rem</td><td>摘要字體大小。</td></tr>
   <tr><td>summary-color</td><td>#C6C7BD</td><td>摘要顏色。</td></tr>
-  <tr><td>note-num-bg</td><td>#B3DE73</td><td>解說編號底色。</td></tr>
+  <tr><td>note-num-bg</td><td>#71CD76</td><td>解說編號底色。</td></tr>
   <tr><td>note-num-color</td><td>#0C0D0C</td><td>解說編號文字色。</td></tr>
   <tr><td>note-word-size</td><td>0.95rem</td><td>解說字詞大小。</td></tr>
-  <tr><td>note-word-color</td><td>#B3DE73</td><td>解說字詞顏色。</td></tr>
+  <tr><td>note-word-color</td><td>#71CD76</td><td>解說字詞顏色。</td></tr>
   <tr><td>note-text-size</td><td>0.82rem</td><td>解說內文大小。</td></tr>
   <tr><td>note-text-color</td><td>#C6C7BD</td><td>解說內文顏色。</td></tr>
   <tr><td>note-divider-style</td><td>dashed</td><td>解說之間的分隔線類型。</td></tr>

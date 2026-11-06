@@ -8,22 +8,22 @@
 <style>
   :root { font-size: 18px; }
   body { background: #0C0D0C; color: #C6C7BD; font-family: "微軟正黑體", "Inter"; padding: 36px 56px; min-width: 988px; }
-  h1 { font-size: 1.6rem; color: #82C8E5; margin-bottom: 8px; }
-  h2 { font-size: 1.2rem; color: #C3A5E5; margin: 36px 0 12px; }
+  h1 { font-size: 1.6rem; color: #5DBAE8; margin-bottom: 8px; }
+  h2 { font-size: 1.2rem; color: #B484E8; margin: 36px 0 12px; }
   .lead-note { font-size: 1rem; color: #DBEDD8; margin-bottom: 24px; }
   kbd { background: #1A1B1A; color: #E3D322; border: 1px solid #C6C7BD; padding: 2px 8px; font-size: 0.9rem; }
   .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .demo-box { border: 1px solid #2E302E; border-radius: 10px; padding: 18px; background: #111311; }
-  .demo-box h3 { font-size: 1rem; margin-bottom: 12px; color: #82C8E5; }
+  .demo-box h3 { font-size: 1rem; margin-bottom: 12px; color: #5DBAE8; }
   .demo-box h3 .tag { font-size: 0.8rem; padding: 2px 10px; border-radius: 999px; margin-left: 8px; }
-  .tag-on { background: #27AE60; color: #0C0D0C; }
-  .tag-off { border: 1px solid #E5C3B3; color: #E5C3B3; }
+  .tag-on { background: #71CD76; color: #0C0D0C; }
+  .tag-off { border: 1px solid #F79C40; color: #F79C40; }
   pre { background: #1A1B1A; color: #DBEDD8; padding: 16px; border-radius: 8px; font-size: 0.85rem; margin: 0; }
   table.attr { width: 100%; font-size: 0.95rem; }
   table.attr th { color: #E3D322; border-bottom: 1px solid #C6C7BD; padding: 8px 12px; }
   table.attr td { border-bottom: 1px dashed rgba(198, 199, 189, 0.82); padding: 8px 12px; vertical-align: top; }
   .alert-zone { position: fixed; top: 18px; right: 24px; width: 360px; z-index: 2000; }
-  .alert-dark-brand { background: rgba(26, 27, 26, 0.92); color: #D4FFFC; border: 1px solid #1CCAE8; }
+  .alert-dark-brand { background: rgba(26, 27, 26, 0.92); color: #DBEDD8; border: 1px solid #5DBAE8; }
 </style>
 </head>
 <body>
@@ -39,7 +39,7 @@
 <div class="demo-grid">
   <div class="demo-box">
     <h3>範例一：開啟鍵盤換頁<span class="tag tag-on">keyboard-nav</span></h3>
-    <slider-show id="demoOn" keyboard-nav theme="sky" height="280px" progress-style="stepper" show-part-indicator="true">
+    <slider-show id="demoOn" keyboard-nav theme="blue" height="280px" progress-style="stepper" show-part-indicator="true">
       <div slide part="1">
         <div class="slide-content">
           <div class="slide-subtitle">Part 1 · 第 1 張</div>
@@ -75,7 +75,7 @@
 
   <div class="demo-box">
     <h3>範例二：未開啟（預設）<span class="tag tag-off">無屬性</span></h3>
-    <slider-show id="demoOff" theme="lavender" height="280px" progress-style="dots">
+    <slider-show id="demoOff" theme="violet" height="280px" progress-style="dots">
       <div slide part="1">
         <div class="slide-content">
           <div class="slide-subtitle">預設關閉</div>
@@ -116,15 +116,15 @@
 <h2>程式碼對照（修改 1：新增 keyboard-nav）</h2>
 <div class="demo-grid">
   <div>
-    <div class="mb-2" style="color:#E5C3B3;">修改前</div>
-<pre>&lt;slider-show theme="sky" height="420px"
+    <div class="mb-2" style="color:#F79C40;">修改前</div>
+<pre>&lt;slider-show theme="blue" height="420px"
   progress-style="stepper"&gt;
   ...
 &lt;/slider-show&gt;</pre>
   </div>
   <div>
-    <div class="mb-2" style="color:#B3DE73;">修改後</div>
-<pre>&lt;slider-show keyboard-nav theme="sky" height="420px"
+    <div class="mb-2" style="color:#71CD76;">修改後</div>
+<pre>&lt;slider-show keyboard-nav theme="blue" height="420px"
   progress-style="stepper"&gt;
   ...
 &lt;/slider-show&gt;</pre>

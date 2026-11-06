@@ -30,13 +30,13 @@ nav.toc .sub { color: #C6C7BD; font-size: 1.125rem; margin-bottom: 20px; }
 nav.toc ol { list-style: none; margin: 0; padding: 0; }
 nav.toc li { margin: 0; }
 nav.toc a { display: block; padding: 6px 12px; border-radius: 6px; color: #C6C7BD; text-decoration: none; font-size: 1.125rem; line-height: 1.5; }
-nav.toc a:hover { background: #1f201f; color: #D4FFFC; }
+nav.toc a:hover { background: #1f201f; color: #DBEDD8; }
 main { padding: 40px 64px 120px; max-width: 1300px; }
-h1 { margin: 0 0 8px; color: #1CCAE8; font-size: 2.25rem; line-height: 1.4; }
+h1 { margin: 0 0 8px; color: #5DBAE8; font-size: 2.25rem; line-height: 1.4; }
 .lead { color: #DBEDD8; margin: 0 0 32px; }
 section.doc { margin: 0 0 56px; padding-bottom: 16px; }
-h2 { margin: 0 0 20px; padding-bottom: 8px; color: #82C8E5; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #0DA591; }
-h3 { margin: 32px 0 12px; color: #E5C3B3; font-size: 1.375rem; line-height: 1.4; }
+h2 { margin: 0 0 20px; padding-bottom: 8px; color: #5DBAE8; font-size: 1.75rem; line-height: 1.4; border-bottom: 2px solid #71CD76; }
+h3 { margin: 32px 0 12px; color: #F79C40; font-size: 1.375rem; line-height: 1.4; }
 p, li { font-size: 1.125rem; line-height: 1.5; }
 p { margin: 0 0 14px; }
 ul, ol { margin: 0 0 16px; padding-left: 28px; }
@@ -44,11 +44,11 @@ li { margin: 6px 0; }
 code { color: #E3D322; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size: 1.125rem; }
 pre {
   margin: 0 0 20px; padding: 16px 20px;
-  background: #141514; border-left: 4px solid #0DA591; border-radius: 6px;
+  background: #141514; border-left: 4px solid #71CD76; border-radius: 6px;
   overflow-x: auto;
 }
-pre code { color: #D4FFFC; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
-.code-title { margin: 16px 0 6px; color: #B3DE73; font-weight: 700; }
+pre code { color: #DBEDD8; font-size: 1.125rem; line-height: 1.5; white-space: pre; }
+.code-title { margin: 16px 0 6px; color: #71CD76; font-weight: 700; }
 .tbl { overflow-x: auto; margin: 0 0 24px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px 14px; text-align: left; vertical-align: top; border: 1px solid #2f302f; font-size: 1.125rem; line-height: 1.5; }
@@ -57,13 +57,13 @@ td:first-child { white-space: normal; max-width: 340px; overflow-wrap: anywhere;
 td:last-child { min-width: 360px; }
 th { white-space: normal; }
 tbody tr:nth-child(even) td { background: #111211; }
-.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #4171BF; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
-.note b { color: #D4FFFC; }
-.note-tip  { border-left-color: #27AE60; }
-.note-warn { border-left-color: #EDA109; }
-.note-bug  { border-left-color: #E6374B; }
-.note-bug b { color: #E6374B; }
-.note-info { border-left-color: #4171BF; }
+.note { margin: 0 0 20px; padding: 14px 18px; border-left: 5px solid #778CE1; background: #141514; border-radius: 4px; font-size: 1.125rem; line-height: 1.5; }
+.note b { color: #DBEDD8; }
+.note-tip  { border-left-color: #71CD76; }
+.note-warn { border-left-color: #F79C40; }
+.note-bug  { border-left-color: #EF6661; }
+.note-bug b { color: #EF6661; }
+.note-info { border-left-color: #778CE1; }
 </style>
 </head>
 <body>
@@ -163,7 +163,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 </section>
 <section class="doc" id="panel-attrs">
 <h2>3. 面板屬性總表</h2>
-<p>以下全部寫在 <code>&lt;practice-tracker&gt;</code> 標籤上。顏色類屬性只接受 CSS 色碼（例如 <code>#27AE60</code>），<b>不接受</b>色票名稱；這與第 5 節按鈕的顏色屬性不同，請留意。</p>
+<p>以下全部寫在 <code>&lt;practice-tracker&gt;</code> 標籤上。顏色類屬性只接受 CSS 色碼（例如 <code>#71CD76</code>），<b>不接受</b>色票名稱；這與第 5 節按鈕的顏色屬性不同，請留意。</p>
 <h3>3.1 基本與位置</h3>
 <div class="tbl"><table>
 <thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
@@ -192,11 +192,11 @@ tbody tr:nth-child(even) td { background: #111211; }
 <div class="tbl"><table>
 <thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
 <tbody>
-<tr><td><code>data-color-done</code></td><td><code>colorDone</code></td><td><code>#27AE60</code></td><td>已完成格子的顏色，也是收合時標題列計數的顏色。</td></tr>
+<tr><td><code>data-color-done</code></td><td><code>colorDone</code></td><td><code>#71CD76</code></td><td>已完成格子的顏色，也是收合時標題列計數的顏色。</td></tr>
 <tr><td><code>data-color-pending</code></td><td><code>colorPending</code></td><td><code>#2a2b2a</code></td><td>未完成格子的顏色。</td></tr>
 <tr><td><code>data-color-panel</code></td><td><code>colorPanel</code></td><td><code>#1a1b1a</code></td><td>面板背景。</td></tr>
 <tr><td><code>data-color-text</code></td><td><code>colorText</code></td><td><code>#C6C7BD</code></td><td>面板文字顏色。</td></tr>
-<tr><td><code>data-color-complete</code></td><td><code>colorComplete</code></td><td><code>#B3DE73</code></td><td>全部完成時，「完成提示」的文字顏色。</td></tr>
+<tr><td><code>data-color-complete</code></td><td><code>colorComplete</code></td><td><code>#71CD76</code></td><td>全部完成時，「完成提示」的文字顏色。</td></tr>
 </tbody></table></div>
 <h3>3.4 字體大小</h3>
 <div class="tbl"><table>
@@ -287,7 +287,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tr><td><code>data-btn-padding</code></td><td><code>btnPadding</code></td><td>空</td><td>自訂 padding，例如 <code>8px 24px</code>，有填就蓋過 size 的 padding。</td></tr>
 <tr><td><code>data-btn-width</code></td><td><code>btnWidth</code></td><td>空</td><td>自訂寬度，例如 <code>160px</code>。留空為內容寬度（block 為 100%）。</td></tr>
 <tr><td><code>data-btn-radius</code></td><td><code>btnRadius</code></td><td>空</td><td>自訂圓角，例如 <code>0</code> 或 <code>12px</code>。</td></tr>
-<tr><td><code>data-btn-color</code></td><td><code>btnColor</code></td><td><code>ocean</code></td><td><b>色票名稱</b>（如 teal、special、pink）或任意 CSS 色碼。這是少數接受色票名稱的屬性。</td></tr>
+<tr><td><code>data-btn-color</code></td><td><code>btnColor</code></td><td><code>blue</code></td><td><b>色票名稱</b>（如 green、green、pink）或任意 CSS 色碼。這是少數接受色票名稱的屬性。</td></tr>
 <tr><td><code>data-btn-align</code></td><td><code>btnAlign</code></td><td><code>start</code></td><td>start（靠左）、center、end（靠右）。</td></tr>
 <tr><td><code>data-btn-event-name</code></td><td><code>btnEventName</code></td><td><code>pt:section-done</code></td><td>每次有 section 被標記完成時發出的事件名稱，見第 10 節。設為空字串可不發事件。</td></tr>
 </tbody></table></div>
@@ -298,7 +298,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 &lt;!-- 2. 個別指定樣式、顏色、大小 --&gt;
 &lt;section id="ex-2"
          data-btn-style="pill" data-btn-text="我讀完了"
-         data-btn-color="special" data-btn-size="lg"&gt;...&lt;/section&gt;
+         data-btn-color="green" data-btn-size="lg"&gt;...&lt;/section&gt;
 
 &lt;!-- 3. 自己決定位置，並單獨覆蓋屬性 --&gt;
 &lt;section id="ex-3"&gt;
@@ -308,10 +308,10 @@ tbody tr:nth-child(even) td { background: #111211; }
 &lt;/section&gt;
 
 &lt;!-- 4. 全域預設寫在 tracker 上：整頁的按鈕都是 solid、青綠色 --&gt;
-&lt;practice-tracker data-prefix="ex-" data-btn-style="solid" data-btn-color="teal"&gt;&lt;/practice-tracker&gt;</code></pre>
+&lt;practice-tracker data-prefix="ex-" data-btn-style="solid" data-btn-color="green"&gt;&lt;/practice-tracker&gt;</code></pre>
 <h3>5.5 行為細節</h3>
 <ul>
-<li>完成後按鈕固定變成綠色（<code>#27AE60</code>）並停用，不受 <code>data-btn-color</code> 影響。</li>
+<li>完成後按鈕固定變成綠色（<code>#71CD76</code>）並停用，不受 <code>data-btn-color</code> 影響。</li>
 <li>按鈕可用鍵盤操作：Tab 聚焦，Enter 或空白鍵觸發。</li>
 <li>從其他途徑（API、事件、bp-stepper）標記該 section 完成時，按鈕也會同步變成已完成狀態。</li>
 <li>元件內部不顯示任何提示訊息。想要提示，就監聽 <code>pt:section-done</code>，再用 Bootstrap alert 呈現。</li>
@@ -346,7 +346,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tr><td><code>data-phrase-label-done</code></td><td><code>phraseLabelDone</code></td><td><code>已收藏</code></td><td>計數後綴，顯示成「2 / 9 已收藏」。</td></tr>
 <tr><td><code>data-phrase-color-done</code></td><td><code>phraseColorDone</code></td><td><code>#FF91D7</code></td><td>已收藏格子的顏色（CSS 色碼）。也是清單項目與按鈕的預設主色。</td></tr>
 <tr><td><code>data-phrase-color-pending</code></td><td><code>phraseColorPending</code></td><td>空</td><td>未收藏格子的顏色，留空則沿用 <code>data-color-pending</code>。</td></tr>
-<tr><td><code>data-phrase-color-complete</code></td><td><code>phraseColorComplete</code></td><td><code>#B3DE73</code></td><td>全部收藏後完成提示的顏色。</td></tr>
+<tr><td><code>data-phrase-color-complete</code></td><td><code>phraseColorComplete</code></td><td><code>#71CD76</code></td><td>全部收藏後完成提示的顏色。</td></tr>
 <tr><td><code>data-phrase-cell-shape</code></td><td><code>phraseCellShape</code></td><td><code>circle</code></td><td>片語格子的形狀，可用值同 <code>data-cell-shape</code>。</td></tr>
 <tr><td><code>data-phrase-complete-text</code></td><td><code>phraseCompleteText</code></td><td><code>片語獵人認證！</code></td><td>全部收藏後的文字。只在片語全部收藏後顯示，與章節進度無關。</td></tr>
 <tr><td><code>data-phrase-complete-sub</code></td><td><code>phraseCompleteSub</code></td><td>空</td><td>副文字。</td></tr>
@@ -359,7 +359,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tr><td><code>data-phrase-list-btn-label</code></td><td><code>phraseListBtnLabel</code></td><td><code>查看收藏清單</code></td><td>按鈕文字。收藏第一個片語之前按鈕是隱藏的，收藏後才出現並常駐。</td></tr>
 <tr><td><code>data-phrase-list-title</code></td><td><code>phraseListTitle</code></td><td>空</td><td>側邊欄標題，留空則沿用 <code>data-phrase-title</code>。</td></tr>
 <tr><td><code>data-phrase-list-placement</code></td><td><code>phraseListPlacement</code></td><td><code>end</code></td><td>側邊欄出現的位置：start（左）、end（右）、top、bottom。</td></tr>
-<tr><td><code>data-phrase-list-theme</code></td><td><code>phraseListTheme</code></td><td>空</td><td><b>只接受色票名稱</b>（如 ocean、pink），用於標題列與按鈕底色。留空則用 <code>data-phrase-color-done</code>。填色碼無效，會退回預設。</td></tr>
+<tr><td><code>data-phrase-list-theme</code></td><td><code>phraseListTheme</code></td><td>空</td><td><b>只接受色票名稱</b>（如 blue、pink），用於標題列與按鈕底色。留空則用 <code>data-phrase-color-done</code>。填色碼無效，會退回預設。</td></tr>
 <tr><td><code>data-phrase-list-width</code></td><td><code>phraseListWidth</code></td><td><code>380px</code></td><td>側邊欄寬度，只對 start 與 end 有效。</td></tr>
 <tr><td><code>data-phrase-list-empty-text</code></td><td><code>phraseListEmptyText</code></td><td><code>尚未收藏任何片語</code></td><td>還沒有收藏時的提示文字。</td></tr>
 </tbody></table></div>
@@ -370,7 +370,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <h2>7. phrase-chip.js：`&lt;phrase-chip&gt;` 片語標籤</h2>
 <p>在文章裡把一個片語做成可點擊的標籤。點擊後在標籤附近彈出解釋卡，卡片上有例句、中文翻譯，以及「收藏這個片語」按鈕。收藏後會發出事件，由 practice-tracker 接收並點亮格子、加入清單。</p>
 <h3>7.1 HTML 結構</h3>
-<pre><code>&lt;phrase-chip data-phrase="stick to" data-theme="ocean" data-icon="bookmark"&gt;
+<pre><code>&lt;phrase-chip data-phrase="stick to" data-theme="blue" data-icon="bookmark"&gt;
   stick to
   &lt;phrase-card&gt;
     &lt;phrase-example&gt;
@@ -392,7 +392,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <thead><tr><th>HTML 屬性</th><th>設定鍵</th><th>預設值</th><th>說明</th></tr></thead>
 <tbody>
 <tr><td><code>data-phrase</code></td><td>無</td><td>必填</td><td>片語本身，收藏的識別。</td></tr>
-<tr><td><code>data-theme</code></td><td><code>theme</code></td><td><code>ocean</code></td><td><b>色票名稱</b>。決定標籤與卡片的主色，也會被帶入收藏清單。</td></tr>
+<tr><td><code>data-theme</code></td><td><code>theme</code></td><td><code>blue</code></td><td><b>色票名稱</b>。決定標籤與卡片的主色，也會被帶入收藏清單。</td></tr>
 <tr><td><code>data-label</code></td><td><code>label</code></td><td>空</td><td>標籤顯示的文字，留空則從內容推得。</td></tr>
 <tr><td><code>data-size</code></td><td><code>size</code></td><td><code>md</code></td><td>sm（0.85rem）、md（1rem）、lg（1.15rem），padding 同步改變。</td></tr>
 <tr><td><code>data-shape</code></td><td><code>shape</code></td><td><code>pill</code></td><td>pill（膠囊）、rounded（圓角方形）、underline（只有底線）。</td></tr>
@@ -427,10 +427,10 @@ tbody tr:nth-child(even) td { background: #111211; }
 <section class="doc" id="phrase-upgrade">
 <h2>8. phrase-chip.js：`&lt;phrase-upgrade&gt;` 漸進升級文字</h2>
 <p>同一支 phrase-chip.js 還提供第二個元件：一段文字，每點一下就以動畫「升級」成下一個階段的文字，單向前進，到最後一階段停止。用來示範「基本說法如何一步步改成高分說法」。它不彈卡片，也不參與收藏，與 practice-tracker 沒有關係。</p>
-<pre><code>&lt;phrase-upgrade data-anim="strike-fade" data-theme="ocean"&gt;
+<pre><code>&lt;phrase-upgrade data-anim="strike-fade" data-theme="blue"&gt;
   &lt;phrase-stage&gt;I do exercise&lt;/phrase-stage&gt;
   &lt;phrase-stage text-color="shell"&gt;I work out&lt;/phrase-stage&gt;
-  &lt;phrase-stage text-color="salmon"&gt;I hit the gym&lt;/phrase-stage&gt;
+  &lt;phrase-stage text-color="orange"&gt;I hit the gym&lt;/phrase-stage&gt;
 &lt;/phrase-upgrade&gt;</code></pre>
 <ul>
 <li>至少要有兩個 <code>&lt;phrase-stage&gt;</code>，否則元件不會初始化，內容維持原樣。</li>
@@ -443,7 +443,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tbody>
 <tr><td><code>data-anim</code></td><td><code>anim</code></td><td><code>strike-fade</code></td><td>動畫種類：<code>crossfade</code>（淡入淡出）、<code>slide-up</code>（上滑）、<code>flip</code>（翻轉）、<code>strike-fade</code>（劃線再淡出）、<code>typewriter</code>（逐字刪除再逐字打出）。不認得的值退回 strike-fade。</td></tr>
 <tr><td><code>data-anim-duration</code></td><td><code>animDuration</code></td><td><code>0.9s</code></td><td>動畫總時間，可寫 <code>0.9s</code> 或 <code>900ms</code>。typewriter 不使用此值。</td></tr>
-<tr><td><code>data-theme</code></td><td><code>theme</code></td><td><code>ocean</code></td><td>主色（色票名稱）。</td></tr>
+<tr><td><code>data-theme</code></td><td><code>theme</code></td><td><code>blue</code></td><td>主色（色票名稱）。</td></tr>
 <tr><td><code>data-typewriter-speed</code></td><td><code>typewriterSpeed</code></td><td><code>55</code></td><td>僅 typewriter 使用，每個字元的間隔毫秒數（整數）。</td></tr>
 <tr><td><code>data-hide-hint</code></td><td><code>hideHint</code></td><td>false</td><td>設為 true 隱藏右側的「可點擊」提示圖示。</td></tr>
 <tr><td><code>data-hint-icon</code></td><td><code>hintIcon</code></td><td><code>arrow-repeat</code></td><td>提示圖示，Bootstrap Icons 名稱，不含 <code>bi-</code> 前綴。</td></tr>
@@ -548,14 +548,14 @@ tbody tr:nth-child(even) td { background: #111211; }
 <thead><tr><th>名稱</th><th>色碼</th><th>名稱</th><th>色碼</th></tr></thead>
 <tbody>
 <tr><td><code>bg</code></td><td><code>#0C0D0C</code></td><td><code>shell</code>（主文字）</td><td><code>#C6C7BD</code></td></tr>
-<tr><td><code>lavender</code></td><td><code>#C3A5E5</code></td><td><code>sky</code></td><td><code>#82C8E5</code></td></tr>
-<tr><td><code>warning</code></td><td><code>#E6374B</code></td><td><code>salmon</code></td><td><code>#E5C3B3</code></td></tr>
-<tr><td><code>ocean</code></td><td><code>#1CCAE8</code></td><td><code>safe</code></td><td><code>#27AE60</code></td></tr>
-<tr><td><code>teal</code></td><td><code>#0DA591</code></td><td><code>vanilla</code></td><td><code>#DBEDD8</code></td></tr>
-<tr><td><code>yellow</code></td><td><code>#E3D322</code></td><td><code>focus</code></td><td><code>#D4FFFC</code></td></tr>
-<tr><td><code>special</code></td><td><code>#B3DE73</code></td><td><code>info</code></td><td><code>#4171BF</code></td></tr>
-<tr><td><code>indigo</code></td><td><code>#7849C9</code></td><td><code>pink</code></td><td><code>#FF91D7</code></td></tr>
-<tr><td><code>orange</code></td><td><code>#EDA109</code></td><td>金色（特殊內容，不在色票內）</td><td><code>#D4AF37</code></td></tr>
+<tr><td><code>violet</code></td><td><code>#B484E8</code></td><td><code>blue</code></td><td><code>#5DBAE8</code></td></tr>
+<tr><td><code>warning</code></td><td><code>#EF6661</code></td><td><code>orange</code></td><td><code>#F79C40</code></td></tr>
+<tr><td><code>blue</code></td><td><code>#5DBAE8</code></td><td><code>green</code></td><td><code>#71CD76</code></td></tr>
+<tr><td><code>green</code></td><td><code>#71CD76</code></td><td><code>vanilla</code></td><td><code>#DBEDD8</code></td></tr>
+<tr><td><code>yellow</code></td><td><code>#E3D322</code></td><td><code>focus</code></td><td><code>#DBEDD8</code></td></tr>
+<tr><td><code>green</code></td><td><code>#71CD76</code></td><td><code>info</code></td><td><code>#778CE1</code></td></tr>
+<tr><td><code>indigo</code></td><td><code>#778CE1</code></td><td><code>pink</code></td><td><code>#FF91D7</code></td></tr>
+<tr><td><code>orange</code></td><td><code>#F79C40</code></td><td>金色（特殊內容，不在色票內）</td><td><code>#D4AF37</code></td></tr>
 </tbody></table></div>
 <h3>11.2 哪些屬性吃色票名稱，哪些吃色碼</h3>
 <div class="tbl"><table>
@@ -565,7 +565,7 @@ tbody tr:nth-child(even) td { background: #111211; }
 <tr><td><code>data-phrase-color-done</code>、<code>-pending</code>、<code>-complete</code></td><td>只接受 CSS 色碼</td></tr>
 <tr><td><code>data-phrase-list-theme</code></td><td>只接受色票名稱</td></tr>
 <tr><td><code>data-btn-color</code></td><td>色票名稱或 CSS 色碼皆可</td></tr>
-<tr><td>phrase-chip 的 <code>data-theme</code>、<code>data-card-theme</code></td><td>只接受色票名稱（不認得的名稱退回 ocean）</td></tr>
+<tr><td>phrase-chip 的 <code>data-theme</code>、<code>data-card-theme</code></td><td>只接受色票名稱（不認得的名稱退回 blue）</td></tr>
 <tr><td>phrase-upgrade 的 <code>data-theme</code></td><td>只接受色票名稱</td></tr>
 <tr><td>phrase-stage 的 <code>text-color</code></td><td>色票名稱或 CSS 色碼皆可</td></tr>
 </tbody></table></div>
@@ -604,7 +604,7 @@ tbody tr:nth-child(even) td { background: #111211; }
   &lt;h2&gt;第一段&lt;/h2&gt;
   &lt;p&gt;
     I usually
-    &lt;phrase-chip data-phrase="stick to" data-theme="ocean" data-icon="bookmark"&gt;
+    &lt;phrase-chip data-phrase="stick to" data-theme="blue" data-icon="bookmark"&gt;
       stick to
       &lt;phrase-card&gt;
         &lt;phrase-example&gt;I usually &lt;mark&gt;stick to&lt;/mark&gt; simple dishes.&lt;/phrase-example&gt;
@@ -615,13 +615,13 @@ tbody tr:nth-child(even) td { background: #111211; }
   &lt;/p&gt;
 &lt;/section&gt;
 
-&lt;section id="ex-upgrade" data-btn-text="我讀完了" data-btn-style="pill" data-btn-color="special"&gt;
+&lt;section id="ex-upgrade" data-btn-text="我讀完了" data-btn-style="pill" data-btn-color="green"&gt;
   &lt;h2&gt;第二段&lt;/h2&gt;
   &lt;p&gt;
     Every day,
     &lt;phrase-upgrade data-anim="strike-fade"&gt;
       &lt;phrase-stage&gt;I do exercise&lt;/phrase-stage&gt;
-      &lt;phrase-stage text-color="salmon"&gt;I hit the gym&lt;/phrase-stage&gt;
+      &lt;phrase-stage text-color="orange"&gt;I hit the gym&lt;/phrase-stage&gt;
     &lt;/phrase-upgrade&gt;.
   &lt;/p&gt;
 &lt;/section&gt;

@@ -15,17 +15,17 @@
   --muted: #8F9088;
   --gold: #C9973F;
   --gold-light: #EFD9A2;
-  --lavender: #C3A5E5;
-  --sky: #82C8E5;
-  --warning: #E6374B;
-  --safe: #27AE60;
-  --focus: #D4FFFC;
-  --special: #B3DE73;
+  --violet: #B484E8;
+  --blue: #5DBAE8;
+  --warning: #EF6661;
+  --green: #71CD76;
+  --focus: #DBEDD8;
+  --green: #71CD76;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--shell); font-size: 1rem; line-height: 1.5; }
-a { color: var(--sky); }
-code { color: var(--lavender); font-size: 0.9em; }
+a { color: var(--blue); }
+code { color: var(--violet); font-size: 0.9em; }
 
 .layout { display: flex; min-height: 100vh; }
 .side {
@@ -38,7 +38,7 @@ code { color: var(--lavender); font-size: 0.9em; }
 main { flex: 1; min-width: 0; padding: 32px 40px 80px; }
 h1 { font-size: 1.8rem; margin: 0 0 8px; color: var(--gold-light); }
 h2 { font-size: 1.4rem; margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
-h3 { font-size: 1.05rem; margin: 0 0 8px; color: var(--sky); }
+h3 { font-size: 1.05rem; margin: 0 0 8px; color: var(--blue); }
 .lead { color: var(--muted); margin: 0 0 16px; }
 section.blk { margin-bottom: 48px; }
 
@@ -62,14 +62,14 @@ pre.src {
 .chips { display: flex; flex-wrap: wrap; gap: 16px 24px; }
 
 #alertBox { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 380px; }
-.alert { background: var(--area); color: var(--shell); border: 1px solid var(--card-border); border-left: 4px solid var(--ac, var(--sky)); border-radius: 8px; }
-.alert-success { --ac: var(--safe); }
+.alert { background: var(--area); color: var(--shell); border: 1px solid var(--card-border); border-left: 4px solid var(--ac, var(--blue)); border-radius: 8px; }
+.alert-success { --ac: var(--green); }
 .alert-danger { --ac: var(--warning); }
 
 pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-border); border-radius: 8px; padding: 16px; overflow: auto; font-size: 0.8rem; line-height: 1.5; max-height: 640px; }
-.diff .add { color: var(--special); }
+.diff .add { color: var(--green); }
 .diff .del { color: var(--warning); }
-.diff .hunk { color: var(--sky); }
+.diff .hunk { color: var(--blue); }
 .tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; background: var(--gold); color: #0C0D0C; margin-right: 8px; font-weight: 700; }
 
 @media (max-width: 1200px) { .demo { grid-template-columns: 1fr; } }
@@ -194,7 +194,7 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
             <span data-popover-theme="gold" data-popover-color="gold" data-popover-fx="off"
                   data-popover-title="金色，關閉電流"
                   data-popover-content="data-popover-fx=&quot;off&quot;，只保留金色配色。">金色但不要電流</span>
-            <span data-popover-theme="sky" data-popover-color="sky" data-popover-fx="electric"
+            <span data-popover-theme="blue" data-popover-color="blue" data-popover-fx="electric"
                   data-popover-title="天空藍，強制電流"
                   data-popover-content="沒有指定 fxDim 時，暗部色會自動由邊框色混黑計算。">其他主題強制電流</span>
             <span data-popover-theme="pink" data-popover-color="pink" data-popover-fx="electric"
@@ -218,17 +218,17 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
         <script type="text/x-demo">
           PopoverConfig.addTheme('emerald-volt', {
             bg: '#06140E',
-            titleColor: '#B3DE73',
-            borderColor: '#27AE60',
+            titleColor: '#71CD76',
+            borderColor: '#71CD76',
             fx: 'electric',
-            fxCore: '#D4FFFC',
+            fxCore: '#DBEDD8',
             fxDim: '#0E4A29'
           });
 
           PopoverConfig.addTheme('violet-volt', {
             bg: '#0e0a18',
-            titleColor: '#C3A5E5',
-            borderColor: '#7849C9',
+            titleColor: '#B484E8',
+            borderColor: '#778CE1',
             fx: 'electric',
             fxCore: '#FF91D7',
             fxDim: '#2A1850'
@@ -240,9 +240,9 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
         <pre class="src"></pre>
         <script type="text/x-demo">
           <div class="chips">
-            <span data-popover-theme="emerald-volt" data-popover-color="#27AE60"
+            <span data-popover-theme="emerald-volt" data-popover-color="#71CD76"
                   data-popover-title="綠色電流" data-popover-content="亮點是淺青色，暗部是深綠。">綠色電流</span>
-            <span data-popover-theme="violet-volt" data-popover-color="#7849C9"
+            <span data-popover-theme="violet-volt" data-popover-color="#778CE1"
                   data-popover-title="紫色電流" data-popover-content="亮點是粉紅，暗部是深紫。">紫色電流</span>
           </div>
         </script>
@@ -266,7 +266,7 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
           BpPopnote.annotate([
             { text: 'ubiquitous', within: '#ann-box', theme: 'gold', color: 'gold',
               title: 'ubiquitous', content: 'adj. 無所不在的' },
-            { text: 'Smartphones', within: '#ann-box', theme: 'sky', color: 'sky',
+            { text: 'Smartphones', within: '#ann-box', theme: 'blue', color: 'blue',
               title: 'smartphone', content: 'n. 智慧型手機' },
             { text: 'impact', within: '#ann-box', occurrence: 2, theme: 'gold', color: 'gold',
               title: 'impact（第二次出現）', content: '這裡是名詞，指影響。' },
@@ -303,8 +303,8 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
       <pre class="diff"><span class="hunk">--- bp-popnote.js（修改前）</span>
 <span class="hunk">+++ bp-popnote.js（修改後）</span>
 <span class="hunk">@@ -18,6 +18,7 @@</span>
-     info     : '#2351DB',
-     wrong    : '#E6374B',
+     info     : '#778CE1',
+     wrong    : '#EF6661',
      shell    : '#C6C7BD',
 <span class="add">+    gold     : '#C9973F',</span>
    };
@@ -446,8 +446,8 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
    const THEMES = {
 <span class="hunk">@@ -749,6 +877,9 @@</span>
      wrong     : { bg: '#190d0d', titleColor: PALETTE.wrong,    borderColor: PALETTE.wrong    },
-     correct   : { bg: '#091508', titleColor: PALETTE.safe,     borderColor: PALETTE.safe     },
-     accent    : { bg: '#130e1e', titleColor: PALETTE.lavender, borderColor: PALETTE.lavender },
+     correct   : { bg: '#091508', titleColor: PALETTE.green,     borderColor: PALETTE.green     },
+     accent    : { bg: '#130e1e', titleColor: PALETTE.violet, borderColor: PALETTE.violet },
 <span class="add">+    /* 金色電流：fx 為動畫種類，fxCore 是電流亮點色，fxDim 是電流環的暗部色 */</span>
 <span class="add">+    gold      : { bg: '#1A1200', titleColor: '#EFD9A2', borderColor: PALETTE.gold,</span>
 <span class="add">+                  fx: 'electric', fxCore: PALETTE.focus, fxDim: '#6B4F12' },</span>
@@ -602,7 +602,7 @@ pre.diff { margin: 0; background: var(--area); border: 1px solid var(--card-bord
   });
 
   /* 與其他主題並排 */
-  var NAMES = ['dark', 'sky', 'ocean', 'success', 'special', 'note', 'salmon', 'pink', 'orange', 'teal', 'focus', 'indigo', 'info', 'warning', 'gold'];
+  var NAMES = ['dark', 'blue', 'blue', 'success', 'green', 'note', 'orange', 'pink', 'orange', 'green', 'focus', 'indigo', 'info', 'warning', 'gold'];
   var chips = document.getElementById('compareChips');
   NAMES.forEach(function (n) {
     var el = document.createElement('span');

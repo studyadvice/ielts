@@ -7,9 +7,9 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0C0D0C; --shell: #C6C7BD; --lavender: #C3A5E5; --sky: #82C8E5;
-    --ocean: #1CCAE8; --safe: #27AE60; --warning: #E6374B; --salmon: #E5C3B3;
-    --special: #B3DE73; --orange: #EDA109; --region: #333333; --indigo: #7849C9;
+    --bg: #0C0D0C; --shell: #C6C7BD; --violet: #B484E8; --blue: #5DBAE8;
+    --blue: #5DBAE8; --green: #71CD76; --warning: #EF6661; --orange: #F79C40;
+    --green: #71CD76; --orange: #F79C40; --region: #333333; --indigo: #778CE1;
   }
   body {
     background: var(--bg); color: var(--shell);
@@ -17,18 +17,18 @@
     font-size: 1.125rem; line-height: 1.5;
     padding: 40px 48px; max-width: 960px; margin: 0 auto;
   }
-  h1 { font-size: 1.6rem; color: var(--ocean); margin-bottom: 6px; }
+  h1 { font-size: 1.6rem; color: var(--blue); margin-bottom: 6px; }
   .subtitle { font-size: 1rem; color: rgba(198,199,189,0.6); margin-bottom: 40px; }
   section { margin-bottom: 52px; }
-  h2 { font-size: 1.15rem; color: var(--lavender); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
-  h2 code { font-size: 0.9rem; color: var(--special); background: rgba(179,222,115,0.1); padding: 2px 8px; border-radius: 4px; }
+  h2 { font-size: 1.15rem; color: var(--violet); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  h2 code { font-size: 0.9rem; color: var(--green); background: rgba(179,222,115,0.1); padding: 2px 8px; border-radius: 4px; }
   .desc { font-size: 0.95rem; color: rgba(198,199,189,0.65); margin-bottom: 16px; line-height: 1.5; }
-  .desc code { font-size: 0.88em; color: var(--special); background: rgba(179,222,115,0.1); padding: 1px 6px; border-radius: 3px; }
+  .desc code { font-size: 0.88em; color: var(--green); background: rgba(179,222,115,0.1); padding: 1px 6px; border-radius: 3px; }
   .trigger-btn {
     display: inline-flex; align-items: center; gap: 6px;
     background: var(--region); border: 1px solid rgba(130,200,229,0.4);
     border-radius: 6px; padding: 8px 22px; font-size: 0.95rem;
-    color: var(--sky); cursor: pointer; margin-bottom: 16px; transition: background 0.2s;
+    color: var(--blue); cursor: pointer; margin-bottom: 16px; transition: background 0.2s;
   }
   .trigger-btn:hover { background: #3a3b3a; }
   .divider { border: none; border-top: 1px solid rgba(198,199,189,0.12); margin: 40px 0; }
@@ -36,12 +36,12 @@
   .attr-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 8px; }
   .attr-table th {
     text-align: left; padding: 10px 16px;
-    background: rgba(195,165,229,0.1); color: var(--lavender);
+    background: rgba(195,165,229,0.1); color: var(--violet);
     border-bottom: 1px solid rgba(195,165,229,0.25);
   }
   .attr-table td { padding: 10px 16px; border-bottom: 1px solid rgba(198,199,189,0.1); vertical-align: top; }
   .attr-table tr:last-child td { border-bottom: none; }
-  .attr-table code { color: var(--special); background: rgba(179,222,115,0.08); padding: 1px 6px; border-radius: 3px; }
+  .attr-table code { color: var(--green); background: rgba(179,222,115,0.08); padding: 1px 6px; border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -57,7 +57,7 @@
     小型重試按鈕，點擊後原地還原選項狀態、清除解說，重新開放作答。
   </p>
   <button class="trigger-btn" onclick="document.getElementById('demo1').setAttribute('active','true')">▶ 觸發</button>
-  <info-region id="demo1" color="sky" quiz answer="b" show-retry
+  <info-region id="demo1" color="blue" quiz answer="b" show-retry
     explain="補述用法的, <strong>which</strong> 主格關代，<br>代替前句(結果)，導出原因">
     <p style="margin-bottom:14px;">Which 補述子句代替的是？</p>
     <ir-choices>
@@ -79,8 +79,8 @@
     可自訂為任意文字與品牌色票名稱。
   </p>
   <button class="trigger-btn" onclick="document.getElementById('demo2').setAttribute('active','true')">▶ 觸發</button>
-  <info-region id="demo2" color="lavender" quiz answer="c"
-    show-retry retry-label="⟳ 再答一次" retry-color="ocean"
+  <info-region id="demo2" color="violet" quiz answer="c"
+    show-retry retry-label="⟳ 再答一次" retry-color="blue"
     explain="<em>非限定子句</em>前必須加逗號，且 <code>that</code> 不可用於補述子句。">
     <p style="margin-bottom:14px;">補述關代子句中，下列何者<u>不可</u>使用？</p>
     <ir-choices>
@@ -102,10 +102,10 @@
     反之亦然。適合允許使用者自行決定是否跳題的情境。
   </p>
   <button class="trigger-btn" onclick="document.getElementById('demo3').setAttribute('active','true')">▶ 觸發</button>
-  <info-region id="demo3" color="special" quiz answer="a"
-    show-retry retry-label="↺ 重試" retry-color="warning"
+  <info-region id="demo3" color="green" quiz answer="a"
+    show-retry retry-label="↺ 重試" retry-color="red"
     manual-next quiz-next-label="下一題 ▶" correct-next="demo3-end" wrong-next="demo3-end"
-    explain="<span style='color:#82C8E5'>She missed the bus</span>，which made her late.<br><small>↑ which 代替整個前句，非單一名詞</small>">
+    explain="<span style='color:#5DBAE8'>She missed the bus</span>，which made her late.<br><small>↑ which 代替整個前句，非單一名詞</small>">
     <p style="margin-bottom:14px;">which 在此句中代替的是？</p>
     <ir-choices>
       <ir-choice value="a">整個前句（正確）</ir-choice>
@@ -114,7 +114,7 @@
       <ir-choice value="d">late</ir-choice>
     </ir-choices>
   </info-region>
-  <info-region id="demo3-end" color="teal">
+  <info-region id="demo3-end" color="green">
     <p>🎉 作答完畢！</p>
   </info-region>
 </section>

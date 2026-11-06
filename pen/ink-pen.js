@@ -38,17 +38,23 @@
   'use strict';
 
   var PALETTE = {
-    bg: '#0C0D0C', shell: '#C6C7BD', lavender: '#B484E8', sky: '#5DBAE8',
-    warning: '#EF6661', salmon: '#F79C40', ocean: '#5DBAE8', safe: '#71CD76',
-    teal: '#71CD76', vanilla: '#DBEDD8', yellow: '#E3D322', focus: '#DBEDD8',
-    special: '#71CD76', info: '#778CE1', indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#F79C40',
+    bg: '#0C0D0C', shell: '#C6C7BD',
+    vanilla: '#DBEDD8', yellow: '#E3D322',
+    indigo: '#778CE1', pink: '#FF91D7',
+    orange: '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
-    gray: '#86877F'
+    gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63'
   };
 
   var PEN_OPTIONS = [
@@ -146,9 +152,9 @@
       + 'display:flex;align-items:center;justify-content:center;padding:0;'
       + 'background:rgba(19,20,18,0.92);border:1px solid rgba(58,59,55,0.9);'
       + 'box-shadow:0 4px 14px rgba(0,0,0,0.82);transition:border-color .15s ease;}'
-      + '.ip-dot:hover{border-color:var(--c-ocean,#5DBAE8);}'
+      + '.ip-dot:hover{border-color:var(--c-blue,#5DBAE8);}'
       + '.ip-dot i{width:14px;height:14px;border-radius:50%;display:block;'
-      + 'background:var(--c-focus,#DBEDD8);}'
+      + 'background:var(--c-vanilla,#DBEDD8);}'
       + '.ip-dot.ip-armed{border-color:rgba(93,186,232,0.9);'
       + 'box-shadow:0 0 0 2px rgba(93,186,232,0.82),0 4px 14px rgba(0,0,0,0.82);}'
 
@@ -161,8 +167,8 @@
       + '.ip-btn{font-size:0.88rem;line-height:1.4;padding:5px 12px;border-radius:14px;'
       + 'border:1px solid rgba(58,59,55,0.9);background:rgba(32,33,25,0.92);'
       + 'color:var(--c-shell,#C6C7BD);cursor:pointer;white-space:nowrap;}'
-      + '.ip-btn:hover{border-color:var(--c-ocean,#5DBAE8);color:var(--c-ocean,#5DBAE8);}'
-      + '.ip-btn.ip-active{background:var(--c-teal,#71CD76);border-color:var(--c-teal,#71CD76);'
+      + '.ip-btn:hover{border-color:var(--c-blue,#5DBAE8);color:var(--c-blue,#5DBAE8);}'
+      + '.ip-btn.ip-active{background:var(--c-green,#71CD76);border-color:var(--c-green,#71CD76);'
       + 'color:#07211D;font-weight:600;}'
       + '.ip-bar select,.ip-bar input[type=number]{background:rgba(15,16,14,0.95);'
       + 'border:1px solid rgba(58,59,55,0.9);color:var(--c-shell,#C6C7BD);border-radius:12px;'
@@ -180,13 +186,13 @@
       + 'width:calc(var(--ih-n,10) * 1.05ch);margin:0 3px;padding:0;'
       + 'border-bottom:2px solid rgba(113,205,118,0.86);border-radius:3px 3px 0 0;'
       + 'transition:background .15s ease,border-color .15s ease;}'
-      + 'ink-handwrite:hover{background:rgba(113,205,118,0.2);border-color:var(--c-ocean,#5DBAE8);}'
+      + 'ink-handwrite:hover{background:rgba(113,205,118,0.2);border-color:var(--c-blue,#5DBAE8);}'
       + 'ink-handwrite.ih-has-answer{margin-right:17px;}'
       + 'ink-handwrite .ih-clip{position:absolute;inset:0;overflow:hidden;'
       + 'display:flex;align-items:center;justify-content:center;pointer-events:none;}'
       + 'ink-handwrite .ih-icon{display:flex;align-items:center;justify-content:center;'
       + 'color:rgba(198,199,189,0.82);}'
-      + 'ink-handwrite:hover .ih-icon{color:var(--c-ocean,#5DBAE8);}'
+      + 'ink-handwrite:hover .ih-icon{color:var(--c-blue,#5DBAE8);}'
       + 'ink-handwrite .ih-clip img{position:absolute;left:4px;top:2px;'
       + 'width:calc(100% - 8px);height:calc(100% - 6px);'
       + 'object-fit:contain;display:block;}'
@@ -195,7 +201,7 @@
 
       /* ---- 解答 ---- */
       + 'ink-handwrite .ih-ans{display:none;white-space:nowrap;line-height:1.4;'
-      + 'color:var(--c-special,#71CD76);transform-origin:center center;}'
+      + 'color:var(--c-green,#71CD76);transform-origin:center center;}'
       + 'ink-handwrite.ih-answered .ih-ans{display:block;}'
       + 'ink-handwrite.ih-answered .ih-icon{display:none;}'
       + 'ink-handwrite.ih-answered{border-bottom-width:3px;'
@@ -205,10 +211,10 @@
       + 'width:9px;height:9px;margin-top:-5px;border-radius:50%;z-index:830;cursor:pointer;'
       + 'border:1px solid rgba(198,199,189,0.82);background:rgba(12,13,12,0.86);'
       + 'transition:background .12s ease,border-color .12s ease;}'
-      + 'ink-handwrite .ih-dot:hover{background:var(--c-ocean,#5DBAE8);'
-      + 'border-color:var(--c-ocean,#5DBAE8);}'
-      + 'ink-handwrite.ih-answered .ih-dot{background:var(--c-special,#71CD76);'
-      + 'border-color:var(--c-special,#71CD76);}'
+      + 'ink-handwrite .ih-dot:hover{background:var(--c-blue,#5DBAE8);'
+      + 'border-color:var(--c-blue,#5DBAE8);}'
+      + 'ink-handwrite.ih-answered .ih-dot{background:var(--c-green,#71CD76);'
+      + 'border-color:var(--c-green,#71CD76);}'
 
       /* ---- 手寫視窗 ---- */
       + 'ui-ink-modal{position:fixed;inset:0;z-index:960;display:none;'
@@ -217,7 +223,7 @@
       + '.ipm-box{background:rgba(23,24,26,0.97);border:1px solid rgba(51,52,47,0.9);'
       + 'border-radius:12px;padding:24px 28px;box-shadow:0 14px 44px rgba(0,0,0,0.86);}'
       + '.ipm-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;}'
-      + '.ipm-head h4{margin:0;font-size:1.1rem;line-height:1.4;color:var(--c-focus,#DBEDD8);}'
+      + '.ipm-head h4{margin:0;font-size:1.1rem;line-height:1.4;color:var(--c-vanilla,#DBEDD8);}'
       + '.ipm-head span{font-size:0.85rem;line-height:1.4;color:#9a9b94;}'
       + '.ipm-pad{position:relative;border-radius:10px;overflow:hidden;'
       + 'background:rgba(15,16,14,0.95);border:1px solid rgba(58,59,55,0.9);}'
@@ -230,9 +236,9 @@
       + 'border:1px solid rgba(58,59,55,0.9);color:var(--c-shell,#C6C7BD);border-radius:12px;'
       + 'padding:6px 10px;font-size:0.88rem;line-height:1.4;}'
       + '.ipm-foot input[type=number]{width:64px;}'
-      + '.ipm-ok{background:var(--c-teal,#71CD76);border-color:var(--c-teal,#71CD76);'
+      + '.ipm-ok{background:var(--c-green,#71CD76);border-color:var(--c-green,#71CD76);'
       + 'color:#07211D;font-weight:600;}'
-      + '.ipm-ok:hover{color:#07211D;border-color:var(--c-teal,#71CD76);}'
+      + '.ipm-ok:hover{color:#07211D;border-color:var(--c-green,#71CD76);}'
 
       ;
     var style = document.createElement('style');
@@ -304,7 +310,7 @@
 
       this._mode = 'off';
       this._anchor = (this.getAttribute('data-anchor') === 'document') ? 'document' : 'viewport';
-      this._color = PALETTE.focus;
+      this._color = PALETTE.vanilla;
       this._width = WIDTH_DEFAULT;
       this._strokes = [];
       this._trail = [];
@@ -642,8 +648,8 @@
           ctx.save();
           ctx.translate(-this._ox(), -this._oy());
           ctx.globalAlpha = 0.88;
-          ctx.strokeStyle = PALETTE.warning;
-          ctx.shadowColor = PALETTE.warning;
+          ctx.strokeStyle = PALETTE.red;
+          ctx.shadowColor = PALETTE.red;
           ctx.shadowBlur = 14;
           for (var i = 1; i < this._trail.length; i++) {
             var a = this._trail[i - 1], b = this._trail[i];
@@ -836,7 +842,7 @@
 
       this._strokes = [];
       this._drawing = false;
-      this._color = PALETTE.focus;
+      this._color = PALETTE.vanilla;
       this._width = HW_DEFAULT;
       this._target = null;
 
@@ -1267,12 +1273,12 @@
    * <dot-go>
    *
    * 用法：
-   *   <dot-go href="#part2" theme="sky" dot-style="star-fill"></dot-go>
+   *   <dot-go href="#part2" theme="blue" dot-style="star-fill"></dot-go>
    *   <dot-go href="lesson-02.html" theme="pink" dot-style="square">下一課</dot-go>
    *
    * 屬性：
    *   href         目標。"#id" 為同頁平滑捲動，其餘視為網址
-   *   theme        配色表名稱（sky、pink…）或 #RGB／#RRGGBB，預設 sky
+   *   theme        配色表名稱（blue、pink…）或 #RGB／#RRGGBB，預設 blue
    *   dot-style    circle | circle-fill | star | star-fill | square | square-fill | icon
    *                預設 circle-fill
    *   icon         dot-style="icon" 時使用的 Bootstrap Icons 名稱，
@@ -1345,11 +1351,11 @@
 
   function resolveColor(theme) {
     var t = String(theme || '').trim();
-    if (!t) return PALETTE.sky;
+    if (!t) return PALETTE.blue;
     if (PALETTE[t]) return PALETTE[t];
     if (HEX_RE.test(t)) return t.toUpperCase();
-    warn('dot-go 的 theme 無法辨識，已改用 sky：' + t);
-    return PALETTE.sky;
+    warn('dot-go 的 theme 無法辨識，已改用 blue：' + t);
+    return PALETTE.blue;
   }
 
   /* 頁面上已有 Bootstrap Icons 就不重複載入 */
@@ -1439,7 +1445,7 @@
       return Math.min(DOT_SIZE_MAX, Math.max(DOT_SIZE_MIN, n));
     }
 
-    get color() { return resolveColor(this.getAttribute('theme') || 'sky'); }
+    get color() { return resolveColor(this.getAttribute('theme') || 'blue'); }
 
     /* ---------- 外觀 ---------- */
     _render() {
@@ -1609,29 +1615,14 @@
     }
   };
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

@@ -3,61 +3,54 @@
   const BRAND = {
     bg:       '#0C0D0C',
     shell:    '#C6C7BD',
-    lavender: '#B484E8',
-    sky:      '#5DBAE8',
-    warning:  '#EF6661',
-    salmon:   '#F79C40',
-    ocean:    '#5DBAE8',
-    safe:     '#71CD76',
-    teal:     '#71CD76',
     vanilla:  '#DBEDD8',
     yellow:   '#E3D322',
-    focus:    '#DBEDD8',
-    info:     '#778CE1',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#F79C40',
-    special:  '#71CD76',
+    orange:   '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
     blue: '#5DBAE8',
     violet: '#B484E8',
     gray: '#86877F',
+    /* 新增色 */
+    key: '#51DBCF',
+    'key-deep': '#176878',
+    calm: '#A3C4BC',
+    quiet: '#A9B8E0',
+    playful: '#FFA987',
+    urgent: '#FF2E63',
   };
 
   const THEMES = {
-    lavender: { color: BRAND.lavender, colorActive: BRAND.blue,  colorDone: BRAND.safe,   titleColor: BRAND.lavender, badgeBg: 'rgba(180,132,232,0.15)'  },
-    sky:      { color: BRAND.sky,      colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.sky,      badgeBg: 'rgba(93,186,232,0.12)'  },
-    info:     { color: BRAND.info,     colorActive: BRAND.violet,   colorDone: BRAND.safe,   titleColor: BRAND.info,     badgeBg: 'rgba(119,140,225,0.12)'    },
-    indigo:   { color: BRAND.indigo,   colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.indigo,   badgeBg: 'rgba(119,140,225,0.12)'   },
-    ocean:    { color: BRAND.ocean,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.ocean,    badgeBg: 'rgba(93,186,232,0.12)'   },
-    teal:     { color: BRAND.teal,     colorActive: BRAND.yellow,    colorDone: BRAND.blue,   titleColor: BRAND.teal,     badgeBg: 'rgba(113,205,118,0.12)'   },
-    safe:     { color: BRAND.safe,     colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.safe,     badgeBg: 'rgba(113,205,118,0.12)'    },
-    yellow:   { color: BRAND.yellow,   colorActive: BRAND.orange,   colorDone: BRAND.teal,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
-    orange:   { color: BRAND.orange,   colorActive: BRAND.yellow,   colorDone: BRAND.teal,   titleColor: BRAND.orange,   badgeBg: 'rgba(247,156,64,0.12)'    },
-    focus:    { color: BRAND.focus,    colorActive: BRAND.yellow,  colorDone: BRAND.teal,   titleColor: BRAND.focus,    badgeBg: 'rgba(219,237,216,0.12)'   },
-    special:  { color: BRAND.special,  colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.special,  badgeBg: 'rgba(113,205,118,0.12)'  },
-    pink:     { color: BRAND.pink,     colorActive: BRAND.lavender, colorDone: BRAND.teal,   titleColor: BRAND.pink,     badgeBg: 'rgba(255,145,215,0.12)'  },
-    salmon:   { color: BRAND.salmon,   colorActive: BRAND.pink,     colorDone: BRAND.teal,   titleColor: BRAND.salmon,   badgeBg: 'rgba(247,156,64,0.12)'  },
-    warning:  { color: BRAND.warning,  colorActive: BRAND.orange,   colorDone: BRAND.green, titleColor: BRAND.warning,  badgeBg: 'rgba(239,102,97,0.12)'    },
-    shell:    { color: BRAND.shell,    colorActive: BRAND.info,     colorDone: BRAND.safe,   titleColor: BRAND.shell,    badgeBg: 'rgba(198,199,189,0.13)'  },
-    vanilla:  { color: BRAND.vanilla,  colorActive: BRAND.blue,    colorDone: BRAND.teal,   titleColor: BRAND.vanilla,  badgeBg: 'rgba(219,237,216,0.12)'  },
+    indigo:   { color: BRAND.indigo,   colorActive: BRAND.violet, colorDone: BRAND.green,   titleColor: BRAND.indigo,   badgeBg: 'rgba(119,140,225,0.12)'   },
+    yellow:   { color: BRAND.yellow,   colorActive: BRAND.orange,   colorDone: BRAND.green,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
+    orange:   { color: BRAND.orange,   colorActive: BRAND.yellow,   colorDone: BRAND.green,   titleColor: BRAND.orange,   badgeBg: 'rgba(255,85,48,0.12)'    },
+    pink:     { color: BRAND.pink,     colorActive: BRAND.violet, colorDone: BRAND.green,   titleColor: BRAND.pink,     badgeBg: 'rgba(255,145,215,0.12)'  },
+    shell:    { color: BRAND.shell,    colorActive: BRAND.indigo,     colorDone: BRAND.green,   titleColor: BRAND.shell,    badgeBg: 'rgba(198,199,189,0.13)'  },
+    vanilla:  { color: BRAND.vanilla,  colorActive: BRAND.blue,    colorDone: BRAND.green,   titleColor: BRAND.vanilla,  badgeBg: 'rgba(219,237,216,0.12)'  },
     /* 新色票 */
     blue:     { color: BRAND.blue,     colorActive: BRAND.indigo,   colorDone: BRAND.green,  titleColor: BRAND.blue,     badgeBg: 'rgba(93,186,232,0.12)'   },
     green:    { color: BRAND.green,    colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.green,    badgeBg: 'rgba(113,205,118,0.12)'  },
     red:      { color: BRAND.red,      colorActive: BRAND.orange,   colorDone: BRAND.green,  titleColor: BRAND.red,      badgeBg: 'rgba(239,102,97,0.12)'   },
     violet:   { color: BRAND.violet,   colorActive: BRAND.pink,     colorDone: BRAND.green,  titleColor: BRAND.violet,   badgeBg: 'rgba(180,132,232,0.12)'  },
     gray:     { color: BRAND.gray,     colorActive: BRAND.blue,     colorDone: BRAND.green,  titleColor: BRAND.gray,     badgeBg: 'rgba(134,135,127,0.13)'  },
+    key:      { color: BRAND.key, colorActive: BRAND.blue, colorDone: BRAND.green, titleColor: BRAND.key, badgeBg: '#142623' },
+    'key-deep':{ color: BRAND['key-deep'], colorActive: BRAND.key, colorDone: BRAND.green, titleColor: BRAND['key-deep'], badgeBg: '#0D1819' },
+    calm:     { color: BRAND.calm, colorActive: BRAND.quiet, colorDone: BRAND.blue, titleColor: BRAND.calm, badgeBg: '#1E2321' },
+    quiet:    { color: BRAND.quiet, colorActive: BRAND.indigo, colorDone: BRAND.green, titleColor: BRAND.quiet, badgeBg: '#1F2225' },
+    playful:  { color: BRAND.playful, colorActive: BRAND.pink, colorDone: BRAND.green, titleColor: BRAND.playful, badgeBg: '#29201B' },
+    urgent:   { color: BRAND.urgent, colorActive: BRAND.orange, colorDone: BRAND.green, titleColor: BRAND.urgent, badgeBg: '#291116' },
   };
 
   const defaults = {
-    color:               BRAND.lavender,
+    color:               BRAND.violet,
     colorActive:         BRAND.blue,
-    colorDone:           BRAND.safe,
-    colorError:          BRAND.warning,
+    colorDone:           BRAND.green,
+    colorError:          BRAND.red,
     textColor:           BRAND.shell,
-    titleColor:          BRAND.lavender,
+    titleColor:          BRAND.violet,
     badgeBg:             'rgba(180,132,232,0.15)',
     cardBg:              'rgba(12,13,12,0.55)',
     cardBgActive:        'rgba(113,205,118,0.07)',
@@ -144,12 +137,12 @@ bp-stepper {
   --bps-pad-top:               8px;
   --bps-pad-bottom:            8px;
   --bps-pad-x:                 10px;
-  --bps-color:                 ${BRAND.lavender};
-  --bps-color-active:          ${BRAND.special};
-  --bps-color-done:            ${BRAND.safe};
-  --bps-color-error:           ${BRAND.warning};
+  --bps-color:                 ${BRAND.violet};
+  --bps-color-active:          ${BRAND.green};
+  --bps-color-done:            ${BRAND.green};
+  --bps-color-error:           ${BRAND.red};
   --bps-text:                  ${BRAND.shell};
-  --bps-title:                 ${BRAND.lavender};
+  --bps-title:                 ${BRAND.violet};
   --bps-badge-bg:              rgba(180,132,232,0.15);
   --bps-card-bg:               rgba(12,13,12,0.55);
   --bps-card-bg-act:           rgba(113,205,118,0.07);
@@ -167,7 +160,7 @@ bp-stepper {
   --bps-title-fs:              1rem;
   --bps-badge-fs:              0.82rem;
   --bps-arrow:                 9px;
-  --bps-connector-label-color: ${BRAND.sky};
+  --bps-connector-label-color: ${BRAND.blue};
   --bps-prog-btn-sz:           28px;
   --bps-ui-title-gap:          8px;
   --bps-content-opacity:       0.9;
@@ -1214,11 +1207,11 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
 
     Object.entries(DATA_MAP).forEach(([key, cssVar]) => {
       let val = el.dataset[key] !== undefined ? el.dataset[key] : cfg[key];
-      // ★ 解析 BRAND 色名別名（e.g. 'salmon' → '#F79C40'，'ocean' → '#5DBAE8'）
+      // ★ 解析 BRAND 色名別名（e.g. 'orange' → '#FF5530'，'blue' → '#5DBAE8'）
       //   data-color-active / data-color-done 等直接填色名時，原本會以字串形式寫入
       //   CSS 變數，導致：
-      //     • 碰巧是 CSS 原生色名（如 salmon）→ 顯示錯誤顏色
-      //     • 非 CSS 色名（如 ocean）         → 無效值，所有用該變數的規則全失效
+      //     • 碰巧是 CSS 原生色名（如 tomato）→ 顯示錯誤顏色
+      //     • 非 CSS 色名（如 lagoon）         → 無效值，所有用該變數的規則全失效
       //       （連接線 ::after、箭頭 ::before 一起消失）
       if (typeof val === 'string' && BRAND[val]) val = BRAND[val];
       if (val) el.style.setProperty(cssVar, val);
@@ -1431,29 +1424,14 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
   injectCSS();
 
 })();
-/* ── 色名標籤 <c-blue>、<c-pink> 等：所有元件共用同一份，頁面上只注入一次 ── */
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = {
-    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#F79C40', green: '#71CD76', blue: '#5DBAE8',
-    indigo: '#778CE1', violet: '#B484E8', gray: '#86877F'
-  };
-  /* 舊色名：對應到最接近的新色，與 chk/ui-check.js、inc/palette.php 一致 */
-  var ALIASES = {
-    lavender: 'violet', sky: 'blue', ocean: 'blue', stone: 'blue', info: 'indigo', bluebell: 'indigo',
-    warning: 'red', salmon: 'orange', safe: 'green', teal: 'green', special: 'green',
-    focus: 'vanilla', attention: 'yellow'
-  };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
-  Object.keys(ALIASES).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[ALIASES[k]] + '}'); });
-  var s = document.createElement('style');
-  s.id = 'ui-color-tags';
-  s.textContent = css.join('\n');
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(s);
-  if (typeof window !== 'undefined' && !window.UiColorTags) {
-    window.UiColorTags = { colors: COLORS, aliases: ALIASES };
-  }
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();
