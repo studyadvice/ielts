@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-network 元件展示</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#0C0D0C; --shell:#C6C7BD; --vanilla:#DBEDD8; --yellow:#E3D322; --pink:#FF91D7; --red:#EF6661;
+  --orange:#FF5530; --green:#71CD76; --blue:#5DBAE8; --indigo:#778CE1; --violet:#B484E8; --gray:#86877F;
+  --key:#51DBCF; --key-deep:#176878; --calm:#A3C4BC; --quiet:#A9B8E0; --playful:#FFA987; --urgent:#FF2E63;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--vanilla);font-size:1rem;}
+.page{max-width:1760px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:2.2rem;color:var(--key);margin:0 0 8px 0;}
+.lead-note{color:var(--calm);font-size:1.05rem;margin:0 0 32px 0;}
+.demo{border:1px solid var(--gray);border-radius:12px;padding:24px;margin:0 0 32px 0;}
+.demo h2{font-size:1.4rem;color:var(--yellow);margin:0 0 6px 0;}
+.demo .desc{color:var(--shell);margin:0 0 16px 0;font-size:.95rem;}
+.demo-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:24px;align-items:start;}
+.code-label{font-size:.8rem;color:var(--gray);margin:0 0 6px 0;letter-spacing:1px;}
+.code-box{background:var(--bg);border:1px solid var(--key-deep);border-radius:8px;padding:16px;margin:0;max-height:560px;overflow:auto;}
+.code-box code{color:var(--calm);font-size:.82rem;white-space:pre;}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:16px 0 0 0;}
+.btn-un{background:var(--key-deep);color:var(--vanilla);border:1px solid var(--key);font-size:.9rem;padding:6px 14px;}
+.btn-un:hover,.btn-un:focus{background:var(--key);color:var(--bg);border-color:var(--key);}
+.ctl{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--shell);}
+.ctl input[type=text],.ctl select{background:var(--bg);color:var(--vanilla);border:1px solid var(--gray);border-radius:6px;padding:4px 8px;font-size:.9rem;}
+.ctl input[type=range]{accent-color:var(--key);}
+.ctl input[type=checkbox]{accent-color:var(--key);width:18px;height:18px;}
+.seed-tag{font-family:monospace;color:var(--key);font-size:.9rem;}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.cap{font-size:.85rem;color:var(--calm);margin:8px 0 0 0;}
+.log{background:var(--bg);border:1px solid var(--gray);border-radius:8px;padding:12px;height:200px;overflow:auto;font-family:monospace;font-size:.85rem;color:var(--shell);margin:12px 0 0 0;}
+.log .hit{color:var(--green);}
+.log .stop{color:var(--urgent);}
+table.ref{width:100%;border-collapse:collapse;font-size:.9rem;margin:0 0 24px 0;}
+table.ref th,table.ref td{border-bottom:1px solid var(--gray);padding:8px 12px;text-align:left;vertical-align:top;color:var(--vanilla);background:var(--bg);}
+table.ref th{color:var(--key);}
+table.ref code{color:var(--playful);}
+h3.ref-title{font-size:1.1rem;color:var(--blue);margin:8px 0 10px 0;}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0 0;}
+.sw{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--shell);border:1px solid var(--gray);border-radius:6px;padding:4px 8px;}
+.sw b{display:inline-block;width:14px;height:14px;border-radius:3px;}
+.bookmark{border-left:4px solid var(--key);padding:24px;margin:0 0 24px 0;min-height:240px;}
+.bookmark h3{font-size:1.3rem;color:var(--key);margin:0 0 8px 0;}
+.bookmark p{color:var(--shell);font-size:.95rem;margin:0 0 12px 0;}
+.back-top{color:var(--blue);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="page" id="top">
+  <h1>ui-network 元件展示</h1>
+  <p class="lead-note">透過 <code>&lt;ui-network&gt;</code> 與 <code>&lt;ui-node&gt;</code> 語意標籤宣告 Bootstrap Icons 名稱與圓圈尺寸，元件自動隨機排列並以三角網格繪製連線。版本 v1.0.0，建立日期 11-07-26。</p>
+
+  <!-- 範例一 -->
+  <section class="demo" data-demo>
+    <h2>範例一：仿原圖網路圖（含書籤與外部連結）</h2>
+    <p class="desc">地圖、手把、調色盤三顆圓圈跳到本頁下方書籤；書本圓圈另開 Bootstrap Icons 官網。滑鼠移入圓圈時，相連的線條會亮起。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="stage"></div>
+        <div class="controls">
+          <button type="button" class="btn btn-un" id="btn-shuffle"><i class="bi bi-shuffle"></i> 重新隨機</button>
+          <span class="ctl">目前種子 <span class="seed-tag" id="seed-now">-</span></span>
+          <span class="ctl"><input type="text" id="seed-input" size="10" placeholder="輸入種子"><button type="button" class="btn btn-un" id="btn-seed">套用</button></span>
+          <span class="ctl">連線密度
+            <select id="sel-density">
+              <option value="sparse">sparse</option>
+              <option value="normal" selected>normal</option>
+              <option value="dense">dense</option>
+            </select>
+          </span>
+          <span class="ctl">padding <input type="range" id="rng-pad" min="0" max="160" step="4" value="40"><span class="seed-tag" id="pad-now">40</span></span>
+          <label class="ctl"><input type="checkbox" id="chk-float"> 漂浮動畫</label>
+        </div>
+      </div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network id="net-main" seed="2026" padding="40" density="normal">
+  <ui-node icon="map-fill" size="xl" color="green" href="#sec-travel" title="旅行"></ui-node>
+  <ui-node icon="controller" size="lg" color="gray" href="#sec-game" title="遊戲"></ui-node>
+  <ui-node icon="palette-fill" size="lg" color="indigo" href="#sec-art" title="藝術"></ui-node>
+  <ui-node icon="book-half" size="md" color="orange" href="https://icons.getbootstrap.com/" target="_blank" title="Bootstrap Icons 官網"></ui-node>
+  <ui-node icon="flower1" size="md" color="pink"></ui-node>
+  <ui-node icon="heart-pulse-fill" size="md" color="red"></ui-node>
+  <ui-node icon="briefcase-fill" size="md" color="playful"></ui-node>
+  <ui-node icon="pencil-square" size="sm" color="gray"></ui-node>
+  <ui-node icon="tv-fill" size="sm" color="violet"></ui-node>
+  <ui-node icon="cup-hot-fill" size="sm" color="key-deep"></ui-node>
+  <ui-node icon="music-note-beamed" size="sm" color="blue"></ui-node>
+  <ui-node icon="camera-fill" size="sm" color="urgent"></ui-node>
+  <ui-node icon="airplane-fill" size="sm" color="indigo"></ui-node>
+  <ui-node icon="bicycle" size="xs" color="green"></ui-node>
+  <ui-node icon="tree-fill" size="xs" color="green"></ui-node>
+  <ui-node icon="trophy-fill" size="xs" color="orange"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
+  <!-- 範例二 -->
+  <section class="demo" data-demo>
+    <h2>範例二：padding 與連線密度比較</h2>
+    <p class="desc">兩者使用相同種子與節點。左側 padding 為 16 且密度 dense，右側 padding 為 64 且密度 sparse，比例皆為 4:3。</p>
+    <div class="demo-grid">
+      <div class="stage pair"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div>
+  <ui-network seed="pair" padding="16" density="dense" ratio="4:3">
+    <ui-node icon="house-fill" size="lg"></ui-node>
+    <ui-node icon="gear-fill" size="md"></ui-node>
+    <ui-node icon="chat-dots-fill" size="md"></ui-node>
+    <ui-node icon="cloud-fill" size="sm"></ui-node>
+    <ui-node icon="lightning-fill" size="sm"></ui-node>
+    <ui-node icon="star-fill" size="sm"></ui-node>
+    <ui-node icon="bell-fill" size="xs"></ui-node>
+    <ui-node icon="envelope-fill" size="xs"></ui-node>
+    <ui-node icon="calendar-event" size="xs"></ui-node>
+    <ui-node icon="people-fill" size="md"></ui-node>
+  </ui-network>
+  <p class="cap">padding="16"　density="dense"</p>
+</div>
+<div>
+  <ui-network seed="pair" padding="64" density="sparse" ratio="4:3">
+    <ui-node icon="house-fill" size="lg"></ui-node>
+    <ui-node icon="gear-fill" size="md"></ui-node>
+    <ui-node icon="chat-dots-fill" size="md"></ui-node>
+    <ui-node icon="cloud-fill" size="sm"></ui-node>
+    <ui-node icon="lightning-fill" size="sm"></ui-node>
+    <ui-node icon="star-fill" size="sm"></ui-node>
+    <ui-node icon="bell-fill" size="xs"></ui-node>
+    <ui-node icon="envelope-fill" size="xs"></ui-node>
+    <ui-node icon="calendar-event" size="xs"></ui-node>
+    <ui-node icon="people-fill" size="md"></ui-node>
+  </ui-network>
+  <p class="cap">padding="64"　density="sparse"</p>
+</div>
+    </script>
+  </section>
+
+  <!-- 範例三 -->
+  <section class="demo" data-demo>
+    <h2>範例三：漂浮動畫與自訂配色</h2>
+    <p class="desc">開啟 float 後圓圈緩慢漂移，線條同步跟隨。背景、線條、圓圈底色都改用色票名稱指定，節點未設定 color 時自動輪替。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network float height="460" padding="48 80" seed="drift"
+            bg-from="indigo" bg-to="background"
+            line-color="quiet" line-active="yellow" line-width="1.2"
+            node-fill="shell">
+  <ui-node icon="rocket-takeoff-fill" size="xl"></ui-node>
+  <ui-node icon="moon-stars-fill" size="lg"></ui-node>
+  <ui-node icon="sun-fill" size="md"></ui-node>
+  <ui-node icon="globe2" size="md"></ui-node>
+  <ui-node icon="stars" size="sm"></ui-node>
+  <ui-node icon="cloud-moon-fill" size="sm"></ui-node>
+  <ui-node icon="compass-fill" size="sm"></ui-node>
+  <ui-node icon="binoculars-fill" size="sm"></ui-node>
+  <ui-node icon="radar" size="xs"></ui-node>
+  <ui-node icon="lightbulb-fill" size="xs"></ui-node>
+  <ui-node icon="snow" size="xs"></ui-node>
+  <ui-node icon="droplet-fill" size="xs"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
+  <!-- 範例四 -->
+  <section class="demo" data-demo>
+    <h2>範例四：錯誤提示（Bootstrap alert）</h2>
+    <p class="desc">不存在的圖示名稱、色票外的顏色、無法辨識的尺寸，會在元件上方以提示訊息顯示。點擊旗子圓圈會因找不到書籤而再出現一則提示。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network seed="oops" height="360" animate="off">
+  <ui-node icon="elephant" size="lg" color="red"></ui-node>
+  <ui-node icon="heart-fill" size="md" color="brown"></ui-node>
+  <ui-node icon="flag-fill" size="huge" color="blue" href="#no-such-bookmark"></ui-node>
+  <ui-node icon="emoji-smile-fill" size="sm" color="green"></ui-node>
+  <ui-node icon="puzzle-fill" size="sm" color="violet"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
+  <!-- 範例五 -->
+  <section class="demo" data-demo>
+    <h2>範例五：node-click 事件與攔截</h2>
+    <p class="desc">每次點擊都會觸發 node-click 事件。鎖頭圓圈設有 data-lock，監聽器呼叫 preventDefault() 後，原本的書籤跳轉就不會執行。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="stage"></div>
+        <div class="log" id="evt-log"></div>
+      </div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+        <p class="code-label" style="margin-top:16px">JavaScript</p>
+        <pre class="code-box"><code>const net = document.getElementById('net-event');
+net.addEventListener('node-click', e =&gt; {
+  const { index, icon, href, node } = e.detail;
+  if (node.dataset.lock !== undefined) {
+    e.preventDefault();          // 取消跳轉
+    log(`已攔截 #${index} ${icon}`, 'stop');
+    return;
+  }
+  log(`點擊 #${index} ${icon} ${href ?? ''}`, 'hit');
+});</code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network id="net-event" seed="evt" height="380" density="dense">
+  <ui-node icon="lock-fill" size="lg" color="urgent" href="#sec-art" data-lock title="被攔截的連結"></ui-node>
+  <ui-node icon="hand-index-thumb-fill" size="md" color="key-deep"></ui-node>
+  <ui-node icon="bookmark-star-fill" size="md" color="orange"></ui-node>
+  <ui-node icon="cursor-fill" size="sm" color="indigo"></ui-node>
+  <ui-node icon="bullseye" size="sm" color="red"></ui-node>
+  <ui-node icon="hand-thumbs-up-fill" size="sm" color="green"></ui-node>
+  <ui-node icon="magic" size="xs" color="violet"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
+  <!-- 參考表 -->
+  <section class="demo">
+    <h2>屬性與 API 參考</h2>
+    <h3 class="ref-title">&lt;ui-network&gt; 屬性</h3>
+    <table class="ref">
+      <thead><tr><th style="width:180px">屬性</th><th style="width:200px">預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>padding</code></td><td>40</td><td>圓圈可擺放區域的內距，單位 px，寫法比照 CSS 的 1 到 4 個數值。線條仍會延伸到整個畫布邊緣。</td></tr>
+        <tr><td><code>seed</code></td><td>每次載入隨機</td><td>亂數種子，可為數字或文字。相同種子與相同節點會得到相同版面。</td></tr>
+        <tr><td><code>density</code></td><td>normal</td><td>連線密度：sparse、normal、dense。</td></tr>
+        <tr><td><code>height</code></td><td>無</td><td>固定高度，單位 px。設定後會忽略 ratio。</td></tr>
+        <tr><td><code>ratio</code></td><td>16:9</td><td>未設定 height 時，依寬度維持此比例。</td></tr>
+        <tr><td><code>fixed-size</code></td><td>未啟用</td><td>布林屬性。啟用後圓圈尺寸不隨容器寬度縮放，也不自動縮小以避免重疊。</td></tr>
+        <tr><td><code>bg-from</code>、<code>bg-to</code></td><td>blue、key-deep</td><td>背景放射漸層的中心色與外圍色，使用色票名稱。</td></tr>
+        <tr><td><code>line-color</code></td><td>shell</td><td>線條顏色，透明度固定 0.8。</td></tr>
+        <tr><td><code>line-active</code></td><td>key</td><td>滑鼠移入圓圈時，相連線條與圓圈外框的顏色。</td></tr>
+        <tr><td><code>line-width</code></td><td>1.5</td><td>線條粗細，單位 px。</td></tr>
+        <tr><td><code>node-fill</code></td><td>vanilla</td><td>所有圓圈的底色。</td></tr>
+        <tr><td><code>float</code></td><td>未啟用</td><td>布林屬性，啟用圓圈漂浮動畫。</td></tr>
+        <tr><td><code>animate</code></td><td>on</td><td>設為 off 時，載入與重新隨機不播放線條描繪與圓圈彈出動畫。</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="ref-title">&lt;ui-node&gt; 屬性</h3>
+    <table class="ref">
+      <thead><tr><th style="width:180px">屬性</th><th style="width:200px">預設值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>icon</code></td><td>circle</td><td>Bootstrap Icons 名稱，可省略 bi- 前綴。</td></tr>
+        <tr><td><code>size</code></td><td>md</td><td>xs (72)、sm (96)、md (120)、lg (150)、xl (210)，或直接寫直徑數字。數值以 1280px 寬為基準自動縮放。</td></tr>
+        <tr><td><code>color</code></td><td>自動輪替</td><td>圖示顏色，使用色票名稱。</td></tr>
+        <tr><td><code>fill</code></td><td>繼承 node-fill</td><td>單一圓圈的底色。</td></tr>
+        <tr><td><code>href</code></td><td>無</td><td>以 # 開頭時平滑捲動到同頁書籤，其他網址則正常跳頁。</td></tr>
+        <tr><td><code>target</code></td><td>無</td><td>搭配 href 使用，例如 _blank 另開分頁。</td></tr>
+        <tr><td><code>title</code></td><td>無</td><td>滑鼠停留時的提示文字。</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="ref-title">方法與事件</h3>
+    <table class="ref">
+      <thead><tr><th style="width:180px">名稱</th><th style="width:200px">類型</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>shuffle(seed?)</code></td><td>方法</td><td>重新隨機排列並播放動畫，可傳入種子，回傳實際使用的種子。</td></tr>
+        <tr><td><code>refresh()</code></td><td>方法</td><td>以目前種子重新建構。</td></tr>
+        <tr><td><code>currentSeed</code></td><td>唯讀屬性</td><td>目前使用中的種子。</td></tr>
+        <tr><td><code>node-click</code></td><td>事件</td><td>detail 含 index、node、icon、href，可呼叫 preventDefault() 取消跳轉。</td></tr>
+        <tr><td><code>network-render</code></td><td>事件</td><td>每次重繪後觸發，detail 含 seed、nodes、edges。</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="ref-title">可用色票名稱</h3>
+    <div class="swatches" id="swatches"></div>
+  </section>
+
+  <!-- 書籤 -->
+  <section class="bookmark" id="sec-travel">
+    <h3><i class="bi bi-map-fill"></i> 旅行</h3>
+    <p>這是範例一地圖圓圈的書籤目標。</p>
+    <a class="back-top" href="#top"><i class="bi bi-arrow-up-circle"></i> 回到上方</a>
+  </section>
+  <section class="bookmark" id="sec-game">
+    <h3><i class="bi bi-controller"></i> 遊戲</h3>
+    <p>這是範例一手把圓圈的書籤目標。</p>
+    <a class="back-top" href="#top"><i class="bi bi-arrow-up-circle"></i> 回到上方</a>
+  </section>
+  <section class="bookmark" id="sec-art">
+    <h3><i class="bi bi-palette-fill"></i> 藝術</h3>
+    <p>這是範例一調色盤圓圈的書籤目標，範例五的鎖頭圓圈也指向這裡，但會被事件攔截。</p>
+    <a class="back-top" href="#top"><i class="bi bi-arrow-up-circle"></i> 回到上方</a>
+  </section>
+</div>
+
+<script src="ui-network.js"></script>
+<script>
+(() => {
+  /* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+
+  /* 範例一控制項 */
+  const net = document.getElementById('net-main');
+  const seedNow = document.getElementById('seed-now');
+  seedNow.textContent = net.currentSeed;
+  net.addEventListener('network-render', e => { seedNow.textContent = e.detail.seed; });
+  document.getElementById('btn-shuffle').addEventListener('click', () => net.shuffle());
+  const seedInput = document.getElementById('seed-input');
+  const applySeed = () => { const v = seedInput.value.trim(); if (v) net.shuffle(v); };
+  document.getElementById('btn-seed').addEventListener('click', applySeed);
+  seedInput.addEventListener('keydown', e => { if (e.key === 'Enter') applySeed(); });
+  document.getElementById('sel-density').addEventListener('change', e => net.setAttribute('density', e.target.value));
+  const padNow = document.getElementById('pad-now');
+  document.getElementById('rng-pad').addEventListener('input', e => {
+    net.setAttribute('padding', e.target.value);
+    padNow.textContent = e.target.value;
+  });
+  document.getElementById('chk-float').addEventListener('change', e => net.toggleAttribute('float', e.target.checked));
+
+  /* 範例五事件紀錄 */
+  const logBox = document.getElementById('evt-log');
+  const log = (msg, cls) => {
+    const row = document.createElement('div');
+    row.className = cls;
+    const t = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+    row.textContent = `[${t}] ${msg}`;
+    logBox.prepend(row);
+  };
+  log('等待點擊圓圈。', '');
+  document.getElementById('net-event').addEventListener('node-click', e => {
+    const { index, icon, href, node } = e.detail;
+    if (node.dataset.lock !== undefined) {
+      e.preventDefault();
+      log(`已攔截 #${index} ${icon}，原連結 ${href} 不會執行。`, 'stop');
+      return;
+    }
+    log(`點擊 #${index} ${icon} ${href ?? ''}`, 'hit');
+  });
+
+  /* 色票清單 */
+  const sw = document.getElementById('swatches');
+  Object.entries(customElements.get('ui-network').palette).forEach(([name, hex]) => {
+    const el = document.createElement('span');
+    el.className = 'sw';
+    el.innerHTML = `<b style="background:${hex}"></b>${name} ${hex}`;
+    sw.append(el);
+  });
+})();
+</script>
+</body>
+</html>
