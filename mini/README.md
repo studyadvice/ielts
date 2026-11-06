@@ -34,6 +34,7 @@
 | `align` | 逗號分隔的 `l`、`c`、`r` | 自動 | 逐欄對齊，例如 `l, l, r`。也接受 `left`、`center`、`right`。沒寫到的欄位：整欄都是數字就靠右，其他靠左。 |
 | `col-widths` | 比例 | 自動 | 欄寬比例，例如 `2:1:1`。數字個數要等於欄數。 |
 | `pre-theme` | 見下表 | `clean` | 預排外觀。 |
+| `head-style` | `filled` | 無 | 表頭改成強調色的實心色帶，可以和任何 `pre-theme` 搭配，例如 `compact` 加實心表頭。 |
 | `color` | 色名或色碼 | 依外觀 | 強調色，用 17 色的色名。 |
 | `font-size` | CSS 長度 | `1rem` | 字級。 |
 
@@ -52,7 +53,7 @@
 | `frame` | 強調色圓角外框，表頭下方一條強調色線 | `key` | 想讓整張表自成一塊的重點資料 |
 | `side` | 第一欄是實心色帶 | `indigo` | 「項目｜說明」的對照表，可以不寫表頭 |
 
-`banner` 與 `side` 用 `key-deep` 當色帶時自動配白字，其他顏色配深色字。
+`banner`、`side` 與 `head-style="filled"` 用 `key-deep` 當色帶時自動配白字，其他顏色配深色字。
 
 ## 屬性解說
 
@@ -89,6 +90,15 @@
   Amy | 7 | 6.5
   Ben | 6 | 6
 </template>
+```
+
+**任何外觀加實心表頭**
+
+```html
+<mini-table pre-theme="compact" head-style="filled" color="indigo" head="語塊 | 次數">
+  a stone's throw from | 12
+  rain or shine | 7
+</mini-table>
 ```
 
 **實心表頭、欄寬與色名標籤**

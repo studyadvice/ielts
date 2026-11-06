@@ -36,7 +36,7 @@
 <body>
 <div class="page">
   <h1>mini-table：一行一列的輕量表格</h1>
-  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。<br>第二次修改：<code>grid</code> 的框線改用強調色調暗，深色底上看得清楚；新增 <code>tiles</code>、<code>frame</code>、<code>side</code> 三種外觀，見範例 5。</p>
+  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。<br>第二次修改：<code>grid</code> 的框線改用強調色調暗，深色底上看得清楚；新增 <code>tiles</code>、<code>frame</code>、<code>side</code> 三種外觀，見範例 5。<br>第三次修改：新增 <code>head-style="filled"</code>，任何外觀都能改成實心表頭，見範例 6。</p>
 
   <section class="demo">
     <h2>範例 1：資料卡片</h2>
@@ -80,7 +80,38 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 6：head-style="filled" 搭配不同外觀</h2>
+    <p class="desc">同一個屬性加在 <code>compact</code>、<code>clean</code>、<code>tiles</code>、<code>grid</code> 上，表頭都變成強調色實心色帶；<code>key-deep</code> 自動配白字。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex6"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex6"></pre></div>
+    </div>
+  </section>
 </div>
+
+<template id="ex6">
+<div class="themes" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+  <mini-table pre-theme="compact" head-style="filled" color="indigo" head="語塊 | 次數">
+    a stone's throw from | 12
+    rain or shine | 7
+    conveniently located | 5
+  </mini-table>
+  <mini-table pre-theme="clean" head-style="filled" color="key-deep" head="Account | Region | Seats">
+    Northwind | EMEA | 1,200
+    Globex | EMEA | 860
+  </mini-table>
+  <mini-table pre-theme="tiles" head-style="filled" color="calm" head="作業 | 截止 | 狀態" align="l, c, r">
+    Part 2 錄音 | 11/08 | <c-urgent>未交</c-urgent>
+    語塊造句 | 11/10 | <c-green>已交</c-green>
+  </mini-table>
+  <mini-table pre-theme="grid" head-style="filled" color="playful" head="Band | 描述">
+    7 | 流暢少停頓
+    6 | 能說長但會卡
+  </mini-table>
+</div>
+</template>
 
 <template id="ex5">
 <ui-cards cols="2">

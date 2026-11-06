@@ -25,6 +25,7 @@
  *   align         逐欄對齊，逗號分隔：l、c、r（或 left、center、right）；沒寫的欄位數字靠右、其他靠左
  *   col-widths    欄寬比例，例如 2:1:1
  *   pre-theme     預排外觀：clean（預設）、ledger、grid、banner、compact、bare、score、tiles、frame、side
+ *   head-style    filled：表頭改成強調色實心色帶，可以和任何 pre-theme 搭配
  *   color         強調色，17 色色名或色碼，預設依外觀
  *   font-size     字級，例如 0.95rem
  *
@@ -104,6 +105,12 @@ mini-table[data-theme="score"] tbody tr:last-child{border-bottom:0;}
 mini-table[data-theme="score"] td:first-child{color:var(--mt-c);font-weight:700;}
 mini-table[data-theme="score"] td.mt-num{font-size:1.25em;font-weight:700;color:${PALETTE.vanilla};}
 
+/* head-style="filled"：任何外觀都能改成實心表頭（選擇器多一層，蓋過各外觀的表頭設定） */
+mini-table[data-head="filled"][data-theme] th{background:var(--mt-c);color:var(--mt-on);font-weight:700;}
+mini-table[data-head="filled"][data-theme="clean"] th:first-child,mini-table[data-head="filled"][data-theme="clean"] td:first-child{padding-left:12px;}
+mini-table[data-head="filled"][data-theme="clean"] th:last-child,mini-table[data-head="filled"][data-theme="clean"] td:last-child{padding-right:12px;}
+mini-table[data-head="filled"][data-theme="tiles"] th{padding-bottom:10px;}
+
 /* tiles：每一列是一塊圓角色塊，列與列之間留空隙 */
 mini-table[data-theme="tiles"] table{border-collapse:separate;border-spacing:0 6px;margin:-6px 0;}
 mini-table[data-theme="tiles"] th{color:var(--mt-c);padding-bottom:2px;}
@@ -173,6 +180,9 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
       if (!THEMES.includes(theme)) console.warn('[mini-table] pre-theme="' + theme + '" 不存在，可用：' + THEMES.join('、') + '，已改用 clean。');
       const th = THEMES.includes(theme) ? theme : 'clean';
       this.setAttribute('data-theme', th);
+      const hs = (g('head-style') || '').trim();
+      if (hs && hs !== 'filled') console.warn('[mini-table] head-style="' + hs + '" 不存在，目前只有 filled。');
+      if (hs === 'filled') this.setAttribute('data-head', 'filled'); else this.removeAttribute('data-head');
       const cName = g('color') || THEME_COLOR[th];
       this.style.setProperty('--mt-c', color(cName));
       this.style.setProperty('--mt-on', onColor(cName));
