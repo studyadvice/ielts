@@ -36,7 +36,7 @@
 <div id="alerts"></div>
 <div class="page">
   <h1>ui-cards：卡片實心、選中實心、框線、滑過效果與翻面</h1>
-  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。第二次修改新增框線粗細與滑過效果：<code>border-width</code>、<code>hover-color</code>、<code>hover-width</code>、<code>hover-all</code>，見範例 5 到 7。第三次修改新增翻面功能：<code>back</code>、<code>back-source</code>、<code>flip-toggle</code>、<code>auto-flip</code>、<code>flip-color</code>、<code>flip-animation</code>，見範例 8 與 9。第四次修改（11-06-26）新增標題列：<code>media-position="inline"</code> 與 <code>meta</code>，角標會排進標題列，見範例 10。</p>
+  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。第二次修改新增框線粗細與滑過效果：<code>border-width</code>、<code>hover-color</code>、<code>hover-width</code>、<code>hover-all</code>，見範例 5 到 7。第三次修改新增翻面功能：<code>back</code>、<code>back-source</code>、<code>flip-toggle</code>、<code>auto-flip</code>、<code>flip-color</code>、<code>flip-animation</code>，見範例 8 與 9。第四次修改（11-06-26）新增標題列：<code>media-position="inline"</code> 與 <code>meta</code>，角標會排進標題列，見範例 10。第五次修改（11-07-26）新增內容區主題：<code>panel-theme</code>、<code>panel-color</code>，內容來源 <code>&lt;template&gt;</code> 的 <code>theme</code>、<code>color</code>，以及按鈕或卡片的 <code>detail-theme</code>、<code>detail-color</code>，可組合外框、底色、標題、密度與特效，包含 info-region 的金箔與電流，見範例 11。</p>
 
   <section class="demo">
     <h2>屬性一覽</h2>
@@ -157,7 +157,47 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex10"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 11：內容區主題 theme（第五次修改）</h2>
+    <p class="desc">主題寫在內容來源的 <code>&lt;template&gt;</code> 上，跟著內容走：不管哪張卡打開，同一段內容的外觀都一樣。關鍵字用空格組合，分五組，同一組後寫的蓋掉先寫的。疊加順序是 <code>ui-cards</code> 的 <code>panel-theme</code>、<code>template</code> 的 <code>theme</code>、按鈕的 <code>detail-theme</code>。顏色只接受 17 色色名，金箔版固定金色。點每張卡看效果。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex11"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex11"></pre></div>
+    </div>
+    <table class="attr-table" style="margin-top:16px">
+      <thead><tr><th>組別</th><th>關鍵字</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>外框</td><td><code>outline</code>（預設）、<code>top-bar</code>、<code>double</code>、<code>corner</code></td><td>細框、上方粗色條、強調色雙線框、只畫四個角。</td></tr>
+        <tr><td>底色</td><td><code>plain</code>（預設）、<code>tint</code>、<code>hatch</code>、<code>gold</code></td><td>透明、強調色淡底、淡斜紋、金箔版（與 info-region 的 <code>ir-gold</code> 相同，會蓋掉外框與顏色）。</td></tr>
+        <tr><td>標題</td><td><code>head-line</code>（預設）、<code>head-filled</code>、<code>head-tab</code>、<code>head-chip</code>、<code>head-under</code></td><td>下方細線、實心色帶、框外頁籤、膠囊外框、標題字下方粗底線。</td></tr>
+        <tr><td>密度</td><td><code>normal</code>（預設）、<code>compact</code></td><td>一般、緊湊。</td></tr>
+        <tr><td>特效</td><td><code>electric</code>、<code>pulse</code>、<code>no-fx</code></td><td>電流環加閃電（與 info-region 相同）、外圈呼吸光、取消上層給的特效。</td></tr>
+        <tr><td>屬性</td><td><code>panel-theme</code>、<code>panel-color</code>（ui-cards）<br><code>theme</code>、<code>color</code>（template）<br><code>detail-theme</code>、<code>detail-color</code>（卡片或按鈕）</td><td>顏色不寫時，強調色跟著 <code>panel-title-color</code>，預設 <code>violet</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
 </div>
+
+<template id="ex11">
+<ui-cards cols="4" panel-title="{label}" active-detail="th-key">
+  <card-item icon="star" label="重點" detail="th-key">gold electric</card-item>
+  <card-item icon="journal-text" label="範文" detail="th-model">top-bar head-filled</card-item>
+  <card-item icon="exclamation-circle" label="提醒" detail="th-warn">tint head-tab</card-item>
+  <card-item icon="quote" label="例句" detail="th-ex">corner head-under</card-item>
+  <card-item icon="plus-circle" label="補充" detail="th-more">hatch compact head-chip</card-item>
+  <card-item icon="bookmark-star" label="考前必看" detail="th-must">double pulse</card-item>
+  <card-item icon="lightning" label="電流加色" detail="th-ex" detail-theme="electric" detail-color="urgent">按鈕覆寫</card-item>
+  <card-item icon="square" label="一般" detail="d-p1">沒有 theme</card-item>
+</ui-cards>
+
+<template id="th-key" theme="gold electric"><p>第一句就用 <b>a stone's throw from</b>，一次交代地點。</p></template>
+<template id="th-model" theme="top-bar head-filled" color="key"><p>I'd like to talk about a trip I took last spring. It was a real eye-opener for me, mainly because it made me rethink how I spend my weekends.</p></template>
+<template id="th-warn" theme="tint head-tab" color="orange"><p>不要照搬題目的句子，換一個說法開頭。</p></template>
+<template id="th-ex" theme="corner head-under" color="blue"><p>It's <b>a stone's throw from</b> the station.</p></template>
+<template id="th-more" theme="hatch compact head-chip" color="calm"><p>同義說法：within walking distance、just around the corner。</p></template>
+<template id="th-must" theme="double pulse" color="pink"><p>Part 2 準備的一分鐘，先寫四個關鍵字。</p></template>
+</template>
 
 <template id="ex10">
 <ui-cards cols="2">

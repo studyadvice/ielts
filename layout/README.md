@@ -624,6 +624,8 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `panel-badge` | 文字 | 無 | 內容區右上角的角標文字。 |
 | `panel-badge-icon` | Bootstrap Icons 名稱 | 無 | 內容區角標圖示。 |
 | `panel-badge-color` | 顏色 | 內建 | 內容區角標底色。 |
+| `panel-theme` | 關鍵字，空格分隔 | 無 | 內容區主題，見下方「內容區主題」。 |
+| `panel-color` | 色名 | 跟隨 `panel-title-color` | 內容區主題的強調色。 |
 | `trigger` | `click`、`hover` | `click` | 卡片開啟細節的方式。 |
 | `detail-trigger` | `click`、`hover` | `click` | 細節按鈕開啟細節的方式。 |
 | `toggle` | 布林 | 關閉 | 再點一次已選的卡片或按鈕時收起細節。 |
@@ -688,6 +690,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `toggle` | 布林 | 再點一次收起細節。 |
 | `disabled` | 布林 | 停用。 |
 | `detail-badge`、`detail-badge-icon`、`detail-badge-color` | 同 `panel-badge` | 開啟這個細節時使用的內容區角標，優先於 `<ui-cards>` 的設定；寫空值可隱藏角標。 |
+| `detail-theme`、`detail-color` | 同 `panel-theme`、`panel-color` | 開啟這個細節時疊加的內容區主題與強調色，優先於內容來源與 `<ui-cards>` 的設定。 |
 
 ### 顯示按鈕屬性
 
@@ -961,3 +964,31 @@ uc.unflipAll();      // 全部翻回正面
   <step-item label="第三課" status="todo" disabled tooltip="尚未開放"></step-item>
 </ui-steps>
 ```
+
+## 內容區主題
+
+內容區（panel detail）可以用關鍵字組合外觀。主題寫在內容來源的 `<template>` 上，就會跟著內容走，不管哪張卡打開都一樣。
+
+```html
+<ui-cards panel-title="{label}">
+  <card-item label="重點" detail="key-point">...</card-item>
+  <card-item label="範文" detail="model">...</card-item>
+</ui-cards>
+
+<template id="key-point" theme="gold electric"><p>...</p></template>
+<template id="model" theme="top-bar head-filled" color="key"><p>...</p></template>
+```
+
+| 組別 | 關鍵字 | 說明 |
+| --- | --- | --- |
+| 外框 | `outline`（預設）、`top-bar`、`double`、`corner` | 細框、上方粗色條、強調色雙線框、只畫四個角。 |
+| 底色 | `plain`（預設）、`tint`、`hatch`、`gold` | 透明、強調色淡底、淡斜紋、金箔版（與 info-region 的 `ir-gold` 相同，會蓋掉外框與顏色）。 |
+| 標題 | `head-line`（預設）、`head-filled`、`head-tab`、`head-chip`、`head-under` | 下方細線、實心色帶、框外頁籤、膠囊外框、標題字下方粗底線。 |
+| 密度 | `normal`（預設）、`compact` | 一般、緊湊。 |
+| 特效 | `electric`、`pulse`、`no-fx` | 電流環加閃電、外圈呼吸光、取消上層給的特效。 |
+
+- **疊加順序：** `<ui-cards>` 的 `panel-theme`，再疊內容來源的 `theme`，最後疊按鈕或卡片的 `detail-theme`。同一組後寫的蓋掉先寫的，例如 `panel-theme="compact"` 加上 `theme="tint"` 等於 `compact tint`。
+- **顏色：** `detail-color` 優先，其次是內容來源的 `color`，再來是 `panel-color`，都只接受 17 色色名。都沒寫時跟著 `panel-title-color`，預設 `violet`。金箔版固定金色。
+- **`head-tab` 與 `panel-height`：** 內容區可捲動時，頁籤改成放在框內左上角，避免被裁掉。
+- **電流的閃電：** 在右上角；有角標或用 `head-filled` 時移到右下角。
+

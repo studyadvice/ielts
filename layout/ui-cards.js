@@ -80,6 +80,15 @@
   };
   const lineStyle = st => (st === 'none' ? 'none' : (['solid', 'dashed', 'dotted'].includes(st) ? st : 'solid'));
   const alertEl = id => el('div', 'alert alert-danger uic-alert', `找不到 id 為「${id}」的內容。`);
+  /* 內容區主題關鍵字 → [組別, 值]；預設值（outline、plain、head-line、normal）等於不設定 */
+  const THEME_TOKENS = {
+    outline: ['frame', ''], 'top-bar': ['frame', 'top-bar'], double: ['frame', 'double'], corner: ['frame', 'corner'],
+    plain: ['bg', ''], tint: ['bg', 'tint'], hatch: ['bg', 'hatch'], gold: ['bg', 'gold'],
+    'head-line': ['head', ''], 'head-filled': ['head', 'filled'], 'head-tab': ['head', 'tab'], 'head-chip': ['head', 'chip'], 'head-under': ['head', 'under'],
+    normal: ['size', ''], compact: ['size', 'compact'],
+    electric: ['fx', 'electric'], pulse: ['fx', 'pulse'], 'no-fx': ['fx', '']
+  };
+
   const cloneOf = id => {
     const src = id ? document.getElementById(id) : null;
     if (!src) return null;
@@ -192,6 +201,62 @@ ui-cards .uic-pbody{line-height:1.7;}
 ui-cards .uic-pbody > :first-child{margin-top:0;}
 ui-cards .uic-pbody > :last-child{margin-bottom:0;}
 ui-cards .uic-ph{color:${PALETTE.indigo};font-size:0.95rem;text-align:center;border:1px dashed ${PALETTE.indigo};border-radius:8px;padding:24px 16px;}
+/* ══ 內容區主題 theme：外框 frame、底色 bg、標題 head、密度 size、特效 fx，各組各取一個 ══ */
+ui-cards .uic-panel{--uic-pac:var(--uic-head-c, ${PALETTE.violet});--uic-pac-on:#0C0D0C;--uic-pad-y:16px;--uic-pad-x:16px;}
+ui-cards .uic-panel .uic-head{color:var(--uic-pac);border-bottom-color:var(--uic-head-line, var(--uic-pac));}
+ui-cards .uic-panel > .uic-head,ui-cards .uic-panel > .uic-pbody{position:relative;z-index:1;}
+ui-cards .uic-panel > .uic-badge{z-index:3;}
+/* 外框 */
+ui-cards .uic-panel[data-frame="top-bar"]{border:1px solid #3A3B38;border-top:4px solid var(--uic-pac);border-radius:4px 4px 8px 8px;}
+ui-cards .uic-panel[data-frame="double"]{border:3px double var(--uic-pac);}
+ui-cards .uic-panel[data-frame="corner"]{border-color:transparent;border-radius:0;--uic-pad-y:20px;--uic-pad-x:20px;padding:20px;}
+ui-cards .uic-panel[data-frame="corner"]::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:
+  linear-gradient(var(--uic-pac),var(--uic-pac)) top left/40px 3px no-repeat,linear-gradient(var(--uic-pac),var(--uic-pac)) top left/3px 40px no-repeat,
+  linear-gradient(var(--uic-pac),var(--uic-pac)) top right/40px 3px no-repeat,linear-gradient(var(--uic-pac),var(--uic-pac)) top right/3px 40px no-repeat,
+  linear-gradient(var(--uic-pac),var(--uic-pac)) bottom left/40px 3px no-repeat,linear-gradient(var(--uic-pac),var(--uic-pac)) bottom left/3px 40px no-repeat,
+  linear-gradient(var(--uic-pac),var(--uic-pac)) bottom right/40px 3px no-repeat,linear-gradient(var(--uic-pac),var(--uic-pac)) bottom right/3px 40px no-repeat;}
+/* 底色（不透明，強調色與底色混合） */
+ui-cards .uic-panel[data-bg="tint"]{background:color-mix(in srgb,var(--uic-pac) 13%,#0C0D0C);}
+ui-cards .uic-panel[data-bg="hatch"]{background:repeating-linear-gradient(135deg,#0C0D0C 0 10px,color-mix(in srgb,var(--uic-pac) 9%,#0C0D0C) 10px 20px);}
+/* 金箔：與 info-region 的 ir-gold 相同，會蓋掉外框與顏色 */
+ui-cards .uic-panel[data-bg="gold"]{--uic-pac:#C9973F;--uic-pac-on:#0C0D0C;background:linear-gradient(150deg,#1A1200 0%,#2E2000 40%,#1F1700 70%,#1A1200 100%);border:1px solid rgba(185,140,55,0.82);border-left:4px solid #C9973F;border-radius:6px;color:#EFD9A2;}
+ui-cards .uic-panel[data-bg="gold"]::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(102deg,#000000 25%,#2B2008 50%,#000000 75%);background-size:200% 100%;mix-blend-mode:screen;animation:uic-gold-shimmer 4s ease-in-out infinite;}
+@keyframes uic-gold-shimmer{0%{background-position:-60% center}100%{background-position:160% center}}
+ui-cards .uic-panel[data-bg="gold"] .uic-head{color:#E3C27A;border-bottom-color:#C9973F;}
+ui-cards .uic-panel[data-bg="gold"] .uic-ph{color:#E3C27A;border-color:#C9973F;}
+/* 標題 */
+ui-cards .uic-panel[data-head="filled"] .uic-head{background:var(--uic-pac);color:var(--uic-pac-on);border-bottom:0;margin:calc(var(--uic-pad-y) * -1) calc(var(--uic-pad-x) * -1) 14px;padding:10px var(--uic-pad-x);border-radius:7px 7px 0 0;}
+ui-cards .uic-panel[data-frame="corner"][data-head="filled"] .uic-head{border-radius:0;}
+ui-cards .uic-panel[data-bg="gold"][data-head="filled"] .uic-head{color:#0C0D0C;border-radius:0 5px 0 0;}
+ui-cards .uic-panel[data-head="tab"]:has(> .uic-head:not(:empty)){margin-top:18px;}
+ui-cards .uic-panel[data-head="tab"] .uic-head{position:absolute;left:12px;top:-15px;margin:0;padding:3px 12px;font-size:0.95rem;line-height:1.4;border:0;border-radius:6px 6px 0 0;background:var(--uic-pac);color:var(--uic-pac-on);}
+ui-cards .uic-panel[data-head="tab"] .uic-pbody{padding-top:10px;}
+ui-cards .uic-panel[data-head="tab"][style*="max-height"] .uic-head{position:static;display:inline-block;margin:0 0 12px;}
+ui-cards .uic-panel[data-head="tab"][style*="max-height"]{margin-top:0;}
+ui-cards .uic-panel[data-head="chip"] .uic-head{display:inline-block;border:1.5px solid var(--uic-pac);border-radius:999px;padding:1px 14px;font-size:0.95rem;}
+ui-cards .uic-panel[data-head="under"] .uic-head{display:inline-block;border-bottom:3px solid var(--uic-pac);padding:0 0 4px;}
+ui-cards .uic-panel[data-head="chip"]:not(.uic-has-badge) .uic-head:empty + .uic-pbody,ui-cards .uic-panel[data-head="under"] .uic-head:empty + .uic-pbody{padding-right:0;}
+/* 密度 */
+ui-cards .uic-panel[data-size="compact"]{--uic-pad-y:10px;--uic-pad-x:12px;padding:10px 12px;font-size:0.92rem;}
+ui-cards .uic-panel[data-size="compact"] .uic-pbody{line-height:1.55;}
+ui-cards .uic-panel[data-size="compact"] .uic-head{font-size:1rem;margin-bottom:8px;padding-bottom:6px;}
+ui-cards .uic-panel[data-size="compact"][data-head="filled"] .uic-head{padding:7px 12px;margin-bottom:10px;}
+ui-cards .uic-panel[data-size="compact"][data-head="chip"] .uic-head,ui-cards .uic-panel[data-size="compact"][data-head="tab"] .uic-head{padding:1px 12px;}
+ui-cards .uic-panel[data-size="compact"][data-frame="corner"]{--uic-pad-y:14px;--uic-pad-x:14px;padding:14px;}
+/* 特效：electric 電流（與 info-region 相同）、pulse 外圈呼吸光 */
+@property --uic-fx-angle{syntax:'<angle>';inherits:false;initial-value:0deg;}
+@keyframes uic-fx-spin{to{--uic-fx-angle:360deg;}}
+@keyframes uic-fx-glow{0%,100%{box-shadow:0 0 10px var(--uic-fx-dim)}7%{box-shadow:0 0 22px var(--uic-fx-edge)}9%{box-shadow:0 0 6px var(--uic-fx-dim)}12%{box-shadow:0 0 28px var(--uic-fx-core)}16%{box-shadow:0 0 12px var(--uic-fx-edge)}55%{box-shadow:0 0 10px var(--uic-fx-dim)}58%{box-shadow:0 0 20px var(--uic-fx-edge)}60%{box-shadow:0 0 8px var(--uic-fx-dim)}}
+@keyframes uic-fx-bolt{0%,100%{background:var(--uic-fx-core)}7%{background:var(--uic-fx-dim)}9%{background:var(--uic-fx-core)}12%{background:var(--uic-fx-edge)}15%{background:var(--uic-fx-core)}56%{background:var(--uic-fx-core)}58%{background:var(--uic-fx-dim)}61%{background:var(--uic-fx-core)}}
+ui-cards .uic-panel[data-fx="electric"]{--uic-fx-edge:var(--uic-pac);--uic-fx-dim:color-mix(in srgb,var(--uic-pac) 45%,#000000);--uic-fx-core:#DBEDD8;animation:uic-fx-glow 3.6s linear infinite;}
+ui-cards .uic-panel[data-fx="electric"][data-bg="gold"]{--uic-fx-dim:#6B4F12;}
+ui-cards .uic-panel[data-fx="electric"]::after{content:'';position:absolute;inset:0;padding:2px;border-radius:inherit;pointer-events:none;z-index:2;background:conic-gradient(from var(--uic-fx-angle,0deg),var(--uic-fx-dim) 0deg,var(--uic-fx-dim) 190deg,var(--uic-fx-edge) 270deg,var(--uic-fx-core) 335deg,var(--uic-fx-dim) 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;animation:uic-fx-spin 2.6s linear infinite;}
+ui-cards .uic-fx-bolt{position:absolute;top:10px;right:12px;width:11px;height:18px;z-index:3;pointer-events:none;background:var(--uic-fx-core);clip-path:polygon(62% 0,8% 56%,44% 56%,30% 100%,92% 38%,56% 38%);animation:uic-fx-bolt 3.6s linear infinite;}
+ui-cards .uic-panel.uic-has-badge .uic-fx-bolt,ui-cards .uic-panel[data-head="filled"] .uic-fx-bolt{top:auto;bottom:10px;}
+ui-cards .uic-panel[data-fx="electric"]:not(.uic-has-badge):not([data-head="filled"]) .uic-head{padding-right:28px;}
+ui-cards .uic-panel[data-fx="electric"][data-head="chip"]:not(.uic-has-badge) .uic-head,ui-cards .uic-panel[data-fx="electric"][data-head="tab"] .uic-head{padding-right:14px;}
+@keyframes uic-fx-pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--uic-pac) 70%,#0C0D0C)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--uic-pac) 25%,#0C0D0C)}}
+ui-cards .uic-panel[data-fx="pulse"]{animation:uic-fx-pulse 2.4s ease-in-out infinite;}
 ui-cards .uic-alert{background:${PALETTE.base};border:1px solid ${PALETTE.red};color:${PALETTE.red};border-radius:6px;padding:12px 16px;margin:0;font-size:0.95rem;}
 
 ui-cards .uic-btn{display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;border-radius:6px;padding:6px 14px;margin:4px 8px 4px 0;font-size:0.95rem;font-weight:600;line-height:1.4;cursor:pointer;text-decoration:none;}
@@ -236,6 +301,8 @@ ${variantCSS}
         panelBadge: a('panel-badge') || '',
         panelBadgeIcon: a('panel-badge-icon') || '',
         panelBadgeColor: a('panel-badge-color') || '',
+        panelTheme: a('panel-theme') || '',
+        panelColor: a('panel-color') || '',
         btnColor: a('button-color') || 'blue',
         cardStyle: a('card-style') || ''
       };
@@ -301,6 +368,7 @@ ${variantCSS}
         }
         this._panel = { col, head, body };
         wrap.append(col);
+        this._setPanelTheme(null);
         if (o.panel === 'right') {
           const c = (a('panel-columns') || '8,4').split(',').map(v => num(v, 1));
           s.setProperty('--uic-pcols', `minmax(0,${c[0]}fr) minmax(0,${c[1] != null ? c[1] : c[0]}fr)`);
@@ -542,7 +610,35 @@ ${variantCSS}
       p.body.replaceChildren(cloneOf(id) || alertEl(id));
       this._decorateButtons(p.body);
       this._setPanelBadge(b);
+      this._setPanelTheme(b);
       this._wrap.classList.remove('uic-nopanel');
+    }
+
+    /* 內容區主題：ui-cards 的 panel-theme → 內容來源元素的 theme → 按鈕的 detail-theme，依序疊加，
+       同一組後寫的蓋掉先寫的；顏色同理（panel-color → color → detail-color）。 */
+    _setPanelTheme(b) {
+      const p = this._panel, o = this._o, col = p.col;
+      const src = b && b.getAttribute('detail') ? document.getElementById(b.getAttribute('detail')) : null;
+      const tokens = [o.panelTheme, src && src.getAttribute('theme'), b && b.getAttribute('detail-theme')]
+        .filter(Boolean).join(' ').split(/[\s,]+/).filter(Boolean);
+      const st = { frame: '', bg: '', head: '', size: '', fx: '' };
+      tokens.forEach(t => {
+        const g = THEME_TOKENS[t];
+        if (g) st[g[0]] = g[1];
+        else console.warn('[ui-cards] theme="' + t + '" 不是可用的關鍵字，可用：' + Object.keys(THEME_TOKENS).join('、') + '。');
+      });
+      Object.keys(st).forEach(k => (st[k] ? col.setAttribute('data-' + k, st[k]) : col.removeAttribute('data-' + k)));
+      const cName = (b && b.getAttribute('detail-color')) || (src && src.getAttribute('color')) || o.panelColor;
+      if (cName && st.bg !== 'gold') {
+        col.style.setProperty('--uic-pac', color(cName));
+        col.style.setProperty('--uic-pac-on', textOn(cName));
+      } else {
+        col.style.removeProperty('--uic-pac');
+        col.style.removeProperty('--uic-pac-on');
+      }
+      let bolt = col.querySelector(':scope > .uic-fx-bolt');
+      if (st.fx === 'electric') { if (!bolt) col.append(el('span', 'uic-fx-bolt')); }
+      else if (bolt) bolt.remove();
     }
 
     /* 內容區角標：按鈕的 detail-badge* 優先，其次為 ui-cards 的 panel-badge*；清空時移除 */
@@ -617,6 +713,7 @@ ${variantCSS}
       p.head.textContent = this._o.panelTitle.replace('{label}', '').trim();
       p.body.replaceChildren(...(this._o.placeholder ? [el('div', 'uic-ph', this._o.placeholder)] : []));
       this._setPanelBadge(null);
+      this._setPanelTheme(null);
       if (this._o.hideEmpty) this._wrap.classList.add('uic-nopanel');
     }
 
