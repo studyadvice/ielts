@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-guide 指引框</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7; --red: #EF6661;
+    --orange: #FF5530; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1; --gray: #86877F; --key: #51DBCF;
+    --line: #2A2B29;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid var(--line); border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 16px 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.82rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow: auto; }
+  .tool { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px 0; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  .attr-table th { color: var(--vanilla); font-weight: 600; }
+
+  /* 範例 1：仿參考圖的兩個面板 */
+  .stage { position: relative; padding: 8px 0 8px 120px; }
+  .old-box { width: 900px; border: 1px solid #30312E; border-radius: 8px; background: #141514; }
+  .old-row { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #262725; }
+  .old-row:last-child { border-bottom: 0; }
+  .old-row .ico { font-size: 1.6rem; flex: none; }
+  .old-row b { color: var(--vanilla); display: block; }
+  .old-row small { color: var(--gray); }
+  .old-row .grow { flex: 1; }
+  .fake-btn { display: inline-flex; align-items: center; gap: 10px; border: 1px solid #3A3B38; border-radius: 6px; padding: 6px 14px; background: #1E1F1D; color: var(--vanilla); font-size: 0.95rem; white-space: nowrap; }
+  .fake-btn.dim { color: #6E6F68; }
+  .new-box { width: 1080px; margin: 110px 0 0 340px; border: 1px solid #30312E; border-radius: 10px; background: #141514; }
+  .new-top { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #262725; }
+  .new-top .clock { width: 44px; height: 44px; border-radius: 50%; background: #E3D322; color: #0C0D0C; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex: none; }
+  .new-top b { color: var(--vanilla); font-size: 1.15rem; display: block; }
+  .new-cols { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .new-col { padding: 16px 20px; border-right: 1px solid #262725; }
+  .new-col:last-child { border-right: 0; }
+  .new-col b { color: var(--vanilla); }
+  .bar { height: 8px; border-radius: 4px; margin: 12px 0 0 0; background: #3A3B38; overflow: hidden; display: flex; }
+  .bar span { display: block; height: 100%; }
+
+  /* 範例 2、3：口說答題流程 */
+  .flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 140px 80px; padding: 70px 40px 150px 80px; }
+  .tile { border: 1px solid #30312E; border-radius: 8px; padding: 16px 18px; background: #161716; }
+  .tile b { color: var(--vanilla); display: block; margin: 0 0 4px 0; }
+  .tile small { color: var(--gray); }
+  /* 範例 4 到 7：文字密度測試 */
+  .dense { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 0 160px; padding: 20px 20px 20px 30px; }
+  .dense p { line-height: 1.9; margin: 0 0 14px 0; }
+  .dense .hl { color: var(--vanilla); }
+  .notes { display: flex; flex-direction: column; gap: 14px; padding: 0 0 0 0; }
+  .note { border: 1px solid #30312E; border-radius: 8px; padding: 10px 14px; background: #161716; font-size: 0.92rem; }
+  .note b { color: var(--vanilla); }
+  .sparse { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px; padding: 30px 40px 0 60px; }
+  .sum { margin: 170px 220px 40px 220px; border: 1px solid #30312E; border-radius: 10px; padding: 20px 24px; background: #161716; line-height: 1.8; }
+  .cross { display: grid; grid-template-columns: 220px minmax(0, 1fr) 220px; grid-template-rows: auto auto auto; gap: 90px 130px; padding: 30px 40px 30px 80px; align-items: center; }
+  .cross .center { grid-column: 2; grid-row: 2; border: 1px solid #30312E; border-radius: 10px; padding: 18px 22px; background: #161716; line-height: 1.9; }
+  .reflow { border: 1px dashed #3A3B38; border-radius: 8px; padding: 18px 22px; transition: width .3s ease; line-height: 1.9; }
+  .reflow-notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; margin: 120px 0 20px 0; }
+  .alert-zone { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 340px; display: flex; flex-direction: column; gap: 8px; }
+  .alert-zone .alert { margin: 0; background: #1B1C1B; color: var(--vanilla); border: 1px solid var(--blue); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-guide：指引框</h1>
+  <p class="lead-note">建立日期 11-06-26。框住頁面上任何有 <code>id</code> 的元素，左側放號碼方塊，用水平、垂直的自動折線連到另一個元素。說明卡支援 HTML、角標與可設定分隔線的頁尾。顯示由你自己放的按鈕控制：加上 <code>guide-for</code> 就是控制鈕。<br>第二次修改：多條線進入同一目標時終點自動分開；同方向的線自動錯開；文字重排時自動重算；新增適合密集文字的 <code>num-pos="badge"</code> 小圓號碼。範例 4 到 7 用不同文字密度測試折線位置。<br>第三次修改：新增 <code>card-reveal</code>，說明卡要按下才顯示，有 <code>click</code>、<code>button</code>、<code>step</code> 三種；說明卡隱藏時框的右上角有閃動的「?」提示；新增 <code>cards-show</code>、<code>cards-hide</code>、<code>cards-toggle</code> 三個控制動作。見範例 8。</p>
+
+  <section class="demo">
+    <h2>屬性一覽</h2>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>寫在哪裡</th><th>值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>mode</code></td><td><code>&lt;ui-guide&gt;</code></td><td><code>all</code>、<code>step</code></td><td><code>all</code>：一次全部顯示或隱藏。<code>step</code>：一次多一個。</td></tr>
+        <tr><td><code>open</code></td><td><code>&lt;ui-guide&gt;</code></td><td>布林</td><td>載入時就全部顯示。</td></tr>
+        <tr><td><code>stagger</code></td><td><code>&lt;ui-guide&gt;</code></td><td>毫秒</td><td>全部顯示時，每個框之間的間隔，做出依序出現的效果。</td></tr>
+        <tr><td><code>draw-speed</code></td><td><code>&lt;ui-guide&gt;</code></td><td>毫秒</td><td>線畫出來的時間，預設 600。<code>no-animation</code> 關閉動畫。</td></tr>
+        <tr><td><code>loop</code></td><td><code>&lt;ui-guide&gt;</code></td><td>布林</td><td>逐步模式到最後一個後，再按「下一個」全部收起。</td></tr>
+        <tr><td><code>num</code></td><td><code>&lt;guide-mark&gt;</code></td><td>文字或 HTML</td><td>號碼方塊的內容，預設依序 1、2、3。</td></tr>
+        <tr><td><code>target</code></td><td><code>&lt;guide-mark&gt;</code></td><td>元素 id</td><td>要框起來的元素，任何有 id 的元素都可以。</td></tr>
+        <tr><td><code>to</code></td><td><code>&lt;guide-mark&gt;</code></td><td>元素 id</td><td>線要連到的元素；不寫就只有框，沒有線。</td></tr>
+        <tr><td><code>exit</code>、<code>enter</code></td><td><code>&lt;guide-mark&gt;</code></td><td><code>left</code>、<code>right</code>、<code>top</code>、<code>bottom</code></td><td>線從框的哪一邊出去、從目標的哪一邊進來。不寫時依位置自動判斷。</td></tr>
+        <tr><td><code>lane</code></td><td><code>&lt;guide-mark&gt;</code></td><td>整數</td><td>錯開距離，每加 1 多離開 14px。不寫時，同一個出口方向的線依序自動錯開。</td></tr>
+        <tr><td>內容、<code>source</code></td><td><code>&lt;guide-mark&gt;</code></td><td>HTML、元素 id</td><td>說明卡的內容，可以直接寫在標籤裡，或從 template 讀取。</td></tr>
+        <tr><td><code>badge</code>、<code>badge-color</code></td><td><code>&lt;guide-mark&gt;</code></td><td>文字、色名</td><td>說明卡右上角的角標。</td></tr>
+        <tr><td><code>footer</code></td><td><code>&lt;guide-mark&gt;</code></td><td>HTML</td><td>說明卡頁尾。</td></tr>
+        <tr><td><code>divider</code>、<code>divider-color</code></td><td>兩者皆可</td><td><code>solid</code>、<code>dashed</code>、<code>dotted</code>、<code>none</code>；色名</td><td>頁尾上方分隔線的樣式與顏色。</td></tr>
+        <tr><td><code>label-pos</code></td><td>兩者皆可</td><td><code>bottom</code>、<code>top</code>、<code>left</code>、<code>right</code></td><td>說明卡放在框的哪一邊，預設 <code>bottom</code>。</td></tr>
+        <tr><td><code>num-pos</code></td><td>兩者皆可</td><td><code>left</code>、<code>right</code>、<code>badge</code>、<code>none</code></td><td>號碼方塊在框的左側、右側；<code>badge</code> 是框左上角的小圓號碼，適合框住段落裡的字；<code>none</code> 不顯示。</td></tr>
+        <tr><td><code>color</code></td><td>兩者皆可</td><td>色名或色碼</td><td>框、號碼方塊、線與圓點的顏色，預設 <code>shell</code>。<code>key-deep</code> 的號碼自動用白字。</td></tr>
+        <tr><td><code>line-width</code>、<code>line-style</code></td><td>兩者皆可</td><td>px；<code>solid</code>、<code>dashed</code></td><td>框與線的粗細、線的樣式。</td></tr>
+        <tr><td><code>pad</code>、<code>gap</code>、<code>tab-width</code>、<code>radius</code>、<code>dot-size</code>、<code>card-width</code></td><td>兩者皆可</td><td>px</td><td>框與目標的間距、線離開框的距離、號碼方塊寬度、圓角、圓點半徑、說明卡寬度。</td></tr>
+        <tr><td><code>card-reveal</code></td><td>兩者皆可</td><td><code>click</code>、<code>button</code>、<code>step</code></td><td>說明卡按下才顯示。<code>click</code>：點號碼方塊或「?」提示。<code>button</code>：說明卡的位置先放一顆小按鈕。<code>step</code>：逐步模式中，按「下一個」先出現框，再按一次才出現說明卡。不寫就跟著框一起出現。</td></tr>
+        <tr><td><code>card-button-label</code></td><td>兩者皆可</td><td>HTML</td><td><code>button</code> 模式小按鈕的文字，預設「看解說」。</td></tr>
+        <tr><td><code>guide-for</code></td><td>任何按鈕</td><td>ui-guide 的 id</td><td>讓這個元素成為控制鈕。</td></tr>
+        <tr><td><code>guide-action</code></td><td>任何按鈕</td><td><code>toggle</code>、<code>show</code>、<code>hide</code>、<code>next</code>、<code>prev</code>、<code>reset</code>、<code>cards-show</code>、<code>cards-hide</code>、<code>cards-toggle</code></td><td>按下時的動作。<code>cards-*</code> 只控制已顯示的框的說明卡。預設：<code>all</code> 模式為 <code>toggle</code>，<code>step</code> 模式為 <code>next</code>。</td></tr>
+        <tr><td><code>guide-label-open</code>、<code>guide-label-closed</code></td><td>任何按鈕</td><td>HTML</td><td>有框顯示中與全部隱藏時，按鈕各自顯示的文字。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：重現參考圖（逐步模式）</h2>
+    <p class="desc">上方是舊版面，下方是新版面。<code>mode="step"</code>：按「下一個」一次多一個框，線用畫出來的動畫；「上一個」收回最後一個；「全部切換」顯示或隱藏全部。三條線分別示範 <code>exit</code> 與 <code>enter</code> 的組合。</p>
+    <div class="live" data-tpl="ex1"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：說明卡、角標與頁尾（全部顯示，依序出現）</h2>
+    <p class="desc"><code>mode="all"</code> 加 <code>stagger="500"</code>，按一下依序出現，再按一下全部收起；按鈕文字用 <code>guide-label-open</code> 與 <code>guide-label-closed</code> 切換。說明卡示範 HTML 內容、角標、虛線與點線頁尾，以及不同顏色和位置。</p>
+    <div class="live" data-tpl="ex2"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：只有框、號碼放右側、不顯示號碼</h2>
+    <p class="desc">沒寫 <code>to</code> 就只有框和說明卡。<code>num-pos="right"</code> 把號碼放右側，<code>num-pos="none"</code> 只畫框。虛線框用 <code>line-style="dashed"</code>。</p>
+    <div class="live" data-tpl="ex3"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：密集段落連到右側筆記</h2>
+    <p class="desc">左邊是三段密集的文字，框住段落裡的五個語塊（<code>num-pos="badge"</code>，號碼不蓋到前面的字），連到右邊五則筆記。五條線都從右邊出去，自動錯開垂直段，不會疊在一起。</p>
+    <div class="live" data-tpl="ex4"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 5：稀疏項目匯入同一個目標</h2>
+    <p class="desc">上排四個簡短項目都連到下方同一段總結。終點沿著總結的上緣平均分開，水平段各自錯開高度。</p>
+    <div class="live" data-tpl="ex5"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 6：長短混合、四個方向</h2>
+    <p class="desc">中間是一段長文，周圍六個短項目從上、下、左連進來：上緣進三條、下緣進兩條，終點自動分開。最後一條反過來，從長文以虛線連到右側的短項目。</p>
+    <div class="live" data-tpl="ex6"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex6"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 7：文字重排時自動重算</h2>
+    <p class="desc">按下按鈕改變段落寬度與字級，段落裡的語塊換行、位置改變，框與折線會跟著移動。這一組用 <code>open</code>，載入時就顯示。</p>
+    <div class="live" data-tpl="ex7"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex7"></pre>
+  </section>
+
+  <section class="demo">
+    <h2>範例 8：說明卡按下才顯示（第三次修改）</h2>
+    <p class="desc">上排三個框用 <code>card-reveal="click"</code> 與 <code>card-reveal="button"</code>：點號碼、「?」或小按鈕打開說明卡，卡片右上角的 &times; 收起。下排是逐步模式加 <code>card-reveal="step"</code>：每個框要按兩次「下一個」，第一次出現框，第二次出現說明卡，「上一個」反向收回。最右邊的按鈕用 <code>cards-toggle</code> 一次打開或收起所有說明卡。</p>
+    <div class="live" data-tpl="ex8"></div>
+    <p class="pair-label">程式碼</p><pre class="code" data-code="ex8"></pre>
+  </section>
+</div>
+
+<template id="ex4">
+<div class="tool"><button class="btn btn-sm btn-outline-light" guide-for="g-dense" guide-label-open="收起" guide-label-closed="顯示指引">顯示指引</button></div>
+<div class="dense">
+  <div>
+    <p>Describe a place you often visit. 很多考生一開口就說 I often go to a café，這句話沒有錯，但它只是把題目換個順序講一次。更好的開場是先給畫面：<span class="hl" id="d-1">a cozy café a stone's throw from my office</span>，一句話同時交代了地點、距離與氣氛，考官馬上知道你要講的是什麼地方，也聽到一個道地的語塊。接著不要急著說 I like it because，而是補一個具體的細節。</p>
+    <p>例如老闆會記得你的點單：<span class="hl" id="d-2">the owner knows my order by heart</span>。這種細節讓故事有人味，也自然帶出下一句。如果想說自己常去，可以用 <span class="hl" id="d-3">pop in</span> 取代 go，例如 I pop in almost every morning before work，語氣更輕鬆，也比 often go 更像母語者的說法。</p>
+    <p>收尾時回到感受，但避免 It is very good 這種空泛的評語。可以說 <span class="hl" id="d-4">it feels like a second home</span>，或是用對比帶出變化：<span class="hl" id="d-5">it's where I recharge after a long day</span>。這樣兩分鐘的回答就有開場、細節、習慣與感受四個層次，每一層都至少有一個可以加分的語塊，而且彼此銜接，不是一句一句硬背出來的範文。</p>
+  </div>
+  <div class="notes">
+    <div class="note" id="n-1"><b>開場給畫面</b><br>地點＋距離＋氣氛一次交代</div>
+    <div class="note" id="n-2"><b>具體細節</b><br>know something by heart：記得滾瓜爛熟</div>
+    <div class="note" id="n-3"><b>口語動詞</b><br>pop in：順道進去一下</div>
+    <div class="note" id="n-4"><b>感受</b><br>a second home：第二個家</div>
+    <div class="note" id="n-5"><b>延伸</b><br>recharge：充電、恢復精神</div>
+  </div>
+</div>
+
+<ui-guide id="g-dense" color="key" num-pos="badge" pad="3" stagger="250">
+  <guide-mark target="d-1" to="n-1" exit="right" enter="left"></guide-mark>
+  <guide-mark target="d-2" to="n-2" exit="right" enter="left"></guide-mark>
+  <guide-mark target="d-3" to="n-3" exit="right" enter="left" color="playful"></guide-mark>
+  <guide-mark target="d-4" to="n-4" exit="right" enter="left" color="calm"></guide-mark>
+  <guide-mark target="d-5" to="n-5" exit="right" enter="left" color="calm"></guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex5">
+<div class="tool"><button class="btn btn-sm btn-outline-light" guide-for="g-sum" guide-label-open="收起" guide-label-closed="顯示指引">顯示指引</button></div>
+<div class="sparse">
+  <div class="note" id="s-1"><b>地點</b></div>
+  <div class="note" id="s-2"><b>距離</b></div>
+  <div class="note" id="s-3"><b>細節</b></div>
+  <div class="note" id="s-4"><b>感受</b></div>
+</div>
+<div class="sum" id="s-sum">
+  <b style="color:var(--vanilla)">總結</b><br>
+  四個層次合起來就是一個完整的 Part 2 回答：<c-key>a cozy café a stone's throw from my office</c-key>，老闆記得我的點單，我幾乎每天早上都會順道進去，那裡就像我的第二個家。
+</div>
+
+<ui-guide id="g-sum" color="blue" stagger="200" num-pos="badge">
+  <guide-mark target="s-1" to="s-sum" exit="bottom" enter="top"></guide-mark>
+  <guide-mark target="s-2" to="s-sum" exit="bottom" enter="top"></guide-mark>
+  <guide-mark target="s-3" to="s-sum" exit="bottom" enter="top"></guide-mark>
+  <guide-mark target="s-4" to="s-sum" exit="bottom" enter="top"></guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex6">
+<div class="tool"><button class="btn btn-sm btn-outline-light" guide-for="g-cross" guide-label-open="收起" guide-label-closed="顯示指引">顯示指引</button></div>
+<div class="cross">
+  <div class="note" id="x-tl" style="grid-column:1;grid-row:1"><b>Fluency</b></div>
+  <div class="note" id="x-top" style="grid-column:2;grid-row:1;justify-self:center"><b>Lexical Resource</b></div>
+  <div class="note" id="x-tr" style="grid-column:3;grid-row:1"><b>Grammar</b></div>
+  <div class="note" id="x-left" style="grid-column:1;grid-row:2"><b>Pronunciation</b><br>咬字、語調與重音</div>
+  <div class="center" id="x-center">
+    雅思口說的四個評分面向各佔 25%。流暢度看的是能不能持續講下去、停頓是否自然；詞彙看的是用字精準與道地的語塊；語法看的是句型多樣與正確；發音則看清晰度、語調與重音。四個面向互相影響：語塊熟了，講得就順；句型有變化，詞彙也比較有發揮空間。所以練習時不要只盯著單字表，而是用同一個點子跨題練習，讓四個面向一起進步。
+  </div>
+  <div class="note" id="x-right" style="grid-column:3;grid-row:2"><b>橫向練習</b><br>同一點子跨題使用</div>
+  <div class="note" id="x-bl" style="grid-column:1;grid-row:3"><b>Part 1</b></div>
+  <div class="note" id="x-br" style="grid-column:3;grid-row:3"><b>Part 3</b></div>
+</div>
+
+<ui-guide id="g-cross" color="violet" stagger="200">
+  <guide-mark target="x-top" to="x-center" exit="bottom" enter="top" num-pos="badge"></guide-mark>
+  <guide-mark target="x-tl" to="x-center" exit="right" enter="top" num-pos="badge"></guide-mark>
+  <guide-mark target="x-tr" to="x-center" exit="left" enter="top" num-pos="badge"></guide-mark>
+  <guide-mark target="x-left" to="x-center" exit="right" enter="left"></guide-mark>
+  <guide-mark target="x-bl" to="x-center" exit="right" enter="bottom" num-pos="badge" color="indigo"></guide-mark>
+  <guide-mark target="x-br" to="x-center" exit="left" enter="bottom" num-pos="badge" color="indigo"></guide-mark>
+  <guide-mark target="x-center" to="x-right" exit="right" enter="left" num-pos="none" color="key" line-style="dashed"></guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex7">
+<div class="tool">
+  <button class="btn btn-sm btn-outline-light" id="rf-narrow">窄版</button>
+  <button class="btn btn-sm btn-outline-light" id="rf-wide">寬版</button>
+  <button class="btn btn-sm btn-outline-light" id="rf-big">放大字</button>
+  <button class="btn btn-sm btn-outline-light" id="rf-small">縮小字</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-reflow" guide-label-open="收起" guide-label-closed="顯示指引">收起</button>
+</div>
+<div class="reflow" id="rf-box" style="width:100%">
+  每次練完一題，先檢查自己用了幾個亮點，而不是只看講了多久。像 <span class="hl" id="r-1">managed to stick to</span> 這種帶有克服困難意味的語塊，搭配 <span class="hl" id="r-2">rain or shine</span> 插在句中，再用 <span class="hl" id="r-3">which makes it hard to</span> 補述前面整件事，一句話就同時展現了詞彙與語法的多樣性。練習時刻意把剛學會的語塊放進不同題目，直到它們變成隨時說得出口的素材。
+</div>
+<div class="reflow-notes">
+  <div class="note" id="rn-1"><b>manage to</b>：設法做到</div>
+  <div class="note" id="rn-2"><b>rain or shine</b>：風雨無阻</div>
+  <div class="note" id="rn-3"><b>which makes it hard to</b>：補述用法</div>
+</div>
+
+<ui-guide id="g-reflow" open color="key" num-pos="badge" pad="3">
+  <guide-mark target="r-1" to="rn-1" exit="bottom" enter="top"></guide-mark>
+  <guide-mark target="r-2" to="rn-2" exit="bottom" enter="top"></guide-mark>
+  <guide-mark target="r-3" to="rn-3" exit="bottom" enter="top"></guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex1">
+<div class="tool">
+  <button class="btn btn-sm btn-outline-light" guide-for="g-pr" guide-action="next"><i class="bi bi-arrow-right"></i> 下一個</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-pr" guide-action="prev"><i class="bi bi-arrow-left"></i> 上一個</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-pr" guide-action="toggle"
+          guide-label-open="全部隱藏" guide-label-closed="全部顯示">全部顯示</button>
+</div>
+
+<div class="stage">
+  <div class="old-box">
+    <div class="old-row">
+      <div id="pr-checks" style="display:flex;align-items:center;gap:14px;padding:0 12px 0 0">
+        <i class="bi bi-arrow-repeat ico" style="color:#71CD76"></i>
+        <div><b>All checks have passed</b><small>16 skipped, 119 successful checks</small></div>
+      </div>
+    </div>
+    <div class="old-row">
+      <i class="bi bi-exclamation-triangle-fill ico" style="color:#86877F"></i>
+      <div class="grow"><b>This branch is out-of-date with the base branch</b><small>Merge the latest changes from main into this branch.</small></div>
+      <span class="fake-btn" id="pr-update">Update branch <i class="bi bi-caret-down-fill"></i></span>
+    </div>
+    <div class="old-row">
+      <i class="bi bi-exclamation-octagon-fill ico" style="color:#EF6661"></i>
+      <div class="grow"><b>Merging is blocked</b><small>At least 2 approving reviews are required.</small></div>
+    </div>
+    <div class="old-row">
+      <span class="fake-btn dim" id="pr-merge">Merge pull request <i class="bi bi-caret-down-fill"></i></span>
+      <small>You can also merge this with the command line.</small>
+    </div>
+  </div>
+
+  <div class="new-box">
+    <div class="new-top">
+      <span class="clock"><i class="bi bi-clock"></i></span>
+      <div class="grow" style="flex:1"><b>Approval required</b><small>Request another approving review before this can merge.</small></div>
+      <span class="fake-btn" id="pr-update-new">Update branch <i class="bi bi-caret-down-fill"></i></span>
+      <span class="fake-btn dim" id="pr-merge-new">Merge pull request <i class="bi bi-caret-down-fill"></i></span>
+    </div>
+    <div class="new-cols">
+      <div class="new-col" id="pr-checks-new"><b>Checks</b><div class="bar"><span style="width:88%;background:#71CD76"></span></div></div>
+      <div class="new-col"><b>Comments</b> <small>2 unresolved</small><div class="bar"><span style="width:85%;background:#71CD76"></span><span style="width:15%;background:#FF5530"></span></div></div>
+      <div class="new-col"><b>Approvals</b> <small>1 still required</small><div class="bar"><span style="width:50%;background:#71CD76"></span></div></div>
+    </div>
+  </div>
+</div>
+
+<ui-guide id="g-pr" mode="step">
+  <guide-mark num="1" target="pr-checks" to="pr-checks-new" exit="left" enter="left" label-pos="right" card-width="240">
+    檢查結果移到下方的 <b>Checks</b> 欄位
+  </guide-mark>
+  <guide-mark num="2" target="pr-update" to="pr-update-new" exit="right" enter="top" label-pos="bottom" card-width="220">
+    <b>Update branch</b> 移到右上
+  </guide-mark>
+  <guide-mark num="3" target="pr-merge" to="pr-merge-new" exit="bottom" enter="top" lane="1" label-pos="right" card-width="240">
+    <b>Merge pull request</b> 跟著移過去
+  </guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex2">
+<div class="tool">
+  <button class="btn btn-sm btn-outline-light" guide-for="g-flow"
+          guide-label-open="<i class='bi bi-eye-slash'></i> 收起說明" guide-label-closed="<i class='bi bi-eye'></i> 顯示說明"><i class="bi bi-eye"></i> 顯示說明</button>
+</div>
+
+<div class="flow" style="padding-top:120px">
+  <div class="tile" id="f-q"><b>讀題</b><small>Describe a place you often visit.</small></div>
+  <div class="tile" id="f-open"><b>開場句</b><small>A cozy café a stone's throw from my office.</small></div>
+  <div class="tile" id="f-detail"><b>細節</b><small>The owner remembers my order.</small></div>
+  <div class="tile" id="f-chunk"><b>語塊</b><small>a stone's throw from、pop in</small></div>
+  <div class="tile" id="f-feel"><b>收尾</b><small>It feels like a second home.</small></div>
+  <div class="tile" id="f-end"><b>完成</b><small>兩分鐘</small></div>
+</div>
+
+<ui-guide id="g-flow" stagger="500" color="key" card-width="260">
+  <guide-mark num="1" target="f-q" to="f-open" exit="right" enter="left" label-pos="top"
+              badge="10 秒" footer="不要照搬題目用字" divider="dashed">
+    先找出題目要你描述的<c-key>地點</c-key>
+  </guide-mark>
+  <guide-mark num="2" target="f-open" to="f-chunk" exit="bottom" enter="top" color="playful" label-pos="top"
+              badge="重點" badge-color="urgent" footer="來源：第二課" divider="dotted" divider-color="playful">
+    第一句直接給畫面，<b>a stone's throw from</b> 一次用上
+  </guide-mark>
+  <guide-mark num="3" target="f-chunk" to="f-feel" exit="right" enter="left" color="calm" label-pos="bottom">
+    語塊用完，接著收尾回到感受
+  </guide-mark>
+  <guide-mark num="4" target="f-detail" to="f-end" exit="bottom" enter="top" color="urgent" label-pos="top"
+              footer="<i class='bi bi-clock'></i> 剩 30 秒時收尾" divider="none">
+    最後一句回到感受
+  </guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex3">
+<div class="tool">
+  <button class="btn btn-sm btn-outline-light" guide-for="g-only" guide-action="show">顯示</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-only" guide-action="hide">隱藏</button>
+</div>
+
+<div class="flow" style="padding-bottom:110px">
+  <div class="tile" id="o-a"><b>Fluency</b><small>流暢與連貫</small></div>
+  <div class="tile" id="o-b"><b>Lexical Resource</b><small>詞彙資源</small></div>
+  <div class="tile" id="o-c"><b>Grammar</b><small>語法多樣與正確</small></div>
+</div>
+
+<ui-guide id="g-only" color="indigo">
+  <guide-mark target="o-a" label-pos="bottom">一般框，號碼在左</guide-mark>
+  <guide-mark target="o-b" num-pos="right" color="blue" label-pos="bottom">號碼在右側</guide-mark>
+  <guide-mark target="o-c" num-pos="none" line-style="dashed" color="yellow" label-pos="bottom"
+              footer="適合只想圈出區塊時" divider="dashed">只有虛線框，不顯示號碼</guide-mark>
+</ui-guide>
+</template>
+
+<template id="ex8">
+<div class="tool">
+  <button class="btn btn-sm btn-outline-light" guide-for="g-rv" guide-label-open="隱藏框" guide-label-closed="顯示框">顯示框</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-rv" guide-action="cards-toggle">全部說明卡</button>
+</div>
+<div class="flow" style="padding-bottom:150px">
+  <div class="tile" id="rv-a"><b>Part 1</b><small>日常問答</small></div>
+  <div class="tile" id="rv-b"><b>Part 2</b><small>兩分鐘獨白</small></div>
+  <div class="tile" id="rv-c"><b>Part 3</b><small>延伸討論</small></div>
+</div>
+<ui-guide id="g-rv" color="key" label-pos="bottom" open>
+  <guide-mark target="rv-a" card-reveal="click" badge="點號碼">回答兩到三句，給一個理由或例子。</guide-mark>
+  <guide-mark target="rv-b" card-reveal="button" color="playful" footer="準備時間一分鐘" divider="dashed">先寫四個關鍵字，依時間順序講。</guide-mark>
+  <guide-mark target="rv-c" card-reveal="button" color="quiet" card-button-label="提示">比較、推測、舉社會層面的例子。</guide-mark>
+</ui-guide>
+
+<div class="tool" style="margin-top:12px">
+  <button class="btn btn-sm btn-outline-light" guide-for="g-st" guide-action="prev">上一個</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-st" guide-action="next">下一個</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-st" guide-action="cards-toggle">全部說明卡</button>
+  <button class="btn btn-sm btn-outline-light" guide-for="g-st" guide-action="reset">重來</button>
+</div>
+<p style="line-height:2.4;padding:60px 0 120px">I'd say it was <span id="st-a">a real eye-opener</span>, mainly because <span id="st-b">it made me rethink</span> how I spend my weekends, and <span id="st-c">to be honest</span> I've been far more relaxed since.</p>
+<ui-guide id="g-st" mode="step" card-reveal="step" num-pos="badge" color="violet" label-pos="bottom">
+  <guide-mark target="st-a">形容經驗的語塊：<c-key>an eye-opener</c-key></guide-mark>
+  <guide-mark target="st-b" color="blue" label-pos="top">說明影響：<c-key>make sb rethink</c-key></guide-mark>
+  <guide-mark target="st-c" color="pink">口語填充：<c-key>to be honest</c-key></guide-mark>
+</ui-guide>
+</template>
+
+<div class="alert-zone" id="alerts"></div>
+
+<script>
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    document.querySelector('pre[data-code="' + box.dataset.tpl + '"]').textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+  (function () {
+    var box = document.getElementById('rf-box'), fs = 1;
+    document.getElementById('rf-narrow').onclick = function () { box.style.width = '55%'; };
+    document.getElementById('rf-wide').onclick = function () { box.style.width = '100%'; };
+    document.getElementById('rf-big').onclick = function () { fs = Math.min(1.5, fs + 0.15); box.style.fontSize = fs + 'rem'; };
+    document.getElementById('rf-small').onclick = function () { fs = Math.max(0.8, fs - 0.15); box.style.fontSize = fs + 'rem'; };
+  })();
+  document.addEventListener('ui-guide:change', function (e) {
+    if (e.target.id !== 'g-pr') return;
+    var a = document.createElement('div');
+    a.className = 'alert alert-info'; a.setAttribute('role', 'alert');
+    a.textContent = '目前顯示 ' + e.detail.shown.length + ' / ' + e.detail.total + ' 個框';
+    document.getElementById('alerts').appendChild(a);
+    setTimeout(function () { a.remove(); }, 1600);
+  });
+</script>
+<script src="ui-guide.js"></script>
+</body>
+</html>
