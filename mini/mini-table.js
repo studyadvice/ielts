@@ -24,7 +24,7 @@
  *   source        內容改從 template 或元素讀取（一行一列），優先於標籤內的文字
  *   align         逐欄對齊，逗號分隔：l、c、r（或 left、center、right）；沒寫的欄位數字靠右、其他靠左
  *   col-widths    欄寬比例，例如 2:1:1
- *   pre-theme     預排外觀：clean（預設）、ledger、grid、banner、compact、bare、score
+ *   pre-theme     預排外觀：clean（預設）、ledger、grid、banner、compact、bare、score、tiles、frame、side
  *   color         強調色，17 色色名或色碼，預設依外觀
  *   font-size     字級，例如 0.95rem
  *
@@ -43,9 +43,9 @@
   };
   const BG = '#0C0D0C';
   const LINE = '#2C2D2B';
-  const THEMES = ['clean', 'ledger', 'grid', 'banner', 'compact', 'bare', 'score'];
+  const THEMES = ['clean', 'ledger', 'grid', 'banner', 'compact', 'bare', 'score', 'tiles', 'frame', 'side'];
   /* 各外觀的預設強調色 */
-  const THEME_COLOR = { clean: 'gray', ledger: 'blue', grid: 'shell', banner: 'key-deep', compact: 'gray', bare: 'key', score: 'key' };
+  const THEME_COLOR = { clean: 'gray', ledger: 'blue', grid: 'shell', banner: 'key-deep', compact: 'gray', bare: 'key', score: 'key', tiles: 'gray', frame: 'key', side: 'indigo' };
 
   const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
   const onColor = v => (v && v.trim() === 'key-deep' ? '#FFFFFF' : BG);
@@ -77,9 +77,10 @@ mini-table[data-theme="ledger"] th{color:${PALETTE.vanilla};font-weight:700;bord
 mini-table[data-theme="ledger"] tbody tr:nth-child(odd){background:#161716;}
 mini-table[data-theme="ledger"] tbody tr:nth-child(even){background:#1D1E1C;}
 
-/* grid：每一格都有框線 */
-mini-table[data-theme="grid"] th,mini-table[data-theme="grid"] td{border:1px solid var(--mt-line);}
-mini-table[data-theme="grid"] th{color:${PALETTE.vanilla};font-weight:700;background:#161716;}
+/* grid：每一格都有框線；框線用強調色調暗，深色底上也看得清楚 */
+mini-table[data-theme="grid"]{--mt-gl:color-mix(in srgb, var(--mt-c) 55%, ${BG});}
+mini-table[data-theme="grid"] th,mini-table[data-theme="grid"] td{border:1px solid var(--mt-gl, #6E6F68);}
+mini-table[data-theme="grid"] th{color:${PALETTE.vanilla};font-weight:700;background:#1F201E;}
 
 /* banner：表頭是實心色帶 */
 mini-table[data-theme="banner"] th{background:var(--mt-c);color:var(--mt-on);font-weight:700;}
@@ -102,6 +103,26 @@ mini-table[data-theme="score"] tr{border-bottom:1px solid var(--mt-line);}
 mini-table[data-theme="score"] tbody tr:last-child{border-bottom:0;}
 mini-table[data-theme="score"] td:first-child{color:var(--mt-c);font-weight:700;}
 mini-table[data-theme="score"] td.mt-num{font-size:1.25em;font-weight:700;color:${PALETTE.vanilla};}
+
+/* tiles：每一列是一塊圓角色塊，列與列之間留空隙 */
+mini-table[data-theme="tiles"] table{border-collapse:separate;border-spacing:0 6px;margin:-6px 0;}
+mini-table[data-theme="tiles"] th{color:var(--mt-c);padding-bottom:2px;}
+mini-table[data-theme="tiles"] td{background:#1A1B19;}
+mini-table[data-theme="tiles"] td:first-child{border-radius:8px 0 0 8px;}
+mini-table[data-theme="tiles"] td:last-child{border-radius:0 8px 8px 0;}
+mini-table[data-theme="tiles"] td:only-child{border-radius:8px;}
+
+/* frame：圓角外框用強調色，表頭下方一條強調色線，內容列細線分隔 */
+mini-table[data-theme="frame"] table{border-collapse:separate;border-spacing:0;border:1px solid var(--mt-c);border-radius:10px;overflow:hidden;}
+mini-table[data-theme="frame"] th{color:var(--mt-c);font-weight:700;background:#161716;border-bottom:1px solid var(--mt-c);}
+mini-table[data-theme="frame"] tbody tr + tr td{border-top:1px solid var(--mt-line);}
+
+/* side：第一欄是實心色帶，適合「項目 | 說明」的對照表 */
+mini-table[data-theme="side"] th{color:${PALETTE.gray};}
+mini-table[data-theme="side"] tr{border-bottom:1px solid var(--mt-line);}
+mini-table[data-theme="side"] tbody tr:last-child{border-bottom:0;}
+mini-table[data-theme="side"] td:first-child{background:var(--mt-c);color:var(--mt-on);font-weight:700;}
+mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid ${BG};}
 `;
     (document.head || document.documentElement).appendChild(s);
   }

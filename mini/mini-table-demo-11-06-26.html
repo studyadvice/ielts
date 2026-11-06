@@ -36,7 +36,7 @@
 <body>
 <div class="page">
   <h1>mini-table：一行一列的輕量表格</h1>
-  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。</p>
+  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。<br>第二次修改：<code>grid</code> 的框線改用強調色調暗，深色底上看得清楚；新增 <code>tiles</code>、<code>frame</code>、<code>side</code> 三種外觀，見範例 5。</p>
 
   <section class="demo">
     <h2>範例 1：資料卡片</h2>
@@ -57,7 +57,7 @@
   </section>
 
   <section class="demo">
-    <h2>範例 3：七種預排外觀</h2>
+    <h2>範例 3：所有預排外觀</h2>
     <p class="desc">同一份內容，換 <code>pre-theme</code> 就換樣子。每張表都用 <code>source="tpl-band"</code> 讀同一個 template。</p>
     <div class="live" data-tpl="ex3"></div>
   </section>
@@ -71,7 +71,46 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 5：新增的 tiles、frame、side，以及改善後的 grid</h2>
+    <p class="desc"><code>tiles</code> 每列是一塊圓角色塊；<code>frame</code> 有強調色圓角外框；<code>side</code> 第一欄是實心色帶，適合「項目｜說明」對照；<code>grid</code> 的框線預設用 shell 調暗，可以用 <code>color</code> 換成其他色。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex5"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre></div>
+    </div>
+  </section>
 </div>
+
+<template id="ex5">
+<ui-cards cols="2">
+  <card-item icon="grid-3x3" label="grid" meta="color=&quot;blue&quot;" media-position="inline">
+    <mini-table pre-theme="grid" color="blue" head="Band | Fluency | Lexical">
+      7 | 流暢少停頓 | 偶用少見字
+      6 | 能說長但會卡 | 字彙夠用
+    </mini-table>
+  </card-item>
+  <card-item icon="layers" label="tiles" meta="每列一塊" media-position="inline">
+    <mini-table pre-theme="tiles" head="作業 | 截止 | 狀態" align="l, c, r">
+      Part 2 錄音 | 11/08 | <c-urgent>未交</c-urgent>
+      語塊造句 | 11/10 | <c-green>已交</c-green>
+    </mini-table>
+  </card-item>
+  <card-item icon="bounding-box" label="frame" meta="強調色外框" media-position="inline">
+    <mini-table pre-theme="frame" head="語塊 | 中文">
+      a stone's throw from | 離……很近
+      rain or shine | 風雨無阻
+    </mini-table>
+  </card-item>
+  <card-item icon="layout-sidebar" label="side" meta="項目對照" media-position="inline">
+    <mini-table pre-theme="side" col-widths="1:3">
+      開場 | 第一句不照搬題目，直接給畫面
+      展開 | 用具體的人事時地物撐起答案
+      收尾 | 一句話回到自己的感受
+    </mini-table>
+  </card-item>
+</ui-cards>
+</template>
 
 <template id="ex1">
 <ui-cards cols="3">
@@ -124,6 +163,9 @@
   <div><p class="tname"><code>compact</code></p><mini-table pre-theme="compact" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
   <div><p class="tname"><code>bare</code></p><mini-table pre-theme="bare" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
   <div><p class="tname"><code>score</code></p><mini-table pre-theme="score" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>tiles</code></p><mini-table pre-theme="tiles" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>frame</code></p><mini-table pre-theme="frame" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>side</code></p><mini-table pre-theme="side" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
   <div><p class="tname"><code>banner</code> + <code>color="playful"</code></p><mini-table pre-theme="banner" color="playful" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
 </div>
 
