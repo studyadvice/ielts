@@ -26,10 +26,14 @@
  *   col-widths    欄寬比例，例如 2:1:1
  *   pre-theme     預排外觀：clean（預設）、ledger、grid、banner、compact、bare、score、tiles、frame、side
  *   head-style    filled：表頭改成強調色實心色帶，可以和任何 pre-theme 搭配
+ *   row-style     lines、dashed、striped、none：列與列之間改成細線、虛線、交錯底色或無線
+ *   first-col     filled、accent、bold：第一欄改成實心色帶、強調色字或粗體
+ *   mark-color    列首寫 ! 的強調列所用的顏色，預設同 color
  *   color         強調色，17 色色名或色碼，預設依外觀
  *   font-size     字級，例如 0.95rem
  *
  * 格子內可以寫 HTML（<b>、<c-key> 等）。格子裡要放 | 時寫成 \|。
+ * 列首寫 ! 代表強調這一列；內容本身要以 ! 開頭時寫成 \!。
  * 不使用 Shadow DOM；屬性只在載入時讀取一次，之後要重畫呼叫 el.render()。
  */
 (() => {
@@ -111,6 +115,30 @@ mini-table[data-head="filled"][data-theme="clean"] th:first-child,mini-table[dat
 mini-table[data-head="filled"][data-theme="clean"] th:last-child,mini-table[data-head="filled"][data-theme="clean"] td:last-child{padding-right:12px;}
 mini-table[data-head="filled"][data-theme="tiles"] th{padding-bottom:10px;}
 
+/* row-style：蓋過各外觀的列分隔（選擇器多一層） */
+mini-table[data-rows="lines"][data-theme] tbody tr{border-bottom:1px solid var(--mt-line);}
+mini-table[data-rows="lines"][data-theme] tbody tr:last-child{border-bottom:0;}
+mini-table[data-rows="dashed"][data-theme] tbody tr{border-bottom:1px dashed var(--mt-line);}
+mini-table[data-rows="dashed"][data-theme] tbody tr:last-child{border-bottom:0;}
+mini-table[data-rows="dashed"][data-theme="grid"] tbody td{border-top-style:dashed;border-bottom-style:dashed;}
+mini-table[data-rows="dashed"][data-theme="frame"] tbody tr + tr td{border-top-style:dashed;}
+mini-table[data-rows="none"][data-theme] tbody tr{border-bottom:0;}
+mini-table[data-rows="none"][data-theme] tbody td{border-top:0;border-bottom:0;}
+mini-table[data-rows="striped"][data-theme] tbody tr:nth-child(odd),mini-table[data-rows="striped"][data-theme] tbody tr:nth-child(odd) td{background:#161716;}
+mini-table[data-rows="striped"][data-theme] tbody tr:nth-child(even),mini-table[data-rows="striped"][data-theme] tbody tr:nth-child(even) td{background:#1F201E;}
+
+/* first-col：第一欄的樣式，任何外觀都能用 */
+mini-table[data-first="filled"][data-theme] td:first-child{background:var(--mt-c);color:var(--mt-on);font-weight:700;}
+mini-table[data-first="filled"][data-theme="clean"] td:first-child,mini-table[data-first="filled"][data-theme="clean"] th:first-child{padding-left:12px;}
+mini-table[data-first="accent"][data-theme] td:first-child{color:var(--mt-c);font-weight:700;}
+mini-table[data-first="bold"][data-theme] td:first-child{color:${PALETTE.vanilla};font-weight:700;}
+
+/* 列首 ! 的強調列：強調色淡底，左側一條強調色線 */
+mini-table[data-theme][data-theme] tbody tr.mt-mark:nth-child(n) td{background:color-mix(in srgb, var(--mt-mark) 20%, ${BG});color:${PALETTE.vanilla};}
+mini-table[data-theme] tbody tr.mt-mark td:first-child{box-shadow:inset 3px 0 0 var(--mt-mark);}
+mini-table[data-first="filled"][data-theme][data-theme] tbody tr.mt-mark:nth-child(n) td:first-child{background:var(--mt-c);color:var(--mt-on);}
+mini-table[data-theme="clean"] tbody tr.mt-mark td:first-child{padding-left:12px;}
+
 /* tiles：每一列是一塊圓角色塊，列與列之間留空隙 */
 mini-table[data-theme="tiles"] table{border-collapse:separate;border-spacing:0 6px;margin:-6px 0;}
 mini-table[data-theme="tiles"] th{color:var(--mt-c);padding-bottom:2px;}
@@ -183,9 +211,17 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
       const hs = (g('head-style') || '').trim();
       if (hs && hs !== 'filled') console.warn('[mini-table] head-style="' + hs + '" 不存在，目前只有 filled。');
       if (hs === 'filled') this.setAttribute('data-head', 'filled'); else this.removeAttribute('data-head');
+      const pickOpt = (name, data, allowed) => {
+        const v = (g(name) || '').trim();
+        if (v && !allowed.includes(v)) console.warn('[mini-table] ' + name + '="' + v + '" 不存在，可用：' + allowed.join('、') + '。');
+        if (allowed.includes(v)) this.setAttribute(data, v); else this.removeAttribute(data);
+      };
+      pickOpt('row-style', 'data-rows', ['lines', 'dashed', 'striped', 'none']);
+      pickOpt('first-col', 'data-first', ['filled', 'accent', 'bold']);
       const cName = g('color') || THEME_COLOR[th];
       this.style.setProperty('--mt-c', color(cName));
       this.style.setProperty('--mt-on', onColor(cName));
+      this.style.setProperty('--mt-mark', color(g('mark-color') || cName));
       if (g('font-size')) this.style.setProperty('--mt-fs', g('font-size'));
 
       /* 表頭與內容 */
@@ -200,7 +236,15 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
         if (b != null) bodyText = b;
       }
       const head = headLine ? splitRow(headLine) : null;
-      const rows = bodyText.split('\n').map(s => s.trim()).filter(Boolean).map(splitRow);
+      /* 列首 ! 是強調列；\! 是文字的驚嘆號 */
+      const marks = [];
+      const rows = bodyText.split('\n').map(s => s.trim()).filter(Boolean).map(line => {
+        let mark = false;
+        if (line.startsWith('!')) { mark = true; line = line.slice(1).trim(); }
+        else if (line.startsWith('\\!')) line = line.slice(1);
+        marks.push(mark);
+        return splitRow(line);
+      });
       const n = Math.max(head ? head.length : 0, ...rows.map(r => r.length), 1);
       rows.forEach((r, i) => {
         if (r.length !== n) console.warn('[mini-table] 第 ' + (i + 1) + ' 列有 ' + r.length + ' 欄，其他列有 ' + n + ' 欄，已用空白補齊。');
@@ -234,7 +278,7 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
       if (head) html += '<thead><tr>' + head.map((h, i) => '<th class="' + cls(i) + '">' + h + '</th>').join('') + '</tr></thead>';
       html += '<tbody>';
       if (!rows.length) html += '<tr><td class="mt-empty" colspan="' + n + '">（沒有資料）</td></tr>';
-      rows.forEach(r => { html += '<tr>' + r.map((c, i) => '<td class="' + cls(i) + '">' + c + '</td>').join('') + '</tr>'; });
+      rows.forEach((r, ri) => { html += '<tr' + (marks[ri] ? ' class="mt-mark"' : '') + '>' + r.map((c, i) => '<td class="' + cls(i) + '">' + c + '</td>').join('') + '</tr>'; });
       html += '</tbody></table>';
       this.innerHTML = html;
     }

@@ -35,6 +35,9 @@
 | `col-widths` | 比例 | 自動 | 欄寬比例，例如 `2:1:1`。數字個數要等於欄數。 |
 | `pre-theme` | 見下表 | `clean` | 預排外觀。 |
 | `head-style` | `filled` | 無 | 表頭改成強調色的實心色帶，可以和任何 `pre-theme` 搭配，例如 `compact` 加實心表頭。 |
+| `row-style` | `lines`、`dashed`、`striped`、`none` | 依外觀 | 列與列之間改成細線、虛線、交錯底色或無線，蓋過外觀本身的設定。 |
+| `first-col` | `filled`、`accent`、`bold` | 無 | 第一欄改成實心色帶、強調色粗體或白色粗體，讓第一欄變成項目欄。 |
+| `mark-color` | 色名或色碼 | 同 `color` | 強調列（列首寫 `!`）的顏色。 |
 | `color` | 色名或色碼 | 依外觀 | 強調色，用 17 色的色名。 |
 | `font-size` | CSS 長度 | `1rem` | 字級。 |
 
@@ -59,6 +62,8 @@
 
 - **分欄：** 每一行用 `|` 分欄，前後空白會自動去掉。行首行尾多寫的 `|`（Markdown 表格寫法）也可以。空行會略過。
 - **格子裡要放 `|`：** 寫成 `\|`。
+- **強調某一列：** 列首寫 `!`，例如 `! Globex | EMEA | 860`。這一列會變成強調色淡底，左側一條強調色線，顏色用 `mark-color` 換。內容本身要以驚嘆號開頭時寫成 `\!`。
+- **自由組合：** `pre-theme` 決定基本外觀，`head-style`、`row-style`、`first-col` 分別調整表頭、列分隔與第一欄，可以任意搭配。
 - **欄數不一致：** 以最多欄的那一列為準，不足的補空白格，主控台會提醒。
 - **格子內容：** 可以寫 HTML，例如 `<b>`、`<c-key>` 等色名標籤。
 - **數字判斷：** 整欄（忽略空白格）都是數字時視為數字欄，自動靠右並使用等寬數字。可以有千分位逗號、小數點、百分比，以及 `k`、`M`、`萬` 這類單位。
@@ -98,6 +103,17 @@
 <mini-table pre-theme="compact" head-style="filled" color="indigo" head="語塊 | 次數">
   a stone's throw from | 12
   rain or shine | 7
+</mini-table>
+```
+
+**列分隔、第一欄與強調列**
+
+```html
+<mini-table pre-theme="clean" row-style="striped" first-col="accent" color="key" mark-color="urgent"
+            head="Name | Fluency | Lexical">
+  Amy  | 7 | 6.5
+  ! Ben | 5.5 | 5
+  Cleo | 6.5 | 7
 </mini-table>
 ```
 

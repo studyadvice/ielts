@@ -36,7 +36,7 @@
 <body>
 <div class="page">
   <h1>mini-table：一行一列的輕量表格</h1>
-  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。<br>第二次修改：<code>grid</code> 的框線改用強調色調暗，深色底上看得清楚；新增 <code>tiles</code>、<code>frame</code>、<code>side</code> 三種外觀，見範例 5。<br>第三次修改：新增 <code>head-style="filled"</code>，任何外觀都能改成實心表頭，見範例 6。</p>
+  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。<br>第二次修改：<code>grid</code> 的框線改用強調色調暗，深色底上看得清楚；新增 <code>tiles</code>、<code>frame</code>、<code>side</code> 三種外觀，見範例 5。<br>第三次修改：新增 <code>head-style="filled"</code>，任何外觀都能改成實心表頭，見範例 6。<br>第四次修改：新增 <code>row-style</code>、<code>first-col</code>、<code>mark-color</code>，以及列首 <code>!</code> 的強調列，見範例 7。</p>
 
   <section class="demo">
     <h2>範例 1：資料卡片</h2>
@@ -89,7 +89,40 @@
       <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex6"></pre></div>
     </div>
   </section>
+
+  <section class="demo">
+    <h2>範例 7：列分隔、第一欄與強調列</h2>
+    <p class="desc">左上：<code>clean</code> 改成交錯底色、第一欄強調色，第二列用 <code>!</code> 標成強調列並以 <code>mark-color="urgent"</code> 上色。右上：<code>compact</code> 加實心表頭、第一欄實心色帶、列與列無線。下排：<code>frame</code> 改虛線、<code>grid</code> 第一欄粗體。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex7"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex7"></pre></div>
+    </div>
+  </section>
 </div>
+
+<template id="ex7">
+<div class="themes" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+  <mini-table pre-theme="clean" row-style="striped" first-col="accent" color="key" mark-color="urgent" head="Name | Fluency | Lexical">
+    Amy | 7 | 6.5
+    ! Ben | 5.5 | 5
+    Cleo | 6.5 | 7
+  </mini-table>
+  <mini-table pre-theme="compact" head-style="filled" first-col="filled" row-style="none" color="indigo" head="步驟 | 做法">
+    開場 | 第一句不照搬題目
+    ! 展開 | 用具體細節撐起答案
+    收尾 | 一句話回到感受
+  </mini-table>
+  <mini-table pre-theme="frame" row-style="dashed" color="calm" head="語塊 | 中文">
+    a stone's throw from | 離……很近
+    rain or shine | 風雨無阻
+    \! important | 開頭是驚嘆號的內容
+  </mini-table>
+  <mini-table pre-theme="grid" first-col="bold" head="Band | 描述">
+    7 | 流暢少停頓
+    ! 6 | 能說長但會卡
+  </mini-table>
+</div>
+</template>
 
 <template id="ex6">
 <div class="themes" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
