@@ -598,7 +598,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `hover-color` | 顏色 | `vanilla` | 滑鼠移到卡片上的框線色。 |
 | `hover-width` | 數字（px） | 不變 | 滑過時的框線粗細，往內加粗，卡片大小與內容位置不會跳動。沒設時只換顏色。 |
 | `hover-all` | 布林 | 關閉 | 讓純展示的卡片也有滑過效果。沒設時只有帶 `detail` 或 `href` 的卡片會反應；停用的卡片一律不反應。 |
-| `media-position` | `left` | 上方 | 圖示或圖片放在卡片左側。 |
+| `media-position` | `left`、`inline` | 上方 | `left`：圖示或圖片放在卡片左側。`inline`：圖示縮成方框，和標題排在同一行。 |
 | `media-height` | 數字（px） | `140` | 圖片高度（圖片在上方時）。 |
 | `media-width` | 數字（px） | `120` | 圖示或圖片寬度（在左側時）。 |
 | `icon-size` | 數字（rem）或長度 | `2rem` | 圖示大小。 |
@@ -642,7 +642,9 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `image` | 圖片網址 | 卡片圖片，優先於 `icon`。 |
 | `source` | 元素 id | 把該元素（或 `<template>`）的內容複製到卡片內文。 |
 | `footer` | 文字 | 卡片頁尾。 |
-| `badge` | 文字 | 右上角角標。 |
+| `meta` | 文字 | 標題列右側的灰色小字，例如資料來源。 |
+| `media-position` | `inline` | 只讓這張卡片的圖示和標題排在同一行。 |
+| `badge` | 文字 | 右上角角標。有標題列（`inline` 或 `meta`）時，角標排在標題列最右側。 |
 | `badge-icon` | Bootstrap Icons 名稱 | 角標圖示。 |
 | `badge-color` | 顏色 | 這張卡片的角標底色。 |
 | `color`、`icon-color`、`icon-size` | 同 `<ui-cards>` | 只覆寫這張卡片。 |
@@ -762,6 +764,21 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
   <card-item label="開場句" note="第一句不照搬題目"></card-item>
   <card-item label="重點" color="yellow" border-width="3" hover-color="yellow" hover-width="5"></card-item>
   <card-item label="停用" disabled></card-item>
+</ui-cards>
+```
+
+**標題列與資料表**
+
+`media-position="inline"` 讓圖示和標題排在同一行，`meta` 放右側小字，角標會排進同一列。卡片內文放 `mini/mini-table.js` 的 `<mini-table>`，就是一張資料卡片。
+
+```html
+<ui-cards cols="3">
+  <card-item icon="snow" label="Top accounts" meta="Snowflake" media-position="inline" badge="新">
+    <mini-table head="Account | Region | Seats" align="l, l, r">
+      Northwind | EMEA | 1,200
+      Globex    | EMEA | 860
+    </mini-table>
+  </card-item>
 </ui-cards>
 ```
 

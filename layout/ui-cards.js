@@ -133,6 +133,13 @@ ui-cards .uic-media.uic-img{padding:0;height:var(--uic-mh);}
 ui-cards[media-position="left"] .uic-media.uic-img{height:auto;min-height:100%;}
 ui-cards .uic-media img{width:100%;height:100%;object-fit:cover;display:block;}
 
+/* 標題列：media-position="inline" 時圖示與標題同一行；meta 是右側小字；有標題列時角標也排在列內 */
+ui-cards .uic-chead{display:flex;align-items:center;gap:10px;min-width:0;}
+ui-cards .uic-chead .uic-label{flex:1 1 auto;min-width:0;}
+ui-cards .uic-hicon{flex:none;display:inline-flex;align-items:center;justify-content:center;width:2.1em;height:2.1em;border:1px solid #2C2D2B;border-radius:8px;color:var(--uic-icon, var(--uic-c));font-size:var(--uic-fs-label, 1.1rem);line-height:1;overflow:hidden;}
+ui-cards .uic-hicon img{width:100%;height:100%;object-fit:cover;display:block;}
+ui-cards .uic-meta{flex:none;color:${PALETTE.gray};font-size:0.85rem;white-space:nowrap;}
+ui-cards .uic-chead .uic-badge{position:static;flex:none;}
 ui-cards .uic-main{flex:1 1 auto;padding:var(--uic-pad);display:flex;flex-direction:column;gap:6px;min-width:0;}
 ui-cards .uic-label{font-size:var(--uic-fs-label, 1.1rem);font-weight:700;line-height:1.4;color:var(--uic-c);}
 ui-cards .uic-note{font-size:var(--uic-fs-note, 0.85rem);line-height:1.5;color:${PALETTE.indigo};}
@@ -342,7 +349,11 @@ ${variantCSS}
 
       const img = ta('image');
       const icon = ta('icon');
-      if (img || icon) {
+      /* inline：圖示放進標題列，不另佔一塊 */
+      const inline = (ta('media-position') || this.getAttribute('media-position') || '').trim() === 'inline';
+      const meta = ta('meta');
+      const useHead = inline || !!meta;
+      if ((img || icon) && !inline) {
         const media = el('div', 'uic-media');
         if (img) {
           const im = el('img');
@@ -359,7 +370,19 @@ ${variantCSS}
       }
 
       const main = el('div', 'uic-main');
-      if (ta('label')) main.append(el('div', 'uic-label', ta('label')));
+      let head = null;
+      if (useHead) {
+        head = el('div', 'uic-chead');
+        if (inline && (img || icon)) {
+          const hi = el('span', 'uic-hicon');
+          if (img) { const im = el('img'); im.src = img; im.alt = ta('label') || ''; im.loading = 'lazy'; hi.append(im); }
+          else hi.append(iconEl(icon));
+          head.append(hi);
+        }
+        head.append(el('div', 'uic-label', ta('label') || ''));
+        if (meta) head.append(el('div', 'uic-meta', meta));
+        main.append(head);
+      } else if (ta('label')) main.append(el('div', 'uic-label', ta('label')));
       if (ta('note')) main.append(el('div', 'uic-note', ta('note')));
       if (ta('tags')) {
         const tg = el('div', 'uic-tags');
@@ -399,7 +422,8 @@ ${variantCSS}
         c.setAttribute('aria-pressed', 'false');
       }
       const bd = badgeEl(ta('badge'), ta('badge-icon'));
-      if (bd) parts.push(bd);
+      if (bd && head) head.append(bd);
+      else if (bd) parts.push(bd);
       c.replaceChildren(...parts);
       applyBadgeColor(c, ta('badge-color'));
 

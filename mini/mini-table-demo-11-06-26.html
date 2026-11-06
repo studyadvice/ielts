@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mini-table 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
+    --gray: #86877F; --line: #2A2B29;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid var(--line); border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.82rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 620px; overflow: auto; }
+  .themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .themes .tname { color: var(--vanilla); font-weight: 700; margin: 0 0 8px 0; }
+  .themes .tname code { color: var(--yellow); }
+  .tool { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px 0; }
+  .alert-zone { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 340px; }
+  .alert-zone .alert { background: #1B1C1B; color: var(--vanilla); border: 1px solid var(--blue); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>mini-table：一行一列的輕量表格</h1>
+  <p class="lead-note">建立日期 11-06-26。一行一列，用 <code>|</code> 分欄；<code>align="l, l, r"</code> 逐欄對齊；表頭與內容都可以放在 <code>&lt;template&gt;</code>；<code>pre-theme</code> 有七種預排外觀。搭配 ui-cards 新增的 <code>media-position="inline"</code> 與 <code>meta</code>，就是一張資料卡片。</p>
+
+  <section class="demo">
+    <h2>範例 1：資料卡片</h2>
+    <p class="desc">卡片用 <code>media-position="inline"</code> 讓圖示和標題同一行，<code>meta</code> 放右側來源，角標排在同一列。表格用預設的 <code>clean</code> 外觀。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：表頭與內容放在 template</h2>
+    <p class="desc"><code>head-source</code> 讀表頭，<code>source</code> 讀內容。同一份資料可以給好幾張表用。外觀是 <code>score</code>：第一欄強調，數字放大。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：七種預排外觀</h2>
+    <p class="desc">同一份內容，換 <code>pre-theme</code> 就換樣子。每張表都用 <code>source="tpl-band"</code> 讀同一個 template。</p>
+    <div class="live" data-tpl="ex3"></div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：用 JavaScript 換外觀</h2>
+    <p class="desc">改 <code>pre-theme</code> 屬性後呼叫 <code>render()</code>。</p>
+    <div class="tool" id="theme-btns"></div>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex1">
+<ui-cards cols="3">
+  <card-item icon="snow" label="Top accounts" meta="Snowflake" media-position="inline">
+    <mini-table head="Account | Region | Seats" align="l, l, r">
+      Northwind | EMEA | 1,200
+      Globex    | EMEA | 860
+    </mini-table>
+  </card-item>
+  <card-item icon="mic" label="本週口說練習" meta="Part 1" media-position="inline" badge="新">
+    <mini-table head="題目 | 次數 | 平均" align="l, c, r">
+      Hometown | 4 | 6.5
+      Work or study | 3 | 6
+    </mini-table>
+  </card-item>
+  <card-item icon="bookmark-star" label="高頻語塊" meta="Lesson 2" media-position="inline">
+    <mini-table pre-theme="compact" head="語塊 | 用過">
+      <c-key>conveniently located</c-key> | 5
+      <c-key>a tiny apartment</c-key> | 3
+      <c-key>rain or shine</c-key> | 2
+    </mini-table>
+  </card-item>
+</ui-cards>
+</template>
+
+<template id="ex2">
+<ui-cards cols="2">
+  <card-item icon="graph-up" label="模考分數" meta="11 月" media-position="inline">
+    <mini-table pre-theme="score" head-source="mock-head" source="mock-rows"></mini-table>
+  </card-item>
+  <card-item icon="table" label="同一份資料，換外觀" meta="ledger" media-position="inline">
+    <mini-table pre-theme="ledger" head-source="mock-head" source="mock-rows"></mini-table>
+  </card-item>
+</ui-cards>
+
+<template id="mock-head">Name | Fluency | Lexical</template>
+<template id="mock-rows">
+  Amy | 7 | 6.5
+  Ben | 6 | 6
+  Cleo | 6.5 | 7
+</template>
+</template>
+
+<template id="ex3">
+<div class="themes">
+  <div><p class="tname"><code>clean</code></p><mini-table pre-theme="clean" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>ledger</code></p><mini-table pre-theme="ledger" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>grid</code></p><mini-table pre-theme="grid" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>banner</code></p><mini-table pre-theme="banner" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>compact</code></p><mini-table pre-theme="compact" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>bare</code></p><mini-table pre-theme="bare" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>score</code></p><mini-table pre-theme="score" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>banner</code> + <code>color="playful"</code></p><mini-table pre-theme="banner" color="playful" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+</div>
+
+<template id="tpl-band">
+  Part 1 | 4–5 分鐘 | 9
+  Part 2 | 3–4 分鐘 | 1
+  Part 3 | 4–5 分鐘 | 5
+</template>
+</template>
+
+<template id="ex4">
+<mini-table id="mt-live" pre-theme="clean" head="Skill | Weight | Target" align="l, c, r" col-widths="2:1:1">
+  Fluency and Coherence | 25% | 7
+  Lexical Resource | 25% | 7
+  Grammatical Range | 25% | 6.5
+  Pronunciation | 25% | 7
+</mini-table>
+</template>
+
+<div class="alert-zone" id="alerts"></div>
+
+<script>
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    var pre = document.querySelector('pre[data-code="' + box.dataset.tpl + '"]');
+    if (pre) pre.textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+</script>
+<script src="../layout/ui-cards.js"></script>
+<script src="mini-table.js"></script>
+<script>
+  (function () {
+    var box = document.getElementById('theme-btns');
+    MiniTable.themes.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn btn-sm btn-outline-light'; b.textContent = t;
+      b.addEventListener('click', function () {
+        var m = document.getElementById('mt-live');
+        m.setAttribute('pre-theme', t); m.render();
+        var a = document.createElement('div');
+        a.className = 'alert alert-info'; a.setAttribute('role', 'alert'); a.textContent = '外觀已換成 ' + t;
+        document.getElementById('alerts').appendChild(a);
+        setTimeout(function () { a.remove(); }, 1800);
+      });
+      box.appendChild(b);
+    });
+  })();
+</script>
+</body>
+</html>
