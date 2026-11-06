@@ -29,6 +29,8 @@
   - [展開長文字：expandable](#展開長文字expandable)
   - [遮罩](#遮罩)
   - [補充資訊：extra-info](#補充資訊extra-info)
+  - [展開附屬內容：toggle](#展開附屬內容toggle)
+  - [滑過顯示：hover-source 與 hover-target](#滑過顯示hover-source-與-hover-target)
   - [輪播](#輪播)
   - [欄間箭頭](#欄間箭頭)
   - [固定欄](#固定欄)
@@ -111,6 +113,10 @@ ui-table
 | `auto-reveal-interval` | 毫秒 | 有 `hidden` 的列依序每隔指定時間自動顯示。 |
 | `extra-info-size` | 數字或 `px`、`rem`、`em` | extra-info 握把圖示的預設高度。 |
 | `extra-info-color` | 色彩 | extra-info 握把圖示的預設色彩。 |
+| `toggle-icon` | Bootstrap Icons 名稱 | toggle 按鈕收合時的預設圖示，預設 `bi-chevron-down`。 |
+| `toggle-icon-open` | Bootstrap Icons 名稱 | toggle 按鈕展開時的預設圖示，預設 `bi-chevron-up`。 |
+| `toggle-color` | 色彩 | toggle 按鈕與展開區虛線的預設色彩，預設為主題色。 |
+| `hover-target` | 元素 `id` | `hover-source` 內容的預設放置位置。 |
 | `tree-col` | 正整數 | 樹狀展開鈕與縮排放在第幾欄，預設 `1`。 |
 | `tree-indent` | 數字或 `px`、`rem`、`em` | 每一層的縮排寬度，預設 `20px`。 |
 | `tree-icon` | `chevron`、`caret`、`plus` | 展開鈕圖示，預設 `chevron`。 |
@@ -178,6 +184,10 @@ ui-table
 | `extra-info` | 補充資訊來源元素的 `id`。 |
 | `extra-info-size` | 握把圖示高度，純數字視為 `px`。 |
 | `extra-info-color` | 握把圖示色彩。 |
+| `toggle` | 展開內容來源的 `id`（建議用 `<template>`）。這一格右側出現 toggle 按鈕。 |
+| `toggle-icon`、`toggle-icon-open`、`toggle-color` | 只覆寫這一格的 toggle 圖示與色彩。 |
+| `hover-source` | 滑鼠移入時要顯示的內容來源 `id`。 |
+| `hover-target` | 只覆寫這一格的放置位置。 |
 | `carousel-interval` | 輪播間隔毫秒數；`0` 為手動輪播。 |
 | `progress-bar` | 顯示輪播進度條。 |
 | `progress-bar-color` | 進度條單色。 |
@@ -317,6 +327,50 @@ ui-table
 - 浮動框 掛在 `<body>`，不會被儲存格裁切，會自動選擇上方或下方的空間。
 - 點擊 浮動框 以外的地方或按 Esc 關閉。
 - 握把的尺寸與色彩優先順序：`ui-col` > `ui-row` > `ui-table` > `UiTableConfig`。尺寸是圖示高度，寬度自動為 0.65 倍。
+
+### 展開附屬內容：toggle
+
+在格子上寫 `toggle="來源 id"`，格子右側會出現一顆按鈕。按下後在這一列下方展開一條橫跨整列的內容區，再按一次收起。
+
+```html
+<ui-table theme="blue" toggle-icon="bi-plus-circle" toggle-icon-open="bi-dash-circle">
+  <ui-row col-widths="1:2">
+    <ui-col>a double-edged sword</ui-col>
+    <ui-col toggle="ex-sword">一把雙面刃</ui-col>
+  </ui-row>
+</ui-table>
+
+<template id="ex-sword"><p>Social media is a double-edged sword.</p></template>
+```
+
+- 來源建議用 `<template>`；一般元素也可以，載入時會自動隱藏。內容在按下當下才讀取。
+- 圖示寫 Bootstrap Icons 名稱，`bi-` 前綴可以省略。圖示與色彩的優先順序：`ui-col` > `ui-table` > 預設。
+- 同一列有多個 toggle 格子時共用一個展開區，按另一格會直接換內容，前一格的按鈕自動恢復收合圖示。展開中的格子底部會出現一條色線。
+- 按鈕會阻止點擊往外傳，所以和 `show-next` 放在同一格也不會同時觸發。
+- 可以和遮罩、輪播、補充資訊、欄間箭頭並用；有遮罩時，揭曉前按鈕被遮住。
+- 每次展開或收起，`<ui-table>` 會發出 `uit-toggle` 事件（會冒泡，也可以在 `document` 上監聽）。
+
+### 滑過顯示：hover-source 與 hover-target
+
+滑鼠移到格子上時，把 `hover-source` 的內容放進 `hover-target`；移開後內容保留，直到滑到下一個有 `hover-source` 的格子。
+
+```html
+<ui-table theme="green" hover-target="preview">
+  <ui-row>
+    <ui-col hover-source="pv-mitigate">mitigate</ui-col>
+    <ui-col hover-source="pv-exacerbate">exacerbate</ui-col>
+  </ui-row>
+</ui-table>
+
+<div id="preview"></div>
+<template id="pv-mitigate"><p>mitigate the impact of</p></template>
+<template id="pv-exacerbate"><p>exacerbate the problem</p></template>
+```
+
+- `hover-target` 寫在 `<ui-table>` 當整張表的預設，單一格也可以自己指定。
+- 來源一樣建議用 `<template>`；一般元素會自動隱藏。
+- 格子的遮罩還沒揭曉時不會觸發。
+- 每次放入內容，`<ui-table>` 會發出 `uit-hover` 事件（會冒泡）。
 
 ### 輪播
 
@@ -556,7 +610,7 @@ ui-table
 
 **表格層級**
 
-`fontSize`、`fontColor`、`autoRevealInterval`、`cellAlignment`、`verticalAlignment`、`hoverBgColor`、`cellMinHeight`、`rowBorder`、`extraInfoSize`、`extraInfoColor`、`treeCol`、`treeIndent`、`treeIcon`、`treeLine`、`treeLineColor`、`treeAccordion`、`treeOpen`，以及：
+`fontSize`、`fontColor`、`autoRevealInterval`、`cellAlignment`、`verticalAlignment`、`hoverBgColor`、`cellMinHeight`、`rowBorder`、`extraInfoSize`、`extraInfoColor`、`treeCol`、`treeIndent`、`treeIcon`、`treeLine`、`treeLineColor`、`treeAccordion`、`treeOpen`、`toggleIcon`、`toggleIconOpen`、`toggleColor`、`hoverTarget`，以及：
 
 - `groups`：`[{ titleLeft, titleRight, iniCollapse, rows: [...] }]`
 - `rows`：沒有 `groups` 時，可以直接寫列的陣列
@@ -570,7 +624,7 @@ ui-table
 
 **儲存格層級**
 
-`content`（HTML 字串）或 `items`（輪播項目的 HTML 字串陣列），以及 `icon`、`fontColor`、`span`、`width`、`fixed`、`showNext`、`expandable`、`maskText`、`maskText2`、`maskInvert`、`maskColor`、`maskOrder`、`inverse`、`extraInfo`、`extraInfoSize`、`extraInfoColor`、`carouselInterval`（可為 `0`）、`progressBar`、`progressBarColor`、`progressBarColor1`、`progressBarColor2`、`arrow`、`arrowSize`、`arrowColor`、`arrowPos`、`arrowOpen`、`iconsList`（陣列或逗號分隔字串）、`iconsListInterval`。
+`content`（HTML 字串）或 `items`（輪播項目的 HTML 字串陣列），以及 `icon`、`fontColor`、`span`、`width`、`fixed`、`showNext`、`expandable`、`maskText`、`maskText2`、`maskInvert`、`maskColor`、`maskOrder`、`inverse`、`extraInfo`、`extraInfoSize`、`extraInfoColor`、`carouselInterval`（可為 `0`）、`progressBar`、`progressBarColor`、`progressBarColor1`、`progressBarColor2`、`arrow`、`arrowSize`、`arrowColor`、`arrowPos`、`arrowOpen`、`iconsList`（陣列或逗號分隔字串）、`iconsListInterval`、`toggle`、`toggleIcon`、`toggleIconOpen`、`toggleColor`、`hoverSource`、`hoverTarget`。
 
 後來新增的對應鍵：列物件的 `canHide`（`true` 或欄位編號，需 `enhance: true`）、`canHideSize`、`canHideColor`、`minHeight`；儲存格物件的 `id`、`flashWidth`、`flashSpeed`、`flashLoops`、`itemNumber`（`true`、`'outline'`、`'fill'`、`'count'`）。
 
@@ -611,6 +665,20 @@ document.getElementById('tree-menu').addEventListener('uit-tree-toggle', functio
 ```
 
 載入時的初始展開（`tree-open`）不會發出事件。
+
+**uit-toggle 與 uit-hover 事件**
+
+```js
+var t = document.querySelector('ui-table');
+t.addEventListener('uit-toggle', function (e) {
+  // e.detail.source  來源 id
+  // e.detail.open    true 為展開，false 為收起
+  // e.detail.cell    按下按鈕的格子
+});
+t.addEventListener('uit-hover', function (e) {
+  // e.detail.source、e.detail.target、e.detail.cell
+});
+```
 
 **uit-row-hide 事件**
 

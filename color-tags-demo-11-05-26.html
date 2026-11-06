@@ -72,7 +72,7 @@
   </section>
 
   <section class="demo">
-    <h2>範例 4：ui-cards、card-toggle、slider-show</h2>
+    <h2>範例 4：ui-cards（含翻面卡片）、slider-show</h2>
     <p class="desc">原本不支援色彩標籤的元件，現在也能直接使用。</p>
     <div class="pair">
       <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
@@ -152,9 +152,9 @@
   </card-item>
 </ui-cards>
 
-<card-toggle color="violet" toggle content="答案：<c-green>pressing issue</c-green>">
-  urgent problem 可以升級成什麼？
-</card-toggle>
+<ui-cards cols="1" flip-toggle>
+  <card-item color="violet" label="urgent problem 可以升級成什麼？" back="答案：<c-green>pressing issue</c-green>"></card-item>
+</ui-cards>
 
 <slider-show height="160px" show-part-indicator="false">
   <div slide><div class="slide-content"><div class="slide-main"><p>第一句 <c-yellow>不照搬題目</c-yellow>，第二句 <c-blue>展開細節</c-blue>。</p></div></div></div>
@@ -172,7 +172,6 @@
 <script src="ladder/ui-insight.js"></script>
 <script src="ladder/ui-detail-ladder.js"></script>
 <script src="layout/ui-cards.js"></script>
-<script src="card-toggle.js"></script>
 <script src="slider-show.js"></script>
 <script>
   /* 色名表：直接讀取共用樣式的定義 */

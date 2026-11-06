@@ -180,7 +180,7 @@
 
 ### 填空題
 
-在 `quiz` 區塊裡放 `<ir-input>`，就是填空題。計分、解說、重試、`correct-next` 與 `wrong-next` 都和選擇題相同。取代原本的 `card-toggle` 填空問答。
+在 `quiz` 區塊裡放 `<ir-input>`，就是填空題。計分、解說、重試、`correct-next` 與 `wrong-next` 都和選擇題相同。
 
 ```html
 <info-region id="f1" quiz quiz-item color="blue" quiz-label="填空"

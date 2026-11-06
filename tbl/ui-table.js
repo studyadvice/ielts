@@ -328,6 +328,17 @@
     '.uit-sn-ico{display:inline-flex;align-items:center;flex-shrink:0;margin-left:auto;transition:transform .25s ease}',
     '.uit-col.sn-open .uit-sn-ico{transform:rotate(180deg)}',
 
+    /* toggle 按鈕與列下方的展開區（展開區是這一列的最後一個格子，橫跨整列） */
+    '.uit-tgb{cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:auto;padding:0 4px;min-height:1.5em;font-size:1.05em;line-height:1;color:var(--uit-tgc,var(--uit-tm));user-select:none;transition:transform .15s ease}',
+    '.uit-tgb:hover{transform:scale(1.15)}',
+    '.uit-sn-ico + .uit-tgb, .uit-tgb + .uit-sn-ico{margin-left:6px}',
+    '.uit-col.is-inv .uit-tgb{color:var(--uit-tgc,#0C0D0C)}',
+    '.uit-col.uit-tg-on{box-shadow:inset 0 -3px 0 var(--uit-tgc,var(--uit-tm))}',
+    '.uit-tgp{grid-column:1 / -1;padding:12px 16px;border-top:1px dashed var(--uit-tgc,var(--uit-tm));background:#141514;color:var(--uit-tgt,#C6C7BD);font-size:var(--uit-fs);animation:uit-tgin .25s ease}',
+    '.uit-tgp > :first-child{margin-top:0}',
+    '.uit-tgp > :last-child{margin-bottom:0}',
+    '@keyframes uit-tgin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}',
+
     /* 遮罩 */
     '.uit-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;gap:8px;font-weight:600;transition:opacity .3s ease;font-size:var(--uit-fs);border-radius:inherit}',
     '.uit-mask.unlockable{cursor:pointer}',
@@ -626,6 +637,10 @@
     if (data.rowBorder)          this.el.setAttribute('row-border',           data.rowBorder);
     if (data.extraInfoSize)      this.el.setAttribute('extra-info-size',      String(data.extraInfoSize));
     if (data.extraInfoColor)     this.el.setAttribute('extra-info-color',     data.extraInfoColor);
+    if (data.toggleIcon)         this.el.setAttribute('toggle-icon',          data.toggleIcon);
+    if (data.toggleIconOpen)     this.el.setAttribute('toggle-icon-open',     data.toggleIconOpen);
+    if (data.toggleColor)        this.el.setAttribute('toggle-color',         data.toggleColor);
+    if (data.hoverTarget)        this.el.setAttribute('hover-target',         data.hoverTarget);
     /* 樹狀設定（表格層級） */
     if (data.treeCol)            this.el.setAttribute('tree-col',             String(data.treeCol));
     if (data.treeIndent)         this.el.setAttribute('tree-indent',          String(data.treeIndent));
@@ -677,6 +692,12 @@
         if (cd.maskText2)         c.setAttribute('mask-text-2',       cd.maskText2);
         if (cd.inverse)           c.setAttribute('inverse',           '');
         if (cd.extraInfo)         c.setAttribute('extra-info',        cd.extraInfo);
+        if (cd.toggle)            c.setAttribute('toggle',            cd.toggle);
+        if (cd.toggleIcon)        c.setAttribute('toggle-icon',       cd.toggleIcon);
+        if (cd.toggleIconOpen)    c.setAttribute('toggle-icon-open',  cd.toggleIconOpen);
+        if (cd.toggleColor)       c.setAttribute('toggle-color',      cd.toggleColor);
+        if (cd.hoverSource)       c.setAttribute('hover-source',      cd.hoverSource);
+        if (cd.hoverTarget)       c.setAttribute('hover-target',      cd.hoverTarget);
         if (cd.extraInfoSize)     c.setAttribute('extra-info-size',   String(cd.extraInfoSize));
         if (cd.extraInfoColor)    c.setAttribute('extra-info-color',  cd.extraInfoColor);
         if (cd.maskInvert)        c.setAttribute('mask-invert',       '');
@@ -1550,6 +1571,10 @@
       div.appendChild(ci);
     }
 
+    /* toggle 按鈕與 hover-source：兩者都可以和遮罩、輪播、補充資訊並用 */
+    if (colEl.hasAttribute('toggle')) this._setupToggle(colEl, div, ci, hasInv);
+    if (colEl.hasAttribute('hover-source')) this._setupHover(colEl, div);
+
     if (hasMask) {
       div.classList.add('has-mask');   /* 遮罩上的眼睛加深色外框，淺色遮罩上才看得清楚 */
       var maskGrad   = colEl.getAttribute('mask-gradient') || '';
@@ -1621,6 +1646,108 @@
 
   /* can-hide 的眼睛圖示（Bootstrap Icons）：平常是 bi-eye，滑鼠移上去換成 bi-eye-slash 提示「點了會隱藏」。
      尺寸與色彩：can-hide-size、can-hide-color（寫在 ui-row-enhance 上），沒寫時跟隨文字大小與格子文字色 */
+  /* 讀取 template 或一般元素的內容；template 複製 content，一般元素複製 innerHTML */
+  function srcContent(id) {
+    var src = id && document.getElementById(id);
+    if (!src) return null;
+    var frag = document.createDocumentFragment();
+    if (src.tagName === 'TEMPLATE') frag.appendChild(src.content.cloneNode(true));
+    else { var t = document.createElement('div'); t.innerHTML = src.innerHTML; while (t.firstChild) frag.appendChild(t.firstChild); }
+    return frag;
+  }
+  function hideSrc(id) {
+    var src = id && document.getElementById(id);
+    if (src && src.tagName !== 'TEMPLATE') src.style.display = 'none';
+  }
+  function biName(v) {
+    v = String(v || '').trim();
+    if (!v) return '';
+    return /^bi-/.test(v) ? v : 'bi-' + v;
+  }
+
+  /* toggle：格子右側的按鈕，按下後在這一列下方展開 toggle 指向的內容，再按一次收起。
+     同一列有多個 toggle 格子時共用一個展開區，按另一格會直接換內容。
+     圖示與顏色優先順序：ui-col > ui-table > 預設 */
+  UiTable.prototype._setupToggle = function (colEl, div, ci, hasInv) {
+    var self = this;
+    var id = (colEl.getAttribute('toggle') || '').trim();
+    if (!id) { console.warn('[ui-table] toggle 需要填入 template 或元素的 id，已忽略。'); return; }
+    if (!document.getElementById(id)) console.warn('[ui-table] toggle 找不到 id="' + id + '" 的元素，點擊時會再試一次。');
+    hideSrc(id);
+    var pick = function (n, fb) { return colEl.getAttribute(n) || self.el.getAttribute(n) || fb; };
+    var icoClosed = biName(pick('toggle-icon', 'bi-chevron-down'));
+    var icoOpen   = biName(pick('toggle-icon-open', 'bi-chevron-up'));
+    var tc = resolveColor(pick('toggle-color', ''));
+    if (pick('toggle-color', '') && !tc) console.warn('[ui-table] toggle-color="' + pick('toggle-color', '') + '" 不是有效的色彩，已改用主題色。');
+    if (tc) div.style.setProperty('--uit-tgc', tc);
+
+    var btn = mk('span', 'uit-tgb');
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '<i class="bi ' + icoClosed + '" aria-hidden="true"></i>';
+    btn._icons = [icoClosed, icoOpen];
+    ci.appendChild(btn);
+
+    function setIcon(b, open) {
+      b.innerHTML = '<i class="bi ' + b._icons[open ? 1 : 0] + '" aria-hidden="true"></i>';
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var cell = b.closest('.uit-col');
+      if (cell) cell.classList.toggle('uit-tg-on', open);
+    }
+    function act(e) {
+      e.preventDefault();
+      e.stopPropagation();   /* 避免同時觸發 show-next */
+      var row = div.closest('.uit-row');
+      if (!row) return;
+      var panel = row._uitTgPanel;
+      var opener = row._uitTgBtn;
+      if (panel && opener === btn) {   /* 再按一次：收起 */
+        panel.remove(); row._uitTgPanel = null; row._uitTgBtn = null;
+        setIcon(btn, false);
+        self.el.dispatchEvent(new CustomEvent('uit-toggle', { bubbles: true, detail: { source: id, open: false, cell: div } }));
+        return;
+      }
+      var frag = srcContent(id);
+      if (!frag) { console.error('[ui-table] toggle 找不到 id="' + id + '" 的元素。'); return; }
+      if (!panel) {
+        panel = mk('div', 'uit-tgp');
+        row.appendChild(panel);
+        row._uitTgPanel = panel;
+      } else if (opener) setIcon(opener, false);
+      panel.style.setProperty('--uit-tgc', tc || self.color);
+      if (self.fontColor) panel.style.setProperty('--uit-tgt', self.fontColor);
+      panel.innerHTML = '';
+      panel.appendChild(frag);
+      panel.style.animation = 'none'; void panel.offsetHeight; panel.style.animation = '';
+      row._uitTgBtn = btn;
+      setIcon(btn, true);
+      self.el.dispatchEvent(new CustomEvent('uit-toggle', { bubbles: true, detail: { source: id, open: true, cell: div } }));
+    }
+    btn.addEventListener('click', act);
+    btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') act(e); });
+  };
+
+  /* hover-source：滑鼠移到格子上，把來源內容放進 hover-target（ui-col > ui-table），移開後保留。
+     格子還有遮罩沒揭曉時不觸發 */
+  UiTable.prototype._setupHover = function (colEl, div) {
+    var self = this;
+    var sid = (colEl.getAttribute('hover-source') || '').trim();
+    var tid = (colEl.getAttribute('hover-target') || this.el.getAttribute('hover-target') || '').trim();
+    if (!sid || !tid) { console.warn('[ui-table] hover-source 需要搭配 hover-target（寫在 ui-col 或 ui-table），已忽略。'); return; }
+    hideSrc(sid);
+    div.addEventListener('mouseenter', function () {
+      if (div.querySelector('.uit-mask:not(.revealed)')) return;
+      var tgt = document.getElementById(tid);
+      var frag = srcContent(sid);
+      if (!tgt) { console.error('[ui-table] hover-target 找不到 id="' + tid + '" 的元素。'); return; }
+      if (!frag) { console.error('[ui-table] hover-source 找不到 id="' + sid + '" 的元素。'); return; }
+      tgt.innerHTML = '';
+      tgt.appendChild(frag);
+      self.el.dispatchEvent(new CustomEvent('uit-hover', { bubbles: true, detail: { source: sid, target: tid, cell: div } }));
+    });
+  };
+
   UiTable.prototype._mkEye = function (rowStyle) {
     var self = this;
     var eye  = mk('span', 'uit-eye');

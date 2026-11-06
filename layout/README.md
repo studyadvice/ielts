@@ -658,7 +658,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 
 ### 翻面屬性
 
-`<card-item>` 加上 `back` 或 `back-source` 就變成翻面卡片：點卡片本身換成背面，卡片內的按鈕、連結與輸入框照常運作。取代原本的 `card-toggle` 一般翻面。
+`<card-item>` 加上 `back` 或 `back-source` 就變成翻面卡片：點卡片本身換成背面，卡片內的按鈕、連結與輸入框照常運作。
 
 | 屬性 | 寫在哪裡 | 值 | 說明 |
 | --- | --- | --- | --- |

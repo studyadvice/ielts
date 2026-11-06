@@ -254,6 +254,11 @@
       { k: 'vertical-alignment', l: '垂直對齊', t: 'select', o: ['', 'top', 'middle', 'bottom'] },
       { s: '揭示' },
       { k: 'auto-reveal-interval', l: '自動揭示間隔', t: 'text', ph: '1500', h: '毫秒。hidden 的列依序出現' },
+      { s: 'toggle 與滑過顯示（整張表的預設）' },
+      { k: 'toggle-icon', l: 'toggle 收合圖示', t: 'text', ph: 'bi-chevron-down' },
+      { k: 'toggle-icon-open', l: 'toggle 展開圖示', t: 'text', ph: 'bi-chevron-up' },
+      { k: 'toggle-color', l: 'toggle 色彩', t: 'color' },
+      { k: 'hover-target', l: '滑過內容放置 id', t: 'text', h: '來源與目標元素寫在「附加 HTML」或頁面上' },
       { s: '樹狀（進階列巢狀時）' },
       { k: 'tree-icon', l: '展開鈕圖示', t: 'select', o: ['', 'chevron', 'caret', 'plus'] },
       { k: 'tree-line', l: '導引線', t: 'bool' },
@@ -311,6 +316,14 @@
       { k: 'progress-bar', l: '進度條', t: 'bool' },
       { k: 'progress-bar-color', l: '進度條色', t: 'color' },
       { k: 'item-number', l: '項目編號', t: 'select', o: ['', 'outline', 'fill', 'count'] },
+      { s: '附屬內容：toggle' },
+      { k: 'toggle', l: '展開內容來源 id', t: 'text', h: '格子右側出現按鈕，展開在這一列下方。來源建議用 <template>，寫在「附加 HTML」' },
+      { k: 'toggle-icon', l: '收合圖示', t: 'text', ph: 'bi-chevron-down' },
+      { k: 'toggle-icon-open', l: '展開圖示', t: 'text', ph: 'bi-chevron-up' },
+      { k: 'toggle-color', l: '按鈕色', t: 'color' },
+      { s: '滑過顯示' },
+      { k: 'hover-source', l: '滑過內容來源 id', t: 'text' },
+      { k: 'hover-target', l: '放置位置 id', t: 'text', h: '沒填時用表格設定的 hover-target' },
       { s: '補充與識別' },
       { k: 'extra-info', l: '補充資訊來源 id', t: 'text', h: '來源元素寫在表格設定的「附加 HTML」' },
       { k: 'id', l: '格子 id', t: 'text', h: '<ui-flash> 動畫用' }
@@ -803,6 +816,8 @@
     if (a.icon) out.push([a.icon, '']);
     if (a.span) out.push(['跨 ' + a.span, '']);
     if (a['extra-info']) out.push(['補充 ' + a['extra-info'], 'c-green']);
+    if (a.toggle) out.push(['toggle ' + a.toggle, 'c-violet']);
+    if (a['hover-source']) out.push(['滑過 ' + a['hover-source'], 'c-blue']);
     if (a['font-color']) out.push(['色 ' + a['font-color'], '']);
     return out.map(function (x) { return '<span class="chip ' + x[1] + '">' + esc(x[0]) + '</span>'; }).join('');
   }
