@@ -58,7 +58,7 @@ h3.ref-title{font-size:1.1rem;color:var(--blue);margin:8px 0 10px 0;}
 <body>
 <div class="page" id="top">
   <h1>ui-network 元件展示</h1>
-  <p class="lead-note">透過 <code>&lt;ui-network&gt;</code> 與 <code>&lt;ui-node&gt;</code> 語意標籤宣告 Bootstrap Icons 名稱與圓圈尺寸，元件自動隨機排列並以三角網格繪製連線。目前版本 v1.1.0，建立日期 11-07-26。</p>
+  <p class="lead-note">透過 <code>&lt;ui-network&gt;</code> 與 <code>&lt;ui-node&gt;</code> 語意標籤宣告 Bootstrap Icons 名稱與圓圈尺寸，元件自動隨機排列並以三角網格繪製連線。目前版本 v1.2.0，建立日期 11-07-26。</p>
 
   <!-- 範例一 -->
   <section class="demo" data-demo>
@@ -297,9 +297,67 @@ net.addEventListener('node-click', e =&gt; {
     </script>
   </section>
 
+  <!-- 範例八（v1.2.0） -->
+  <section class="demo" data-demo>
+    <h2>範例八：random-black 隨機彩色圖示<span class="ver">v1.2.0 新增</span></h2>
+    <p class="desc">加上 random-black 後，所有圖示改用依種子產生的隨機顏色，圓圈一律為黑色底。節點上的 color、fill 與容器的 node-fill 都不會生效，例如第一顆圓圈雖然寫了 fill="#FFFFFF"，仍維持黑色底。按下按鈕可重新隨機版面與配色。</p>
+    <div class="demo-grid">
+      <div>
+        <div class="stage"></div>
+        <div class="controls">
+          <button type="button" class="btn btn-un" id="btn-rb-shuffle"><i class="bi bi-shuffle"></i> 重新隨機配色</button>
+          <label class="ctl"><input type="checkbox" id="chk-rb" checked> random-black</label>
+        </div>
+      </div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network id="net-black" random-black seed="black" padding="40">
+  <ui-node icon="map-fill" size="xl" color="green" fill="#FFFFFF"></ui-node>
+  <ui-node icon="controller" size="lg"></ui-node>
+  <ui-node icon="palette-fill" size="lg"></ui-node>
+  <ui-node icon="book-half" size="md"></ui-node>
+  <ui-node icon="flower1" size="md"></ui-node>
+  <ui-node icon="heart-pulse-fill" size="md"></ui-node>
+  <ui-node icon="briefcase-fill" size="md"></ui-node>
+  <ui-node icon="pencil-square" size="sm"></ui-node>
+  <ui-node icon="tv-fill" size="sm"></ui-node>
+  <ui-node icon="cup-hot-fill" size="sm"></ui-node>
+  <ui-node icon="music-note-beamed" size="sm"></ui-node>
+  <ui-node icon="camera-fill" size="sm"></ui-node>
+  <ui-node icon="bicycle" size="xs"></ui-node>
+  <ui-node icon="trophy-fill" size="xs"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
   <!-- 更新紀錄 -->
   <section class="demo">
     <h2>更新紀錄</h2>
+    <h3 class="ref-title">v1.2.0：新增 random-black 屬性</h3>
+    <p class="desc">容器加上 random-black 後，圖示顏色依種子隨機產生，圓圈固定為黑色底（色票 background #0C0D0C），不受任何 fill、node-fill、color 設定影響。</p>
+    <div class="diff">
+      <div>
+        <p class="code-label">v1.1.0：每顆圓圈需逐一指定顏色</p>
+        <pre class="code-box old"><code>&lt;ui-network node-fill="#0C0D0C"&gt;
+  &lt;ui-node icon="map-fill" color="green"&gt;&lt;/ui-node&gt;
+  &lt;ui-node icon="controller" color="pink"&gt;&lt;/ui-node&gt;
+  &lt;ui-node icon="tv-fill" color="#5DBAE8"&gt;&lt;/ui-node&gt;
+&lt;/ui-network&gt;</code></pre>
+      </div>
+      <div>
+        <p class="code-label">v1.2.0：一個屬性完成隨機彩色加黑底</p>
+        <pre class="code-box"><code>&lt;ui-network random-black&gt;
+  &lt;ui-node icon="map-fill"&gt;&lt;/ui-node&gt;
+  &lt;ui-node icon="controller"&gt;&lt;/ui-node&gt;
+  &lt;ui-node icon="tv-fill"&gt;&lt;/ui-node&gt;
+&lt;/ui-network&gt;</code></pre>
+      </div>
+    </div>
+
     <h3 class="ref-title">v1.1.0：開放自訂色碼</h3>
     <p class="desc">所有顏色屬性（color、fill、node-fill、bg-from、bg-to、line-color、line-active）都可直接填色碼。未設定時的預設色與自動輪替色維持不變。</p>
     <div class="diff">
@@ -356,6 +414,7 @@ line-color="#FFFFFF80"    → 0.5 低於下限，調整為 0.78</code></pre>
         <tr><td><code>node-fill</code></td><td>vanilla</td><td>所有圓圈的底色。</td></tr>
         <tr><td><code>float</code></td><td>未啟用</td><td>布林屬性，啟用圓圈漂浮動畫。</td></tr>
         <tr><td><code>animate</code></td><td>on</td><td>設為 off 時，載入與重新隨機不播放線條描繪與圓圈彈出動畫。</td></tr>
+        <tr><td><code>random-black</code></td><td>未啟用</td><td>布林屬性。圖示顏色依種子隨機產生，圓圈固定為黑色底，忽略 color、fill、node-fill。</td></tr>
       </tbody>
     </table>
 
@@ -451,6 +510,11 @@ line-color="#FFFFFF80"    → 0.5 低於下限，調整為 0.78</code></pre>
     padNow.textContent = e.target.value;
   });
   document.getElementById('chk-float').addEventListener('change', e => net.toggleAttribute('float', e.target.checked));
+
+  /* 範例八控制項 */
+  const netBlack = document.getElementById('net-black');
+  document.getElementById('btn-rb-shuffle').addEventListener('click', () => netBlack.shuffle());
+  document.getElementById('chk-rb').addEventListener('change', e => netBlack.toggleAttribute('random-black', e.target.checked));
 
   /* 範例五事件紀錄 */
   const logBox = document.getElementById('evt-log');

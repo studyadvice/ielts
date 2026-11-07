@@ -8,6 +8,7 @@
 - 支援書籤跳轉與外部連結
 - 滑鼠移入時相連線條亮起，載入時播放線條描繪動畫，可選漂浮動畫
 - 顏色可用色票名稱或色碼（#RGB、#RRGGBB、#RRGGBBAA、rgb()、rgba()）
+- `random-black` 一鍵切換為隨機彩色圖示搭配黑色底圓圈
 - 錯誤以 Bootstrap alert 顯示在元件上方，不使用瀏覽器彈窗
 
 ## 目錄
@@ -151,7 +152,24 @@
 </ui-network>
 ```
 
-### 五、自訂直徑與單一圓圈底色
+### 五、隨機彩色圖示與黑色底
+
+加上 `random-black` 後，所有圖示顏色依種子隨機產生，圓圈一律為黑色底。節點的 `color`、`fill` 與容器的 `node-fill` 都會被忽略，因此下例第一顆圓圈仍是黑色底。相同種子得到相同配色，呼叫 `shuffle()` 會同時重新隨機版面與配色。
+
+```html
+<ui-network random-black seed="black" padding="40">
+  <ui-node icon="map-fill" size="xl" color="green" fill="#FFFFFF"></ui-node>
+  <ui-node icon="controller" size="lg"></ui-node>
+  <ui-node icon="palette-fill" size="lg"></ui-node>
+  <ui-node icon="book-half" size="md"></ui-node>
+  <ui-node icon="heart-pulse-fill" size="md"></ui-node>
+  <ui-node icon="tv-fill" size="sm"></ui-node>
+  <ui-node icon="camera-fill" size="sm"></ui-node>
+  <ui-node icon="trophy-fill" size="xs"></ui-node>
+</ui-network>
+```
+
+### 六、自訂直徑與單一圓圈底色
 
 `size` 可直接寫直徑數字（px）。加上 `fixed-size` 後，尺寸不會隨容器寬度縮放。
 
@@ -164,7 +182,7 @@
 </ui-network>
 ```
 
-### 六、重新隨機與控制項
+### 七、重新隨機與控制項
 
 ```html
 <ui-network id="net" seed="2026">
@@ -196,7 +214,7 @@
 </script>
 ```
 
-### 七、攔截點擊事件
+### 八、攔截點擊事件
 
 每次點擊圓圈都會觸發 `node-click`。呼叫 `preventDefault()` 後，原本的跳轉不會執行。
 
@@ -222,7 +240,7 @@
 </script>
 ```
 
-### 八、動態新增與修改節點
+### 九、動態新增與修改節點
 
 新增或移除 `<ui-node>` 會自動重新排列；修改節點屬性只更新外觀，不會打亂版面。
 
@@ -264,6 +282,7 @@ node.remove();
 | `node-fill` | `vanilla` | 所有圓圈的底色。 |
 | `float` | 未啟用 | 布林屬性，啟用圓圈漂浮動畫，線條同步跟隨。 |
 | `animate` | `on` | 設為 `off` 時，不播放線條描繪與圓圈彈出動畫。 |
+| `random-black` | 未啟用 | 布林屬性。圖示顏色依種子隨機產生，圓圈固定為黑色底（`#0C0D0C`），忽略 `color`、`fill`、`node-fill`。 |
 
 ### `<ui-node>`
 
@@ -330,7 +349,7 @@ console.log(palette.key);   // "#51DBCF"
 
 ### 色票
 
-元件預設色與自動輪替色都來自以下色票。
+元件預設色與自動輪替色都來自以下色票。`random-black` 模式的圖示色不受此限，由種子隨機產生。
 
 | 名稱 | 色碼 | 名稱 | 色碼 |
 |---|---|---|---|
@@ -379,6 +398,12 @@ console.log(palette.key);   // "#51DBCF"
 4. **繪製**：底層 SVG 畫線，上層絕對定位的元素畫圓圈與圖示。座標以比例儲存，視窗縮放時只重新鬆弛，不會重新隨機。
 
 ## 更新紀錄
+
+### v1.2.0
+
+- 新增 `random-black` 屬性：圖示顏色依種子隨機產生，圓圈固定為黑色底
+- 隨機色相以黃金角間隔分散，亮度與飽和度限制在黑底上清楚可辨的範圍
+- 啟用時忽略 `color`、`fill`、`node-fill`
 
 ### v1.1.0
 

@@ -17,6 +17,7 @@
   const ICON_RATIO = 0.52;         // 圖示字級相對於圓圈直徑
   const LINE_OPACITY = 0.8;        // 線條未指定透明度時的預設值
   const MIN_ALPHA = 0.78;          // 任何顏色的透明度下限
+  const BLACK_FILL = PALETTE.background;  // random-black 模式的圓圈底色
   const MAX_FILL = 0.4;            // 圓圈總面積占可用區域的上限
   const NS = 'http://www.w3.org/2000/svg';
 
@@ -236,7 +237,7 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
   class UINetwork extends HTMLElement {
     static get observedAttributes() {
       return ['seed', 'density', 'padding', 'height', 'ratio', 'fixed-size', 'bg-from', 'bg-to',
-        'line-color', 'line-active', 'line-width', 'node-fill', 'float', 'animate'];
+        'line-color', 'line-active', 'line-width', 'node-fill', 'float', 'animate', 'random-black'];
     }
     static get palette() { return PALETTE; }
 
@@ -259,6 +260,8 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
       this._autoSeed = String((Math.random() * 4294967296) >>> 0);
       this._seedOverride = null;
       this._hoverNode = null;
+      this._randColors = null;
+      this._randKey = '';
     }
 
     /* ---- 公開 API ---- */
@@ -625,8 +628,9 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
       const r = this._radii[i];
       if (!el || r == null) return;
       const icon = (el.getAttribute('icon') || 'circle').trim().replace(/^bi-/, '');
-      const color = this._color(el.getAttribute('color'), AUTO_COLORS[i % AUTO_COLORS.length]);
-      const fill = this._color(el.getAttribute('fill') || this.getAttribute('node-fill'), 'vanilla');
+      const black = this.hasAttribute('random-black');
+      const color = black ? this._randomColor(i) : this._color(el.getAttribute('color'), AUTO_COLORS[i % AUTO_COLORS.length]);
+      const fill = black ? BLACK_FILL : this._color(el.getAttribute('fill') || this.getAttribute('node-fill'), 'vanilla');
       const href = el.getAttribute('href');
       const tag = href ? 'a' : 'span';
 
@@ -654,6 +658,27 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
       ic.className = `bi bi-${icon}`;
       ic.style.color = color;
       ic.style.fontSize = (d * ICON_RATIO / rootPx).toFixed(3) + 'rem';
+    }
+
+    /*
+     * random-black 模式的圖示色：依種子產生，相同種子得到相同配色。
+     * 色相以黃金角間隔分散，避免相鄰節點顏色太接近；亮度與飽和度限制在黑底上清楚可辨的範圍。
+     */
+    _randomColor(i) {
+      const n = this._nodes.length;
+      const key = this.currentSeed + ':' + n;
+      if (!this._randColors || this._randKey !== key) {
+        const rng = mulberry32(hashSeed(this.currentSeed + ':random-black'));
+        const start = rng() * 360;
+        this._randColors = Array.from({ length: n }, (_, k) => {
+          const h = (start + k * 137.508 + (rng() - 0.5) * 24 + 360) % 360;
+          const sat = 68 + rng() * 24;
+          const light = 58 + rng() * 14;
+          return `hsl(${h.toFixed(1)}, ${sat.toFixed(1)}%, ${light.toFixed(1)}%)`;
+        });
+        this._randKey = key;
+      }
+      return this._randColors[i];
     }
 
     _toggleFloat() {
