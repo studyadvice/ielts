@@ -1,5 +1,5 @@
 /*!
- * ui-screen.js v1.0.1
+ * ui-screen.js v1.0.2
  * 分隔線對照元件 <ui-screen>
  * 左右或上下拖曳分隔線，對照兩組以語意標籤定義的內容。
  * 把手圖示使用 Bootstrap Icons 類別名稱，圖示字型由專案自行載入。
@@ -45,7 +45,7 @@
   const CSS = `
 ui-screen{display:block;position:relative;--uis-pos:50%;}
 ui-screen-handle{display:contents;}
-ui-screen > .uis-frame{position:relative;padding:var(--uis-bw,0px);border-radius:var(--uis-radius,0px);background:var(--uis-border,transparent);box-shadow:var(--uis-shadow,none);}
+ui-screen > .uis-frame{position:relative;box-sizing:border-box;height:100%;padding:var(--uis-bw,0px);border-radius:var(--uis-radius,0px);background:var(--uis-border,transparent);box-shadow:var(--uis-shadow,none);}
 ui-screen > .uis-frame > .uis-stage{position:relative;overflow:hidden;border-radius:max(0px, calc(var(--uis-radius,0px) - var(--uis-bw,0px)));background:var(--uis-stage-bg,#0C0D0C);isolation:isolate;-webkit-user-select:none;user-select:none;}
 .uis-stage > ui-screen-before,.uis-stage > ui-screen-after{display:block;overflow:hidden;box-sizing:border-box;background:var(--uis-layer-bg,var(--uis-stage-bg,#0C0D0C));}
 .uis-stage > ui-screen-before{position:relative;z-index:1;}

@@ -158,7 +158,7 @@
       <h1>&lt;<span>ui-screen</span>&gt; 分隔線對照元件</h1>
       <p>左右或上下拖曳分隔線，對照兩組事先用語意標籤定義好的內容。</p>
     </div>
-    <div class="ver">v1.0.1 ・ 11-07-26</div>
+    <div class="ver">v1.0.2 ・ 11-07-26</div>
   </header>
 
   <!-- 1 -->
@@ -426,6 +426,24 @@
     </script>
   </section>
 
+  <!-- 9：v1.0.2 -->
+  <section class="demo-sec">
+    <h2>9. v1.0.2：<code>height="100%"</code> 填滿父元素</h2>
+    <p class="desc">v1.0.1 以前外框不會跟著元件高度撐開，<code>height="100%"</code> 會讓畫面塌成 0。v1.0.2 起外框高度跟著元件，放進固定高度的格子、卡片或 <code>&lt;scene-layer&gt;</code> 都能填滿。</p>
+    <div class="demo-grid">
+      <div data-live="d9"></div>
+      <pre class="code"><code data-code="d9"></code></pre>
+    </div>
+    <script type="text/plain" id="d9">
+<div style="height:300px;padding:16px;border:1px dashed #86877F;border-radius:16px">
+  <ui-screen height="100%" radius="12" border-width="3" border-gradient="sunset" style="height:100%">
+    <ui-screen-before label="父元素 300px" bg="key-deep"></ui-screen-before>
+    <ui-screen-after label="height=100%" bg="indigo,violet"></ui-screen-after>
+  </ui-screen>
+</div>
+    </script>
+  </section>
+
   <!-- 7 -->
   <section class="demo-sec">
     <h2>7. 屬性、事件與方法一覽</h2>
@@ -448,7 +466,7 @@
         <tr><td><code>disabled</code></td><td>布林</td><td>無</td><td>鎖定所有互動。</td></tr>
 
         <tr class="group"><td colspan="4">&lt;ui-screen&gt; 尺寸與外框</td></tr>
-        <tr><td><code>height</code></td><td>長度</td><td>無</td><td>純數字視為 px。未設定高度與比例時，以 before 內容的自然高度為準。</td></tr>
+        <tr><td><code>height</code></td><td>長度</td><td>無</td><td>純數字視為 px，也可以填 100% 填滿父元素（v1.0.2）。未設定高度與比例時，以 before 內容的自然高度為準。</td></tr>
         <tr><td><code>aspect-ratio</code></td><td>例如 16/9</td><td>無</td><td>長寬比。squeeze 模式未設尺寸時預設 16/9。</td></tr>
         <tr><td><code>stage-bg</code></td><td>顏色</td><td>background</td><td>內容區底色。</td></tr>
         <tr><td><code>border-width</code></td><td>長度</td><td>0</td><td>外框粗細。</td></tr>

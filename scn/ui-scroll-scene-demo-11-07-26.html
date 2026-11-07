@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-scroll-scene 範例</title>
+<!-- 範例頁自行載入 Bootstrap 與 Bootstrap Icons，元件本身不引用 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --background:#0C0D0C;--shell:#C6C7BD;--vanilla:#DBEDD8;--yellow:#E3D322;--pink:#FF91D7;--red:#EF6661;
+    --orange:#FF5530;--green:#71CD76;--blue:#5DBAE8;--indigo:#778CE1;--violet:#B484E8;--gray:#86877F;
+    --key:#51DBCF;--key-deep:#176878;--calm:#A3C4BC;--quiet:#A9B8E0;--playful:#FFA987;--urgent:#FF2E63;
+  }
+  body{background:var(--background);color:var(--shell);font-size:1rem;}
+  code{color:var(--key);}
+  .wrap{max-width:1680px;margin:0 auto;padding:40px 48px 96px;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-bottom:24px;margin-bottom:48px;border-bottom:2px solid var(--yellow);}
+  .page-head h1{font-size:2.4rem;font-weight:800;color:var(--vanilla);margin:0;}
+  .page-head h1 span{color:var(--yellow);}
+  .page-head p{margin:8px 0 0;color:var(--gray);font-size:1.05rem;}
+  .ver{font-size:.9rem;color:var(--gray);}
+  section.demo-sec{margin-bottom:96px;}
+  section.demo-sec > h2{font-size:1.5rem;font-weight:800;color:var(--yellow);margin:0 0 8px;}
+  section.demo-sec > .desc{color:var(--shell);margin:0 0 24px;max-width:1100px;}
+  details.code-box{margin-top:24px;border:1px solid var(--gray);border-radius:14px;background:var(--background);}
+  details.code-box summary{padding:14px 20px;cursor:pointer;color:var(--key);font-weight:700;font-size:.95rem;}
+  details.code-box pre{margin:0;padding:0 20px 20px;max-height:520px;overflow:auto;}
+  details.code-box code{color:var(--vanilla);font-size:.82rem;line-height:1.6;white-space:pre;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+  .btn-ui{background:var(--background);border:1px solid var(--gray);color:var(--shell);padding:8px 16px;border-radius:10px;font-size:.95rem;cursor:pointer;}
+  .btn-ui:hover{border-color:var(--key);color:var(--key);}
+
+  /* 通知：Bootstrap alert */
+  .toast-area{position:fixed;top:20px;right:24px;z-index:2000;width:380px;}
+  .alert.alert-ui{background:rgba(12,13,12,0.94);border:1px solid var(--key);color:var(--vanilla);border-radius:12px;padding:14px 48px 14px 16px;margin-bottom:12px;font-size:.95rem;}
+  .alert.alert-ui i{color:var(--key);margin-right:8px;}
+  .alert.alert-ui .btn-close{filter:invert(1) grayscale(1);padding:16px;}
+
+  /* 步驟文字 */
+  scene-step h3{font-size:1.3rem;font-weight:800;color:var(--vanilla);margin:0 0 10px;}
+  scene-step p{margin:0 0 10px;font-size:1.02rem;line-height:1.75;}
+  scene-step .q{color:var(--yellow);font-weight:700;}
+  scene-step .tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--key-deep);color:var(--vanilla);font-size:.85rem;margin-right:6px;}
+
+  /* 範例 1：圖表 */
+  .chart-title{font-size:1.1rem;font-weight:800;color:var(--vanilla);margin:0 0 12px;align-self:flex-start;}
+  .legend{display:flex;gap:20px;margin-top:10px;font-size:.9rem;align-self:flex-start;}
+  .legend b{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+  .model{max-width:720px;font-size:1.15rem;line-height:1.9;color:var(--vanilla);}
+  .model h4{font-size:1rem;color:var(--yellow);letter-spacing:.1em;margin:0 0 14px;}
+  .model span{padding:2px 0;}
+
+  /* 範例 2：文章 */
+  .passage{padding:48px 56px 64px;color:var(--background);}
+  .passage h3{font-size:1.6rem;font-weight:800;margin:0 0 24px;}
+  .passage p{font-size:1.1rem;line-height:1.85;margin:0 0 22px;}
+  .passage p b{display:inline-block;width:28px;color:var(--key-deep);}
+
+  /* 範例 3：口說升級 */
+  .ans{height:100%;padding:72px 44px 36px;font-size:1.12rem;line-height:1.85;}
+  .ans.plain{background:var(--shell);color:var(--background);}
+  .ans.pro{background:var(--key-deep);color:var(--vanilla);}
+  .ans.pro em{font-style:normal;color:var(--yellow);font-weight:700;}
+
+  /* 範例 4：口說流程 */
+  .flow-layer{text-align:center;}
+  .flow-layer i{font-size:5rem;display:block;margin-bottom:16px;}
+  .flow-layer b{display:block;font-size:1.6rem;color:var(--vanilla);margin-bottom:6px;}
+  .flow-layer span{font-size:1.05rem;}
+
+  /* 屬性表 */
+  .attr-table{width:100%;border-collapse:collapse;font-size:.92rem;}
+  .attr-table th{background:var(--key-deep);color:var(--vanilla);text-align:left;padding:12px 14px;font-weight:700;}
+  .attr-table td{padding:10px 14px;border-bottom:1px solid var(--gray);vertical-align:top;color:var(--shell);}
+  .attr-table td:first-child{white-space:nowrap;}
+  .attr-table tr.group td{background:var(--background);color:var(--yellow);font-weight:800;padding-top:22px;border-bottom:2px solid var(--yellow);}
+</style>
+</head>
+<body>
+<div class="toast-area" id="toastArea"></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div>
+      <h1>&lt;<span>ui-scroll-scene</span>&gt; 捲動敘事元件</h1>
+      <p>一欄固定舞台，一欄捲動步驟；捲到哪一步，舞台就切換到對應狀態。</p>
+    </div>
+    <div class="ver">v1.0.0 ・ 11-07-26</div>
+  </header>
+
+  <!-- 1 -->
+  <section class="demo-sec">
+    <h2>1. 寫作第一部分圖表解析（圖層、聚光、放大）</h2>
+    <p class="desc">舞台放兩個 <code>&lt;scene-layer&gt;</code>：圖表與範文。步驟用 <code>show</code> 切換圖層，<code>focus</code> 聚光，<code>zoom</code> 放大到指定元素。內嵌 SVG 的線條與圓點也能被聚光。</p>
+    <div data-live="d1"></div>
+    <details class="code-box"><summary>查看程式碼</summary><pre><code data-code="d1"></code></pre></details>
+    <script type="text/plain" id="d1">
+<ui-scroll-scene stage-width="58" radius="20" border-width="3" border-gradient="deep" numbered nav="dots">
+  <scene-stage>
+    <scene-layer id="chart">
+      <div class="chart-title">International students in three cities, 2016 to 2024 (thousands)</div>
+      <svg viewBox="0 0 640 400" width="100%" style="max-height:78%">
+        <g stroke="#86877F" stroke-width="1">
+          <line x1="50" y1="60" x2="610" y2="60"/><line x1="50" y1="160" x2="610" y2="160"/>
+          <line x1="50" y1="260" x2="610" y2="260"/><line x1="50" y1="360" x2="610" y2="360"/>
+        </g>
+        <g fill="#C6C7BD" font-size="13">
+          <text x="20" y="64">60</text><text x="20" y="164">40</text><text x="20" y="264">20</text><text x="28" y="364">0</text>
+          <text x="44" y="388">2016</text><text x="179" y="388">2018</text><text x="314" y="388">2020</text>
+          <text x="449" y="388">2022</text><text x="584" y="388">2024</text>
+        </g>
+        <polyline id="line-syd" fill="none" stroke="#51DBCF" stroke-width="4" points="60,210 127.5,200 195,185 262.5,220 330,205 397.5,180 465,160 532.5,140 600,125"/>
+        <polyline id="line-tor" fill="none" stroke="#E3D322" stroke-width="4" points="60,270 127.5,250 195,225 262.5,230 330,195 397.5,165 465,130 532.5,100 600,70"/>
+        <polyline id="line-dub" fill="none" stroke="#FF91D7" stroke-width="4" points="60,310 127.5,300 195,295 262.5,305 330,290 397.5,275 465,265 532.5,250 600,240"/>
+        <circle id="cross" cx="296" cy="212" r="22" fill="none" stroke="#DBEDD8" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle id="peak" cx="600" cy="70" r="8" fill="#E3D322"/>
+      </svg>
+      <div class="legend"><span><b style="background:#51DBCF"></b>Sydney</span><span><b style="background:#E3D322"></b>Toronto</span><span><b style="background:#FF91D7"></b>Dublin</span></div>
+    </scene-layer>
+    <scene-layer id="model">
+      <div class="model">
+        <h4>MODEL ANSWER</h4>
+        <span id="s1">The line graph compares the number of international students in Sydney, Toronto and Dublin between 2016 and 2024.</span>
+        <span id="s2">Overall, all three cities attracted more students, but Toronto grew fastest and overtook Sydney around 2020.</span>
+        <span id="s3">Toronto rose from about 18,000 to a peak of 58,000, while Sydney climbed more modestly from 30,000 to 47,000.</span>
+        <span id="s4">Dublin remained the smallest destination throughout, reaching just 24,000 by the end of the period.</span>
+      </div>
+    </scene-layer>
+  </scene-stage>
+
+  <scene-step show="chart">
+    <h3>先看整體</h3>
+    <p>三條線最後都比起點高，代表三個城市的留學生都增加了。寫作時第一件事就是找出這種整體趨勢。</p>
+  </scene-step>
+  <scene-step focus="#line-tor">
+    <h3>誰成長最快？</h3>
+    <p>多倫多從最低的位置一路往上，斜率最陡。這是概述句一定要提到的重點。</p>
+  </scene-step>
+  <scene-step zoom="#cross" focus="#cross">
+    <h3>關鍵交叉點</h3>
+    <p>2019 到 2020 年之間，多倫多超越雪梨。交叉點是很好的比較素材，可以用 <span class="q">overtook</span> 描述。</p>
+  </scene-step>
+  <scene-step focus="#peak">
+    <h3>最高點</h3>
+    <p>多倫多在 2024 年達到 58,000 人，是全圖最高值。描述細節段落時，先寫極值再寫其他數據。</p>
+  </scene-step>
+  <scene-step show="model" transition="slide" focus="#s1,#s2">
+    <h3>範文：開頭與概述</h3>
+    <p>第一句改寫題目，第二句就是概述：整體趨勢加上最明顯的特徵。</p>
+  </scene-step>
+  <scene-step focus="#s3,#s4">
+    <h3>範文：細節段落</h3>
+    <p>先比較兩個主要城市，再單獨描述最小的一個。每個數字都對應到圖表上看得到的位置。</p>
+  </scene-step>
+</ui-scroll-scene>
+    </script>
+  </section>
+
+  <!-- 2 -->
+  <section class="demo-sec">
+    <h2>2. 閱讀定位訓練（單一內容、平移、步驟在左）</h2>
+    <p class="desc">舞台不放圖層時，內容是一整篇文章。<code>pan</code> 只平移不縮放，把答案所在段落帶到舞台中央；<code>focus</code> 標出同義替換的位置。這裡使用 <code>stage-side="right"</code>、<code>step-style="line"</code>。</p>
+    <div data-live="d2"></div>
+    <details class="code-box"><summary>查看程式碼</summary><pre><code data-code="d2"></code></pre></details>
+    <script type="text/plain" id="d2">
+<ui-scroll-scene stage-side="right" stage-width="56" stage-bg="vanilla" radius="16"
+                 border-width="2" border-color="gray" step-style="line" accent="key-deep"
+                 dim="rgba(12, 13, 12, 0.8)" stage-height="520" numbered>
+  <scene-stage>
+    <article class="passage">
+      <h3>The Return of the Night Train</h3>
+      <p id="pA"><b>A</b>Twenty years ago, many European rail companies were quietly retiring their overnight services. Budget airlines had made short flights cheap, and sleeping cars seemed like a relic of another age.</p>
+      <p id="pB"><b>B</b>That picture has changed. Since the late 2010s, several operators have restored routes that once linked major capitals, and new companies have entered the market with modern carriages.</p>
+      <p id="pC"><b>C</b>Part of the appeal is practical. A traveller who boards at ten in the evening and arrives at eight the next morning saves <span id="k1">the price of a hotel room</span>, which can make the journey cheaper than flying.</p>
+      <p id="pD"><b>D</b>Environmental concerns also play a role. Researchers estimate that <span id="k2">a seat on an overnight train produces a fraction of the emissions</span> of the same trip by air, a figure that many younger passengers now check before booking.</p>
+      <p id="pE"><b>E</b>Yet the revival faces obstacles. Rolling stock is expensive, track access fees vary from country to country, and <span id="k3">timetables must be agreed by several national operators</span>, which slows the opening of new lines.</p>
+      <p id="pF"><b>F</b>Despite these difficulties, demand continues to grow. On some routes, tickets sell out weeks in advance, suggesting that the night train has found a new generation of fans.</p>
+    </article>
+  </scene-stage>
+
+  <scene-step>
+    <h3>先瀏覽文章</h3>
+    <p>文章比舞台長，舞台只露出開頭。往下捲動，每一題都會把舞台帶到答案所在的段落。</p>
+  </scene-step>
+  <scene-step pan="#pC" focus="#k1">
+    <p class="q">Which paragraph mentions a way travellers can save money on accommodation?</p>
+    <p><span class="tag">同義替換</span>save money on accommodation 對應 saves the price of a hotel room。答案是 C。</p>
+  </scene-step>
+  <scene-step pan="#pD" focus="#k2">
+    <p class="q">Which paragraph refers to the lower environmental impact of rail travel?</p>
+    <p><span class="tag">同義替換</span>lower environmental impact 對應 a fraction of the emissions。答案是 D。</p>
+  </scene-step>
+  <scene-step pan="#pE" focus="#k3">
+    <p class="q">Which paragraph describes the need for cooperation between countries?</p>
+    <p><span class="tag">同義替換</span>cooperation between countries 對應 agreed by several national operators。答案是 E。</p>
+  </scene-step>
+</ui-scroll-scene>
+    </script>
+  </section>
+
+  <!-- 3 -->
+  <section class="demo-sec">
+    <h2>3. 驅動其他元件：口說答案升級（set 與 scrub）</h2>
+    <p class="desc">舞台裡放一個 <code>&lt;ui-screen&gt;</code>。<code>scrub</code> 讓分隔線隨捲動連續移動，<code>set</code> 在指定步驟改變它的屬性。往回捲時，所有屬性都會還原。</p>
+    <div data-live="d3"></div>
+    <details class="code-box"><summary>查看程式碼</summary><pre><code data-code="d3"></code></pre></details>
+    <script type="text/plain" id="d3">
+<ui-scroll-scene stage-width="60" radius="18" border-width="3" border-gradient="warm" nav="bar" accent="yellow" layer-padding="48">
+  <scene-stage>
+    <scene-layer>
+      <ui-screen id="upg" position="100" height="100%" radius="12" mode="handle" style="width:100%;height:100%">
+        <ui-screen-before label="普通回答">
+          <div class="ans plain">I like Kyoto very much. It is a very beautiful city and it has many old temples. I went there last year with my sister and we were very happy. The food was also very good.</div>
+        </ui-screen-before>
+        <ui-screen-after label="高分回答">
+          <div class="ans pro">Kyoto has <em>a special place in my heart</em>. It is <em>steeped in history</em>, with temples on almost every corner. I <em>spent a week there</em> with my sister last spring, and it was <em>an unforgettable trip</em>. The local food was <em>a highlight in itself</em>.</div>
+        </ui-screen-after>
+      </ui-screen>
+    </scene-layer>
+  </scene-stage>
+
+  <scene-step>
+    <h3>先讀普通回答</h3>
+    <p>內容沒有錯，但用字重複：very 出現了四次，句型也幾乎相同。</p>
+  </scene-step>
+  <scene-step scrub="#upg position 100 0">
+    <h3>往下捲，慢慢換成高分版本</h3>
+    <p>這一步的捲動距離對應分隔線的位置。黃色字是替換進來的搭配詞。</p>
+  </scene-step>
+  <scene-step set="#upg position=50">
+    <h3>停在中間對照</h3>
+    <p>左右各看一半，比較同一個意思的兩種說法。也可以直接拖曳把手。</p>
+  </scene-step>
+  <scene-step set="#upg orientation=vertical; #upg position=50">
+    <h3>改成上下對照</h3>
+    <p><code>set</code> 可以改任何屬性，這裡把方向改成上下分隔。往回捲就會變回左右。</p>
+  </scene-step>
+</ui-scroll-scene>
+    </script>
+  </section>
+
+  <!-- 4 -->
+  <section class="demo-sec">
+    <h2>4. 固定高度區塊內捲動，事件與方法</h2>
+    <p class="desc"><code>scroll="self"</code> 讓元件在自己的高度內捲動，適合嵌在卡片或版面格子裡。下方按鈕呼叫 <code>goTo()</code>、<code>prev()</code>、<code>next()</code>，進入步驟時以 Bootstrap alert 顯示 <code>scene:enter</code> 事件。</p>
+    <div class="toolbar">
+      <button class="btn-ui" data-go="prev"><i class="bi bi-chevron-up"></i> 上一步</button>
+      <button class="btn-ui" data-go="next"><i class="bi bi-chevron-down"></i> 下一步</button>
+      <button class="btn-ui" data-go="0">第 1 步</button>
+      <button class="btn-ui" data-go="3">第 4 步</button>
+    </div>
+    <div data-live="d4"></div>
+    <details class="code-box"><summary>查看程式碼</summary><pre><code data-code="d4"></code></pre></details>
+    <script type="text/plain" id="d4">
+<ui-scroll-scene id="selfDemo" scroll="self" height="560" stage-side="right" stage-width="50"
+                 step-style="plain" layer-transition="zoom" radius="16" border-width="3"
+                 border-gradient="candy" accent="pink" trigger="45">
+  <scene-stage>
+    <scene-layer id="f1" class="flow-layer"><i class="bi bi-card-text" style="color:#5DBAE8"></i><b>讀題卡</b><span>看清楚四個提示</span></scene-layer>
+    <scene-layer id="f2" class="flow-layer"><i class="bi bi-pencil-square" style="color:#E3D322"></i><b>準備 1 分鐘</b><span>寫關鍵字，不寫句子</span></scene-layer>
+    <scene-layer id="f3" class="flow-layer"><i class="bi bi-mic-fill" style="color:#FF91D7"></i><b>說 2 分鐘</b><span>照筆記順序展開</span></scene-layer>
+    <scene-layer id="f4" class="flow-layer"><i class="bi bi-chat-dots-fill" style="color:#71CD76"></i><b>回答追問</b><span>一兩句簡短回應</span></scene-layer>
+  </scene-stage>
+
+  <scene-step id="card" show="f1"><h3>第一步：讀題卡</h3><p>題卡上有一個主題和四個提示問題，先確認每個提示都會回答到。</p></scene-step>
+  <scene-step id="prep" show="f2"><h3>第二步：準備</h3><p>一分鐘只夠寫關鍵字。依照提示順序寫下四組詞，最後一組留給感想。</p></scene-step>
+  <scene-step id="talk" show="f3"><h3>第三步：開口</h3><p>說到兩分鐘被打斷是正常的，代表內容足夠。不要提早停下來。</p></scene-step>
+  <scene-step id="follow" show="f4"><h3>第四步：追問</h3><p>考官可能再問一兩個相關問題，簡短回答即可。</p></scene-step>
+</ui-scroll-scene>
+    </script>
+  </section>
+
+  <!-- 5 -->
+  <section class="demo-sec">
+    <h2>5. 屬性、事件與方法一覽</h2>
+    <table class="attr-table">
+      <thead><tr><th style="width:240px">名稱</th><th style="width:300px">可用值</th><th style="width:180px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr class="group"><td colspan="4">&lt;ui-scroll-scene&gt; 版面</td></tr>
+        <tr><td><code>stage-side</code></td><td>left ／ right</td><td>left</td><td>舞台在左或右。</td></tr>
+        <tr><td><code>stage-width</code></td><td>20 到 80</td><td>55</td><td>舞台寬度百分比。</td></tr>
+        <tr><td><code>stage-top</code></td><td>長度 ／ auto</td><td>auto</td><td>舞台吸頂距離。auto 為 24px，頁面上有 <code>sticky-head</code> 時再加上它的高度。</td></tr>
+        <tr><td><code>stage-height</code></td><td>長度</td><td>視窗高度減上下距離</td><td>舞台高度。</td></tr>
+        <tr><td><code>gap</code></td><td>px</td><td>48</td><td>舞台與步驟欄的距離。</td></tr>
+        <tr><td><code>scroll</code></td><td>page ／ self</td><td>page</td><td>page 跟著整頁捲動；self 在元件自己的高度內捲動。</td></tr>
+        <tr><td><code>height</code></td><td>長度</td><td>600</td><td>scroll="self" 時的元件高度。</td></tr>
+        <tr><td><code>trigger</code></td><td>0 到 100</td><td>55</td><td>觸發線在可視高度的百分比，步驟頂端越過這條線就啟動。</td></tr>
+
+        <tr class="group"><td colspan="4">&lt;ui-scroll-scene&gt; 步驟</td></tr>
+        <tr><td><code>step-style</code></td><td>card ／ line ／ plain</td><td>card</td><td>步驟外觀。未啟動的步驟自動變暗。</td></tr>
+        <tr><td><code>step-min-height</code></td><td>長度</td><td>可視高度的 60%</td><td>每一步的最小高度，決定每步需要捲動多久。</td></tr>
+        <tr><td><code>step-gap</code></td><td>px</td><td>24</td><td>步驟之間的距離。</td></tr>
+        <tr><td><code>lead</code> ／ <code>tail</code></td><td>長度</td><td>30% ／ 45%</td><td>步驟欄上下的留白，讓第一步和最後一步能捲到觸發線。</td></tr>
+        <tr><td><code>numbered</code></td><td>布林</td><td>無</td><td>步驟前顯示 01、02 編號。</td></tr>
+        <tr><td><code>accent</code></td><td>顏色</td><td>key</td><td>目前步驟、導覽與聚光框的顏色。</td></tr>
+        <tr><td><code>nav</code></td><td>dots ／ bar ／ none</td><td>dots</td><td>舞台邊緣的導覽：可點擊的圓點、進度條或不顯示。</td></tr>
+
+        <tr class="group"><td colspan="4">&lt;ui-scroll-scene&gt; 舞台</td></tr>
+        <tr><td><code>layer-transition</code></td><td>fade ／ slide ／ zoom ／ none</td><td>fade</td><td>圖層切換的預設轉場。</td></tr>
+        <tr><td><code>layer-padding</code></td><td>px</td><td>32</td><td>圖層內距。</td></tr>
+        <tr><td><code>transition</code></td><td>毫秒</td><td>600</td><td>圖層、放大與平移的動畫時間。</td></tr>
+        <tr><td><code>dim</code></td><td>顏色</td><td>rgba(12, 13, 12, 0.82)</td><td>聚光時其餘部分的遮罩色。</td></tr>
+        <tr><td><code>focus-style</code></td><td>both ／ spotlight ／ ring</td><td>both</td><td>spotlight 只變暗；ring 只加外框；both 兩者都有。</td></tr>
+        <tr><td><code>focus-padding</code></td><td>px</td><td>8</td><td>聚光範圍向外擴張的距離。</td></tr>
+        <tr><td><code>zoom-max</code> ／ <code>zoom-padding</code></td><td>數字 ／ px</td><td>3 ／ 24</td><td>放大倍率上限，以及放大到元素時保留的邊距。</td></tr>
+        <tr><td><code>stage-bg</code></td><td>顏色</td><td>background</td><td>舞台底色。</td></tr>
+        <tr><td><code>border-width</code> ／ <code>border-color</code></td><td>長度 ／ 顏色</td><td>0 ／ 無</td><td>舞台外框。</td></tr>
+        <tr><td><code>border-gradient</code></td><td>預設名稱 ／ 逗號色票 ／ CSS 漸層</td><td>無</td><td>靜態漸層外框，與 ui-screen 相同的八組預設集。</td></tr>
+        <tr><td><code>border-gradient-angle</code> ／ <code>border-gradient-type</code></td><td>角度 ／ linear、radial、conic</td><td>135 ／ linear</td><td>漸層角度與類型。</td></tr>
+        <tr><td><code>radius</code> ／ <code>shadow</code></td><td>長度 ／ 布林或 box-shadow</td><td>16 ／ 無</td><td>圓角與陰影。</td></tr>
+
+        <tr class="group"><td colspan="4">&lt;scene-step&gt;</td></tr>
+        <tr><td><code>show</code></td><td>圖層 id</td><td>第一層</td><td>切換到指定圖層。效果會延續到後面的步驟。</td></tr>
+        <tr><td><code>transition</code></td><td>fade ／ slide ／ zoom ／ none</td><td>沿用容器</td><td>這一步切換圖層時的轉場。</td></tr>
+        <tr><td><code>focus</code></td><td>CSS 選擇器，逗號可多個</td><td>無</td><td>聚光舞台裡的元素，只作用在這一步。</td></tr>
+        <tr><td><code>zoom</code></td><td>選擇器 ／ 倍率 ／ x%,y%,倍率</td><td>無</td><td>放大到元素、以中心放大，或放大到指定座標，只作用在這一步。</td></tr>
+        <tr><td><code>pan</code></td><td>選擇器</td><td>無</td><td>不縮放，只把元素平移到舞台中央，適合長文。</td></tr>
+        <tr><td><code>set</code></td><td><code>選擇器 屬性=值</code>，分號分隔</td><td>無</td><td>設定舞台內（找不到時改找整頁）元素的屬性；<code>!屬性</code> 為移除。效果會延續，往回捲時還原。</td></tr>
+        <tr><td><code>scrub</code></td><td><code>選擇器 屬性 起 迄 單位</code></td><td>無</td><td>在這一步捲動的過程中，數值從起點連續變到終點。</td></tr>
+        <tr><td><code>source</code></td><td>template 或元素 id</td><td>無</td><td>從 <code>&lt;template&gt;</code> 複製步驟內容。</td></tr>
+        <tr><td><code>nav-label</code></td><td>文字</td><td>步驟序號</td><td>滑鼠停在導覽圓點上的提示。</td></tr>
+
+        <tr class="group"><td colspan="4">&lt;scene-layer&gt;</td></tr>
+        <tr><td><code>id</code></td><td>文字</td><td>無</td><td>給 <code>show</code> 指定。</td></tr>
+        <tr><td><code>align</code></td><td>start</td><td>置中</td><td>預設內容置中；start 改為從左上排起。</td></tr>
+
+        <tr class="group"><td colspan="4">事件與方法</td></tr>
+        <tr><td><code>scene:enter</code></td><td colspan="2">detail：index、id、step</td><td>進入某一步時觸發，會冒泡。</td></tr>
+        <tr><td><code>scene:progress</code></td><td colspan="2">detail：index、progress</td><td>有 <code>scrub</code> 的步驟捲動時持續觸發，progress 為 0 到 1。</td></tr>
+        <tr><td><code>index</code> ／ <code>steps</code></td><td colspan="2">唯讀</td><td>目前步驟（尚未進入第一步時為 -1）與所有步驟元素。</td></tr>
+        <tr><td><code>goTo(n, { smooth })</code></td><td colspan="2">smooth 預設 true</td><td>捲到第 n 步（從 0 起算）。</td></tr>
+        <tr><td><code>next()</code> ／ <code>prev()</code> ／ <code>refresh()</code></td><td colspan="2"></td><td>下一步、上一步、重新套用屬性與版面。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-screen.js"></script>
+<script src="ui-scroll-scene.js"></script>
+<script>
+(() => {
+  const dedent = (s) => {
+    const lines = s.replace(/^\s*\n/, '').replace(/\s+$/, '').split('\n');
+    const ind = Math.min(...lines.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length));
+    return lines.map((l) => l.slice(ind)).join('\n');
+  };
+
+  const notify = (html) => {
+    const area = document.getElementById('toastArea');
+    const el = document.createElement('div');
+    el.className = 'alert alert-ui alert-dismissible fade show';
+    el.setAttribute('role', 'alert');
+    el.innerHTML = html + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    area.prepend(el);
+    while (area.children.length > 4) area.lastElementChild.remove();
+    setTimeout(() => {
+      if (!el.isConnected) return;
+      if (window.bootstrap) bootstrap.Alert.getOrCreateInstance(el).close(); else el.remove();
+    }, 3600);
+  };
+
+  document.querySelectorAll('script[type="text/plain"][id]').forEach((sc) => {
+    const src = dedent(sc.textContent);
+    const live = document.querySelector(`[data-live="${sc.id}"]`);
+    const code = document.querySelector(`[data-code="${sc.id}"]`);
+    if (code) code.textContent = src;
+    if (live) live.innerHTML = src;
+  });
+
+  const self = document.getElementById('selfDemo');
+  self.addEventListener('scene:enter', (e) => {
+    notify(`<i class="bi bi-signpost-2-fill"></i>scene:enter，第 <b>${e.detail.index + 1}</b> 步（id：${e.detail.id}）`);
+  });
+  document.querySelectorAll('[data-go]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const v = b.dataset.go;
+      if (v === 'next') self.next(); else if (v === 'prev') self.prev(); else self.goTo(+v);
+    });
+  });
+})();
+</script>
+</body>
+</html>
