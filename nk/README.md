@@ -7,6 +7,7 @@
 - 以 Delaunay 三角剖分產生連線，線條自然延伸出畫布邊緣
 - 支援書籤跳轉與外部連結
 - 滑鼠移入時相連線條亮起，載入時播放線條描繪動畫，可選漂浮動畫
+- 顏色可用色票名稱或色碼（#RGB、#RRGGBB、#RRGGBBAA、rgb()、rgba()）
 - 錯誤以 Bootstrap alert 顯示在元件上方，不使用瀏覽器彈窗
 
 ## 目錄
@@ -16,9 +17,10 @@
 - [範例](#範例)
 - [屬性](#屬性)
 - [方法與事件](#方法與事件)
-- [色票](#色票)
+- [顏色](#顏色)
 - [錯誤提示](#錯誤提示)
 - [運作原理](#運作原理)
+- [更新紀錄](#更新紀錄)
 - [瀏覽器支援](#瀏覽器支援)
 - [授權](#授權)
 
@@ -114,7 +116,7 @@
 
 ### 三、漂浮動畫與自訂配色
 
-所有顏色都以色票名稱指定。節點省略 `color` 時會自動輪替顏色。
+顏色以色票名稱指定。節點省略 `color` 時會自動輪替顏色。
 
 ```html
 <ui-network float height="460" padding="48 80" seed="drift"
@@ -132,7 +134,24 @@
 </ui-network>
 ```
 
-### 四、自訂直徑與單一圓圈底色
+### 四、自訂色碼
+
+所有顏色屬性都可直接填色碼，也可與色票名稱混用。以下用白色圓圈與約 85% 透明度的白線重現原圖風格。
+
+```html
+<ui-network seed="white" padding="40" node-fill="#FFFFFF" line-color="#FFFFFFD9">
+  <ui-node icon="map-fill" size="xl" color="#71CD76"></ui-node>
+  <ui-node icon="controller" size="lg" color="rgb(134 135 127)"></ui-node>
+  <ui-node icon="palette-fill" size="lg" color="indigo"></ui-node>
+  <ui-node icon="book-half" size="md" color="#FF5530"></ui-node>
+  <ui-node icon="heart-pulse-fill" size="md" color="#EF6661"></ui-node>
+  <ui-node icon="cup-hot-fill" size="sm" color="rgba(23, 104, 120, 0.9)"></ui-node>
+  <ui-node icon="trophy-fill" size="xs" color="#F80"></ui-node>
+  <ui-node icon="star-fill" size="xs" color="yellow" fill="#0C0D0C"></ui-node>
+</ui-network>
+```
+
+### 五、自訂直徑與單一圓圈底色
 
 `size` 可直接寫直徑數字（px）。加上 `fixed-size` 後，尺寸不會隨容器寬度縮放。
 
@@ -145,7 +164,7 @@
 </ui-network>
 ```
 
-### 五、重新隨機與控制項
+### 六、重新隨機與控制項
 
 ```html
 <ui-network id="net" seed="2026">
@@ -177,7 +196,7 @@
 </script>
 ```
 
-### 六、攔截點擊事件
+### 七、攔截點擊事件
 
 每次點擊圓圈都會觸發 `node-click`。呼叫 `preventDefault()` 後，原本的跳轉不會執行。
 
@@ -203,7 +222,7 @@
 </script>
 ```
 
-### 七、動態新增與修改節點
+### 八、動態新增與修改節點
 
 新增或移除 `<ui-node>` 會自動重新排列；修改節點屬性只更新外觀，不會打亂版面。
 
@@ -239,7 +258,7 @@ node.remove();
 | `fixed-size` | 未啟用 | 布林屬性。圓圈尺寸不隨容器寬度縮放，也不自動縮小以避免重疊。 |
 | `bg-from` | `blue` | 背景放射漸層的中心色。 |
 | `bg-to` | `key-deep` | 背景放射漸層的外圍色。 |
-| `line-color` | `shell` | 線條顏色，透明度固定為 0.8。 |
+| `line-color` | `shell` | 線條顏色。未指定透明度時為 0.8，以 `#RRGGBBAA` 或 `rgba()` 指定時以該值為準。 |
 | `line-active` | `key` | 滑鼠移入圓圈時，相連線條與圓圈外框的顏色。 |
 | `line-width` | `1.5` | 線條粗細，單位 px。 |
 | `node-fill` | `vanilla` | 所有圓圈的底色。 |
@@ -252,7 +271,7 @@ node.remove();
 |---|---|---|
 | `icon` | `circle` | Bootstrap Icons 名稱，可省略 `bi-` 前綴。 |
 | `size` | `md` | 預設級距或直徑數字，見下表。 |
-| `color` | 自動輪替 | 圖示顏色，使用色票名稱。 |
+| `color` | 自動輪替 | 圖示顏色。 |
 | `fill` | 繼承 `node-fill` | 單一圓圈的底色。 |
 | `href` | 無 | 以 `#` 開頭時捲動到同頁書籤，其他網址正常跳頁。 |
 | `target` | 無 | 搭配 `href` 使用，`_blank` 會自動加上 `rel="noopener noreferrer"`。 |
@@ -287,9 +306,31 @@ const palette = customElements.get('ui-network').palette;
 console.log(palette.key);   // "#51DBCF"
 ```
 
-## 色票
+## 顏色
 
-所有顏色屬性只接受以下名稱，不接受色碼。
+所有顏色屬性（`color`、`fill`、`node-fill`、`bg-from`、`bg-to`、`line-color`、`line-active`）都接受以下格式：
+
+| 格式 | 範例 | 說明 |
+|---|---|---|
+| 色票名稱 | `key` | 見下方色票。名稱優先，因此 `red`、`blue` 等代表色票色，不是 CSS 具名顏色。 |
+| `#RGB`、`#RRGGBB` | `#FFF`、`#FFFFFF` | 不透明色碼，大小寫不拘。 |
+| `#RGBA`、`#RRGGBBAA` | `#FFFFFFD9` | 帶透明度的色碼。 |
+| `rgb()`、`rgba()` | `rgba(255, 255, 255, 0.9)` | 支援逗號與空白兩種寫法，例如 `rgb(255 255 255 / 0.9)`。 |
+
+任何顏色的透明度都不得低於 0.78，低於時會提示並自動調整為 0.78。CSS 具名顏色（例如 `white`、`black`）不支援。
+
+### 線條透明度
+
+| 寫法 | 實際透明度 |
+|---|---|
+| `line-color="shell"` | 0.8（預設） |
+| `line-color="#FFFFFF"` | 0.8（預設） |
+| `line-color="#FFFFFFD9"` | 約 0.85 |
+| `line-color="#FFFFFF80"` | 0.5 低於下限，調整為 0.78 |
+
+### 色票
+
+元件預設色與自動輪替色都來自以下色票。
 
 | 名稱 | 色碼 | 名稱 | 色碼 |
 |---|---|---|---|
@@ -313,17 +354,20 @@ console.log(palette.key);   // "#51DBCF"
 |---|---|
 | 未載入 Bootstrap Icons 樣式表 | 紅色提示，圖示無法顯示 |
 | 圖示名稱不存在 | 黃色提示，列出所有無效名稱 |
-| 顏色不在色票中 | 黃色提示，改用預設色 |
+| 顏色無法辨識 | 黃色提示，改用預設色 |
+| 顏色透明度低於 0.78 | 黃色提示，調整為 0.78 |
 | 尺寸無法辨識 | 黃色提示，改用 `md` |
 | 書籤 id 不存在 | 點擊時黃色提示，不捲動 |
 | 空間不足導致重疊 | 黃色提示，建議減少節點或調整尺寸 |
 
 ```html
-<!-- 這段會產生四則提示 -->
+<!-- 這段會產生五則提示 -->
 <ui-network seed="oops" height="360" animate="off">
   <ui-node icon="elephant" size="lg" color="red"></ui-node>
-  <ui-node icon="heart-fill" size="md" color="brown"></ui-node>
+  <ui-node icon="heart-fill" size="md" color="white"></ui-node>
   <ui-node icon="flag-fill" size="huge" color="blue" href="#no-such-bookmark"></ui-node>
+  <ui-node icon="droplet-fill" size="sm" color="#12345"></ui-node>
+  <ui-node icon="eye-slash-fill" size="sm" fill="rgba(255, 255, 255, 0.5)"></ui-node>
 </ui-network>
 ```
 
@@ -333,6 +377,19 @@ console.log(palette.key);   // "#51DBCF"
 2. **鬆弛**：反覆推開過近的圓圈，大圓移動較少，確保彼此保持間距。
 3. **連線**：將圓心與畫布外的虛擬錨點一起做 Delaunay 三角剖分，刪除過長的邊與穿過其他圓圈的邊，孤立的圓圈會補上最短的一條連線。
 4. **繪製**：底層 SVG 畫線，上層絕對定位的元素畫圓圈與圖示。座標以比例儲存，視窗縮放時只重新鬆弛，不會重新隨機。
+
+## 更新紀錄
+
+### v1.1.0
+
+- 所有顏色屬性開放色碼：`#RGB`、`#RGBA`、`#RRGGBB`、`#RRGGBBAA`、`rgb()`、`rgba()`
+- `line-color` 帶透明度時以該值為準，未帶透明度時維持預設 0.8
+- 透明度低於 0.78 時提示並自動調整為 0.78
+- 未設定顏色時的預設色與自動輪替色維持不變
+
+### v1.0.0
+
+- 首次發布
 
 ## 瀏覽器支援
 

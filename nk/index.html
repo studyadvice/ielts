@@ -49,12 +49,16 @@ h3.ref-title{font-size:1.1rem;color:var(--blue);margin:8px 0 10px 0;}
 .bookmark h3{font-size:1.3rem;color:var(--key);margin:0 0 8px 0;}
 .bookmark p{color:var(--shell);font-size:.95rem;margin:0 0 12px 0;}
 .back-top{color:var(--blue);font-size:.9rem;}
+.ver{display:inline-block;background:var(--key-deep);color:var(--vanilla);border:1px solid var(--key);border-radius:6px;font-size:.75rem;padding:2px 8px;margin:0 0 0 8px;vertical-align:middle;}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0 0 0;}
+.diff .code-box.old{border-color:var(--gray);}
+.diff .code-box.old code{color:var(--gray);}
 </style>
 </head>
 <body>
 <div class="page" id="top">
   <h1>ui-network 元件展示</h1>
-  <p class="lead-note">透過 <code>&lt;ui-network&gt;</code> 與 <code>&lt;ui-node&gt;</code> 語意標籤宣告 Bootstrap Icons 名稱與圓圈尺寸，元件自動隨機排列並以三角網格繪製連線。版本 v1.0.0，建立日期 11-07-26。</p>
+  <p class="lead-note">透過 <code>&lt;ui-network&gt;</code> 與 <code>&lt;ui-node&gt;</code> 語意標籤宣告 Bootstrap Icons 名稱與圓圈尺寸，元件自動隨機排列並以三角網格繪製連線。目前版本 v1.1.0，建立日期 11-07-26。</p>
 
   <!-- 範例一 -->
   <section class="demo" data-demo>
@@ -242,6 +246,96 @@ net.addEventListener('node-click', e =&gt; {
     </script>
   </section>
 
+  <!-- 範例六（v1.1.0） -->
+  <section class="demo" data-demo>
+    <h2>範例六：自訂色碼<span class="ver">v1.1.0 新增</span></h2>
+    <p class="desc">所有顏色屬性除了色票名稱，也接受 #RGB、#RRGGBB、#RRGGBBAA、rgb() 與 rgba()。這裡用白色圓圈與約 85% 透明度的白線重現原圖風格；圖示顏色混用色票名稱、色碼與 rgb() 寫法。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network seed="white" padding="40" node-fill="#FFFFFF" line-color="#FFFFFFD9">
+  <ui-node icon="map-fill" size="xl" color="#71CD76"></ui-node>
+  <ui-node icon="controller" size="lg" color="rgb(134 135 127)"></ui-node>
+  <ui-node icon="palette-fill" size="lg" color="indigo"></ui-node>
+  <ui-node icon="book-half" size="md" color="#FF5530"></ui-node>
+  <ui-node icon="flower1" size="md" color="pink"></ui-node>
+  <ui-node icon="heart-pulse-fill" size="md" color="#EF6661"></ui-node>
+  <ui-node icon="briefcase-fill" size="md" color="playful"></ui-node>
+  <ui-node icon="pencil-square" size="sm" color="gray"></ui-node>
+  <ui-node icon="tv-fill" size="sm" color="violet"></ui-node>
+  <ui-node icon="cup-hot-fill" size="sm" color="rgba(23, 104, 120, 0.9)"></ui-node>
+  <ui-node icon="camera-fill" size="sm" color="#FF2E63"></ui-node>
+  <ui-node icon="trophy-fill" size="xs" color="#F80"></ui-node>
+  <ui-node icon="star-fill" size="xs" color="yellow" fill="#0C0D0C"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
+  <!-- 範例七（v1.1.0） -->
+  <section class="demo" data-demo>
+    <h2>範例七：色碼錯誤與透明度下限<span class="ver">v1.1.0 新增</span></h2>
+    <p class="desc">格式錯誤的色碼與 CSS 具名顏色（例如 white）會提示並改用預設色。透明度低於 0.78 時提示並自動調整為 0.78。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<ui-network seed="alpha" height="320" animate="off" line-color="rgba(255, 255, 255, 0.4)">
+  <ui-node icon="droplet-fill" size="lg" color="#12345" fill="#FFFFFF"></ui-node>
+  <ui-node icon="cloud-fill" size="md" color="white" fill="#FFFFFF"></ui-node>
+  <ui-node icon="eye-slash-fill" size="md" color="indigo" fill="rgba(255, 255, 255, 0.5)"></ui-node>
+  <ui-node icon="check-circle-fill" size="sm" color="green" fill="#FFFFFFE6"></ui-node>
+</ui-network>
+    </script>
+  </section>
+
+  <!-- 更新紀錄 -->
+  <section class="demo">
+    <h2>更新紀錄</h2>
+    <h3 class="ref-title">v1.1.0：開放自訂色碼</h3>
+    <p class="desc">所有顏色屬性（color、fill、node-fill、bg-from、bg-to、line-color、line-active）都可直接填色碼。未設定時的預設色與自動輪替色維持不變。</p>
+    <div class="diff">
+      <div>
+        <p class="code-label">v1.0.0：只接受色票名稱，色碼會被視為錯誤</p>
+        <pre class="code-box old"><code>&lt;ui-network node-fill="vanilla" line-color="shell"&gt;
+  &lt;ui-node icon="map-fill" color="green"&gt;&lt;/ui-node&gt;
+  &lt;!-- 下列寫法會提示「色票中沒有」並改用預設色 --&gt;
+  &lt;ui-node icon="tv-fill" color="#B484E8"&gt;&lt;/ui-node&gt;
+&lt;/ui-network&gt;</code></pre>
+      </div>
+      <div>
+        <p class="code-label">v1.1.0：色票名稱與色碼皆可</p>
+        <pre class="code-box"><code>&lt;ui-network node-fill="#FFFFFF" line-color="#FFFFFFD9"&gt;
+  &lt;ui-node icon="map-fill" color="green"&gt;&lt;/ui-node&gt;
+  &lt;ui-node icon="tv-fill" color="#B484E8"&gt;&lt;/ui-node&gt;
+  &lt;ui-node icon="book-half" color="rgb(255 85 48)"&gt;&lt;/ui-node&gt;
+&lt;/ui-network&gt;</code></pre>
+      </div>
+    </div>
+    <div class="diff">
+      <div>
+        <p class="code-label">v1.0.0：線條透明度固定</p>
+        <pre class="code-box old"><code>stroke: var(--un-line);
+stroke-opacity: 0.8;   /* 無法調整 */</code></pre>
+      </div>
+      <div>
+        <p class="code-label">v1.1.0：line-color 帶透明度時以該值為準</p>
+        <pre class="code-box"><code>line-color="shell"        → 透明度 0.8（預設）
+line-color="#FFFFFF"      → 透明度 0.8（預設）
+line-color="#FFFFFFD9"    → 透明度約 0.85
+line-color="#FFFFFF80"    → 0.5 低於下限，調整為 0.78</code></pre>
+      </div>
+    </div>
+  </section>
+
   <!-- 參考表 -->
   <section class="demo">
     <h2>屬性與 API 參考</h2>
@@ -255,8 +349,8 @@ net.addEventListener('node-click', e =&gt; {
         <tr><td><code>height</code></td><td>無</td><td>固定高度，單位 px。設定後會忽略 ratio。</td></tr>
         <tr><td><code>ratio</code></td><td>16:9</td><td>未設定 height 時，依寬度維持此比例。</td></tr>
         <tr><td><code>fixed-size</code></td><td>未啟用</td><td>布林屬性。啟用後圓圈尺寸不隨容器寬度縮放，也不自動縮小以避免重疊。</td></tr>
-        <tr><td><code>bg-from</code>、<code>bg-to</code></td><td>blue、key-deep</td><td>背景放射漸層的中心色與外圍色，使用色票名稱。</td></tr>
-        <tr><td><code>line-color</code></td><td>shell</td><td>線條顏色，透明度固定 0.8。</td></tr>
+        <tr><td><code>bg-from</code>、<code>bg-to</code></td><td>blue、key-deep</td><td>背景放射漸層的中心色與外圍色。</td></tr>
+        <tr><td><code>line-color</code></td><td>shell</td><td>線條顏色。未指定透明度時為 0.8，以 #RRGGBBAA 或 rgba() 指定時以該值為準。</td></tr>
         <tr><td><code>line-active</code></td><td>key</td><td>滑鼠移入圓圈時，相連線條與圓圈外框的顏色。</td></tr>
         <tr><td><code>line-width</code></td><td>1.5</td><td>線條粗細，單位 px。</td></tr>
         <tr><td><code>node-fill</code></td><td>vanilla</td><td>所有圓圈的底色。</td></tr>
@@ -271,7 +365,7 @@ net.addEventListener('node-click', e =&gt; {
       <tbody>
         <tr><td><code>icon</code></td><td>circle</td><td>Bootstrap Icons 名稱，可省略 bi- 前綴。</td></tr>
         <tr><td><code>size</code></td><td>md</td><td>xs (72)、sm (96)、md (120)、lg (150)、xl (210)，或直接寫直徑數字。數值以 1280px 寬為基準自動縮放。</td></tr>
-        <tr><td><code>color</code></td><td>自動輪替</td><td>圖示顏色，使用色票名稱。</td></tr>
+        <tr><td><code>color</code></td><td>自動輪替</td><td>圖示顏色。</td></tr>
         <tr><td><code>fill</code></td><td>繼承 node-fill</td><td>單一圓圈的底色。</td></tr>
         <tr><td><code>href</code></td><td>無</td><td>以 # 開頭時平滑捲動到同頁書籤，其他網址則正常跳頁。</td></tr>
         <tr><td><code>target</code></td><td>無</td><td>搭配 href 使用，例如 _blank 另開分頁。</td></tr>
@@ -290,6 +384,18 @@ net.addEventListener('node-click', e =&gt; {
         <tr><td><code>network-render</code></td><td>事件</td><td>每次重繪後觸發，detail 含 seed、nodes、edges。</td></tr>
       </tbody>
     </table>
+
+    <h3 class="ref-title">顏色格式</h3>
+    <table class="ref">
+      <thead><tr><th style="width:180px">格式</th><th style="width:200px">範例</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>色票名稱</td><td><code>key</code></td><td>見下方色票清單。名稱優先，因此 red、blue 等代表色票色，不是 CSS 具名顏色。</td></tr>
+        <tr><td><code>#RGB</code>、<code>#RRGGBB</code></td><td><code>#FFF</code>、<code>#FFFFFF</code></td><td>不透明色碼，大小寫不拘。</td></tr>
+        <tr><td><code>#RGBA</code>、<code>#RRGGBBAA</code></td><td><code>#FFFFFFD9</code></td><td>帶透明度的色碼。</td></tr>
+        <tr><td><code>rgb()</code>、<code>rgba()</code></td><td><code>rgba(255, 255, 255, 0.9)</code></td><td>支援逗號與空白兩種寫法，例如 <code>rgb(255 255 255 / 0.9)</code>。</td></tr>
+      </tbody>
+    </table>
+    <p class="desc">任何顏色的透明度都不得低於 0.78，低於時會提示並自動調整為 0.78。CSS 具名顏色（例如 white、black）不支援。</p>
 
     <h3 class="ref-title">可用色票名稱</h3>
     <div class="swatches" id="swatches"></div>

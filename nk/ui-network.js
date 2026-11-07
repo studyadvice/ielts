@@ -15,15 +15,16 @@
   const REF_WIDTH = 1280;          // 預設尺寸對應的參考寬度
   const DENSITY = { sparse: 1.3, normal: 1.75, dense: 2.4 };
   const ICON_RATIO = 0.52;         // 圖示字級相對於圓圈直徑
-  const LINE_OPACITY = 0.8;        // 線條透明度（不得低於 0.78）
+  const LINE_OPACITY = 0.8;        // 線條未指定透明度時的預設值
+  const MIN_ALPHA = 0.78;          // 任何顏色的透明度下限
   const MAX_FILL = 0.4;            // 圓圈總面積占可用區域的上限
   const NS = 'http://www.w3.org/2000/svg';
 
   const CSS = `
 ui-network{display:block;position:relative;width:100%;overflow:hidden;user-select:none;-webkit-user-select:none;}
 ui-network > svg.un-lines{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0;}
-ui-network .un-line{fill:none;stroke:var(--un-line,#C6C7BD);stroke-width:var(--un-lw,1.5px);stroke-opacity:${LINE_OPACITY};stroke-linecap:round;transition:stroke .2s ease,stroke-width .2s ease;}
-ui-network .un-line.is-active{stroke:var(--un-line-active,#51DBCF);stroke-width:calc(var(--un-lw,1.5px) + 1.5px);stroke-opacity:1;}
+ui-network .un-line{fill:none;stroke:var(--un-line,rgba(198,199,189,${LINE_OPACITY}));stroke-width:var(--un-lw,1.5px);stroke-linecap:round;transition:stroke .2s ease,stroke-width .2s ease;}
+ui-network .un-line.is-active{stroke:var(--un-line-active,#51DBCF);stroke-width:calc(var(--un-lw,1.5px) + 1.5px);}
 ui-network .un-line.is-draw{animation:un-draw .9s ease-out backwards;}
 ui-network > ui-node{position:absolute;left:0;top:0;display:block;z-index:1;will-change:transform;}
 ui-network > ui-node:hover{z-index:2;}
@@ -84,6 +85,46 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
   function parseRatio(v) {
     const m = String(v || '').match(/^\s*(\d+(?:\.\d+)?)\s*[:/x]\s*(\d+(?:\.\d+)?)\s*$/);
     return m && +m[1] > 0 && +m[2] > 0 ? [+m[1], +m[2]] : [16, 9];
+  }
+
+  /*
+   * 顏色解析：色票名稱、#RGB、#RGBA、#RRGGBB、#RRGGBBAA、rgb()、rgba()。
+   * 回傳 { r, g, b, a, explicit }，explicit 表示是否明確指定透明度；無法辨識時回傳 null。
+   * 色票名稱優先，因此 red、blue 等名稱代表色票色，不是 CSS 具名顏色。
+   */
+  function parseColor(v) {
+    const s = String(v ?? '').trim();
+    if (!s) return null;
+    const lower = s.toLowerCase();
+    if (PALETTE[lower]) return parseColor(PALETTE[lower]);
+
+    if (s[0] === '#') {
+      const h = s.slice(1);
+      if (!/^[0-9a-f]+$/i.test(h) || ![3, 4, 6, 8].includes(h.length)) return null;
+      const full = h.length <= 4 ? [...h].map(c => c + c).join('') : h;
+      const byte = i => parseInt(full.slice(i, i + 2), 16);
+      const explicit = full.length === 8;
+      return { r: byte(0), g: byte(2), b: byte(4), a: explicit ? byte(6) / 255 : 1, explicit };
+    }
+
+    const m = lower.match(/^rgba?\((.+)\)$/);
+    if (m) {
+      const parts = m[1].trim().split(/\s*[,/]\s*|\s+/).filter(Boolean);
+      if (parts.length !== 3 && parts.length !== 4) return null;
+      const num = x => /^-?\d*\.?\d+%?$/.test(x) ? parseFloat(x) : NaN;
+      const ch = x => (x.endsWith('%') ? num(x) * 2.55 : num(x));
+      const [r, g, b] = parts.slice(0, 3).map(ch);
+      const explicit = parts.length === 4;
+      const a = explicit ? (parts[3].endsWith('%') ? num(parts[3]) / 100 : num(parts[3])) : 1;
+      if ([r, g, b, a].some(isNaN)) return null;
+      const c255 = x => Math.round(Math.min(255, Math.max(0, x)));
+      return { r: c255(r), g: c255(g), b: c255(b), a: Math.min(1, Math.max(0, a)), explicit };
+    }
+    return null;
+  }
+
+  function toCss(c) {
+    return c.a >= 1 ? `rgb(${c.r}, ${c.g}, ${c.b})` : `rgba(${c.r}, ${c.g}, ${c.b}, ${+c.a.toFixed(3)})`;
   }
 
   function segDist(p, a, b) {
@@ -490,19 +531,32 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
     }
 
     _applyVars() {
-      this.style.setProperty('--un-line', this._color(this.getAttribute('line-color'), 'shell'));
+      const line = this._rgba(this.getAttribute('line-color'), 'shell');
+      if (!line.explicit) line.a = LINE_OPACITY;   // 未明確指定透明度時套用預設值
+      this.style.setProperty('--un-line', toCss(line));
       this.style.setProperty('--un-line-active', this._color(this.getAttribute('line-active'), 'key'));
       const lw = parseFloat(this.getAttribute('line-width'));
       this.style.setProperty('--un-lw', (lw > 0 ? lw : 1.5) + 'px');
     }
 
-    _color(name, fallback) {
-      const key = (name || '').trim();
-      if (!key) return PALETTE[fallback];
-      if (PALETTE[key]) return PALETTE[key];
-      this._alert(`色票中沒有「${key}」，已改用預設色 ${fallback}。`, 'warning');
-      return PALETTE[fallback];
+    /* 解析顏色屬性；無法辨識時提示並改用預設色，透明度低於 0.78 時提示並調整為 0.78 */
+    _rgba(value, fallback) {
+      const raw = (value || '').trim();
+      const fb = () => ({ ...parseColor(fallback), explicit: false });
+      if (!raw) return fb();
+      const c = parseColor(raw);
+      if (!c) {
+        this._alert(`顏色「${raw}」無法辨識，已改用預設色 ${fallback}。可用色票名稱、#RGB、#RRGGBB、#RRGGBBAA、rgb() 或 rgba()。`, 'warning');
+        return fb();
+      }
+      if (c.a < MIN_ALPHA) {
+        this._alert(`顏色「${raw}」的透明度 ${+c.a.toFixed(2)} 低於 ${MIN_ALPHA}，已調整為 ${MIN_ALPHA}。`, 'warning');
+        c.a = MIN_ALPHA;
+      }
+      return c;
     }
+
+    _color(value, fallback) { return toCss(this._rgba(value, fallback)); }
 
     _framePts() {
       const t = this._floatT;
