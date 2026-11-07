@@ -1,5 +1,5 @@
 /*!
- * ui-screen.js v1.0.0
+ * ui-screen.js v1.0.1
  * 分隔線對照元件 <ui-screen>
  * 左右或上下拖曳分隔線，對照兩組以語意標籤定義的內容。
  * 把手圖示使用 Bootstrap Icons 類別名稱，圖示字型由專案自行載入。
@@ -47,7 +47,7 @@ ui-screen{display:block;position:relative;--uis-pos:50%;}
 ui-screen-handle{display:contents;}
 ui-screen > .uis-frame{position:relative;padding:var(--uis-bw,0px);border-radius:var(--uis-radius,0px);background:var(--uis-border,transparent);box-shadow:var(--uis-shadow,none);}
 ui-screen > .uis-frame > .uis-stage{position:relative;overflow:hidden;border-radius:max(0px, calc(var(--uis-radius,0px) - var(--uis-bw,0px)));background:var(--uis-stage-bg,#0C0D0C);isolation:isolate;-webkit-user-select:none;user-select:none;}
-.uis-stage > ui-screen-before,.uis-stage > ui-screen-after{display:block;overflow:hidden;box-sizing:border-box;}
+.uis-stage > ui-screen-before,.uis-stage > ui-screen-after{display:block;overflow:hidden;box-sizing:border-box;background:var(--uis-layer-bg,var(--uis-stage-bg,#0C0D0C));}
 .uis-stage > ui-screen-before{position:relative;z-index:1;}
 .uis-stage > ui-screen-after{position:absolute;inset:0;z-index:2;}
 .uis-stage.uis-fixed > ui-screen-before{position:absolute;inset:0;}
@@ -125,6 +125,13 @@ ui-screen > .uis-frame > .uis-stage{position:relative;overflow:hidden;border-rad
     }
     if (type === 'radial') return `radial-gradient(circle at center, ${stops.join(', ')})`;
     return `linear-gradient(${a}deg, ${stops.join(', ')})`;
+  };
+
+  /* 單色或漸層：預設名稱、最外層有逗號、或完整 CSS 漸層時視為漸層 */
+  const paint = (v, angle = 180) => {
+    const t = String(v).trim();
+    const isGrad = PRESETS[t.toLowerCase()] || splitTop(t).length > 1 || /-gradient\(/i.test(t);
+    return isGrad ? gradient(t, angle, 'linear') : color(t);
   };
 
   const len = (v, unit = 'px') => {
@@ -236,7 +243,7 @@ ui-screen > .uis-frame > .uis-stage{position:relative;overflow:hidden;border-rad
 
       this._mo = new MutationObserver(() => this._labels());
       [this._before, this._after].forEach((layer) => {
-        this._mo.observe(layer, { attributes: true, attributeFilter: ['label', 'label-icon', 'label-bg', 'label-color'] });
+        this._mo.observe(layer, { attributes: true, attributeFilter: ['label', 'label-icon', 'label-bg', 'label-color', 'bg'] });
       });
     }
 
@@ -315,6 +322,10 @@ ui-screen > .uis-frame > .uis-stage{position:relative;overflow:hidden;border-rad
         }
         layer.style.setProperty('--uis-lbg', color(layer.getAttribute('label-bg')) || defs[side][0]);
         layer.style.setProperty('--uis-lc', color(layer.getAttribute('label-color')) || defs[side][1]);
+        /* 圖層底色：未設定時沿用 stage-bg，避免兩層內容互相透出 */
+        const lbg = layer.getAttribute('bg');
+        if (lbg) layer.style.setProperty('--uis-layer-bg', paint(lbg));
+        else layer.style.removeProperty('--uis-layer-bg');
       });
       this._placeLabels();
       this._autohide();

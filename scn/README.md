@@ -19,6 +19,7 @@
 - [範例](#範例)
 - [事件](#事件)
 - [方法](#方法)
+- [版本紀錄](#版本紀錄)
 - [授權](#授權)
 
 ## 結構
@@ -98,6 +99,7 @@
 | --- | --- | --- |
 | `<ui-screen-before>`、`<ui-screen-after>` | `label` | 標籤文字。 |
 | | `label-icon` | 標籤前方的 Bootstrap Icons 圖示。 |
+| | `bg` | 圖層底色，未設定時沿用 `stage-bg`。可用顏色、色票名稱，逗號分隔或預設名稱視為由上而下的漸層。 |
 | | `label-bg`、`label-color` | 各自的標籤配色。before 預設深底淺字，after 預設 `yellow` 底深字。 |
 | `<ui-screen-handle>` | | 自訂把手內容，取代 `handle-icon`。 |
 | `<ui-screen-label>` | `free` | 放在 before 或 after 內，可放複雜 HTML 的標籤；加上 `free` 則不自動定位。 |
@@ -177,6 +179,13 @@ document.querySelector('ui-screen').addEventListener('ui-screen:end', e => conso
 | `replay()` | 重播載入示範動畫。 |
 | `refresh()` | 重新套用所有屬性。 |
 | `UIScreen.presets`、`UIScreen.palette`、`UIScreen.gradient()` | 取得漸層預設集、色票，或用同一套規則產生漸層字串。 |
+
+## 版本紀錄
+
+| 版本 | 說明 |
+| --- | --- |
+| 1.0.1 | 修正：圖層沒有底色，內容透明時兩層文字互相透出。圖層預設套用 `stage-bg`，並新增圖層屬性 `bg`。 |
+| 1.0.0 | 初版。 |
 
 ## 授權
 
