@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-btn 自訂尺寸展示</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#0C0D0C; --shell:#C6C7BD; --vanilla:#DBEDD8; --yellow:#E3D322; --pink:#FF91D7; --red:#EF6661;
+  --orange:#FF5530; --green:#71CD76; --blue:#5DBAE8; --indigo:#778CE1; --violet:#B484E8; --gray:#86877F;
+  --key:#51DBCF; --key-deep:#176878; --calm:#A3C4BC; --quiet:#A9B8E0; --playful:#FFA987; --urgent:#FF2E63;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;font-size:1rem;}
+.page{max-width:1760px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:2.2rem;color:var(--key);margin:0 0 8px 0;}
+.lead-note{color:var(--calm);font-size:1.05rem;margin:0 0 32px 0;}
+.demo{border:1px solid var(--gray);border-radius:12px;padding:24px;margin:0 0 32px 0;}
+.demo h2{font-size:1.4rem;color:var(--yellow);margin:0 0 6px 0;}
+.demo .desc{color:var(--shell);margin:0 0 16px 0;font-size:.95rem;line-height:1.6;}
+.demo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
+.stage{display:flex;flex-direction:column;gap:20px;padding:20px;border:1px dashed var(--key-deep);border-radius:8px;}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:16px;}
+.row-label{width:120px;flex-shrink:0;font-family:monospace;font-size:.85rem;color:var(--quiet);}
+.panel{color:var(--shell);background:var(--bg);border-left:4px solid var(--key);padding:12px 16px;margin:12px 0 0 0;font-size:.95rem;}
+.big-ctx{font-size:1.5rem;}
+.code-label{font-size:.8rem;color:var(--gray);margin:0 0 6px 0;letter-spacing:1px;}
+.code-box{background:var(--bg);border:1px solid var(--key-deep);border-radius:8px;padding:16px;margin:0;max-height:640px;overflow:auto;}
+.code-box code{color:var(--calm);font-size:.82rem;white-space:pre;font-family:monospace;}
+table.ref{width:100%;border-collapse:collapse;font-size:.9rem;}
+table.ref th,table.ref td{border-bottom:1px solid var(--gray);padding:8px 12px;text-align:left;vertical-align:top;color:var(--vanilla);}
+table.ref th{color:var(--key);}
+table.ref code{color:var(--playful);}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-btn 自訂尺寸展示</h1>
+  <p class="lead-note">ui-plus.js 的 <code>&lt;ui-btn&gt;</code> 的 <code>size</code> 屬性，除了 sm、md、lg，現在也接受 <code>2rem</code> 這類字級長度。建立日期 11-07-26。</p>
+
+  <section class="demo" data-demo>
+    <h2>範例一：預設級距與自訂字級對照</h2>
+    <p class="desc">自訂字級以 md（1rem）為基準等比例換算：內距、圓角、圖示與文字的間距、展開箭頭都會一起放大或縮小，內距與圓角一律換算成 px。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="row">
+  <span class="row-label">sm / md / lg</span>
+  <ui-btn size="sm" icon="bi-star-fill" theme="yellow" alert="size=&quot;sm&quot;">按鈕</ui-btn>
+  <ui-btn size="md" icon="bi-star-fill" theme="yellow" alert="size=&quot;md&quot;">按鈕</ui-btn>
+  <ui-btn size="lg" icon="bi-star-fill" theme="yellow" alert="size=&quot;lg&quot;">按鈕</ui-btn>
+</div>
+<div class="row">
+  <span class="row-label">rem</span>
+  <ui-btn size="0.75rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;0.75rem&quot;">按鈕</ui-btn>
+  <ui-btn size="1.5rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;1.5rem&quot;">按鈕</ui-btn>
+  <ui-btn size="2rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;2rem&quot;">按鈕</ui-btn>
+</div>
+<div class="row">
+  <span class="row-label">px / 純數字</span>
+  <ui-btn size="20px" icon="bi-heart-fill" theme="pink" variant="outline" alert="size=&quot;20px&quot;">按鈕</ui-btn>
+  <ui-btn size="2.5" icon="bi-heart-fill" theme="pink" variant="outline" alert="size=&quot;2.5&quot;，視為 2.5rem">按鈕</ui-btn>
+</div>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例二：圓形圖示按鈕與展開箭頭</h2>
+    <p class="desc">沒有文字的圓形圖示按鈕，直徑與右下角的展開小圓點也會等比例縮放。帶 chevron 的按鈕，箭頭大小同樣跟著字級變化。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="row">
+  <span class="row-label">圖示按鈕</span>
+  <ui-btn size="sm" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="sm"></ui-btn>
+  <ui-btn size="lg" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="lg"></ui-btn>
+  <ui-btn size="2rem" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="2rem"></ui-btn>
+  <ui-btn size="3rem" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="3rem"></ui-btn>
+</div>
+<div class="panel" id="tip-a" style="display:none">任何一顆眼睛按鈕都能切換這段內容。</div>
+
+<div class="row">
+  <span class="row-label">chevron</span>
+  <ui-btn size="2rem" icon="bi-lightbulb" icon-active="bi-lightbulb-fill" theme="green"
+          chevron label-open="收起提示" target="tip-b">看提示</ui-btn>
+</div>
+<div class="panel" id="tip-b" style="display:none">先找出題目中的關鍵字，再決定立場。</div>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例三：em 單位與格式錯誤</h2>
+    <p class="desc">em 以按鈕所在容器的字級為基準，這裡的容器字級為 1.5rem，所以 1em 等於 1.5rem。格式錯誤的值會改用 md，並在瀏覽器主控台留下警告。</p>
+    <div class="demo-grid">
+      <div class="stage"></div>
+      <div>
+        <p class="code-label">HTML</p>
+        <pre class="code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="row big-ctx">
+  <span class="row-label">父層 1.5rem</span>
+  <ui-btn size="1em" icon="bi-gem" theme="violet" alert="size=&quot;1em&quot;，等於 1.5rem">1em</ui-btn>
+  <ui-btn size="1.5rem" icon="bi-gem" theme="violet" alert="size=&quot;1.5rem&quot;">1.5rem</ui-btn>
+</div>
+<div class="row">
+  <span class="row-label">錯誤格式</span>
+  <ui-btn size="huge" icon="bi-x-octagon" theme="red" alert="size=&quot;huge&quot; 無效，已改用 md">huge</ui-btn>
+  <ui-btn size="2vw" icon="bi-x-octagon" theme="red" alert="size=&quot;2vw&quot; 無效，已改用 md">2vw</ui-btn>
+</div>
+    </script>
+  </section>
+
+  <section class="demo">
+    <h2>size 屬性說明</h2>
+    <table class="ref">
+      <thead><tr><th style="width:220px">寫法</th><th style="width:220px">範例</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>預設級距</td><td><code>sm</code>、<code>md</code>、<code>lg</code></td><td>與原本相同，預設為 md。</td></tr>
+        <tr><td>rem</td><td><code>2rem</code></td><td>按鈕字級。內距、圓角、間距等以 md 為基準等比例換算為 px。</td></tr>
+        <tr><td>em</td><td><code>1.2em</code></td><td>以按鈕所在容器的字級為基準。</td></tr>
+        <tr><td>px</td><td><code>24px</code></td><td>直接指定字級像素，輸出時換算為 rem。</td></tr>
+        <tr><td>純數字</td><td><code>2</code></td><td>視為 rem，與 repo 其他元件的慣例一致。</td></tr>
+        <tr><td>無效值</td><td><code>huge</code>、<code>2vw</code></td><td>改用 md，並於主控台警告。</td></tr>
+      </tbody>
+    </table>
+    <p class="desc" style="margin-top:16px">換算比例（以 md 為 1 倍）：文字按鈕內距 8px 16px、圓角 24px、間距 6px；圓形圖示按鈕直徑 40px、圖示字級 1.15 倍；展開箭頭 11px；展開小圓點 5px。全域設定 <code>UiBtnConfig.size</code> 同樣可以填長度值。</p>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+</script>
+<script src="ui-plus.js?v=11-07-26b"></script>
+</body>
+</html>

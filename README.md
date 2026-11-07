@@ -2049,11 +2049,33 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `icon-active` | 空 | 展開時改用的圖示。 |
 | `label-open` | 空 | 展開時改用的按鈕文字。 |
 | `theme` | `shell` | 按鈕顏色。 |
-| `size` | `md` | `sm`、`md`、`lg`。 |
+| `size` | `md` | `sm`、`md`、`lg`，或字級長度，例如 `2rem`、`1.2em`、`24px`；純數字視為 rem。見下方「自訂尺寸」。 |
 | `variant` | `fill` | `fill`（實心）、`outline`（框線）、`ghost`（無框）。 |
 | `chevron` | 布林 | 在文字後方加上展開箭頭，展開時旋轉。 |
 | `tooltip` | 空 | 滑鼠停留時的提示文字。 |
 | `disabled` | 布林 | 停用按鈕。 |
+
+**自訂尺寸**：`size` 填長度時代表按鈕字級，其餘尺寸以 `md`（1rem）為基準等比例換算，內距、圓角、間距一律輸出為 px。
+
+```html
+<ui-btn size="2rem" icon="bi-lightning-fill" theme="key" alert="已送出">送出</ui-btn>
+<ui-btn size="3rem" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip"></ui-btn>
+<ui-btn size="24px" chevron theme="green" target="tip">看提示</ui-btn>
+<div id="tip" style="display:none">先找出題目中的關鍵字，再決定立場。</div>
+```
+
+| 項目 | md（1 倍） | `size="2rem"`（2 倍） |
+| --- | --- | --- |
+| 文字字級 | `1rem` | `2rem` |
+| 文字按鈕內距 | `8px 16px` | `16px 32px` |
+| 文字按鈕圓角 | `24px` | `48px` |
+| 圖示與文字間距 | `6px` | `12px` |
+| 圓形圖示按鈕直徑 | `40px` | `80px` |
+| 圓形圖示按鈕的圖示字級 | `1.15rem` | `2.3rem` |
+| 展開箭頭 | `11px` | `22px` |
+| 展開小圓點 | `5px` | `10px` |
+
+`em` 以按鈕所在容器的字級為基準。無法辨識的值（例如 `huge`、`2vw`）會改用 `md`，並在主控台警告。
 
 **行為**
 
@@ -2085,7 +2107,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `scroll-gate` | 捲動閘門。目標內容維持顯示但呈半透明、無法點選，頁面也無法捲動超過這顆按鈕，直到按下按鈕解鎖。按鈕會持續脈動提示。 |
 | `unlock-chunk` | 展開時呼叫外部 `chunk-demo` 元件的 `unlockChunk()`，收合時呼叫 `lockChunk()`。格式為 `元件id:區塊編號`，多個以逗號分隔，例如 `demo1:2,demo1:3`。需另外載入 `chunk-demo.js`。 |
 
-**全域設定**：在載入腳本之前定義 `window.UiBtnConfig`，可用鍵為 `theme`、`size`、`variant`、`animation`、`animDuration`、`chevron`。
+**全域設定**：在載入腳本之前定義 `window.UiBtnConfig`，可用鍵為 `theme`、`size`、`variant`、`animation`、`animDuration`、`chevron`。`size` 同樣可以填長度值，例如 `'1.25rem'`。
 
 ### JavaScript API
 

@@ -1229,6 +1229,32 @@
     lg: { fs: '1.1rem',  pad: '10px 20px', r: '28px', dim: '48px', gap: '8px', icoFs: '1.3rem'  }
   };
 
+  /* size 除了 sm/md/lg，也接受字級長度：2rem、1.5em、24px，純數字視為 rem。
+     以 md（1rem）為基準等比例換算，內距、圓角、間距、直徑一律輸出 px。 */
+  function resolveBtnSize(val, el) {
+    var key = String(val || '').trim().toLowerCase();
+    if (SIZES[key]) return SIZES[key];
+    var m = key.match(/^(\d*\.?\d+)\s*(rem|em|px)?$/);
+    if (!m || !(+m[1] > 0)) {
+      console.warn('[ui-btn] size 格式無效（可用 sm、md、lg，或 2rem、1.5em、24px 等長度），已改用 md：', val);
+      return SIZES.md;
+    }
+    var rootPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    var unit = m[2] || 'rem';
+    var px = +m[1];
+    if (unit === 'rem') px *= rootPx;
+    else if (unit === 'em') {
+      var host = (el && el.parentElement) || document.documentElement;
+      px *= parseFloat(getComputedStyle(host).fontSize) || rootPx;
+    }
+    var k = px / rootPx;
+    var p = function (n) { return Math.max(1, Math.round(n * k)) + 'px'; };
+    return {
+      fs: +k.toFixed(4) + 'rem', pad: p(8) + ' ' + p(16), r: p(24), dim: p(40), gap: p(6),
+      icoFs: +(k * 1.15).toFixed(4) + 'rem', chev: p(11), dot: p(5), dotOff: p(3), custom: true
+    };
+  }
+
   function parseUnlockChunk(val) {
     if (!val) return [];
     return val.split(',').reduce(function (acc, seg) {
@@ -1418,7 +1444,7 @@
 
   UiBtn.prototype._render = function () {
     var self     = this;
-    var sz       = SIZES[this.size] || SIZES.md;
+    var sz       = resolveBtnSize(this.size, this.el);
     var hasText  = !!this.labelClosed;
     var iconOnly = !hasText;
     var hoverBg  = blendColor(this.color, 0.22);
@@ -1462,12 +1488,22 @@
       var chev = document.createElement('span');
       chev.className = 'ubtn-chev';
       chev.innerHTML = CHEV_SVG;
+      if (sz.custom) {
+        chev.firstChild.setAttribute('width', parseInt(sz.chev, 10));
+        chev.firstChild.setAttribute('height', parseInt(sz.chev, 10));
+      }
       btn.appendChild(chev);
     }
 
     if (iconOnly) {
       var dot = document.createElement('span');
       dot.className = 'ubtn-dot';
+      if (sz.custom) {
+        dot.style.width  = sz.dot;
+        dot.style.height = sz.dot;
+        dot.style.right  = sz.dotOff;
+        dot.style.bottom = sz.dotOff;
+      }
       btn.appendChild(dot);
     }
 
