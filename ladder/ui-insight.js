@@ -1,5 +1,5 @@
 /*!
- * <ui-insight> 亮點字詞解說元件 v1.2
+ * <ui-insight> 亮點字詞解說元件 v1.4
  * 用途：左側為一句一句的卡片，右側顯示所選句子中亮點字詞的解說，雙向對照。
  * 不使用 shadow DOM，CSS 由本檔自動注入。需要 Bootstrap Icons（bi-*）。
  * v1.1：所有顏色屬性（含 hl-hot-bg、hl-hot-color、tag-color）可直接填品牌色名稱，
@@ -8,6 +8,17 @@
  *       有明確指定的屬性才會覆蓋 theme 的顏色。優先順序：個別屬性 > theme > 內建預設。
  *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、orange、green、
  *       blue、indigo、violet、gray、key、key-deep、calm、quiet、playful、urgent）。名稱不存在時退回 default。
+ * v1.3：<ins-line> 新增 extra-info 屬性，填 <template> 的 id，例如 extra-info="tpl-1"。
+ *       選到該句時，template 的 HTML 內容會顯示在右側面板的最下方，位於亮點解說之後。
+ *       找不到 id 時不顯示；id 指向的若不是 <template>，則改用該元素的 innerHTML。
+ *       外觀屬性：extra-bg、extra-color、extra-border-color、extra-font-size、extra-padding、
+ *       extra-radius、extra-top（與上方解說的距離）。extra-border-color 會跟著 theme。
+ * v1.4：新增 extra-info-style 屬性，選擇附加區塊的樣式，線條顏色都用 extra-border-color：
+ *       outline（預設，1px 實線外框）、dashed（1px 虛線外框，無底色）、
+ *       divider（只有上方分隔線，無外框無底色）、label（1px 外框，左上角嵌入標籤）。
+ *       label 的文字用 extra-info-label 設定，預設為「補充」。
+ *       兩個屬性可寫在 <ui-insight> 套用全部句子，也可寫在 <ins-line> 單獨覆蓋。
+ *       取消 v1.3 的左側粗色條。
  */
 (() => {
   if (customElements.get('ui-insight')) return;
@@ -45,7 +56,8 @@
     'panel-bg', 'summary-color', 'note-num-bg', 'note-num-color', 'note-word-color',
     'note-text-color', 'note-divider-color', 'note-hot-bg',
     'tag-text-color', 'tag-default-bg', 'empty-color',
-    'ini-title-color', 'ini-title-bg'
+    'ini-title-color', 'ini-title-bg',
+    'extra-bg', 'extra-color', 'extra-border-color'
   ]);
 
   const resolveColor = (v) => {
@@ -71,7 +83,8 @@
     'note-word-color': a,
     'tag-default-bg': a,
     'tag-text-color': on,
-    'ini-title-color': a
+    'ini-title-color': a,
+    'extra-border-color': a
   });
 
   const THEMES = {
@@ -163,7 +176,15 @@
 
     'ini-title-size': '1rem',
     'ini-title-color': '#5DBAE8',
-    'ini-title-bg': '#161816'
+    'ini-title-bg': '#161816',
+
+    'extra-bg': '#1E201E',
+    'extra-color': '#C6C7BD',
+    'extra-border-color': '#5DBAE8',
+    'extra-font-size': '0.85rem',
+    'extra-padding': '10px 12px',
+    'extra-radius': '6px',
+    'extra-top': '12px'
   };
 
   /* 其他屬性（開關與文字） */
@@ -178,8 +199,12 @@
     'empty-text': '這一句沒有標記亮點。',
     'start': '1',
     'ini-title': '點擊展開',
-    'keyboard': 'true'
+    'keyboard': 'true',
+    'extra-info-style': 'outline',
+    'extra-info-label': '補充'
   };
+
+  const EXTRA_STYLES = ['outline', 'dashed', 'divider', 'label'];
 
   const STYLE = `
 ui-insight{display:block;box-sizing:border-box;margin:var(--uin-margin);padding:var(--uin-padding);background:var(--uin-bg);border:var(--uin-border-line);border-radius:var(--uin-border-radius);color:var(--uin-sentence-color)}
@@ -220,6 +245,13 @@ ui-insight .uin-head .uin-chev{transition:transform .25s}
 ui-insight.uin-open .uin-head .uin-chev{transform:rotate(180deg)}
 ui-insight.uin-collapsible.uin-open .uin-wrap{margin:14px 0 0 0;animation:uin-fade .3s ease}
 ui-insight.uin-collapsible:not(.uin-open) .uin-wrap{display:none}
+ui-insight .uin-extra{position:relative;margin:var(--uin-extra-top) 0 0 0;padding:var(--uin-extra-padding);background:var(--uin-extra-bg);color:var(--uin-extra-color);font-size:var(--uin-extra-font-size);border:1px solid var(--uin-extra-border-color);border-radius:var(--uin-extra-radius);line-height:1.7}
+ui-insight .uin-extra[hidden]{display:none}
+ui-insight .uin-extra-body > :last-child{margin-bottom:0}
+ui-insight .uin-extra[data-style="dashed"]{border-style:dashed;background:transparent}
+ui-insight .uin-extra[data-style="divider"]{border-width:1px 0 0 0;border-radius:0;background:transparent;padding:10px 2px 0 2px}
+ui-insight .uin-extra[data-style="label"]{margin:calc(var(--uin-extra-top) + 8px) 0 0 0;padding-top:16px}
+ui-insight .uin-extra-label{position:absolute;top:-0.8em;left:10px;padding:0 8px;font-size:0.7rem;line-height:1.6;color:var(--uin-extra-border-color);background:var(--uin-panel-bg);border:1px solid var(--uin-extra-border-color);border-radius:999px;font-weight:600}
 ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-active-border);outline-offset:3px}
 `;
 
@@ -331,6 +363,9 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
         });
         return {
           heading: line.getAttribute('heading') || '',
+          extra: (line.getAttribute('extra-info') || '').trim(),
+          extraStyle: (line.getAttribute('extra-info-style') || '').trim().toLowerCase(),
+          extraLabel: line.getAttribute('extra-info-label'),
           html: clone.innerHTML.trim(),
           notes
         };
@@ -380,6 +415,7 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
           <div class="uin-panel">
             ${this._bool('show-summary') ? '<p class="uin-summary"></p>' : ''}
             <div class="uin-notes"></div>
+            <div class="uin-extra" hidden></div>
           </div>
         </div>`;
 
@@ -447,15 +483,41 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
           </div>`).join('')
         : `<div class="uin-empty">${this._opt('empty-text')}</div>`;
 
+      const ex = this.querySelector('.uin-extra');
+      if (ex) {
+        ex.innerHTML = '';
+        const src = ln.extra ? document.getElementById(ln.extra) : null;
+        ex.hidden = !src;
+        if (src) {
+          let style = ln.extraStyle || this._opt('extra-info-style').trim().toLowerCase();
+          if (!EXTRA_STYLES.includes(style)) style = 'outline';
+          ex.dataset.style = style;
+          if (style === 'label') {
+            const lb = document.createElement('span');
+            lb.className = 'uin-extra-label';
+            lb.textContent = ln.extraLabel !== null && ln.extraLabel !== '' ? ln.extraLabel : this._opt('extra-info-label');
+            ex.appendChild(lb);
+          }
+          const body = document.createElement('div');
+          body.className = 'uin-extra-body';
+          if (src instanceof HTMLTemplateElement) body.appendChild(src.content.cloneNode(true));
+          else body.innerHTML = src.innerHTML;
+          ex.appendChild(body);
+        }
+      }
+
       box.querySelectorAll('.uin-note').forEach((nd) => {
         nd.addEventListener('mouseenter', () => this._hot(nd.dataset.n));
         nd.addEventListener('mouseleave', () => this._hot(null));
       });
 
       if (animate) {
-        box.classList.remove('uin-in');
-        void box.offsetWidth;
-        box.classList.add('uin-in');
+        [box, ex].forEach((el) => {
+          if (!el) return;
+          el.classList.remove('uin-in');
+          void el.offsetWidth;
+          el.classList.add('uin-in');
+        });
       }
     }
 

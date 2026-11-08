@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>ui-insight v1.3 範例：extra-info</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root { font-size: 18px; }
+  body { background: #0C0D0C; color: #C6C7BD; font-family: "微軟正黑體", "Inter"; padding: 24px; min-width: 1100px; }
+  h1 { color: #51DBCF; font-size: 1.6rem; margin: 0 0 8px 0; }
+  h2 { color: #E3D322; font-size: 1.2rem; margin: 36px 0 8px 0; }
+  .desc { color: #A3C4BC; font-size: 0.9rem; margin: 0 0 12px 0; }
+  .demo-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
+  pre { background: #161816; color: #DBEDD8; border: 1px solid #2A2B29; border-radius: 8px; padding: 14px 16px; font-size: 0.75rem; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+  table.attr { width: 100%; font-size: 0.85rem; border-collapse: collapse; }
+  table.attr th, table.attr td { border-bottom: 1px solid #2A2B29; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.attr th { color: #5DBAE8; }
+  table.attr code { color: #FF91D7; }
+  .zh-label { color: #E3D322; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>&lt;ui-insight&gt; v1.3：extra-info</h1>
+<p class="desc">在 &lt;ins-line&gt; 加上 extra-info="template 的 id"，選到這一句時，template 的內容會顯示在右側面板最下方。點左側卡片或按 Ctrl+Shift+上下方向鍵切換。</p>
+
+<h2>範例一：每句附中文翻譯</h2>
+<p class="desc">兩句各自指向不同的 template。</p>
+<div class="demo-grid">
+  <ui-insight>
+    <ins-line heading="Describe someone you met at a party and enjoyed talking with." extra-info="tpl-party-1">
+      <hl tag="fc" why="用照片這個具體物品當主詞開場，避開 I 開頭，也不重複題目用字">A few photos on my Google Drive</hl> always <hl tag="gra" why="主詞是複數 photos，動詞用 take">take me back to</hl> a lively party, <hl tag="gra" why="關係副詞引導形容詞子句描述在派對上發生的事">where</hl> I had a great conversation with someone truly fascinating.
+    </ins-line>
+    <ins-line extra-info="tpl-party-2">
+      <hl tag="fc" why="第二句交代場合與時間">It was a friend's housewarming last spring</hl>, and the person sitting next to me on the balcony <hl tag="lr" why="揭曉對方身分，順勢銜接到聊天內容">turned out to be</hl> a wildlife photographer.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight&gt;
+  &lt;ins-line heading="..." extra-info="tpl-party-1"&gt;
+    ...句子與 &lt;hl&gt;...
+  &lt;/ins-line&gt;
+  &lt;ins-line extra-info="tpl-party-2"&gt;
+    ...
+  &lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+&lt;template id="tpl-party-1"&gt;
+  &lt;span class="zh-label"&gt;中文翻譯&lt;/span&gt;&lt;br&gt;
+  我 Google 雲端硬碟裡的幾張照片……
+&lt;/template&gt;</pre>
+</div>
+
+<template id="tpl-party-1">
+  <span class="zh-label">中文翻譯</span><br>
+  我 Google 雲端硬碟裡的幾張照片，總會把我帶回一場熱鬧的派對，我在那裡和一位非常有意思的人聊得很開心。
+</template>
+<template id="tpl-party-2">
+  <span class="zh-label">中文翻譯</span><br>
+  那是去年春天一位朋友的新居派對，坐在我旁邊、一起待在陽台的那個人，原來是一位野生動物攝影師。
+</template>
+
+<h2>範例二：搭配 theme、自訂外觀，只有部分句子有附加內容</h2>
+<p class="desc">第二句沒有 extra-info，切換過去時附加區塊會自動隱藏。template 內可放任意 HTML，例如清單與圖示。</p>
+<div class="demo-grid">
+  <ui-insight theme="violet" extra-bg="#1A1622" extra-font-size="0.9rem">
+    <ins-line heading="Describe a crowded place you have been to." extra-info="tpl-crowd-1">
+      <hl tag="fc" why="用手機裡的一段影片當主詞開場">A short video on my phone</hl> <hl tag="gra" why="現在式表示影片至今還在">still shows</hl> <hl tag="gra" why="名詞子句當受詞，用 busy 取代題目的 crowded">how busy Yingge Old Street was</hl> when I visited during Lunar New Year.
+    </ins-line>
+    <ins-line>
+      The MRT trains to Yingge were so packed that <hl tag="lr" why="用具體結果取代 very crowded">I let two go by</hl>, and <hl tag="fc" why="銜接句預告情況更糟">things only got worse</hl> once I reached the pottery shops.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight theme="violet" extra-bg="#1A1622" extra-font-size="0.9rem"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-crowd-1"&gt;...&lt;/ins-line&gt;
+  &lt;ins-line&gt;...沒有 extra-info...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+&lt;template id="tpl-crowd-1"&gt;
+  &lt;div&gt;&lt;i class="bi bi-arrow-repeat"&gt;&lt;/i&gt; 換個地點也能用：&lt;/div&gt;
+  &lt;ul&gt;...&lt;/ul&gt;
+&lt;/template&gt;</pre>
+</div>
+
+<template id="tpl-crowd-1">
+  <div><i class="bi bi-arrow-repeat"></i> 換個地點也能用：</div>
+  <ul style="margin: 4px 0 0 0; padding: 0 0 0 20px;">
+    <li>A short video on my phone still shows how busy <c-key>the night market</c-key> was ...</li>
+    <li>A short video on my phone still shows how busy <c-key>the concert venue</c-key> was ...</li>
+  </ul>
+</template>
+
+<h2>新增屬性</h2>
+<table class="attr">
+  <thead><tr><th>屬性</th><th>放在</th><th>預設值</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td><code>extra-info</code></td><td>&lt;ins-line&gt;</td><td>無</td><td>填 &lt;template&gt; 的 id。找不到時不顯示；id 指向的不是 template 時，改用該元素的 innerHTML。</td></tr>
+    <tr><td><code>extra-bg</code></td><td>&lt;ui-insight&gt;</td><td>#1E201E</td><td>附加區塊背景色，可填品牌色名稱。</td></tr>
+    <tr><td><code>extra-color</code></td><td>&lt;ui-insight&gt;</td><td>#C6C7BD</td><td>附加區塊文字色。</td></tr>
+    <tr><td><code>extra-border-color</code></td><td>&lt;ui-insight&gt;</td><td>#5DBAE8</td><td>附加區塊的線條顏色（v1.4 起用於四種樣式），會跟著 theme。</td></tr>
+    <tr><td><code>extra-font-size</code></td><td>&lt;ui-insight&gt;</td><td>0.85rem</td><td>附加區塊字體大小。</td></tr>
+    <tr><td><code>extra-padding</code></td><td>&lt;ui-insight&gt;</td><td>10px 12px</td><td>附加區塊內距。</td></tr>
+    <tr><td><code>extra-radius</code></td><td>&lt;ui-insight&gt;</td><td>6px</td><td>附加區塊圓角。</td></tr>
+    <tr><td><code>extra-top</code></td><td>&lt;ui-insight&gt;</td><td>12px</td><td>與上方亮點解說的距離。</td></tr>
+  </tbody>
+</table>
+
+<h1 style="margin: 56px 0 8px 0;">&lt;ui-insight&gt; v1.4：extra-info-style</h1>
+<p class="desc">附加區塊改成四種樣式，取消 v1.3 的左側粗色條。線條顏色都用 extra-border-color，會跟著 theme。以下四組使用相同內容，只改 extra-info-style。</p>
+
+<h2>outline（預設）：1px 實線外框</h2>
+<div class="demo-grid">
+  <ui-insight>
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<h2>dashed：1px 虛線外框，無底色</h2>
+<div class="demo-grid">
+  <ui-insight extra-info-style="dashed">
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight extra-info-style="dashed"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<h2>divider：只有上方分隔線</h2>
+<div class="demo-grid">
+  <ui-insight extra-info-style="divider" theme="key">
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight extra-info-style="divider" theme="key"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<h2>label：外框左上角嵌入標籤，並示範在 &lt;ins-line&gt; 單獨覆蓋</h2>
+<p class="desc">第一句用 &lt;ui-insight&gt; 設定的「中文翻譯」標籤；第二句在 &lt;ins-line&gt; 改成「延伸」標籤；第三句在 &lt;ins-line&gt; 改用 dashed。</p>
+<div class="demo-grid">
+  <ui-insight extra-info-style="label" extra-info-label="中文翻譯" theme="yellow">
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+    <ins-line extra-info="tpl-video-2" extra-info-label="延伸">
+      <hl tag="gra" why="用副詞片語起句">Episode by episode</hl>, it <hl tag="lr" why="取代題目的 taught">walked me through</hl> the entire visa process and, more importantly, gave me the courage to actually hit "submit".
+    </ins-line>
+    <ins-line extra-info="tpl-video-3" extra-info-style="dashed">
+      That single click turned a vague dream into an actual plan.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight extra-info-style="label" extra-info-label="中文翻譯" theme="yellow"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+  &lt;ins-line extra-info="tpl-video-2" extra-info-label="延伸"&gt;...&lt;/ins-line&gt;
+  &lt;ins-line extra-info="tpl-video-3" extra-info-style="dashed"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<template id="tpl-video-1">
+  要不是幾年前偶然看到一系列改變我人生的 YouTube 影片，我護照裡那張已經過期的打工度假簽證貼紙根本不會存在。
+</template>
+<template id="tpl-video-2">
+  walk someone through something 也能用在別的題目，例如：My manager walked me through the new system on my first day.
+</template>
+<template id="tpl-video-3">
+  那一次點擊，把一個模糊的夢想變成了真正的計畫。
+</template>
+
+<h2>v1.4 新增屬性</h2>
+<table class="attr">
+  <thead><tr><th>屬性</th><th>放在</th><th>預設值</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td><code>extra-info-style</code></td><td>&lt;ui-insight&gt; 或 &lt;ins-line&gt;</td><td>outline</td><td>outline、dashed、divider、label 四選一，填錯時退回 outline。寫在 &lt;ins-line&gt; 會覆蓋整個元件的設定。</td></tr>
+    <tr><td><code>extra-info-label</code></td><td>&lt;ui-insight&gt; 或 &lt;ins-line&gt;</td><td>補充</td><td>只在 label 樣式顯示，為左上角標籤的文字。</td></tr>
+  </tbody>
+</table>
+
+<script src="ui-insight.js"></script>
+</body>
+</html>
