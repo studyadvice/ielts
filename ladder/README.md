@@ -5,7 +5,7 @@
 | 元件 | 用途 | 版本 |
 |---|---|---|
 | `<ui-detail-ladder>` | 細節階梯：把籠統說法逐階升級成具體說法 | v1.1 |
-| `<ui-insight>` | 亮點字詞解說：左側句子卡片，右側顯示亮點字詞的解說 | v1.0 |
+| `<ui-insight>` | 亮點字詞解說：左側句子卡片，右側顯示亮點字詞的解說 | v1.4 |
 
 ## 特色
 
@@ -268,6 +268,32 @@
 ```html
 <ui-insight theme="violet" hl-hot-color="base">...</ui-insight>
 ```
+
+### 附加內容（extra-info）
+
+在 `<ins-line>` 加上 `extra-info`，填 `<template>` 的 id。選到這一句時，template 的內容會顯示在右側面板最下方，位於亮點解說之後。沒有寫 `extra-info` 或找不到 id 時不顯示；id 指向的若不是 `<template>`，改用該元素的 innerHTML。
+
+```html
+<ui-insight extra-info-style="label" extra-info-label="中文翻譯">
+  <ins-line heading="..." extra-info="tpl-1">...</ins-line>
+  <ins-line extra-info="tpl-2" extra-info-style="dashed">...</ins-line>
+</ui-insight>
+
+<template id="tpl-1">要不是幾年前偶然看到……</template>
+```
+
+| 屬性 | 放在 | 預設值 | 說明 |
+|---|---|---|---|
+| `extra-info` | `<ins-line>` | （無） | `<template>` 的 id。 |
+| `extra-info-style` | `<ui-insight>` 或 `<ins-line>` | `outline` | `outline` 1px 實線外框、`dashed` 1px 虛線外框無底色、`divider` 只有上方分隔線、`label` 外框左上角嵌入標籤。寫在 `<ins-line>` 會覆蓋整體設定。 |
+| `extra-info-label` | `<ui-insight>` 或 `<ins-line>` | `補充` | `label` 樣式的標籤文字。 |
+| `extra-bg` | `<ui-insight>` | `#1E201E` | 背景色（`dashed`、`divider` 不使用）。 |
+| `extra-color` | `<ui-insight>` | `#C6C7BD` | 文字色。 |
+| `extra-border-color` | `<ui-insight>` | `#5DBAE8` | 線條與標籤顏色，會跟著 `theme`。 |
+| `extra-font-size` | `<ui-insight>` | `0.85rem` | 字體大小。 |
+| `extra-padding` | `<ui-insight>` | `10px 12px` | 內距。 |
+| `extra-radius` | `<ui-insight>` | `6px` | 圓角。 |
+| `extra-top` | `<ui-insight>` | `12px` | 與上方亮點解說的距離。 |
 
 ### JavaScript 介面
 
