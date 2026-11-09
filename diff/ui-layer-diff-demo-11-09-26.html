@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>ui-layer-diff v1.1 comparison 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/studyadvice/ielts/bp-styles.css">
+<meta name="theme-color" content="#0C0D0C">
+<style>
+  :root { font-size: 16px; }
+  body { padding: 28px; font-family: "微軟正黑體", "Inter"; min-width: 988px; }
+  pre.demo-code { margin: 12px 0 0 0; padding: 14px 18px; background: #161716; color: #C6C7BD; border: 1px solid #86877F; border-radius: 8px; font-size: 0.85rem; white-space: pre-wrap; }
+</style>
+</head>
+<body class="bp-bg-background bp-text-shell">
+<div class="w-90">
+  <h2 class="mb-2 bp-text-key">ui-layer-diff v1.1：mode="comparison"</h2>
+  <p class="mb-5 fs-5">左側逐層比對，右側說明欄跟著層數切換。不需要另外寫 JavaScript。</p>
+
+  <!-- 範例 1 -->
+  <section class="mb-5">
+    <h4 class="bp-text-yellow"><i class="bi bi-1-circle"></i> 基本用法：note 直接搬到右側</h4>
+    <p>comparison 模式下，<code>width</code> 是左側方框的寬度，右側自動佔滿剩下的空間。</p>
+    <ui-layer-diff mode="comparison" width="50%" theme="key" font-size="1.5" padding="20 28"
+      legend="false" show-del="false" progress>
+      <ui-layer label="主詞語塊" note="地點名詞加上關係子句，說明這是你最常去的地方。">The library I visit most often</ui-layer>
+      <ui-layer label="位置語塊" note="用 conveniently located 取代單調的 is in，再接上具體街景。">The library I visit most often is conveniently located on a tree-lined street,</ui-layer>
+      <ui-layer label="距離語塊" note="用通勤方式與時間，升級 near my place。">The library I visit most often is conveniently located on a tree-lined street, just a short bike ride from my place.</ui-layer>
+    </ui-layer-diff>
+<pre class="demo-code">&lt;ui-layer-diff mode="comparison" width="50%" theme="key" font-size="1.5" padding="20 28"
+  legend="false" show-del="false" progress&gt;
+  &lt;ui-layer label="主詞語塊" note="地點名詞加上關係子句，說明這是你最常去的地方。"&gt;The library I visit most often&lt;/ui-layer&gt;
+  &lt;ui-layer label="位置語塊" note="..."&gt;...&lt;/ui-layer&gt;
+  &lt;ui-layer label="距離語塊" note="..."&gt;...&lt;/ui-layer&gt;
+&lt;/ui-layer-diff&gt;</pre>
+  </section>
+
+  <!-- 範例 2 -->
+  <section class="mb-5">
+    <h4 class="bp-text-yellow"><i class="bi bi-2-circle"></i> 自訂字體大小與色彩，用 note-tpl 放 HTML</h4>
+    <p><code>note-tpl</code> 填 <code>&lt;template&gt;</code> 的 id，右側顯示其 HTML，優先於 <code>note</code>。</p>
+    <ui-layer-diff mode="comparison" width="55%" theme="violet" font-size="1.4" padding="20 28"
+      legend="false" show-del="false" progress
+      note-font-size="1.3" note-color="vanilla" note-bg="#161716" note-border="1px dashed violet"
+      note-padding="20 24" note-gap="32" note-title-size="1.5" note-title-color="yellow">
+      <ui-layer label="主詞語塊" note-tpl="lib-n1">The library I visit most often</ui-layer>
+      <ui-layer label="位置語塊" note-tpl="lib-n2">The library I visit most often is conveniently located on a tree-lined street,</ui-layer>
+      <ui-layer label="距離語塊" note-tpl="lib-n3">The library I visit most often is conveniently located on a tree-lined street, just a short bike ride from my place.</ui-layer>
+    </ui-layer-diff>
+    <template id="lib-n1">
+      <p>地點名詞加上關係子句，說明這是你最常去的地方。</p>
+      <p class="bp-text-gray">換題照用：The gym I go to most often</p>
+    </template>
+    <template id="lib-n2">
+      <p>用 <c-key>conveniently located</c-key> 取代單調的 is in。</p>
+      <p class="bp-text-gray">也可以換成 ideally located、tucked away</p>
+    </template>
+    <template id="lib-n3">
+      <p>用通勤方式與時間，升級 <c-pink>near my place</c-pink>。</p>
+      <ul class="mb-0">
+        <li>just a five-minute walk from where I live</li>
+        <li>only two MRT stops from my place</li>
+      </ul>
+    </template>
+<pre class="demo-code">&lt;ui-layer-diff mode="comparison" width="55%" theme="violet" ...
+  note-font-size="1.3" note-color="vanilla" note-bg="#161716" note-border="1px dashed violet"
+  note-padding="20 24" note-gap="32" note-title-size="1.5" note-title-color="yellow"&gt;
+  &lt;ui-layer label="主詞語塊" note-tpl="lib-n1"&gt;...&lt;/ui-layer&gt;
+&lt;/ui-layer-diff&gt;
+
+&lt;template id="lib-n1"&gt;
+  &lt;p&gt;地點名詞加上關係子句，說明這是你最常去的地方。&lt;/p&gt;
+&lt;/template&gt;</pre>
+  </section>
+
+  <!-- 範例 3 -->
+  <section class="mb-5">
+    <h4 class="bp-text-yellow"><i class="bi bi-3-circle"></i> 搭配自動播放，關閉右側標題，內容置頂</h4>
+    <p><code>mode</code> 可寫多個值，以空白分隔。</p>
+    <ui-layer-diff mode="comparison auto" interval="3500" loop width="50%" theme="blue"
+      font-size="1.3" legend="false" show-del="false" progress
+      note-title="false" note-align="top" note-font-size="1.2" note-color="blue">
+      <ui-layer note="先說是哪個地方">The café I go to most often</ui-layer>
+      <ui-layer note="再說它在哪裡">The café I go to most often is tucked away in a quiet lane,</ui-layer>
+      <ui-layer note="最後說離你多遠">The café I go to most often is tucked away in a quiet lane, just a five-minute walk from where I live.</ui-layer>
+    </ui-layer-diff>
+<pre class="demo-code">&lt;ui-layer-diff mode="comparison auto" interval="3500" loop width="50%" theme="blue"
+  note-title="false" note-align="top" note-font-size="1.2" note-color="blue"&gt; ... &lt;/ui-layer-diff&gt;</pre>
+  </section>
+
+  <!-- 範例 4 -->
+  <section class="mb-5">
+    <h4 class="bp-text-yellow"><i class="bi bi-4-circle"></i> 對照：原本的 manual 模式不受影響</h4>
+    <p>沒寫 comparison 時，<code>width</code> 仍是整個元件的寬度，note 顯示在句子下方。</p>
+    <ui-layer-diff width="50%" theme="key" font-size="1.3" legend="false" show-del="false">
+      <ui-layer label="主詞語塊" note="地點名詞加上關係子句">The library I visit most often</ui-layer>
+      <ui-layer label="位置語塊" note="conveniently located 取代 is in">The library I visit most often is conveniently located on a tree-lined street,</ui-layer>
+    </ui-layer-diff>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-layer-diff.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 適合用在語言教學、文章修改歷程、文案前後對照等需要「一步一步看出差異」的場合。
 
-- 版本：1.0.0
+- 版本：1.1.0（11-09-26 新增 `mode="comparison"` 左右對照排版）
 - 建立日期：10-29-26
 - 單一檔案、零依賴：`ui-layer-diff.js`
 - 不使用 Shadow DOM，CSS 由 JS 自動注入，頁面不需另外引入樣式表
@@ -41,13 +41,13 @@
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `width` | `100%` | 元件寬度。純數字視為 px，也可寫 `50%`、`40rem`。 |
-| `theme` | `dark` | `dark`、`light`、`blue`、`violet`、`green`、`pink`、`orange`、`yellow`、`shell`、`vanilla`、`red`、`indigo`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。也可用 `blue`、`green`、`red`、`violet`、`indigo`、`gray`、`vanilla`、`shell`、`yellow`、`pink`、`orange`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
+| `theme` | `dark` | `dark`、`light`，以及 17 個色票名稱：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。不分大小寫，前後空白會自動去除。名稱無效時在主控台提示，並退回 `dark`（藍色邊框）。 |
 | `padding` | `16` | 內距。純數字視為 px，可寫兩個值，例如 `8 24`。 |
 | `font-size` | `1.125` | 內文字級。純數字視為 rem，標題與按鈕依比例縮放。 |
 | `border` | `1px solid`（主題色） | 寬度、樣式、顏色可任意省略，順序不限。顏色可用色票名稱或 hex。`none` 取消邊框。 |
 | `add-color` | `dark` 系為 `green`，`light` 為 `info` | 增加部分的文字色。 |
 | `del-color` | `warning` | 減去部分的文字色，並加刪除線。 |
-| `mode` | `manual` | `manual` 為手動切換，`auto` 為自動播放。 |
+| `mode` | `manual` | `manual` 為手動切換，`auto` 為自動播放，`comparison` 為左右對照排版（見下方說明）。可寫多個值，以空白分隔，例如 `comparison auto`。 |
 | `interval` | `2500` | 自動播放間隔，單位毫秒，最小 300。 |
 | `loop` | 無 | 布林屬性。有寫時，最後一層之後回到第一層，上一層與下一層也會循環。 |
 | `start` | `1` | 起始層，從 1 起算。 |
@@ -66,12 +66,34 @@
 
 屬性在執行期間修改會立即生效，不需要重新建立元素。
 
+### comparison 排版與說明欄屬性
+
+寫上 `mode="comparison"` 後，元件分成左右兩欄：左側是原本的比對方框，右側是說明欄，切換層數時自動換成該層的說明，不需要另外寫 JavaScript。
+
+- 元件本身佔滿容器寬度，`width` 改為**左側方框**的寬度，預設 `50%`，右側佔滿剩下的空間。
+- 各層的 `note` 改顯示在右側，左側不再重複。
+- 需要放 HTML（清單、色名標籤、多段落）時，在 `<ui-layer>` 寫 `note-tpl`，指向 `<template>` 的 id。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `note-font-size` | `1.125` | 說明欄字級。純數字視為 rem。 |
+| `note-color` | 主題文字色 | 說明欄文字色，可寫色票名稱或 hex。 |
+| `note-bg` | 主題底色 | 說明欄底色。 |
+| `note-border` | `1px solid`（主題色） | 寫法同 `border`，`none` 取消邊框。 |
+| `note-padding` | `16` | 說明欄內距，純數字視為 px，可寫兩個值。 |
+| `note-gap` | `24` | 左右兩欄間距，純數字視為 px。 |
+| `note-align` | `stretch` | `stretch` 與左側等高，`top` 置頂並依內容高度，`center` 垂直置中。 |
+| `note-title` | `true` | 是否在說明欄上方顯示該層的 `label`，設為 `false` 隱藏。 |
+| `note-title-size` | `1.25` | 說明欄標題字級，純數字視為 rem。 |
+| `note-title-color` | 主題色 | 說明欄標題顏色。 |
+
 ### `<ui-layer>`
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `label` | `第 N 層` | 該層左上角的標題。 |
-| `note` | 無 | 該層文字下方的補充說明，用強調色顯示。 |
+| `note` | 無 | 該層文字下方的補充說明，用強調色顯示。comparison 模式改顯示在右側說明欄。 |
+| `note-tpl` | 無 | 僅 comparison 模式：`<template>` 的 id，右側顯示其 HTML，優先於 `note`。 |
 
 ## JavaScript API
 
@@ -121,6 +143,21 @@ document.addEventListener('layerend', () => {
 
 ## 範例
 
+### 左右對照：說明欄跟著層數切換
+
+```html
+<ui-layer-diff mode="comparison" width="50%" theme="key" font-size="1.5"
+               legend="false" show-del="false" progress
+               note-font-size="1.3" note-color="vanilla" note-title-color="yellow">
+  <ui-layer label="主詞語塊" note="地點名詞加上關係子句，說明這是你最常去的地方。">The library I visit most often</ui-layer>
+  <ui-layer label="位置語塊" note-tpl="lib-n2">The library I visit most often is conveniently located on a tree-lined street,</ui-layer>
+</ui-layer-diff>
+
+<template id="lib-n2">
+  <p>用 <c-key>conveniently located</c-key> 取代單調的 is in。</p>
+</template>
+```
+
 ### 自動播放，附完整句子與進度條
 
 ```html
@@ -152,7 +189,7 @@ document.addEventListener('layerend', () => {
 </ui-layer-diff>
 ```
 
-完整的互動範例、各屬性的即時 playground 與程式碼對照，請開啟 `ui-layer-diff-demo-10-29-26.html`。
+完整的互動範例、各屬性的即時 playground 與程式碼對照，請開啟 `ui-layer-diff-demo-10-29-26.html`；comparison 排版請見 `ui-layer-diff-demo-11-09-26.html`。
 
 ## 運作細節
 
@@ -162,3 +199,15 @@ document.addEventListener('layerend', () => {
 - **渲染方式**：元件會用自己產生的內容取代 `<ui-layer>` 子元素。要修改內容請改 `layers` 屬性或重新建立元素。
 - **CSS 注入**：樣式以 `<style id="ui-layer-diff-style">` 注入 `<head>`，選擇器都限定在 `ui-layer-diff` 之下，不會影響頁面其他元素。
 - **顏色透明度**：元件內部沒有使用任何 rgba 半透明顏色。
+
+## 授權
+
+MIT License
+
+Copyright (c) 2026 studyadvice
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

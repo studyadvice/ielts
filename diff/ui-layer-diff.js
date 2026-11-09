@@ -1,3 +1,15 @@
+/*!
+ * <ui-layer-diff> 逐層改寫比對元件 v1.1.0
+ * v1.1.0（11-09-26）
+ *   - mode 新增 comparison：左側為比對方框，右側說明欄隨層切換，顯示該層的 note。
+ *     mode 可寫多個值，例如 mode="comparison auto"。
+ *   - comparison 模式下 width 改為左側方框寬度（預設 50%），元件本身佔滿容器。
+ *   - <ui-layer> 新增 note-tpl：填 <template> 的 id，右側顯示其 HTML，優先於 note。
+ *   - 說明欄外觀屬性：note-font-size、note-color、note-bg、note-border、note-padding、
+ *     note-gap、note-align、note-title、note-title-size、note-title-color。
+ *   - 修正：theme 值前後的空白會自動去除；無效的主題名稱會在主控台提示，再退回 dark。
+ *   - 修正：theme 寫 key、key-deep、calm、quiet、playful、urgent、shell 時未套用，退回 dark。
+ */
 (function () {
   'use strict';
 
@@ -27,8 +39,9 @@
     dark: { bg: '#0C0D0C', text: '#C6C7BD', border: '#5DBAE8', accent: '#5DBAE8', add: '#71CD76', del: '#EF6661' },
     light: { bg: '#DBEDD8', text: '#0C0D0C', border: '#71CD76', accent: '#71CD76', add: '#778CE1', del: '#EF6661' }
   };
-  ['blue', 'violet', 'green', 'pink', 'orange', 'orange', 'blue', 'yellow',
-   'blue', 'green', 'red', 'violet', 'indigo', 'gray', 'vanilla'].forEach(function (n) {
+  /* v1.1：17 個品牌色都可當主題（原本 key、calm、quiet 等未建立，會退回 dark） */
+  Object.keys(PALETTE).forEach(function (n) {
+    if (n === 'bg') return;
     THEMES[n] = { bg: '#0C0D0C', text: '#C6C7BD', border: PALETTE[n], accent: PALETTE[n], add: '#71CD76', del: '#EF6661' };
   });
 
@@ -65,7 +78,16 @@
     'ui-layer-diff .uld-bar{position:relative;box-sizing:border-box;height:var(--uld-ph,10px);margin:12px 0 0 0;background:var(--uld-bg);border:1px solid var(--uld-accent);overflow:hidden;cursor:pointer}',
     'ui-layer-diff .uld-bar.is-top{margin:0 0 12px 0}',
     'ui-layer-diff .uld-bar-fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(to right,var(--uld-pf),var(--uld-pt));clip-path:inset(0 calc(100% - var(--uld-p,0%)) 0 0);transition:clip-path .35s ease}',
-    'ui-layer-diff .uld-bar-tick{position:absolute;top:0;bottom:0;width:2px;margin:0 0 0 -1px;background:var(--uld-bg)}'
+    'ui-layer-diff .uld-bar-tick{position:absolute;top:0;bottom:0;width:2px;margin:0 0 0 -1px;background:var(--uld-bg)}',
+    /* v1.1 comparison 排版：左側方框，右側說明欄 */
+    'ui-layer-diff .uld-cmp{display:grid;grid-template-columns:minmax(0,var(--uld-lw,50%)) minmax(0,1fr);gap:var(--uld-ng,24px);align-items:var(--uld-na,stretch)}',
+    'ui-layer-diff .uld-side{box-sizing:border-box;background:var(--uld-nbg);color:var(--uld-nc);border:var(--uld-nb);padding:var(--uld-np);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:var(--uld-nfs);line-height:1.6;text-align:left}',
+    'ui-layer-diff .uld-side-stage{display:grid}',
+    'ui-layer-diff .uld-sl{grid-area:1 / 1;visibility:hidden;opacity:0;transform:translateX(8px);transition:opacity .3s ease,transform .3s ease,visibility 0s linear .3s}',
+    'ui-layer-diff .uld-sl.is-active{visibility:visible;opacity:1;transform:none;transition:opacity .3s ease,transform .3s ease,visibility 0s linear 0s}',
+    'ui-layer-diff .uld-sl-title{display:block;margin:0 0 8px 0;font-size:var(--uld-ntfs);font-weight:700;color:var(--uld-ntc)}',
+    'ui-layer-diff .uld-sl-body > :first-child{margin-top:0}',
+    'ui-layer-diff .uld-sl-body > :last-child{margin-bottom:0}'
   ].join('\n');
 
   function injectCss() {
@@ -192,9 +214,20 @@
   /* ---------- element ---------- */
 
   var STYLE_ATTRS = ['width', 'theme', 'padding', 'font-size', 'border', 'add-color', 'del-color',
-    'progress-from', 'progress-to', 'progress-height', 'result-gap'];
+    'progress-from', 'progress-to', 'progress-height', 'result-gap',
+    'note-font-size', 'note-color', 'note-bg', 'note-border', 'note-padding', 'note-gap', 'note-align',
+    'note-title-size', 'note-title-color'];
   var BUILD_ATTRS = ['controls', 'legend', 'show-del', 'add-label', 'del-label',
-    'show-result', 'result-label', 'progress', 'progress-position', 'progress-ticks'];
+    'show-result', 'result-label', 'progress', 'progress-position', 'progress-ticks', 'note-title'];
+
+  /* 讀取 note-tpl 指向的內容：<template> 取其 HTML，其他元素取 innerHTML，找不到回傳 null */
+  function tplHtml(id) {
+    id = (id || '').trim().replace(/^#/, '');
+    if (!id) return null;
+    var el = document.getElementById(id);
+    if (!el) return null;
+    return el.innerHTML;
+  }
 
   class UiLayerDiff extends HTMLElement {
     static get observedAttributes() {
@@ -229,7 +262,7 @@
       if (STYLE_ATTRS.indexOf(name) > -1) { this._applyStyle(); return; }
       if (name === 'interval') { this._arm(); return; }
       if (name === 'loop') { this._show(this._idx, null); return; }
-      if (name === 'mode') { this._playing = this._isAuto(); this._rebuild(); return; }
+      if (name === 'mode') { this._playing = this._isAuto(); this._applyStyle(); this._rebuild(); return; }
       if (BUILD_ATTRS.indexOf(name) > -1) this._rebuild();
     }
 
@@ -238,7 +271,10 @@
     get layers() { return (this._layers || []).slice(); }
     set layers(v) {
       this._layers = (v || []).map(function (x) {
-        return typeof x === 'string' ? { text: x, label: '', note: '' } : { text: x.text || '', label: x.label || '', note: x.note || '' };
+        return typeof x === 'string'
+          ? { text: x, label: '', note: '', noteHtml: null }
+          : { text: x.text || '', label: x.label || '', note: x.note || '',
+              noteHtml: x.noteHtml != null ? String(x.noteHtml) : tplHtml(x.noteTpl) };
       });
       if (this._ready) { this._idx = 0; this._rebuild(); }
     }
@@ -266,7 +302,10 @@
 
     /* internals */
 
-    _isAuto() { return (this.getAttribute('mode') || '').toLowerCase() === 'auto'; }
+    /* mode 可寫多個值，以空白分隔，例如 mode="comparison auto" */
+    _modes() { return (this.getAttribute('mode') || '').toLowerCase().split(/[\s,]+/); }
+    _isAuto() { return this._modes().indexOf('auto') > -1; }
+    _isCmp() { return this._modes().indexOf('comparison') > -1; }
 
     /* attribute absent -> def; value "false" -> false; anything else (including empty) -> true */
     _flag(name, def) {
@@ -281,7 +320,8 @@
         return {
           text: (el.textContent || '').replace(/\s+/g, ' ').trim(),
           label: el.getAttribute('label') || '',
-          note: el.getAttribute('note') || ''
+          note: el.getAttribute('note') || '',
+          noteHtml: tplHtml(el.getAttribute('note-tpl'))
         };
       });
     }
@@ -305,7 +345,12 @@
     }
 
     _applyStyle() {
-      var t = THEMES[(this.getAttribute('theme') || 'dark').toLowerCase()] || THEMES.dark;
+      var tn = (this.getAttribute('theme') || 'dark').trim().toLowerCase() || 'dark';
+      var t = THEMES[tn];
+      if (!t) {
+        console.warn('[ui-layer-diff] theme="' + tn + '" 不是有效的主題，已改用 dark。');
+        t = THEMES.dark;
+      }
       var s = this.style;
       s.setProperty('--uld-bg', t.bg);
       s.setProperty('--uld-text', t.text);
@@ -316,7 +361,23 @@
       s.setProperty('--uld-pad', parsePadding(this.getAttribute('padding')));
       s.setProperty('--uld-fs', withUnit(this.getAttribute('font-size'), 'rem', 1.125));
       var w = (this.getAttribute('width') || '').trim();
-      s.setProperty('--uld-w', w ? withUnit(w, 'px', 100) : '100%');
+      if (this._isCmp()) {
+        /* comparison：元件佔滿容器，width 改為左側方框的寬度，預設 50% */
+        s.setProperty('--uld-w', '100%');
+        s.setProperty('--uld-lw', w ? withUnit(w, 'px', 50) : '50%');
+      } else {
+        s.setProperty('--uld-w', w ? withUnit(w, 'px', 100) : '100%');
+      }
+      s.setProperty('--uld-nfs', withUnit(this.getAttribute('note-font-size'), 'rem', 1.125));
+      s.setProperty('--uld-nc', color(this.getAttribute('note-color'), t.text));
+      s.setProperty('--uld-nbg', color(this.getAttribute('note-bg'), t.bg));
+      s.setProperty('--uld-nb', parseBorder(this.getAttribute('note-border'), t.border));
+      s.setProperty('--uld-np', parsePadding(this.getAttribute('note-padding')));
+      s.setProperty('--uld-ng', withUnit(this.getAttribute('note-gap'), 'px', 24));
+      var na = (this.getAttribute('note-align') || '').trim().toLowerCase();
+      s.setProperty('--uld-na', na === 'top' ? 'start' : na === 'center' ? 'center' : 'stretch');
+      s.setProperty('--uld-ntfs', withUnit(this.getAttribute('note-title-size'), 'rem', 1.25));
+      s.setProperty('--uld-ntc', color(this.getAttribute('note-title-color'), t.accent));
       s.setProperty('--uld-pf', color(this.getAttribute('progress-from'), t.accent));
       s.setProperty('--uld-pt', color(this.getAttribute('progress-to'), color(this.getAttribute('add-color'), t.add)));
       s.setProperty('--uld-ph', withUnit(this.getAttribute('progress-height'), 'px', 10));
@@ -329,9 +390,11 @@
       var showDel = this.getAttribute('show-del') !== 'false';
       var showResult = this._flag('show-result', false);
       var resultLabel = esc(this.getAttribute('result-label') || '完整句子');
+      var cmp = this._isCmp();
       var stage = L.map(function (l, i) {
         var inner = i === 0 ? esc(l.text) : diffHtml(L[i - 1].text, l.text, showDel);
-        var note = l.note ? '<div class="uld-note">' + esc(l.note) + '</div>' : '';
+        /* comparison 模式的 note 移到右側說明欄，左側不再重複 */
+        var note = l.note && !cmp ? '<div class="uld-note">' + esc(l.note) + '</div>' : '';
         /* layer 1 is identical to its own diff text, so its full sentence is never shown */
         var result = showResult && i > 0
           ? '<div class="uld-result"><span class="uld-result-label">' + resultLabel + '</span><div class="uld-result-text">' + esc(l.text) + '</div></div>'
@@ -374,9 +437,21 @@
       }
       var foot = (legend || ctl) ? '<div class="uld-foot">' + legend + ctl + '</div>' : '';
 
-      this.innerHTML = '<div class="uld-box">' +
+      var box = '<div class="uld-box">' +
         '<div class="uld-head"><span class="uld-label"></span><span class="uld-count"></span></div>' +
         barTop + '<div class="uld-stage">' + stage + '</div>' + barBottom + foot + '</div>';
+
+      if (!cmp) { this.innerHTML = box; return; }
+
+      /* 右側說明欄：note-tpl 的 HTML 優先，其次 note 文字；note-title 控制是否顯示層標題 */
+      var showTitle = this._flag('note-title', true);
+      var side = L.map(function (l, i) {
+        var title = showTitle ? '<span class="uld-sl-title">' + esc(l.label || ('第 ' + (i + 1) + ' 層')) + '</span>' : '';
+        var body = l.noteHtml != null ? l.noteHtml : (l.note ? '<p>' + esc(l.note) + '</p>' : '');
+        return '<div class="uld-sl">' + title + '<div class="uld-sl-body">' + body + '</div></div>';
+      }).join('');
+      this.innerHTML = '<div class="uld-cmp">' + box +
+        '<aside class="uld-side"><div class="uld-side-stage">' + side + '</div></aside></div>';
     }
 
     _show(i, source) {
@@ -386,6 +461,7 @@
       this._idx = i;
       var layerEls = this.querySelectorAll('.uld-layer');
       Array.prototype.forEach.call(layerEls, function (el, k) { el.classList.toggle('is-active', k === i); });
+      Array.prototype.forEach.call(this.querySelectorAll('.uld-sl'), function (el, k) { el.classList.toggle('is-active', k === i); });
       var label = L[i].label || ('第 ' + (i + 1) + ' 層');
       var lb = this.querySelector('.uld-label'), ct = this.querySelector('.uld-count');
       if (lb) lb.textContent = label;
