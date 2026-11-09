@@ -86,7 +86,7 @@
 | `note-title` | `true` | 是否在說明欄上方顯示該層的 `label`，設為 `false` 隱藏。 |
 | `note-title-size` | `1.25` | 說明欄標題字級，純數字視為 rem。 |
 | `note-title-color` | 主題色 | 說明欄標題顏色。 |
-| `note-hide-initial` | `false` | 布林屬性。載入時先不顯示說明，第一次切換層（手動、自動播放、API）之後才顯示，之後回到起始層也照常顯示。非 comparison 模式時，作用於句子下方的 `note`。 |
+| `note-hide-initial` | `false` | 布林屬性。載入時先不顯示說明，第一次切換層（手動、自動播放、API）之後才顯示，之後回到起始層也照常顯示。非 comparison 模式時，作用於句子下方的 `note`。開啟 `progress` 時，隱藏期間進度條也保持全空。 |
 | `note-placeholder` | 空白 | 說明隱藏期間，右側說明欄顯示的文字。 |
 
 ### `<ui-layer>`

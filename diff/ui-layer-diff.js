@@ -4,6 +4,7 @@
  *   - 新增 note-hide-initial：載入時先不顯示說明（右側說明欄與句子下方的 note），
  *     第一次切換層之後才顯示，之後回到起始層也會照常顯示。
  *   - 新增 note-placeholder：說明隱藏期間，右側說明欄顯示的文字，預設空白。
+ *   - note-hide-initial 期間，進度條（progress）也保持全空，第一次切換層之後才填色。
  * v1.1.0（11-09-26）
  *   - mode 新增 comparison：左側為比對方框，右側說明欄隨層切換，顯示該層的 note。
  *     mode 可寫多個值，例如 mode="comparison auto"。
@@ -485,7 +486,8 @@
       if (ct) ct.textContent = (i + 1) + ' / ' + n;
       Array.prototype.forEach.call(this.querySelectorAll('.uld-dot'), function (d, k) { d.classList.toggle('is-active', k === i); });
       var barEl = this.querySelector('.uld-bar');
-      if (barEl) barEl.style.setProperty('--uld-p', ((i + 1) / n * 100) + '%');
+      /* note-hide-initial 期間進度條保持全空，第一次切換層之後才填色 */
+      if (barEl) barEl.style.setProperty('--uld-p', hideNote ? '0%' : ((i + 1) / n * 100) + '%');
       var loop = this.hasAttribute('loop');
       var pv = this.querySelector('[data-act="prev"]'), nx = this.querySelector('[data-act="next"]');
       if (pv) pv.disabled = !loop && i === 0;
