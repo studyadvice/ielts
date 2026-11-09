@@ -567,6 +567,20 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 
 `<ui-cards>` 把多張 `<card-item>` 排成卡片網格。卡片可以只是展示，也可以點擊後在下方或右側的內容區顯示細節；卡片內與內容區裡任何帶 `detail` 的按鈕也能開啟細節。另外支援 `reveal` 按鈕，按下後顯示頁面上另一個隱藏區塊。遵守 ui 元件共同約定：屬性只在載入時讀取一次，內容一律複製，數字單位為 px（字級為 rem），顏色可填品牌色名稱或色碼。
 
+> [!CAUTION]
+> # ⚠️ `reveal` 的目標一律用 `<div hidden>`
+> ## 不要用 `<template>`，按下按鈕後畫面會是空的
+>
+> `reveal` 只會移除目標的 `hidden`、`d-none` 或 `display:none`，不會展開 `<template>` 的內容。目標是 `<template>` 時，內容不會顯示；若按鈕又帶 `remove-cards`，整組卡片被移除後畫面就只剩空白。`<div hidden>` 裡可以再放 `<ui-cards>` 和下一層 `reveal` 按鈕，一層一層往下接。
+>
+> ```html
+> <button reveal="starting-block" remove-cards>開始</button>
+>
+> <div id="starting-block" hidden>
+>   <ui-cards>...</ui-cards>
+> </div>
+> ```
+
 ### 標籤
 
 | 標籤 | 用途 |
@@ -694,9 +708,12 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 
 ### 顯示按鈕屬性
 
+> [!CAUTION]
+> ## ⚠️ `reveal` 的目標一律用 `<div hidden>`，不要用 `<template>`
+
 | 屬性 | 值 | 說明 |
 | --- | --- | --- |
-| `reveal` | 元素 id | 按下後顯示這個區塊（移除 `hidden`、`d-none` 或 `display:none`）。 |
+| `reveal` | 元素 id | 按下後顯示這個區塊（移除 `hidden`、`d-none` 或 `display:none`）。目標必須是 `<div hidden>` 這類一般元素，`<template>` 不會顯示。 |
 | `remove-cards` | 布林 | 顯示後把整個 `<ui-cards>` 從頁面移除。 |
 | `reveal-scroll` | 布林 | 顯示後平滑捲動到該區塊。 |
 | `color` | 顏色 | 按鈕底色。 |
@@ -704,7 +721,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 
 ### 屬性解說
 
-- **內容來源**：`source`、`detail`、`reveal` 都指向頁面上的 id，建議用 `<template>` 或加上 `hidden` 的 `div`。內容一律複製，同一份來源可以被多張卡片共用。找不到 id 時會在該處顯示紅框警告。
+- **內容來源**：`source`、`detail`、`reveal` 都指向頁面上的 id。`source` 和 `detail` 可以用 `<template>` 或加上 `hidden` 的 `div`；`reveal` 一律用加上 `hidden` 的 `div`。內容一律複製，同一份來源可以被多張卡片共用。找不到 id 時會在該處顯示紅框警告。
 - **按鈕樣式**：帶 `detail` 或 `reveal` 的元素會自動套用按鈕樣式；已有 Bootstrap `btn` 類別時不覆蓋，並在選中時加上 `active`。
 - **點擊優先順序**：`reveal` 按鈕最優先，其次是帶 `detail` 的元素，最後才是帶 `href` 的卡片。卡片內一般的連結與按鈕不會被卡片攔截。
 - **實心的文字色**：卡片實心時（`card-style="filled"` 或 `active-style="filled"` 的選中卡片），文字、圖示與標籤依底色亮度自動選擇深色或淺色。
