@@ -4,7 +4,7 @@
 
 適合用在語言教學、文章修改歷程、文案前後對照等需要「一步一步看出差異」的場合。
 
-- 版本：1.1.0（11-09-26 新增 `mode="comparison"` 左右對照排版）
+- 版本：1.2.0（11-09-26 新增 `mode="comparison"` 左右對照排版、`note-hide-initial` 載入時先隱藏說明）
 - 建立日期：10-29-26
 - 單一檔案、零依賴：`ui-layer-diff.js`
 - 不使用 Shadow DOM，CSS 由 JS 自動注入，頁面不需另外引入樣式表
@@ -86,6 +86,8 @@
 | `note-title` | `true` | 是否在說明欄上方顯示該層的 `label`，設為 `false` 隱藏。 |
 | `note-title-size` | `1.25` | 說明欄標題字級，純數字視為 rem。 |
 | `note-title-color` | 主題色 | 說明欄標題顏色。 |
+| `note-hide-initial` | `false` | 布林屬性。載入時先不顯示說明，第一次切換層（手動、自動播放、API）之後才顯示，之後回到起始層也照常顯示。非 comparison 模式時，作用於句子下方的 `note`。 |
+| `note-placeholder` | 空白 | 說明隱藏期間，右側說明欄顯示的文字。 |
 
 ### `<ui-layer>`
 

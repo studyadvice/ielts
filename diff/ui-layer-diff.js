@@ -1,5 +1,9 @@
 /*!
- * <ui-layer-diff> 逐層改寫比對元件 v1.1.0
+ * <ui-layer-diff> 逐層改寫比對元件 v1.2.0
+ * v1.2.0（11-09-26）
+ *   - 新增 note-hide-initial：載入時先不顯示說明（右側說明欄與句子下方的 note），
+ *     第一次切換層之後才顯示，之後回到起始層也會照常顯示。
+ *   - 新增 note-placeholder：說明隱藏期間，右側說明欄顯示的文字，預設空白。
  * v1.1.0（11-09-26）
  *   - mode 新增 comparison：左側為比對方框，右側說明欄隨層切換，顯示該層的 note。
  *     mode 可寫多個值，例如 mode="comparison auto"。
@@ -87,7 +91,10 @@
     'ui-layer-diff .uld-sl.is-active{visibility:visible;opacity:1;transform:none;transition:opacity .3s ease,transform .3s ease,visibility 0s linear 0s}',
     'ui-layer-diff .uld-sl-title{display:block;margin:0 0 8px 0;font-size:var(--uld-ntfs);font-weight:700;color:var(--uld-ntc)}',
     'ui-layer-diff .uld-sl-body > :first-child{margin-top:0}',
-    'ui-layer-diff .uld-sl-body > :last-child{margin-bottom:0}'
+    'ui-layer-diff .uld-sl-body > :last-child{margin-bottom:0}',
+    /* v1.2 note-hide-initial：說明先隱藏，直到第一次切換層 */
+    'ui-layer-diff.uld-nh .uld-note{visibility:hidden}',
+    'ui-layer-diff .uld-sl-ph{color:var(--uld-nc)}'
   ].join('\n');
 
   function injectCss() {
@@ -218,7 +225,7 @@
     'note-font-size', 'note-color', 'note-bg', 'note-border', 'note-padding', 'note-gap', 'note-align',
     'note-title-size', 'note-title-color'];
   var BUILD_ATTRS = ['controls', 'legend', 'show-del', 'add-label', 'del-label',
-    'show-result', 'result-label', 'progress', 'progress-position', 'progress-ticks', 'note-title'];
+    'show-result', 'result-label', 'progress', 'progress-position', 'progress-ticks', 'note-title', 'note-placeholder', 'note-hide-initial'];
 
   /* 讀取 note-tpl 指向的內容：<template> 取其 HTML，其他元素取 innerHTML，找不到回傳 null */
   function tplHtml(id) {
@@ -241,6 +248,7 @@
       this._timer = null;
       this._playing = false;
       this._ready = false;
+      this._noteShown = false;
       var self = this;
       this.addEventListener('click', function (e) { self._onClick(e); });
     }
@@ -450,8 +458,11 @@
         var body = l.noteHtml != null ? l.noteHtml : (l.note ? '<p>' + esc(l.note) + '</p>' : '');
         return '<div class="uld-sl">' + title + '<div class="uld-sl-body">' + body + '</div></div>';
       }).join('');
+      /* 說明隱藏期間顯示的佔位內容，未設定 note-placeholder 時為空白 */
+      var ph = '<div class="uld-sl uld-sl-ph"><div class="uld-sl-body">' +
+        esc(this.getAttribute('note-placeholder') || '') + '</div></div>';
       this.innerHTML = '<div class="uld-cmp">' + box +
-        '<aside class="uld-side"><div class="uld-side-stage">' + side + '</div></aside></div>';
+        '<aside class="uld-side"><div class="uld-side-stage">' + side + ph + '</div></aside></div>';
     }
 
     _show(i, source) {
@@ -461,7 +472,13 @@
       this._idx = i;
       var layerEls = this.querySelectorAll('.uld-layer');
       Array.prototype.forEach.call(layerEls, function (el, k) { el.classList.toggle('is-active', k === i); });
-      Array.prototype.forEach.call(this.querySelectorAll('.uld-sl'), function (el, k) { el.classList.toggle('is-active', k === i); });
+      /* note-hide-initial：載入時不顯示說明，任何一次切換層（手動、自動、API）之後才顯示 */
+      if (source) this._noteShown = true;
+      var hideNote = this._flag('note-hide-initial', false) && !this._noteShown;
+      this.classList.toggle('uld-nh', hideNote);
+      Array.prototype.forEach.call(this.querySelectorAll('.uld-sl:not(.uld-sl-ph)'), function (el, k) { el.classList.toggle('is-active', !hideNote && k === i); });
+      var phEl = this.querySelector('.uld-sl-ph');
+      if (phEl) phEl.classList.toggle('is-active', hideNote);
       var label = L[i].label || ('第 ' + (i + 1) + ' 層');
       var lb = this.querySelector('.uld-label'), ct = this.querySelector('.uld-count');
       if (lb) lb.textContent = label;
