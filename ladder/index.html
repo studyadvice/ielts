@@ -1,0 +1,1368 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ladder 元件範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../bp-styles.css">
+<style>
+/* 合併頁外框：左側選單、右側框架；間距一律 px */
+html,body{height:100%;margin:0;}
+body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
+.shell{display:grid;grid-template-columns:320px minmax(0,1fr);height:100vh;}
+.side{border-right:1px solid var(--bp-key-deep);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
+.side h1{font-size:1.4rem;margin:0 0 6px 0;}
+.side .lead{font-size:.85rem;line-height:1.6;margin:0 0 12px 0;}
+.grp{margin:14px 0 2px 0;letter-spacing:1px;}
+.part-btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;
+  background:transparent;border:1px solid var(--bp-fill);border-radius:8px;padding:8px 10px;color:var(--bp-shell);cursor:pointer;}
+.part-btn:hover{background:var(--bp-fill);}
+.part-btn .d{font-family:ui-monospace,monospace;font-size:.8rem;}
+.part-btn .t{font-size:.9rem;line-height:1.4;}
+.part-btn.on{border-color:var(--bp-key);background:#14302E;color:var(--bp-vanilla);}
+.side-link{font-size:.9rem;text-decoration:none;padding:4px 10px;}
+.main{display:flex;flex-direction:column;min-width:0;}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-key-deep);}
+.bar .now{font-size:1rem;}
+.bar .from{font-family:ui-monospace,monospace;font-size:.8rem;margin-left:auto;}
+#stage{flex:1;width:100%;border:0;background:var(--bp-base);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="side">
+    <h1 class="bp-text-key">ladder 元件範例</h1>
+    <p class="lead bp-text-calm">本資料夾的 <code>ui-detail-ladder</code> 與 <code>ui-insight</code> 範例合併為一頁。左側選擇元件與版本，右側顯示該版本完整的範例與程式碼對照。合併日期 11-10-26。</p>
+      <p class="grp fs-small bp-text-gray">ui-detail-ladder</p>
+      <button type="button" class="part-btn" data-go="ui-detail-ladder-11-01-26"><span class="d bp-text-yellow">11-01-26</span><span class="t">ui-detail-ladder 細節階梯元件範例</span></button>
+      <p class="grp fs-small bp-text-gray">ui-insight</p>
+      <button type="button" class="part-btn" data-go="ui-insight-11-01-26"><span class="d bp-text-yellow">11-01-26</span><span class="t">ui-insight 亮點字詞解說元件範例</span></button>
+      <button type="button" class="part-btn" data-go="ui-insight-11-02-26"><span class="d bp-text-yellow">11-02-26</span><span class="t">ui-insight 示範 11-02-26</span></button>
+      <button type="button" class="part-btn" data-go="ui-insight-11-08-26"><span class="d bp-text-yellow">11-08-26</span><span class="t">ui-insight v1.3 範例：extra-info</span></button>
+  </nav>
+  <main class="main">
+    <div class="bar"><span class="now bp-text-vanilla" id="now"></span><span class="from bp-text-gray" id="from"></span></div>
+    <iframe id="stage" title="範例"></iframe>
+  </main>
+</div>
+
+<!--
+  每個 template 是一份原本獨立的範例頁，內容原封不動：
+  上半是原本 <head> 裡的樣式與連結，標記之下是原本的 <body>。
+  要修改某一版範例，直接改對應 template 裡的 HTML；要新增一版，照同樣格式加一個 template。
+-->
+<template data-part id="ui-detail-ladder-11-01-26" data-component="ui-detail-ladder" data-date="11-01-26"
+          data-title="ui-detail-ladder 細節階梯元件範例" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-detail-ladder-demo-11-01-26.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-detail-ladder 細節階梯元件範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{color:#5DBAE8;font-size:1rem;margin:24px 0 8px 0}
+  p.lead-text{color:#C6C7BD;font-size:.95rem}
+  .demo-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  table.ref{width:100%;border-collapse:collapse;font-size:.85rem}
+  table.ref th{background:#1a1c1a;color:#5DBAE8;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
+  table.ref td{padding:7px 10px;border-bottom:1px solid #222422;vertical-align:top}
+  table.ref td:first-child{color:#E3D322;font-family:Consolas,monospace;white-space:nowrap}
+  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#F79C40;white-space:nowrap}
+  .swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;font-size:.8rem}
+  .swatches span{background:#161816;border-radius:6px;padding:6px 8px}
+  .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
+  code{color:#FF91D7}
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+
+<h1>&lt;ui-detail-ladder&gt; 細節階梯元件</h1>
+<p class="lead-text">把籠統說法逐階升級成具體說法。左側為階梯軌道，右側依序為 pill、次標題、本文、註腳、進度條與按鈕，全部可由屬性自訂。</p>
+<div class="alert alert-dark-custom" style="margin:12px 0 0 0;border-color:#B484E8">
+  <i class="bi bi-clock-history" style="color:#B484E8"></i>
+  版本紀錄：v1.0 首版（範例一到三）；v1.1 新增預設收合、鍵盤切換、次標題圖示（見頁面下方「v1.1 更新」）。
+</div>
+
+<!-- ========== 範例一 ========== -->
+<h2>範例一：全部使用預設值</h2>
+<div class="demo-row">
+  <div>
+    <ui-detail-ladder id="demo1">
+      <ladder-step label="籠統說法">
+        <step-title>原本的說法</step-title>
+        <step-body>I live <mark>near</mark> my school.</step-body>
+        <step-note>我住在學校附近。</step-note>
+      </ladder-step>
+      <ladder-step label="加上距離感">
+        <step-title>先讓距離可以想像</step-title>
+        <step-body>I live <mark>within walking distance of</mark> my school.</step-body>
+        <step-note>我住的地方走路就能到學校。</step-note>
+      </ladder-step>
+      <ladder-step label="加上數字">
+        <step-title>換成可衡量的數字</step-title>
+        <step-body>It's <mark>about a ten-minute walk</mark> from my place to school.</step-body>
+        <step-note>從我家走到學校大約十分鐘。</step-note>
+      </ladder-step>
+      <ladder-step label="加上生活畫面">
+        <step-title>最後補上一個生活場景</step-title>
+        <step-body>It's a ten-minute walk, <mark>so I can roll out of bed at 7:45 and still make my first class</mark>.</step-body>
+        <step-note>走路十分鐘，所以我七點四十五分才起床也趕得上第一堂課。</step-note>
+      </ladder-step>
+    </ui-detail-ladder>
+    <div class="alert alert-dark-custom" id="log1">事件紀錄：點擊階梯或按鈕後顯示於此。</div>
+  </div>
+<pre>&lt;ui-detail-ladder&gt;
+  &lt;ladder-step label="籠統說法"&gt;
+    &lt;step-title&gt;原本的說法&lt;/step-title&gt;
+    &lt;step-body&gt;I live &lt;mark&gt;near&lt;/mark&gt; my school.&lt;/step-body&gt;
+    &lt;step-note&gt;我住在學校附近。&lt;/step-note&gt;
+  &lt;/ladder-step&gt;
+  &lt;ladder-step label="加上距離感"&gt;
+    ...
+  &lt;/ladder-step&gt;
+&lt;/ui-detail-ladder&gt;
+
+&lt;script src="ui-detail-ladder.js"&gt;&lt;/script&gt;</pre>
+</div>
+
+<!-- ========== 範例二 ========== -->
+<h2>範例二：由上到下、虛線、漸層進度條、外框、本文分隔線</h2>
+<div class="demo-row">
+  <ui-detail-ladder
+    direction="down"
+    border="true"
+    border-color="#778CE1"
+    padding="16px 20px"
+    step-gap="22px"
+    step-font-size="0.9rem"
+    line-style="dashed"
+    line-width="2px"
+    show-divider="true"
+    divider-style="dotted"
+    divider-color="#778CE1"
+    progress-height="10px"
+    progress-color="#5DBAE8"
+    progress-color-end="#B484E8"
+    progress-text="第 {n} 階，共 {total} 階"
+    progress-text-color="#5DBAE8"
+    next-text="下一階"
+    pill-bg="#F79C40">
+    <ladder-step label="籠統說法">
+      <step-title>原本的說法</step-title>
+      <step-body>The bus was <mark>so crowded</mark>.</step-body>
+      <step-note>公車很擠。</step-note>
+    </ladder-step>
+    <ladder-step label="換成結果">
+      <step-title>用結果代替形容詞</step-title>
+      <step-body>The buses were so packed that <mark>I couldn't get on</mark>.</step-body>
+      <step-note>公車擠到我上不去。</step-note>
+    </ladder-step>
+    <ladder-step label="加上數字">
+      <step-title>讓結果可以被衡量</step-title>
+      <step-body>The buses were so packed that <mark>I let three go by</mark>.</step-body>
+      <step-note>公車擠到我讓了三班過去。</step-note>
+    </ladder-step>
+  </ui-detail-ladder>
+<pre>&lt;ui-detail-ladder
+  direction="down"
+  border="true" border-color="#778CE1"
+  padding="16px 20px"
+  step-gap="22px" step-font-size="0.9rem"
+  line-style="dashed" line-width="2px"
+  show-divider="true" divider-style="dotted" divider-color="#778CE1"
+  progress-height="10px"
+  progress-color="#5DBAE8" progress-color-end="#B484E8"
+  progress-text="第 {n} 階，共 {total} 階"
+  next-text="下一階"
+  pill-bg="#F79C40"&gt;
+  ...
+&lt;/ui-detail-ladder&gt;</pre>
+</div>
+
+<!-- ========== 範例三 ========== -->
+<h2>範例三：隱藏 pill、雙線軌道、放大字體、快速色彩標籤</h2>
+<div class="demo-row">
+  <ui-detail-ladder
+    show-pill="false"
+    rail-width="240px"
+    dot-size="28px"
+    dot-font-size="0.8rem"
+    step-font-size="1rem"
+    line-style="double"
+    line-width="4px"
+    line-active-color="#71CD76"
+    current-color="#FF91D7"
+    body-font-size="1.25rem"
+    title-color="#F79C40"
+    note-color="#F79C40"
+    hl-bg="#E3D322"
+    progress-color="#FF91D7"
+    start="2">
+    <ladder-step label="籠統說法">
+      <step-title>原本的說法</step-title>
+      <step-body>I'm <c-red>fond of cooking</c-red>.</step-body>
+      <step-note>標籤示範：<c-red>c4 warning</c-red> 標出要被換掉的空泛說法。</step-note>
+    </ladder-step>
+    <ladder-step label="加上對象">
+      <step-title>說出為誰而做</step-title>
+      <step-body>I don't mind <c-blue>cooking dinner</c-blue> <mark>for my family</mark>.</step-body>
+      <step-note>標籤示範：<c-blue>c3 blue</c-blue> 標出動作。</step-note>
+    </ladder-step>
+    <ladder-step label="加上情境">
+      <step-title>放進真實的一天</step-title>
+      <step-body>I don't mind cooking dinner for my family, <mark>even after a hectic day</mark> with <c-pink>back-to-back meetings</c-pink>.</step-body>
+      <step-note>標籤示範：<c-pink>c15 pink</c-pink> 標出可借用的搭配詞。</step-note>
+    </ladder-step>
+  </ui-detail-ladder>
+<pre>&lt;ui-detail-ladder
+  show-pill="false"
+  rail-width="240px" dot-size="28px"
+  step-font-size="1rem"
+  line-style="double" line-width="4px"
+  line-active-color="#71CD76"
+  current-color="#FF91D7"
+  body-font-size="1.25rem"
+  start="2"&gt;
+  &lt;ladder-step label="加上對象"&gt;
+    &lt;step-body&gt;I don't mind &lt;c3&gt;cooking dinner&lt;/c3&gt;
+      &lt;mark&gt;for my family&lt;/mark&gt;.&lt;/step-body&gt;
+  &lt;/ladder-step&gt;
+&lt;/ui-detail-ladder&gt;
+
+雙線（double）需要 line-width 至少 3px 才看得出兩條線。</pre>
+</div>
+
+<!-- ========== v1.1 更新 ========== -->
+<h2 style="color:#71CD76;border-bottom-color:#71CD76">v1.1 更新：預設收合、鍵盤切換、次標題圖示</h2>
+<p class="lead-text">以下每組左邊是 v1.1 實際效果，右邊是 v1.0 與 v1.1 的寫法對照。</p>
+
+<h3>1. ini-collapse 預設收合</h3>
+<div class="demo-row">
+  <ui-detail-ladder id="demo4" ini-collapse ini-title="預設收合，點擊展開" border="true" border-color="#778CE1" padding="12px 16px">
+    <ladder-step label="籠統說法">
+      <step-title icon="bi-chat-square-quote">原本的說法</step-title>
+      <step-body>Exercise is <mark>crucial</mark> for me.</step-body>
+      <step-note>運動對我很重要。</step-note>
+    </ladder-step>
+    <ladder-step label="加上頻率">
+      <step-title icon="bi-calendar-week">說出多常做</step-title>
+      <step-body>I <mark>go for a run three times a week</mark>.</step-body>
+      <step-note>我一週跑步三次。</step-note>
+    </ladder-step>
+    <ladder-step label="加上畫面">
+      <step-title icon="bi-sunrise">放進一個具體時刻</step-title>
+      <step-body>I go for a run three times a week, <mark>usually along the riverbank before work</mark>.</step-body>
+      <step-note>我一週跑三次，通常是上班前沿著河堤跑。</step-note>
+    </ladder-step>
+  </ui-detail-ladder>
+<pre><span style="color:#F79C40">/* v1.0：沒有收合功能，元件一律展開 */</span>
+&lt;ui-detail-ladder border="true"&gt;
+  ...
+&lt;/ui-detail-ladder&gt;
+
+<span style="color:#71CD76">/* v1.1：加上 ini-collapse 即預設收合 */</span>
+&lt;ui-detail-ladder ini-collapse
+  ini-title="預設收合，點擊展開"
+  border="true"&gt;
+  ...
+&lt;/ui-detail-ladder&gt;
+
+ini-collapse 不必給值；寫成 ini-collapse="false" 等同不收合。
+可搭配 ini-title-size、ini-title-color、ini-title-bg 調整標題列。</pre>
+</div>
+
+<h3>2. Ctrl+Shift+上下方向鍵切換階梯</h3>
+<div class="demo-row">
+  <div>
+    <ui-detail-ladder id="demo5" direction="down" line-style="dotted" line-width="3px">
+      <ladder-step label="籠統說法">
+        <step-title icon="bi-geo-alt">原本的說法</step-title>
+        <step-body>My location is <mark>convenient</mark>.</step-body>
+        <step-note>我住的地方很方便。</step-note>
+      </ladder-step>
+      <ladder-step label="說出方便在哪">
+        <step-title icon="bi-shop">指出具體設施</step-title>
+        <step-body>There's <mark>a supermarket and a metro station</mark> right around the corner.</step-body>
+        <step-note>轉角就有超市和捷運站。</step-note>
+      </ladder-step>
+      <ladder-step label="加上生活畫面">
+        <step-title icon="bi-basket">描述一次真實使用</step-title>
+        <step-body>If I run out of milk, <mark>I can grab some in my slippers</mark> and be back in five minutes.</step-body>
+        <step-note>牛奶喝完了，我穿著拖鞋就能去買，五分鐘回到家。</step-note>
+      </ladder-step>
+    </ui-detail-ladder>
+    <div class="alert alert-dark-custom" id="log5">
+      <i class="bi bi-keyboard"></i> 把游標移到元件上（或點一下元件），再按 Ctrl+Shift+↑ 或 Ctrl+Shift+↓。
+    </div>
+  </div>
+<pre><span style="color:#F79C40">/* v1.0：只能用滑鼠點階梯或按鈕 */</span>
+
+<span style="color:#71CD76">/* v1.1：預設啟用鍵盤，不需任何設定 */</span>
+&lt;ui-detail-ladder direction="down"&gt;
+  ...
+&lt;/ui-detail-ladder&gt;
+
+/* 若要關閉 */
+&lt;ui-detail-ladder keyboard="false"&gt;
+
+規則：
+・方向鍵依「畫面上的上下」移動。
+  direction="up"   時 ↑ 是下一階。
+  direction="down" 時 ↓ 是下一階。
+・作用對象：最近一次被游標指到、點擊
+  或用 Tab 取得焦點的那一個元件。
+・游標在其他 input、textarea 打字時不攔截。
+・收合狀態下不作用。
+・用鍵盤切換時，目前階梯的圓點外圍會加一圈提示框。</pre>
+</div>
+
+<h3>3. step-title 的 icon 屬性</h3>
+<div class="demo-row">
+  <ui-detail-ladder id="demo6" title-icon-color="#FF91D7" show-progress="false">
+    <ladder-step label="籠統說法">
+      <step-title icon="bi-emoji-neutral">原本的說法</step-title>
+      <step-body>Nightlife here is <mark>vibrant</mark>.</step-body>
+    </ladder-step>
+    <ladder-step label="加上場所">
+      <step-title icon="star-fill" icon-color="#E3D322">簡寫也可以（star-fill）</step-title>
+      <step-body>There's <mark>a night market two streets away</mark>.</step-body>
+    </ladder-step>
+    <ladder-step label="加上感官">
+      <step-title icon="bi bi-fire" icon-color="#F79C40">完整寫法也可以（bi bi-fire）</step-title>
+      <step-body>There's a night market two streets away, <mark>and you can smell the grilled squid from my balcony</mark>.</step-body>
+    </ladder-step>
+  </ui-detail-ladder>
+<pre><span style="color:#F79C40">/* v1.0：圖示要自己寫在標題裡 */</span>
+&lt;step-title&gt;&lt;i class="bi bi-star-fill"&gt;&lt;/i&gt; 標題&lt;/step-title&gt;
+
+<span style="color:#71CD76">/* v1.1：直接用 icon 屬性 */</span>
+&lt;step-title icon="bi-star-fill"&gt;標題&lt;/step-title&gt;
+
+/* 三種寫法都可以 */
+icon="bi-star-fill"
+icon="star-fill"
+icon="bi bi-star-fill"
+
+/* 單一圖示改色 */
+&lt;step-title icon="bi-fire" icon-color="#F79C40"&gt;
+
+/* 整個元件的圖示統一改色（預設 #E3D322） */
+&lt;ui-detail-ladder title-icon-color="#FF91D7"&gt;</pre>
+</div>
+
+<!-- ========== 結構說明 ========== -->
+<h2>內容結構</h2>
+<table class="ref">
+  <tr><th style="width:220px">標籤</th><th style="width:160px">屬性</th><th>說明</th></tr>
+  <tr><td>&lt;ladder-step&gt;</td><td>label</td><td>左側階梯文字，同時顯示在 pill 冒號後方。</td></tr>
+  <tr><td>&lt;ladder-step&gt;</td><td>pill</td><td>pill 前段文字。未設定時第一階為「起點」，其後為「第1階」、「第2階」依序遞增。</td></tr>
+  <tr><td>&lt;step-title&gt;</td><td></td><td>次標題，可省略。</td></tr>
+  <tr><td>&lt;step-title&gt;</td><td>icon</td><td>v1.1 新增。Bootstrap Icons 名稱，接受 bi-star-fill、star-fill、bi bi-star-fill 三種寫法。</td></tr>
+  <tr><td>&lt;step-title&gt;</td><td>icon-color</td><td>v1.1 新增。單一圖示的顏色，未設定時使用元件的 title-icon-color。</td></tr>
+  <tr><td>&lt;step-body&gt;</td><td></td><td>本文。用 &lt;mark&gt; 標出這一階新增的部分，可搭配 &lt;c1&gt; 到 &lt;c16&gt;。</td></tr>
+  <tr><td>&lt;step-note&gt;</td><td></td><td>註腳，可省略，同樣支援快速色彩標籤。</td></tr>
+</table>
+
+<h3>快速色彩標籤 &lt;c1&gt; 到 &lt;c16&gt;</h3>
+<div class="swatches">
+  <span><c1 style="color:#C6C7BD">c1 shell</c-shell></span>
+  <span style="color:#B484E8">c2 violet</span>
+  <span style="color:#5DBAE8">c3 blue</span>
+  <span style="color:#EF6661">c4 warning</span>
+  <span style="color:#F79C40">c5 orange</span>
+  <span style="color:#5DBAE8">c6 blue</span>
+  <span style="color:#71CD76">c7 green</span>
+  <span style="color:#71CD76">c8 green</span>
+  <span style="color:#DBEDD8">c9 vanilla</span>
+  <span style="color:#E3D322">c10 yellow</span>
+  <span style="color:#DBEDD8">c11 focus</span>
+  <span style="color:#71CD76">c12 green</span>
+  <span style="color:#778CE1">c13 info</span>
+  <span style="color:#778CE1">c14 indigo</span>
+  <span style="color:#FF91D7">c15 pink</span>
+  <span style="color:#F79C40">c16 orange</span>
+</div>
+
+<!-- ========== 屬性表 ========== -->
+<h2>屬性一覽</h2>
+
+<h3>整體外觀</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>margin</td><td>6px 12px</td><td>元件對外間距。</td></tr>
+  <tr><td>padding</td><td>6px 12px</td><td>元件對內間距。</td></tr>
+  <tr><td>bg</td><td>#0C0D0C</td><td>元件背景色，同時用於未到達圓點的底色。</td></tr>
+  <tr><td>border</td><td>false</td><td>是否顯示外框。</td></tr>
+  <tr><td>border-color</td><td>#C6C7BD</td><td>外框顏色。</td></tr>
+  <tr><td>border-width</td><td>1px</td><td>外框粗細。</td></tr>
+  <tr><td>border-radius</td><td>12px</td><td>外框圓角。</td></tr>
+  <tr><td>rail-width</td><td>200px</td><td>左側階梯欄寬度。</td></tr>
+  <tr><td>column-gap</td><td>24px</td><td>左右兩欄的間距。</td></tr>
+  <tr><td>start</td><td>1</td><td>初始停在第幾階。</td></tr>
+  <tr><td>ini-collapse</td><td>（無）</td><td>v1.1 新增。出現此屬性即預設收合，點擊標題列展開或收合。</td></tr>
+  <tr><td>ini-title</td><td>點擊展開</td><td>v1.1 新增。收合標題列的文字。</td></tr>
+  <tr><td>ini-title-size</td><td>1rem</td><td>v1.1 新增。標題列字體大小。</td></tr>
+  <tr><td>ini-title-color</td><td>#5DBAE8</td><td>v1.1 新增。標題列文字與圖示顏色。</td></tr>
+  <tr><td>ini-title-bg</td><td>#161816</td><td>v1.1 新增。標題列底色。</td></tr>
+  <tr><td>keyboard</td><td>true</td><td>v1.1 新增。是否啟用 Ctrl+Shift+上下方向鍵切換階梯。</td></tr>
+</table>
+
+<h3>左側階梯</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>direction</td><td>up</td><td>up 為由下往上（第 1 階在最下方），down 為由上往下。按鈕箭頭會跟著改變方向。</td></tr>
+  <tr><td>step-gap</td><td>14px</td><td>每一階之間的間距。</td></tr>
+  <tr><td>step-font-size</td><td>0.8125rem</td><td>階梯文字大小。</td></tr>
+  <tr><td>dot-size</td><td>22px</td><td>數字圓點直徑。</td></tr>
+  <tr><td>dot-font-size</td><td>0.6875rem</td><td>圓點內數字大小。</td></tr>
+  <tr><td>label-color</td><td>#C6C7BD</td><td>尚未到達的階梯文字與圓點框線顏色。</td></tr>
+  <tr><td>active-color</td><td>#5DBAE8</td><td>已經過的階梯顏色，也是「下一階」按鈕底色。</td></tr>
+  <tr><td>current-color</td><td>#5DBAE8</td><td>目前所在階梯的顏色。</td></tr>
+  <tr><td>line-style</td><td>solid</td><td>垂直線類型：solid、dashed、dotted、double。</td></tr>
+  <tr><td>line-width</td><td>2px</td><td>垂直線粗細。double 建議 3px 以上。</td></tr>
+  <tr><td>line-color</td><td>#C6C7BD</td><td>垂直線未到達段的顏色。</td></tr>
+  <tr><td>line-active-color</td><td>#5DBAE8</td><td>垂直線已到達段的顏色。</td></tr>
+</table>
+
+<h3>Pill、次標題、本文、註腳</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>show-pill</td><td>true</td><td>是否顯示 pill。</td></tr>
+  <tr><td>pill-font-size</td><td>0.85rem</td><td>pill 字體大小。</td></tr>
+  <tr><td>pill-bg</td><td>#B484E8</td><td>pill 底色。</td></tr>
+  <tr><td>pill-color</td><td>#0C0D0C</td><td>pill 文字色。</td></tr>
+  <tr><td>title-font-size</td><td>1.0625rem</td><td>次標題字體大小。</td></tr>
+  <tr><td>title-color</td><td>#5DBAE8</td><td>次標題顏色。</td></tr>
+  <tr><td>title-icon-color</td><td>#E3D322</td><td>v1.1 新增。次標題圖示的統一顏色。</td></tr>
+  <tr><td>body-font-size</td><td>1rem</td><td>本文字體大小。</td></tr>
+  <tr><td>body-color</td><td>#C6C7BD</td><td>本文顏色。</td></tr>
+  <tr><td>note-font-size</td><td>0.85rem</td><td>註腳字體大小。</td></tr>
+  <tr><td>note-color</td><td>#C6C7BD</td><td>註腳顏色。</td></tr>
+  <tr><td>show-divider</td><td>false</td><td>本文上下是否顯示分隔線。</td></tr>
+  <tr><td>divider-style</td><td>solid</td><td>分隔線類型：solid、dashed、dotted、double。</td></tr>
+  <tr><td>divider-width</td><td>1px</td><td>分隔線粗細。</td></tr>
+  <tr><td>divider-color</td><td>#C6C7BD</td><td>分隔線顏色。</td></tr>
+  <tr><td>hl-bg</td><td>#71CD76</td><td>&lt;mark&gt; 新增片段的底色。</td></tr>
+  <tr><td>hl-color</td><td>#0C0D0C</td><td>&lt;mark&gt; 新增片段的文字色。</td></tr>
+</table>
+
+<h3>進度條與按鈕</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>show-progress</td><td>true</td><td>是否顯示進度條與下方文字。</td></tr>
+  <tr><td>progress-height</td><td>6px</td><td>進度條粗細。</td></tr>
+  <tr><td>progress-color</td><td>#71CD76</td><td>進度條顏色；搭配 progress-color-end 時為漸層起點。</td></tr>
+  <tr><td>progress-color-end</td><td>（空）</td><td>設定後進度條變成由左到右的雙色漸層。</td></tr>
+  <tr><td>progress-track</td><td>#262826</td><td>進度條底軌顏色，也是「重來」按鈕底色。</td></tr>
+  <tr><td>progress-text</td><td>具體程度 {p}%</td><td>下方文字範本。{p} 為百分比，{n} 為目前階數，{total} 為總階數。</td></tr>
+  <tr><td>progress-text-size</td><td>0.75rem</td><td>下方文字大小。</td></tr>
+  <tr><td>progress-text-color</td><td>#C6C7BD</td><td>下方文字顏色。</td></tr>
+  <tr><td>show-buttons</td><td>true</td><td>是否顯示按鈕。</td></tr>
+  <tr><td>next-text</td><td>往上一階</td><td>前進按鈕文字。</td></tr>
+  <tr><td>reset-text</td><td>重來</td><td>重來按鈕文字。</td></tr>
+  <tr><td>button-font-size</td><td>0.875rem</td><td>按鈕字體大小。</td></tr>
+</table>
+
+<h3>JavaScript 介面</h3>
+<table class="ref">
+  <tr><th style="width:220px">名稱</th><th style="width:160px">類型</th><th>說明</th></tr>
+  <tr><td>go(n)</td><td>方法</td><td>跳到第 n 階。</td></tr>
+  <tr><td>next() / prev()</td><td>方法</td><td>前進或後退一階。</td></tr>
+  <tr><td>reset()</td><td>方法</td><td>回到第 1 階。</td></tr>
+  <tr><td>current / total</td><td>唯讀屬性</td><td>目前階數與總階數。</td></tr>
+  <tr><td>ladder-change</td><td>事件</td><td>切換階梯時觸發，detail 內含 index、total、label。</td></tr>
+  <tr><td>open() / close() / toggle()</td><td>方法</td><td>v1.1 新增。展開、收合、切換（僅在 ini-collapse 時有效）。</td></tr>
+  <tr><td>isOpen</td><td>唯讀屬性</td><td>v1.1 新增。目前是否展開。</td></tr>
+  <tr><td>ladder-toggle</td><td>事件</td><td>v1.1 新增。展開或收合時觸發，detail 內含 open。</td></tr>
+</table>
+
+</div>
+
+<script src="ui-detail-ladder.js"></script>
+<script>
+  document.getElementById('demo1').addEventListener('ladder-change', (e) => {
+    const d = e.detail;
+    document.getElementById('log1').textContent =
+      `事件紀錄：切換到第 ${d.index} 階（共 ${d.total} 階），${d.label}。`;
+  });
+  document.getElementById('demo5').addEventListener('ladder-change', (e) => {
+    const d = e.detail;
+    document.getElementById('log5').innerHTML =
+      `<i class="bi bi-keyboard"></i> 目前第 ${d.index} 階：${d.label}。`;
+  });
+</script>
+</template>
+<template data-part id="ui-insight-11-01-26" data-component="ui-insight" data-date="11-01-26"
+          data-title="ui-insight 亮點字詞解說元件範例" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-insight-demo-11-01-26.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-insight 亮點字詞解說元件範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{color:#5DBAE8;font-size:1rem;margin:24px 0 8px 0}
+  p.lead-text{color:#C6C7BD;font-size:.95rem}
+  .demo-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  pre .cm{color:#F79C40}
+  table.ref{width:100%;border-collapse:collapse;font-size:.85rem}
+  table.ref th{background:#1a1c1a;color:#5DBAE8;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
+  table.ref td{padding:7px 10px;border-bottom:1px solid #222422;vertical-align:top}
+  table.ref td:first-child{color:#E3D322;font-family:Consolas,monospace;white-space:nowrap}
+  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#F79C40;white-space:nowrap}
+  .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
+  .tagdemo span{display:inline-block;border-radius:999px;padding:0 10px;color:#0C0D0C;font-size:.8rem;margin:0 6px 0 0}
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+
+<h1>&lt;ui-insight&gt; 亮點字詞解說元件</h1>
+<p class="lead-text">左側為一句一句的卡片，右側顯示所選句子中亮點字詞的解說。滑過句中亮點或右側解說可互相對照，所有部位的配色、字體與間距都可由屬性自訂。</p>
+
+<!-- ========== 範例一 ========== -->
+<h2>範例一：全部使用預設值</h2>
+<div class="demo-row">
+  <div>
+    <ui-insight id="demo1">
+      <ins-line>
+        <hl why="自然的開場語氣，取代 That's an interesting question 這類罐頭開場。">Honestly,</hl> I'm
+        <hl why="慣用說法，比 I don't like getting up early 更道地，也不必用大字。" tag="lr">not much of a morning person</hl>,
+        so I usually run after work instead.
+      </ins-line>
+      <ins-line>
+        <hl why="混合條件句：過去沒發生的事，連到現在的結果。" tag="gra">If I hadn't moved closer to the office</hl>,
+        I'd probably still be <hl why="stuck 帶出被困住的無奈感，比 spend time on the bus 生動。">stuck on the bus</hl> for an hour.
+      </ins-line>
+      <ins-line>
+        The buses were so packed that <hl why="用具體結果取代 very crowded，數字讓畫面立刻出現。">I let three go by</hl>.
+      </ins-line>
+      <ins-line>
+        I live near my school.
+      </ins-line>
+    </ui-insight>
+    <div class="alert alert-dark-custom" id="log1">事件紀錄：點選句子卡片後顯示於此。</div>
+  </div>
+<pre>&lt;ui-insight&gt;
+  &lt;ins-line&gt;
+    &lt;hl why="自然的開場語氣"&gt;Honestly,&lt;/hl&gt; I'm
+    &lt;hl why="慣用說法" tag="lr"&gt;not much of a morning person&lt;/hl&gt;,
+    so I usually run after work instead.
+  &lt;/ins-line&gt;
+  &lt;ins-line&gt;
+    ...
+  &lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+&lt;script src="ui-insight.js"&gt;&lt;/script&gt;
+
+<span class="cm">右側解說的字詞會自動取自亮點文字，
+並去掉結尾的逗號與句號（Honestly, 會顯示成 Honestly）。
+沒有任何 &lt;hl&gt; 的句子，右側會顯示 empty-text。</span></pre>
+</div>
+
+<!-- ========== 範例二 ========== -->
+<h2>範例二：預設收合、外框、自訂配色、卡片標題、自訂標籤</h2>
+<div class="demo-row">
+  <ui-insight
+    ini-collapse
+    ini-title="Part 3 範例：城市生活的優缺點"
+    border="true"
+    border-color="#778CE1"
+    padding="14px 18px"
+    split="50%"
+    card-active-border="#FF91D7"
+    num-active-bg="#FF91D7"
+    hl-line-color="#5DBAE8"
+    hl-line-style="dotted"
+    hl-hot-bg="#5DBAE8"
+    sup-color="#5DBAE8"
+    note-num-bg="#5DBAE8"
+    note-word-color="#5DBAE8"
+    note-divider-style="solid"
+    sentence-font-size="1.05rem"
+    summary-text="Q{n} / {total}：{count} 個值得借用的說法">
+    <ins-line heading="Is city life better for young people?">
+      <hl why="先給立場再補一句保留，回答立刻有層次。" tag="fc">For the most part, yes</hl>,
+      <hl why="but not for everyone 這種收尾讓論點不會太絕對。">though not for everyone</hl>.
+    </ins-line>
+    <ins-line heading="What are the downsides?">
+      Rent eats up <hl why="用比例取代 expensive，具體又好懂。" tag="lr">almost half of a starting salary</hl>,
+      so a lot of my friends <hl why="生活化的動詞片語，表示和別人合租。" tag="搭配詞" tag-color="#F79C40">end up sharing a flat</hl>.
+    </ins-line>
+    <ins-line heading="Will this change in the future?">
+      <hl why="未來進行式表達「照現況發展下去」的推測。" tag="gra">If remote work keeps growing</hl>,
+      <hl why="hedging 用語，避免把預測說死。">I wouldn't be surprised if</hl> more people moved back to their hometowns.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight
+  ini-collapse
+  ini-title="Part 3 範例：城市生活的優缺點"
+  border="true" border-color="#778CE1"
+  padding="14px 18px"
+  split="50%"
+  card-active-border="#FF91D7"
+  num-active-bg="#FF91D7"
+  hl-line-color="#5DBAE8" hl-line-style="dotted"
+  hl-hot-bg="#5DBAE8" sup-color="#5DBAE8"
+  note-num-bg="#5DBAE8" note-word-color="#5DBAE8"
+  summary-text="Q{n} / {total}：{count} 個值得借用的說法"&gt;
+
+  &lt;ins-line heading="What are the downsides?"&gt;
+    ...
+    &lt;hl why="生活化的動詞片語"
+        tag="搭配詞" tag-color="#F79C40"&gt;end up sharing a flat&lt;/hl&gt;
+  &lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+<span class="cm">heading：卡片上方的小標題，適合放考官提問。
+tag 填 lr、gra、fc、p 會變成內建標籤；
+填其他文字則直接顯示該文字，可用 tag-color 指定顏色。</span></pre>
+</div>
+
+<!-- ========== 範例三 ========== -->
+<h2>範例三：隱藏編號、色彩標籤、鍵盤切換、從第 2 句開始</h2>
+<div class="demo-row">
+  <div>
+    <ui-insight
+      id="demo3"
+      show-num="false"
+      show-sup="false"
+      start="2"
+      card-bg="#0C0D0C"
+      card-border="#2A2B29"
+      panel-bg="#0C0D0C"
+      note-hot-bg="#161816"
+      note-word-color="#E3D322"
+      note-num-bg="#E3D322"
+      hl-line-color="#E3D322"
+      hl-hot-bg="#E3D322"
+      summary-text="{count} 個亮點">
+      <ins-line>
+        I'm <c-red>fond of cooking</c-red>.
+      </ins-line>
+      <ins-line>
+        I don't mind <hl why="don't mind 比 like 低調，聽起來更真實。<c-blue>小提醒</c-blue>：後面接動名詞。">cooking dinner for my family</hl>,
+        <hl why="把動作放進具體情境，可以搭配 <c-pink>back-to-back meetings</c-pink>。" tag="lr">even after a hectic day</hl>.
+      </ins-line>
+      <ins-line>
+        <hl why="用時間點取代 sometimes，頻率立刻清楚。">On Sunday evenings</hl>, I make a big pot of soup that lasts us till Wednesday.
+      </ins-line>
+    </ui-insight>
+    <div class="alert alert-dark-custom" id="log3">
+      <i class="bi bi-keyboard"></i> 把游標移到元件上（或點一下元件），再按 Ctrl+Shift+↑ 或 Ctrl+Shift+↓ 切換句子。
+    </div>
+  </div>
+<pre>&lt;ui-insight
+  show-num="false"
+  show-sup="false"
+  start="2"
+  card-bg="#0C0D0C"
+  panel-bg="#0C0D0C"
+  note-word-color="#E3D322"
+  hl-line-color="#E3D322"
+  hl-hot-bg="#E3D322"
+  summary-text="{count} 個亮點"&gt;
+  &lt;ins-line&gt;
+    I'm &lt;c4&gt;fond of cooking&lt;/c4&gt;.
+  &lt;/ins-line&gt;
+  &lt;ins-line&gt;
+    I don't mind &lt;hl why="... &lt;c3&gt;小提醒&lt;/c3&gt;：後面接動名詞。"&gt;
+      cooking dinner for my family&lt;/hl&gt;, ...
+  &lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+<span class="cm">句子內文與 why 解說都支援 &lt;c1&gt; 到 &lt;c16&gt; 色彩標籤。
+鍵盤：Ctrl+Shift+↑ 上一句，Ctrl+Shift+↓ 下一句。
+作用於最近一次被游標指到、點擊或用 Tab 取得焦點的元件。</span></pre>
+</div>
+
+<!-- ========== 結構說明 ========== -->
+<h2>內容結構</h2>
+<table class="ref">
+  <tr><th style="width:220px">標籤</th><th style="width:160px">屬性</th><th>說明</th></tr>
+  <tr><td>&lt;ins-line&gt;</td><td></td><td>一張句子卡片。</td></tr>
+  <tr><td>&lt;ins-line&gt;</td><td>heading</td><td>卡片上方的小標題，可省略，適合放考官提問。</td></tr>
+  <tr><td>&lt;hl&gt;</td><td>why</td><td>亮點的解說文字，支援 &lt;c1&gt; 到 &lt;c16&gt;。</td></tr>
+  <tr><td>&lt;hl&gt;</td><td>tag</td><td>選用標籤。lr、gra、fc、p 分別顯示為詞彙、文法、連貫、發音；其他文字照原文顯示。</td></tr>
+  <tr><td>&lt;hl&gt;</td><td>tag-color</td><td>單一標籤的底色。</td></tr>
+  <tr><td>&lt;hl&gt;</td><td>word</td><td>右側顯示的字詞，未設定時取亮點文字並去掉結尾標點。</td></tr>
+</table>
+
+<h3>內建標籤</h3>
+<p class="tagdemo">
+  <span style="background:#71CD76">lr 詞彙</span>
+  <span style="background:#B484E8">gra 文法</span>
+  <span style="background:#5DBAE8">fc 連貫</span>
+  <span style="background:#F79C40">p 發音</span>
+  <span style="background:#FF91D7">其他文字（tag-default-bg）</span>
+</p>
+
+<!-- ========== 屬性表 ========== -->
+<h2>屬性一覽</h2>
+
+<h3>整體外觀</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>margin</td><td>6px 12px</td><td>元件對外間距。</td></tr>
+  <tr><td>padding</td><td>6px 12px</td><td>元件對內間距。</td></tr>
+  <tr><td>bg</td><td>#0C0D0C</td><td>元件背景色。</td></tr>
+  <tr><td>border</td><td>false</td><td>是否顯示外框。</td></tr>
+  <tr><td>border-color</td><td>#C6C7BD</td><td>外框顏色。</td></tr>
+  <tr><td>border-width</td><td>1px</td><td>外框粗細。</td></tr>
+  <tr><td>border-radius</td><td>12px</td><td>外框圓角。</td></tr>
+  <tr><td>split</td><td>55%</td><td>左側卡片欄所占寬度。</td></tr>
+  <tr><td>column-gap</td><td>20px</td><td>左右兩欄的間距。</td></tr>
+  <tr><td>start</td><td>1</td><td>初始選取第幾句。</td></tr>
+  <tr><td>ini-collapse</td><td>（無）</td><td>出現此屬性即預設收合，點擊標題列展開或收合。</td></tr>
+  <tr><td>ini-title</td><td>點擊展開</td><td>收合標題列的文字。</td></tr>
+  <tr><td>ini-title-size</td><td>1rem</td><td>標題列字體大小。</td></tr>
+  <tr><td>ini-title-color</td><td>#5DBAE8</td><td>標題列文字與圖示顏色。</td></tr>
+  <tr><td>ini-title-bg</td><td>#161816</td><td>標題列底色。</td></tr>
+  <tr><td>keyboard</td><td>true</td><td>是否啟用 Ctrl+Shift+上下方向鍵切換句子。</td></tr>
+</table>
+
+<h3>左側句子卡片</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>card-gap</td><td>10px</td><td>卡片之間的間距。</td></tr>
+  <tr><td>card-padding</td><td>12px 14px</td><td>卡片內距。</td></tr>
+  <tr><td>card-bg</td><td>#161816</td><td>卡片底色。</td></tr>
+  <tr><td>card-border</td><td>#2A2B29</td><td>卡片框線顏色。</td></tr>
+  <tr><td>card-hover-border</td><td>#5A5B56</td><td>滑過卡片時的框線顏色。</td></tr>
+  <tr><td>card-active-border</td><td>#5DBAE8</td><td>選取中卡片的框線顏色。</td></tr>
+  <tr><td>card-radius</td><td>8px</td><td>卡片圓角。</td></tr>
+  <tr><td>heading-font-size</td><td>0.75rem</td><td>卡片小標題字體大小。</td></tr>
+  <tr><td>heading-color</td><td>#B484E8</td><td>卡片小標題顏色。</td></tr>
+  <tr><td>sentence-font-size</td><td>1rem</td><td>句子字體大小。</td></tr>
+  <tr><td>sentence-color</td><td>#C6C7BD</td><td>句子顏色。</td></tr>
+  <tr><td>sentence-line-height</td><td>2.1</td><td>句子行高，留空間給亮點底線與小編號。</td></tr>
+  <tr><td>show-num</td><td>true</td><td>是否顯示句子編號。</td></tr>
+  <tr><td>num-bg</td><td>#2A2B29</td><td>句子編號底色。</td></tr>
+  <tr><td>num-color</td><td>#C6C7BD</td><td>句子編號文字色。</td></tr>
+  <tr><td>num-active-bg</td><td>#5DBAE8</td><td>選取中句子的編號底色。</td></tr>
+  <tr><td>num-active-color</td><td>#0C0D0C</td><td>選取中句子的編號文字色。</td></tr>
+</table>
+
+<h3>亮點字詞</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>hl-line-color</td><td>#71CD76</td><td>亮點底線顏色（只在選取中的卡片顯示）。</td></tr>
+  <tr><td>hl-line-style</td><td>solid</td><td>底線類型：solid、dashed、dotted、double。</td></tr>
+  <tr><td>hl-line-width</td><td>2px</td><td>底線粗細。</td></tr>
+  <tr><td>hl-hot-bg</td><td>#71CD76</td><td>對照中亮點的底色。</td></tr>
+  <tr><td>hl-hot-color</td><td>#0C0D0C</td><td>對照中亮點的文字色。</td></tr>
+  <tr><td>show-sup</td><td>true</td><td>是否顯示亮點右上角的小編號。</td></tr>
+  <tr><td>sup-font-size</td><td>0.625rem</td><td>小編號字體大小。</td></tr>
+  <tr><td>sup-color</td><td>#71CD76</td><td>小編號顏色。</td></tr>
+</table>
+
+<h3>右側解說面板</h3>
+<table class="ref">
+  <tr><th style="width:220px">屬性</th><th style="width:160px">預設值</th><th>說明</th></tr>
+  <tr><td>panel-bg</td><td>#161816</td><td>面板底色。</td></tr>
+  <tr><td>panel-padding</td><td>14px 16px</td><td>面板內距。</td></tr>
+  <tr><td>panel-radius</td><td>8px</td><td>面板圓角。</td></tr>
+  <tr><td>panel-sticky</td><td>true</td><td>句子很多時，面板是否跟著捲動停留在畫面上。</td></tr>
+  <tr><td>panel-top</td><td>12px</td><td>面板停留時與視窗頂端的距離。</td></tr>
+  <tr><td>show-summary</td><td>true</td><td>是否顯示面板頂端摘要。</td></tr>
+  <tr><td>summary-text</td><td>第 {n} 句，共 {count} 個亮點</td><td>摘要範本。{n} 目前句數，{total} 總句數，{count} 亮點數。</td></tr>
+  <tr><td>summary-font-size</td><td>0.75rem</td><td>摘要字體大小。</td></tr>
+  <tr><td>summary-color</td><td>#C6C7BD</td><td>摘要顏色。</td></tr>
+  <tr><td>note-num-bg</td><td>#71CD76</td><td>解說編號底色。</td></tr>
+  <tr><td>note-num-color</td><td>#0C0D0C</td><td>解說編號文字色。</td></tr>
+  <tr><td>note-word-size</td><td>0.95rem</td><td>解說字詞大小。</td></tr>
+  <tr><td>note-word-color</td><td>#71CD76</td><td>解說字詞顏色。</td></tr>
+  <tr><td>note-text-size</td><td>0.82rem</td><td>解說內文大小。</td></tr>
+  <tr><td>note-text-color</td><td>#C6C7BD</td><td>解說內文顏色。</td></tr>
+  <tr><td>note-divider-style</td><td>dashed</td><td>解說之間的分隔線類型。</td></tr>
+  <tr><td>note-divider-width</td><td>1px</td><td>分隔線粗細。</td></tr>
+  <tr><td>note-divider-color</td><td>#2A2B29</td><td>分隔線顏色。</td></tr>
+  <tr><td>note-hot-bg</td><td>#222522</td><td>對照中解說的底色。</td></tr>
+  <tr><td>tag-font-size</td><td>0.6875rem</td><td>標籤字體大小。</td></tr>
+  <tr><td>tag-text-color</td><td>#0C0D0C</td><td>標籤文字色。</td></tr>
+  <tr><td>tag-default-bg</td><td>#FF91D7</td><td>非內建標籤的預設底色。</td></tr>
+  <tr><td>empty-text</td><td>這一句沒有標記亮點。</td><td>沒有亮點時顯示的文字。</td></tr>
+  <tr><td>empty-color</td><td>#C6C7BD</td><td>上述文字的顏色。</td></tr>
+</table>
+
+<h3>JavaScript 介面</h3>
+<table class="ref">
+  <tr><th style="width:220px">名稱</th><th style="width:160px">類型</th><th>說明</th></tr>
+  <tr><td>go(n)</td><td>方法</td><td>選取第 n 句。</td></tr>
+  <tr><td>next() / prev()</td><td>方法</td><td>下一句或上一句。</td></tr>
+  <tr><td>open() / close() / toggle()</td><td>方法</td><td>展開、收合、切換（僅在 ini-collapse 時有效）。</td></tr>
+  <tr><td>current / total / isOpen</td><td>唯讀屬性</td><td>目前句數、總句數、是否展開。</td></tr>
+  <tr><td>insight-change</td><td>事件</td><td>切換句子時觸發，detail 內含 index、total、count。</td></tr>
+  <tr><td>insight-toggle</td><td>事件</td><td>展開或收合時觸發，detail 內含 open。</td></tr>
+</table>
+
+</div>
+
+<script src="ui-insight.js"></script>
+<script>
+  document.getElementById('demo1').addEventListener('insight-change', (e) => {
+    const d = e.detail;
+    document.getElementById('log1').textContent =
+      `事件紀錄：切換到第 ${d.index} 句（共 ${d.total} 句），這句有 ${d.count} 個亮點。`;
+  });
+  document.getElementById('demo3').addEventListener('insight-change', (e) => {
+    document.getElementById('log3').innerHTML =
+      `<i class="bi bi-keyboard"></i> 目前第 ${e.detail.index} 句，共 ${e.detail.count} 個亮點。`;
+  });
+</script>
+</template>
+<template data-part id="ui-insight-11-02-26" data-component="ui-insight" data-date="11-02-26"
+          data-title="ui-insight 示範 11-02-26" data-html-attrs="lang=&quot;zh-Hant&quot; data-bs-theme=&quot;dark&quot;" data-from="ui-insight-demo-11-02-26.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-insight 示範 11-02-26</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --c-base:#0C0D0C; --c-shell:#C6C7BD; --c-violet:#B484E8; --c-blue:#5DBAE8; --c-warning:#EF6661;
+  --c-orange:#F79C40; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
+  --c-yellow:#E3D322; --c-focus:#DBEDD8; --c-green:#71CD76; --c-info:#778CE1; --c-indigo:#778CE1;
+  --c-pink:#FF91D7; --c-orange:#F79C40;
+  --bs-body-bg:#0C0D0C; --bs-body-color:#C6C7BD;
+}
+body{background:var(--c-base);color:var(--c-shell);font-size:1rem}
+.wrap{max-width:1680px;margin:0 auto;padding:24px 32px 64px}
+h1{font-size:1.75rem;color:var(--c-blue);margin:0 0 6px 0}
+h2{font-size:1.25rem;color:var(--c-violet);margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px dashed #2A2B29}
+.sub{color:var(--c-shell);font-size:0.9rem;margin:0 0 16px 0}
+.badge-date{background:var(--c-indigo);color:var(--c-focus);font-size:0.75rem;padding:4px 10px;border-radius:999px;margin:0 0 0 8px;vertical-align:middle}
+.panel{background:#161816;border:1px solid #2A2B29;border-radius:10px;padding:16px 18px}
+.codebox{background:#111311;border:1px solid #2A2B29;border-radius:8px;padding:14px 16px;margin:0;overflow:auto;font-size:0.8125rem;line-height:1.7;color:var(--c-shell)}
+.codebox .k{color:var(--c-violet)}
+.codebox .s{color:var(--c-green)}
+.codebox .c{color:#8A8B84}
+.codebox .del{display:block;background:#3A1218;color:#FF9AA6}
+.codebox .add{display:block;background:#10301C;color:#8FE3AE}
+.tag-lbl{display:inline-block;font-size:0.75rem;border-radius:999px;padding:2px 10px;margin:0 0 8px 0;color:var(--c-base)}
+.lbl-before{background:var(--c-warning);color:var(--c-focus)}
+.lbl-after{background:var(--c-green);color:var(--c-base)}
+.form-select,.form-control{background-color:#161816;color:var(--c-shell);border-color:#3A3B38}
+.form-select:focus{border-color:var(--c-blue);box-shadow:none}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin:0 6px 0 0;vertical-align:-2px;border:1px solid #3A3B38}
+table{font-size:0.875rem}
+.table{--bs-table-bg:transparent;--bs-table-color:var(--c-shell);--bs-table-border-color:#2A2B29}
+.alert{font-size:0.9rem}
+.alert-info{--bs-alert-bg:#1B2A47;--bs-alert-color:#C9DAFF;--bs-alert-border-color:var(--c-info)}
+.alert-success{--bs-alert-bg:#10301C;--bs-alert-color:#B8F0CC;--bs-alert-border-color:var(--c-green)}
+</style>
+<!-- ===== body ===== -->
+<div class="wrap">
+
+  <h1><i class="bi bi-lightbulb"></i> ui-insight<span class="badge-date">11-02-26 修正</span><span class="badge-date" style="background:var(--c-green);color:var(--c-base)">v1.2 theme</span></h1>
+  <p class="sub">修正一（v1.1）：<code>hl-hot-bg</code>、<code>hl-hot-color</code> 以及其他所有顏色屬性，現在都可以直接填品牌色名稱（例如 <code>blue</code>、<code>violet</code>、<code>base</code>），不分大小寫。</p>
+  <p class="sub">修正二（v1.2）：新增 <code>theme</code> 屬性，請見第 6 節。</p>
+
+  <div id="msg"></div>
+
+  <h2>1. 原因</h2>
+  <div class="panel">
+    <p style="margin:0 0 8px 0">元件把屬性值原封不動寫進 CSS 變數，<code>blue</code> 這類名稱不是合法的 CSS 顏色，瀏覽器會整條規則作廢，所以亮點被游標指到時沒有任何底色變化。<code>hl-hot-color</code> 與 <code>tag-color</code> 也有同樣的問題。</p>
+    <p style="margin:0">解法是新增品牌色名稱對照表，所有顏色屬性在寫入 CSS 之前先轉成色碼。找不到對照名稱時，維持原值，所以 <code>#hex</code>、<code>rgb()</code>、CSS 內建顏色名稱仍然有效。</p>
+  </div>
+
+  <h2>2. 可用的色名</h2>
+  <div class="panel">
+    <div class="row g-2" id="swatches"></div>
+  </div>
+
+  <h2>3. 範例與程式碼對照</h2>
+
+  <div class="row g-4">
+    <div class="col-12 col-xl-7">
+      <div class="tag-lbl lbl-after">範例 A　hl-hot-bg="blue"　hl-hot-color="base"</div>
+      <ui-insight hl-hot-bg="blue" hl-hot-color="base" hl-line-color="blue" sup-color="blue" start="1">
+        <ins-line heading="Part 2 開場">
+          I'd like to talk about a <hl word="turning point" tag="lr" why="名詞片語，指人生的轉捩點，比 an important moment 更具體。">turning point</hl> in my life.
+        </ins-line>
+        <ins-line heading="描述經過">
+          It <hl word="dawned on me" tag="gra" why="慣用片語，表示突然理解某件事，主詞是 it，後面接 that 子句。">dawned on me</hl> that I had been avoiding the real problem.
+        </ins-line>
+        <ins-line heading="轉折">
+          <hl word="Looking back" tag="fc" why="分詞片語，用來銜接時間，讓敘述從現在回到過去。">Looking back</hl>, that decision changed everything.
+        </ins-line>
+      </ui-insight>
+
+      <div class="tag-lbl lbl-after" style="margin-top:20px">範例 B　hl-hot-bg="violet"　tag-color="orange"</div>
+      <ui-insight hl-hot-bg="LAVENDER" hl-hot-color="base" hl-line-color="violet" sup-color="violet" note-word-color="violet" note-num-bg="violet" card-active-border="violet">
+        <ins-line heading="大小寫不拘">
+          She <hl word="took it in her stride" tag="自訂標籤" tag-color="orange" why="tag-color 也能填色名，這裡用 orange。意思是從容面對。">took it in her stride</hl> and kept going.
+        </ins-line>
+        <ins-line heading="第二句">
+          That was <hl word="a blessing in disguise" tag="lr" why="塞翁失馬，表面是壞事，後來變成好事。">a blessing in disguise</hl>.
+        </ins-line>
+      </ui-insight>
+    </div>
+
+    <div class="col-12 col-xl-5">
+      <div class="tag-lbl lbl-before">修正前</div>
+      <pre class="codebox"><span class="c">// 屬性值直接寫入 CSS 變數</span>
+_css(name) {
+  const v = this.getAttribute(name);
+  <span class="del">return v === null || v === '' ? CSS_ATTRS[name] : v;</span>
+}
+
+_tagHtml(nt) {
+  ...
+  <span class="del">const bg = nt.tagColor || (preset ? preset.color : ...);</span>
+}</pre>
+
+      <div class="tag-lbl lbl-after" style="margin-top:16px">修正後</div>
+      <pre class="codebox"><span class="c">// 新增：色名對照與顏色屬性清單</span>
+<span class="add">const COLOR_NAMES = { base:'#0C0D0C', shell:'#C6C7BD', blue:'#5DBAE8', ... };
+const COLOR_ATTRS = new Set(['bg','hl-hot-bg','hl-hot-color', ...]);
+const resolveColor = (v) => { ...查表，找不到就回傳原值 };</span>
+
+_css(name) {
+  const v = this.getAttribute(name);
+  <span class="add">const val = v === null || v === '' ? CSS_ATTRS[name] : v;
+  return COLOR_ATTRS.has(name) ? resolveColor(val) : val;</span>
+}
+
+_tagHtml(nt) {
+  ...
+  <span class="add">const bg = resolveColor(nt.tagColor) || (preset ? preset.color : ...);</span>
+}</pre>
+    </div>
+  </div>
+
+  <h2>4. 即時試玩</h2>
+  <div class="panel" style="margin:0 0 16px 0">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="selBg">hl-hot-bg</label>
+        <select id="selBg" class="form-select"></select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="selFg">hl-hot-color</label>
+        <select id="selFg" class="form-select"></select>
+      </div>
+      <div class="col-12 col-md-4">
+        <code id="liveCode" style="font-size:0.8125rem;color:var(--c-green)"></code>
+      </div>
+    </div>
+  </div>
+
+  <ui-insight id="live" hl-hot-bg="pink" hl-hot-color="base">
+    <ins-line heading="試著把游標移到亮點上">
+      Moving to a new city <hl word="pushed me out of my comfort zone" tag="lr" why="離開舒適圈，常搭配 push、step 或 get 使用。">pushed me out of my comfort zone</hl>.
+    </ins-line>
+    <ins-line heading="第二句">
+      I <hl word="gradually came to realise" tag="gra" why="come to + 原形動詞，表示逐漸有了某種認知。">gradually came to realise</hl> how much I had grown.
+    </ins-line>
+  </ui-insight>
+
+  <h2>5. 使用方式</h2>
+  <pre class="codebox">&lt;ui-insight hl-hot-bg="blue" hl-hot-color="base"&gt;
+  &lt;ins-line heading="標題"&gt;
+    It &lt;hl word="dawned on me" tag="gra" tag-color="violet" why="說明文字"&gt;dawned on me&lt;/hl&gt; that ...
+  &lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+
+  <h2>6. theme 屬性（v1.2）</h2>
+  <div class="panel" style="margin:0 0 16px 0">
+    <p style="margin:0 0 8px 0">影響外觀色彩的個別屬性，預設值都會跟著 <code>theme</code> 走。只有明確寫在標籤上的屬性，才會覆蓋 theme 的顏色。</p>
+    <p style="margin:0 0 8px 0">優先順序：<code>個別屬性</code> &gt; <code>theme</code> &gt; <code>內建預設</code>。</p>
+    <p style="margin:0">主題名稱不存在時，退回 <code>default</code>（維持原本的多色外觀）。其餘主題以單一品牌色為主軸，卡片、面板等底色維持中性。</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-xl-7">
+      <div class="tag-lbl lbl-after">範例 C　即時切換 theme，並可選擇是否覆蓋 hl-hot-bg</div>
+      <div class="panel" style="margin:0 0 12px 0">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-4">
+            <label class="form-label" for="selTheme">theme</label>
+            <select id="selTheme" class="form-select"></select>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label" for="selOver">覆蓋 hl-hot-bg</label>
+            <select id="selOver" class="form-select"></select>
+          </div>
+          <div class="col-12 col-md-4">
+            <code id="themeCode" style="font-size:0.8125rem;color:var(--c-green)"></code>
+          </div>
+        </div>
+      </div>
+
+      <ui-insight id="themeLive" theme="violet">
+        <ins-line heading="游標移到亮點上，觀察 theme 與覆蓋色">
+          It <hl word="dawned on me" tag="gra" why="慣用片語，表示突然理解某件事。">dawned on me</hl> that I had been <hl word="avoiding the real problem" tag="lr" why="avoid 後面接動名詞，說明逃避的對象。">avoiding the real problem</hl>.
+        </ins-line>
+        <ins-line heading="第二句">
+          <hl word="Looking back" tag="fc" why="分詞片語，用來銜接時間。">Looking back</hl>, that decision changed everything.
+        </ins-line>
+      </ui-insight>
+    </div>
+
+    <div class="col-12 col-xl-5">
+      <div class="tag-lbl lbl-before">修改前（v1.1）</div>
+      <pre class="codebox"><span class="c">// 沒有 theme，顏色預設只來自 CSS_ATTRS</span>
+_css(name) {
+  const v = this.getAttribute(name);
+  <span class="del">const val = v === null || v === '' ? CSS_ATTRS[name] : v;</span>
+  <span class="del">return COLOR_ATTRS.has(name) ? resolveColor(val) : val;</span>
+}</pre>
+
+      <div class="tag-lbl lbl-after" style="margin-top:16px">修改後（v1.2）</div>
+      <pre class="codebox"><span class="c">// 新增：主題表（只列出與預設不同的顏色）</span>
+<span class="add">const accentTheme = (a, on = 'base') => ({ 'hl-hot-bg': a, 'hl-hot-color': on, ... });
+const THEMES = { default: {}, violet: accentTheme('violet'), ... };</span>
+
+_css(name) {
+  const v = this.getAttribute(name);
+  <span class="add">const has = v !== null && v !== '';
+  if (!COLOR_ATTRS.has(name)) return has ? v : CSS_ATTRS[name];
+  if (has) return resolveColor(v);                       // 個別屬性優先
+  const tv = THEMES[this._themeName()][name];           // 其次是 theme
+  return resolveColor(tv !== undefined ? tv : CSS_ATTRS[name]);  // 最後是內建預設</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="tag-lbl lbl-after" style="margin-top:28px">範例 D　全部內建主題一覽</div>
+  <div class="row g-4" id="themeGrid"></div>
+
+  <div class="tag-lbl lbl-after" style="margin-top:28px">範例 E　theme 搭配個別屬性覆蓋</div>
+  <div class="row g-4">
+    <div class="col-12 col-xl-7">
+      <ui-insight theme="green" hl-hot-bg="pink" card-active-border="orange">
+        <ins-line heading="theme=green，只覆蓋兩個屬性">
+          She <hl word="took it in her stride" tag="lr" why="亮點底色被覆蓋成 pink，其他顏色（底線、上標、說明編號）仍是 green。">took it in her stride</hl> and kept going.
+        </ins-line>
+        <ins-line heading="卡片外框被覆蓋成 orange">
+          That was <hl word="a blessing in disguise" tag="lr" why="塞翁失馬，表面是壞事，後來變成好事。">a blessing in disguise</hl>.
+        </ins-line>
+      </ui-insight>
+    </div>
+    <div class="col-12 col-xl-5">
+      <pre class="codebox">&lt;ui-insight <span class="s">theme="green"</span>
+            <span class="s">hl-hot-bg="pink"</span>
+            <span class="s">card-active-border="orange"</span>&gt;
+  ...
+&lt;/ui-insight&gt;</pre>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-insight.js"></script>
+<script>
+(() => {
+  const NAMES = {
+    base:'#0C0D0C', shell:'#C6C7BD', violet:'#B484E8', blue:'#5DBAE8', red:'#EF6661', orange:'#F79C40',
+    blue:'#5DBAE8', green:'#71CD76', green:'#71CD76', vanilla:'#DBEDD8', yellow:'#E3D322', vanilla:'#DBEDD8',
+    green:'#71CD76', indigo:'#778CE1', indigo:'#778CE1', pink:'#FF91D7', orange:'#F79C40'
+  };
+
+  const sw = document.getElementById('swatches');
+  Object.entries(NAMES).forEach(([n, hex]) => {
+    const col = document.createElement('div');
+    col.className = 'col-6 col-md-3 col-xl-2';
+    col.innerHTML = `<span class="swatch" style="background:${hex}"></span><code>${n}</code> <span style="font-size:0.75rem">${hex}</span>`;
+    sw.appendChild(col);
+  });
+
+  const selBg = document.getElementById('selBg');
+  const selFg = document.getElementById('selFg');
+  const live = document.getElementById('live');
+  const code = document.getElementById('liveCode');
+  const opts = Object.keys(NAMES).map((n) => `<option value="${n}">${n}</option>`).join('');
+  selBg.innerHTML = opts;
+  selFg.innerHTML = opts;
+  selBg.value = 'pink';
+  selFg.value = 'base';
+
+  const showMsg = (html, type) => {
+    const box = document.getElementById('msg');
+    box.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${html}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
+  };
+
+  const sync = (notify) => {
+    live.setAttribute('hl-hot-bg', selBg.value);
+    live.setAttribute('hl-hot-color', selFg.value);
+    code.textContent = `hl-hot-bg="${selBg.value}" hl-hot-color="${selFg.value}"`;
+    if (notify) {
+      if (selBg.value === selFg.value) {
+        showMsg('底色與文字色相同，亮點被指到時會看不見文字，請換一個顏色。', 'info');
+      } else {
+        showMsg(`已套用 hl-hot-bg=${selBg.value}（${NAMES[selBg.value]}），hl-hot-color=${selFg.value}（${NAMES[selFg.value]}）。`, 'success');
+      }
+    }
+  };
+  selBg.addEventListener('change', () => sync(true));
+  selFg.addEventListener('change', () => sync(true));
+  sync(false);
+
+  /* ---- v1.2 theme 範例 ---- */
+  const THEMES = customElements.get('ui-insight').themes;
+
+  const selTheme = document.getElementById('selTheme');
+  const selOver = document.getElementById('selOver');
+  const themeLive = document.getElementById('themeLive');
+  const themeCode = document.getElementById('themeCode');
+  selTheme.innerHTML = THEMES.map((t) => `<option value="${t}">${t}</option>`).join('');
+  selOver.innerHTML = '<option value="">（不覆蓋）</option>' +
+    Object.keys(NAMES).map((n) => `<option value="${n}">${n}</option>`).join('');
+  selTheme.value = 'violet';
+
+  const syncTheme = (notify) => {
+    themeLive.setAttribute('theme', selTheme.value);
+    if (selOver.value) themeLive.setAttribute('hl-hot-bg', selOver.value);
+    else themeLive.removeAttribute('hl-hot-bg');
+    themeCode.textContent = `theme="${selTheme.value}"` + (selOver.value ? ` hl-hot-bg="${selOver.value}"` : '');
+    if (notify) {
+      showMsg(selOver.value
+        ? `已套用 theme=${selTheme.value}，並以 hl-hot-bg=${selOver.value} 覆蓋亮點底色。`
+        : `已套用 theme=${selTheme.value}，所有顏色都跟著主題。`, 'success');
+    }
+  };
+  selTheme.addEventListener('change', () => syncTheme(true));
+  selOver.addEventListener('change', () => syncTheme(true));
+  syncTheme(false);
+
+  const grid = document.getElementById('themeGrid');
+  grid.innerHTML = THEMES.map((t) => `
+    <div class="col-12 col-xl-6">
+      <div class="tag-lbl" style="background:#2A2B29;color:var(--c-shell)"><code style="color:var(--c-green)">theme="${t}"</code></div>
+      <ui-insight theme="${t}" margin="0">
+        <ins-line heading="${t}">
+          It <hl word="dawned on me" tag="gra" why="游標移到亮點上，看看底色與文字色。">dawned on me</hl> that I had been <hl word="avoiding the real problem" tag="lr" why="其他亮點的說明也會跟著主題。">avoiding the real problem</hl>.
+        </ins-line>
+      </ui-insight>
+    </div>`).join('');
+})();
+</script>
+</template>
+<template data-part id="ui-insight-11-08-26" data-component="ui-insight" data-date="11-08-26"
+          data-title="ui-insight v1.3 範例：extra-info" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-insight-demo-11-08-26.html">
+<meta charset="utf-8">
+<title>ui-insight v1.3 範例：extra-info</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root { font-size: 18px; }
+  body { background: #0C0D0C; color: #C6C7BD; font-family: "微軟正黑體", "Inter"; padding: 24px; min-width: 1100px; }
+  h1 { color: #51DBCF; font-size: 1.6rem; margin: 0 0 8px 0; }
+  h2 { color: #E3D322; font-size: 1.2rem; margin: 36px 0 8px 0; }
+  .desc { color: #A3C4BC; font-size: 0.9rem; margin: 0 0 12px 0; }
+  .demo-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
+  pre { background: #161816; color: #DBEDD8; border: 1px solid #2A2B29; border-radius: 8px; padding: 14px 16px; font-size: 0.75rem; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+  table.attr { width: 100%; font-size: 0.85rem; border-collapse: collapse; }
+  table.attr th, table.attr td { border-bottom: 1px solid #2A2B29; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.attr th { color: #5DBAE8; }
+  table.attr code { color: #FF91D7; }
+  .zh-label { color: #E3D322; font-weight: 600; }
+</style>
+<!-- ===== body ===== -->
+<h1>&lt;ui-insight&gt; v1.3：extra-info</h1>
+<p class="desc">在 &lt;ins-line&gt; 加上 extra-info="template 的 id"，選到這一句時，template 的內容會顯示在右側面板最下方。點左側卡片或按 Ctrl+Shift+上下方向鍵切換。</p>
+
+<h2>範例一：每句附中文翻譯</h2>
+<p class="desc">兩句各自指向不同的 template。</p>
+<div class="demo-grid">
+  <ui-insight>
+    <ins-line heading="Describe someone you met at a party and enjoyed talking with." extra-info="tpl-party-1">
+      <hl tag="fc" why="用照片這個具體物品當主詞開場，避開 I 開頭，也不重複題目用字">A few photos on my Google Drive</hl> always <hl tag="gra" why="主詞是複數 photos，動詞用 take">take me back to</hl> a lively party, <hl tag="gra" why="關係副詞引導形容詞子句描述在派對上發生的事">where</hl> I had a great conversation with someone truly fascinating.
+    </ins-line>
+    <ins-line extra-info="tpl-party-2">
+      <hl tag="fc" why="第二句交代場合與時間">It was a friend's housewarming last spring</hl>, and the person sitting next to me on the balcony <hl tag="lr" why="揭曉對方身分，順勢銜接到聊天內容">turned out to be</hl> a wildlife photographer.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight&gt;
+  &lt;ins-line heading="..." extra-info="tpl-party-1"&gt;
+    ...句子與 &lt;hl&gt;...
+  &lt;/ins-line&gt;
+  &lt;ins-line extra-info="tpl-party-2"&gt;
+    ...
+  &lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+&lt;template id="tpl-party-1"&gt;
+  &lt;span class="zh-label"&gt;中文翻譯&lt;/span&gt;&lt;br&gt;
+  我 Google 雲端硬碟裡的幾張照片……
+&lt;/template&gt;</pre>
+</div>
+
+<template id="tpl-party-1">
+  <span class="zh-label">中文翻譯</span><br>
+  我 Google 雲端硬碟裡的幾張照片，總會把我帶回一場熱鬧的派對，我在那裡和一位非常有意思的人聊得很開心。
+</template>
+<template id="tpl-party-2">
+  <span class="zh-label">中文翻譯</span><br>
+  那是去年春天一位朋友的新居派對，坐在我旁邊、一起待在陽台的那個人，原來是一位野生動物攝影師。
+</template>
+
+<h2>範例二：搭配 theme、自訂外觀，只有部分句子有附加內容</h2>
+<p class="desc">第二句沒有 extra-info，切換過去時附加區塊會自動隱藏。template 內可放任意 HTML，例如清單與圖示。</p>
+<div class="demo-grid">
+  <ui-insight theme="violet" extra-bg="#1A1622" extra-font-size="0.9rem">
+    <ins-line heading="Describe a crowded place you have been to." extra-info="tpl-crowd-1">
+      <hl tag="fc" why="用手機裡的一段影片當主詞開場">A short video on my phone</hl> <hl tag="gra" why="現在式表示影片至今還在">still shows</hl> <hl tag="gra" why="名詞子句當受詞，用 busy 取代題目的 crowded">how busy Yingge Old Street was</hl> when I visited during Lunar New Year.
+    </ins-line>
+    <ins-line>
+      The MRT trains to Yingge were so packed that <hl tag="lr" why="用具體結果取代 very crowded">I let two go by</hl>, and <hl tag="fc" why="銜接句預告情況更糟">things only got worse</hl> once I reached the pottery shops.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight theme="violet" extra-bg="#1A1622" extra-font-size="0.9rem"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-crowd-1"&gt;...&lt;/ins-line&gt;
+  &lt;ins-line&gt;...沒有 extra-info...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;
+
+&lt;template id="tpl-crowd-1"&gt;
+  &lt;div&gt;&lt;i class="bi bi-arrow-repeat"&gt;&lt;/i&gt; 換個地點也能用：&lt;/div&gt;
+  &lt;ul&gt;...&lt;/ul&gt;
+&lt;/template&gt;</pre>
+</div>
+
+<template id="tpl-crowd-1">
+  <div><i class="bi bi-arrow-repeat"></i> 換個地點也能用：</div>
+  <ul style="margin: 4px 0 0 0; padding: 0 0 0 20px;">
+    <li>A short video on my phone still shows how busy <c-key>the night market</c-key> was ...</li>
+    <li>A short video on my phone still shows how busy <c-key>the concert venue</c-key> was ...</li>
+  </ul>
+</template>
+
+<h2>新增屬性</h2>
+<table class="attr">
+  <thead><tr><th>屬性</th><th>放在</th><th>預設值</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td><code>extra-info</code></td><td>&lt;ins-line&gt;</td><td>無</td><td>填 &lt;template&gt; 的 id。找不到時不顯示；id 指向的不是 template 時，改用該元素的 innerHTML。</td></tr>
+    <tr><td><code>extra-bg</code></td><td>&lt;ui-insight&gt;</td><td>#1E201E</td><td>附加區塊背景色，可填品牌色名稱。</td></tr>
+    <tr><td><code>extra-color</code></td><td>&lt;ui-insight&gt;</td><td>#C6C7BD</td><td>附加區塊文字色。</td></tr>
+    <tr><td><code>extra-border-color</code></td><td>&lt;ui-insight&gt;</td><td>#5DBAE8</td><td>附加區塊的線條顏色（v1.4 起用於四種樣式），會跟著 theme。</td></tr>
+    <tr><td><code>extra-font-size</code></td><td>&lt;ui-insight&gt;</td><td>0.85rem</td><td>附加區塊字體大小。</td></tr>
+    <tr><td><code>extra-padding</code></td><td>&lt;ui-insight&gt;</td><td>10px 12px</td><td>附加區塊內距。</td></tr>
+    <tr><td><code>extra-radius</code></td><td>&lt;ui-insight&gt;</td><td>6px</td><td>附加區塊圓角。</td></tr>
+    <tr><td><code>extra-top</code></td><td>&lt;ui-insight&gt;</td><td>12px</td><td>與上方亮點解說的距離。</td></tr>
+  </tbody>
+</table>
+
+<h1 style="margin: 56px 0 8px 0;">&lt;ui-insight&gt; v1.4：extra-info-style</h1>
+<p class="desc">附加區塊改成四種樣式，取消 v1.3 的左側粗色條。線條顏色都用 extra-border-color，會跟著 theme。以下四組使用相同內容，只改 extra-info-style。</p>
+
+<h2>outline（預設）：1px 實線外框</h2>
+<div class="demo-grid">
+  <ui-insight>
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<h2>dashed：1px 虛線外框，無底色</h2>
+<div class="demo-grid">
+  <ui-insight extra-info-style="dashed">
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight extra-info-style="dashed"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<h2>divider：只有上方分隔線</h2>
+<div class="demo-grid">
+  <ui-insight extra-info-style="divider" theme="key">
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight extra-info-style="divider" theme="key"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<h2>label：外框左上角嵌入標籤，並示範在 &lt;ins-line&gt; 單獨覆蓋</h2>
+<p class="desc">第一句用 &lt;ui-insight&gt; 設定的「中文翻譯」標籤；第二句在 &lt;ins-line&gt; 改成「延伸」標籤；第三句在 &lt;ins-line&gt; 改用 dashed。</p>
+<div class="demo-grid">
+  <ui-insight extra-info-style="label" extra-info-label="中文翻譯" theme="yellow">
+    <ins-line heading="Describe an interesting online video that taught you something new." extra-info="tpl-video-1">
+      <hl tag="fc" why="用護照裡過期的簽證貼紙當主詞">My expired Working Holiday visa sticker</hl> in my passport <hl tag="gra" why="用假設語氣強調影響">wouldn't exist without</hl> a life-changing YouTube series I came across years ago.
+    </ins-line>
+    <ins-line extra-info="tpl-video-2" extra-info-label="延伸">
+      <hl tag="gra" why="用副詞片語起句">Episode by episode</hl>, it <hl tag="lr" why="取代題目的 taught">walked me through</hl> the entire visa process and, more importantly, gave me the courage to actually hit "submit".
+    </ins-line>
+    <ins-line extra-info="tpl-video-3" extra-info-style="dashed">
+      That single click turned a vague dream into an actual plan.
+    </ins-line>
+  </ui-insight>
+<pre>&lt;ui-insight extra-info-style="label" extra-info-label="中文翻譯" theme="yellow"&gt;
+  &lt;ins-line heading="..." extra-info="tpl-video-1"&gt;...&lt;/ins-line&gt;
+  &lt;ins-line extra-info="tpl-video-2" extra-info-label="延伸"&gt;...&lt;/ins-line&gt;
+  &lt;ins-line extra-info="tpl-video-3" extra-info-style="dashed"&gt;...&lt;/ins-line&gt;
+&lt;/ui-insight&gt;</pre>
+</div>
+
+<template id="tpl-video-1">
+  要不是幾年前偶然看到一系列改變我人生的 YouTube 影片，我護照裡那張已經過期的打工度假簽證貼紙根本不會存在。
+</template>
+<template id="tpl-video-2">
+  walk someone through something 也能用在別的題目，例如：My manager walked me through the new system on my first day.
+</template>
+<template id="tpl-video-3">
+  那一次點擊，把一個模糊的夢想變成了真正的計畫。
+</template>
+
+<h2>v1.4 新增屬性</h2>
+<table class="attr">
+  <thead><tr><th>屬性</th><th>放在</th><th>預設值</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td><code>extra-info-style</code></td><td>&lt;ui-insight&gt; 或 &lt;ins-line&gt;</td><td>outline</td><td>outline、dashed、divider、label 四選一，填錯時退回 outline。寫在 &lt;ins-line&gt; 會覆蓋整個元件的設定。</td></tr>
+    <tr><td><code>extra-info-label</code></td><td>&lt;ui-insight&gt; 或 &lt;ins-line&gt;</td><td>補充</td><td>只在 label 樣式顯示，為左上角標籤的文字。</td></tr>
+  </tbody>
+</table>
+
+<script src="ui-insight.js"></script>
+</template>
+
+<script>
+(function () {
+  var MARK = '<!-- ===== body ===== -->';
+  var frame = document.getElementById('stage');
+  var parts = Array.prototype.slice.call(document.querySelectorAll('template[data-part]'));
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-go]'));
+
+  function show(id, push) {
+    var t = document.getElementById(id) || parts[0];
+    var src = t.innerHTML;
+    var i = src.indexOf(MARK);
+    var head = i >= 0 ? src.slice(0, i) : '';
+    var body = i >= 0 ? src.slice(i + MARK.length) : src;
+    /* srcdoc 的相對路徑以本頁為準，所以元件的 js 照原樣載入 */
+    frame.srcdoc = '<!doctype html><html ' + (t.dataset.htmlAttrs || '') + '><head>' + head +
+      '</head><body>' + body + '</body></html>';
+    document.getElementById('now').textContent = t.dataset.component + '　' + t.dataset.date + '　' + t.dataset.title;
+    document.getElementById('from').textContent = '原檔 ' + t.dataset.from;
+    btns.forEach(function (b) { b.classList.toggle('on', b.dataset.go === t.id); });
+    if (push && location.hash !== '#' + t.id) history.replaceState(null, '', '#' + t.id);
+  }
+
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { show(b.dataset.go, true); });
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), false); });
+  show(location.hash.slice(1) || parts[parts.length - 1].id, false);
+})();
+</script>
+</body>
+</html>

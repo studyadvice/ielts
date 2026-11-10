@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>layout 元件範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../bp-styles.css">
+<style>
+/* 合併頁外框：左側選單、右側框架；間距一律 px */
+html,body{height:100%;margin:0;}
+body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
+.shell{display:grid;grid-template-columns:320px minmax(0,1fr);height:100vh;}
+.side{border-right:1px solid var(--bp-key-deep);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
+.side h1{font-size:1.4rem;margin:0 0 6px 0;}
+.side .lead{font-size:.85rem;line-height:1.6;margin:0 0 12px 0;}
+.grp{margin:14px 0 2px 0;letter-spacing:1px;}
+.part-btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;
+  background:transparent;border:1px solid var(--bp-fill);border-radius:8px;padding:8px 10px;color:var(--bp-shell);cursor:pointer;}
+.part-btn:hover{background:var(--bp-fill);}
+.part-btn .d{font-family:ui-monospace,monospace;font-size:.8rem;}
+.part-btn .t{font-size:.9rem;line-height:1.4;}
+.part-btn.on{border-color:var(--bp-key);background:#14302E;color:var(--bp-vanilla);}
+.side-link{font-size:.9rem;text-decoration:none;padding:4px 10px;}
+.main{display:flex;flex-direction:column;min-width:0;}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-key-deep);}
+.bar .now{font-size:1rem;}
+.bar .from{font-family:ui-monospace,monospace;font-size:.8rem;margin-left:auto;}
+#stage{flex:1;width:100%;border:0;background:var(--bp-base);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="side">
+    <h1 class="bp-text-key">layout 元件範例</h1>
+    <p class="lead bp-text-calm">本資料夾的 <code>ui-cards</code> 與 <code>ui-steps</code> 範例合併為一頁。左側選擇元件與版本，右側顯示該版本完整的範例與程式碼對照。版型範本與元件共同約定仍是獨立頁面，連結在左下方。合併日期 11-10-26。</p>
+      <p class="grp fs-small bp-text-gray">ui-cards</p>
+      <button type="button" class="part-btn" data-go="ui-cards-11-03-26"><span class="d bp-text-yellow">11-03-26</span><span class="t">ui-cards 示範</span></button>
+      <button type="button" class="part-btn" data-go="ui-cards-11-04-26"><span class="d bp-text-yellow">11-04-26</span><span class="t">ui-cards 示範 | 11-04-26</span></button>
+      <button type="button" class="part-btn" data-go="ui-cards-11-05-26"><span class="d bp-text-yellow">11-05-26</span><span class="t">ui-cards 範例：卡片實心與選中實心</span></button>
+      <p class="grp fs-small bp-text-gray">ui-steps</p>
+      <button type="button" class="part-btn" data-go="ui-steps-11-03-26"><span class="d bp-text-yellow">11-03-26</span><span class="t">ui-steps 示範</span></button>
+      <p class="grp fs-small bp-text-gray">其他頁面</p>
+      <a class="side-link bp-text-blue" href="ui-cards-templates-11-05-26.html"><i class="bi bi-box-arrow-up-right"></i> ui-cards 版型範本</a>
+      <a class="side-link bp-text-blue" href="ui-conventions.html"><i class="bi bi-box-arrow-up-right"></i> ui 元件共同約定</a>
+  </nav>
+  <main class="main">
+    <div class="bar"><span class="now bp-text-vanilla" id="now"></span><span class="from bp-text-gray" id="from"></span></div>
+    <iframe id="stage" title="範例"></iframe>
+  </main>
+</div>
+
+<!--
+  每個 template 是一份原本獨立的範例頁，內容原封不動：
+  上半是原本 <head> 裡的樣式與連結，標記之下是原本的 <body>。
+  要修改某一版範例，直接改對應 template 裡的 HTML；要新增一版，照同樣格式加一個 template。
+-->
+<template data-part id="ui-cards-11-03-26" data-component="ui-cards" data-date="11-03-26"
+          data-title="ui-cards 示範" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-cards-demo-11-03-26.html">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .page{max-width:1600px;margin:0 auto;padding:32px 40px 64px 40px;}
+  h1{font-size:2rem;color:#5DBAE8;margin:0 0 8px 0;}
+  h2{font-size:1.4rem;color:#B484E8;margin:48px 0 8px 0;padding:0 0 8px 0;border-bottom:1px solid #B484E8;}
+  h3{font-size:1.1rem;color:#5DBAE8;margin:24px 0 8px 0;}
+  .lead-text{color:#778CE1;font-size:1rem;margin:0 0 16px 0;}
+  .note{color:#DBEDD8;font-size:0.95rem;margin:0 0 16px 0;}
+  .demo-live{margin:16px 0;}
+  pre.demo-code{background:#0C0D0C;color:#DBEDD8;border:1px solid #5DBAE8;border-radius:8px;padding:16px;font-size:0.85rem;max-height:420px;overflow:auto;margin:0;}
+  code{color:#71CD76;}
+  a{color:#5DBAE8;}
+  .ref{--bs-table-bg:transparent;--bs-table-color:#C6C7BD;--bs-table-border-color:#C6C7BD;font-size:0.9rem;}
+  .ref th{color:#E3D322;}
+  .ref td:first-child{color:#71CD76;font-family:monospace;white-space:nowrap;}
+  .ver{border-left:4px solid #71CD76;padding:8px 16px;margin:8px 0;}
+  .ver strong{color:#71CD76;}
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+
+  <h1>&lt;ui-cards&gt; 卡片牆元件</h1>
+  <p class="lead-text">卡片以網格排列，內容可直接寫在 <code>&lt;card-item&gt;</code> 裡，或用 <code>source</code> 複製。帶 <code>detail</code> 的卡片或卡片內元素，會在內容區顯示對應內容。屬性約定見 <a href="ui-conventions.html">ui-conventions.html</a>。</p>
+
+  <h2>版本紀錄</h2>
+  <div class="ver"><strong>v1.0（11-03-26）</strong>　初版。</div>
+
+  <!-- ===================== 範例一 ===================== -->
+  <h2>範例一：圖示卡片，內容區在下方</h2>
+  <p class="note">每張卡片有圖示、名稱、說明、標籤與頁尾，<code>divider</code> 在頁尾上方畫虛線。整張卡片帶 <code>detail</code>，點擊後內容區顯示對應內容；<code>toggle</code> 讓再點一次收起。</p>
+  <div class="demo-live" id="demo1"></div>
+  <pre class="demo-code" id="demo1-code"></pre>
+  <script type="text/plain" data-demo="demo1">
+<ui-cards title="服務項目" cols="3" divider="dashed" toggle
+  panel-title="{label}" accent="blue">
+  <card-item label="網站設計" note="形象網站、活動頁" icon="palette-fill" color="violet"
+    tags="RWD,SEO" footer="約 4 週" detail="c1-web"></card-item>
+  <card-item label="系統開發" note="後台、會員、金流" icon="cpu-fill" color="blue"
+    tags="PHP,MySQL" footer="約 8 週" detail="c1-sys" badge="熱門"></card-item>
+  <card-item label="維護代管" note="主機、備份、更新" icon="shield-check" color="green"
+    tags="月費" footer="按月計費" detail="c1-care"></card-item>
+</ui-cards>
+
+<div id="c1-web" hidden><p>包含版面設計、切版與上線，提供兩次修改。</p></div>
+<div id="c1-sys" hidden><p>依需求規劃資料表與後台，含操作日誌與權限管理。</p></div>
+<div id="c1-care" hidden><p>每月備份、安全更新與流量報告。</p></div>
+  </script>
+
+  <!-- ===================== 範例二 ===================== -->
+  <h2>範例二：圖片在左，內容區在右</h2>
+  <p class="note"><code>media-position="left"</code> 讓圖片放在左側，<code>panel="right"</code> 讓內容區固定在右側。卡片內的按鈕也可以帶 <code>detail</code>，並用 <code>color</code> 指定配色。第三張卡片跨兩欄，最後一張停用，另一張是外部連結。</p>
+  <div class="demo-live" id="demo2"></div>
+  <pre class="demo-code" id="demo2-code"></pre>
+  <script type="text/plain" data-demo="demo2">
+<ui-cards cols="2" media-position="left" media-width="140" panel="right" panel-columns="8,4"
+  panel-title="詳細資料" placeholder="點卡片或卡片內的按鈕。" accent="pink" bordered
+  active-detail="c2-a">
+  <card-item label="山景木屋" note="南投 · 兩人房" image="https://picsum.photos/seed/cabin/400/300"
+    detail="c2-a" tags="景觀,早餐">
+    <p>每晚 3,200 元起。</p>
+  </card-item>
+  <card-item label="海邊民宿" note="墾丁 · 四人房" image="https://picsum.photos/seed/beach/400/300"
+    badge="剩 2 間">
+    <p>每晚 4,800 元起。</p>
+    <button detail="c2-b-room">房型</button>
+    <button detail="c2-b-rule" color="orange" detail-title="入住須知">須知</button>
+  </card-item>
+  <card-item span="2" label="城市旅店" note="台北 · 商務房，步行 3 分鐘到捷運"
+    image="https://picsum.photos/seed/city/400/300" detail="c2-c" color="blue">
+    <p>平日每晚 2,600 元，週末 3,000 元。</p>
+  </card-item>
+  <card-item label="合作平台" note="另開視窗" icon="box-arrow-up-right" color="orange"
+    href="https://getbootstrap.com" target="_blank"></card-item>
+  <card-item label="湖畔營地" note="整修中" icon="tree-fill" disabled detail="c2-a"></card-item>
+</ui-cards>
+
+<template id="c2-a"><p>木屋有獨立陽台，早餐為在地食材。</p></template>
+<template id="c2-b-room"><ul><li>四人和室</li><li>四人雙床</li></ul></template>
+<template id="c2-b-rule"><p>入住 15:00，退房 11:00，禁止寵物。</p></template>
+<template id="c2-c"><p>提供會議室與洗衣服務。</p></template>
+  </script>
+
+  <!-- ===================== 範例三 ===================== -->
+  <h2>範例三：實心卡片，置中排列，不帶內容區</h2>
+  <p class="note"><code>card-style="filled"</code> 以卡片顏色當底色，<code>align="center"</code> 置中，<code>card-height</code> 統一最小高度。卡片內容用 <code>source</code> 從同一份來源複製。<code>panel="none"</code> 時不建立內容區。</p>
+  <div class="demo-live" id="demo3"></div>
+  <pre class="demo-code" id="demo3-code"></pre>
+  <script type="text/plain" data-demo="demo3">
+<ui-cards cols="4" gap="12" card-style="filled" align="center" card-height="180" icon-size="2.4"
+  card-radius="12" panel="none">
+  <card-item label="今日訂單" icon="cart-check-fill" color="blue" source="c3-a"></card-item>
+  <card-item label="新會員" icon="person-plus-fill" color="green" source="c3-b"></card-item>
+  <card-item label="待出貨" icon="box-seam-fill" color="yellow" source="c3-c"></card-item>
+  <card-item label="退貨申請" icon="arrow-return-left" color="orange" source="c3-d" badge="新"></card-item>
+</ui-cards>
+
+<template id="c3-a"><p style="font-size:1.6rem;font-weight:700;">128</p></template>
+<template id="c3-b"><p style="font-size:1.6rem;font-weight:700;">36</p></template>
+<template id="c3-c"><p style="font-size:1.6rem;font-weight:700;">17</p></template>
+<template id="c3-d"><p style="font-size:1.6rem;font-weight:700;">3</p></template>
+  </script>
+
+  <!-- ===================== 屬性一覽 ===================== -->
+  <h2>屬性一覽</h2>
+
+  <h3>容器 &lt;ui-cards&gt;</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>title</td><td>無</td><td>元件標題</td></tr>
+      <tr><td>cols</td><td>3</td><td>每列卡片數</td></tr>
+      <tr><td>gap</td><td>16</td><td>卡片間距（px）</td></tr>
+      <tr><td>card-style</td><td>outline</td><td>outline（外框）、filled（實心）、plain（無框）</td></tr>
+      <tr><td>card-padding</td><td>16</td><td>卡片內距（px）</td></tr>
+      <tr><td>card-radius</td><td>8</td><td>卡片圓角（px）</td></tr>
+      <tr><td>card-height</td><td>自動</td><td>卡片最小高度（px）</td></tr>
+      <tr><td>align</td><td>left</td><td>left、center</td></tr>
+      <tr><td>media-position</td><td>top</td><td>圖片或圖示位置：top、left</td></tr>
+      <tr><td>media-height</td><td>140</td><td>圖片在上方時的高度（px）</td></tr>
+      <tr><td>media-width</td><td>120</td><td>圖片在左側時的寬度（px）</td></tr>
+      <tr><td>icon-size</td><td>2</td><td>圖示大小（rem）</td></tr>
+      <tr><td>color</td><td>shell</td><td>卡片主色（外框、名稱、圖示，實心時為底色）</td></tr>
+      <tr><td>icon-color</td><td>同 color</td><td>圖示顏色；實心卡片預設為底層背景色</td></tr>
+      <tr><td>accent</td><td>blue</td><td>選中卡片的外框色</td></tr>
+      <tr><td>divider</td><td>不顯示</td><td>頁尾上方分隔線：solid、dashed、dotted</td></tr>
+      <tr><td>divider-color</td><td>同 color</td><td>分隔線顏色</td></tr>
+      <tr><td>bordered</td><td>否</td><td>整個元件外框</td></tr>
+      <tr><td>panel</td><td>below</td><td>內容區位置：below、right、none</td></tr>
+      <tr><td>panel-columns</td><td>8,4</td><td>內容區在右側時，卡片區與內容區比例</td></tr>
+      <tr><td>panel-title</td><td>無</td><td>內容區標題，可用 {label}</td></tr>
+      <tr><td>panel-height</td><td>無</td><td>內容區最大高度（px），超出時捲動</td></tr>
+      <tr><td>placeholder</td><td>請點選卡片。</td><td>未選擇時的提示</td></tr>
+      <tr><td>hide-empty-panel</td><td>否</td><td>內容區沒有內容時隱藏</td></tr>
+      <tr><td>active-detail</td><td>無</td><td>初始開啟的 detail</td></tr>
+      <tr><td>trigger、detail-trigger</td><td>click</td><td>卡片、卡片內元素的觸發方式：click、hover</td></tr>
+      <tr><td>toggle</td><td>否</td><td>再點一次已開啟的卡片時收起</td></tr>
+      <tr><td>button-color</td><td>blue</td><td>帶 detail 元素的預設按鈕配色</td></tr>
+    </tbody>
+  </table>
+
+  <h3>卡片 &lt;card-item&gt;</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>label、note、tooltip</td><td>名稱、次要文字、滑鼠提示</td></tr>
+      <tr><td>icon、image</td><td>圖示或圖片網址，兩者擇一，image 優先</td></tr>
+      <tr><td>badge</td><td>右上角標</td></tr>
+      <tr><td>tags</td><td>以逗號分隔的標籤</td></tr>
+      <tr><td>footer</td><td>頁尾文字</td></tr>
+      <tr><td>color、icon-color</td><td>本卡片主色、圖示顏色</td></tr>
+      <tr><td>span</td><td>跨幾欄</td></tr>
+      <tr><td>source</td><td>複製到卡片內文的內容，接在卡片原有內容之後</td></tr>
+      <tr><td>detail、detail-title</td><td>點擊卡片時在內容區顯示的內容與標題</td></tr>
+      <tr><td>toggle</td><td>再點一次收起</td></tr>
+      <tr><td>disabled</td><td>停用</td></tr>
+      <tr><td>href、target</td><td>改為連結</td></tr>
+    </tbody>
+  </table>
+
+  <h3>卡片內或內容區裡的觸發元素</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>detail</td><td>在內容區顯示對應內容</td></tr>
+      <tr><td>color</td><td>按鈕配色；已有 btn 類別時不套用</td></tr>
+      <tr><td>toggle</td><td>再按一次收起</td></tr>
+      <tr><td>detail-title</td><td>內容區標題</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script src="ui-cards.js"></script>
+<script>
+  // 示範頁專用：同一份原始碼同時渲染成元件與程式碼區塊
+  document.querySelectorAll('script[type="text/plain"][data-demo]').forEach(src => {
+    const lines = src.textContent.replace(/^\n+|\s+$/g, '').split('\n');
+    const indent = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length));
+    const code = lines.map(l => l.slice(indent)).join('\n');
+    document.getElementById(src.dataset.demo).innerHTML = code;
+    document.getElementById(src.dataset.demo + '-code').textContent = code;
+  });
+</script>
+</template>
+<template data-part id="ui-cards-11-04-26" data-component="ui-cards" data-date="11-04-26"
+          data-title="ui-cards 示範 | 11-04-26" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-cards-demo-11-04-26.html">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 示範 | 11-04-26</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root { font-size: 16px; }
+  body {
+    margin: 0;
+    padding: 32px 48px;
+    background: #0C0D0C;
+    color: #C6C7BD;
+    font-family: "微軟正黑體", "Inter";
+    min-width: 1200px;
+  }
+  h1 { font-size: 1.8rem; color: #DBEDD8; margin: 0 0 8px 0; }
+  h2 { font-size: 1.35rem; color: #5DBAE8; margin: 0 0 16px 0; }
+  .lead-note { font-size: 1rem; color: #778CE1; margin: 0 0 32px 0; }
+  .demo-block {
+    border-top: 1px solid rgba(198, 199, 189, 0.78);
+    padding: 32px 0 40px 0;
+  }
+  .demo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0 0 0; }
+  .code-box {
+    margin: 0;
+    padding: 16px;
+    border: 1px solid rgba(198, 199, 189, 0.78);
+    border-radius: 8px;
+    background: #0C0D0C;
+    color: #71CD76;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-label { font-size: 0.95rem; color: #B484E8; margin: 0 0 8px 0; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td {
+    border: 1px solid rgba(198, 199, 189, 0.78);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .attr-table th { color: #DBEDD8; }
+  .attr-table code { color: #E3D322; }
+</style>
+<!-- ===== body ===== -->
+<h1>ui-cards 示範</h1>
+<p class="lead-note">11-04-26 修改：開放內容區標題與元件大標題的字級、文字色、底線色設定。</p>
+
+<template id="c1-a">
+  <ul class="mb-0">
+    <li>開場句</li>
+    <li>銜接開場句、開始敘事</li>
+  </ul>
+</template>
+<template id="c1-b">
+  <p class="mb-0">把同一個語塊放進 Part 2 的不同題目，練到隨時說得出口。</p>
+</template>
+
+<section class="demo-block">
+  <h2>修改一：內容區標題可設定字級與色彩</h2>
+
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">修改前（標題固定 1.1rem、薰衣草紫）</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="right" panel-columns="7,5"
+        panel-title="橫向練習" color="blue" badge-color="blue" bordered active-detail="c1-a"
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="person-video3" label="IELTS Speaking Tutorial Series" note="雅思口說開放課程"
+          badge-icon="person-video2" detail="c1-a">
+          <p>語塊組合，自由造句</p>
+          <button detail="c1-b" color="blue">橫向練習在Part 2落地</button>
+        </card-item>
+      </ui-cards>
+    </div>
+    <div>
+      <p class="code-label">修改後（標題 1.65rem、香草色，底線改天藍）</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="right" panel-columns="7,5"
+        panel-title="橫向練習" panel-title-size="1.65rem" panel-title-color="vanilla" panel-title-line="blue"
+        color="blue" badge-color="blue" bordered active-detail="c1-a"
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="person-video3" label="IELTS Speaking Tutorial Series" note="雅思口說開放課程"
+          badge-icon="person-video2" detail="c1-a">
+          <p>語塊組合，自由造句</p>
+          <button detail="c1-b" color="blue">橫向練習在Part 2落地</button>
+        </card-item>
+      </ui-cards>
+    </div>
+  </div>
+
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">修改前程式碼</p>
+<pre class="code-box">&lt;ui-cards cols="2" media-position="left" media-width="168" panel="right" panel-columns="8,4"
+  panel-title="橫向練習" placeholder="點卡片或卡片內的按鈕。" color="blue" badge-color="blue" bordered
+  active-detail="c1-a" label-size="1.65rem" note-size="1.25rem"&gt;</pre>
+    </div>
+    <div>
+      <p class="code-label">修改後程式碼</p>
+<pre class="code-box">&lt;ui-cards cols="2" media-position="left" media-width="168" panel="right" panel-columns="8,4"
+  panel-title="橫向練習" panel-title-size="1.65rem" panel-title-color="vanilla" panel-title-line="blue"
+  placeholder="點卡片或卡片內的按鈕。" color="blue" badge-color="blue" bordered
+  active-detail="c1-a" label-size="1.65rem" note-size="1.25rem"&gt;</pre>
+    </div>
+  </div>
+</section>
+
+<section class="demo-block">
+  <h2>修改二：元件大標題同樣開放設定</h2>
+  <ui-cards title="本課重點" title-size="1.5rem" title-color="yellow"
+    cols="3" panel="none" color="violet">
+    <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目"></card-item>
+    <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用"></card-item>
+    <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開"></card-item>
+  </ui-cards>
+<pre class="code-box mt-3">&lt;ui-cards title="本課重點" title-size="1.5rem" title-color="yellow" cols="3" panel="none" color="violet"&gt;</pre>
+</section>
+
+<section class="demo-block">
+  <h2>修改三：顯示按鈕（reveal）</h2>
+  <p>按鈕文字就是按鈕內容，可自由填寫。按下後讓指定 id 的隱藏區塊顯示；加上 <code>remove-cards</code> 會連同按鈕所在的整個 ui-cards 一起移除。</p>
+
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">範例 A：只顯示目標，保留卡片</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="none" color="blue" bordered
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="person-video3" label="IELTS Speaking Tutorial Series" note="雅思口說開放課程">
+          <p>語塊組合，自由造句</p>
+          <button reveal="reveal-a" color="green">看完整示範</button>
+        </card-item>
+      </ui-cards>
+      <div id="reveal-a" class="mt-3 p-3 border rounded" hidden>
+        A tiny apartment on the fifth floor of a fifteen-year-old building, conveniently located near the MRT station.
+      </div>
+    </div>
+    <div>
+      <p class="code-label">範例 B：顯示目標並移除整個 ui-cards</p>
+      <ui-cards cols="1" media-position="left" media-width="120" panel="none" color="violet" bordered
+        label-size="1.4rem" note-size="1.1rem">
+        <card-item icon="door-open" label="準備好了嗎？" note="按下按鈕開始練習">
+          <button reveal="reveal-b" remove-cards color="violet">開始練習</button>
+        </card-item>
+      </ui-cards>
+      <div id="reveal-b" class="p-3 border rounded" style="display: none;">
+        練習一：把 conveniently located 放進「你常去的咖啡店」這一題。
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-pair">
+    <div>
+      <p class="code-label">範例 A 程式碼</p>
+<pre class="code-box">&lt;button reveal="reveal-a" color="green"&gt;看完整示範&lt;/button&gt;
+
+&lt;div id="reveal-a" hidden&gt;...&lt;/div&gt;</pre>
+    </div>
+    <div>
+      <p class="code-label">範例 B 程式碼</p>
+<pre class="code-box">&lt;button reveal="reveal-b" remove-cards color="violet"&gt;開始練習&lt;/button&gt;
+
+&lt;div id="reveal-b" style="display: none;"&gt;...&lt;/div&gt;</pre>
+    </div>
+  </div>
+</section>
+
+<section class="demo-block">
+  <h2>新增屬性一覽</h2>
+  <table class="attr-table">
+    <thead>
+      <tr><th>屬性</th><th>作用</th><th>預設值</th><th>寫法</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>panel-title-size</code></td><td>內容區標題字級</td><td>1.1rem</td><td>純數字視為 rem，例如 1.65；也可寫 24px、clamp() 等</td></tr>
+      <tr><td><code>panel-title-color</code></td><td>內容區標題文字色，未設定底線色時底線跟著改</td><td>violet</td><td>色盤名稱或色碼</td></tr>
+      <tr><td><code>panel-title-line</code></td><td>內容區標題底線色；寫 none 移除底線</td><td>同標題文字色</td><td>色盤名稱、色碼或 none</td></tr>
+      <tr><td><code>title-size</code></td><td>元件大標題（title 屬性）字級</td><td>1.2rem</td><td>同 panel-title-size</td></tr>
+      <tr><td><code>title-color</code></td><td>元件大標題文字色</td><td>violet</td><td>色盤名稱或色碼</td></tr>
+      <tr><td><code>reveal</code>（按鈕）</td><td>按下後顯示此 id 的區塊，支援 hidden、display: none、d-none 三種隱藏方式</td><td>無</td><td>目標 id</td></tr>
+      <tr><td><code>remove-cards</code>（按鈕）</td><td>顯示目標後移除按鈕所在的整個 ui-cards</td><td>不移除</td><td>寫上屬性即啟用</td></tr>
+      <tr><td><code>reveal-scroll</code>（按鈕）</td><td>顯示後平滑捲動到目標區塊</td><td>不捲動</td><td>寫上屬性即啟用</td></tr>
+      <tr><td><code>color</code>（按鈕）</td><td>按鈕底色，與 detail 按鈕相同</td><td>button-color 或 blue</td><td>色盤名稱或色碼</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<script src="ui-cards.js"></script>
+</template>
+<template data-part id="ui-cards-11-05-26" data-component="ui-cards" data-date="11-05-26"
+          data-title="ui-cards 範例：卡片實心與選中實心" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-cards-demo-11-05-26.html">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 範例：卡片實心與選中實心</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
+    --red: #EF6661; --orange: #FF5530; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --violet: #B484E8; --gray: #86877F;
+  }
+  body { background: var(--bg); color: var(--shell); font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); font-size: 1rem; margin: 0 0 24px 0; }
+  .demo { border: 1px solid #2A2B29; border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { color: var(--shell); font-size: 0.95rem; margin: 0 0 16px 0; }
+  .demo .desc code, .attr-table code { color: var(--yellow); background: transparent; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow: auto; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td { border-bottom: 1px solid #2A2B29; padding: 8px 12px; text-align: left; vertical-align: top; }
+  .attr-table th { color: var(--vanilla); }
+  .tool { display: flex; gap: 12px; align-items: center; margin: 0 0 12px 0; flex-wrap: wrap; }
+  .tool .btn { font-size: 0.9rem; }
+  #alerts { position: fixed; top: 16px; right: 24px; z-index: 1080; width: 380px; }
+</style>
+<!-- ===== body ===== -->
+<div id="alerts"></div>
+<div class="page">
+  <h1>ui-cards：卡片實心、選中實心、框線、滑過效果與翻面</h1>
+  <p class="lead-note">修改日期 11-05-26。新增兩項功能：<code>&lt;card-item&gt;</code> 可以單獨設定 <code>card-style</code>；<code>&lt;ui-cards&gt;</code> 新增 <code>active-style="filled"</code>，讓目前選中的卡片以實心顯示。第二次修改新增框線粗細與滑過效果：<code>border-width</code>、<code>hover-color</code>、<code>hover-width</code>、<code>hover-all</code>，見範例 5 到 7。第三次修改新增翻面功能：<code>back</code>、<code>back-source</code>、<code>flip-toggle</code>、<code>auto-flip</code>、<code>flip-color</code>、<code>flip-animation</code>，見範例 8 與 9。第四次修改（11-06-26）新增標題列：<code>media-position="inline"</code> 與 <code>meta</code>，角標會排進標題列，見範例 10。第五次修改（11-07-26）新增內容區主題：<code>panel-theme</code>、<code>panel-color</code>，內容來源 <code>&lt;template&gt;</code> 的 <code>theme</code>、<code>color</code>，以及按鈕或卡片的 <code>detail-theme</code>、<code>detail-color</code>，可組合外框、底色、標題、密度與特效，包含 info-region 的金箔與電流，見範例 11。</p>
+
+  <section class="demo">
+    <h2>屬性一覽</h2>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>寫在哪裡</th><th>值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>card-style</code></td><td><code>&lt;ui-cards&gt;</code></td><td><code>filled</code>、<code>plain</code></td><td>整組卡片的外觀預設值。</td></tr>
+        <tr><td><code>card-style</code></td><td><code>&lt;card-item&gt;</code></td><td><code>filled</code>、<code>plain</code>、<code>outline</code></td><td>只設定這張卡片，優先於 <code>&lt;ui-cards&gt;</code> 的設定。<code>outline</code> 用來在整組實心時讓某張恢復外框。</td></tr>
+        <tr><td><code>active-style</code></td><td><code>&lt;ui-cards&gt;</code></td><td><code>filled</code></td><td>目前選中的卡片以 <code>accent</code> 色實心顯示，其他卡片維持原本外觀。</td></tr>
+        <tr><td><code>border-width</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>數字（px）</td><td>卡片框線粗細，預設 <code>1</code>。寫在 <code>&lt;card-item&gt;</code> 只影響這張。</td></tr>
+        <tr><td><code>hover-color</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>品牌色名稱或色碼</td><td>滑鼠移到卡片上的框線色，預設 <code>vanilla</code>。</td></tr>
+        <tr><td><code>hover-width</code></td><td><code>&lt;ui-cards&gt;</code>、<code>&lt;card-item&gt;</code></td><td>數字（px）</td><td>滑過時的框線粗細。往內加粗，卡片大小與內容位置不會跳動。沒設時粗細不變，只換顏色。</td></tr>
+        <tr><td><code>hover-all</code></td><td><code>&lt;ui-cards&gt;</code></td><td>布林</td><td>讓純展示的卡片也有滑過效果。沒設時只有帶 <code>detail</code> 或 <code>href</code> 的卡片會反應；停用的卡片一律不反應。</td></tr>
+        <tr><td><code>back</code>、<code>back-source</code></td><td><code>&lt;card-item&gt;</code></td><td>HTML／元素 id</td><td>背面內容。設了就變成翻面卡片，點卡片本身翻面。</td></tr>
+        <tr><td><code>flip-toggle</code></td><td>兩者皆可</td><td>布林</td><td>背面可再點一次翻回。卡片可寫 <code>flip-toggle="false"</code> 例外。</td></tr>
+        <tr><td><code>auto-flip</code></td><td>兩者皆可</td><td>毫秒</td><td>翻面後倒數自動翻回，底部顯示倒數條。</td></tr>
+        <tr><td><code>flip-color</code></td><td>兩者皆可</td><td>顏色</td><td>翻面期間的卡片色。</td></tr>
+        <tr><td><code>flip-animation</code></td><td>兩者皆可</td><td><code>fade</code>、<code>slide</code>、<code>none</code></td><td>翻面動畫，預設 <code>fade</code>。</td></tr>
+        <tr><td><code>media-position="inline"</code></td><td>兩者皆可</td><td>值</td><td>圖示縮成方框，和標題排在同一行。</td></tr>
+        <tr><td><code>meta</code></td><td><code>&lt;card-item&gt;</code></td><td>文字</td><td>標題列右側的灰色小字；有標題列時角標排在最右側。</td></tr>
+        <tr><td>文字色</td><td>自動</td><td></td><td>實心時依底色亮度自動選擇深色或淺色文字，深色底（例如元件色名 <code>indigo</code>、<code>warning</code>）會改用淺色字。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：只讓某一張卡片實心</h2>
+    <p class="desc">在 <code>&lt;card-item&gt;</code> 上寫 <code>card-style="filled"</code>，只有這張變成實心，顏色取自卡片自己的 <code>color</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：整組實心，其中一張恢復外框</h2>
+    <p class="desc"><code>&lt;ui-cards card-style="filled"&gt;</code> 設定整組，再用 <code>&lt;card-item card-style="outline"&gt;</code> 讓某張例外。每張實心卡片的文字色都依底色亮度自動選擇。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：三欄卡片，選中的那張實心</h2>
+    <p class="desc"><code>active-style="filled"</code> 讓目前選中的卡片以 <code>accent</code> 色實心顯示，其他卡片維持外框。點不同卡片看看切換效果；<code>toggle</code> 讓再點一次可取消選取。</p>
+    <div class="tool">
+      <button type="button" class="btn btn-outline-light" id="btn-which">目前選中哪一張？</button>
+    </div>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex3" id="live-ex3"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：卡片各有顏色，選中時統一實心</h2>
+    <p class="desc">卡片平時用自己的 <code>color</code> 當外框，選中時以 <code>accent</code> 實心顯示。想讓選中的卡片用自己的顏色填滿，把 <code>accent</code> 設成相同顏色即可。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 5：框線加粗，滑過換色並更粗</h2>
+    <p class="desc"><code>border-width="2"</code> 讓所有卡片框線變成 2px；<code>hover-color="pink"</code> 加 <code>hover-width="4"</code>，滑鼠移上去時變成 4px 粉紅框。這組卡片帶 <code>detail</code>，所以本來就會反應滑過。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex5"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 6：純展示的卡片也有滑過效果</h2>
+    <p class="desc">卡片沒有 <code>detail</code> 或 <code>href</code> 時，預設不反應滑過。加上 <code>hover-all</code> 就會有效果；設了 <code>disabled</code> 的卡片仍然不反應。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex6"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex6"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 7：單張卡片覆寫</h2>
+    <p class="desc">三個屬性都可以寫在 <code>&lt;card-item&gt;</code> 上，只改這一張。這裡讓「重點」卡片框線 3px，滑過時變成 5px 黃框，其他卡片沿用整組設定。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex7"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex7"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 8：翻面字卡</h2>
+    <p class="desc">整組設 <code>flip-toggle</code> 與 <code>flip-color="green"</code>：點卡片看背面，再點一次翻回。第三張用 <code>back-source</code> 讀取 <code>&lt;template&gt;</code>，並用 <code>flip-animation="slide"</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex8"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex8"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 9：倒數自動翻回，卡片內按鈕照常運作</h2>
+    <p class="desc"><code>auto-flip="3000"</code> 翻面三秒後自動翻回，底部有倒數條；<code>flip-toggle="false"</code> 讓倒數期間點擊不會提早翻回。卡片內的「看例句」是 <code>detail</code> 按鈕，按它只開內容區，不會翻面。</p>
+    <div class="tool">
+      <button type="button" class="btn btn-outline-light" id="btn-unflip">全部翻回正面</button>
+    </div>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex9" id="live-ex9"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex9"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 10：標題列加資料表</h2>
+    <p class="desc">圖示和標題同一行，右側 <code>meta</code> 寫來源，角標排在最右。內文放 <code>mini/mini-table.js</code> 的 <code>&lt;mini-table&gt;</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex10"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex10"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 11：內容區主題 theme（第五次修改）</h2>
+    <p class="desc">主題寫在內容來源的 <code>&lt;template&gt;</code> 上，跟著內容走：不管哪張卡打開，同一段內容的外觀都一樣。關鍵字用空格組合，分五組，同一組後寫的蓋掉先寫的。疊加順序是 <code>ui-cards</code> 的 <code>panel-theme</code>、<code>template</code> 的 <code>theme</code>、按鈕的 <code>detail-theme</code>。顏色只接受 17 色色名，金箔版固定金色。點每張卡看效果。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex11"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex11"></pre></div>
+    </div>
+    <table class="attr-table" style="margin-top:16px">
+      <thead><tr><th>組別</th><th>關鍵字</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>外框</td><td><code>outline</code>（預設）、<code>top-bar</code>、<code>double</code>、<code>corner</code></td><td>細框、上方粗色條、強調色雙線框、只畫四個角。</td></tr>
+        <tr><td>底色</td><td><code>plain</code>（預設）、<code>tint</code>、<code>hatch</code>、<code>gold</code></td><td>透明、強調色淡底、淡斜紋、金箔版（與 info-region 的 <code>ir-gold</code> 相同，會蓋掉外框與顏色）。</td></tr>
+        <tr><td>標題</td><td><code>head-line</code>（預設）、<code>head-filled</code>、<code>head-tab</code>、<code>head-chip</code>、<code>head-under</code></td><td>下方細線、實心色帶、框外頁籤、膠囊外框、標題字下方粗底線。</td></tr>
+        <tr><td>密度</td><td><code>normal</code>（預設）、<code>compact</code></td><td>一般、緊湊。</td></tr>
+        <tr><td>特效</td><td><code>electric</code>、<code>pulse</code>、<code>no-fx</code></td><td>電流環加閃電（與 info-region 相同）、外圈呼吸光、取消上層給的特效。</td></tr>
+        <tr><td>屬性</td><td><code>panel-theme</code>、<code>panel-color</code>（ui-cards）<br><code>theme</code>、<code>color</code>（template）<br><code>detail-theme</code>、<code>detail-color</code>（卡片或按鈕）</td><td>顏色不寫時，強調色跟著 <code>panel-title-color</code>，預設 <code>violet</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<template id="ex11">
+<ui-cards cols="4" panel-title="{label}" active-detail="th-key">
+  <card-item icon="star" label="重點" detail="th-key">gold electric</card-item>
+  <card-item icon="journal-text" label="範文" detail="th-model">top-bar head-filled</card-item>
+  <card-item icon="exclamation-circle" label="提醒" detail="th-warn">tint head-tab</card-item>
+  <card-item icon="quote" label="例句" detail="th-ex">corner head-under</card-item>
+  <card-item icon="plus-circle" label="補充" detail="th-more">hatch compact head-chip</card-item>
+  <card-item icon="bookmark-star" label="考前必看" detail="th-must">double pulse</card-item>
+  <card-item icon="lightning" label="電流加色" detail="th-ex" detail-theme="electric" detail-color="urgent">按鈕覆寫</card-item>
+  <card-item icon="square" label="一般" detail="d-p1">沒有 theme</card-item>
+</ui-cards>
+
+<template id="th-key" theme="gold electric"><p>第一句就用 <b>a stone's throw from</b>，一次交代地點。</p></template>
+<template id="th-model" theme="top-bar head-filled" color="key"><p>I'd like to talk about a trip I took last spring. It was a real eye-opener for me, mainly because it made me rethink how I spend my weekends.</p></template>
+<template id="th-warn" theme="tint head-tab" color="orange"><p>不要照搬題目的句子，換一個說法開頭。</p></template>
+<template id="th-ex" theme="corner head-under" color="blue"><p>It's <b>a stone's throw from</b> the station.</p></template>
+<template id="th-more" theme="hatch compact head-chip" color="calm"><p>同義說法：within walking distance、just around the corner。</p></template>
+<template id="th-must" theme="double pulse" color="pink"><p>Part 2 準備的一分鐘，先寫四個關鍵字。</p></template>
+</template>
+
+<template id="ex10">
+<ui-cards cols="2">
+  <card-item icon="snow" label="Top accounts" meta="Snowflake" media-position="inline">
+    <mini-table head="Account | Region | Seats" align="l, l, r">
+      Northwind | EMEA | 1,200
+      Globex    | EMEA | 860
+    </mini-table>
+  </card-item>
+  <card-item icon="mic" label="本週口說練習" meta="Part 1" media-position="inline" badge="新">
+    <mini-table head="題目 | 次數 | 平均" align="l, c, r">
+      Hometown | 4 | 6.5
+      Work or study | 3 | 6
+    </mini-table>
+  </card-item>
+</ui-cards>
+</template>
+
+<template id="ex8">
+<ui-cards cols="3" flip-toggle flip-color="green" align="center">
+  <card-item label="mitigate" note="點卡片看意思" back="<b>減輕、緩和</b><br>mitigate the impact of"></card-item>
+  <card-item label="exacerbate" note="點卡片看意思" back="<b>使惡化</b><br>exacerbate the problem"></card-item>
+  <card-item label="pervasive" note="點卡片看同義字" back-source="bk-pervasive" flip-animation="slide"></card-item>
+</ui-cards>
+
+<template id="bk-pervasive"><p><b>同義字</b></p><p>widespread、prevalent、ubiquitous</p></template>
+</template>
+
+<template id="ex9">
+<ui-cards cols="2" auto-flip="3000" flip-toggle="false" flip-color="orange" panel-title="{label}" placeholder="按「看例句」會在這裡顯示。">
+  <card-item label="Do you like mornings?" back="Honestly, I'm <c-green>not much of a morning person</c-green>.">
+    <button detail="ex-morning" detail-title="例句">看例句</button>
+  </card-item>
+  <card-item label="How do you get to work?" back="It's <c-green>about a twenty-minute ride</c-green> on the MRT.">
+    <button detail="ex-work" detail-title="例句">看例句</button>
+  </card-item>
+</ui-cards>
+
+<template id="ex-morning"><p>I need two cups of coffee before I can function properly.</p></template>
+<template id="ex-work"><p>I catch up on podcasts on the way.</p></template>
+</template>
+
+<template id="ex5">
+<ui-cards cols="3" border-width="2" hover-color="pink" hover-width="4" panel-title="{label}" placeholder="點選一張卡片。">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目" detail="d-open"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用" detail="d-cross"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開" detail="d-link"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex6">
+<ui-cards cols="4" hover-all hover-color="blue" hover-width="3" align="center">
+  <card-item icon="headphones" label="聽力" note="30 分鐘"></card-item>
+  <card-item icon="book" label="閱讀" note="60 分鐘"></card-item>
+  <card-item icon="pencil" label="寫作" note="60 分鐘"></card-item>
+  <card-item icon="mic" label="口說" note="下週開放" disabled></card-item>
+</ui-cards>
+</template>
+
+<template id="ex7">
+<ui-cards cols="3" hover-all hover-color="green" hover-width="2">
+  <card-item label="一般卡片" note="滑過：2px 綠框"></card-item>
+  <card-item label="重點" note="平時 3px，滑過 5px 黃框" color="yellow" border-width="3" hover-color="yellow" hover-width="5"></card-item>
+  <card-item label="一般卡片" note="滑過：2px 綠框"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex1">
+<ui-cards cols="3" color="#86877F">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用"
+             color="#5DBAE8" card-style="filled"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex2">
+<ui-cards cols="3" card-style="filled" color="#71CD76">
+  <card-item icon="1-circle" label="Part 1" note="兩三句即可"></card-item>
+  <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#778CE1"></card-item>
+  <card-item icon="3-circle" label="Part 3" note="延伸討論" card-style="outline" color="#FF5530"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex3">
+<ui-cards cols="3" color="#C6C7BD" accent="#5DBAE8"
+          active-style="filled" active-detail="d-open" toggle
+          panel-title="{label}" placeholder="點選一張卡片。">
+  <card-item icon="chat-quote" label="開場句" note="第一句不照搬題目" detail="d-open"></card-item>
+  <card-item icon="arrow-left-right" label="橫向練習" note="同一語塊跨題使用" detail="d-cross"></card-item>
+  <card-item icon="signpost-split" label="銜接敘事" note="從開場句自然展開" detail="d-link"></card-item>
+</ui-cards>
+</template>
+
+<template id="ex4">
+<ui-cards cols="3" accent="#B484E8" active-style="filled" panel="right" panel-columns="8,4"
+          panel-title="{label}" placeholder="點選一張卡片。">
+  <card-item icon="1-circle" label="Part 1" note="兩三句即可" color="#71CD76" detail="d-p1"></card-item>
+  <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#FF5530" detail="d-p2"></card-item>
+  <card-item icon="3-circle" label="Part 3" note="延伸討論" color="#FF91D7" detail="d-p3"></card-item>
+</ui-cards>
+</template>
+
+<template id="d-open"><p>把題目用字和句型換掉，第一句就開始展現詞彙和語法。</p></template>
+<template id="d-cross"><p>把剛學會的語塊拿到不同的題目裡反覆使用，直到說得出口。</p></template>
+<template id="d-link"><p>從開場句自然接到故事主體，不必再說 I'm going to talk about。</p></template>
+<template id="d-p1"><p>Part 1：兩三句，第一句不照搬題目。</p></template>
+<template id="d-p2"><p>Part 2：開場句帶出故事，再依提示展開。</p></template>
+<template id="d-p3"><p>Part 3：先給立場，再用例子支撐。</p></template>
+
+<script>
+  /* 依 template 同時產生畫面與程式碼，兩邊永遠一致 */
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    var code = document.querySelector('pre[data-code="' + box.dataset.tpl + '"]');
+    code.textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+
+  function showAlert(msg, kind) {
+    var box = document.getElementById('alerts');
+    var div = document.createElement('div');
+    div.className = 'alert alert-' + (kind || 'info') + ' alert-dismissible fade show';
+    div.setAttribute('role', 'alert');
+    div.textContent = msg;
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'btn-close';
+    close.setAttribute('data-bs-dismiss', 'alert');
+    div.appendChild(close);
+    box.appendChild(div);
+    setTimeout(function () { div.classList.remove('show'); setTimeout(function () { div.remove(); }, 200); }, 3200);
+  }
+
+  document.getElementById('btn-unflip').addEventListener('click', function () {
+    document.querySelector('#live-ex9 ui-cards').unflipAll();
+    showAlert('已全部翻回正面。', 'info');
+  });
+  document.addEventListener('ui-cards:flip', function (e) {
+    if (e.detail.flipped && e.target.closest('#live-ex9')) showAlert('翻面：' + e.detail.card.getAttribute('label'), 'info');
+  });
+
+  document.getElementById('btn-which').addEventListener('click', function () {
+    var on = document.querySelector('#live-ex3 card-item[data-active]');
+    showAlert(on ? '目前選中：' + on.getAttribute('label') : '目前沒有選中的卡片。', on ? 'info' : 'warning');
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-cards.js"></script>
+<script src="../mini/mini-table.js"></script>
+</template>
+<template data-part id="ui-steps-11-03-26" data-component="ui-steps" data-date="11-03-26"
+          data-title="ui-steps 示範" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-steps-demo-11-03-26.html">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-steps 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .page{max-width:1600px;margin:0 auto;padding:32px 40px 64px 40px;}
+  h1{font-size:2rem;color:#5DBAE8;margin:0 0 8px 0;}
+  h2{font-size:1.4rem;color:#B484E8;margin:48px 0 8px 0;padding:0 0 8px 0;border-bottom:1px solid #B484E8;}
+  h3{font-size:1.1rem;color:#5DBAE8;margin:24px 0 8px 0;}
+  .lead-text{color:#778CE1;font-size:1rem;margin:0 0 16px 0;}
+  .note{color:#DBEDD8;font-size:0.95rem;margin:0 0 16px 0;}
+  .demo-live{margin:16px 0;}
+  pre.demo-code{background:#0C0D0C;color:#DBEDD8;border:1px solid #5DBAE8;border-radius:8px;padding:16px;font-size:0.85rem;max-height:420px;overflow:auto;margin:0;}
+  code{color:#71CD76;}
+  a{color:#5DBAE8;}
+  .ref{--bs-table-bg:transparent;--bs-table-color:#C6C7BD;--bs-table-border-color:#C6C7BD;font-size:0.9rem;}
+  .ref th{color:#E3D322;}
+  .ref td:first-child{color:#71CD76;font-family:monospace;white-space:nowrap;}
+  .ver{border-left:4px solid #71CD76;padding:8px 16px;margin:8px 0;}
+  .ver strong{color:#71CD76;}
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+
+  <h1>&lt;ui-steps&gt; 流程與時間軸元件</h1>
+  <p class="lead-text">步驟可橫向或直向排列，用連接線與箭頭串起來。帶 <code>source</code> 的步驟可在內容區顯示內容，內容裡帶 <code>detail</code> 的元素在下方細節區顯示更多。屬性約定見 <a href="ui-conventions.html">ui-conventions.html</a>。</p>
+
+  <h2>版本紀錄</h2>
+  <div class="ver"><strong>v1.0（11-03-26）</strong>　初版。</div>
+
+  <!-- ===================== 範例一 ===================== -->
+  <h2>範例一：橫向訂單流程</h2>
+  <p class="note"><code>current="3"</code> 讓前兩步自動成為完成、第三步為目前；完成的步驟改顯示 <code>done-icon</code>。已走過的連接線與箭頭使用啟用色。點擊步驟顯示內容，內容中的按鈕在下方開啟細節。</p>
+  <div class="demo-live" id="demo1"></div>
+  <pre class="demo-code" id="demo1-code"></pre>
+  <script type="text/plain" data-demo="demo1">
+<ui-steps title="訂單進度" current="3" numbered done-icon="check-lg" bordered
+  line arrows arrow-shape="chevron" active="s1-ship"
+  panel-title="{label}" detail-title="更多資訊">
+  <step-item label="下單" note="11/01 10:20" source="s1-order"></step-item>
+  <step-item label="付款" note="11/01 10:25" source="s1-pay"></step-item>
+  <step-item label="出貨" note="處理中" source="s1-ship" badge="!"></step-item>
+  <step-item label="配送" source="s1-deliver"></step-item>
+  <step-item label="完成" source="s1-done"></step-item>
+</ui-steps>
+
+<div id="s1-order" hidden><p>訂單編號 A20261101，共 3 件商品。</p><button detail="s1-items">看商品明細</button></div>
+<div id="s1-pay" hidden><p>已使用信用卡付款，金額 2,380 元。</p></div>
+<div id="s1-ship" hidden>
+  <p>倉庫正在包裝，預計今日出貨。</p>
+  <button detail="s1-items">商品明細</button>
+  <button detail="s1-addr" color="orange" detail-title="收件資訊">收件地址</button>
+</div>
+<div id="s1-deliver" hidden><p>尚未開始配送。</p></div>
+<div id="s1-done" hidden><p>完成後可在這裡填寫評價。</p></div>
+<div id="s1-items" hidden><ul><li>帆布托特包 × 1</li><li>保溫杯 × 1</li><li>筆記本 × 1</li></ul></div>
+<div id="s1-addr" hidden><p>台北市中正區範例路 1 號，王小明收。</p></div>
+  </script>
+
+  <!-- ===================== 範例二 ===================== -->
+  <h2>範例二：直向時間軸，內容區在右側</h2>
+  <p class="note"><code>direction="vertical"</code> 時，內容區放在右側，比例由 <code>columns</code> 決定。用 <code>status</code> 個別指定狀態，用 <code>color</code> 個別上色；含停用步驟與外部連結步驟。連接線改用虛線，長度固定。</p>
+  <div class="demo-live" id="demo2"></div>
+  <pre class="demo-code" id="demo2-code"></pre>
+  <script type="text/plain" data-demo="demo2">
+<ui-steps direction="vertical" columns="4,8" node-shape="rounded" node-size="44"
+  line="dashed" line-color="violet" compact connector-length="28"
+  accent="violet" bordered panel-title="{label}" active="s2-plan" toggle>
+  <step-item label="需求訪談" note="9 月" icon="chat-dots-fill" status="done" source="s2-talk"></step-item>
+  <step-item label="規劃設計" note="10 月" icon="pencil-square" status="current" source="s2-plan"></step-item>
+  <step-item label="開發" note="11 月" icon="code-slash" source="s2-dev" badge="3"></step-item>
+  <step-item label="內部測試" note="暫停中" icon="bug-fill" disabled></step-item>
+  <step-item label="上線" note="12 月" icon="rocket-takeoff-fill" color="orange" source="s2-launch"></step-item>
+  <step-item label="專案說明" note="另開視窗" icon="box-arrow-up-right" color="blue"
+    href="https://getbootstrap.com" target="_blank"></step-item>
+</ui-steps>
+
+<template id="s2-talk"><p>與客戶訪談三次，確認核心需求與預算。</p></template>
+<template id="s2-plan">
+  <p>完成版面與流程設計，正在確認細節。</p>
+  <button detail="s2-wire" color="violet">線框圖說明</button>
+  <button detail="s2-risk" color="red" toggle>風險（再按一次收合）</button>
+</template>
+<template id="s2-dev"><p>前台、後台與資料庫同步進行。</p></template>
+<template id="s2-launch"><p>預計 12 月中旬正式上線。</p></template>
+<template id="s2-wire"><p>共 12 個頁面，首頁與商品頁已定稿。</p></template>
+<template id="s2-risk"><p>第三方金流審核時間可能延後一週。</p></template>
+  </script>
+
+  <!-- ===================== 範例三 ===================== -->
+  <h2>範例三：純進度條，不帶內容</h2>
+  <p class="note">步驟都沒有 <code>source</code> 時，不會建立內容區，只顯示進度。用 <code>label-width</code> 讓每一步等寬，箭頭改成圓框三角形。</p>
+  <div class="demo-live" id="demo3"></div>
+  <pre class="demo-code" id="demo3-code"></pre>
+  <script type="text/plain" data-demo="demo3">
+<ui-steps current="2" node-size="36" icon-size="1" label-width="96" color="vanilla" accent="pink"
+  done-color="green" icon-color="base" line="dotted" line-width="3"
+  arrows arrow-style="circle" arrow-shape="triangle" arrow-size="24" arrow-active-color="green">
+  <step-item label="填寫資料" icon="person-fill"></step-item>
+  <step-item label="上傳證件" icon="upload"></step-item>
+  <step-item label="審核" icon="hourglass-split"></step-item>
+  <step-item label="開通" icon="check2-circle"></step-item>
+</ui-steps>
+  </script>
+
+  <!-- ===================== 屬性一覽 ===================== -->
+  <h2>屬性一覽</h2>
+
+  <h3>容器 &lt;ui-steps&gt;</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>title</td><td>無</td><td>元件標題</td></tr>
+      <tr><td>direction</td><td>horizontal</td><td>horizontal（橫向，內容在下）、vertical（直向，內容在右）</td></tr>
+      <tr><td>columns</td><td>4,8</td><td>直向時步驟與內容區的比例</td></tr>
+      <tr><td>current</td><td>無</td><td>目前步驟（從 1 起算），之前的自動成為完成</td></tr>
+      <tr><td>numbered</td><td>否</td><td>沒有圖示的節點顯示序號</td></tr>
+      <tr><td>done-icon</td><td>無</td><td>完成步驟改顯示的圖示</td></tr>
+      <tr><td>node-size</td><td>48</td><td>節點尺寸（px）</td></tr>
+      <tr><td>node-shape</td><td>circle</td><td>circle、rounded、square</td></tr>
+      <tr><td>icon-size</td><td>1.3</td><td>圖示大小（rem）</td></tr>
+      <tr><td>color</td><td>shell</td><td>未完成節點顏色</td></tr>
+      <tr><td>accent</td><td>blue</td><td>目前步驟顏色</td></tr>
+      <tr><td>done-color</td><td>green</td><td>完成步驟顏色</td></tr>
+      <tr><td>icon-color</td><td>底層背景色</td><td>圖示與序號顏色</td></tr>
+      <tr><td>label-width</td><td>自動</td><td>橫向時每一步寬度（px）</td></tr>
+      <tr><td>line</td><td>不顯示</td><td>連接線：solid、dashed、dotted</td></tr>
+      <tr><td>line-width</td><td>2</td><td>連接線粗細（px）</td></tr>
+      <tr><td>line-color</td><td>shell</td><td>連接線顏色</td></tr>
+      <tr><td>line-active-color</td><td>同 accent</td><td>已走過的連接線顏色</td></tr>
+      <tr><td>connector-length</td><td>48</td><td>連接段最短長度（px）</td></tr>
+      <tr><td>compact</td><td>否</td><td>連接段固定為 connector-length，不延展</td></tr>
+      <tr><td>arrows</td><td>不顯示</td><td>連接段中央顯示箭頭，直向時自動朝下</td></tr>
+      <tr><td>arrow-size、arrow-shape、arrow-style、arrow-icon、arrow-color、arrow-active-color</td><td>20、arrow、plain、無、shell、accent</td><td>與 ui-drill 相同</td></tr>
+      <tr><td>gap</td><td>24</td><td>步驟區與內容區距離（px）</td></tr>
+      <tr><td>padding</td><td>16</td><td>外框內距（px）</td></tr>
+      <tr><td>bordered</td><td>否</td><td>外框與內容區分隔線</td></tr>
+      <tr><td>panel-title</td><td>無</td><td>內容區標題，可用 {label}</td></tr>
+      <tr><td>detail-title</td><td>無</td><td>細節區預設標題</td></tr>
+      <tr><td>panel-height</td><td>無</td><td>內容區最大高度（px），超出時捲動</td></tr>
+      <tr><td>placeholder</td><td>請點選步驟。</td><td>未選擇時的提示</td></tr>
+      <tr><td>active、active-detail</td><td>無</td><td>初始選取的 source、初始開啟的 detail</td></tr>
+      <tr><td>trigger、detail-trigger</td><td>click</td><td>click、hover</td></tr>
+      <tr><td>toggle</td><td>否</td><td>再點一次已選步驟時取消</td></tr>
+      <tr><td>button-color</td><td>blue</td><td>內容中帶 detail 元素的預設配色</td></tr>
+    </tbody>
+  </table>
+
+  <h3>步驟 &lt;step-item&gt;</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>label、note、tooltip</td><td>名稱、次要文字、滑鼠提示</td></tr>
+      <tr><td>icon、badge</td><td>圖示、角標</td></tr>
+      <tr><td>status</td><td>done、current、todo，優先於 current</td></tr>
+      <tr><td>color、icon-color</td><td>本步驟節點顏色（不論狀態）、圖示顏色</td></tr>
+      <tr><td>source</td><td>內容區顯示的內容</td></tr>
+      <tr><td>detail</td><td>選取時同時開啟的細節</td></tr>
+      <tr><td>disabled</td><td>停用</td></tr>
+      <tr><td>href、target</td><td>改為連結</td></tr>
+    </tbody>
+  </table>
+
+  <h3>內容中的觸發元素</h3>
+  <table class="table table-sm ref">
+    <thead><tr><th>屬性</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>detail</td><td>在細節區顯示對應內容</td></tr>
+      <tr><td>color</td><td>按鈕配色；已有 btn 類別時不套用</td></tr>
+      <tr><td>toggle</td><td>再按一次收起細節</td></tr>
+      <tr><td>detail-title</td><td>細節區標題</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script src="ui-steps.js"></script>
+<script>
+  // 示範頁專用：同一份原始碼同時渲染成元件與程式碼區塊
+  document.querySelectorAll('script[type="text/plain"][data-demo]').forEach(src => {
+    const lines = src.textContent.replace(/^\n+|\s+$/g, '').split('\n');
+    const indent = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length));
+    const code = lines.map(l => l.slice(indent)).join('\n');
+    document.getElementById(src.dataset.demo).innerHTML = code;
+    document.getElementById(src.dataset.demo + '-code').textContent = code;
+  });
+</script>
+</template>
+
+<script>
+(function () {
+  var MARK = '<!-- ===== body ===== -->';
+  var frame = document.getElementById('stage');
+  var parts = Array.prototype.slice.call(document.querySelectorAll('template[data-part]'));
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-go]'));
+
+  function show(id, push) {
+    var t = document.getElementById(id) || parts[0];
+    var src = t.innerHTML;
+    var i = src.indexOf(MARK);
+    var head = i >= 0 ? src.slice(0, i) : '';
+    var body = i >= 0 ? src.slice(i + MARK.length) : src;
+    /* srcdoc 的相對路徑以本頁為準，所以元件的 js 照原樣載入 */
+    frame.srcdoc = '<!doctype html><html ' + (t.dataset.htmlAttrs || '') + '><head>' + head +
+      '</head><body>' + body + '</body></html>';
+    document.getElementById('now').textContent = t.dataset.component + '　' + t.dataset.date + '　' + t.dataset.title;
+    document.getElementById('from').textContent = '原檔 ' + t.dataset.from;
+    btns.forEach(function (b) { b.classList.toggle('on', b.dataset.go === t.id); });
+    if (push && location.hash !== '#' + t.id) history.replaceState(null, '', '#' + t.id);
+  }
+
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { show(b.dataset.go, true); });
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), false); });
+  show(location.hash.slice(1) || parts[parts.length - 1].id, false);
+})();
+</script>
+</body>
+</html>
