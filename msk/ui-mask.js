@@ -16,17 +16,20 @@
   var PALETTE = {
     background: '#0C0D0C', base: '#0C0D0C',
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
-    red: '#EF6661', orange: '#FF5530', green: '#71CD76', blue: '#5DBAE8',
+    red: '#EF6661', orange: '#FFA987', green: '#71CD76', blue: '#5DBAE8',
     indigo: '#778CE1', violet: '#B484E8', gray: '#86877F', key: '#51DBCF',
-    'key-deep': '#176878', calm: '#A3C4BC', quiet: '#A9B8E0', playful: '#FFA987',
-    urgent: '#FF2E63'
+    'key-deep': '#51DBCF', calm: '#A3C4BC', quiet: '#8EA4DE', playful: '#FFA987',
+    urgent: '#FF2E63',
+    energetic: '#B6FF00',
+    dreamy: '#DE8EC9',
+    'bg-alternative': '#3B2A20'
   };
 
   /* 與 ui-table 的 mask-gradient 相同的六組預設漸層 */
   var GRADIENTS = {
     '1': 'linear-gradient(135deg,#0d0814 0%,#1e1040 45%,#778CE1 100%)',
     '2': 'linear-gradient(135deg,#041418 0%,#073540 45%,#5DBAE8 100%)',
-    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#FF5530 100%)',
+    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#FFA987 100%)',
     '4': 'linear-gradient(135deg,#1a060e 0%,#5e1535 50%,#FF91D7 100%)',
     '5': 'linear-gradient(135deg,#041208 0%,#083820 50%,#71CD76 100%)',
     '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#778CE1 80%,#778CE1 100%)'

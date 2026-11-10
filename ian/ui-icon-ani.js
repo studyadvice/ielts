@@ -68,7 +68,7 @@
     base: '#0C0D0C', shell: '#C6C7BD',
     vanilla: '#DBEDD8', yellow: '#E3D322',
     indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#FF5530',
+    orange: '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -77,11 +77,14 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#176878',
+    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
-    quiet: '#A9B8E0',
+    quiet: '#8EA4DE',
     playful: '#FFA987',
-    urgent: '#FF2E63'
+    urgent: '#FF2E63',
+    energetic: '#B6FF00',
+    dreamy: '#DE8EC9',
+    'bg-alternative': '#3B2A20'
   };
   const SIZE_PRESETS = { sm: '1.25rem', md: '2rem', lg: '3rem', xl: '4.5rem' };
   const EFFECTS = ['fade', 'scale', 'flip', 'none'];
@@ -137,11 +140,11 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
 .uia-reveal-slide{animation:uia-slide-in 500ms ease both;}
 
 .uia-sys-alert{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;
-  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #FF5530;color:#FF5530;
+  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #FFA987;color:#FFA987;
   border-radius:8px;padding:12px 44px 12px 16px;font-size:0.95rem;line-height:1.6;}
 .uia-sys-alert code{color:#E3D322;font-size:0.85rem;word-break:break-all;}
 .uia-sys-alert .uia-close{position:absolute;top:8px;right:10px;background:none;border:0;
-  color:#FF5530;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
+  color:#FFA987;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
 `;
 
   /* ---------- 工具函式 ---------- */
@@ -747,7 +750,7 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

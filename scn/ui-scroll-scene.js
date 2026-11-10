@@ -10,20 +10,20 @@
   'use strict';
   if (window.customElements.get('ui-scroll-scene')) return;
 
-  /* 色票：顏色屬性可直接寫名稱，例如 accent="key-deep" */
+  /* 色票：顏色屬性可直接寫名稱，例如 accent="dreamy" */
   const PALETTE = {
     'background': '#0C0D0C', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8', 'yellow': '#E3D322',
-    'pink': '#FF91D7', 'red': '#EF6661', 'orange': '#FF5530', 'green': '#71CD76',
+    'pink': '#FF91D7', 'red': '#EF6661', 'orange': '#FFA987', 'green': '#71CD76',
     'blue': '#5DBAE8', 'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F',
-    'key': '#51DBCF', 'key-deep': '#176878', 'calm': '#A3C4BC', 'quiet': '#A9B8E0',
-    'playful': '#FFA987', 'urgent': '#FF2E63'
+    'key': '#51DBCF', 'key-deep': '#51DBCF', 'calm': '#A3C4BC', 'quiet': '#8EA4DE',
+    'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#DE8EC9', 'bg-alternative': '#3B2A20'
   };
 
   /* 漸層預設集：與 ui-screen 相同 */
   const PRESETS = {
-    warm: ['yellow', 'orange', 'pink'], cool: ['blue', 'indigo', 'violet'],
-    fresh: ['green', 'key', 'blue'], deep: ['key', 'key-deep'],
-    candy: ['pink', 'violet', 'quiet'], fire: ['urgent', 'orange', 'yellow'],
+    warm: ['yellow', 'playful', 'pink'], cool: ['blue', 'indigo', 'violet'],
+    fresh: ['green', 'key', 'blue'], deep: ['key', 'bg-alternative'],
+    candy: ['pink', 'violet', 'quiet'], fire: ['urgent', 'playful', 'yellow'],
     mist: ['calm', 'quiet', 'vanilla'], sunset: ['playful', 'pink', 'indigo']
   };
 

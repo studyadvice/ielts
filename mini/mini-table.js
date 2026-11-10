@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
@@ -50,18 +50,18 @@
 
   const PALETTE = {
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7', red: '#EF6661',
-    orange: '#FF5530', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8',
-    gray: '#86877F', key: '#51DBCF', 'key-deep': '#176878', calm: '#A3C4BC', quiet: '#A9B8E0',
-    playful: '#FFA987', urgent: '#FF2E63'
+    orange: '#FFA987', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8',
+    gray: '#86877F', key: '#51DBCF', 'key-deep': '#51DBCF', calm: '#A3C4BC', quiet: '#8EA4DE',
+    playful: '#FFA987', urgent: '#FF2E63', energetic: '#B6FF00', dreamy: '#DE8EC9', 'bg-alternative': '#3B2A20'
   };
   const BG = '#0C0D0C';
   const LINE = '#2C2D2B';
   const THEMES = ['clean', 'ledger', 'grid', 'banner', 'compact', 'bare', 'score', 'tiles', 'frame', 'side'];
   /* 各外觀的預設強調色 */
-  const THEME_COLOR = { clean: 'gray', ledger: 'blue', grid: 'shell', banner: 'key-deep', compact: 'gray', bare: 'key', score: 'key', tiles: 'gray', frame: 'key', side: 'indigo' };
+  const THEME_COLOR = { clean: 'gray', ledger: 'blue', grid: 'shell', banner: 'bg-alternative', compact: 'gray', bare: 'key', score: 'key', tiles: 'gray', frame: 'key', side: 'indigo' };
 
   const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
-  const onColor = v => (v && v.trim() === 'key-deep' ? '#FFFFFF' : BG);
+  const onColor = v => (v && v.trim() === 'bg-alternative' ? '#FFFFFF' : BG);
 
   const STYLE_ID = 'mini-table-style';
   function injectStyle() {

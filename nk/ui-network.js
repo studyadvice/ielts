@@ -4,13 +4,13 @@
 
   const PALETTE = Object.freeze({
     'background': '#0C0D0C', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8', 'yellow': '#E3D322',
-    'pink': '#FF91D7', 'red': '#EF6661', 'orange': '#FF5530', 'green': '#71CD76',
+    'pink': '#FF91D7', 'red': '#EF6661', 'orange': '#FFA987', 'green': '#71CD76',
     'blue': '#5DBAE8', 'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F',
-    'key': '#51DBCF', 'key-deep': '#176878', 'calm': '#A3C4BC', 'quiet': '#A9B8E0',
-    'playful': '#FFA987', 'urgent': '#FF2E63'
+    'key': '#51DBCF', 'key-deep': '#51DBCF', 'calm': '#A3C4BC', 'quiet': '#8EA4DE',
+    'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#DE8EC9', 'bg-alternative': '#3B2A20'
   });
 
-  const AUTO_COLORS = ['green', 'indigo', 'red', 'gray', 'violet', 'pink', 'orange', 'blue', 'key-deep', 'urgent', 'playful'];
+  const AUTO_COLORS = ['green', 'indigo', 'red', 'gray', 'violet', 'pink', 'energetic', 'blue', 'dreamy', 'urgent', 'playful'];
   const SIZE_PRESETS = { xs: 72, sm: 96, md: 120, lg: 150, xl: 210 };
   const REF_WIDTH = 1280;          // 預設尺寸對應的參考寬度
   const DENSITY = { sparse: 1.3, normal: 1.75, dense: 2.4 };
@@ -38,7 +38,7 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
 @keyframes un-draw{from{stroke-dashoffset:var(--un-len);}to{stroke-dashoffset:0;}}
 .un-alert-box{margin:0;padding:0;}
 .un-alert{display:flex;align-items:center;gap:10px;margin:0 0 12px 0;font-size:.95rem;border-width:1px;}
-.un-alert.alert-warning{background:#E3D322;color:#0C0D0C;border-color:#FF5530;}
+.un-alert.alert-warning{background:#E3D322;color:#0C0D0C;border-color:#FFA987;}
 .un-alert.alert-danger{background:#EF6661;color:#0C0D0C;border-color:#FF2E63;}
 `;
 
@@ -529,7 +529,7 @@ ui-network > ui-node .un-link > i{display:block;line-height:1;pointer-events:non
 
     _applyBackground() {
       const from = this._color(this.getAttribute('bg-from'), 'blue');
-      const to = this._color(this.getAttribute('bg-to'), 'key-deep');
+      const to = this._color(this.getAttribute('bg-to'), 'bg-alternative');
       this.style.background = `radial-gradient(ellipse 80% 100% at 32% 48%, ${from} -25%, ${to} 90%)`;
     }
 

@@ -7,7 +7,7 @@
  * v1.2：新增 theme 屬性，例如 theme="violet"。影響外觀色彩的個別屬性預設都跟著 theme，
  *       有明確指定的屬性才會覆蓋 theme 的顏色。優先順序：個別屬性 > theme > 內建預設。
  *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、orange、green、
- *       blue、indigo、violet、gray、key、key-deep、calm、quiet、playful、urgent）。名稱不存在時退回 default。
+ *       blue、indigo、violet、gray、key、key-deep、calm、quiet、playful、urgent、energetic、dreamy）。名稱不存在時退回 default。
  * v1.3：<ins-line> 新增 extra-info 屬性，填 <template> 的 id，例如 extra-info="tpl-1"。
  *       選到該句時，template 的 HTML 內容會顯示在右側面板的最下方，位於亮點解說之後。
  *       找不到 id 時不顯示；id 指向的若不是 <template>，則改用該元素的 innerHTML。
@@ -31,7 +31,7 @@
     yellow: '#E3D322',
     indigo: '#778CE1',
     pink: '#FF91D7',
-    orange: '#FF5530',
+    orange: '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -40,11 +40,14 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#176878',
+    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
-    quiet: '#A9B8E0',
+    quiet: '#8EA4DE',
     playful: '#FFA987',
-    urgent: '#FF2E63'
+    urgent: '#FF2E63',
+    energetic: '#B6FF00',
+    dreamy: '#DE8EC9',
+    'bg-alternative': '#3B2A20'
   };
 
   /* CSS_ATTRS 之中屬於顏色的屬性，值會先經過品牌色名稱轉換 */
@@ -106,7 +109,9 @@
     calm: accentTheme('calm'),
     quiet: accentTheme('quiet'),
     playful: accentTheme('playful'),
-    urgent: accentTheme('urgent')
+    urgent: accentTheme('urgent'),
+    energetic: accentTheme('energetic'),
+    dreamy: accentTheme('dreamy')
   };
 
   /* 內建標籤：tag="lr" 等簡寫會轉成中文文字與預設顏色 */
@@ -114,7 +119,7 @@
     lr: { text: '詞彙', color: '#71CD76' },
     gra: { text: '文法', color: '#B484E8' },
     fc: { text: '連貫', color: '#5DBAE8' },
-    p: { text: '發音', color: '#FF5530' }
+    p: { text: '發音', color: '#FFA987' }
   };
 
   /* 會轉成 CSS 變數的屬性與預設值 */
@@ -576,7 +581,7 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
