@@ -73,7 +73,8 @@
     requestAnimationFrame(function () { requestAnimationFrame(fn); });
   }
 
-  function onTransEnd(el, prop, fn) {
+  /* wait：保險計時的毫秒數，預設 600；動畫較長時傳入動畫時間，避免提前收尾 */
+  function onTransEnd(el, prop, fn, wait) {
     var done = false;
     function h(e) {
       if (e.propertyName === prop && !done) {
@@ -85,7 +86,7 @@
     el.addEventListener('transitionend', h);
     setTimeout(function () {
       if (!done) { done = true; el.removeEventListener('transitionend', h); fn(); }
-    }, 600);
+    }, Math.max(600, (+wait || 0) + 120));
   }
 
   function clearAnim(el) {
@@ -93,45 +94,83 @@
       el.style.opacity = '';
   }
 
-  function animOpen(el, mode, dur) {
-    clearAnim(el);
-    if (mode === 'none') { el.style.display = ''; return; }
+  /* 顯示元素：先清掉行內 display；若仍被 class（例如 bp-hidden）隱藏，改用 block */
+  function showEl(el) {
     el.style.display = '';
+    if (getComputedStyle(el).display === 'none') el.style.display = 'block';
+  }
+
+  /* 目前是否處於顯示狀態（收合動畫進行中視為已隱藏） */
+  function isShown(el) {
+    if (!el || el._ubtnClosing) return false;
+    return getComputedStyle(el).display !== 'none';
+  }
+
+  /* 每次開合遞增序號，舊動畫的收尾回呼若已過期就不執行，
+     避免「收合中又快速展開」時，收合的回呼把內容又藏起來 */
+  function nextSeq(el) {
+    el._ubtnSeq = (el._ubtnSeq || 0) + 1;
+    return el._ubtnSeq;
+  }
+
+  function animOpen(el, mode, dur) {
+    var seq = nextSeq(el);
+    el._ubtnClosing = false;
+    clearAnim(el);
+    if (mode === 'none') { showEl(el); return; }
+    /* 先關閉過渡並設好起點，讓瀏覽器以「透明、高度 0」作為起始樣式，
+       下一個畫面才掛上過渡並設定終點，淡入與展開才會完整播放 */
+    el.style.transition = 'none';
+    el.style.opacity    = '0';
     if (mode === 'fade') {
-      el.style.opacity    = '0';
-      el.style.transition = 'opacity ' + dur + 'ms ease';
-      rAF2(function () { el.style.opacity = '1'; });
-      onTransEnd(el, 'opacity', function () {
-        el.style.transition = el.style.opacity = '';
+      showEl(el);
+      void el.offsetHeight;
+      rAF2(function () {
+        if (el._ubtnSeq !== seq) return;
+        el.style.transition = 'opacity ' + dur + 'ms ease';
+        el.style.opacity    = '1';
       });
+      onTransEnd(el, 'opacity', function () {
+        if (el._ubtnSeq !== seq) return;
+        el.style.transition = el.style.opacity = '';
+      }, dur + 40);
     } else {
+      showEl(el);
       var h = el.scrollHeight || 200;
       el.style.overflow   = 'hidden';
       el.style.maxHeight  = '0';
-      el.style.opacity    = '0';
-      el.style.transition = 'max-height ' + dur + 'ms ease, opacity ' +
-        Math.round(dur * 0.7) + 'ms ease';
+      void el.offsetHeight;
       rAF2(function () {
+        if (el._ubtnSeq !== seq) return;
+        el.style.transition = 'max-height ' + dur + 'ms ease, opacity ' +
+          Math.round(dur * 0.7) + 'ms ease';
         el.style.maxHeight = h + 'px';
         el.style.opacity   = '1';
       });
       onTransEnd(el, 'max-height', function () {
+        if (el._ubtnSeq !== seq) return;
         el.style.maxHeight = el.style.overflow =
           el.style.transition = el.style.opacity = '';
-      });
+      }, dur);
     }
   }
 
   function animClose(el, mode, dur) {
+    var seq = nextSeq(el);
     clearAnim(el);
-    if (mode === 'none') { el.style.display = 'none'; return; }
+    if (mode === 'none') { el._ubtnClosing = false; el.style.display = 'none'; return; }
+    el._ubtnClosing = true;
+    function done() {
+      if (el._ubtnSeq !== seq) return;
+      el._ubtnClosing     = false;
+      el.style.display    = 'none';
+      el.style.maxHeight  = el.style.overflow =
+        el.style.transition = el.style.opacity = '';
+    }
     if (mode === 'fade') {
       el.style.transition = 'opacity ' + dur + 'ms ease';
       el.style.opacity    = '0';
-      onTransEnd(el, 'opacity', function () {
-        el.style.display    = 'none';
-        el.style.transition = el.style.opacity = '';
-      });
+      onTransEnd(el, 'opacity', done, dur);
     } else {
       var h = el.scrollHeight || 1;
       el.style.overflow   = 'hidden';
@@ -139,14 +178,11 @@
       el.style.transition = 'max-height ' + dur + 'ms ease, opacity ' +
         Math.round(dur * 0.7) + 'ms ease';
       rAF2(function () {
+        if (el._ubtnSeq !== seq) return;
         el.style.maxHeight = '0';
         el.style.opacity   = '0';
       });
-      onTransEnd(el, 'max-height', function () {
-        el.style.display    = 'none';
-        el.style.maxHeight  = el.style.overflow =
-          el.style.transition = el.style.opacity = '';
-      });
+      onTransEnd(el, 'max-height', done, dur);
     }
   }
 
@@ -370,6 +406,11 @@
     '@keyframes ubtn-gpulse{0%,100%{box-shadow:0 0 0 0 var(--ubtn-c,' +
       '#C6C7BD)}60%{box-shadow:0 0 0 11px #0C0D0C}}',
     '.ubtn-gate-cue{animation:ubtn-gpulse 2.2s ease-in-out infinite}',
+
+    /* 揭曉儲存格時，格子內框短暫亮起按鈕顏色再收掉 */
+    '@keyframes ubtn-cflash{0%{box-shadow:inset 0 0 0 3px var(--ubtn-c,#C6C7BD)}' +
+      '100%{box-shadow:inset 0 0 0 0 var(--ubtn-c,#C6C7BD)}}',
+    '.ubtn-cell-flash{animation:ubtn-cflash 1.2s ease-out}',
 
     '.ubtn-astack{position:fixed;left:50%;transform:translateX(-50%);z-index:9999;' +
       'display:flex;flex-direction:column;align-items:center;gap:8px;' +
@@ -1275,6 +1316,39 @@
     }, []);
   }
 
+  /* "a, b c,#d" → ['a','b','c','d']：逗號或空白分隔，開頭的 # 可省略，重複的 id 只算一次 */
+  function parseIdList(val) {
+    var out = [];
+    String(val || '').split(/[\s,]+/).forEach(function (s) {
+      s = s.replace(/^#/, '').trim();
+      if (s && out.indexOf(s) < 0) out.push(s);
+    });
+    return out;
+  }
+
+  /* <template> 本身不會顯示。第一次展開時把內容複製到緊接在 template 後面的 <div>，
+     之後的開合都作用在這個 <div>。同一個 template 被多顆按鈕指向時共用同一份輸出。
+     template 的 class 與 style 會帶到輸出的 <div>。 */
+  function renderTemplate(tpl, btn) {
+    if (tpl._ubtnOut && tpl._ubtnOut.isConnected) return tpl._ubtnOut;
+    var box = document.createElement('div');
+    box.className = 'ubtn-tpl-out' + (tpl.className ? ' ' + tpl.className : '');
+    var st = tpl.getAttribute('style');
+    if (st) box.setAttribute('style', st);
+    if (tpl.id) box.setAttribute('data-ubtn-from', tpl.id);
+    box.style.display = 'none';
+    box.appendChild(tpl.content.cloneNode(true));
+    tpl.after(box);
+    tpl._ubtnOut = box;
+    /* 內容裡若有 ui-btn、read-pulse、ui-cluster 等本檔元件，一併初始化 */
+    boot();
+    tpl.dispatchEvent(new CustomEvent('ubtn-template-rendered', {
+      bubbles: true,
+      detail: { template: tpl, output: box, button: btn ? btn.el : null }
+    }));
+    return box;
+  }
+
   function mkIco(name) {
     if (!name) return '';
     if (/^bi-/.test(name)) {
@@ -1363,7 +1437,20 @@
     this.hasChevron  = el.hasAttribute('chevron')      || !!UB_CFG.chevron;
     this.startOpen   = el.hasAttribute('open');
     this.disabled    = el.hasAttribute('disabled');
-    this.targetId    = el.getAttribute('target')       || '';
+    /* target 與 targets 都可填多個 id（逗號或空白分隔），兩者合併 */
+    this.targetIds   = parseIdList((el.getAttribute('target') || '') + ',' +
+                                   (el.getAttribute('targets') || ''));
+    this.targetId    = this.targetIds[0] || '';
+    this.stagger     = Math.max(0, parseInt(el.getAttribute('stagger'), 10) || 0);
+
+    /* 搭配 mini-table.js：揭曉表格裡指定的儲存格（座標同 Excel，表頭算第 1 列）。
+       min-table-id 是 mini-table-id 的別名，少打一個字母也能用 */
+    this.cellTableId  = (el.getAttribute('mini-table-id') || el.getAttribute('min-table-id') || '')
+                          .replace(/^#/, '').trim();
+    this.cellSpec     = el.getAttribute('target-cell') || '';
+    this.cellContent  = el.getAttribute('target-cell-content');
+    this.cellSourceId = (el.getAttribute('target-cell-source') || '').replace(/^#/, '').trim();
+    this._cellRefs    = [];
     this.href        = el.getAttribute('href')         || '';
     this.hrefTarget  = el.getAttribute('href-target')  || '_self';
     this.labelClosed = el.textContent.trim();
@@ -1386,6 +1473,8 @@
     this.color   = resolveColor(this.theme) || BRAND.shell;
     this.isOpen  = false;
     this._target = null;
+    this._items  = [];
+    this._timers = [];
     this._btn    = null;
     this._lbl    = null;
     this._icoEl  = null;
@@ -1399,40 +1488,71 @@
   }
 
   UiBtn.prototype.init = function () {
+    var self = this;
     this._render();
 
-    if (this.targetId) {
-      this._target = document.getElementById(this.targetId);
-      if (!this._target) console.warn('[ui-btn] 找不到 target: #' + this.targetId);
-    } else if (this.href) {
-      this._target = null;
-    } else {
-      this._target = this._nextSib;
-      if (!this._target && !this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 屬性。');
+    var srcs = [];
+    if (this.targetIds.length) {
+      this.targetIds.forEach(function (id) {
+        var t = document.getElementById(id);
+        if (t) srcs.push(t);
+        else console.warn('[ui-btn] 找不到 target: #' + id);
+      });
+    } else if (!this.href && !this.cellTableId) {
+      if (this._nextSib) srcs.push(this._nextSib);
+      else if (!this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 或 targets 屬性。');
     }
+    if (this.cellTableId && !this.cellSpec) {
+      console.warn('[ui-btn] 有 mini-table-id="' + this.cellTableId + '" 但沒有 target-cell，請指定儲存格，例如 target-cell="B2"。');
+    }
+    this._items = srcs.map(function (src) {
+      var isTpl = src.tagName.toLowerCase() === 'template';
+      return { src: src, tpl: isTpl, el: isTpl ? (src._ubtnOut || null) : src };
+    });
 
     if (this.scrollGate) {
       this.isOpen = this.startOpen;
-      if (this._target) {
-        this._target.style.display = '';
-        this._target.classList.add('ubtn-gate-target');
-        if (!this.isOpen) {
-          this._target.classList.add('ubtn-gate-locked');
-          this._btn.classList.add('ubtn-gate-cue');
-        }
+      if (this._items.length) {
+        this._items.forEach(function (it) {
+          var el = self._itemEl(it);
+          showEl(el);
+          el.classList.add('ubtn-gate-target');
+          if (!self.isOpen) el.classList.add('ubtn-gate-locked');
+        });
+        if (!this.isOpen) this._btn.classList.add('ubtn-gate-cue');
         _gateInstances.push(this);
         _initGate();
         setTimeout(_syncGateLimit, 0);
       }
-    } else if (this._target) {
-      var hidden = this._target.style.display === 'none' ||
-        (this._target.style.display === '' &&
-          getComputedStyle(this._target).display === 'none');
-      this.isOpen = this.startOpen || !hidden;
-      if (this.startOpen && hidden) this._target.style.display = '';
+    } else if (this._items.length) {
+      if (this.startOpen) {
+        this._items.forEach(function (it) {
+          var el = self._itemEl(it);
+          if (!isShown(el)) showEl(el);
+        });
+        this.isOpen = true;
+      } else {
+        /* 全部目標都已顯示才算展開；template 尚未渲染一律視為隱藏 */
+        this.isOpen = this._items.every(function (it) { return isShown(self._itemEl(it, true)); });
+      }
     } else {
       this.isOpen = this.startOpen;
     }
+    /* 有指定儲存格時，除非寫了 open，一律從「未揭曉」開始 */
+    if (this.cellTableId && this.cellSpec) {
+      if (this.startOpen) {
+        var tblEl = document.getElementById(this.cellTableId);
+        var reveal = function () { self._revealCells(0, false); };
+        if (tblEl && typeof tblEl.setCell !== 'function' && global.customElements) {
+          customElements.whenDefined('mini-table').then(function () { setTimeout(reveal, 0); });
+        } else {
+          reveal();
+        }
+      } else {
+        this.isOpen = false;
+      }
+    }
+    this._target = this._items.length ? this._itemEl(this._items[0], true) : null;
 
     this._syncBtn();
 
@@ -1508,7 +1628,7 @@
     }
 
     btn.addEventListener('click', function (e) {
-      if (!self.href || self.targetId) self._toggle();
+      if (!self.href || self.targetIds.length || self.cellTableId) self._toggle();
       if (self.alertMsg) showAlert(self.alertMsg, self.alertOpts);
       if (self.href) {
         var t = self.hrefTarget;
@@ -1542,33 +1662,183 @@
     }
   };
 
+  /* 取得目標實際要開合的元素；template 會在這裡渲染（peek 為 true 時只查詢不渲染） */
+  UiBtn.prototype._itemEl = function (it, peek) {
+    if (!it.tpl) return it.src;
+    it.el = peek ? (it.src._ubtnOut || null) : renderTemplate(it.src, this);
+    return it.el;
+  };
+
+  UiBtn.prototype._clearTimers = function () {
+    this._timers.forEach(clearTimeout);
+    this._timers = [];
+  };
+
   UiBtn.prototype._open = function () {
+    var self = this;
+    this._clearTimers();
     this.isOpen = true;
     this._syncBtn();
-    if (this._target) {
+    var k = 0;
+    if (this._items.length) {
       if (this.scrollGate) {
-        this._target.classList.remove('ubtn-gate-locked');
+        this._items.forEach(function (it) {
+          self._itemEl(it).classList.remove('ubtn-gate-locked');
+        });
         this._btn.classList.remove('ubtn-gate-cue');
         _syncGateLimit();
       } else {
-        animOpen(this._target, this.animation, this.animDur);
+        /* 依 targets 的順序展開；有 stagger 時每個間隔 stagger 毫秒。已顯示的不重播動畫 */
+        this._items.forEach(function (it) {
+          var el = self._itemEl(it);
+          if (isShown(el)) return;
+          var delay = self.stagger * k++;
+          if (!delay) { animOpen(el, self.animation, self.animDur); return; }
+          el.style.display = 'none';
+          self._timers.push(setTimeout(function () {
+            if (self.isOpen) animOpen(el, self.animation, self.animDur);
+          }, delay));
+        });
       }
     }
+    /* 儲存格接在元素之後，延續同一個 stagger 順序 */
+    this._revealCells(k, this.animation !== 'none');
     this._applyChunkLock(false);
   };
 
+  /* 依 | 切開內容；\| 視為文字的 |（與 mini-table 的寫法相同） */
+  function splitCellContent(text) {
+    var MARK = '\u0000';
+    return String(text).replace(/\\\|/g, MARK).split('|').map(function (s) {
+      return s.replace(/\u0000/g, '|').trim();
+    });
+  }
+
+  /* 找到表格並展開座標，回傳 { tbl, refs, contents }；找不到時警告並回傳 null */
+  UiBtn.prototype._cellPlan = function () {
+    if (!this.cellTableId || !this.cellSpec) return null;
+    var tbl = document.getElementById(this.cellTableId);
+    if (!tbl) {
+      console.warn('[ui-btn] 找不到 mini-table #' + this.cellTableId);
+      return null;
+    }
+    if (typeof tbl.resolveCells !== 'function') {
+      console.warn('[ui-btn] #' + this.cellTableId + ' 不支援儲存格操作，請確認已載入新版 mini-table.js。');
+      return null;
+    }
+    var refs = tbl.resolveCells(this.cellSpec);
+    if (!refs.length) return null;
+
+    /* 內容來源：target-cell-source（template 或元素）優先，其次 target-cell-content */
+    var raw = null;
+    if (this.cellSourceId) {
+      var src = document.getElementById(this.cellSourceId);
+      if (src) raw = src.innerHTML;
+      else console.warn('[ui-btn] 找不到 target-cell-source #' + this.cellSourceId);
+    }
+    if (raw == null) raw = this.cellContent;
+    if (raw == null) {
+      console.warn('[ui-btn] 沒有要顯示的內容，請設定 target-cell-content 或 target-cell-source。');
+      raw = '';
+    }
+
+    /* 單格：整段內容照用；多格：用 | 分成每一格的內容，只有一段時每格都用同一段 */
+    var contents;
+    if (refs.length === 1) {
+      contents = [String(raw).replace(/\\\|/g, '|').trim()];
+    } else {
+      var parts = splitCellContent(raw);
+      if (parts.length === 1) {
+        contents = refs.map(function () { return parts[0]; });
+      } else {
+        if (parts.length !== refs.length) {
+          console.warn('[ui-btn] target-cell 有 ' + refs.length + ' 格（' + refs.join('、') + '），內容卻有 ' +
+            parts.length + ' 段，請用 | 分隔，一格一段。多的略過，少的留空。');
+        }
+        contents = refs.map(function (r, i) { return parts[i] != null ? parts[i] : ''; });
+      }
+    }
+    return { tbl: tbl, refs: refs, contents: contents };
+  };
+
+  /* 揭曉儲存格：k 是 stagger 的起始序號，animate 為 false 時直接顯示 */
+  UiBtn.prototype._revealCells = function (k, animate) {
+    var self = this;
+    var plan = this._cellPlan();
+    if (!plan) return k;
+    this._cellRefs = plan.refs.slice();
+    plan.refs.forEach(function (ref, i) {
+      var html = '<span class="ubtn-cell">' + plan.contents[i] + '</span>';
+      var run = function () {
+        if (!self.isOpen) return;
+        var td = plan.tbl.setCell(ref, html);
+        if (!td || !animate) return;
+        var sp = td.querySelector('.ubtn-cell');
+        if (sp) fadeInline(sp, true, self.animDur);
+        td.style.setProperty('--ubtn-c', self.color);
+        td.classList.remove('ubtn-cell-flash');
+        void td.offsetWidth;
+        td.classList.add('ubtn-cell-flash');
+      };
+      var delay = animate ? self.stagger * k++ : 0;
+      if (delay) self._timers.push(setTimeout(run, delay));
+      else run();
+    });
+    return k;
+  };
+
+  /* 收回儲存格：淡出後恢復原始內容 */
+  UiBtn.prototype._hideCells = function () {
+    var self = this;
+    if (!this._cellRefs.length) return;
+    var tbl = document.getElementById(this.cellTableId);
+    if (!tbl || typeof tbl.resetCell !== 'function') return;
+    var refs = this._cellRefs;
+    this._cellRefs = [];
+    var animate = this.animation !== 'none';
+    refs.forEach(function (ref) {
+      var td = tbl.cellAt(ref, true);
+      var sp = td && td.querySelector('.ubtn-cell');
+      if (!animate || !sp) { tbl.resetCell(ref); return; }
+      fadeInline(sp, false, self.animDur);
+      self._timers.push(setTimeout(function () {
+        if (!self.isOpen) tbl.resetCell(ref);
+      }, self.animDur + 20));
+    });
+  };
+
+  /* 格子裡的內容只做淡入淡出（格子本身的框線與底色不動） */
+  function fadeInline(el, show, dur) {
+    el.style.transition = 'none';
+    el.style.opacity = show ? '0' : '1';
+    void el.offsetWidth;
+    rAF2(function () {
+      el.style.transition = 'opacity ' + dur + 'ms ease';
+      el.style.opacity = show ? '1' : '0';
+    });
+  }
+
   UiBtn.prototype._close = function () {
+    var self = this;
+    this._clearTimers();
     this.isOpen = false;
     this._syncBtn();
-    if (this._target) {
+    if (this._items.length) {
       if (this.scrollGate) {
-        this._target.classList.add('ubtn-gate-locked');
+        this._items.forEach(function (it) {
+          self._itemEl(it).classList.add('ubtn-gate-locked');
+        });
         this._btn.classList.add('ubtn-gate-cue');
         _syncGateLimit();
       } else {
-        animClose(this._target, this.animation, this.animDur);
+        /* 收合一律同時進行；尚未渲染的 template 不需處理 */
+        this._items.forEach(function (it) {
+          var el = self._itemEl(it, true);
+          if (isShown(el)) animClose(el, self.animation, self.animDur);
+        });
       }
     }
+    this._hideCells();
     this._applyChunkLock(true);
   };
 

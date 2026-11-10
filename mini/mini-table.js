@@ -35,6 +35,14 @@
  * 格子內可以寫 HTML（<b>、<c-key> 等）。格子裡要放 | 時寫成 \|。
  * 列首寫 ! 代表強調這一列；內容本身要以 ! 開頭時寫成 \!。
  * 不使用 Shadow DOM；屬性只在載入時讀取一次，之後要重畫呼叫 el.render()。
+ *
+ * 儲存格 API（座標與 Excel 相同，有表頭時表頭是第 1 列）
+ *   el.cellAt('B2')            取得儲存格元素
+ *   el.resolveCells('B2 C2:C4') 展開成 ['B2','C2','C3','C4']
+ *   el.setCell('B2', html)     寫入內容，render() 重畫後仍保留
+ *   el.resetCell('B2')         恢復原始內容
+ *   el.size()                  { cols, rows }
+ * ui-plus.js 的 <ui-btn mini-table-id="…" target-cell="B2"> 就是用這組 API 揭曉答案。
  */
 (() => {
   'use strict';
@@ -181,6 +189,23 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
     if (!src) { console.error('[mini-table] ' + who + ' 找不到 id="' + id + '" 的元素。'); return null; }
     return src.tagName === 'TEMPLATE' ? src.innerHTML : src.innerHTML;
   }
+  /* 儲存格座標，與 Excel 相同：欄用字母（A、B…Z、AA），列用數字，從 1 起算。
+     有表頭時表頭就是第 1 列。$B$2 這種絕對參照的 $ 會略過。
+     回傳 { col, row }（皆從 1 起算），格式錯誤回傳 null */
+  function parseRef(ref) {
+    const m = String(ref || '').trim().toUpperCase().replace(/\$/g, '').match(/^([A-Z]{1,3})(\d+)$/);
+    if (!m) return null;
+    let col = 0;
+    for (const ch of m[1]) col = col * 26 + (ch.charCodeAt(0) - 64);
+    const row = parseInt(m[2], 10);
+    return row > 0 ? { col, row } : null;
+  }
+  function refName(col, row) {
+    let s = '';
+    for (let c = col; c > 0; c = Math.floor((c - 1) / 26)) s = String.fromCharCode(65 + (c - 1) % 26) + s;
+    return s + row;
+  }
+
   function parseAlign(v) {
     if (!v) return [];
     return v.split(/[,\s]+/).filter(Boolean).map(a => {
@@ -281,9 +306,88 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
       rows.forEach((r, ri) => { html += '<tr' + (marks[ri] ? ' class="mt-mark"' : '') + '>' + r.map((c, i) => '<td class="' + cls(i) + '">' + c + '</td>').join('') + '</tr>'; });
       html += '</tbody></table>';
       this.innerHTML = html;
+
+      /* 記下每一格的原始內容，再套用 setCell() 寫入過的內容，重畫後維持原狀 */
+      this._orig = {};
+      const t = this.querySelector('table');
+      Array.from(t.rows).forEach((tr, ri) => {
+        Array.from(tr.cells).forEach((td, ci) => {
+          if (!td.classList.contains('mt-empty')) this._orig[refName(ci + 1, ri + 1)] = td.innerHTML;
+        });
+      });
+      if (this._ovr) {
+        Object.keys(this._ovr).forEach(ref => {
+          const td = this.cellAt(ref, true);
+          if (td) td.innerHTML = this._ovr[ref];
+        });
+      }
+    }
+
+    /* ── 儲存格 API：座標與 Excel 相同，有表頭時表頭是第 1 列 ── */
+
+    /* 取得儲存格元素（th 或 td）；超出範圍回傳 null */
+    cellAt(ref, quiet) {
+      const p = parseRef(ref);
+      if (!p) { if (!quiet) console.warn('[mini-table] 儲存格座標「' + ref + '」格式錯誤，應為 B2 這種寫法。'); return null; }
+      const t = this.querySelector('table');
+      const tr = t && t.rows[p.row - 1];
+      const td = tr && tr.cells[p.col - 1];
+      if (!td || td.classList.contains('mt-empty')) {
+        if (!quiet) console.warn('[mini-table] #' + (this.id || '?') + ' 沒有儲存格 ' + refName(p.col, p.row) + '，表格共 ' + this.size().cols + ' 欄 ' + this.size().rows + ' 列（表頭算第 1 列）。');
+        return null;
+      }
+      return td;
+    }
+
+    /* 表格大小，表頭也算一列 */
+    size() {
+      const t = this.querySelector('table');
+      if (!t || t.querySelector('.mt-empty')) return { cols: 0, rows: t && t.tHead ? 1 : 0 };
+      return { cols: t.rows[0] ? t.rows[0].cells.length : 0, rows: t.rows.length };
+    }
+
+    /* "B2 C3, D2:E4" → ['B2','C3','D2','E2',…]。逗號或空白分隔，支援範圍；不存在的格子略過並警告 */
+    resolveCells(spec) {
+      const out = [];
+      String(spec || '').split(/[\s,]+/).filter(Boolean).forEach(part => {
+        const ends = part.split(':');
+        const a = parseRef(ends[0]);
+        const b = ends.length === 2 ? parseRef(ends[1]) : a;
+        if (!a || !b || ends.length > 2) {
+          console.warn('[mini-table] 儲存格座標「' + part + '」格式錯誤，應為 B2 或 B2:C4。');
+          return;
+        }
+        for (let r = Math.min(a.row, b.row); r <= Math.max(a.row, b.row); r++) {
+          for (let c = Math.min(a.col, b.col); c <= Math.max(a.col, b.col); c++) {
+            const ref = refName(c, r);
+            if (out.indexOf(ref) < 0 && this.cellAt(ref)) out.push(ref);
+          }
+        }
+      });
+      return out;
+    }
+
+    /* 寫入儲存格內容並記住，之後 render() 重畫也會保留；回傳儲存格元素 */
+    setCell(ref, html) {
+      const td = this.cellAt(ref);
+      if (!td) return null;
+      const key = refName(parseRef(ref).col, parseRef(ref).row);
+      (this._ovr || (this._ovr = {}))[key] = html;
+      td.innerHTML = html;
+      return td;
+    }
+
+    /* 恢復儲存格的原始內容；回傳儲存格元素 */
+    resetCell(ref) {
+      const td = this.cellAt(ref);
+      if (!td) return null;
+      const key = refName(parseRef(ref).col, parseRef(ref).row);
+      if (this._ovr) delete this._ovr[key];
+      td.innerHTML = this._orig && key in this._orig ? this._orig[key] : '';
+      return td;
     }
   }
 
   customElements.define('mini-table', MiniTable);
-  window.MiniTable = { themes: THEMES.slice() };
+  window.MiniTable = { themes: THEMES.slice(), parseRef, refName };
 })();

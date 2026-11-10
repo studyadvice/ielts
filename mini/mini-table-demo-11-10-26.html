@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mini-table 儲存格揭曉</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../bp-styles.css">
+<style>
+/* 只放 bp-styles.css 沒有的版面設定；間距一律 px */
+body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
+.page{padding:32px 40px 80px 40px;}
+.demo{border-radius:12px;padding:24px;margin:0 0 32px 0;}
+.stage{border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.btn-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;}
+.code-box{border-radius:8px;padding:16px;margin:0;max-height:640px;overflow:auto;}
+.code-box code{font-size:.82rem;white-space:pre;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;}
+.ref th,.ref td{border-bottom:1px solid var(--bp-gray);padding:8px 12px;text-align:left;vertical-align:top;}
+.ref code{color:var(--bp-playful);}
+.alert-zone{position:fixed;top:16px;right:16px;z-index:2000;width:380px;}
+.alert-zone .alert{background:#1B1C1B;color:var(--bp-vanilla);border:1px solid var(--bp-key);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="alert-zone" id="alert-zone"></div>
+<div class="page">
+  <h1 class="fs-larger bp-text-key">mini-table 儲存格揭曉</h1>
+  <p class="fs-regular bp-text-calm" style="margin:0 0 32px 0">mini-table.js 新增儲存格 API，搭配 ui-plus.js 的 <code>&lt;ui-btn&gt;</code>，用 Excel 的座標指定某一格，點擊後顯示內容。表頭算第 1 列。建立日期 11-10-26。</p>
+
+  <section class="demo bp-border-gray" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例一：座標怎麼數</h2>
+    <p class="bp-text-shell">三欄三列的表：第 1 列是表頭，所以 B2 是第一筆資料的第二欄。按下按鈕，九格同時換成自己的座標；內容用 <code>|</code> 分隔，一格一段，依 A1、B1、C1、A2…的順序對應。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
+        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table id="coord-tbl" head="Place | Answer | Note" pre-theme="grid" color="indigo">
+  Taipei | ？ | ？
+  Kaohsiung | ？ | ？
+</mini-table>
+<div class="btn-row">
+  <ui-btn theme="indigo" icon="bi-grid-3x3" mini-table-id="coord-tbl" target-cell="A1:C3"
+          target-cell-content="A1|B1|C1|A2|B2|C2|A3|B3|C3" label-open="恢復原表">顯示每一格的座標</ui-btn>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例二：單格揭曉答案</h2>
+    <p class="bp-text-shell">最常用的寫法。<code>target-cell-content</code> 可以寫 HTML；長一點的內容放進 template，用 <code>target-cell-source</code> 讀取。再按一次恢復成問號。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
+        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table id="mytbl" head="Clue | Answer | Chunk" pre-theme="frame" color="green">
+  A place for coffee | ？ | ？
+  A place for books | ？ | ？
+</mini-table>
+<div class="btn-row">
+  <ui-btn theme="green" mini-table-id="mytbl" target-cell="B2"
+          target-cell-content="<b>Cafe</b>" label-open="收回">顯示答案</ui-btn>
+  <ui-btn theme="yellow" mini-table-id="mytbl" target-cell="C2"
+          target-cell-source="chunk-c2" label-open="收回">顯示語塊</ui-btn>
+  <ui-btn theme="blue" mini-table-id="mytbl" target-cell="B3 C3"
+          target-cell-content="<b>Library</b> | a quiet corner to <c-blue>lose myself in</c-blue>"
+          stagger="400" label-open="收回">第 3 列一起揭曉</ui-btn>
+</div>
+<template id="chunk-c2">
+  grab a <c-yellow>quick flat white</c-yellow>
+</template>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray">
+    <h2 class="fs-large bp-text-yellow">範例三：JavaScript API</h2>
+    <p class="bp-text-shell">不透過 ui-btn 也可以直接操作。寫入的內容會被記住，呼叫 <code>render()</code> 重畫後仍然保留；<code>resetCell()</code> 恢復原始內容。</p>
+    <div class="row g-4">
+      <div class="col-6">
+        <div class="stage bp-border-key-deep">
+          <mini-table id="api-tbl" head="Skill | Band" pre-theme="ledger">
+            Fluency | 6
+            Lexical resource | 6
+          </mini-table>
+          <div class="btn-row">
+            <button type="button" class="btn btn-sm btn-key" data-act="set">setCell('B3', '7.5')</button>
+            <button type="button" class="btn btn-sm btn-key-outline" data-act="reset">resetCell('B3')</button>
+            <button type="button" class="btn btn-sm btn-indigo-outline" data-act="theme">換外觀後 render()</button>
+            <button type="button" class="btn btn-sm btn-gray-outline" data-act="size">size()</button>
+            <button type="button" class="btn btn-sm btn-red-outline" data-act="bad">cellAt('D9')</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">JavaScript</p>
+        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">const t = document.getElementById('api-tbl');
+t.cellAt('B2');               // 取得儲存格元素（th 或 td）
+t.resolveCells('A2:B3');      // ['A2', 'B2', 'A3', 'B3']
+t.setCell('B3', '7.5');       // 寫入並記住，render() 後仍保留
+t.resetCell('B3');            // 恢復原始內容
+t.size();                     // { cols: 2, rows: 3 }，表頭算一列
+MiniTable.parseRef('$AA$12'); // { col: 27, row: 12 }
+MiniTable.refName(27, 12);    // 'AA12'</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo bp-border-gray">
+    <h2 class="fs-large bp-text-yellow">座標規則與相關屬性</h2>
+    <table class="ref">
+      <thead><tr><th class="bp-text-key" style="width:220px">項目</th><th class="bp-text-key" style="width:260px">範例</th><th class="bp-text-key">說明</th></tr></thead>
+      <tbody>
+        <tr><td>座標</td><td><code>B2</code>、<code>AA12</code></td><td>欄用字母、列用數字，都從 1 起算，大小寫皆可。有表頭時表頭是第 1 列；沒有表頭時第一筆資料就是第 1 列。</td></tr>
+        <tr><td>多格與範圍</td><td><code>B2 C3</code>、<code>C2:C4</code></td><td>逗號或空白分隔，範圍依列的順序展開（A1、B1…A2、B2…）。</td></tr>
+        <tr><td>絕對參照</td><td><code>$B$2</code></td><td>從 Excel 複製過來的 <code>$</code> 會略過。</td></tr>
+        <tr><td>超出範圍</td><td><code>D9</code></td><td>主控台警告並說明表格的欄數與列數，那一格略過。</td></tr>
+        <tr><td><code>mini-table-id</code></td><td><code>mini-table-id="mytbl"</code></td><td>寫在 ui-btn 上，指定表格。也接受 <code>min-table-id</code>。</td></tr>
+        <tr><td><code>target-cell</code></td><td><code>target-cell="B2"</code></td><td>寫在 ui-btn 上，指定儲存格。</td></tr>
+        <tr><td><code>target-cell-content</code></td><td><code>target-cell-content="&lt;b&gt;Cafe&lt;/b&gt;"</code></td><td>寫在 ui-btn 上，要顯示的內容。多格用 <code>|</code> 分隔。</td></tr>
+        <tr><td><code>target-cell-source</code></td><td><code>target-cell-source="ans"</code></td><td>寫在 ui-btn 上，從 template 讀內容，優先於 <code>target-cell-content</code>。</td></tr>
+      </tbody>
+    </table>
+    <p class="bp-text-shell" style="margin:16px 0 0 0">ui-btn 的 <code>label-open</code>、<code>stagger</code>、<code>anim-duration</code>、<code>animation="none"</code>、<code>open</code>、<code>group</code> 都能和儲存格一起用。兩支檔案的載入順序不拘。</p>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+
+/* 範例三：結果用 Bootstrap alert 顯示 */
+function note(msg) {
+  const zone = document.getElementById('alert-zone');
+  const box = document.createElement('div');
+  box.className = 'alert alert-dismissible fade show';
+  box.innerHTML = '<span></span><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+  box.firstChild.textContent = msg;
+  box.querySelector('.btn-close').addEventListener('click', () => box.remove());
+  zone.appendChild(box);
+  setTimeout(() => box.remove(), 3500);
+}
+document.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => {
+  const t = document.getElementById('api-tbl');
+  const act = b.dataset.act;
+  if (act === 'set') { t.setCell('B3', '<b>7.5</b>'); note('B3 已寫入 7.5'); }
+  if (act === 'reset') { t.resetCell('B3'); note('B3 已恢復原始內容'); }
+  if (act === 'theme') {
+    t.setAttribute('pre-theme', t.getAttribute('pre-theme') === 'ledger' ? 'tiles' : 'ledger');
+    t.render();
+    note('已換成 ' + t.getAttribute('pre-theme') + ' 並重畫，B3 的寫入內容仍在');
+  }
+  if (act === 'size') { const s = t.size(); note('size()：' + s.cols + ' 欄 ' + s.rows + ' 列（表頭算一列）'); }
+  if (act === 'bad') { note('cellAt(\'D9\') 回傳 ' + t.cellAt('D9') + '，主控台有警告'); }
+}));
+</script>
+<script src="mini-table.js?v=11-10-26"></script>
+<script src="../ui-plus.js?v=11-10-26c"></script>
+</body>
+</html>

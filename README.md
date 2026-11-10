@@ -2034,11 +2034,12 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 **目標元素的判定順序**
 
-1. 有 `target` 屬性：控制該 id 的元素。
-2. 只有 `href`、沒有 `target`：純連結按鈕，不控制任何元素。
-3. 都沒有：控制緊接在後面的元素（會略過連續排列的其他 `<ui-btn>`，因此可以並排多顆按鈕）。
+1. 有 `target` 或 `targets` 屬性：控制這些 id 的元素，可以是一個或多個，也可以是 `<template>`。
+2. 有 `mini-table-id`：操作該表格的儲存格，見下方「揭曉 mini-table 的儲存格」。
+3. 只有 `href`、沒有 `target`：純連結按鈕，不控制任何元素。
+4. 都沒有：控制緊接在後面的元素（會略過連續排列的其他 `<ui-btn>`，因此可以並排多顆按鈕）。
 
-**初始狀態**：目標元素一開始就是隱藏（`display:none`）時，按鈕為收合狀態；目標可見時視為已展開。要讓內容預設隱藏，請在目標加上 `style="display:none"`；按鈕加上 `open` 則會強制以展開狀態開始。`scroll-gate` 模式例外，見下方「進階」。
+**初始狀態**：目標元素一開始就是隱藏（`display:none` 或 `bp-hidden` 這類 class）時，按鈕為收合狀態；全部目標都可見時視為已展開。要讓內容預設隱藏，請在目標加上 `style="display:none"`；按鈕加上 `open` 則會強制以展開狀態開始。`scroll-gate` 模式例外，見下方「進階」。
 
 **外觀**
 
@@ -2081,10 +2082,12 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `target` | 空 | 要控制的元素 id。 |
+| `target` | 空 | 要控制的元素 id；也接受多個 id。 |
+| `targets` | 空 | 一次控制多個元素，id 用逗號或空白分隔，`#` 可省略。與 `target` 同時寫時合併。 |
+| `stagger` | `0` | 多個目標展開時，每個間隔的毫秒數；收合一律同時進行。 |
 | `open` | 布林 | 載入時即為展開狀態。 |
 | `animation` | `slide` | 展開動畫：`slide`、`fade`、`none`。 |
-| `anim-duration` | `320` | 動畫毫秒數。 |
+| `anim-duration` | `320` | 每個目標動畫的毫秒數，可設超過 600。 |
 | `group` | 空 | 同組按鈕互斥，打開一個時其他自動收合（手風琴效果）。 |
 | `href` | 空 | 點擊後前往的網址。與 `target` 同時設定時，會先切換目標再跳頁。 |
 | `href-target` | `_self` | 開啟位置，`_blank` 為新分頁。按住 Ctrl 或 Cmd 點擊也會開新分頁。 |
@@ -2107,6 +2110,43 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `scroll-gate` | 捲動閘門。目標內容維持顯示但呈半透明、無法點選，頁面也無法捲動超過這顆按鈕，直到按下按鈕解鎖。按鈕會持續脈動提示。 |
 | `unlock-chunk` | 展開時呼叫外部 `chunk-demo` 元件的 `unlockChunk()`，收合時呼叫 `lockChunk()`。格式為 `元件id:區塊編號`，多個以逗號分隔，例如 `demo1:2,demo1:3`。需另外載入 `chunk-demo.js`。 |
 
+**多個目標與 template**
+
+```html
+<ui-btn targets="hint-a, hint-b tpl-model" stagger="400" animation="fade"
+        anim-duration="800" label-open="收起">看提示與範文</ui-btn>
+<div id="hint-a" style="display:none">…</div>
+<div id="hint-b" class="bp-hidden">…</div>
+<template id="tpl-model">…</template>
+```
+
+- 目標不必相鄰，依 `targets` 的順序展開；部分已顯示時，按下只補開其餘目標，已顯示的不重播動畫。
+- `<template>` 在第一次展開時才渲染到緊接其後的 `<div class="ubtn-tpl-out" data-ubtn-from="模板id">`，之後的開合都作用在這個 div，輸入過的內容會保留。template 的 `class` 與 `style` 會帶到這個 div，內容裡的 ui-plus 元件會自動初始化。
+- 多顆按鈕指向同一個 template 時共用同一份輸出。
+- 渲染後在 template 上觸發會冒泡的 `ubtn-template-rendered` 事件，`e.detail` 含 `template`、`output`、`button`。
+
+**揭曉 mini-table 的儲存格**
+
+需另外載入 `mini/mini-table.js`，兩支檔案的載入順序不拘。
+
+```html
+<mini-table id="mytbl" head="Clue | Answer | Chunk">
+  A place for coffee | ？ | ？
+</mini-table>
+<ui-btn mini-table-id="mytbl" target-cell="B2" target-cell-content="<b>Cafe</b>">顯示答案</ui-btn>
+```
+
+| 屬性 | 說明 |
+| --- | --- |
+| `mini-table-id` | 要操作的 `<mini-table>` 的 id。也接受 `min-table-id`。 |
+| `target-cell` | 儲存格座標，和 Excel 相同：欄用字母、列用數字，**表頭算第 1 列**。可寫多格（逗號或空白分隔）與範圍，例如 `B2 C3`、`C2:C4`；`$B$2` 的 `$` 會略過。 |
+| `target-cell-content` | 要顯示的內容，可寫 HTML。多格時用 `\|` 分隔，一格一段；只寫一段就每格都用同一段。內容要放 `\|` 時寫成 `\\|`。 |
+| `target-cell-source` | 改從 `<template>` 或元素讀取內容，優先於 `target-cell-content`，多格時同樣用 `\|` 分隔。 |
+
+- 按一下揭曉，內容淡入，格子內框短暫亮起按鈕的 `theme` 顏色；再按一次淡出並恢復原本的內容。
+- `stagger`、`anim-duration`、`animation="none"`、`label-open`、`open`、`group` 都適用；與 `targets` 同時使用時，先開元素、再開儲存格，共用同一個 `stagger` 順序。
+- 不存在的格子會在主控台警告並略過。
+
 **全域設定**：在載入腳本之前定義 `window.UiBtnConfig`，可用鍵為 `theme`、`size`、`variant`、`animation`、`animDuration`、`chevron`。`size` 同樣可以填長度值，例如 `'1.25rem'`。
 
 ### JavaScript API
@@ -2128,3 +2168,31 @@ UiCluster.colors;                                 // 色盤
 ```
 
 已處理過的標籤會被標記，重複呼叫 `init()` 不會重複渲染。
+
+## 授權
+
+本專案以 MIT 授權釋出。
+
+```
+MIT License
+
+Copyright (c) 2026 studyadvice
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
