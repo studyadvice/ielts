@@ -351,35 +351,6 @@ document.querySelector('ui-scroll-scene').addEventListener('scene:enter', e => c
 
 ---
 
-## 版本紀錄
-
-| 元件 | 版本 | 說明 |
-| --- | --- | --- |
-| ui-scroll-scene | 1.0.0 | 初版。 |
-| ui-screen | 1.0.2 | 外框跟著元件高度撐開，`height="100%"` 可以填滿父元素，例如放進 `scene-layer`。 |
-| ui-screen | 1.0.1 | 修正：圖層沒有底色，內容透明時兩層文字互相透出。圖層預設套用 `stage-bg`，並新增圖層屬性 `bg`。 |
-| ui-screen | 1.0.0 | 初版。 |
-
 ## 授權
 
 MIT License
-
-Copyright (c) 2026 ui-screen contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
