@@ -265,13 +265,11 @@ chunk-demo { display: block; }
       yellow:   { border: '#E3D322', text: '#E3D322', bg: 'rgba(227,211,34,.09)'  },
       indigo:   { border: '#778CE1', text: '#778CE1', bg: 'rgba(119,140,225,.09)'  },
       pink:     { border: '#FF91D7', text: '#FF91D7', bg: 'rgba(255,145,215,.09)' },
-      orange:   { border: '#FFA987', text: '#FFA987', bg: 'rgba(255,169,135,.09)'   },
       /* 新色票 */
       red:      { border: '#EF6661', text: '#EF6661', bg: 'rgba(239,102,97,.09)'   },
       green:    { border: '#71CD76', text: '#71CD76', bg: 'rgba(113,205,118,.09)'  },
       blue:     { border: '#5DBAE8', text: '#5DBAE8', bg: 'rgba(93,186,232,.09)'   },
       key:      { border: '#51DBCF', text: '#51DBCF', bg: '#12201E' },
-      'key-deep':{ border: '#51DBCF', text: '#51DBCF', bg: '#12201E' },
       calm:     { border: '#A3C4BC', text: '#A3C4BC', bg: '#1A1D1C' },
       quiet:    { border: '#8EA4DE', text: '#8EA4DE', bg: '#1A1C1F' },
       playful:  { border: '#FFA987', text: '#FFA987', bg: '#221B17' },
@@ -1187,7 +1185,7 @@ chunk-demo { display: block; }
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

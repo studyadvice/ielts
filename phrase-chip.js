@@ -10,7 +10,6 @@
     yellow:   '#E3D322',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -19,7 +18,6 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
     quiet: '#8EA4DE',
     playful: '#FFA987',
@@ -218,7 +216,7 @@
 
     /* 取出所有 <phrase-stage>，至少要兩階段才有「升級」的意義。
        每個 stage 可以用 text-color 覆蓋自己的文字顏色（接受 BRAND 色票名稱，
-       例如 shell、orange，或任意 CSS 色票字串），不覆蓋就沿用 data-theme */
+       例如 shell、playful，或任意 CSS 色票字串），不覆蓋就沿用 data-theme */
     const stages = Array.from(el.querySelectorAll('phrase-stage'))
       .map(s => ({
         text:  s.textContent.trim(),
@@ -716,7 +714,7 @@ phrase-upgrade.is-final pu-hint { display: none; }
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

@@ -6,8 +6,8 @@
  *       例如 hl-hot-bg="blue"、hl-hot-color="base"，名稱不分大小寫，也仍可填 #hex 或 rgb()。
  * v1.2：新增 theme 屬性，例如 theme="violet"。影響外觀色彩的個別屬性預設都跟著 theme，
  *       有明確指定的屬性才會覆蓋 theme 的顏色。優先順序：個別屬性 > theme > 內建預設。
- *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、orange、green、
- *       blue、indigo、violet、gray、key、key-deep、calm、quiet、playful、urgent、energetic、dreamy）。名稱不存在時退回 default。
+ *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、green、
+ *       blue、indigo、violet、gray、key、calm、quiet、playful、urgent、energetic、dreamy）。名稱不存在時退回 default。
  * v1.3：<ins-line> 新增 extra-info 屬性，填 <template> 的 id，例如 extra-info="tpl-1"。
  *       選到該句時，template 的 HTML 內容會顯示在右側面板的最下方，位於亮點解說之後。
  *       找不到 id 時不顯示；id 指向的若不是 <template>，則改用該元素的 innerHTML。
@@ -31,7 +31,6 @@
     yellow: '#E3D322',
     indigo: '#778CE1',
     pink: '#FF91D7',
-    orange: '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -40,7 +39,6 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
     quiet: '#8EA4DE',
     playful: '#FFA987',
@@ -93,7 +91,6 @@
   const THEMES = {
     default: {},
     yellow: accentTheme('yellow'),
-    orange: accentTheme('orange'),
     pink: accentTheme('pink'),
     indigo: accentTheme('indigo'),
     /* 新色票 */
@@ -105,7 +102,6 @@
     vanilla: accentTheme('vanilla'),
     shell: accentTheme('shell'),
     key: accentTheme('key'),
-    'key-deep': accentTheme('key-deep'),
     calm: accentTheme('calm'),
     quiet: accentTheme('quiet'),
     playful: accentTheme('playful'),
@@ -581,7 +577,7 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

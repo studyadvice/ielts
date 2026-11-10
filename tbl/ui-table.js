@@ -7,7 +7,6 @@
     yellow:   '#E3D322',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#FF5530',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -16,20 +15,22 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#176878',
     calm: '#A3C4BC',
-    quiet: '#A9B8E0',
+    quiet: '#8EA4DE',
     playful: '#FFA987',
-    urgent: '#FF2E63'
+    urgent: '#FF2E63',
+    energetic: '#B6FF00',
+    dreamy: '#DE8EC9',
+    'bg-alternative': '#3B2A20'
   };
 
   var BG = '#0C0D0C';
 
   /* 色名標籤 <c-blue>、<c-key> 等的文字色由共用樣式提供；
-     inverse 格子的底色是亮色，這裡把色名標籤改成「深色字＋品牌色底」的小標籤，key-deep 底色較深改用白字 */
+     inverse 格子的底色是亮色，這裡把色名標籤改成「深色字＋品牌色底」的小標籤，bg-alternative 底色較深改用白字 */
   function colorTagCSS() {
     return Object.keys(BRAND).map(function (k) {
-      var fg = k === 'key-deep' ? '#FFFFFF' : BG;
+      var fg = k === 'bg-alternative' ? '#FFFFFF' : BG;
       return '.uit-wrap .uit-col.is-inv c-' + k + '{color:' + fg + ';background:' + BRAND[k] + ';padding:0 4px}';
     }).join('\n');
   }
@@ -140,7 +141,7 @@
   var MASK_GRADIENTS = {
     '1': 'linear-gradient(135deg,#0d0814 0%,#1e1040 45%,#778CE1 100%)',
     '2': 'linear-gradient(135deg,#041418 0%,#073540 45%,#5DBAE8 100%)',
-    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#FF5530 100%)',
+    '3': 'linear-gradient(135deg,#1c0900 0%,#6b3000 50%,#FFA987 100%)',
     '4': 'linear-gradient(135deg,#1a060e 0%,#5e1535 50%,#FF91D7 100%)',
     '5': 'linear-gradient(135deg,#041208 0%,#083820 50%,#71CD76 100%)',
     '6': 'linear-gradient(135deg,#060c1e 0%,#162060 50%,#778CE1 80%,#778CE1 100%)'
@@ -2037,8 +2038,8 @@
 
   /* ---------- 注意力動畫（彩虹光帶繞格子） ---------- */
 
-  /* 彩虹順序用品牌色：red 紅、orange 橙、yellow 黃、green 綠、blue 青、indigo 藍、violet 紫、pink 粉，最後回到紅 */
-  var FLASH_COLORS = [BRAND.red, BRAND.orange, BRAND.yellow, BRAND.green,
+  /* 彩虹順序用品牌色：red 紅、playful 橙、yellow 黃、green 綠、blue 青、indigo 藍、violet 紫、pink 粉，最後回到紅 */
+  var FLASH_COLORS = [BRAND.red, BRAND.playful, BRAND.yellow, BRAND.green,
                       BRAND.blue, BRAND.indigo, BRAND.violet, BRAND.pink, BRAND.red];
 
   /* 粗細：純數字或 px */
@@ -2443,7 +2444,7 @@
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FF5530', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#176878', calm:'#A3C4BC', quiet:'#A9B8E0', playful:'#FFA987', urgent:'#FF2E63' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

@@ -10,7 +10,6 @@
     yellow: '#E3D322',
     indigo: '#778CE1',
     pink: '#FF91D7',
-    orange: '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -19,7 +18,6 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
     quiet: '#8EA4DE',
     playful: '#FFA987',
@@ -212,7 +210,7 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
   }
 
   // 色彩屬性值：品牌色名稱優先，其次才是 rgba / hex / hsl / CSS 色名
-  // 注意：orange、pink 等與 CSS 內建色名重複時，一律採用品牌色
+  // 注意：pink、red 等與 CSS 內建色名重複時，一律採用品牌色
   function normColor(v) {
     if (v == null) return null;
     const s = String(v).trim();
@@ -941,7 +939,7 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

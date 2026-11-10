@@ -5,7 +5,6 @@
     bg: '#0C0D0C', shell: '#C6C7BD',
     vanilla: '#DBEDD8', yellow: '#E3D322',
     indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -14,7 +13,6 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
     quiet: '#8EA4DE',
     playful: '#FFA987',
@@ -32,7 +30,7 @@
     square: ['bi-square', 'bi-square-fill'],
     heart: ['bi-heart', 'bi-heart-fill']
   };
-  var RATING_COLORS = { star: PALETTE.orange, circle: PALETTE.yellow, square: PALETTE.green, heart: PALETTE.pink };
+  var RATING_COLORS = { star: PALETTE.playful, circle: PALETTE.yellow, square: PALETTE.green, heart: PALETTE.pink };
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
   var ICON_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
   var MASK = '••••••';
@@ -1150,7 +1148,7 @@
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

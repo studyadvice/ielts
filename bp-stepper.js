@@ -7,7 +7,6 @@
     yellow:   '#E3D322',
     indigo:   '#778CE1',
     pink:     '#FF91D7',
-    orange:   '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -16,7 +15,6 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
     quiet: '#8EA4DE',
     playful: '#FFA987',
@@ -28,23 +26,21 @@
 
   const THEMES = {
     indigo:   { color: BRAND.indigo,   colorActive: BRAND.violet, colorDone: BRAND.green,   titleColor: BRAND.indigo,   badgeBg: 'rgba(119,140,225,0.12)'   },
-    yellow:   { color: BRAND.yellow,   colorActive: BRAND.orange,   colorDone: BRAND.green,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
-    orange:   { color: BRAND.orange,   colorActive: BRAND.yellow,   colorDone: BRAND.green,   titleColor: BRAND.orange,   badgeBg: 'rgba(255,169,135,0.12)'    },
+    yellow:   { color: BRAND.yellow,   colorActive: BRAND.playful,   colorDone: BRAND.green,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
     pink:     { color: BRAND.pink,     colorActive: BRAND.violet, colorDone: BRAND.green,   titleColor: BRAND.pink,     badgeBg: 'rgba(255,145,215,0.12)'  },
     shell:    { color: BRAND.shell,    colorActive: BRAND.indigo,     colorDone: BRAND.green,   titleColor: BRAND.shell,    badgeBg: 'rgba(198,199,189,0.13)'  },
     vanilla:  { color: BRAND.vanilla,  colorActive: BRAND.blue,    colorDone: BRAND.green,   titleColor: BRAND.vanilla,  badgeBg: 'rgba(219,237,216,0.12)'  },
     /* 新色票 */
     blue:     { color: BRAND.blue,     colorActive: BRAND.indigo,   colorDone: BRAND.green,  titleColor: BRAND.blue,     badgeBg: 'rgba(93,186,232,0.12)'   },
     green:    { color: BRAND.green,    colorActive: BRAND.yellow,   colorDone: BRAND.blue,   titleColor: BRAND.green,    badgeBg: 'rgba(113,205,118,0.12)'  },
-    red:      { color: BRAND.red,      colorActive: BRAND.orange,   colorDone: BRAND.green,  titleColor: BRAND.red,      badgeBg: 'rgba(239,102,97,0.12)'   },
+    red:      { color: BRAND.red,      colorActive: BRAND.playful,   colorDone: BRAND.green,  titleColor: BRAND.red,      badgeBg: 'rgba(239,102,97,0.12)'   },
     violet:   { color: BRAND.violet,   colorActive: BRAND.pink,     colorDone: BRAND.green,  titleColor: BRAND.violet,   badgeBg: 'rgba(180,132,232,0.12)'  },
     gray:     { color: BRAND.gray,     colorActive: BRAND.blue,     colorDone: BRAND.green,  titleColor: BRAND.gray,     badgeBg: 'rgba(134,135,127,0.13)'  },
     key:      { color: BRAND.key, colorActive: BRAND.blue, colorDone: BRAND.green, titleColor: BRAND.key, badgeBg: '#142623' },
-    'key-deep':{ color: BRAND['key-deep'], colorActive: BRAND.key, colorDone: BRAND.green, titleColor: BRAND['key-deep'], badgeBg: '#142623' },
     calm:     { color: BRAND.calm, colorActive: BRAND.quiet, colorDone: BRAND.blue, titleColor: BRAND.calm, badgeBg: '#1E2321' },
     quiet:    { color: BRAND.quiet, colorActive: BRAND.indigo, colorDone: BRAND.green, titleColor: BRAND.quiet, badgeBg: '#1F2225' },
     playful:  { color: BRAND.playful, colorActive: BRAND.pink, colorDone: BRAND.green, titleColor: BRAND.playful, badgeBg: '#29201B' },
-    urgent:   { color: BRAND.urgent, colorActive: BRAND.orange, colorDone: BRAND.green, titleColor: BRAND.urgent, badgeBg: '#291116' },
+    urgent:   { color: BRAND.urgent, colorActive: BRAND.playful, colorDone: BRAND.green, titleColor: BRAND.urgent, badgeBg: '#291116' },
     energetic: { color: BRAND.energetic, colorActive: BRAND.yellow, colorDone: BRAND.green, titleColor: BRAND.energetic, badgeBg: '#1C2608' },
     dreamy:   { color: BRAND.dreamy, colorActive: BRAND.violet, colorDone: BRAND.green, titleColor: BRAND.dreamy, badgeBg: '#22161F' },
   };
@@ -1212,7 +1208,7 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
 
     Object.entries(DATA_MAP).forEach(([key, cssVar]) => {
       let val = el.dataset[key] !== undefined ? el.dataset[key] : cfg[key];
-      // ★ 解析 BRAND 色名別名（e.g. 'orange' → '#FFA987'，'blue' → '#5DBAE8'）
+      // ★ 解析 BRAND 色名別名（e.g. 'playful' → '#FFA987'，'blue' → '#5DBAE8'）
       //   data-color-active / data-color-done 等直接填色名時，原本會以字串形式寫入
       //   CSS 變數，導致：
       //     • 碰巧是 CSS 原生色名（如 tomato）→ 顯示錯誤顏色
@@ -1433,7 +1429,7 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

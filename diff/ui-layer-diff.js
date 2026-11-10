@@ -13,7 +13,7 @@
  *   - 說明欄外觀屬性：note-font-size、note-color、note-bg、note-border、note-padding、
  *     note-gap、note-align、note-title、note-title-size、note-title-color。
  *   - 修正：theme 值前後的空白會自動去除；無效的主題名稱會在主控台提示，再退回 dark。
- *   - 修正：theme 寫 key、key-deep、calm、quiet、playful、urgent、shell 時未套用，退回 dark。
+ *   - 修正：theme 寫 key、calm、quiet、playful、urgent、shell 時未套用，退回 dark。
  */
 (function () {
   'use strict';
@@ -24,7 +24,6 @@
     bg: '#0C0D0C', shell: '#C6C7BD',
     vanilla: '#DBEDD8', yellow: '#E3D322',
     indigo: '#778CE1', pink: '#FF91D7',
-    orange: '#FFA987',
     /* 新色票 */
     red: '#EF6661',
     green: '#71CD76',
@@ -33,7 +32,6 @@
     gray: '#86877F',
     /* 新增色 */
     key: '#51DBCF',
-    'key-deep': '#51DBCF',
     calm: '#A3C4BC',
     quiet: '#8EA4DE',
     playful: '#FFA987',
@@ -569,7 +567,7 @@
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', orange:'#FFA987', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', 'key-deep':'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
