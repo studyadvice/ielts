@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>practice-tracker 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="bp-styles.css">
+<style>
+/* 只放 bp-styles.css 沒有的版面設定；間距一律 px */
+body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
+.page{padding:32px 300px 120px 40px;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px 0;}
+.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-key-deep);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
+.toc a:hover{border-color:var(--bp-key);color:var(--bp-key);}
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:20px;border-radius:10px;padding:12px 18px;margin:0 0 32px 0;position:sticky;top:8px;z-index:50;background:#141514;}
+.status b{color:var(--bp-yellow);}
+.status .btns{margin-left:auto;display:flex;gap:8px;}
+.demo{border-radius:12px;padding:24px;margin:0 0 32px 0;scroll-margin-top:80px;}
+.demo h2{margin:0 0 6px 0;}
+.demo .desc{margin:0 0 16px 0;line-height:1.7;}
+.demo .desc code,.lead code,.ref code{color:var(--bp-playful);}
+.stage{border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0;}
+.code-box{border-radius:8px;padding:16px;margin:0;max-height:760px;overflow:auto;}
+.code-box code{font-size:.8rem;white-space:pre;font-family:ui-monospace,monospace;}
+/* 被追蹤的練習段落 */
+.stage section{border:1px solid var(--bp-fill);border-radius:8px;padding:12px 16px;scroll-margin-top:80px;}
+.stage section h3{font-size:1rem;margin:0 0 4px 0;color:var(--bp-key);}
+.stage section p{margin:0 0 8px 0;font-size:.92rem;line-height:1.6;}
+/* 形狀圖例 */
+.shape-row{display:grid;grid-template-columns:90px 180px minmax(0,1fr);align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--bp-fill);}
+.shape-row code{color:var(--bp-yellow);}
+.shape-cells{display:flex;gap:8px;align-items:center;--pt-cell:22px;--pt-radius:4px;--pt-pending:#2a2b2a;--pt-done:#71CD76;--pt-anim:0s;}
+.shape-cells.lg{--pt-cell:26px;}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;}
+.ref{width:100%;border-collapse:collapse;font-size:.9rem;margin:0 0 20px 0;}
+.ref th,.ref td{border-bottom:1px solid var(--bp-fill);padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:var(--bp-key);}
+.alert-zone{position:fixed;top:16px;right:16px;z-index:2000;width:400px;}
+.alert-zone .alert{background:#161716;color:var(--bp-vanilla);border:1px solid var(--bp-key);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="alert-zone" id="alert-zone"></div>
+<div class="page">
+  <h1 class="fs-larger bp-text-key">practice-tracker 範例</h1>
+  <p class="lead fs-regular bp-text-calm" style="margin:0 0 16px 0">學習進度面板：頁面上 id 以指定前綴（預設 <code>ex-</code>）開頭的 <code>&lt;section&gt;</code> 會變成右下角面板的一格，完成一段就點亮一格。<b>一頁只能有一個 <code>&lt;practice-tracker&gt;</code></b>，所以本頁用同一個面板示範全部功能：點格子跳轉、格子形狀、內建標記完成按鈕、從外部標記完成，以及定時 Modal。片語收藏需搭配 phrase-chip.js，見 <a class="bp-text-blue" href="practice-tracker-manual-10-24-26.html">使用手冊</a>。建立日期 11-10-26，合併並改寫自 <code>practice-tracker-demo-10-19-26.html</code>、<code>practice-tracker-demo-10-22-26.html</code>、<code>practice-tracker-demo-10-24-26.html</code>。</p>
+
+  <nav class="toc">
+    <a href="#ex-setup">一、面板設定與 click-go</a>
+    <a href="#ex-shape">二、格子形狀</a>
+    <a href="#ex-btn">三、內建標記完成按鈕</a>
+    <a href="#ex-api">四、從外部標記完成</a>
+    <a href="#ex-promo">五、定時 Modal</a>
+    <a href="#ref">屬性與 API</a>
+  </nav>
+
+  <div class="status bp-border-key-deep">
+    <span>已完成：<b id="st-done">0</b> / <b id="st-total">0</b></span>
+    <span>Modal 條件：已瀏覽 <b id="st-sec">0</b> / <b id="st-need-sec">0</b> 段，已過 <b id="st-time">0</b> / <b id="st-need-time">0</b> 秒</span>
+    <span>Modal：<b id="st-state">等待中</b></span>
+    <span class="btns">
+      <button type="button" class="btn btn-sm btn-yellow-outline" id="btn-promo"><i class="bi bi-megaphone"></i> 立即顯示 Modal</button>
+      <button type="button" class="btn btn-sm btn-gray-outline" id="btn-reload"><i class="bi bi-arrow-clockwise"></i> 重新整理</button>
+    </span>
+  </div>
+
+  <div class="demo bp-border-gray" id="ex-setup">
+    <h2 class="fs-large bp-text-yellow">範例一：面板設定與 click-go</h2>
+    <p class="desc bp-text-shell">右下角的面板就是這段程式碼產生的。<code>data-click-go</code> 讓格子可以點，點了會平滑捲動到對應的段落；滑過格子會看到段落 id。這個設定只在載入時讀取一次。點面板標題列可以收合，收合後標題右側會顯示「已完成／總數」，全部完成時換成完成色。</p>
+    <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">&lt;practice-tracker
+  data-title="練習進度"
+  data-click-go="true"
+  data-cells-per-row="5"
+  data-cell-size="20px"
+  data-cell-gap="7px"
+  data-panel-width="230px"
+  data-complete-text="全部完成！"
+  data-complete-sub="繼續保持。"
+  data-promo-target="promo-1"
+  data-promo-minutes="0.5"
+  data-promo-min-sections="3"
+  data-promo-title="特別公告"
+  data-promo-button-label="我知道了"
+&gt;&lt;/practice-tracker&gt;
+
+&lt;!-- 被追蹤的段落：id 以 ex- 開頭的 section --&gt;
+&lt;section id="ex-01"&gt;…&lt;/section&gt;</code></pre>
+  </div>
+
+  <div class="demo bp-border-gray" id="ex-shape">
+    <h2 class="fs-large bp-text-yellow">範例二：格子形狀</h2>
+    <p class="desc bp-text-shell"><code>data-cell-shape</code> 設定格子形狀，共六種。載入後也能用 <code>PracticeTracker.changeShape()</code> 即時切換，不必重新初始化。按下方按鈕，右下角面板的格子會跟著換。</p>
+    <div class="row g-4">
+      <div class="col-6">
+        <div class="stage bp-border-key-deep" style="gap:0">
+          <div class="shape-row"><code>square</code><div class="shape-cells"><pt-cell></pt-cell><pt-cell></pt-cell><pt-cell class="is-done"></pt-cell><pt-cell class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">預設，沿用圓角設定</span></div>
+          <div class="shape-row"><code>circle</code><div class="shape-cells"><pt-cell data-shape="circle"></pt-cell><pt-cell data-shape="circle"></pt-cell><pt-cell data-shape="circle" class="is-done"></pt-cell><pt-cell data-shape="circle" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">圓形</span></div>
+          <div class="shape-row"><code>star</code><div class="shape-cells lg"><pt-cell data-shape="star"></pt-cell><pt-cell data-shape="star"></pt-cell><pt-cell data-shape="star" class="is-done"></pt-cell><pt-cell data-shape="star" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">五角星</span></div>
+          <div class="shape-row"><code>diamond</code><div class="shape-cells"><pt-cell data-shape="diamond"></pt-cell><pt-cell data-shape="diamond"></pt-cell><pt-cell data-shape="diamond" class="is-done"></pt-cell><pt-cell data-shape="diamond" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">菱形</span></div>
+          <div class="shape-row"><code>hexagon</code><div class="shape-cells"><pt-cell data-shape="hexagon"></pt-cell><pt-cell data-shape="hexagon"></pt-cell><pt-cell data-shape="hexagon" class="is-done"></pt-cell><pt-cell data-shape="hexagon" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">六邊形</span></div>
+          <div class="shape-row"><code>heart</code><div class="shape-cells lg"><pt-cell data-shape="heart"></pt-cell><pt-cell data-shape="heart"></pt-cell><pt-cell data-shape="heart" class="is-done"></pt-cell><pt-cell data-shape="heart" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">愛心</span></div>
+          <div class="ctrl" style="margin:16px 0 0 0" id="shape-btns">
+            <button type="button" class="btn btn-sm btn-key" data-shape="square">square</button>
+            <button type="button" class="btn btn-sm btn-key-outline" data-shape="circle">circle</button>
+            <button type="button" class="btn btn-sm btn-key-outline" data-shape="star">star</button>
+            <button type="button" class="btn btn-sm btn-key-outline" data-shape="diamond">diamond</button>
+            <button type="button" class="btn btn-sm btn-key-outline" data-shape="hexagon">hexagon</button>
+            <button type="button" class="btn btn-sm btn-key-outline" data-shape="heart">heart</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">&lt;!-- 載入時決定 --&gt;
+&lt;practice-tracker data-cell-shape="star"&gt;&lt;/practice-tracker&gt;
+
+&lt;!-- 載入後即時切換；無效的值會退回 square --&gt;
+PracticeTracker.changeShape('heart');</code></pre></div>
+    </div>
+  </div>
+
+  <div class="demo bp-border-gray" id="ex-btn" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例三：內建標記完成按鈕</h2>
+    <p class="desc bp-text-shell">段落上寫任何 <code>data-btn*</code> 屬性，結尾就會自動長出一顆「標記完成」按鈕，不必自己寫函式。<code>data-btn-style</code> 有七種：<code>solid</code>、<code>outline</code>（預設）、<code>pill</code>、<code>ghost</code>、<code>block</code>、<code>split</code>、<code>check</code>；另外可調文字、完成後文字、顏色、大小、寬度與對齊。想自己決定按鈕位置，就在段落裡放 <code>&lt;pt-done-btn&gt;</code>。按下後發出 <code>pt:section-done</code> 事件，右上角的提示就是由它產生。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<section id="ex-01" data-btn-style="solid">
+  <h3>01 Read the cue card</h3>
+  <p>solid：實心按鈕。</p>
+</section>
+<section id="ex-02" data-btn-style="outline" data-btn-color="green">
+  <h3>02 Take notes</h3>
+  <p>outline：外框按鈕，顏色改成 green。</p>
+</section>
+<section id="ex-03" data-btn-style="pill" data-btn-text="我讀完了" data-btn-color="green" data-btn-size="lg">
+  <h3>03 Start with a hook</h3>
+  <p>pill：膠囊形，自訂文字，大尺寸。</p>
+</section>
+<section id="ex-04" data-btn-style="ghost" data-btn-color="blue" data-btn-align="end">
+  <h3>04 Add details</h3>
+  <p>ghost：無框，靠右對齊。</p>
+</section>
+<section id="ex-05" data-btn-style="block" data-btn-text="完成這一段" data-btn-color="violet">
+  <h3>05 Use chunks</h3>
+  <p>block：滿版寬度。</p>
+</section>
+<section id="ex-06" data-btn-style="split" data-btn-color="yellow" data-btn-size="sm">
+  <h3>06 Wrap up</h3>
+  <p>split：左右分段，小尺寸。</p>
+</section>
+<section id="ex-07">
+  <h3>07 Self-check</h3>
+  <pt-done-btn data-btn-style="check" data-btn-text="標記完成" data-btn-color="pink"></pt-done-btn>
+  <p>check：圓形打勾，文字變成滑鼠提示。這顆按鈕用 pt-done-btn 放在段落中間。</p>
+</section>
+    </script>
+  </div>
+
+  <div class="demo bp-border-gray" id="ex-api" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例四：從外部標記完成</h2>
+    <p class="desc bp-text-shell">不用內建按鈕時，有兩種方式通知面板：呼叫 <code>PracticeTracker.markDone(id)</code>，或從 <code>document</code> 發出 <code>pt:stage-complete</code> 事件並在 <code>detail.sectionId</code> 帶上段落 id。重複標記沒有副作用。這兩段沒有 <code>data-btn*</code> 屬性，所以不會長出內建按鈕。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<section id="ex-08">
+  <h3>08 Record yourself</h3>
+  <p>用 markDone() 標記。</p>
+  <button type="button" class="btn btn-sm btn-key-outline"
+          onclick="PracticeTracker.markDone('ex-08'); this.disabled = true;">markDone('ex-08')</button>
+</section>
+<section id="ex-09">
+  <h3>09 Listen back</h3>
+  <p>發出 pt:stage-complete 事件。</p>
+  <button type="button" class="btn btn-sm btn-key-outline"
+          onclick="document.dispatchEvent(new CustomEvent('pt:stage-complete', { detail: { sectionId: 'ex-09' } })); this.disabled = true;">發出 pt:stage-complete</button>
+</section>
+    </script>
+  </div>
+
+  <div class="demo bp-border-gray" id="ex-promo">
+    <h2 class="fs-large bp-text-yellow">範例五：定時 Modal</h2>
+    <p class="desc bp-text-shell"><code>data-promo-target</code> 指定一個隱藏的區塊，條件達成時把它的內容放進 Modal 彈出一次。本頁的條件是載入滿 0.5 分鐘，且至少有效瀏覽 3 個段落；進度顯示在頁面上方的狀態列。有效瀏覽是指段落可見達到門檻（預設 40%）並連續停留 2 秒，快速捲過不算。條件達成後會等捲動停止約 1.5 秒才彈出；若有其他 Modal 或 offcanvas 開著，則等它關閉。同一次載入只彈一次，不使用 localStorage；把 <code>data-promo-min-sections</code> 設為 0 就只看時間。顯示與關閉時分別發出 <code>pt:promo-shown</code> 與 <code>pt:promo-closed</code>。需要 Bootstrap 的 JS。</p>
+    <div class="row g-4">
+      <div class="col-6">
+        <div class="stage bp-border-key-deep">
+          <p class="fs-small bp-text-gray" style="margin:0">Modal 的內容來源，平常保持隱藏：</p>
+          <div id="promo-1" style="display:none">
+            <h4>本週加開口說模考</h4>
+            <p>你已經練習了一段時間。這個區塊的內容完全由頁面上的 <code>#promo-1</code> 決定，可以放公告、課程資訊或任何重要訊息。</p>
+            <ul>
+              <li>支援標題、段落、清單與圖片</li>
+              <li>連結會以金色呈現，例如 <a href="#ex-promo">了解更多</a></li>
+            </ul>
+          </div>
+          <div class="ctrl"><button type="button" class="btn btn-sm btn-yellow-outline" onclick="PracticeTracker.showPromo()"><i class="bi bi-megaphone"></i> PracticeTracker.showPromo()</button></div>
+        </div>
+      </div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">&lt;div id="promo-1" style="display:none"&gt;
+  &lt;h4&gt;本週加開口說模考&lt;/h4&gt;
+  &lt;p&gt;…&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;practice-tracker
+  data-promo-target="promo-1"
+  data-promo-minutes="0.5"
+  data-promo-min-sections="3"
+  data-promo-title="特別公告"
+  data-promo-button-label="我知道了"&gt;&lt;/practice-tracker&gt;
+
+// 不等條件，立即顯示
+PracticeTracker.showPromo();
+// 目前進度
+PracticeTracker.promoState;
+// { viewedSections, needSections, elapsedSeconds, needSeconds, shown, … }</code></pre></div>
+    </div>
+  </div>
+
+  <div class="demo bp-border-gray" id="ref">
+    <h2 class="fs-large bp-text-yellow">屬性與 API</h2>
+    <p class="desc bp-text-shell" style="margin:0 0 12px 0">常用項目。全部屬性、片語收藏與 phrase-chip 的說明見 <a class="bp-text-blue" href="practice-tracker-manual-10-24-26.html">使用手冊</a>。</p>
+    <table class="ref">
+      <thead><tr><th style="width:320px">practice-tracker 屬性</th><th style="width:150px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-prefix</code></td><td>ex-</td><td>要追蹤的 section id 前綴。</td></tr>
+        <tr><td><code>data-title</code>、<code>data-label-done</code></td><td>進度、完成</td><td>面板標題與計數文字。</td></tr>
+        <tr><td><code>data-complete-text</code>、<code>data-complete-sub</code></td><td>全部完成</td><td>全部完成時的訊息與副標。</td></tr>
+        <tr><td><code>data-click-go</code></td><td>false</td><td>格子可點，點了捲動到對應段落。</td></tr>
+        <tr><td><code>data-collapsed</code></td><td>false</td><td>載入時就收合。</td></tr>
+        <tr><td><code>data-position</code>、<code>data-offset-x</code>、<code>data-offset-y</code></td><td>bottom-right、24px</td><td>面板位置與距離邊緣。</td></tr>
+        <tr><td><code>data-panel-width</code></td><td>220px</td><td>面板寬度。</td></tr>
+        <tr><td><code>data-cell-shape</code></td><td>square</td><td>格子形狀，六種。</td></tr>
+        <tr><td><code>data-cell-size</code>、<code>data-cell-gap</code>、<code>data-cell-radius</code>、<code>data-cells-per-row</code></td><td>16px、6px、4px、5</td><td>格子大小、間距、圓角、每列格數。</td></tr>
+        <tr><td><code>data-color-done</code>、<code>data-color-pending</code>、<code>data-color-complete</code></td><td>green 等</td><td>完成、未完成、全部完成的顏色，可寫色名。</td></tr>
+        <tr><td><code>data-font-size-*</code></td><td>約 0.8rem</td><td>panel、title、count、complete、complete-sub 的字級。</td></tr>
+        <tr><td><code>data-event-name</code></td><td>pt:stage-complete</td><td>從外部通知完成時監聽的事件名稱。</td></tr>
+        <tr><td><code>data-watch-stepper</code></td><td>true</td><td>段落裡的 bp-stepper 全部完成時，自動標記該段完成。</td></tr>
+        <tr><td><code>data-btn</code></td><td>true</td><td><code>false</code> 關閉整個內建按鈕功能。寫在面板上的其他 <code>data-btn-*</code> 只是預設值，不會讓段落長出按鈕。</td></tr>
+        <tr><td><code>data-promo-target</code>、<code>data-promo-minutes</code>、<code>data-promo-min-sections</code></td><td>無、5、4</td><td>定時 Modal 的內容來源、時間與瀏覽段落數。</td></tr>
+        <tr><td><code>data-promo-title</code>、<code>data-promo-button-label</code></td><td>無、我知道了</td><td>Modal 標題與按鈕文字。</td></tr>
+        <tr><td><code>data-promo-view-ratio</code>、<code>data-promo-view-seconds</code>、<code>data-promo-idle-seconds</code></td><td>0.4、2、1.5</td><td>有效瀏覽門檻、停留秒數、捲動停止後等多久。</td></tr>
+      </tbody>
+    </table>
+    <table class="ref">
+      <thead><tr><th style="width:320px">段落與 pt-done-btn 屬性</th><th style="width:150px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-btn-style</code></td><td>outline</td><td>solid、outline、pill、ghost、block、split、check。</td></tr>
+        <tr><td><code>data-btn-text</code>、<code>data-btn-done-text</code></td><td>標記完成、✓ 已完成</td><td>按鈕文字與完成後文字。</td></tr>
+        <tr><td><code>data-btn-color</code></td><td>blue</td><td>色名或色碼。</td></tr>
+        <tr><td><code>data-btn-size</code>、<code>data-btn-font-size</code>、<code>data-btn-width</code>、<code>data-btn-padding</code>、<code>data-btn-radius</code></td><td>md</td><td>sm、md、lg；其餘可直接指定。</td></tr>
+        <tr><td><code>data-btn-align</code></td><td>start</td><td>start、center、end。</td></tr>
+        <tr><td><code>data-btn="false"</code></td><td></td><td>這個段落不插入按鈕。</td></tr>
+      </tbody>
+    </table>
+    <table class="ref">
+      <thead><tr><th style="width:320px">window.PracticeTracker</th><th colspan="2">說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>markDone(id)</code></td><td colspan="2">標記段落完成，重複呼叫沒有副作用。</td></tr>
+        <tr><td><code>changeShape(shape)</code></td><td colspan="2">即時切換格子形狀，無效值退回 square。</td></tr>
+        <tr><td><code>showPromo()</code>、<code>promoState</code></td><td colspan="2">立即顯示定時 Modal；查詢它的條件進度。</td></tr>
+        <tr><td><code>total</code>、<code>doneSet</code>、<code>cfg</code></td><td colspan="2">段落總數、已完成的 id 集合、解析後的設定（唯讀）。</td></tr>
+        <tr><td>事件 <code>pt:section-done</code></td><td colspan="2">內建按鈕按下時發出，<code>detail.sectionId</code> 是段落 id。</td></tr>
+        <tr><td>事件 <code>pt:promo-shown</code>、<code>pt:promo-closed</code></td><td colspan="2">定時 Modal 顯示與關閉時發出。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<practice-tracker
+  data-title="練習進度"
+  data-click-go="true"
+  data-cells-per-row="5"
+  data-cell-size="20px"
+  data-cell-gap="7px"
+  data-panel-width="230px"
+  data-complete-text="全部完成！"
+  data-complete-sub="繼續保持。"
+  data-promo-target="promo-1"
+  data-promo-minutes="0.5"
+  data-promo-min-sections="3"
+  data-promo-title="特別公告"
+  data-promo-button-label="我知道了"
+></practice-tracker>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼；須在 practice-tracker.js 之前執行，段落才會被追蹤 */
+(function () {
+  function dedent(s) {
+    var lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    var ind = Math.min.apply(null, lines.filter(function (l) { return l.trim(); })
+      .map(function (l) { return l.match(/^\s*/)[0].length; }));
+    return lines.map(function (l) { return l.slice(ind); }).join('\n');
+  }
+  document.querySelectorAll('[data-demo]').forEach(function (sec) {
+    var src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+
+/* 提示：Bootstrap alert，不用 alert() */
+function note(html) {
+  var zone = document.getElementById('alert-zone');
+  var box = document.createElement('div');
+  box.className = 'alert alert-dismissible fade show';
+  box.innerHTML = html + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+  zone.appendChild(box);
+  setTimeout(function () {
+    if (window.bootstrap && box.isConnected) bootstrap.Alert.getOrCreateInstance(box).close();
+    else box.remove();
+  }, 3000);
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="practice-tracker.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var pt = window.PracticeTracker;
+  if (!pt) return;
+
+  /* 狀態列 */
+  function refresh() {
+    var st = pt.promoState;
+    document.getElementById('st-done').textContent = pt.doneSet.size;
+    document.getElementById('st-total').textContent = pt.total;
+    document.getElementById('st-sec').textContent = st.viewedSections;
+    document.getElementById('st-need-sec').textContent = st.needSections;
+    document.getElementById('st-time').textContent = Math.min(st.elapsedSeconds, st.needSeconds);
+    document.getElementById('st-need-time').textContent = st.needSeconds;
+    document.getElementById('st-state').textContent = st.shown ? '已顯示' : '等待中';
+  }
+  refresh();
+  setInterval(refresh, 500);
+
+  /* 範例二：即時切換形狀 */
+  document.getElementById('shape-btns').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-shape]');
+    if (!b) return;
+    pt.changeShape(b.dataset.shape);
+    document.querySelectorAll('#shape-btns [data-shape]').forEach(function (x) {
+      x.classList.toggle('btn-key', x === b);
+      x.classList.toggle('btn-key-outline', x !== b);
+    });
+  });
+
+  document.getElementById('btn-promo').addEventListener('click', function () { pt.showPromo(); });
+  document.getElementById('btn-reload').addEventListener('click', function () { location.reload(); });
+
+  /* 事件 */
+  document.addEventListener('pt:section-done', function (e) {
+    note('<i class="bi bi-check2-circle bp-text-green"></i> pt:section-done：' + e.detail.sectionId);
+    refresh();
+  });
+  document.addEventListener('pt:stage-complete', function (e) {
+    note('<i class="bi bi-broadcast bp-text-blue"></i> 收到 pt:stage-complete：' + e.detail.sectionId);
+    setTimeout(refresh, 0);
+  });
+  document.addEventListener('pt:promo-shown', function (e) {
+    note('<i class="bi bi-megaphone bp-text-yellow"></i> pt:promo-shown：已瀏覽 ' + e.detail.viewedSections.length + ' 段，經過 ' + e.detail.elapsedSeconds + ' 秒');
+    refresh();
+  });
+  document.addEventListener('pt:promo-closed', function () {
+    note('<i class="bi bi-x-circle bp-text-gray"></i> pt:promo-closed');
+  });
+});
+</script>
+</body>
+</html>

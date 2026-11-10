@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>slider-show 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="bp-styles.css">
+<style>
+/* 只放 bp-styles.css 沒有的版面設定；間距一律 px */
+body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
+.page{padding:32px 40px 80px 40px;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
+.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-key-deep);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
+.toc a:hover{border-color:var(--bp-key);color:var(--bp-key);}
+.demo{border-radius:12px;padding:24px;margin:0 0 32px 0;scroll-margin-top:16px;}
+.demo-head{display:flex;align-items:center;gap:12px;margin:0 0 6px 0;}
+.demo-head h2{margin:0;}
+.demo-head .replay{margin-left:auto;}
+.demo .desc{margin:0 0 16px 0;line-height:1.7;}
+.demo .desc code,.lead code,.ref code{color:var(--bp-playful);}
+.stage{border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.stage-label{font-family:ui-monospace,monospace;font-size:.8rem;color:var(--bp-quiet);margin:0 0 6px 0;}
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;}
+.code-box{border-radius:8px;padding:16px;margin:0;max-height:720px;overflow:auto;}
+.code-box code{font-size:.8rem;white-space:pre;font-family:ui-monospace,monospace;}
+.log{font-family:ui-monospace,monospace;font-size:.85rem;padding:8px 12px;border-radius:6px;}
+kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-gray);font-size:.85rem;}
+.ref{width:100%;border-collapse:collapse;font-size:.9rem;}
+.ref th,.ref td{border-bottom:1px solid var(--bp-fill);padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:var(--bp-key);}
+.alert-zone{position:fixed;top:16px;right:16px;z-index:2000;width:400px;}
+.alert-zone .alert{background:#161716;color:var(--bp-vanilla);border:1px solid var(--bp-key);font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="alert-zone" id="alert-zone"></div>
+<div class="page">
+  <h1 class="fs-larger bp-text-key">slider-show 範例</h1>
+  <p class="lead fs-regular bp-text-calm" style="margin:0 0 16px 0">投影片元件：分部、四種進度樣式、起始與結束畫面、填空題、補充說明、防劇透與鍵盤換頁。每個範例左邊是實際效果，右邊是對應的程式碼，右上角可以重新播放。完整屬性與已知問題見 <a class="bp-text-blue" href="slider-show-manual-10-24-26.html">slider-show 使用手冊</a>。建立日期 11-10-26，合併並改寫自 <code>slider-show-demo-10-22-26.html</code>、<code>slider-show-demo-10-24-26.html</code>、<code>slider-show-demo-11-01-26.html</code>。</p>
+
+  <nav class="toc">
+    <a href="#ex-basic">一、基本投影片</a>
+    <a href="#ex-progress">二、進度樣式</a>
+    <a href="#ex-parts">三、分部與事件</a>
+    <a href="#ex-transition">四、分部轉場</a>
+    <a href="#ex-frame">五、起始與結束畫面</a>
+    <a href="#ex-quiz">六、填空題</a>
+    <a href="#ex-note">七、補充說明與防劇透</a>
+    <a href="#ex-custom">八、按鈕與顏色</a>
+    <a href="#ex-keyboard">九、鍵盤換頁</a>
+    <a href="#ref">屬性速查</a>
+  </nav>
+
+  <section class="demo bp-border-gray" id="ex-basic" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例一：基本投影片</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell">每張投影片是一個 <code>&lt;div slide&gt;</code>，裡面用三個版型 class：<code>slide-subtitle</code>、<code>slide-main</code>、<code>slide-footer</code>。左右箭頭與進度點都能操作。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<slider-show theme="blue" height="260px">
+  <div slide>
+    <div class="slide-content">
+      <div class="slide-subtitle">Part 1 · Hometown</div>
+      <div class="slide-main"><p>Where is your hometown?</p></div>
+      <div class="slide-footer">slide-subtitle、slide-main、slide-footer</div>
+    </div>
+  </div>
+  <div slide>
+    <div class="slide-content"><div class="slide-main"><p>What do you like about it?</p></div></div>
+  </div>
+  <div slide>
+    <div class="slide-content"><div class="slide-main"><p>Would you like to live there in the future?</p></div></div>
+  </div>
+</slider-show>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-progress" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例二：進度樣式</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell"><code>progress-style</code> 有 <code>dots</code>（預設）、<code>stepper</code>、<code>numbers</code>、<code>triangle</code>、<code>none</code>。triangle 的缺角要用 <code>bg-color</code> 填成和頁面背景相同的顏色。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="grid-2">
+  <div><p class="stage-label">dots</p>
+  <slider-show theme="blue" progress-style="dots" height="110px">
+    <div slide><div class="slide-content"><div class="slide-main"><p>dots 1</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>dots 2</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>dots 3</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">stepper</p>
+  <slider-show theme="green" progress-style="stepper" height="110px">
+    <div slide><div class="slide-content"><div class="slide-main"><p>stepper 1</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>stepper 2</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>stepper 3</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">numbers</p>
+  <slider-show theme="orange" progress-style="numbers" height="110px">
+    <div slide><div class="slide-content"><div class="slide-main"><p>numbers 1</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>numbers 2</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>numbers 3</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">triangle，bg-color 同頁面背景</p>
+  <slider-show theme="pink" progress-style="triangle" bg-color="background" height="110px">
+    <div slide><div class="slide-content"><div class="slide-main"><p>triangle 1</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>triangle 2</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>triangle 3</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">none</p>
+  <slider-show theme="gray" progress-style="none" height="110px">
+    <div slide><div class="slide-content"><div class="slide-main"><p>none 1</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>none 2</p></div></div></div>
+  </slider-show></div>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-parts" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例三：分部、分部按鈕與事件</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell">用 <code>part="1"</code>、<code>part="2"</code> 把投影片分組。<code>auto-show-part-buttons</code> 在每部分最後一張顯示「下一部分」按鈕，<code>progress-scope="all"</code> 讓進度列顯示全部投影片，<code>part-transition="fade"</code> 淡入淡出。<code>part-changed</code>、<code>finished</code>、<code>restarted</code> 三個事件會冒泡，右上角的提示就是由這些事件產生。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<slider-show class="evt-demo" theme="violet" height="220px" auto-show-part-buttons="true"
+             part-transition="fade" progress-style="stepper" progress-scope="all"
+             next-part-btn-text="進入下一部分" finish-btn-text="全部完成">
+  <div slide part="1"><div class="slide-content"><div class="slide-subtitle">Part 1</div><div class="slide-main"><p>Warm-up 1</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-subtitle">Part 1</div><div class="slide-main"><p>Warm-up 2</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-subtitle">Part 2</div><div class="slide-main"><p>Cue card</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-subtitle">Part 2</div><div class="slide-main"><p>Follow-up，最後一張</p></div></div></div>
+</slider-show>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-transition" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例四：分部轉場方向</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell"><code>part-transition="slide"</code> 時，「下一部分」畫面向左滑出，「上一部分」向右滑出，方向和直覺一致。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<slider-show theme="key" height="170px" part-transition="slide" auto-show-part-buttons="true">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>Part 1</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>Part 2</p></div></div></div>
+  <div slide part="3"><div class="slide-content"><div class="slide-main"><p>Part 3</p></div></div></div>
+</slider-show>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-frame" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例五：起始與結束畫面</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell">用 <code>role="start"</code>、<code>role="end"</code> 標記封面與結尾，再用 <code>start-style</code>、<code>end-style</code> 挑風格：<code>accent-frame</code>（預設）、<code>gradient-border</code>、<code>gradient-bg</code>、<code>top-bottom-bar</code>、<code>corner-tag</code>。<code>start-colors</code>、<code>end-colors</code> 寫兩個色名。沒有標 role 的投影片不受影響。下面每一組都是封面，往右翻可以看到結尾。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="grid-2">
+  <div><p class="stage-label">accent-frame（預設）</p>
+  <slider-show theme="blue" height="150px">
+    <div slide role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>內容</p></div></div></div>
+    <div slide role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">gradient-border</p>
+  <slider-show theme="blue" height="150px" start-style="gradient-border" end-style="gradient-border">
+    <div slide role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>內容</p></div></div></div>
+    <div slide role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">gradient-bg</p>
+  <slider-show theme="blue" height="150px" start-style="gradient-bg" end-style="gradient-bg">
+    <div slide role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>內容</p></div></div></div>
+    <div slide role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">top-bottom-bar</p>
+  <slider-show theme="blue" height="150px" start-style="top-bottom-bar" end-style="top-bottom-bar">
+    <div slide role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>內容</p></div></div></div>
+    <div slide role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">corner-tag</p>
+  <slider-show theme="blue" height="150px" start-style="corner-tag" end-style="corner-tag">
+    <div slide role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>內容</p></div></div></div>
+    <div slide role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+  </slider-show></div>
+  <div><p class="stage-label">自訂顏色 indigo,pink／blue,green</p>
+  <slider-show theme="blue" height="150px" start-style="gradient-border" end-style="gradient-border"
+               start-colors="indigo,pink" end-colors="blue,green">
+    <div slide role="start"><div class="slide-content"><div class="slide-main"><p>封面</p></div></div></div>
+    <div slide><div class="slide-content"><div class="slide-main"><p>內容</p></div></div></div>
+    <div slide role="end"><div class="slide-content"><div class="slide-main"><p>結尾</p></div></div></div>
+  </slider-show></div>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-quiz" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例六：填空題與批改</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell"><code>&lt;quiz&gt;</code> 裡用 <code>{{答案}}</code> 標出空格。預設要填完才能翻到下一張（<code>quiz-require-complete</code>），下一張最上方會顯示上一張的批改結果。最後按「重新開始」，作答會一併清空。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<slider-show theme="green" height="300px" auto-show-part-buttons="true">
+  <div slide>
+    <div class="slide-content"><div class="slide-main">
+      <p><quiz>The cafe is {{a stone's throw}} from my place, {{which}} makes it my go-to spot.</quiz></p>
+    </div></div>
+  </div>
+  <div slide>
+    <div class="slide-content"><div class="slide-main"><p>看看上方的批改結果</p></div></div>
+  </div>
+</slider-show>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-note" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例七：補充說明與防劇透</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell"><code>&lt;extra-note target="顯示位置" source="內容來源"&gt;</code> 是可點的底線文字，點了把來源內容放進指定的框；<code>extra-note-prefix</code>、<code>extra-note-hover-color</code> 調整前綴與滑過的顏色。寫了 <code>spoiler="提示文字"</code> 的區塊要點一下才會揭曉。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<slider-show theme="yellow" height="250px" extra-note-prefix="▸ " extra-note-hover-color="pink">
+  <div slide>
+    <div class="slide-content"><div class="slide-main">
+      <p>It's handy, <extra-note target="note-box" source="note-src">which</extra-note> is why I go there a lot.</p>
+      <div spoiler="點我看升級說法" style="padding:8px 16px">a stone's throw from my place</div>
+    </div></div>
+  </div>
+</slider-show>
+<div id="note-box" class="log bp-bg-fill bp-text-shell"></div>
+<div id="note-src" hidden><b>which</b> 代替前面整句，帶出結果。</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-custom" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例八：按鈕與顏色</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell"><code>loop</code> 在部分內循環，<code>show-part-indicator="false"</code> 隱藏部分指示，<code>next-part-btn-position="flex-end"</code> 把按鈕靠右。按鈕文字、顏色、字級、內距、圓角，以及箭頭和進度點的顏色都能改，顏色可寫色名或色碼。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<slider-show theme="orange" height="200px" loop="true" show-part-indicator="false"
+             auto-show-part-buttons="true" next-part-btn-position="flex-end"
+             next-part-btn-text="下一組" finish-btn-bg="green" finish-btn-color="background"
+             arrow-bg="fill" dot-color="gray" active-dot-color="yellow"
+             part-btn-font-size="1.125rem" part-btn-padding="8px 20px" part-btn-border-radius="20px">
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>循環第 1 頁</p></div></div></div>
+  <div slide part="1"><div class="slide-content"><div class="slide-main"><p>循環第 2 頁</p></div></div></div>
+  <div slide part="2"><div class="slide-content"><div class="slide-main"><p>第二組</p></div></div></div>
+</slider-show>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ex-keyboard" data-demo>
+    <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例九：鍵盤換頁 keyboard-nav</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
+    <p class="desc bp-text-shell">寫了 <code>keyboard-nav</code> 的元件可以按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>→</kbd> 換下一頁、<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>←</kbd> 回上一頁；部分的最後一張會自動進入下一部分，第一張會退回上一部分的最後一張。頁面上有多個元件時，最後點過的那一個回應按鍵。游標在輸入框或填空格內時不攔截；按住不放也不會連續翻頁。左邊開啟，右邊沒開（預設）。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="grid-2">
+  <div><p class="stage-label">keyboard-nav</p>
+  <slider-show class="evt-demo" keyboard-nav theme="blue" height="240px" progress-style="stepper">
+    <div slide part="1"><div class="slide-content">
+      <div class="slide-subtitle">Part 1 · 1</div>
+      <div class="slide-main">先點一下這裡，再按 Ctrl + Shift + →</div>
+    </div></div>
+    <div slide part="1"><div class="slide-content">
+      <div class="slide-subtitle">Part 1 · 2</div>
+      <div class="slide-main">再按一次會進入 Part 2</div>
+    </div></div>
+    <div slide part="2"><div class="slide-content">
+      <div class="slide-subtitle">Part 2 · 填空</div>
+      <div class="slide-main"><div>The cafes are <quiz>{{conveniently located}}</quiz> near my office.</div></div>
+      <div class="slide-footer">沒填完不會換頁</div>
+    </div></div>
+    <div slide part="2"><div class="slide-content">
+      <div class="slide-subtitle">Part 2 · 結果</div>
+      <div class="slide-main">按 Ctrl + Shift + ← 可一路退回 Part 1</div>
+    </div></div>
+  </slider-show></div>
+  <div><p class="stage-label">沒有 keyboard-nav</p>
+  <slider-show theme="violet" height="240px">
+    <div slide><div class="slide-content">
+      <div class="slide-subtitle">預設關閉</div>
+      <div class="slide-main">點這裡之後按快捷鍵，不會換頁</div>
+    </div></div>
+    <div slide><div class="slide-content">
+      <div class="slide-subtitle">第 2 張</div>
+      <div class="slide-main">只能用箭頭或進度點到這裡</div>
+    </div></div>
+  </slider-show></div>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" id="ref">
+    <h2 class="fs-large bp-text-yellow">屬性速查</h2>
+    <p class="desc bp-text-shell" style="margin:0 0 12px 0">本頁用到的屬性。全部屬性、預設值與已知問題見 <a class="bp-text-blue" href="slider-show-manual-10-24-26.html">使用手冊</a>。</p>
+    <table class="ref">
+      <thead><tr><th style="width:300px">屬性</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>theme</code>、<code>height</code></td><td>主題色名與高度。</td></tr>
+        <tr><td><code>progress-style</code>、<code>progress-scope</code></td><td>進度樣式：<code>dots</code>、<code>stepper</code>、<code>numbers</code>、<code>triangle</code>、<code>none</code>。範圍：<code>part</code>（預設，只算目前部分）或 <code>all</code>。</td></tr>
+        <tr><td><code>bg-color</code>、<code>fill-color</code></td><td>背景色與填色；triangle 樣式需要 bg-color 和頁面背景相同。</td></tr>
+        <tr><td><code>part</code>（投影片上）</td><td>投影片所屬部分，從 1 起算。</td></tr>
+        <tr><td><code>auto-show-part-buttons</code>、<code>part-transition</code></td><td>每部分最後一張顯示分部按鈕；轉場 <code>slide</code> 或 <code>fade</code>。</td></tr>
+        <tr><td><code>next-part-btn-text</code>、<code>prev-part-btn-text</code>、<code>finish-btn-text</code>、<code>restart-btn-text</code></td><td>各按鈕文字。</td></tr>
+        <tr><td><code>next-part-btn-position</code>、<code>show-part-indicator</code></td><td>按鈕位置（flex 的 justify 值）；顯示或隱藏部分指示。</td></tr>
+        <tr><td><code>part-btn-*</code>、<code>finish-btn-*</code>、<code>restart-btn-*</code></td><td>按鈕的顏色、背景、字級、內距與圓角。</td></tr>
+        <tr><td><code>arrow-color</code>、<code>arrow-bg</code>、<code>dot-color</code>、<code>active-dot-color</code></td><td>箭頭與進度點顏色。</td></tr>
+        <tr><td><code>loop</code>、<code>show-arrows</code>、<code>show-dots</code></td><td>部分內循環；顯示箭頭與進度點。</td></tr>
+        <tr><td><code>role="start"</code>、<code>role="end"</code>（投影片上）</td><td>標記封面與結尾。</td></tr>
+        <tr><td><code>start-style</code>、<code>end-style</code>、<code>start-colors</code>、<code>end-colors</code></td><td>封面與結尾的框架風格，顏色寫兩個色名。</td></tr>
+        <tr><td><code>&lt;quiz&gt;</code>、<code>quiz-require-complete</code></td><td>填空題；預設填完才能翻頁，設 <code>false</code> 可略過。</td></tr>
+        <tr><td><code>&lt;extra-note&gt;</code>、<code>extra-note-prefix</code>、<code>extra-note-postfix</code>、<code>extra-note-hover-color</code></td><td>補充說明連結與樣式。</td></tr>
+        <tr><td><code>spoiler</code>（區塊上）、<code>spoiler-text</code>、<code>spoiler-color</code></td><td>防劇透遮罩與提示文字。</td></tr>
+        <tr><td><code>keyboard-nav</code></td><td>開啟 Ctrl + Shift + 方向鍵換頁；不寫或寫 <code>false</code> 都是關閉。</td></tr>
+        <tr><td>事件 <code>part-changed</code>、<code>finished</code>、<code>restarted</code></td><td>都會冒泡；<code>e.detail</code> 含 <code>part</code>，part-changed 另有 <code>total</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼；「重新播放」用同一段原始碼重建 */
+(function () {
+  function dedent(s) {
+    var lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    var ind = Math.min.apply(null, lines.filter(function (l) { return l.trim(); })
+      .map(function (l) { return l.match(/^\s*/)[0].length; }));
+    return lines.map(function (l) { return l.slice(ind); }).join('\n');
+  }
+  document.querySelectorAll('[data-demo]').forEach(function (sec) {
+    var src = dedent(sec.querySelector('script.demo-src').textContent);
+    var stage = sec.querySelector('.stage');
+    sec.querySelector('.code-box code').textContent = src;
+    stage.insertAdjacentHTML('beforeend', src);
+    var replay = sec.querySelector('.replay');
+    if (replay) replay.addEventListener('click', function () {
+      stage.innerHTML = '';
+      stage.insertAdjacentHTML('beforeend', src);
+    });
+  });
+})();
+
+/* 事件提示：Bootstrap alert，不用 alert() */
+function note(html) {
+  var zone = document.getElementById('alert-zone');
+  var box = document.createElement('div');
+  box.className = 'alert alert-dismissible fade show';
+  box.innerHTML = html + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+  zone.appendChild(box);
+  setTimeout(function () {
+    if (window.bootstrap && box.isConnected) bootstrap.Alert.getOrCreateInstance(box).close();
+    else box.remove();
+  }, 2800);
+}
+/* 事件會冒泡，在 document 上監聽，重新播放後一樣有效 */
+document.addEventListener('part-changed', function (e) {
+  if (!e.target.classList || !e.target.classList.contains('evt-demo')) return;
+  note('<i class="bi bi-arrow-right-circle bp-text-key"></i> part-changed：第 ' + e.detail.part + ' / ' + e.detail.total + ' 部分');
+});
+document.addEventListener('finished', function (e) {
+  if (!e.target.classList || !e.target.classList.contains('evt-demo')) return;
+  note('<i class="bi bi-flag bp-text-green"></i> finished：第 ' + e.detail.part + ' 部分結束');
+});
+document.addEventListener('restarted', function (e) {
+  if (!e.target.classList || !e.target.classList.contains('evt-demo')) return;
+  note('<i class="bi bi-arrow-counterclockwise bp-text-yellow"></i> restarted：重新開始');
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="slider-show.js"></script>
+</body>
+</html>

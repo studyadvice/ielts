@@ -97,7 +97,7 @@ nav.toc a { padding: 4px 10px; }
 </nav>
 <main>
 <h1>slider-show 使用手冊</h1>
-<p class="lead">涵蓋 slider-show.js 的全部屬性、事件、API 與已知問題。每個行為都已實際執行驗證，搭配 slider-show-demo-10-24-26.html 使用。</p>
+<p class="lead">涵蓋 slider-show.js 的全部屬性、事件、API 與已知問題。每個行為都已實際執行驗證，搭配 slider-show-demo-11-10-26.html 使用。</p>
 <section class="doc" id="overview">
 <h2>0. 這份手冊在講什麼</h2>
 <p><code>&lt;slider-show&gt;</code> 是一個多功能投影片元件：把一組 <code>[slide]</code> 區塊變成可前後翻頁的簡報，支援分「部分」（part）、進度點與頁碼、起訖畫面裝飾、補充說明（extra-note）、防劇透遮罩、填空題與作答結果，以及同步更新頁面標題。</p>
@@ -109,7 +109,7 @@ nav.toc a { padding: 4px 10px; }
 <tr><td>載入位置</td><td><b>必須在 <code>&lt;slider-show&gt;</code> 之後載入</b>（放在 body 底部）。實測 script 放在元素之前時，元件建立當下讀不到投影片，<code>getTotalParts()</code> 為 0。</td></tr>
 <tr><td>設定方式</td><td>全部用 HTML 屬性，沒有 <code>window.xxxConfig</code>。</td></tr>
 <tr><td>對應版本</td><td>你於 2026-10-24 提供的 slider-show.js（1617 行）。</td></tr>
-<tr><td>示範頁</td><td><code>slider-show-demo-10-24-26.html</code>。</td></tr>
+<tr><td>示範頁</td><td><code>slider-show-demo-11-10-26.html</code>。</td></tr>
 </tbody></table></div>
 <div class="note note-bug"><b>已知問題</b>：<b>先看第 16 節。</b> 實測有一個嚴重問題：存在多個 part 時，切換 part 後，前一個 part 正在顯示的投影片不會被隱藏。往前走（下一部分）因為後面的投影片在 DOM 較後面、通常不透明，剛好蓋住而看不出來；但<b>返回上一部分與重新開始都會顯示成錯的投影片</b>。</div>
 <div class="note note-tip"><b>提示</b>：本手冊的行為描述，都已在模擬環境與真實 Chromium 中實際執行驗證。只靠讀碼判斷的少數地方會標示「讀碼所得」。</div>
