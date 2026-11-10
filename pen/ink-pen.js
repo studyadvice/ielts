@@ -9,6 +9,20 @@
  *   <ink-handwrite>   行內手寫空格，內容以底線長度決定寬度，可加 answer 屬性附解答
  *   <ui-ink-modal>    手寫視窗（首次需要時自動建立，不必自己放）
  *   <dot-go>          跳轉圓點，開著觸控筆也點得到，可跳到同頁標籤或其他網頁
+ *   <ui-ink-ng-mask>  NG 紅色遮罩（首次需要時自動建立，不必自己放）
+ *   <ui-ink-ng-panel> NG 標記清單視窗（首次需要時自動建立，不必自己放）
+ *
+ * NG 標記（螢幕錄影剪輯用）：
+ *   工具列按「錄」開始計時，錄影中遇到 NG 就按 Ctrl+Shift+4，
+ *   整頁出現紅色遮罩 2 秒（錄進影片當記號），同時記下時間點。
+ *   所有時間點（含按下「錄」的那一刻）一律前推 3 秒當保險，不足 0 以 00:00.0 計。
+ *   每次標記立刻存進 localStorage，網頁重新整理或意外關閉也不會遺失，
+ *   重新整理時若計時尚未結束，會接著計時。
+ *   按工具列「清單」可檢視、複製或下載純文字清單。
+ *   工具列屬性：
+ *     data-ng-mask-ms="2000"    遮罩秒數（毫秒），預設 2000
+ *     data-ng-offset="3"        標記前推秒數，預設 3
+ *     data-ng-start-offset="3"  開始時間前推秒數，預設 3
  *
  * 對外介面：window.InkPen
  *   .layer()              取得繪圖層實體
@@ -17,7 +31,8 @@
  *   .blanks()             取得頁面上所有 <ink-handwrite>
  *   .dots()               取得頁面上所有 <dot-go>
  *   .lockScroll(v)        設定捲動鎖定（true／"pen"／false），等同改 data-lock-scroll
- *   .shortcuts            模式快捷鍵對照表
+ *   .shortcuts            快捷鍵對照表（模式與 NG 標記）
+ *   .ng                   NG 標記：start() stop() toggle() mark() text() clear() isRecording()
  *   .palette              配色表
  *
  * 本元件不在畫面上顯示任何提示訊息，設定錯誤只寫入 console，
@@ -27,6 +42,8 @@
  *   Ctrl+Shift+1  觸控筆
  *   Ctrl+Shift+2  雷射筆
  *   Ctrl+Shift+`  關閉繪圖，回到一般點選
+ *   Ctrl+Shift+3  開始／結束 NG 計時
+ *   Ctrl+Shift+4  標記 NG（顯示紅色遮罩並記下時間點）
  *                 以實體按鍵位置判斷（e.code），不受輸入法與 Shift 換字影響；
  *                 游標停在工具列的輸入框裡也有效
  *   C  清除全部筆跡
@@ -94,6 +111,57 @@
     { code: 'Digit2', keys: ['2', '@'], mode: 'laser', label: 'Ctrl+Shift+2' },
     { code: 'Backquote', keys: ['`', '~'], mode: 'off', label: 'Ctrl+Shift+`' }
   ];
+
+  /* NG 標記快捷鍵，判斷方式同上 */
+  var ACTION_KEYS = [
+    { code: 'Digit3', keys: ['3', '#'], action: 'rec', label: 'Ctrl+Shift+3' },
+    { code: 'Digit4', keys: ['4', '$'], action: 'ng', label: 'Ctrl+Shift+4' }
+  ];
+
+  function actionKeyLabel(action) {
+    for (var i = 0; i < ACTION_KEYS.length; i++) {
+      if (ACTION_KEYS[i].action === action) return ACTION_KEYS[i].label;
+    }
+    return '';
+  }
+
+  /* NG 標記預設值 */
+  var NG_MASK_MS = 2000;
+  var NG_OFFSET_S = 3;
+  var NG_START_OFFSET_S = 3;
+  var NG_STORE_KEY = 'ink-pen:ng-session';
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  /* 毫秒轉 mm:ss.s，滿一小時改 h:mm:ss.s，負值以 0 計 */
+  function fmtElapsed(ms) {
+    if (!(ms > 0)) ms = 0;
+    var tenth = Math.floor(ms / 100) % 10;
+    var total = Math.floor(ms / 1000);
+    var h = Math.floor(total / 3600);
+    var m = Math.floor((total % 3600) / 60);
+    var s = total % 60;
+    return (h ? h + ':' + pad2(m) : pad2(m)) + ':' + pad2(s) + '.' + tenth;
+  }
+
+  function fmtClock(ts) {
+    var d = new Date(ts);
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' +
+      pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+  }
+
+  function fmtStamp(ts) {
+    var d = new Date(ts);
+    return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + '-' +
+      pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+  }
+
+  function numAttr(el, name, def) {
+    var raw = el.getAttribute(name);
+    if (raw === null || String(raw).trim() === '') return def;
+    var n = Number(raw);
+    return (isFinite(n) && n >= 0) ? n : def;
+  }
 
   function modeKeyLabel(mode) {
     for (var i = 0; i < MODE_KEYS.length; i++) {
@@ -239,6 +307,34 @@
       + '.ipm-ok{background:var(--c-green,#71CD76);border-color:var(--c-green,#71CD76);'
       + 'color:#07211D;font-weight:600;}'
       + '.ipm-ok:hover{color:#07211D;border-color:var(--c-green,#71CD76);}'
+
+      /* ---- NG 標記：工具列按鈕 ---- */
+      + '.ip-btn.ip-rec{background:var(--c-urgent,#FF2E63);border-color:var(--c-urgent,#FF2E63);'
+      + 'color:#0C0D0C;font-weight:600;}'
+      + '.ip-btn.ip-rec:hover{color:#0C0D0C;border-color:var(--c-urgent,#FF2E63);}'
+      + '.ip-dot.ip-recording{border-color:rgba(255,46,99,0.9);'
+      + 'box-shadow:0 0 0 2px rgba(255,46,99,0.82),0 4px 14px rgba(0,0,0,0.82);}'
+
+      /* ---- NG 標記：紅色遮罩，不擋任何操作，層級高於所有元件 ---- */
+      + 'ui-ink-ng-mask{position:fixed;inset:0;z-index:990;display:none;pointer-events:none;'
+      + 'background:rgba(255,46,99,0.9);}'
+      + 'ui-ink-ng-mask.ip-on{display:block;}'
+
+      /* ---- NG 標記：清單視窗 ---- */
+      + 'ui-ink-ng-panel{position:fixed;inset:0;z-index:950;display:none;'
+      + 'align-items:center;justify-content:center;background:rgba(12,13,12,0.9);}'
+      + 'ui-ink-ng-panel.ip-on{display:flex;}'
+      + '.ipn-box{width:min(960px,92vw);background:rgba(23,24,26,0.97);'
+      + 'border:1px solid rgba(51,52,47,0.9);border-radius:12px;padding:24px 28px;'
+      + 'box-shadow:0 14px 44px rgba(0,0,0,0.86);}'
+      + '.ipn-box h4{margin:0 0 6px;font-size:1.1rem;line-height:1.4;color:var(--c-vanilla,#DBEDD8);}'
+      + '.ipn-box p{margin:0 0 14px;font-size:0.85rem;line-height:1.6;color:#9a9b94;}'
+      + '.ipn-box textarea{display:block;width:100%;box-sizing:border-box;resize:vertical;'
+      + 'font-family:Consolas,"Courier New",monospace;font-size:0.95rem;line-height:1.6;'
+      + 'padding:12px 14px;border-radius:10px;color:var(--c-shell,#C6C7BD);'
+      + 'background:rgba(15,16,14,0.95);border:1px solid rgba(58,59,55,0.9);}'
+      + '.ipn-foot{display:flex;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap;}'
+      + '.ipn-foot .ipn-spacer{flex:1 1 auto;}'
 
       ;
     var style = document.createElement('style');
@@ -1061,6 +1157,129 @@
   }
 
   /* =========================================================
+   * NG 標記：遮罩與清單視窗
+   * ========================================================= */
+  function ensureNgMask() {
+    var m = document.querySelector('ui-ink-ng-mask');
+    if (!m) {
+      m = document.createElement('ui-ink-ng-mask');
+      document.body.appendChild(m);
+    }
+    return m;
+  }
+
+  class UiInkNgPanel extends HTMLElement {
+    connectedCallback() {
+      if (this._built) return;
+      this._built = true;
+      this.innerHTML =
+        '<div class="ipn-box">' +
+        '<h4>NG 標記清單</h4>' +
+        '<p>時間皆為粗定位，剪輯時請對照影片裡的紅色遮罩判斷精準位置。</p>' +
+        '<textarea rows="12" readonly spellcheck="false" data-role="text"></textarea>' +
+        '<div class="ipn-foot">' +
+        '<button type="button" class="ip-btn" data-act="copy">複製</button>' +
+        '<button type="button" class="ip-btn" data-act="download">下載 .txt</button>' +
+        '<button type="button" class="ip-btn" data-act="reset">清空紀錄</button>' +
+        '<span class="ipn-spacer"></span>' +
+        '<button type="button" class="ip-btn ipm-ok" data-act="close">關閉</button>' +
+        '</div></div>';
+
+      this._ta = this.querySelector('[data-role="text"]');
+      this.querySelector('[data-act="copy"]').addEventListener('click', (e) => this._copy(e.currentTarget));
+      this.querySelector('[data-act="download"]').addEventListener('click', () => this._download());
+      this.querySelector('[data-act="reset"]').addEventListener('click', (e) => this._reset(e.currentTarget));
+      this.querySelector('[data-act="close"]').addEventListener('click', () => this.close());
+      /* 點背景關閉 */
+      this.addEventListener('mousedown', (e) => { if (e.target === this) this.close(); });
+    }
+
+    isOpen() { return this.classList.contains('ip-on'); }
+
+    open() {
+      this.refresh();
+      this.classList.add('ip-on');
+    }
+
+    close() { this.classList.remove('ip-on'); }
+
+    refresh() {
+      if (!this._ta) return;
+      var ng = window.InkPen && window.InkPen.ng;
+      this._ta.value = ng ? ng.text() : '';
+    }
+
+    /* 按鈕文字暫時換成提示，不用 alert */
+    _flash(btn, label) {
+      var old = btn.getAttribute('data-label') || btn.textContent;
+      btn.setAttribute('data-label', old);
+      btn.textContent = label;
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { btn.textContent = old; }, 1400);
+    }
+
+    _copy(btn) {
+      var ta = this._ta;
+      var done = () => this._flash(btn, '已複製');
+      var fallback = () => {
+        ta.focus();
+        ta.select();
+        try {
+          if (document.execCommand('copy')) done(); else warn('複製失敗，請手動選取文字複製');
+        } catch (err) { warn('複製失敗，請手動選取文字複製'); }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ta.value).then(done, fallback);
+      } else {
+        fallback();
+      }
+    }
+
+    _download() {
+      var text = this._ta.value;
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      var started = window.InkPen.ng.startedAt();
+      a.href = url;
+      a.download = 'ink-pen-ng-' + fmtStamp(started || Date.now()) + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    /* 需連按兩次才清空，避免誤觸 */
+    _reset(btn) {
+      if (btn._armed) {
+        btn._armed = false;
+        clearTimeout(btn._t2);
+        window.InkPen.ng.clear();
+        btn.textContent = '清空紀錄';
+        this.refresh();
+        return;
+      }
+      btn._armed = true;
+      btn.textContent = '再按一次確認';
+      clearTimeout(btn._t2);
+      btn._t2 = setTimeout(function () {
+        btn._armed = false;
+        btn.textContent = '清空紀錄';
+      }, 3000);
+    }
+  }
+  customElements.define('ui-ink-ng-panel', UiInkNgPanel);
+
+  function ensureNgPanel() {
+    var p = document.querySelector('ui-ink-ng-panel');
+    if (!p) {
+      p = document.createElement('ui-ink-ng-panel');
+      document.body.appendChild(p);
+    }
+    return p;
+  }
+
+  /* =========================================================
    * <ui-ink-bar>
    * 屬性：
    *   data-pos="br|bl|tr|tl"   擺放位置，預設右下角
@@ -1092,6 +1311,13 @@
         '" step="1" value="' + WIDTH_DEFAULT + '" title="筆跡粗細（' + WIDTH_MIN + ' 至 ' + WIDTH_MAX + ' px）" />' +
         '<span class="ip-sep"></span>' +
         '<button type="button" class="ip-btn" data-act="clear">清除 C</button>' +
+        '<span class="ip-sep"></span>' +
+        '<button type="button" class="ip-btn" data-act="rec" title="開始或結束 NG 計時（' +
+        actionKeyLabel('rec') + '）">錄</button>' +
+        '<button type="button" class="ip-btn" data-act="ng" title="標記 NG，顯示紅色遮罩（' +
+        actionKeyLabel('ng') + '）">NG</button>' +
+        '<button type="button" class="ip-btn" data-act="nglist" title="檢視 NG 標記清單">清單</button>' +
+        '<span class="ip-sep"></span>' +
         '<button type="button" class="ip-btn" data-act="hide">收合 H</button>' +
         '</div>';
 
@@ -1101,9 +1327,11 @@
       this._swatch = this.querySelector('[data-role="swatch"]');
       this._select = this.querySelector('[data-role="color"]');
 
+      this._ng = this._ngLoad();
       this._renderColors(true);
       this._wire();
       this._syncPen();
+      this._ngSyncUi();
       if (this.getAttribute('data-open') === 'true') this.toggleBar(true);
       this._bindKeys();
     }
@@ -1169,6 +1397,9 @@
       });
       this.querySelector('[data-act="clear"]').addEventListener('click', () => this.clear());
       this.querySelector('[data-act="hide"]').addEventListener('click', () => this.toggleBar(false));
+      this.querySelector('[data-act="rec"]').addEventListener('click', () => this.ngToggle());
+      this.querySelector('[data-act="ng"]').addEventListener('click', () => this.ngMark());
+      this.querySelector('[data-act="nglist"]').addEventListener('click', () => this.ngOpenPanel());
       this._dot.addEventListener('click', () => this.toggleBar());
 
       var widthInput = this.querySelector('[data-role="width"]');
@@ -1228,7 +1459,164 @@
       return next;
     }
 
+    /* ---------- NG 標記 ---------- */
+    _ngBlank() {
+      return {
+        running: false, startedAt: 0, endedAt: 0,
+        startOffset: NG_START_OFFSET_S, ngOffset: NG_OFFSET_S, marks: []
+      };
+    }
+
+    _ngLoad() {
+      try {
+        var raw = window.localStorage.getItem(NG_STORE_KEY);
+        if (!raw) return this._ngBlank();
+        var d = JSON.parse(raw);
+        if (!d || !Array.isArray(d.marks)) return this._ngBlank();
+        return {
+          running: !!d.running,
+          startedAt: Number(d.startedAt) || 0,
+          endedAt: Number(d.endedAt) || 0,
+          startOffset: isFinite(Number(d.startOffset)) ? Number(d.startOffset) : NG_START_OFFSET_S,
+          ngOffset: isFinite(Number(d.ngOffset)) ? Number(d.ngOffset) : NG_OFFSET_S,
+          marks: d.marks.map(Number).filter(function (n) { return isFinite(n); })
+        };
+      } catch (e) {
+        return this._ngBlank();
+      }
+    }
+
+    _ngSave() {
+      try {
+        window.localStorage.setItem(NG_STORE_KEY, JSON.stringify(this._ng));
+      } catch (e) {
+        warn('NG 紀錄無法寫入 localStorage：' + e.message);
+      }
+    }
+
+    /* 狀態變動後：存檔、更新按鈕、清單視窗開著就同步刷新 */
+    _ngChanged() {
+      this._ngSave();
+      this._ngSyncUi();
+      var p = document.querySelector('ui-ink-ng-panel');
+      if (p && p.isOpen && p.isOpen()) p.refresh();
+    }
+
+    _ngSyncUi() {
+      var rec = this.querySelector('[data-act="rec"]');
+      var on = !!this._ng.running;
+      rec.classList.toggle('ip-rec', on);
+      rec.textContent = on ? '停' : '錄';
+      rec.setAttribute('title', (on ? '結束 NG 計時（' : '開始或結束 NG 計時（') + actionKeyLabel('rec') + '）');
+      this._dot.classList.toggle('ip-recording', on);
+    }
+
+    ngIsRecording() { return !!this._ng.running; }
+    ngStartedAt() { return this._ng.startedAt || 0; }
+
+    ngStart() {
+      if (this._ng.running) return false;
+      this._ng = {
+        running: true,
+        startedAt: Date.now(),
+        endedAt: 0,
+        startOffset: numAttr(this, 'data-ng-start-offset', NG_START_OFFSET_S),
+        ngOffset: numAttr(this, 'data-ng-offset', NG_OFFSET_S),
+        marks: []
+      };
+      this._ngChanged();
+      return true;
+    }
+
+    ngStop() {
+      if (!this._ng.running) return false;
+      this._ng.running = false;
+      this._ng.endedAt = Date.now();
+      this._ngChanged();
+      return true;
+    }
+
+    ngToggle() {
+      return this._ng.running ? !this.ngStop() : this.ngStart();
+    }
+
+    /* 遮罩一定會顯示（它本身就是影片裡的記號）；計時中才會記下時間點。
+     * 回傳這次標記的經過毫秒，沒在計時則回傳 null */
+    ngMark() {
+      this._ngShowMask();
+      if (!this._ng.running) {
+        warn('尚未開始計時，只顯示遮罩，沒有記下時間點。請先按「錄」。');
+        return null;
+      }
+      var now = Date.now();
+      this._ng.marks.push(now);
+      this._ngChanged();
+      return now - this._ng.startedAt;
+    }
+
+    _ngShowMask() {
+      var el = ensureNgMask();
+      var ms = numAttr(this, 'data-ng-mask-ms', NG_MASK_MS);
+      el.classList.add('ip-on');
+      clearTimeout(this._ngMaskTimer);
+      this._ngMaskTimer = setTimeout(function () { el.classList.remove('ip-on'); }, ms);
+    }
+
+    ngClear() {
+      var wasRunning = this._ng.running;
+      if (wasRunning) {
+        this._ng.marks = [];
+      } else {
+        this._ng = this._ngBlank();
+      }
+      this._ngChanged();
+    }
+
+    ngText() {
+      var s = this._ng;
+      if (!s.startedAt) return '尚無紀錄。按工具列的「錄」開始計時。';
+      var so = s.startOffset;
+      var no = s.ngOffset;
+      var lines = [];
+      lines.push('ink-pen NG 標記清單');
+      lines.push('開始計時：' + fmtClock(s.startedAt) + '（前推 ' + so + ' 秒：' + fmtClock(s.startedAt - so * 1000) + '）');
+      if (s.running) {
+        lines.push('狀態：計時中，已過 ' + fmtElapsed(Date.now() - s.startedAt));
+      } else {
+        lines.push('結束計時：' + fmtClock(s.endedAt) + '，總長 ' + fmtElapsed(s.endedAt - s.startedAt));
+      }
+      lines.push('時間以按下「錄」那一刻為 00:00.0，每筆標記前推 ' + no + ' 秒，不足 0 以 00:00.0 計。');
+      lines.push('');
+      lines.push('開始    按鍵 ' + fmtElapsed(0) + '    建議剪輯點 ' + fmtElapsed(-so * 1000));
+      if (!s.marks.length) {
+        lines.push('（目前沒有 NG 標記）');
+      } else {
+        s.marks.forEach(function (t, i) {
+          var el = t - s.startedAt;
+          var n = String(i + 1);
+          lines.push('NG ' + (n.length < 2 ? '0' + n : n) + '  按鍵 ' + fmtElapsed(el) +
+            '    建議剪輯點 ' + fmtElapsed(el - no * 1000));
+        });
+      }
+      return lines.join('\n');
+    }
+
+    ngOpenPanel() {
+      ensureNgPanel().open();
+    }
+
     /* ---------- 快捷鍵 ---------- */
+    _matchActionKey(e) {
+      if (!e.ctrlKey || !e.shiftKey || e.altKey || e.metaKey) return null;
+      var code = e.code || '';
+      for (var i = 0; i < ACTION_KEYS.length; i++) {
+        var k = ACTION_KEYS[i];
+        if (code === k.code) return k.action;
+        if ((!code || code === 'Unidentified') && k.keys.indexOf(e.key) !== -1) return k.action;
+      }
+      return null;
+    }
+
     /* 模式切換用 Ctrl+Shift 組合鍵，依實體按鍵（e.code）判斷，
      * 因為按住 Shift 時 e.key 會變成 ! @ ~，中文輸入法下也可能不準 */
     _matchModeKey(e) {
@@ -1247,6 +1635,15 @@
         var modal = document.querySelector('ui-ink-modal');
         if (modal && modal.isOpen && modal.isOpen()) return;
 
+        /* NG 清單視窗開著時，Esc 關閉它 */
+        var ngPanel = document.querySelector('ui-ink-ng-panel');
+        var panelOpen = !!(ngPanel && ngPanel.isOpen && ngPanel.isOpen());
+        if (panelOpen && e.key === 'Escape') {
+          e.preventDefault();
+          ngPanel.close();
+          return;
+        }
+
         /* 組合鍵不會和打字衝突，游標在輸入框裡也照樣切換 */
         var mode = this._matchModeKey(e);
         if (mode) {
@@ -1255,6 +1652,16 @@
           return;
         }
 
+        /* NG 標記：按住不放不重複觸發 */
+        var act = this._matchActionKey(e);
+        if (act) {
+          e.preventDefault();
+          if (e.repeat) return;
+          if (act === 'rec') this.ngToggle(); else this.ngMark();
+          return;
+        }
+
+        if (panelOpen) return;
         if (isEditable(e.target)) return;
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         switch (e.key) {
@@ -1568,6 +1975,7 @@
   customElements.define('dot-go', DotGo);
 
   /* ---------- 對外介面 ---------- */
+  function InkPenBar() { return document.querySelector('ui-ink-bar'); }
   injectStyles();
   injectDotStyles();
   window.InkPen = {
@@ -1576,7 +1984,20 @@
     widthRange: { min: WIDTH_MIN, max: WIDTH_MAX, def: WIDTH_DEFAULT },
     handwriteRange: { min: HW_MIN, max: HW_MAX, def: HW_DEFAULT },
     slotRange: { min: SLOT_MIN, max: SLOT_MAX },
-    shortcuts: MODE_KEYS.map(function (k) { return { mode: k.mode, label: k.label, code: k.code }; }),
+    shortcuts: MODE_KEYS.map(function (k) { return { mode: k.mode, label: k.label, code: k.code }; })
+      .concat(ACTION_KEYS.map(function (k) { return { action: k.action, label: k.label, code: k.code }; })),
+    /* NG 標記：給程式或 demo 呼叫，實際狀態存在工具列與 localStorage */
+    ng: {
+      start: function () { var b = InkPenBar(); return b ? b.ngStart() : false; },
+      stop: function () { var b = InkPenBar(); return b ? b.ngStop() : false; },
+      toggle: function () { var b = InkPenBar(); return b ? b.ngToggle() : false; },
+      mark: function () { var b = InkPenBar(); return b ? b.ngMark() : null; },
+      clear: function () { var b = InkPenBar(); if (b) b.ngClear(); },
+      text: function () { var b = InkPenBar(); return b ? b.ngText() : ''; },
+      isRecording: function () { var b = InkPenBar(); return b ? b.ngIsRecording() : false; },
+      startedAt: function () { var b = InkPenBar(); return b ? b.ngStartedAt() : 0; },
+      openPanel: function () { var b = InkPenBar(); if (b) b.ngOpenPanel(); }
+    },
     layer: function () { return document.querySelector('ui-ink-layer'); },
     /* 捲動鎖定：true 全部繪圖模式、"pen" 只鎖觸控筆、false 解除 */
     lockScroll: function (v) {

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ink-pen NG 標記</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/studyadvice/ielts/bp-styles.css">
+<script src="ink-pen.js"></script>
+<style>
+  html { font-size: 16px; }
+  body { font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif; line-height: 1.75; margin: 0; }
+  .wrap { max-width: 1680px; margin: 0 auto; padding: 32px 48px 160px; }
+  .panel { border: 1px solid rgba(58, 59, 55, 0.9); border-radius: 12px; padding: 24px 28px; margin: 0 0 28px; background: rgba(23, 24, 22, 0.94); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 18px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; padding: 4px 14px; border-radius: 999px; border: 1px solid rgba(58, 59, 55, 0.9); background: rgba(32, 33, 25, 0.92); }
+  .chip.is-rec { color: #0C0D0C; background: #FF2E63; border-color: #FF2E63; font-weight: 600; }
+  .stat { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 0 0 18px; }
+  .clock { font-family: Consolas, "Courier New", monospace; font-size: 2.2rem; line-height: 1.2; }
+  kbd { background: rgba(32, 33, 25, 0.95); color: #DBEDD8; border: 1px solid rgba(90, 91, 85, 0.9); border-radius: 6px; padding: 2px 8px; font-size: 0.88rem; }
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.cmp th, table.cmp td { border-bottom: 1px solid rgba(58, 59, 55, 0.9); padding: 14px 16px; vertical-align: top; }
+  table.cmp th { text-align: left; }
+  table.cmp td.ex { width: 38%; }
+  pre.code { background: rgba(15, 16, 14, 0.96); border: 1px solid rgba(58, 59, 55, 0.9); border-radius: 8px; padding: 16px 18px; margin: 0; font-size: 0.86rem; line-height: 1.6; color: #DBEDD8; white-space: pre; overflow-x: auto; }
+  textarea.out { width: 100%; box-sizing: border-box; font-family: Consolas, "Courier New", monospace; font-size: 0.95rem; line-height: 1.6; padding: 12px 14px; border-radius: 10px; color: #C6C7BD; background: rgba(15, 16, 14, 0.95); border: 1px solid rgba(58, 59, 55, 0.9); }
+  .lesson p { font-size: 1.15rem; margin: 0 0 14px; }
+  #alert-zone { position: fixed; top: 20px; left: 20px; z-index: 985; width: 440px; }
+  #alert-zone .alert { font-size: 0.95rem; padding: 12px 44px 12px 16px; margin: 0 0 10px; border-radius: 10px; background: rgba(23, 24, 22, 0.96); color: #C6C7BD; border: 1px solid rgba(58, 59, 55, 0.9); }
+  #alert-zone .alert.a-rec { border-left: 4px solid #FF2E63; }
+  #alert-zone .alert.a-ok { border-left: 4px solid #71CD76; }
+  #alert-zone .btn-close { filter: invert(1); padding: 14px; }
+</style>
+</head>
+<body class="bp-bg-base bp-text-shell">
+
+<ui-ink-layer></ui-ink-layer>
+<ui-ink-bar data-open="true"></ui-ink-bar>
+<div id="alert-zone"></div>
+
+<div class="wrap">
+  <h1 class="bp-text-vanilla fs-xlarge">ink-pen NG 標記</h1>
+  <p class="bp-text-gray">2026-11-10 新增：錄影中按下快捷鍵，整頁出現紅色遮罩並記下時間點，方便事後剪輯。</p>
+
+  <!-- ===== 即時操作 ===== -->
+  <section class="panel">
+    <h2 class="bp-text-blue fs-larger">即時操作</h2>
+    <div class="grid-2">
+      <div>
+        <div class="stat">
+          <span class="clock bp-text-vanilla" id="clock">00:00.0</span>
+          <span class="chip" id="chip-state">未計時</span>
+          <span class="chip" id="chip-count">NG 0 筆</span>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-green" id="b-toggle">開始計時</button>
+          <button type="button" class="btn btn-urgent" id="b-mark">標記 NG</button>
+          <button type="button" class="btn btn-blue-outline" id="b-panel">開啟清單視窗</button>
+          <button type="button" class="btn btn-gray-outline" id="b-clear">清空紀錄</button>
+        </div>
+        <p class="bp-text-gray">快捷鍵：<kbd>Ctrl+Shift+3</kbd> 開始或結束計時，<kbd>Ctrl+Shift+4</kbd> 標記 NG。工具列的「錄」「NG」「清單」按鈕效果相同。</p>
+        <p class="bp-text-gray">遮罩預設 2 秒，只用色票的 urgent，不擋任何操作，所以按下後仍可繼續講課與畫筆。</p>
+      </div>
+      <div>
+        <label class="bp-text-gray" for="live-text">目前清單（純文字，即時更新）</label>
+        <textarea class="out" id="live-text" rows="12" readonly spellcheck="false"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 教材範例 ===== -->
+  <section class="panel lesson">
+    <h2 class="bp-text-blue fs-larger">模擬錄課內容</h2>
+    <p>Describe a place you often go to relax. You should say where it is, how often you go there, and explain why it helps you unwind.</p>
+    <p>Well, there's a quiet park <ink-handwrite answer="close to">________</ink-handwrite> my office, and I tend to drop by after a long day.</p>
+    <p class="bp-text-gray">錄影時講到這裡說錯了？按 <kbd>Ctrl+Shift+4</kbd>，整頁會變紅 2 秒。</p>
+  </section>
+
+  <!-- ===== 範例與程式碼對照 ===== -->
+  <section class="panel">
+    <h2 class="bp-text-blue fs-larger">範例與程式碼對照</h2>
+    <table class="cmp">
+      <thead>
+        <tr><th class="bp-text-violet">項目</th><th class="bp-text-violet">範例</th><th class="bp-text-violet">程式碼</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bp-text-vanilla">基本用法</td>
+          <td class="ex">放了 <code>&lt;ui-ink-bar&gt;</code> 就有「錄」「NG」「清單」三顆按鈕和兩個快捷鍵，不必另外設定。</td>
+          <td><pre class="code">&lt;ui-ink-layer&gt;&lt;/ui-ink-layer&gt;
+&lt;ui-ink-bar&gt;&lt;/ui-ink-bar&gt;</pre></td>
+        </tr>
+        <tr>
+          <td class="bp-text-vanilla">調整遮罩與前推秒數</td>
+          <td class="ex">遮罩改 3 秒，標記前推 5 秒，開始時間前推 2 秒。數值單位：遮罩為毫秒，其餘為秒。</td>
+          <td><pre class="code">&lt;ui-ink-bar
+  data-ng-mask-ms="3000"
+  data-ng-offset="5"
+  data-ng-start-offset="2"&gt;
+&lt;/ui-ink-bar&gt;</pre></td>
+        </tr>
+        <tr>
+          <td class="bp-text-vanilla">用程式操作</td>
+          <td class="ex">上方四顆按鈕就是呼叫這些方法。<code>mark()</code> 在未計時的情況下只顯示遮罩，不記時間點。</td>
+          <td><pre class="code">InkPen.ng.start();          // 開始計時
+InkPen.ng.mark();           // 標記 NG
+InkPen.ng.stop();           // 結束計時
+InkPen.ng.text();           // 取得純文字清單
+InkPen.ng.isRecording();    // 是否計時中
+InkPen.ng.openPanel();      // 開啟清單視窗
+InkPen.ng.clear();          // 清空紀錄</pre></td>
+        </tr>
+        <tr>
+          <td class="bp-text-vanilla">清單格式</td>
+          <td class="ex">按下「錄」那一刻為 00:00.0。每筆標記都前推 3 秒，不足 0 以 00:00.0 計，剪輯時請以影片中的紅幀為準。</td>
+          <td><pre class="code">ink-pen NG 標記清單
+開始計時：2026-11-10 14:00:08（前推 3 秒：2026-11-10 14:00:05）
+結束計時：2026-11-10 14:08:21，總長 08:13.0
+時間以按下「錄」那一刻為 00:00.0，每筆標記前推 3 秒，不足 0 以 00:00.0 計。
+
+開始    按鍵 00:00.0    建議剪輯點 00:00.0
+NG 01  按鍵 03:27.4    建議剪輯點 03:24.4
+NG 02  按鍵 06:51.0    建議剪輯點 06:48.0</pre></td>
+        </tr>
+        <tr>
+          <td class="bp-text-vanilla">即時存檔</td>
+          <td class="ex">每次開始、標記、結束都立刻寫入 localStorage，重新整理網頁後會接著計時，標記也都還在。</td>
+          <td><pre class="code">// 鍵名：ink-pen:ng-session
+{
+  "running": true,
+  "startedAt": 1783663208000,
+  "endedAt": 0,
+  "startOffset": 3,
+  "ngOffset": 3,
+  "marks": [1783663415400, 1783663619000]
+}</pre></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+(function () {
+  var ng = InkPen.ng;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function fmt(ms) {
+    if (!(ms > 0)) ms = 0;
+    var t = Math.floor(ms / 1000), tenth = Math.floor(ms / 100) % 10;
+    var h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+    return (h ? h + ':' + pad2(m) : pad2(m)) + ':' + pad2(s) + '.' + tenth;
+  }
+
+  /* Bootstrap alert，取代 alert() */
+  function say(msg, cls) {
+    var el = document.createElement('div');
+    el.className = 'alert alert-dismissible fade show ' + (cls || 'a-ok');
+    el.setAttribute('role', 'alert');
+    el.innerHTML = msg + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    $('alert-zone').appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.remove(); }, 3500);
+  }
+
+  function count() {
+    var m = ng.text().match(/^NG \d+/gm);
+    return m ? m.length : 0;
+  }
+
+  function refresh() {
+    var on = ng.isRecording();
+    var started = ng.startedAt();
+    $('clock').textContent = on ? fmt(Date.now() - started) : (started ? $('clock').textContent : '00:00.0');
+    $('chip-state').textContent = on ? '計時中' : (started ? '已結束' : '未計時');
+    $('chip-state').classList.toggle('is-rec', on);
+    $('chip-count').textContent = 'NG ' + count() + ' 筆';
+    $('b-toggle').textContent = on ? '結束計時' : '開始計時';
+    var ta = $('live-text');
+    var txt = ng.text();
+    if (ta.value !== txt) ta.value = txt;
+  }
+
+  $('b-toggle').addEventListener('click', function () {
+    var was = ng.isRecording();
+    ng.toggle();
+    say(was ? '已結束計時，可從清單取得時間點。' : '開始計時，錄影中按 Ctrl+Shift+4 標記 NG。', was ? 'a-ok' : 'a-rec');
+  });
+  $('b-mark').addEventListener('click', function () { ng.mark(); });
+  $('b-panel').addEventListener('click', function () { ng.openPanel(); });
+  $('b-clear').addEventListener('click', function () { ng.clear(); say('已清空紀錄。', 'a-ok'); });
+
+  setInterval(refresh, 100);
+  refresh();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
