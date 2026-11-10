@@ -11,7 +11,7 @@
 html,body{height:100%;margin:0;}
 body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
 .shell{display:grid;grid-template-columns:320px minmax(0,1fr);height:100vh;}
-.side{border-right:1px solid var(--bp-key-deep);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
+.side{border-right:1px solid var(--bp-bg-alternative);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
 .side h1{font-size:1.4rem;margin:0 0 6px 0;}
 .side .lead{font-size:.85rem;line-height:1.6;margin:0 0 12px 0;}
 .grp{margin:14px 0 2px 0;letter-spacing:1px;}
@@ -23,7 +23,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 .part-btn.on{border-color:var(--bp-key);background:#14302E;color:var(--bp-vanilla);}
 .side-link{font-size:.9rem;text-decoration:none;padding:4px 10px;}
 .main{display:flex;flex-direction:column;min-width:0;}
-.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-key-deep);}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-bg-alternative);}
 .bar .now{font-size:1rem;}
 .bar .from{font-family:ui-monospace,monospace;font-size:.8rem;margin-left:auto;}
 #stage{flex:1;width:100%;border:0;background:var(--bp-base);}
@@ -64,7 +64,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     --violet: #B484E8;
     --blue: #5DBAE8;
     --warning: #EF6661;
-    --orange: #F79C40;
+    --energetic: #B6FF00;
     --blue: #5DBAE8;
     --green: #71CD76;
     --green: #71CD76;
@@ -75,7 +75,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     --info: #778CE1;
     --indigo: #778CE1;
     --pink: #FF91D7;
-    --orange: #F79C40;
+    --energetic: #B6FF00;
   }
   html, body { background: var(--bg); color: var(--shell); }
   body {
@@ -99,7 +99,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   .chg { border: 1px solid var(--shell); padding: 14px 16px; }
   .chg .tag { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 1px 8px; margin-bottom: 8px; color: var(--bg); }
   .chg .tag.add { background: var(--green); }
-  .chg .tag.mod { background: var(--orange); }
+  .chg .tag.mod { background: var(--energetic); }
   .chg .tag.del { background: var(--warning); }
   .chg p { font-size: 0.95rem; margin: 0; }
 
@@ -124,14 +124,14 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     overflow-y: auto;
   }
   .demo-code .hl { color: var(--bg); background: var(--yellow); font-weight: 700; padding: 0 2px; }
-  .demo-note { font-size: 0.92rem; margin-top: 10px; color: var(--orange); }
+  .demo-note { font-size: 0.92rem; margin-top: 10px; color: var(--energetic); }
 
   /* 屬性對照表 */
   .ref { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
   .ref th, .ref td { border: 1px solid var(--shell); padding: 8px 12px; vertical-align: top; }
   .ref th { background: var(--shell); color: var(--bg); text-align: left; font-weight: 700; }
   .ref td.st-add { color: var(--green); font-weight: 700; white-space: nowrap; }
-  .ref td.st-mod { color: var(--orange); font-weight: 700; white-space: nowrap; }
+  .ref td.st-mod { color: var(--energetic); font-weight: 700; white-space: nowrap; }
   .ref td.st-del { color: var(--warning); font-weight: 700; white-space: nowrap; }
   .ref tr.removed td:not(.st-del) { text-decoration: line-through; color: var(--shell); }
 
@@ -140,8 +140,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   [id^="uit-log"] .alert {
     background: var(--bg);
     color: var(--shell);
-    border: 1px solid var(--orange);
-    border-left: 6px solid var(--orange);
+    border: 1px solid var(--energetic);
+    border-left: 6px solid var(--energetic);
     border-radius: 0;
     font-size: 0.92rem;
     line-height: 1.45;
@@ -150,7 +150,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   }
   [id^="uit-log"] .alert.is-err { border-color: var(--warning); }
   [id^="uit-log"] .alert .btn-close { filter: invert(1); padding: 14px; }
-  [id^="uit-log"] .alert b { color: var(--orange); }
+  [id^="uit-log"] .alert b { color: var(--energetic); }
   [id^="uit-log"] .alert.is-err b { color: var(--warning); }
 
   /* 增修紀錄導覽 */
@@ -235,7 +235,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <cell-item>pivotal：強調轉折點，常搭配 role 或 moment。</cell-item>
       <cell-item>paramount：最高程度，口說時少用，寫作較常見。</cell-item>
     </ui-col>
-    <ui-col inverse font-color="orange" carousel-interval="0" progress-bar progress-bar-color1="indigo" progress-bar-color2="warning">
+    <ui-col inverse font-color="energetic" carousel-interval="0" progress-bar progress-bar-color1="indigo" progress-bar-color2="warning">
       <cell-item>It plays a crucial role in my daily routine.</cell-item>
       <cell-item>That conversation was a pivotal moment for me.</cell-item>
       <cell-item>Safety is of paramount importance in this job.</cell-item>
@@ -259,9 +259,9 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="orange">
+<ui-table theme="energetic">
   <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
-    <ui-col carousel-interval="2500" progress-bar progress-bar-color1="orange" progress-bar-color2="pink">
+    <ui-col carousel-interval="2500" progress-bar progress-bar-color1="energetic" progress-bar-color2="pink">
       <cell-item>Fluency：先求說得順，再求說得難。</cell-item>
       <cell-item>Lexical Resource：用得穩的字才算數。</cell-item>
       <cell-item>Grammar：句型變化要在掌控範圍內。</cell-item>
@@ -290,7 +290,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="orange">
+<ui-table theme="energetic">
   <ui-row col-widths="1:1" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
     <ui-col carousel-interval="0">
       <cell-item>只會看到這一個項目。</cell-item>
@@ -330,7 +330,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <ui-row border="1px solid" col-border="1px solid" cell-padding="12px 16px" extra-info-size="1.25rem" extra-info-color="blue">
     <ui-col extra-info="xi-row">整列設定：1.25rem，blue</ui-col>
     <ui-col extra-info="xi-row">繼承整列設定</ui-col>
-    <ui-col extra-info="xi-row" extra-info-color="orange">只覆寫色彩：orange</ui-col>
+    <ui-col extra-info="xi-row" extra-info-color="energetic">只覆寫色彩：energetic</ui-col>
     <ui-col extra-info="xi-row" extra-info-size="0.8rem">只覆寫尺寸：0.8rem</ui-col>
   </ui-row>
 </ui-table>
@@ -453,7 +453,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px" tree-open>
     <ui-col>雅思口說課程改版</ui-col>
     <ui-col>講師</ui-col>
-    <ui-col font-color="orange">進行中</ui-col>
+    <ui-col font-color="energetic">進行中</ui-col>
     <ui-col>11-30</ui-col>
     <ui-row-enhance>
       <ui-col>Part 1 題庫整理</ui-col>
@@ -464,7 +464,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <ui-row-enhance>
       <ui-col>Part 2 範例錄音</ui-col>
       <ui-col>助教</ui-col>
-      <ui-col font-color="orange">進行中</ui-col>
+      <ui-col font-color="energetic">進行中</ui-col>
       <ui-col>11-10</ui-col>
       <ui-row-enhance>
         <ui-col>人物類 12 題</ui-col>
@@ -475,7 +475,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <ui-row-enhance>
         <ui-col>地點類 10 題</ui-col>
         <ui-col>助教</ui-col>
-        <ui-col font-color="orange">進行中</ui-col>
+        <ui-col font-color="energetic">進行中</ui-col>
         <ui-col>11-05</ui-col>
       </ui-row-enhance>
     </ui-row-enhance>
@@ -489,12 +489,12 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <ui-row-enhance col-widths="3:1:1:1" border="1px solid" col-border="1px solid" cell-padding="10px 14px">
     <ui-col>教學網站改版</ui-col>
     <ui-col>工程</ui-col>
-    <ui-col font-color="orange">進行中</ui-col>
+    <ui-col font-color="energetic">進行中</ui-col>
     <ui-col>12-20</ui-col>
     <ui-row-enhance>
       <ui-col>登入流程</ui-col>
       <ui-col>工程</ui-col>
-      <ui-col font-color="orange">進行中</ui-col>
+      <ui-col font-color="energetic">進行中</ui-col>
       <ui-col>11-20</ui-col>
       <ui-row-enhance>
         <ui-col>邀請碼驗證</ui-col>
@@ -852,7 +852,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <div>
       <span class="demo-pane-label">效果</span>
       <div class="demo-src">
-<ui-table theme="orange">
+<ui-table theme="energetic">
   <ui-row-enhance border="1px solid" col-border="1px solid" cell-padding="12px 16px">
     <ui-col mask-text="點我揭曉" icons-list="bi-star, bi-star-fill">遮罩優先</ui-col>
     <ui-col carousel-interval="2000" icons-list="bi-star, bi-star-fill">
@@ -1010,7 +1010,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     --violet: #B484E8;
     --blue: #5DBAE8;
     --warning: #EF6661;
-    --orange: #F79C40;
+    --energetic: #B6FF00;
     --blue: #5DBAE8;
     --green: #71CD76;
     --green: #71CD76;
@@ -1021,7 +1021,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     --info: #778CE1;
     --indigo: #778CE1;
     --pink: #FF91D7;
-    --orange: #F79C40;
+    --energetic: #B6FF00;
   }
   body {
     background: var(--bg);
@@ -1096,7 +1096,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   #logBox .alert.al-warn {
     background: rgba(237, 161, 9, 0.85);
     color: var(--bg);
-    border-color: var(--orange);
+    border-color: var(--energetic);
   }
   #logBox .btn-close { padding: 12px; }
   table.ref { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
@@ -1109,7 +1109,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   }
   table.ref th { color: var(--violet); font-weight: 600; }
   table.ref td:first-child { white-space: nowrap; color: var(--yellow); font-family: monospace; }
-  .note { color: var(--orange); font-size: 0.92rem; margin: 12px 0 0; }
+  .note { color: var(--energetic); font-size: 0.92rem; margin: 12px 0 0; }
   .rev-head {
     font-size: 1.1rem;
     color: var(--bg);
@@ -1306,7 +1306,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     rows: [
       { enhance: true, fontColor: 'blue', cols: [{ content: 'Band' }, { content: 'Descriptor' }] },
       { enhance: true, canHide: true,  cols: [{ content: '7' }, { content: 'uses less common vocabulary' }] },
-      { enhance: true, canHide: 2, canHideColor: 'orange', cols: [{ content: '8' }, { content: 'skilfully uses uncommon items' }] }
+      { enhance: true, canHide: 2, canHideColor: 'energetic', cols: [{ content: '8' }, { content: 'skilfully uses uncommon items' }] }
     ]
   };
 </script>
@@ -1363,7 +1363,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <ui-row col-widths="1:3">
     <ui-col>cell-item</ui-col>
     <ui-col carousel-interval="2600" progress-bar>
-      <cell-item>Band 6：<c-orange>It is good</c-orange> for people.</cell-item>
+      <cell-item>Band 6：<c-energetic>It is good</c-energetic> for people.</cell-item>
       <cell-item>Band 7：<c-green>It is beneficial</c-green> to <c-blue>commuters</c-blue>.</cell-item>
       <cell-item>Band 8：<c-violet><b>It brings tangible benefits</b></c-violet> to <c-blue>daily commuters</c-blue>.</cell-item>
     </ui-col>
@@ -1443,7 +1443,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       { cols: [{ content: 'Paraphrase' }, { content: '<c-red>important</c-red> → <c-green>significant</c-green>' }] },
       { minHeight: '160px', cols: [
           { content: 'Rotate' },
-          { carouselInterval: 2200, items: ['<c-pink>increase</c-pink>', '<c-blue>rise</c-blue>', '<c-orange>surge</c-orange>'] }
+          { carouselInterval: 2200, items: ['<c-pink>increase</c-pink>', '<c-blue>rise</c-blue>', '<c-energetic>surge</c-energetic>'] }
       ] }
     ]
   };
@@ -1525,7 +1525,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <ui-row>
     <ui-col>
       先看遮罩 <ui-flash target="ans-mask" color="green"></ui-flash>
-      再看反色格 <ui-flash target="ans-inv" color="orange"></ui-flash>
+      再看反色格 <ui-flash target="ans-inv" color="energetic"></ui-flash>
       跳到第 10 節 <ui-flash target="w-mitigate" color="blue"></ui-flash>
     </ui-col>
     <ui-col id="ans-inv" inverse flash-width="5">inverse 格子上的光帶</ui-col>
@@ -1612,7 +1612,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   When I first moved to Taipei, I rented
   <ui-trans source="tr-flat">a tiny flat</ui-trans>
   near the station. It was
-  <ui-trans source="tr-cramped" hint-style="pill-fill" theme="orange">a bit cramped</ui-trans>,
+  <ui-trans source="tr-cramped" hint-style="pill-fill" theme="energetic">a bit cramped</ui-trans>,
   but the rent was
   <ui-trans source="tr-reasonable" hint-style="pill-outline" theme="green">pretty reasonable</ui-trans>,
   and I could
@@ -1654,7 +1654,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <ui-col>輪播</ui-col>
     <ui-col carousel-interval="3200" progress-bar>
       <cell-item>It is <ui-trans source="tr-bustling" hint-style="pill-outline" theme="blue">bustling</ui-trans>.</cell-item>
-      <cell-item>It is <ui-trans source="tr-vibrant" hint-style="pill-outline" theme="orange">vibrant</ui-trans>.</cell-item>
+      <cell-item>It is <ui-trans source="tr-vibrant" hint-style="pill-outline" theme="energetic">vibrant</ui-trans>.</cell-item>
     </ui-col>
   </ui-row>
   <ui-row>
@@ -1663,7 +1663,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   </ui-row>
 </ui-table>
 <div id="xi-tr" hidden>
-  <p>Try <ui-trans source="tr-vibrant" theme="orange">vibrant</ui-trans> instead of <i>lively</i>.</p>
+  <p>Try <ui-trans source="tr-vibrant" theme="energetic">vibrant</ui-trans> instead of <i>lively</i>.</p>
 </div>
 <div id="tr-bustling"><b>熙來攘往的、熱鬧的</b></div>
 <div id="tr-vibrant"><b>充滿活力的</b></div>
@@ -1877,7 +1877,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <style>
   :root {
     --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
-    --red: #EF6661; --orange: #FF5530; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --red: #EF6661; --energetic: #B6FF00; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
     --violet: #B484E8; --gray: #86877F; --key: #51DBCF; --line: #2A2B29;
   }
   *, *::before, *::after { box-sizing: border-box; }

@@ -13,7 +13,7 @@
       --violet: #B484E8;
       --green:  #71CD76;
       --warning:  #EF6661;
-      --orange:   #F79C40;
+      --energetic:   #B6FF00;
       --blue:      #5DBAE8;
       --blue:    #5DBAE8;
       --green:     #71CD76;
@@ -24,7 +24,7 @@
       --info:     #778CE1;
       --indigo:   #778CE1;
       --pink:     #FF91D7;
-      --orange:   #F79C40;
+      --energetic:   #B6FF00;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -73,7 +73,7 @@
     .swatch-info { padding: 6px 10px 8px; background: rgba(198,199,189,.07); }
     .swatch-name { display: block; font-size: .88rem; font-weight: 700; color: var(--shell); }
     .swatch-hex  { display: block; font-size: .78rem; color: rgba(198,199,189,.62); font-family: monospace; letter-spacing: .03em; }
-    .chg { display: inline-block; font-size: .68rem; color: var(--orange); background: rgba(237,161,9,.14); border-radius: 3px; padding: 1px 5px; margin-top: 2px; }
+    .chg { display: inline-block; font-size: .68rem; color: var(--energetic); background: rgba(237,161,9,.14); border-radius: 3px; padding: 1px 5px; margin-top: 2px; }
 
     /* Demo panel */
     .dp {
@@ -223,9 +223,9 @@
     <div class="swatch"><div class="swatch-color" style="background:#0C0D0C;border-bottom:1px solid rgba(198,199,189,.14)"></div><div class="swatch-info"><span class="swatch-name">bg</span><span class="swatch-hex">#0C0D0C</span><span class="chg">NEW</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#C6C7BD"></div><div class="swatch-info"><span class="swatch-name">shell</span><span class="swatch-hex">#C6C7BD</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#DBEDD8"></div><div class="swatch-info"><span class="swatch-name">vanilla</span><span class="swatch-hex">#DBEDD8</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#F79C40"></div><div class="swatch-info"><span class="swatch-name">orange</span><span class="swatch-hex">#F79C40</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#B6FF00"></div><div class="swatch-info"><span class="swatch-name">energetic</span><span class="swatch-hex">#B6FF00</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#E3D322"></div><div class="swatch-info"><span class="swatch-name">yellow</span><span class="swatch-hex">#E3D322</span></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#F79C40"></div><div class="swatch-info"><span class="swatch-name">orange</span><span class="swatch-hex">#F79C40</span></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#DE8EC9"></div><div class="swatch-info"><span class="swatch-name">dreamy</span><span class="swatch-hex">#DE8EC9</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#5DBAE8"></div><div class="swatch-info"><span class="swatch-name">blue</span><span class="swatch-hex">#5DBAE8</span><span class="chg">修正</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#5DBAE8"></div><div class="swatch-info"><span class="swatch-name">blue</span><span class="swatch-hex">#5DBAE8</span></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#DBEDD8"></div><div class="swatch-info"><span class="swatch-name">focus</span><span class="swatch-hex">#DBEDD8</span><span class="chg">修正</span></div></div>
@@ -297,7 +297,7 @@
     </div>
     <div class="arrow-row" style="border:none">
       <div class="arrow-tag"><em>arrow="both"</em> dashed</div>
-      <div class="arrow-preview"><dual-hr color-left="blue" color-right="orange" line-style="dashed" dash="10px" gap="6px" thickness="2px" arrow="both" arrow-size="10" margin="0"></dual-hr></div>
+      <div class="arrow-preview"><dual-hr color-left="blue" color-right="energetic" line-style="dashed" dash="10px" gap="6px" thickness="2px" arrow="both" arrow-size="10" margin="0"></dual-hr></div>
     </div>
   </div>
 
@@ -362,9 +362,9 @@
       </div>
     </div>
     <div class="sa-row" style="border:none">
-      <div class="sa-label"><em>line-style="none" arrow="start" arrow-size="20"</em><br>color-left="orange" ratio="1:9"</div>
+      <div class="sa-label"><em>line-style="none" arrow="start" arrow-size="20"</em><br>color-left="energetic" ratio="1:9"</div>
       <div style="flex:1">
-        <dual-hr color-left="orange" color-right="transparent" ratio="1:9" line-style="none" thickness="0" arrow="start" arrow-size="20" margin="0"></dual-hr>
+        <dual-hr color-left="energetic" color-right="transparent" ratio="1:9" line-style="none" thickness="0" arrow="start" arrow-size="20" margin="0"></dual-hr>
       </div>
     </div>
   </div>
@@ -400,8 +400,8 @@
 
   <h3>Dotted</h3>
   <div class="dp">
-    <div class="dlabel"><span>orange / green · dot 8px gap 6px</span></div>
-    <dual-hr color-left="orange" color-right="green" line-style="dotted" dash="8px" gap="6px" thickness="8px"></dual-hr>
+    <div class="dlabel"><span>energetic / green · dot 8px gap 6px</span></div>
+    <dual-hr color-left="energetic" color-right="green" line-style="dotted" dash="8px" gap="6px" thickness="8px"></dual-hr>
     <div class="dlabel" style="margin-top:16px"><span>blue / pink · dot 10px gap 4px</span></div>
     <dual-hr color-left="blue" color-right="pink" line-style="dotted" dash="10px" gap="4px" thickness="10px"></dual-hr>
     <div class="dlabel" style="margin-top:16px"><span>green / blue · dot 4px gap 10px</span></div>
@@ -426,7 +426,7 @@
       <span class="vr-text">D</span>
       <dual-vr color-top="blue" color-bottom="indigo" line-style="dashed" dash="10px" gap="5px" height="60px" thickness="2px"></dual-vr>
       <span class="vr-text">E</span>
-      <dual-vr color-top="orange" color-bottom="green" line-style="dotted" dash="8px" gap="6px" height="60px" thickness="8px"></dual-vr>
+      <dual-vr color-top="energetic" color-bottom="green" line-style="dotted" dash="8px" gap="6px" height="60px" thickness="8px"></dual-vr>
       <span class="vr-text">F</span>
     </div>
   </div>
@@ -488,7 +488,7 @@
           <option value="violet">violet</option><option value="blue">blue</option>
           <option value="green">green</option><option value="green">green</option>
           <option value="green">green</option><option value="warning">warning</option>
-          <option value="orange">orange</option><option value="orange">orange</option>
+          <option value="energetic">energetic</option><option value="dreamy">dreamy</option>
           <option value="pink">pink</option><option value="indigo">indigo</option>
           <option value="info">info</option><option value="vanilla">vanilla</option>
           <option value="shell">shell</option><option value="focus">focus</option>
@@ -502,7 +502,7 @@
           <option value="violet">violet</option><option value="blue">blue</option>
           <option value="green">green</option><option value="green">green</option>
           <option value="green">green</option><option value="warning">warning</option>
-          <option value="orange">orange</option><option value="orange">orange</option>
+          <option value="energetic">energetic</option><option value="dreamy">dreamy</option>
           <option value="pink">pink</option><option value="indigo">indigo</option>
           <option value="info">info</option><option value="vanilla">vanilla</option>
           <option value="shell">shell</option><option value="focus">focus</option>

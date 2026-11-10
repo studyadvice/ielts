@@ -33,10 +33,10 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例一：座標怎麼數</h2>
     <p class="bp-text-shell">三欄三列的表：第 1 列是表頭，所以 B2 是第一筆資料的第二欄。按下按鈕，九格同時換成自己的座標；內容用 <code>|</code> 分隔，一格一段，依 A1、B1、C1、A2…的順序對應。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">
@@ -55,10 +55,10 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例二：單格揭曉答案</h2>
     <p class="bp-text-shell">最常用的寫法。<code>target-cell-content</code> 可以寫 HTML；長一點的內容放進 template，用 <code>target-cell-source</code> 讀取。再按一次恢復成問號。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">
@@ -86,7 +86,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <p class="bp-text-shell">不透過 ui-btn 也可以直接操作。寫入的內容會被記住，呼叫 <code>render()</code> 重畫後仍然保留；<code>resetCell()</code> 恢復原始內容。</p>
     <div class="row g-4">
       <div class="col-6">
-        <div class="stage bp-border-key-deep">
+        <div class="stage bp-border-bg-alternative">
           <mini-table id="api-tbl" head="Skill | Band" pre-theme="ledger">
             Fluency | 6
             Lexical resource | 6
@@ -102,7 +102,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       </div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">JavaScript</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">const t = document.getElementById('api-tbl');
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm">const t = document.getElementById('api-tbl');
 t.cellAt('B2');               // 取得儲存格元素（th 或 td）
 t.resolveCells('A2:B3');      // ['A2', 'B2', 'A3', 'B3']
 t.setCell('B3', '7.5');       // 寫入並記住，render() 後仍保留

@@ -12,7 +12,7 @@
 body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
 .page{padding:32px 40px 80px 40px;}
 .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
-.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-key-deep);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
+.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-bg-alternative);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
 .toc a:hover{border-color:var(--bp-key);color:var(--bp-key);}
 .demo{border-radius:12px;padding:24px;margin:0 0 32px 0;scroll-margin-top:16px;}
 .demo h2{margin:0 0 6px 0;}
@@ -65,8 +65,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例一：基本用法與三種狀態</h2>
     <p class="desc bp-text-shell">不加任何屬性時使用預設外觀（violet）。步驟寫 <code>data-state="done"</code>、<code>"active"</code> 或 <code>"error"</code>，編號徽章會分別變成 ✓、數字與 !。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <bp-stepper>
@@ -98,8 +98,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例二：主題</h2>
     <p class="desc bp-text-shell"><code>data-theme</code> 可用 17 色的任一色名，一次決定主色、進行中、完成與標題顏色。下面列出其中八種，其餘見文末色票。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">
@@ -121,8 +121,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <bp-step data-state="error"><bp-step-title>Repeat</bp-step-title></bp-step>
       <bp-step><bp-step-title>Record</bp-step-title></bp-step>
     </bp-stepper></div>
-  <div><p class="stage-label">data-theme="orange"</p>
-    <bp-stepper data-theme="orange" data-card-width="150px" data-gap="28px">
+  <div><p class="stage-label">data-theme="energetic"</p>
+    <bp-stepper data-theme="energetic" data-card-width="150px" data-gap="28px">
       <bp-step data-state="done"><bp-step-title>Listen</bp-step-title></bp-step>
       <bp-step data-state="active"><bp-step-title>Repeat</bp-step-title></bp-step>
       <bp-step><bp-step-title>Record</bp-step-title></bp-step>
@@ -159,8 +159,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例三：連接線樣式</h2>
     <p class="desc bp-text-shell"><code>data-connector</code> 可用 <code>solid</code>（預設）、<code>dashed</code>、<code>dotted</code>。<code>data-stroke</code> 調整線條粗細，<code>data-arrow-size</code> 調整箭頭大小。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div><p class="stage-label">solid</p>
@@ -188,8 +188,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例四：縱向版型</h2>
     <p class="desc bp-text-shell"><code>data-layout="vertical"</code> 改為上下排列。縱向時 <code>data-card-width</code> 是卡片的固定寬度；不寫則填滿容器。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">
@@ -207,7 +207,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <bp-step-content>每個提示點配一個語塊。</bp-step-content>
     </bp-step>
   </bp-stepper>
-  <bp-stepper data-theme="orange" data-layout="vertical">
+  <bp-stepper data-theme="energetic" data-layout="vertical">
     <bp-step data-state="done">
       <bp-step-title>Submit</bp-step-title>
       <bp-step-content>交出錄音檔。</bp-step-content>
@@ -227,13 +227,13 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 
   <section class="demo bp-border-gray" id="ex-custom" data-demo>
     <h2 class="fs-large bp-text-yellow">範例五：自訂外觀</h2>
-    <p class="desc bp-text-shell">每個 <code>data-*</code> 都能單獨覆寫，不必依賴主題。顏色可以寫色名（例如 <code>orange</code>）或色碼；只改了進行中、完成或錯誤的顏色時，卡片背景會自動配合。</p>
+    <p class="desc bp-text-shell">每個 <code>data-*</code> 都能單獨覆寫，不必依賴主題。顏色可以寫色名（例如 <code>energetic</code>）或色碼；只改了進行中、完成或錯誤的顏色時，卡片背景會自動配合。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
-<bp-stepper data-color="yellow" data-color-active="orange" data-color-done="green"
+<bp-stepper data-color="yellow" data-color-active="energetic" data-color-done="green"
             data-title-color="yellow" data-stroke="3px" data-radius="6px"
             data-card-width="190px" data-gap="44px" data-arrow-size="8px">
   <bp-step data-state="done">
@@ -242,7 +242,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   </bp-step>
   <bp-step data-state="active">
     <bp-step-title>Lexical</bp-step-title>
-    <bp-step-content>color-active = orange</bp-step-content>
+    <bp-step-content>color-active = energetic</bp-step-content>
   </bp-step>
   <bp-step>
     <bp-step-title>Grammar</bp-step-title>
@@ -256,8 +256,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例六：單行標題 compact-header</h2>
     <p class="desc bp-text-shell"><code>data-compact-header</code> 把編號、圖示與標題排成一行，下方加一條隨狀態變色的漸層細線。個別步驟寫 <code>data-compact-header="false"</code> 可恢復原本排版；<code>data-header-pad-y</code> 與 <code>data-header-gap</code> 調整這一行的上下內距與間距。圖示寫在 <code>&lt;span class="bp-step-icon"&gt;</code> 裡，沒有圖示時只排編號與標題。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">
@@ -333,8 +333,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例七：內文透明度</h2>
     <p class="desc bp-text-shell"><code>data-content-opacity</code> 控制一般與進行中步驟的內文透明度（預設 0.9），<code>data-content-opacity-done</code> 控制完成步驟（預設 0.65）。後者沒寫時沿用前者，所以只寫 <code>data-content-opacity="1"</code> 就能讓所有內文都不透明。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">
@@ -368,8 +368,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例八：逐步推進 progress</h2>
     <p class="desc bp-text-shell"><code>data-mode="progress"</code> 在每張卡片右下角放一顆推進按鈕，按下後這一步完成、下一步變成進行中。按鈕可以只有圖示（預設 ›）、只有文字，或圖示加文字；最後一步改用 <code>data-progress-done-icon</code> 與 <code>data-progress-done-text</code>。個別步驟也能覆寫圖示與文字，<code>data-prog-btn-size</code> 調整按鈕大小。下方灰色列顯示 <code>bps:change</code> 與 <code>bps:complete</code> 事件。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div><p class="stage-label">只有圖示（預設）</p>
@@ -418,8 +418,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例九：逐步揭示 progress-show</h2>
     <p class="desc bp-text-shell"><code>data-mode="progress-show"</code> 一開始只顯示第一步，按下推進按鈕，下一步才帶著動畫出現；縱向時由下往上滑入。<code>data-show-ending</code> 指定一個元素的 id，最後一步按下後才顯示它。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div><p class="stage-label">橫向</p>
@@ -431,14 +431,14 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 </bp-stepper></div>
 
 <div><p class="stage-label">縱向，加上結尾</p>
-<bp-stepper class="show-demo" data-mode="progress-show" data-layout="vertical" data-theme="orange"
+<bp-stepper class="show-demo" data-mode="progress-show" data-layout="vertical" data-theme="energetic"
             data-progress-text="下一步" data-progress-done-text="看結果"
             data-show-ending="show-end" data-card-width="320px" data-gap="20px">
   <bp-step><bp-step-title>Basic</bp-step-title><bp-step-content>near my home</bp-step-content></bp-step>
   <bp-step><bp-step-title>Better</bp-step-title><bp-step-content>within walking distance</bp-step-content></bp-step>
   <bp-step><bp-step-title>Best</bp-step-title><bp-step-content>a stone's throw from my place</bp-step-content></bp-step>
 </bp-stepper>
-<div id="show-end" class="result bp-border-orange bp-text-orange" style="margin:12px 0 0 0">三種說法都看完了，換你造句。</div></div>
+<div id="show-end" class="result bp-border-energetic bp-text-energetic" style="margin:12px 0 0 0">三種說法都看完了，換你造句。</div></div>
 <div class="ctrl"><button type="button" class="btn btn-sm btn-key-outline" id="show-reset">全部重設</button></div>
     </script>
   </section>
@@ -447,8 +447,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例十：自訂呼叫按鈕 btn-js</h2>
     <p class="desc bp-text-shell">任一步驟寫 <code>btn-js="JavaScript 運算式"</code>，卡片左下角就會出現一顆按鈕，顏色跟著主題與狀態。運算式裡可以直接用 <code>step</code>（這個步驟）、<code>stepper</code>（整個元件）與 <code>BPStepper</code>。<code>btn-js-label</code> 是按鈕文字，<code>btn-js-icon-class</code> 是圖示；文字留空時按鈕變成正圓形。可以和 progress 的推進按鈕並存。範例裡的 <code>demoAlert()</code> 與 <code>showStepInfo()</code> 是本頁定義的函式。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div><p class="stage-label">文字按鈕</p>
@@ -492,8 +492,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例十一：內建標題、換行、連接線標籤與點選切換</h2>
     <p class="desc bp-text-shell"><code>data-ui-title</code> 把標題放進元件裡（可寫 HTML），<code>data-wrap="3"</code> 每列三步、第四步起轉彎換到下一列，<code>data-connector-label</code> 在連接線上加文字（步驟上也能個別寫），<code>data-clickable="true"</code> 讓步驟可以點選或用 Enter 切換。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <bp-stepper data-theme="key" data-ui-title="<i class='bi bi-signpost-split'></i> Part 2 練習流程"
@@ -511,8 +511,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例十二：JavaScript API</h2>
     <p class="desc bp-text-shell"><code>BPStepper.setActive(el, i)</code> 把第 i 步設為進行中、前面全部完成；i 等於步驟數時全部完成並觸發 <code>bps:complete</code>。<code>setError(el, i)</code> 標記錯誤，<code>resetStates(el)</code> 清除所有狀態。結果用 Bootstrap alert 顯示在右上角。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <bp-stepper id="api-demo" data-theme="blue">

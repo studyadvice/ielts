@@ -132,7 +132,7 @@
   <drill-tile group="帳號" icon="shield-lock" label="安全性" source="set-security" badge="2"></drill-tile>
   <drill-tile group="帳號" icon="credit-card" label="付款" disabled></drill-tile>
 
-  <drill-tile group="其他" icon="palette" label="外觀" source="set-theme" color="orange" active-color="pink"></drill-tile>
+  <drill-tile group="其他" icon="palette" label="外觀" source="set-theme" color="energetic" active-color="pink"></drill-tile>
   <drill-tile group="其他" icon="question-circle" label="說明中心" href="https://example.com/help" target="_blank"></drill-tile>
 </ui-drill>
 
@@ -165,7 +165,7 @@
 
 <template id="proj-doing">
   <button detail="pj-a" label="官網改版">官網改版</button>
-  <button detail="pj-b" color="orange" label="App 2.0">App 2.0</button>
+  <button detail="pj-b" color="energetic" label="App 2.0">App 2.0</button>
   <button detail="pj-c" color="red" label="延遲專案">延遲專案</button>
   <button detail="pj-d" color="#71CD76" detail-title="自訂右欄標題">自訂色</button>
   <button detail="pj-e" class="btn btn-outline-info">Bootstrap 按鈕</button>
@@ -256,7 +256,7 @@
   <drill-tile icon="house" label="首頁" source="tab-home" color="blue"></drill-tile>
   <drill-tile icon="bar-chart" label="報表" source="tab-report" color="green" badge="3"></drill-tile>
   <drill-tile icon="gear" label="設定" source="tab-set" color="violet"></drill-tile>
-  <drill-tile icon="lock" label="管理" color="orange" disabled></drill-tile>
+  <drill-tile icon="lock" label="管理" color="energetic" disabled></drill-tile>
 </ui-drill>
 
 <template id="tab-home"><button detail="h-news">最新公告</button></template>
@@ -290,7 +290,7 @@
   <drill-tile label="報表" source="tab-report" color="yellow"></drill-tile>
 </ui-drill>
 
-<ui-drill tile-shape="tab-underline" tab-width="140" accent="orange">
+<ui-drill tile-shape="tab-underline" tab-width="140" accent="energetic">
   <drill-tile icon="house" label="首頁" source="tab-home"></drill-tile>
   <drill-tile icon="gear" label="設定" source="tab-set"></drill-tile>
 </ui-drill>
@@ -745,7 +745,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 <ui-cards cols="2" panel="right" panel-columns="7,5" panel-title="{label}" accent="pink" toggle>
   <card-item label="湖畔營地" icon="tree-fill" detail="camp-a"></card-item>
   <card-item label="山頂小屋" icon="house" detail="camp-b">
-    <button detail="camp-b-rule" color="orange" detail-title="入住須知">須知</button>
+    <button detail="camp-b-rule" color="energetic" detail-title="入住須知">須知</button>
   </card-item>
   <card-item label="溪谷營地" note="整修中" icon="tree" disabled detail="camp-a"></card-item>
 </ui-cards>
@@ -762,7 +762,7 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
           active-detail="sum-a" hide-empty-panel>
   <card-item label="今日訂單" icon="cart-check-fill" color="blue" detail="sum-a"></card-item>
   <card-item label="新會員" icon="person-plus-fill" color="green" detail="sum-b"></card-item>
-  <card-item label="退貨申請" icon="arrow-return-left" color="orange" badge="3" badge-color="red"></card-item>
+  <card-item label="退貨申請" icon="arrow-return-left" color="energetic" badge="3" badge-color="red"></card-item>
   <card-item label="說明" icon="info-circle" color="violet" href="#help"></card-item>
 </ui-cards>
 ```
@@ -977,7 +977,7 @@ uc.unflipAll();      // 全部翻回正面
 ```html
 <ui-steps line arrows arrow-icon="arrow-right-circle" color="indigo" done-color="green">
   <step-item label="第一課" status="done" href="lesson-1.html"></step-item>
-  <step-item label="第二課" status="current" color="orange"></step-item>
+  <step-item label="第二課" status="current" color="energetic"></step-item>
   <step-item label="第三課" status="todo" disabled tooltip="尚未開放"></step-item>
 </ui-steps>
 ```
@@ -1005,7 +1005,7 @@ uc.unflipAll();      // 全部翻回正面
 | 特效 | `electric`、`pulse`、`no-fx` | 電流環加閃電、外圈呼吸光、取消上層給的特效。 |
 
 - **疊加順序：** `<ui-cards>` 的 `panel-theme`，再疊內容來源的 `theme`，最後疊按鈕或卡片的 `detail-theme`。同一組後寫的蓋掉先寫的，例如 `panel-theme="compact"` 加上 `theme="tint"` 等於 `compact tint`。
-- **顏色：** `detail-color` 優先，其次是內容來源的 `color`，再來是 `panel-color`，都只接受 17 色色名。都沒寫時跟著 `panel-title-color`，預設 `violet`。金箔版固定金色。
+- **顏色：** `detail-color` 優先，其次是內容來源的 `color`，再來是 `panel-color`，都只接受 18 色色名。都沒寫時跟著 `panel-title-color`，預設 `violet`。金箔版固定金色。
 - **`head-tab` 與 `panel-height`：** 內容區可捲動時，頁籤改成放在框內左上角，避免被裁掉。
 - **電流的閃電：** 在右上角；有角標或用 `head-filled` 時移到右下角。
 

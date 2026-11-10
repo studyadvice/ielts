@@ -24,7 +24,7 @@ h2{margin:0 0 8px;color:#5DBAE8;font-size:1.75rem;line-height:1.4;border-bottom:
 .bar{display:flex;gap:12px;margin-bottom:12px}
 .rbtn{font-size:1.125rem;padding:6px 18px;background:transparent;color:#71CD76;border:1px solid #71CD76;border-radius:6px;cursor:pointer}
 .rbtn:hover{background:rgba(179,222,115,.85);color:#0C0D0C}
-details summary{cursor:pointer;color:#F79C40;margin-bottom:8px}
+details summary{cursor:pointer;color:#B6FF00;margin-bottom:8px}
 pre{margin:0 0 12px;padding:16px 20px;background:#141514;border-left:4px solid #71CD76;border-radius:6px;overflow-x:auto}
 pre code{color:#DBEDD8;font-family:Consolas,monospace;font-size:1.125rem;line-height:1.5;white-space:pre}
 .alert{font-size:1.125rem}
@@ -69,7 +69,7 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
 <div class="bar"><button class="rbtn" data-replay="d2">↻ 重新播放</button></div>
 <div class="stage" id="stage-d2"></div>
 <details><summary>顯示原始碼</summary><pre><code>&lt;info-region id="d2-a" active="true" countdown="3000" countdown-position="top"
-             countdown-color="yellow" countdown-height="5" next="d2-b" color="orange"&gt;
+             countdown-color="yellow" countdown-height="5" next="d2-b" color="energetic"&gt;
   &lt;p&gt;先讀這一段，3 秒後自動下一段。&lt;/p&gt;
 &lt;/info-region&gt;
 &lt;info-region id="d2-b" countdown next="d2-c" color="green"&gt;
@@ -99,7 +99,7 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
   &lt;info-region color="violet"&gt;&lt;p&gt;violet&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="blue"&gt;&lt;p&gt;blue&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="red"&gt;&lt;p&gt;warning&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="orange"&gt;&lt;p&gt;orange&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="energetic"&gt;&lt;p&gt;energetic&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="blue"&gt;&lt;p&gt;blue&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="green"&gt;&lt;p&gt;green&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="green"&gt;&lt;p&gt;green&lt;/p&gt;&lt;/info-region&gt;
@@ -109,11 +109,11 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
   &lt;info-region color="indigo"&gt;&lt;p&gt;info&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="indigo"&gt;&lt;p&gt;indigo&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="pink"&gt;&lt;p&gt;pink&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="orange"&gt;&lt;p&gt;orange&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="energetic"&gt;&lt;p&gt;energetic&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="green"&gt;&lt;p&gt;green&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="blue"&gt;&lt;p&gt;blue&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="gold"&gt;&lt;p&gt;gold&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="orange" border-width="2" border-style="dashed"&gt;&lt;p&gt;四邊 2px 虛線&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="energetic" border-width="2" border-style="dashed"&gt;&lt;p&gt;四邊 2px 虛線&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="green" border-width="0" border-top-width="6"&gt;&lt;p&gt;只有上邊 6px&lt;/p&gt;&lt;/info-region&gt;
 &lt;/info-region-group&gt;</code></pre></details>
 </section>
@@ -182,7 +182,7 @@ body .ir-choice-key                   { font-size: 1.125rem !important; }</style
   &lt;info-region color="green"&gt;&lt;p&gt;第三格&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="violet"&gt;&lt;p&gt;第四格&lt;/p&gt;&lt;/info-region&gt;
   &lt;info-region color="pink"&gt;&lt;p&gt;第五格&lt;/p&gt;&lt;/info-region&gt;
-  &lt;info-region color="orange"&gt;&lt;p&gt;第六格&lt;/p&gt;&lt;/info-region&gt;
+  &lt;info-region color="energetic"&gt;&lt;p&gt;第六格&lt;/p&gt;&lt;/info-region&gt;
 &lt;/info-region-group&gt;</code></pre></details>
 </section>
 <section class="demo" id="d8">
@@ -225,7 +225,7 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
 </template>
 <template id="tpl-d2">
 <info-region id="d2-a" active="true" countdown="3000" countdown-position="top"
-             countdown-color="yellow" countdown-height="5" next="d2-b" color="orange">
+             countdown-color="yellow" countdown-height="5" next="d2-b" color="energetic">
   <p>先讀這一段，3 秒後自動下一段。</p>
 </info-region>
 <info-region id="d2-b" countdown next="d2-c" color="green">
@@ -249,7 +249,7 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
   <info-region color="violet"><p>violet</p></info-region>
   <info-region color="blue"><p>blue</p></info-region>
   <info-region color="red"><p>warning</p></info-region>
-  <info-region color="orange"><p>orange</p></info-region>
+  <info-region color="energetic"><p>energetic</p></info-region>
   <info-region color="blue"><p>blue</p></info-region>
   <info-region color="green"><p>green</p></info-region>
   <info-region color="green"><p>green</p></info-region>
@@ -259,11 +259,11 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
   <info-region color="indigo"><p>info</p></info-region>
   <info-region color="indigo"><p>indigo</p></info-region>
   <info-region color="pink"><p>pink</p></info-region>
-  <info-region color="orange"><p>orange</p></info-region>
+  <info-region color="energetic"><p>energetic</p></info-region>
   <info-region color="green"><p>green</p></info-region>
   <info-region color="blue"><p>blue</p></info-region>
   <info-region color="gold"><p>gold</p></info-region>
-  <info-region color="orange" border-width="2" border-style="dashed"><p>四邊 2px 虛線</p></info-region>
+  <info-region color="energetic" border-width="2" border-style="dashed"><p>四邊 2px 虛線</p></info-region>
   <info-region color="green" border-width="0" border-top-width="6"><p>只有上邊 6px</p></info-region>
 </info-region-group>
 </template>
@@ -323,7 +323,7 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
   <info-region color="green"><p>第三格</p></info-region>
   <info-region color="violet"><p>第四格</p></info-region>
   <info-region color="pink"><p>第五格</p></info-region>
-  <info-region color="orange"><p>第六格</p></info-region>
+  <info-region color="energetic"><p>第六格</p></info-region>
 </info-region-group>
 </template>
 <template id="tpl-d8">

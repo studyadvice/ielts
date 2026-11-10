@@ -37,7 +37,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `color` | 色票名稱或任何 CSS 顏色 | `shell` | 遮罩顏色。17 個色票名稱都能直接寫，例如 `pink`、`key-deep`。 |
+| `color` | 色票名稱或任何 CSS 顏色 | `shell` | 遮罩顏色。18 個色票名稱都能直接寫，例如 `pink`、`dreamy`。 |
 | `opacity` | `0` 到 `1` | `1` | 遮罩透明度，數字越小原文透出越多。 |
 | `mask-style` | `solid`、`stripe`、`dots`、`blur`、`underline`、`gradient` | `solid` | 遮罩樣式，見[遮罩樣式](#遮罩樣式)。無效值改用 `solid` 並在主控台提示。 |
 | `gradient` | `1` 到 `6`，或 CSS 漸層 | `1` | 搭配 `mask-style="gradient"`。預設漸層與 ui-table 的 `mask-gradient` 相同。 |
@@ -90,7 +90,7 @@
 ## 區塊模式與提示文字
 
 ```html
-<ui-mask display="block" color="key-deep" label="先自己想想，再點我看答案" padding="14 18" radius="10">
+<ui-mask display="block" color="bg-alternative" label="先自己想想，再點我看答案" padding="14 18" radius="10">
   Unlike those who tend to have the same thing for lunch every day, ...
 </ui-mask>
 ```

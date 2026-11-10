@@ -10,8 +10,8 @@
 <style>
   :root{
     --background:#0C0D0C;--shell:#C6C7BD;--vanilla:#DBEDD8;--yellow:#E3D322;--pink:#FF91D7;--red:#EF6661;
-    --orange:#FF5530;--green:#71CD76;--blue:#5DBAE8;--indigo:#778CE1;--violet:#B484E8;--gray:#86877F;
-    --key:#51DBCF;--key-deep:#176878;--calm:#A3C4BC;--quiet:#A9B8E0;--playful:#FFA987;--urgent:#FF2E63;
+    --energetic:#B6FF00;--green:#71CD76;--blue:#5DBAE8;--indigo:#778CE1;--violet:#B484E8;--gray:#86877F;
+    --key:#51DBCF;--bg-alternative:#3B2A20;--calm:#A3C4BC;--quiet:#8EA4DE;--playful:#FFA987;--urgent:#FF2E63;
   }
   body{background:var(--background);color:var(--shell);font-size:1rem;}
   code{color:var(--key);}
@@ -55,20 +55,20 @@
   .mock-ai .email b{padding:12px 24px;border-radius:999px;background:var(--pink);color:var(--background);font-size:1rem;}
 
   /* 範例 1：設計過 */
-  .mock-pro{height:100%;padding:80px 56px 40px;background:linear-gradient(180deg,var(--playful) 0%,var(--pink) 26%,var(--indigo) 56%,var(--key-deep) 100%);display:flex;justify-content:flex-end;align-items:center;}
+  .mock-pro{height:100%;padding:80px 56px 40px;background:linear-gradient(180deg,var(--playful) 0%,var(--pink) 26%,var(--indigo) 56%,var(--bg-alternative) 100%);display:flex;justify-content:flex-end;align-items:center;}
   .ledger{width:min(580px,100%);background:rgba(12,13,12,0.88);border:1px solid var(--gray);border-radius:18px;padding:22px 24px;color:var(--shell);}
   .ledger-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
   .ledger-head b{display:block;color:var(--vanilla);font-size:1.05rem;}
   .ledger-head small{color:var(--gray);font-size:.8rem;}
-  .ledger-head .chip{font-size:.75rem;padding:4px 10px;border-radius:999px;background:var(--key-deep);color:var(--vanilla);}
+  .ledger-head .chip{font-size:.75rem;padding:4px 10px;border-radius:999px;background:var(--bg-alternative);color:var(--vanilla);}
   .lrow{display:grid;grid-template-columns:36px 1fr 120px 110px;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--gray);}
-  .lrow .av{width:32px;height:32px;border-radius:50%;background:var(--key-deep);color:var(--vanilla);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;}
+  .lrow .av{width:32px;height:32px;border-radius:50%;background:var(--bg-alternative);color:var(--vanilla);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;}
   .lrow .nm{color:var(--vanilla);font-size:.92rem;line-height:1.2;}
   .lrow .nm small{display:block;color:var(--gray);font-size:.75rem;}
   .lrow .ok{color:var(--green);font-size:.8rem;}
   .lrow .open{color:var(--yellow);font-size:.8rem;}
   .lrow .amt{text-align:right;color:var(--vanilla);font-variant-numeric:tabular-nums;font-size:.92rem;}
-  .ledger-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:10px 14px;border:1px solid var(--orange);border-radius:12px;font-size:.82rem;}
+  .ledger-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:10px 14px;border:1px solid var(--energetic);border-radius:12px;font-size:.82rem;}
   .ledger-foot a{color:var(--playful);text-decoration:none;font-weight:700;}
 
   /* 範例 2：主題卡 */
@@ -78,21 +78,21 @@
   .t-head{display:flex;align-items:center;gap:16px;margin-bottom:28px;}
   .t-title{font-size:1.8rem;font-weight:800;}
   .t-chip{font-size:.85rem;padding:4px 12px;border-radius:999px;}
-  .day .t-chip{background:var(--key-deep);color:var(--vanilla);}
+  .day .t-chip{background:var(--bg-alternative);color:var(--vanilla);}
   .night .t-chip{background:var(--key);color:var(--background);}
   .t-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;}
   .t-stats div{padding:18px 20px;border-radius:14px;}
   .day .t-stats div{background:var(--shell);}
-  .night .t-stats div{background:var(--key-deep);}
+  .night .t-stats div{background:var(--bg-alternative);}
   .t-stats b{display:block;font-size:2rem;}
-  .day .t-stats b{color:var(--key-deep);}
+  .day .t-stats b{color:var(--bg-alternative);}
   .night .t-stats b{color:var(--key);}
   .t-stats small{font-size:.9rem;}
   .t-bar{height:14px;border-radius:999px;overflow:hidden;}
   .day .t-bar{background:var(--shell);}
   .night .t-bar{background:var(--gray);}
   .t-bar span{display:block;height:100%;border-radius:999px;}
-  .day .t-bar span{background:var(--key-deep);}
+  .day .t-bar span{background:var(--bg-alternative);}
   .night .t-bar span{background:var(--key);}
 
   /* 範例 3：預設漸層 */
@@ -107,7 +107,7 @@
   /* 範例 4：擠壓 */
   .article{height:100%;padding:72px 40px 32px;overflow:hidden;}
   .article.zh{background:var(--vanilla);color:var(--background);}
-  .article.en{background:var(--key-deep);color:var(--vanilla);}
+  .article.en{background:var(--bg-alternative);color:var(--vanilla);}
   .article h4{font-size:1.5rem;font-weight:800;margin:0 0 14px;}
   .article p{font-size:1.02rem;line-height:1.75;margin:0 0 12px;}
 
@@ -120,9 +120,9 @@
   .wf.wire .bar{height:14px;border-radius:6px;background:var(--gray);margin-bottom:12px;}
   .wf.wire .bar.s{width:55%;}
   .wf.wire .circ{width:48px;height:48px;border-radius:50%;border:2px dashed var(--gray);margin-bottom:18px;}
-  .wf.final .card-x:nth-child(1){background:var(--key-deep);color:var(--vanilla);}
+  .wf.final .card-x:nth-child(1){background:var(--bg-alternative);color:var(--vanilla);}
   .wf.final .card-x:nth-child(2){background:var(--indigo);color:var(--background);}
-  .wf.final .card-x:nth-child(3){background:var(--orange);color:var(--background);}
+  .wf.final .card-x:nth-child(3){background:var(--energetic);color:var(--background);}
   .wf.final .card-x i{font-size:2rem;display:block;margin-bottom:14px;}
   .wf.final .card-x b{display:block;font-size:1.25rem;margin-bottom:6px;}
   .wf.final .card-x span{font-size:.95rem;}
@@ -130,7 +130,7 @@
   /* 範例 6：API */
   .api-pane{height:100%;padding:72px 48px 32px;}
   .api-pane.a{background:var(--calm);color:var(--background);}
-  .api-pane.b{background:var(--key-deep);color:var(--vanilla);}
+  .api-pane.b{background:var(--bg-alternative);color:var(--vanilla);}
   .api-pane h4{font-size:1.6rem;font-weight:800;margin:0 0 12px;}
   .api-pane p{margin:0 0 18px;font-size:1.02rem;}
   .api-pane button{background:var(--background);color:var(--key);border:0;border-radius:10px;padding:10px 20px;font-size:1rem;font-weight:700;cursor:pointer;}
@@ -142,7 +142,7 @@
 
   /* 屬性表 */
   .attr-table{width:100%;border-collapse:collapse;font-size:.92rem;}
-  .attr-table th{background:var(--key-deep);color:var(--vanilla);text-align:left;padding:12px 14px;font-weight:700;}
+  .attr-table th{background:var(--bg-alternative);color:var(--vanilla);text-align:left;padding:12px 14px;font-weight:700;}
   .attr-table td{padding:10px 14px;border-bottom:1px solid var(--gray);vertical-align:top;color:var(--shell);}
   .attr-table td:first-child{white-space:nowrap;}
   .attr-table tr.group td{background:var(--background);color:var(--yellow);font-weight:800;padding-top:22px;border-bottom:2px solid var(--yellow);}
@@ -416,8 +416,8 @@
     <script type="text/plain" id="d8b">
 <!-- 新增 bg：分別指定兩層底色，可用色票名稱或漸層 -->
 <ui-screen height="320" radius="12" border-width="4" border-gradient="deep" handle-size="32">
-  <ui-screen-before bg="key-deep">
-    <div class="fix-pane" style="color:var(--vanilla)"><h3>Before</h3>bg="key-deep"</div>
+  <ui-screen-before bg="bg-alternative">
+    <div class="fix-pane" style="color:var(--vanilla)"><h3>Before</h3>bg="bg-alternative"</div>
   </ui-screen-before>
   <ui-screen-after bg="indigo,violet">
     <div class="fix-pane" style="color:var(--background);text-align:right"><h3>After</h3>bg="indigo,violet"</div>
@@ -437,7 +437,7 @@
     <script type="text/plain" id="d9">
 <div style="height:300px;padding:16px;border:1px dashed #86877F;border-radius:16px">
   <ui-screen height="100%" radius="12" border-width="3" border-gradient="sunset" style="height:100%">
-    <ui-screen-before label="父元素 300px" bg="key-deep"></ui-screen-before>
+    <ui-screen-before label="父元素 300px" bg="bg-alternative"></ui-screen-before>
     <ui-screen-after label="height=100%" bg="indigo,violet"></ui-screen-after>
   </ui-screen>
 </div>
@@ -524,7 +524,7 @@
         <tr><td><code>UIScreen.presets</code> ／ <code>UIScreen.palette</code> ／ <code>UIScreen.gradient()</code></td><td colspan="2">靜態</td><td>取得漸層預設集、色票，或用同一套規則產生漸層字串。</td></tr>
       </tbody>
     </table>
-    <p class="note">所有顏色屬性都可直接寫色票名稱（例如 <code>key-deep</code>），也接受任何 CSS 顏色值。把手與標籤圖示使用 Bootstrap Icons 類別，元件本身不載入圖示字型。</p>
+    <p class="note">所有顏色屬性都可直接寫色票名稱（例如 <code>bg-alternative</code>），也接受任何 CSS 顏色值。把手與標籤圖示使用 Bootstrap Icons 類別，元件本身不載入圖示字型。</p>
   </section>
 </div>
 

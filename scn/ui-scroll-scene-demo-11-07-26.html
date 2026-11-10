@@ -10,8 +10,8 @@
 <style>
   :root{
     --background:#0C0D0C;--shell:#C6C7BD;--vanilla:#DBEDD8;--yellow:#E3D322;--pink:#FF91D7;--red:#EF6661;
-    --orange:#FF5530;--green:#71CD76;--blue:#5DBAE8;--indigo:#778CE1;--violet:#B484E8;--gray:#86877F;
-    --key:#51DBCF;--key-deep:#176878;--calm:#A3C4BC;--quiet:#A9B8E0;--playful:#FFA987;--urgent:#FF2E63;
+    --energetic:#B6FF00;--green:#71CD76;--blue:#5DBAE8;--indigo:#778CE1;--violet:#B484E8;--gray:#86877F;
+    --key:#51DBCF;--bg-alternative:#3B2A20;--calm:#A3C4BC;--quiet:#8EA4DE;--playful:#FFA987;--urgent:#FF2E63;
   }
   body{background:var(--background);color:var(--shell);font-size:1rem;}
   code{color:var(--key);}
@@ -42,7 +42,7 @@
   scene-step h3{font-size:1.3rem;font-weight:800;color:var(--vanilla);margin:0 0 10px;}
   scene-step p{margin:0 0 10px;font-size:1.02rem;line-height:1.75;}
   scene-step .q{color:var(--yellow);font-weight:700;}
-  scene-step .tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--key-deep);color:var(--vanilla);font-size:.85rem;margin-right:6px;}
+  scene-step .tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--bg-alternative);color:var(--vanilla);font-size:.85rem;margin-right:6px;}
 
   /* 範例 1：圖表 */
   .chart-title{font-size:1.1rem;font-weight:800;color:var(--vanilla);margin:0 0 12px;align-self:flex-start;}
@@ -56,12 +56,12 @@
   .passage{padding:48px 56px 64px;color:var(--background);}
   .passage h3{font-size:1.6rem;font-weight:800;margin:0 0 24px;}
   .passage p{font-size:1.1rem;line-height:1.85;margin:0 0 22px;}
-  .passage p b{display:inline-block;width:28px;color:var(--key-deep);}
+  .passage p b{display:inline-block;width:28px;color:var(--bg-alternative);}
 
   /* 範例 3：口說升級 */
   .ans{height:100%;padding:72px 44px 36px;font-size:1.12rem;line-height:1.85;}
   .ans.plain{background:var(--shell);color:var(--background);}
-  .ans.pro{background:var(--key-deep);color:var(--vanilla);}
+  .ans.pro{background:var(--bg-alternative);color:var(--vanilla);}
   .ans.pro em{font-style:normal;color:var(--yellow);font-weight:700;}
 
   /* 範例 4：口說流程 */
@@ -72,7 +72,7 @@
 
   /* 屬性表 */
   .attr-table{width:100%;border-collapse:collapse;font-size:.92rem;}
-  .attr-table th{background:var(--key-deep);color:var(--vanilla);text-align:left;padding:12px 14px;font-weight:700;}
+  .attr-table th{background:var(--bg-alternative);color:var(--vanilla);text-align:left;padding:12px 14px;font-weight:700;}
   .attr-table td{padding:10px 14px;border-bottom:1px solid var(--gray);vertical-align:top;color:var(--shell);}
   .attr-table td:first-child{white-space:nowrap;}
   .attr-table tr.group td{background:var(--background);color:var(--yellow);font-weight:800;padding-top:22px;border-bottom:2px solid var(--yellow);}
@@ -166,7 +166,7 @@
     <details class="code-box"><summary>查看程式碼</summary><pre><code data-code="d2"></code></pre></details>
     <script type="text/plain" id="d2">
 <ui-scroll-scene stage-side="right" stage-width="56" stage-bg="vanilla" radius="16"
-                 border-width="2" border-color="gray" step-style="line" accent="key-deep"
+                 border-width="2" border-color="gray" step-style="line" accent="dreamy"
                  dim="rgba(12, 13, 12, 0.8)" stage-height="520" numbered>
   <scene-stage>
     <article class="passage">

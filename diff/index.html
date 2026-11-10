@@ -9,9 +9,9 @@
 <style>
 :root{
   --c-bg:#0C0D0C; --c-shell:#C6C7BD; --c-violet:#B484E8; --c-blue:#5DBAE8; --c-warning:#EF6661;
-  --c-orange:#F79C40; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
+  --c-energetic:#B6FF00; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
   --c-yellow:#E3D322; --c-focus:#DBEDD8; --c-green:#71CD76; --c-info:#778CE1; --c-indigo:#778CE1;
-  --c-pink:#FF91D7; --c-orange:#F79C40;
+  --c-pink:#FF91D7; --c-energetic:#B6FF00;
 }
 html{font-size:16px}
 body{margin:0;padding:24px 32px 64px 32px;background:var(--c-bg);color:var(--c-shell);font-size:1rem;line-height:1.5;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
@@ -19,8 +19,8 @@ h1{margin:0 0 8px 0;font-size:1.75rem;line-height:1.5;color:var(--c-vanilla)}
 h2{margin:48px 0 16px 0;padding:0 0 8px 0;font-size:1.25rem;line-height:1.5;color:var(--c-blue);border-bottom:1px solid var(--c-green)}
 h3{margin:0 0 8px 0;font-size:1rem;line-height:1.5;color:var(--c-violet)}
 p{margin:0 0 12px 0}
-code{color:var(--c-orange);font-size:0.9375rem}
-.meta{color:var(--c-orange);font-size:0.875rem}
+code{color:var(--c-energetic);font-size:0.9375rem}
+.meta{color:var(--c-energetic);font-size:0.875rem}
 .pair{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start;margin:0 0 32px 0}
 .case-title{margin:0 0 4px 0;font-size:0.9375rem;color:var(--c-violet)}
 .case-desc{margin:0 0 12px 0;font-size:0.875rem;color:var(--c-shell)}
@@ -28,9 +28,9 @@ pre.code{margin:0;padding:12px 16px;background:var(--c-bg);color:var(--c-vanilla
 table.ref{width:100%;border-collapse:collapse;font-size:0.875rem;line-height:1.5}
 table.ref th{padding:8px 12px;text-align:left;color:var(--c-blue);border:1px solid var(--c-green);background:var(--c-bg)}
 table.ref td{padding:8px 12px;vertical-align:top;border:1px solid var(--c-green)}
-table.ref td:first-child{white-space:nowrap;color:var(--c-orange)}
+table.ref td:first-child{white-space:nowrap;color:var(--c-energetic)}
 .pg-ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 20px 0}
-.pg-ctl label{display:block;margin:0 0 4px 0;font-size:0.8125rem;color:var(--c-orange)}
+.pg-ctl label{display:block;margin:0 0 4px 0;font-size:0.8125rem;color:var(--c-energetic)}
 .form-control,.form-select{padding:4px 8px;font-size:0.875rem;line-height:1.5;color:var(--c-shell);background-color:var(--c-bg);border:1px solid var(--c-green);border-radius:0}
 .form-control:focus,.form-select:focus{color:var(--c-shell);background-color:var(--c-bg);border-color:var(--c-focus);box-shadow:0 0 0 2px var(--c-focus)}
 .form-check-input{border-radius:0}
@@ -41,7 +41,7 @@ textarea.form-control{line-height:1.5}
 #alerts .alert .btn-close{padding:14px 12px}
 .alert-info{--bs-alert-color:#0C0D0C;--bs-alert-bg:#5DBAE8;--bs-alert-border-color:#5DBAE8}
 .alert-success{--bs-alert-color:#0C0D0C;--bs-alert-bg:#71CD76;--bs-alert-border-color:#71CD76}
-.alert-warning{--bs-alert-color:#0C0D0C;--bs-alert-bg:#F79C40;--bs-alert-border-color:#F79C40}
+.alert-warning{--bs-alert-color:#0C0D0C;--bs-alert-bg:#B6FF00;--bs-alert-border-color:#B6FF00}
 .alert-danger{--bs-alert-color:#DBEDD8;--bs-alert-bg:#EF6661;--bs-alert-border-color:#EF6661}
 @media (max-width:900px){.pair{grid-template-columns:minmax(0,1fr)}}
 </style>
@@ -126,7 +126,7 @@ textarea.form-control{line-height:1.5}
   <div><label>theme</label>
     <select class="form-select" data-attr="theme">
       <option>dark</option><option>light</option><option>blue</option><option>violet</option>
-      <option>green</option><option>pink</option><option>orange</option><option>orange</option>
+      <option>green</option><option>pink</option><option>energetic</option><option>dreamy</option>
       <option>blue</option><option>yellow</option>
     </select></div>
   <div><label>mode</label>
@@ -153,9 +153,9 @@ textarea.form-control{line-height:1.5}
   <div class="chk"><input class="form-check-input" type="checkbox" id="chkTick" data-attr="progress-ticks" checked><label for="chkTick" style="margin:0">progress-ticks</label></div>
 </div>
 <datalist id="palette">
-  <option>shell</option><option>violet</option><option>blue</option><option>warning</option><option>orange</option>
+  <option>shell</option><option>violet</option><option>blue</option><option>warning</option><option>energetic</option>
   <option>blue</option><option>green</option><option>green</option><option>vanilla</option><option>yellow</option>
-  <option>focus</option><option>green</option><option>info</option><option>indigo</option><option>pink</option><option>orange</option>
+  <option>focus</option><option>green</option><option>info</option><option>indigo</option><option>pink</option><option>dreamy</option>
 </datalist>
 
 <div class="pair">
@@ -175,7 +175,7 @@ textarea.form-control{line-height:1.5}
 <table class="ref">
   <tr><th>屬性</th><th>預設</th><th>說明</th></tr>
   <tr><td>width</td><td>100%</td><td>整個元件寬度。純數字視為 px，也可寫 50%、40rem。</td></tr>
-  <tr><td>theme</td><td>dark</td><td>dark、light、blue、violet、green、pink、orange、yellow、shell、vanilla、red、indigo、gray、key、key-deep、calm、quiet、playful、urgent。</td></tr>
+  <tr><td>theme</td><td>dark</td><td>dark、light、blue、violet、green、pink、energetic、dreamy、yellow、shell、vanilla、red、indigo、gray、key、bg-alternative、calm、quiet、playful、urgent。</td></tr>
   <tr><td>padding</td><td>16</td><td>內距。純數字視為 px，可寫兩個值，例如 8 24。</td></tr>
   <tr><td>font-size</td><td>1.125</td><td>內文字級。純數字視為 rem，標題與按鈕會依比例縮放。</td></tr>
   <tr><td>border</td><td>1px solid（主題色）</td><td>寬度、樣式、顏色可任意省略，順序不限。顏色可用色票名稱或 hex。none 取消邊框。</td></tr>
@@ -238,7 +238,7 @@ textarea.form-control{line-height:1.5}
 
 <template id="tpl3">
   <ui-layer-diff theme="light" width="560" padding="24" font-size="1.25"
-                 border="2px dashed green" add-color="indigo" del-color="orange"
+                 border="2px dashed green" add-color="indigo" del-color="energetic"
                  add-label="新增的細節" del-label="被取代的模糊字">
     <ui-layer>I use my phone a lot.</ui-layer>
     <ui-layer>I check my phone about fifty times a day.</ui-layer>

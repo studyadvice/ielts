@@ -45,7 +45,7 @@
   <ui-node icon="map-fill" size="xl" color="green"></ui-node>
   <ui-node icon="controller" size="lg" color="gray"></ui-node>
   <ui-node icon="palette-fill" size="lg" color="indigo"></ui-node>
-  <ui-node icon="book-half" size="md" color="orange"></ui-node>
+  <ui-node icon="book-half" size="md" color="energetic"></ui-node>
   <ui-node icon="heart-pulse-fill" size="md" color="red"></ui-node>
   <ui-node icon="tv-fill" size="sm" color="violet"></ui-node>
 </ui-network>
@@ -64,20 +64,20 @@
   <ui-node icon="map-fill" size="xl" color="green" href="#sec-travel" title="旅行"></ui-node>
   <ui-node icon="controller" size="lg" color="gray" href="#sec-game" title="遊戲"></ui-node>
   <ui-node icon="palette-fill" size="lg" color="indigo" href="#sec-art" title="藝術"></ui-node>
-  <ui-node icon="book-half" size="md" color="orange"
+  <ui-node icon="book-half" size="md" color="energetic"
            href="https://icons.getbootstrap.com/" target="_blank" title="Bootstrap Icons 官網"></ui-node>
   <ui-node icon="flower1" size="md" color="pink"></ui-node>
   <ui-node icon="heart-pulse-fill" size="md" color="red"></ui-node>
   <ui-node icon="briefcase-fill" size="md" color="playful"></ui-node>
   <ui-node icon="pencil-square" size="sm" color="gray"></ui-node>
   <ui-node icon="tv-fill" size="sm" color="violet"></ui-node>
-  <ui-node icon="cup-hot-fill" size="sm" color="key-deep"></ui-node>
+  <ui-node icon="cup-hot-fill" size="sm" color="dreamy"></ui-node>
   <ui-node icon="music-note-beamed" size="sm" color="blue"></ui-node>
   <ui-node icon="camera-fill" size="sm" color="urgent"></ui-node>
   <ui-node icon="airplane-fill" size="sm" color="indigo"></ui-node>
   <ui-node icon="bicycle" size="xs" color="green"></ui-node>
   <ui-node icon="tree-fill" size="xs" color="green"></ui-node>
-  <ui-node icon="trophy-fill" size="xs" color="orange"></ui-node>
+  <ui-node icon="trophy-fill" size="xs" color="energetic"></ui-node>
 </ui-network>
 
 <section id="sec-travel">旅行</section>
@@ -144,9 +144,9 @@
   <ui-node icon="map-fill" size="xl" color="#71CD76"></ui-node>
   <ui-node icon="controller" size="lg" color="rgb(134 135 127)"></ui-node>
   <ui-node icon="palette-fill" size="lg" color="indigo"></ui-node>
-  <ui-node icon="book-half" size="md" color="#FF5530"></ui-node>
+  <ui-node icon="book-half" size="md" color="#B6FF00"></ui-node>
   <ui-node icon="heart-pulse-fill" size="md" color="#EF6661"></ui-node>
-  <ui-node icon="cup-hot-fill" size="sm" color="rgba(23, 104, 120, 0.9)"></ui-node>
+  <ui-node icon="cup-hot-fill" size="sm" color="rgba(59, 42, 32, 0.9)"></ui-node>
   <ui-node icon="trophy-fill" size="xs" color="#F80"></ui-node>
   <ui-node icon="star-fill" size="xs" color="yellow" fill="#0C0D0C"></ui-node>
 </ui-network>
@@ -175,8 +175,8 @@
 
 ```html
 <ui-network fixed-size height="400" seed="exact">
-  <ui-node icon="trophy-fill" size="180" color="orange" fill="yellow"></ui-node>
-  <ui-node icon="award-fill" size="110" color="key-deep"></ui-node>
+  <ui-node icon="trophy-fill" size="180" color="energetic" fill="yellow"></ui-node>
+  <ui-node icon="award-fill" size="110" color="dreamy"></ui-node>
   <ui-node icon="star-fill" size="80" color="urgent" fill="calm"></ui-node>
   <ui-node icon="gem" size="64" color="violet"></ui-node>
 </ui-network>
@@ -189,7 +189,7 @@
   <ui-node icon="map-fill" size="xl" color="green"></ui-node>
   <ui-node icon="controller" size="lg" color="gray"></ui-node>
   <ui-node icon="palette-fill" size="md" color="indigo"></ui-node>
-  <ui-node icon="book-half" size="md" color="orange"></ui-node>
+  <ui-node icon="book-half" size="md" color="energetic"></ui-node>
 </ui-network>
 
 <button type="button" id="btn-shuffle">重新隨機</button>
@@ -221,8 +221,8 @@
 ```html
 <ui-network id="net-event" seed="evt" height="380">
   <ui-node icon="lock-fill" size="lg" color="urgent" href="#sec-art" data-lock></ui-node>
-  <ui-node icon="hand-index-thumb-fill" size="md" color="key-deep"></ui-node>
-  <ui-node icon="bookmark-star-fill" size="md" color="orange"></ui-node>
+  <ui-node icon="hand-index-thumb-fill" size="md" color="dreamy"></ui-node>
+  <ui-node icon="bookmark-star-fill" size="md" color="energetic"></ui-node>
 </ui-network>
 <div id="evt-log"></div>
 
@@ -275,7 +275,7 @@ node.remove();
 | `ratio` | `16:9` | 未設定 `height` 時，依寬度維持此比例。 |
 | `fixed-size` | 未啟用 | 布林屬性。圓圈尺寸不隨容器寬度縮放，也不自動縮小以避免重疊。 |
 | `bg-from` | `blue` | 背景放射漸層的中心色。 |
-| `bg-to` | `key-deep` | 背景放射漸層的外圍色。 |
+| `bg-to` | `bg-alternative` | 背景放射漸層的外圍色。 |
 | `line-color` | `shell` | 線條顏色。未指定透明度時為 0.8，以 `#RRGGBBAA` 或 `rgba()` 指定時以該值為準。 |
 | `line-active` | `key` | 滑鼠移入圓圈時，相連線條與圓圈外框的顏色。 |
 | `line-width` | `1.5` | 線條粗細，單位 px。 |
@@ -355,15 +355,16 @@ console.log(palette.key);   // "#51DBCF"
 |---|---|---|---|
 | `background` | `#0C0D0C` | `gray` | `#86877F` |
 | `shell` | `#C6C7BD` | `key` | `#51DBCF` |
-| `vanilla` | `#DBEDD8` | `key-deep` | `#176878` |
+| `vanilla` | `#DBEDD8` | `bg-alternative` | `#3B2A20` |
 | `yellow` | `#E3D322` | `calm` | `#A3C4BC` |
-| `pink` | `#FF91D7` | `quiet` | `#A9B8E0` |
+| `pink` | `#FF91D7` | `quiet` | `#8EA4DE` |
 | `red` | `#EF6661` | `playful` | `#FFA987` |
-| `orange` | `#FF5530` | `urgent` | `#FF2E63` |
+| `energetic` | `#B6FF00` | `urgent` | `#FF2E63` |
 | `green` | `#71CD76` | `indigo` | `#778CE1` |
 | `blue` | `#5DBAE8` | `violet` | `#B484E8` |
+| `dreamy` | `#DE8EC9` | | |
 
-未指定 `color` 時，圖示依序使用 green、indigo、red、gray、violet、pink、orange、blue、key-deep、urgent、playful 輪替，已排除與預設圓圈底色對比過低的顏色。
+未指定 `color` 時，圖示依序使用 green、indigo、red、gray、violet、pink、energetic、blue、dreamy、urgent、playful 輪替，已排除與預設圓圈底色對比過低的顏色。
 
 ## 錯誤提示
 

@@ -8,9 +8,9 @@
 <script src="ui-fillin.js"></script>
 <style>
   :root{
-    --base:#0C0D0C;--shell:#C6C7BD;--violet:#B484E8;--blue:#5DBAE8;--warning:#EF6661;--orange:#F79C40;
+    --base:#0C0D0C;--shell:#C6C7BD;--violet:#B484E8;--blue:#5DBAE8;--warning:#EF6661;--energetic:#B6FF00;
     --blue:#5DBAE8;--green:#71CD76;--green:#71CD76;--vanilla:#DBEDD8;--yellow:#E3D322;--indigo:#778CE1;
-    --green:#71CD76;--info:#778CE1;--indigo:#778CE1;--pink:#FF91D7;--orange:#F79C40;
+    --green:#71CD76;--info:#778CE1;--indigo:#778CE1;--pink:#FF91D7;--energetic:#B6FF00;
   }
   html{font-size:16px}
   body{background:var(--base);color:var(--shell);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem;margin:0;padding:0}
@@ -19,7 +19,7 @@
   h2{font-size:1.4rem;color:var(--violet);margin:40px 0 12px;padding:0 0 6px;border-bottom:1px solid rgba(198,199,189,0.78)}
   h3{font-size:1.1rem;color:var(--vanilla);margin:16px 0 8px}
   p.lead-note{font-size:1rem;color:var(--shell);margin:0 0 16px}
-  code{color:var(--orange);font-size:0.95rem}
+  code{color:var(--energetic);font-size:0.95rem}
   pre.code{background:#151715;color:var(--vanilla);border:1px solid var(--indigo);border-radius:6px;padding:12px 16px;margin:10px 0 0;font-size:0.9rem;white-space:pre-wrap}
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -43,7 +43,7 @@
 <body>
 <div class="page">
   <h1>ui-fillin：用品牌色名稱設定各部位色彩</h1>
-  <p class="lead-note">所有 <code>*-color</code> 屬性與 <code>line-color</code> 現在都可以直接寫品牌色名稱，例如 <code>accent-color="blue"</code>。名稱後面加 <code>/透明度</code> 可指定透明度，例如 <code>accent-color="orange/0.85"</code>，低於 0.78 會自動提高到 0.78。</p>
+  <p class="lead-note">所有 <code>*-color</code> 屬性與 <code>line-color</code> 現在都可以直接寫品牌色名稱，例如 <code>accent-color="blue"</code>。名稱後面加 <code>/透明度</code> 可指定透明度，例如 <code>accent-color="energetic/0.85"</code>，低於 0.78 會自動提高到 0.78。</p>
 
   <h2>品牌色票</h2>
   <p class="lead-note">點擊色塊可複製名稱。</p>
@@ -83,15 +83,15 @@
         <p>The early bird {*catches|catch|caught} the worm. Practice {*makes|make|made} perfect.</p>
         <p>Actions speak louder {*than|then} words.</p>
       </div>
-      <ui-fillin accent-color="orange/0.85" blank-color="orange" picked-color="green" hover-color="blue"
+      <ui-fillin accent-color="energetic/0.85" blank-color="energetic" picked-color="green" hover-color="blue"
                  btn-color="indigo" alert-color="indigo" line-color="indigo/0.9" menu-color="#151715">
         <main-box source="src2"></main-box>
       </ui-fillin>
     </div>
     <div>
 <pre class="code">&lt;ui-fillin
-  accent-color="orange/0.85"
-  blank-color="orange"
+  accent-color="energetic/0.85"
+  blank-color="energetic"
   picked-color="green"
   hover-color="blue"
   btn-color="indigo"
@@ -142,7 +142,7 @@
       <tr><td><code>line-color</code></td><td>外框、表格線、分隔線（另可用 <code>line-alpha</code>）</td><td>shell</td></tr>
     </tbody>
   </table>
-  <p class="lead-note" style="margin-top:12px">可用值：品牌色名稱（不分大小寫，<code>bg</code> 與 <code>background</code> 是 <code>base</code> 的別名）、<code>色名/透明度</code>、hex、rgba（透明度不得低於 0.78）、hsl。<code>orange</code>、<code>pink</code> 等與 CSS 內建色名同名者，一律採用品牌色。無法辨識的值會改用預設色，並在 console 顯示警告。另可透過 <code>customElements.get('ui-fillin').brand</code> 取得色票，或用 CSS 變數 <code>var(--uf-c-blue)</code> 在元件內自訂樣式。</p>
+  <p class="lead-note" style="margin-top:12px">可用值：品牌色名稱（不分大小寫，<code>bg</code> 與 <code>background</code> 是 <code>base</code> 的別名）、<code>色名/透明度</code>、hex、rgba（透明度不得低於 0.78）、hsl。<code>energetic</code>、<code>pink</code> 等與 CSS 內建色名同名者，一律採用品牌色。無法辨識的值會改用預設色，並在 console 顯示警告。另可透過 <code>customElements.get('ui-fillin').brand</code> 取得色票，或用 CSS 變數 <code>var(--uf-c-blue)</code> 在元件內自訂樣式。</p>
 </div>
 
 <script>

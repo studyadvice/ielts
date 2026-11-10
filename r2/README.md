@@ -41,7 +41,7 @@
 
 數字型的尺寸屬性單位為 px，字體大小屬性單位為 rem；也可以直接填任何 CSS 值。顏色屬性可填配色名稱或色碼。
 
-配色名稱：`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
+配色名稱：`shell`、`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。
 
 ### `<layer-switch>`
 
@@ -151,7 +151,7 @@
   hide-empty-right active="k-read">
   <drill-tile source="k-read" label="課文分析" color="green" icon="book-half"></drill-tile>
   <drill-tile source="k-words" label="搭配詞" color="indigo" icon="diagram-3-fill"></drill-tile>
-  <drill-tile source="k-focus" label="重點段落" color="orange" icon="bullseye"></drill-tile>
+  <drill-tile source="k-focus" label="重點段落" color="energetic" icon="bullseye"></drill-tile>
 </ui-drill>
 
 <template id="k-read">
@@ -209,7 +209,7 @@
   <layer-switch mark-style="underline">
     <ls-text><ls-mark layer="n">Cities</ls-mark> <ls-mark layer="v">invest</ls-mark> in <ls-mark layer="n">buses</ls-mark>.</ls-text>
     <ls-layer name="n" label="名詞" color="blue"></ls-layer>
-    <ls-layer name="v" label="動詞" color="orange"></ls-layer>
+    <ls-layer name="v" label="動詞" color="energetic"></ls-layer>
   </layer-switch>
 </template>
 <!-- p2、p3、u1、u2 寫法相同 -->
@@ -307,7 +307,7 @@
 ```html
 <layer-switch target="shared-panel" toggle-style="dot" mark-style="box">
   <ls-text><ls-mark layer="a">First</ls-mark> sentence.</ls-text>
-  <ls-layer name="a" label="重點" source="tip-a" color="orange"></ls-layer>
+  <ls-layer name="a" label="重點" source="tip-a" color="energetic"></ls-layer>
 </layer-switch>
 
 <layer-switch target="shared-panel" toggle-style="dot" mark-style="box">

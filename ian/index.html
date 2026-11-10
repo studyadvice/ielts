@@ -9,9 +9,9 @@
 <style>
   :root{
     --base:#0C0D0C; --shell:#C6C7BD; --violet:#B484E8; --blue:#5DBAE8; --warning:#EF6661;
-    --orange:#F79C40; --blue:#5DBAE8; --green:#71CD76; --green:#71CD76; --vanilla:#DBEDD8;
+    --energetic:#B6FF00; --blue:#5DBAE8; --green:#71CD76; --green:#71CD76; --vanilla:#DBEDD8;
     --yellow:#E3D322; --indigo:#778CE1; --green:#71CD76; --info:#778CE1; --indigo:#778CE1;
-    --pink:#FF91D7; --orange:#F79C40;
+    --pink:#FF91D7; --energetic:#B6FF00;
     --card:#141614; --line:#2B2F2B; --well:#0F110F;
   }
   body{background:var(--base);color:var(--shell);font-size:1rem;}
@@ -32,7 +32,7 @@
   .btn-uia{background:#1A1D1A;border:1px solid var(--indigo);color:var(--shell);font-size:0.85rem;padding:4px 12px;}
   .btn-uia:hover,.btn-uia:focus{background:var(--indigo);color:var(--base);border-color:var(--indigo);}
   .btn-uia.go{border-color:var(--green);} .btn-uia.go:hover{background:var(--green);}
-  .btn-uia.stop{border-color:var(--orange);} .btn-uia.stop:hover{background:var(--orange);}
+  .btn-uia.stop{border-color:var(--energetic);} .btn-uia.stop:hover{background:var(--energetic);}
   .btn-uia.danger{border-color:var(--warning);} .btn-uia.danger:hover{background:var(--warning);color:#fff;}
   .reveal-box{background:#132019;border:1px solid var(--green);color:var(--vanilla);padding:12px 16px;border-radius:8px;font-size:0.95rem;width:100%;}
   .reveal-box.alt{background:#151A26;border-color:var(--info);}
@@ -53,11 +53,11 @@
   #alertArea .alert{font-size:0.9rem;padding:12px 40px 12px 16px;margin-bottom:8px;}
   .alert-info{--bs-alert-bg:#121A24;--bs-alert-color:var(--info);--bs-alert-border-color:var(--info);}
   .alert-success{--bs-alert-bg:#122018;--bs-alert-color:var(--green);--bs-alert-border-color:var(--green);}
-  .alert-warning{--bs-alert-bg:#1E1A0D;--bs-alert-color:var(--orange);--bs-alert-border-color:var(--orange);}
+  .alert-warning{--bs-alert-bg:#1E1A0D;--bs-alert-color:var(--energetic);--bs-alert-border-color:var(--energetic);}
   .changelog li{margin-bottom:6px;font-size:0.95rem;}
   .new-badge{font-size:0.75rem;background:var(--green);color:var(--base);border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:middle;font-weight:600;}
   .cmp-label{font-size:0.9rem;font-weight:600;margin-bottom:8px;}
-  .cmp-label.old{color:var(--orange);}
+  .cmp-label.old{color:var(--energetic);}
   .cmp-label.new{color:var(--green);}
   .src-box{background:#101210;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:0.85rem;color:var(--vanilla);}
 </style>
@@ -79,7 +79,7 @@
         <template>
 <ui-icon-anim icons="bi-sun,bi-cloud-sun,bi-cloud,bi-cloud-rain,bi-cloud-lightning-rain"
   interval="900" effect="fade" size="lg"
-  colors="yellow,orange,shell,blue,violet"></ui-icon-anim>
+  colors="yellow,energetic,shell,blue,violet"></ui-icon-anim>
         </template>
       </div>
     </div>
@@ -106,7 +106,7 @@
         <template>
 <ui-icon-anim icons="bi-battery,bi-battery-half,bi-battery-full"
   interval="500" effect="none" size="xl"
-  colors="warning,orange,green"></ui-icon-anim>
+  colors="warning,energetic,green"></ui-icon-anim>
         </template>
       </div>
     </div>
@@ -128,7 +128,7 @@
         <template>
 <ui-icon-anim mode="sequence" icons="bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill,bi-circle-fill"
   interval="250" hold="1200" gap="10" size="md" effect="scale"
-  colors="warning,orange,yellow,green,blue,indigo,indigo"></ui-icon-anim>
+  colors="warning,energetic,yellow,green,blue,indigo,indigo"></ui-icon-anim>
         </template>
       </div>
     </div>
@@ -137,7 +137,7 @@
         <template>
 <ui-icon-anim mode="sequence" icons="bi-file-earmark-code,bi-arrow-right,bi-gear,bi-arrow-right,bi-box-seam"
   interval="600" hold="1800" gap="12" size="lg" effect="flip"
-  colors="info,shell,orange,shell,green"></ui-icon-anim>
+  colors="info,shell,energetic,shell,green"></ui-icon-anim>
         </template>
       </div>
     </div>
@@ -158,7 +158,7 @@
     <div class="col-12 col-lg-6 col-xxl-3">
       <div class="demo-card" data-title="數字與 px 單位" data-desc="純數字視為 rem；也可寫含單位的值，例如 40px。">
         <template>
-<ui-icon-anim icons="bi-bell,bi-bell-fill" size="2.5" interval="600" colors="orange"></ui-icon-anim>
+<ui-icon-anim icons="bi-bell,bi-bell-fill" size="2.5" interval="600" colors="energetic"></ui-icon-anim>
 <ui-icon-anim icons="bi-bell,bi-bell-fill" size="40px" interval="600" colors="pink"></ui-icon-anim>
         </template>
       </div>
@@ -197,7 +197,7 @@
       <div class="demo-card" data-title="淡出移除" data-desc="播完一輪後停留 <code>remove-delay</code> 毫秒，淡出並從 DOM 刪除。事件紀錄在下方控制面板。">
         <template>
 <ui-icon-anim data-log="淡出移除" icons="bi-hourglass-top,bi-hourglass-split,bi-hourglass-bottom,bi-check-circle-fill"
-  interval="600" effect="flip" size="xl" colors="orange,orange,orange,green"
+  interval="600" effect="flip" size="xl" colors="energetic,energetic,energetic,green"
   loop="false" remove-on-end remove-delay="1000" remove-effect="fade"></ui-icon-anim>
         </template>
       </div>
@@ -279,7 +279,7 @@
         <template>
 <ui-icon-anim data-log="按鈕基本" button-text="開始" button-icon="bi-play-fill"
   icons="bi-hourglass-top,bi-hourglass-split,bi-hourglass-bottom,bi-check-circle-fill"
-  interval="600" effect="flip" size="lg" colors="orange,orange,orange,green"
+  interval="600" effect="flip" size="lg" colors="energetic,energetic,energetic,green"
   loop="false" button-restore></ui-icon-anim>
         </template>
       </div>
@@ -332,7 +332,7 @@
         <div class="demo-stage">
           <ui-icon-anim data-log="全域清單" size="lg" colors="yellow,blue,pink" effect="scale"></ui-icon-anim>
           <ui-icon-anim mode="sequence" size="md" colors="green" interval="400" hold="1000"></ui-icon-anim>
-          <ui-icon-anim button-text="開始" size="lg" colors="orange,violet,blue" loop="false" button-restore></ui-icon-anim>
+          <ui-icon-anim button-text="開始" size="lg" colors="energetic,violet,blue" loop="false" button-restore></ui-icon-anim>
         </div>
         <div class="demo-desc">三個元件都沒有設定 <code>icons</code>，自動讀取頁面上的 <code>#global_icon_list</code>。來源內容可用逗點、空白或換行分隔。修改下方清單後，所有元件會自動重新開始。</div>
         <div class="input-group mb-3">
@@ -345,7 +345,7 @@
 
 &lt;ui-icon-anim size="lg" colors="yellow,blue,pink" effect="scale"&gt;&lt;/ui-icon-anim&gt;
 &lt;ui-icon-anim mode="sequence" size="md" colors="green" interval="400" hold="1000"&gt;&lt;/ui-icon-anim&gt;
-&lt;ui-icon-anim button-text="開始" size="lg" colors="orange,violet,blue" loop="false" button-restore&gt;&lt;/ui-icon-anim&gt;
+&lt;ui-icon-anim button-text="開始" size="lg" colors="energetic,violet,blue" loop="false" button-restore&gt;&lt;/ui-icon-anim&gt;
 
 // 修改來源內容，元件自動重新開始
 document.getElementById('global_icon_list').textContent = 'bi-heart, bi-gem';</pre>
@@ -364,7 +364,7 @@ document.getElementById('global_icon_list').textContent = 'bi-heart, bi-gem';</p
   bi-cloud-snow
   bi-rainbow
 </div>
-<div id="weatherColors" hidden>yellow, orange, shell, indigo, blue, violet, vanilla, pink, red, green, gray, key, key-deep, calm, quiet, playful, urgent</div>
+<div id="weatherColors" hidden>yellow, energetic, dreamy, shell, indigo, blue, violet, vanilla, pink, red, green, gray, key, calm, quiet, playful, urgent</div>
 
 <ui-icon-anim data-log="指定來源" mode="sequence" icons-from="weatherIcons" colors-from="#weatherColors"
   interval="300" hold="1500" gap="12" size="lg" effect="flip"></ui-icon-anim>
@@ -381,7 +381,7 @@ document.getElementById('global_icon_list').textContent = 'bi-heart, bi-gem';</p
         <div class="demo-stage" style="min-height:160px;">
           <ui-icon-anim id="ctrlDemo" data-log="控制面板"
             icons="bi-emoji-smile,bi-emoji-laughing,bi-emoji-wink,bi-emoji-sunglasses,bi-emoji-heart-eyes,bi-emoji-surprise"
-            interval="800" size="xl" colors="yellow,orange,pink,blue,orange,green"></ui-icon-anim>
+            interval="800" size="xl" colors="yellow,energetic,pink,blue,energetic,green"></ui-icon-anim>
         </div>
         <div class="mb-3">
           <span class="status-pill">index：<b id="stIndex">-</b></span>

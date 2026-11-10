@@ -9,10 +9,10 @@
 <style>
   :root{
     --c-bg:#0C0D0C; --c-shell:#C6C7BD; --c-violet:#B484E8; --c-blue:#5DBAE8;
-    --c-warning:#EF6661; --c-orange:#F79C40; --c-blue:#5DBAE8; --c-green:#71CD76;
+    --c-warning:#EF6661; --c-energetic:#B6FF00; --c-blue:#5DBAE8; --c-green:#71CD76;
     --c-green:#71CD76; --c-vanilla:#DBEDD8; --c-yellow:#E3D322; --c-focus:#DBEDD8;
     --c-green:#71CD76; --c-info:#778CE1; --c-indigo:#778CE1; --c-pink:#FF91D7;
-    --c-orange:#F79C40;
+    --c-energetic:#B6FF00;
   }
   html{scroll-behavior:auto;}
   body{background:var(--c-bg);color:var(--c-shell);font-size:1.05rem;line-height:1.5;margin:0;}
@@ -54,7 +54,7 @@
     <dot-go href="#part1" theme="blue" dot-style="circle-fill">Part 1 樣式</dot-go>
     <dot-go href="#part2" theme="pink" dot-style="star-fill">Part 2 練習</dot-go>
     <dot-go href="#part3" theme="yellow" dot-style="square-fill">Part 3 屬性</dot-go>
-    <dot-go href="#part4" theme="orange" dot-style="star" clear-ink>Part 4 清筆跡後跳轉</dot-go>
+    <dot-go href="#part4" theme="energetic" dot-style="star" clear-ink>Part 4 清筆跡後跳轉</dot-go>
     <dot-go href="https://www.ielts.org/" theme="green" dot-style="square" target="_blank">IELTS 官網（新分頁）</dot-go>
     <dot-go href="#part5" theme="blue" dot-style="icon" icon="bi-translate">修改 2　icon 樣式</dot-go>
   </nav>
@@ -130,7 +130,7 @@ InkPen.dotStyles;              // 支援的樣式清單</pre>
 
   <section class="card-x" id="part4">
     <h2>Part 4　清筆跡後跳轉</h2>
-    <p>先按 1 在畫面上隨意畫幾筆，再點這顆 <dot-go href="#top" theme="orange" dot-style="star" clear-ink>回頂端並清除</dot-go>，
+    <p>先按 1 在畫面上隨意畫幾筆，再點這顆 <dot-go href="#top" theme="energetic" dot-style="star" clear-ink>回頂端並清除</dot-go>，
       筆跡會先清空再跳轉。少了 clear-ink 的圓點則保留筆跡：<dot-go href="#top" theme="green" dot-style="circle-fill">回頂端（保留筆跡）</dot-go></p>
     <p class="muted">本示範的繪圖層設為 data-anchor="document"，筆跡會跟著內容捲動。</p>
   </section>
@@ -146,7 +146,7 @@ InkPen.dotStyles;              // 支援的樣式清單</pre>
       <dot-go href="#part3" theme="pink" dot-style="icon" icon="bi-mic-fill">口說錄音</dot-go>
       <dot-go href="#part1" theme="yellow" dot-style="icon" icon="lightbulb">提示</dot-go>
       <dot-go href="#top" theme="green" dot-style="icon" icon="bi bi-arrow-up-circle-fill">回頂端</dot-go>
-      <dot-go href="https://www.ielts.org/" theme="orange" dot-style="icon" icon="bi-box-arrow-up-right" target="_blank">IELTS 官網</dot-go>
+      <dot-go href="https://www.ielts.org/" theme="energetic" dot-style="icon" icon="bi-box-arrow-up-right" target="_blank">IELTS 官網</dot-go>
     </div>
     <h3>只有圖示，搭配不同 size</h3>
     <div class="row-demo">

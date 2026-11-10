@@ -110,7 +110,7 @@
 
 ### 顏色清單
 
-`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`gold`、`shell`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
+`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`gold`、`shell`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。
 
 按鈕也有對應的顏色類別 `ir-btn--顏色`。要新增顏色，修改檔案開頭的 `BrandColors` 物件即可，相關樣式會自動產生。
 
@@ -351,7 +351,7 @@ g.reset();                            // 重設整個群組
 ### 2. 倒數條自動換步
 
 ```html
-<info-region id="b1" color="orange" next="b2" countdown="4000" countdown-position="top">
+<info-region id="b1" color="energetic" next="b2" countdown="4000" countdown-position="top">
   這段話會停留四秒，頂端的倒數條跑完後自動換下一步。
 </info-region>
 ```
@@ -387,7 +387,7 @@ g.reset();                            // 重設整個群組
                    show-controls="false" auto-start>
   <info-region color="blue"><h4>聽力</h4><p>四個段落，三十分鐘。</p></info-region>
   <info-region color="green"><h4>閱讀</h4><p>三篇文章，六十分鐘。</p></info-region>
-  <info-region color="orange"><h4>寫作</h4><p>兩個任務，六十分鐘。</p></info-region>
+  <info-region color="energetic"><h4>寫作</h4><p>兩個任務，六十分鐘。</p></info-region>
 </info-region-group>
 ```
 
@@ -422,7 +422,7 @@ g.reset();                            // 重設整個群組
   </info-region>
 
   <!-- 只有答錯才會看到的補充說明 -->
-  <info-region id="q1-help" color="orange" next="q2" manual manual-label="我懂了 ▶">
+  <info-region id="q1-help" color="energetic" next="q2" manual manual-label="我懂了 ▶">
     <h4>補充：第三人稱單數</h4>
     <p>主詞是 he、she、it 時，動詞要加 s 或 es。</p>
   </info-region>

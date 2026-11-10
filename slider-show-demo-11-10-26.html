@@ -12,7 +12,7 @@
 body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
 .page{padding:32px 40px 80px 40px;}
 .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
-.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-key-deep);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
+.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-bg-alternative);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
 .toc a:hover{border-color:var(--bp-key);color:var(--bp-key);}
 .demo{border-radius:12px;padding:24px;margin:0 0 32px 0;scroll-margin-top:16px;}
 .demo-head{display:flex;align-items:center;gap:12px;margin:0 0 6px 0;}
@@ -57,8 +57,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例一：基本投影片</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell">每張投影片是一個 <code>&lt;div slide&gt;</code>，裡面用三個版型 class：<code>slide-subtitle</code>、<code>slide-main</code>、<code>slide-footer</code>。左右箭頭與進度點都能操作。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <slider-show theme="blue" height="260px">
@@ -83,8 +83,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例二：進度樣式</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell"><code>progress-style</code> 有 <code>dots</code>（預設）、<code>stepper</code>、<code>numbers</code>、<code>triangle</code>、<code>none</code>。triangle 的缺角要用 <code>bg-color</code> 填成和頁面背景相同的顏色。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">
@@ -101,7 +101,7 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div slide><div class="slide-content"><div class="slide-main"><p>stepper 3</p></div></div></div>
   </slider-show></div>
   <div><p class="stage-label">numbers</p>
-  <slider-show theme="orange" progress-style="numbers" height="110px">
+  <slider-show theme="energetic" progress-style="numbers" height="110px">
     <div slide><div class="slide-content"><div class="slide-main"><p>numbers 1</p></div></div></div>
     <div slide><div class="slide-content"><div class="slide-main"><p>numbers 2</p></div></div></div>
     <div slide><div class="slide-content"><div class="slide-main"><p>numbers 3</p></div></div></div>
@@ -125,8 +125,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例三：分部、分部按鈕與事件</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell">用 <code>part="1"</code>、<code>part="2"</code> 把投影片分組。<code>auto-show-part-buttons</code> 在每部分最後一張顯示「下一部分」按鈕，<code>progress-scope="all"</code> 讓進度列顯示全部投影片，<code>part-transition="fade"</code> 淡入淡出。<code>part-changed</code>、<code>finished</code>、<code>restarted</code> 三個事件會冒泡，右上角的提示就是由這些事件產生。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <slider-show class="evt-demo" theme="violet" height="220px" auto-show-part-buttons="true"
@@ -144,8 +144,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例四：分部轉場方向</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell"><code>part-transition="slide"</code> 時，「下一部分」畫面向左滑出，「上一部分」向右滑出，方向和直覺一致。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <slider-show theme="key" height="170px" part-transition="slide" auto-show-part-buttons="true">
@@ -160,8 +160,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例五：起始與結束畫面</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell">用 <code>role="start"</code>、<code>role="end"</code> 標記封面與結尾，再用 <code>start-style</code>、<code>end-style</code> 挑風格：<code>accent-frame</code>（預設）、<code>gradient-border</code>、<code>gradient-bg</code>、<code>top-bottom-bar</code>、<code>corner-tag</code>。<code>start-colors</code>、<code>end-colors</code> 寫兩個色名。沒有標 role 的投影片不受影響。下面每一組都是封面，往右翻可以看到結尾。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">
@@ -210,8 +210,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例六：填空題與批改</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell"><code>&lt;quiz&gt;</code> 裡用 <code>{{答案}}</code> 標出空格。預設要填完才能翻到下一張（<code>quiz-require-complete</code>），下一張最上方會顯示上一張的批改結果。最後按「重新開始」，作答會一併清空。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <slider-show theme="green" height="300px" auto-show-part-buttons="true">
@@ -231,8 +231,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例七：補充說明與防劇透</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell"><code>&lt;extra-note target="顯示位置" source="內容來源"&gt;</code> 是可點的底線文字，點了把來源內容放進指定的框；<code>extra-note-prefix</code>、<code>extra-note-hover-color</code> 調整前綴與滑過的顏色。寫了 <code>spoiler="提示文字"</code> 的區塊要點一下才會揭曉。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <slider-show theme="yellow" height="250px" extra-note-prefix="▸ " extra-note-hover-color="pink">
@@ -252,11 +252,11 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例八：按鈕與顏色</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell"><code>loop</code> 在部分內循環，<code>show-part-indicator="false"</code> 隱藏部分指示，<code>next-part-btn-position="flex-end"</code> 把按鈕靠右。按鈕文字、顏色、字級、內距、圓角，以及箭頭和進度點的顏色都能改，顏色可寫色名或色碼。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
-<slider-show theme="orange" height="200px" loop="true" show-part-indicator="false"
+<slider-show theme="energetic" height="200px" loop="true" show-part-indicator="false"
              auto-show-part-buttons="true" next-part-btn-position="flex-end"
              next-part-btn-text="下一組" finish-btn-bg="green" finish-btn-color="background"
              arrow-bg="fill" dot-color="gray" active-dot-color="yellow"
@@ -272,8 +272,8 @@ kbd{background:var(--bp-fill);color:var(--bp-yellow);border:1px solid var(--bp-g
     <div class="demo-head"><h2 class="fs-large bp-text-yellow">範例九：鍵盤換頁 keyboard-nav</h2><button type="button" class="btn btn-sm btn-key-outline replay"><i class="bi bi-arrow-counterclockwise"></i> 重新播放</button></div>
     <p class="desc bp-text-shell">寫了 <code>keyboard-nav</code> 的元件可以按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>→</kbd> 換下一頁、<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>←</kbd> 回上一頁；部分的最後一張會自動進入下一部分，第一張會退回上一部分的最後一張。頁面上有多個元件時，最後點過的那一個回應按鍵。游標在輸入框或填空格內時不攔截；按住不放也不會連續翻頁。左邊開啟，右邊沒開（預設）。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="grid-2">

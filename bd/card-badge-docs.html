@@ -19,7 +19,7 @@
   --violet:#B484E8;
   --green: #71CD76;
   --warning: #EF6661;
-  --orange:  #F79C40;
+  --energetic:  #B6FF00;
   --blue:     #5DBAE8;
   --green:    #71CD76;
   --vanilla: #DBEDD8;
@@ -28,7 +28,7 @@
   --blue:   #5DBAE8;
   --indigo:  #778CE1;
   --pink:    #FF91D7;
-  --orange:  #F79C40;
+  --energetic:  #B6FF00;
   --mono: 'Cascadia Code','JetBrains Mono','Consolas',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -202,7 +202,7 @@ table.at tr.hide{display:none}
 .evt-table{width:100%;border-collapse:collapse;font-size:.82rem}
 .evt-table th{background:var(--fill2);color:var(--vanilla);font-weight:600;padding:8px 14px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bd)}
 .evt-table td{padding:8px 14px;border-bottom:1px solid rgba(198,199,189,.06);vertical-align:top}
-.evt-name{font-family:var(--mono);color:var(--orange);font-size:.8rem}
+.evt-name{font-family:var(--mono);color:var(--energetic);font-size:.8rem}
 
 /* Responsive */
 @media(max-width:860px){
@@ -267,7 +267,7 @@ table.at tr.hide{display:none}
       <card-badge theme="blue" icon="bi-bell" text="通知" size="re"></card-badge>
       <card-badge theme="green-outline" text="完成"></card-badge>
       <card-badge theme="indigo" icon="bi-stars" text="精選"></card-badge>
-      <card-badge theme="orange" icon="bi-lightning-charge" text="快速"></card-badge>
+      <card-badge theme="energetic" icon="bi-lightning-charge" text="快速"></card-badge>
     </div>
   </div>
 
@@ -280,7 +280,7 @@ table.at tr.hide{display:none}
       <div class="swatch" style="background:#B484E8;color:#0C0D0C"><span class="sw-name">violet</span><span class="sw-hex">#B484E8</span></div>
       <div class="swatch" style="background:#71CD76;color:#0C0D0C"><span class="sw-name">green</span><span class="sw-hex">#71CD76</span></div>
       <div class="swatch" style="background:#EF6661;color:#0C0D0C"><span class="sw-name">warning</span><span class="sw-hex">#EF6661</span></div>
-      <div class="swatch" style="background:#F79C40;color:#0C0D0C"><span class="sw-name">orange</span><span class="sw-hex">#F79C40</span></div>
+      <div class="swatch" style="background:#B6FF00;color:#0C0D0C"><span class="sw-name">energetic</span><span class="sw-hex">#B6FF00</span></div>
       <div class="swatch" style="background:#5DBAE8;color:#0C0D0C"><span class="sw-name">blue</span><span class="sw-hex">#5DBAE8</span></div>
       <div class="swatch" style="background:#71CD76;color:#0C0D0C"><span class="sw-name">green</span><span class="sw-hex">#71CD76</span></div>
       <div class="swatch" style="background:#DBEDD8;color:#0C0D0C"><span class="sw-name">vanilla</span><span class="sw-hex">#DBEDD8</span></div>
@@ -289,7 +289,7 @@ table.at tr.hide{display:none}
       <div class="swatch" style="background:#5DBAE8;color:#0C0D0C"><span class="sw-name">blue</span><span class="sw-hex">#5DBAE8</span></div>
       <div class="swatch new" style="background:#778CE1;color:#fff"><span class="sw-name">indigo</span><span class="sw-hex">#778CE1</span></div>
       <div class="swatch" style="background:#FF91D7;color:#0C0D0C"><span class="sw-name">pink</span><span class="sw-hex">#FF91D7</span></div>
-      <div class="swatch" style="background:#F79C40;color:#0C0D0C"><span class="sw-name">orange</span><span class="sw-hex">#F79C40</span></div>
+      <div class="swatch" style="background:#DE8EC9;color:#0C0D0C"><span class="sw-name">dreamy</span><span class="sw-hex">#DE8EC9</span></div>
     </div>
     <div class="badge-row" style="margin-top:16px">
       <card-badge theme="shell" text="shell"></card-badge>
@@ -302,7 +302,7 @@ table.at tr.hide{display:none}
       <card-badge theme="indigo" text="indigo"></card-badge>
       <card-badge theme="indigo" text="indigo ✦"></card-badge>
       <card-badge theme="pink" text="pink"></card-badge>
-      <card-badge theme="orange" text="orange"></card-badge>
+      <card-badge theme="energetic" text="energetic"></card-badge>
     </div>
 
     <div class="sub-h">Outline — 外框</div>
@@ -313,7 +313,7 @@ table.at tr.hide{display:none}
       <card-badge theme="red-outline" text="red"></card-badge>
       <card-badge theme="indigo-outline" text="indigo"></card-badge>
       <card-badge theme="indigo-outline" text="indigo"></card-badge>
-      <card-badge theme="orange-outline" text="orange"></card-badge>
+      <card-badge theme="energetic-outline" text="energetic"></card-badge>
       <card-badge theme="pink-outline" text="pink"></card-badge>
     </div>
   </div>
@@ -700,7 +700,7 @@ table.at tr.hide{display:none}
         <span style="font-size:.72rem;color:var(--blue)">show-zero</span>
       </div>
       <div class="badge-row">
-        <card-badge theme="orange" count="150" max-count="99" size="re" icon="bi-chat"></card-badge>
+        <card-badge theme="energetic" count="150" max-count="99" size="re" icon="bi-chat"></card-badge>
         <span style="font-size:.72rem;color:var(--blue)">max-count=99 → 99+</span>
       </div>
       <div class="badge-row">
@@ -788,9 +788,9 @@ table.at tr.hide{display:none}
     <div class="demo-card-hd"><i class="bi bi-trash3"></i> 點擊移除（removeself）</div>
     <div class="demo-card-body" id="demo-remove-body">
       <card-badge theme="red" text="點擊移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
-      <card-badge theme="orange" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="energetic" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
       <card-badge theme="indigo" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
-      <card-badge theme="orange" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
+      <card-badge theme="energetic" text="移除 ×" removeself="true" clickable="true" hover-effect="scale" size="re"></card-badge>
     </div>
     <div class="demo-card-code">removeself="true" clickable="true"</div>
   </div>
@@ -834,7 +834,7 @@ table.at tr.hide{display:none}
           <badge-item text="blue"      theme="blue"></badge-item>
           <badge-item text="green"     theme="green"></badge-item>
           <badge-item text="indigo"   theme="indigo"></badge-item>
-          <badge-item text="orange"   theme="orange"></badge-item>
+          <badge-item text="energetic"   theme="energetic"></badge-item>
         </card-badge>
         <span style="font-size:.78rem;color:var(--blue)">每 1.8s 自動切換</span>
       </div>
@@ -874,7 +874,7 @@ const COLORS = [
   {name:'violet',hex:'#B484E8'},
   {name:'green', hex:'#71CD76'},
   {name:'warning', hex:'#EF6661'},
-  {name:'orange',  hex:'#F79C40'},
+  {name:'energetic',  hex:'#B6FF00'},
   {name:'blue',     hex:'#5DBAE8'},
   {name:'green',    hex:'#71CD76'},
   {name:'vanilla', hex:'#DBEDD8'},
@@ -883,7 +883,7 @@ const COLORS = [
   {name:'blue',   hex:'#5DBAE8'},
   {name:'indigo',  hex:'#778CE1'},
   {name:'pink',    hex:'#FF91D7'},
-  {name:'orange',  hex:'#F79C40'},
+  {name:'dreamy',  hex:'#DE8EC9'},
 ];
 
 const ICONS = [

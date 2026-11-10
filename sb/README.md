@@ -151,7 +151,7 @@
 **倒數計時**
 
 ```html
-<sentence-build theme="orange" timer="30" timer-warn="8" timer-action="answer" timer-label="剩餘時間">
+<sentence-build theme="energetic" timer="30" timer-warn="8" timer-action="answer" timer-label="剩餘時間">
   <chunk-item>I'd say</chunk-item>
   <chunk-item>it depends on</chunk-item>
   <chunk-item>the situation</chunk-item>

@@ -172,7 +172,7 @@ NG 02  按鍵 06:51.0    建議剪輯點 06:48.0
 | 屬性 | 值 | 預設 | 說明 |
 |---|---|---|---|
 | `href` | `#id` 或網址 | 無 | `#id` 為同頁平滑捲動，並讓目標閃一下外框；其餘當網址跳轉。未設定時圓點停用 |
-| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `blue` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
+| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `blue` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `dot-style` | `circle`、`circle-fill`、`star`、`star-fill`、`square`、`square-fill`、`icon` | `circle-fill` | 圖示樣式 |
 | `icon` | Bootstrap Icons 名稱 | 無 | `dot-style="icon"` 時使用，寫 `bi-translate`、`translate` 或 `bi bi-translate` 皆可 |
 | `size` | 10 至 48 | 18 | 圖示大小（px） |

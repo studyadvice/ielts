@@ -8,7 +8,7 @@
 <style>
 :root{
   --bg:#0C0D0C;--shell:#C6C7BD;--focus:#DBEDD8;--blue:#5DBAE8;--green:#71CD76;--violet:#B484E8;
-  --ok:#71CD76;--bad:#EF6661;--orange:#F79C40;--line:rgba(198,199,189,0.78);
+  --ok:#71CD76;--bad:#EF6661;--energetic:#B6FF00;--line:rgba(198,199,189,0.78);
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Mono CJK TC",monospace;
 }
 html{font-size:112.5%}
@@ -48,7 +48,7 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
 .dbtn.on{background:var(--violet);border-color:var(--violet);color:var(--bg)}
 .fs-row{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
 .fs-row .nm{color:var(--blue);font-family:var(--mono)}
-.demo-alert{margin:12px 0 0;padding:12px;border:1px solid var(--orange);border-radius:6px;background:var(--orange);color:var(--bg)}
+.demo-alert{margin:12px 0 0;padding:12px;border:1px solid var(--energetic);border-radius:6px;background:var(--energetic);color:var(--bg)}
 .demo-alert[hidden]{display:none}
 
 #s7-live .dbtn{margin:12px 12px 0 0}
@@ -216,7 +216,7 @@ input[type="text"]:focus{outline:2px solid var(--focus);outline-offset:2px}
         <button type="button" class="dbtn on" data-theme="default">天空 blue</button>
         <button type="button" class="dbtn" data-theme="violet">薰衣草 violet</button>
         <button type="button" class="dbtn" data-theme="blue">海洋 blue</button>
-        <button type="button" class="dbtn" data-theme="orange">鮭魚 orange</button>
+        <button type="button" class="dbtn" data-theme="energetic">鮭魚 energetic</button>
         <button type="button" class="dbtn" data-theme="green">藍綠 green</button>
         <button type="button" class="dbtn" data-theme="pink">粉紅 pink</button>
       </div>
@@ -511,7 +511,7 @@ customElements.define('demo-tick', class extends HTMLElement {
 
 /* ---------- 六、主題切換 ---------- */
 (function () {
-  var THEMES = { 'default': '#5DBAE8', violet: '#B484E8', blue: '#5DBAE8', orange: '#F79C40', green: '#71CD76', pink: '#FF91D7' };
+  var THEMES = { 'default': '#5DBAE8', violet: '#B484E8', blue: '#5DBAE8', energetic: '#B6FF00', green: '#71CD76', pink: '#FF91D7' };
   var target = document.getElementById('theme-demo');
   var tag = document.getElementById('theme-tag');
   var btns = Array.prototype.slice.call(document.querySelectorAll('[data-theme]'));

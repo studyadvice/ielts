@@ -89,7 +89,7 @@
 
 ```html
 <section>
-  <sticky-head accent="orange" auto-hide label="Part 3" top-btn="回本節" shadow="false"
+  <sticky-head accent="energetic" auto-hide label="Part 3" top-btn="回本節" shadow="false"
                size="2rem" size-stuck="1rem" padding-stuck="6px 16px">
     <h2>延伸討論</h2>
   </sticky-head>

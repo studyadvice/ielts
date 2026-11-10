@@ -41,7 +41,7 @@
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
 | `width` | `100%` | 元件寬度。純數字視為 px，也可寫 `50%`、`40rem`。 |
-| `theme` | `dark` | `dark`、`light`，以及 17 個色票名稱：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。不分大小寫，前後空白會自動去除。名稱無效時在主控台提示，並退回 `dark`（藍色邊框）。 |
+| `theme` | `dark` | `dark`、`light`，以及 18 個色票名稱：`shell`、`vanilla`、`yellow`、`pink`、`red`、`energetic`、`dreamy`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。不分大小寫，前後空白會自動去除。名稱無效時在主控台提示，並退回 `dark`（藍色邊框）。 |
 | `padding` | `16` | 內距。純數字視為 px，可寫兩個值，例如 `8 24`。 |
 | `font-size` | `1.125` | 內文字級。純數字視為 rem，標題與按鈕依比例縮放。 |
 | `border` | `1px solid`（主題色） | 寬度、樣式、顏色可任意省略，順序不限。顏色可用色票名稱或 hex。`none` 取消邊框。 |
@@ -176,7 +176,7 @@ document.addEventListener('layerend', () => {
 
 ```html
 <ui-layer-diff theme="light" width="560" padding="24" font-size="1.25"
-               border="2px dashed green" add-color="indigo" del-color="orange">
+               border="2px dashed green" add-color="indigo" del-color="energetic">
   <ui-layer>I use my phone a lot.</ui-layer>
   <ui-layer>I check my phone about fifty times a day.</ui-layer>
 </ui-layer-diff>

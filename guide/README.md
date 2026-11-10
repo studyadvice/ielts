@@ -61,7 +61,7 @@
 | `card-reveal` | 兩者皆可 | `click`、`button`、`step` | 說明卡按下才顯示，見下節。 |
 | `card-button-label` | 兩者皆可 | HTML | `button` 模式小按鈕的文字，預設「看解說」。 |
 
-顏色用 17 色色名：`shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
+顏色用 18 色色名：`shell`、`vanilla`、`yellow`、`pink`、`red`、`energetic`、`dreamy`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。
 
 ## 控制按鈕
 

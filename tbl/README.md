@@ -228,7 +228,7 @@ ui-table
 ```html
 <ui-row-enhance>
   <ui-col inverse>任務</ui-col>
-  <ui-col inverse font-color="orange">狀態</ui-col>
+  <ui-col inverse font-color="energetic">狀態</ui-col>
 </ui-row-enhance>
 ```
 
@@ -379,7 +379,7 @@ ui-table
 **自動輪播**
 
 ```html
-<ui-col carousel-interval="2500" progress-bar progress-bar-color1="orange" progress-bar-color2="pink">
+<ui-col carousel-interval="2500" progress-bar progress-bar-color1="energetic" progress-bar-color2="pink">
   <cell-item>Fluency：先求說得順。</cell-item>
   <cell-item>Lexical Resource：用得穩的字才算數。</cell-item>
 </ui-col>
@@ -472,7 +472,7 @@ ui-table
 
 ### 文字色彩標籤
 
-在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c-色名>文字</c-色名>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成品牌色底的小標籤（`key-deep` 用白字，其他用深色字）。`mask-text` 是屬性文字，不支援標籤。色名清單見根目錄 README 的「色名標籤」。
+在 `<ui-col>`、`<cell-item>` 與 extra-info 來源區塊的內容裡，用 `<c-色名>文字</c-色名>` 套用品牌色，可以和 `<b>`、`<u>` 互相包覆。`inverse` 格子裡會變成品牌色底的小標籤（`bg-alternative` 用白字，其他用深色字）。`mask-text` 是屬性文字，不支援標籤。色名清單見根目錄 README 的「色名標籤」。
 
 ```html
 <ui-col>The government should <c-pink>invest in</c-pink> public transport.</ui-col>

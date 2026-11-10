@@ -35,10 +35,10 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例一：一次展開散落各處的 div</h2>
     <p class="bp-text-shell">三個答題提示不必相鄰，也不必放在按鈕旁邊。<code>targets</code> 用空白或逗號分隔 id，開頭的 <code>#</code> 可寫可不寫。第三個提示用 <code>bp-hidden</code> class 隱藏，同樣可以展開。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">
@@ -64,10 +64,10 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例二：template 延遲渲染，與 div 混合使用</h2>
     <p class="bp-text-shell"><code>&lt;template&gt;</code> 的內容在第一次展開時才複製到它後面的 <code>&lt;div&gt;</code>，之後的開合都作用在這個 div，所以輸入過的內容會保留。template 內的 ui-btn 會自動初始化。template 的 class 與 style 會帶到輸出的 div。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">
@@ -95,7 +95,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <div class="log bp-bg-fill bp-text-quiet" id="tpl-log">尚未渲染任何 template</div>
     </script>
     <p class="fs-small bp-text-gray" style="margin:16px 0 6px 0">JavaScript（監聽渲染事件，更新上方灰色列）</p>
-    <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">document.addEventListener('ubtn-template-rendered', function (e) {
+    <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm">document.addEventListener('ubtn-template-rendered', function (e) {
   document.getElementById('tpl-log').textContent =
     '已渲染 template #' + e.detail.template.id + '（事件 ubtn-template-rendered）';
 });</code></pre>
@@ -105,20 +105,20 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例三：stagger 依序出現</h2>
     <p class="bp-text-shell"><code>stagger="400"</code> 讓目標依 <code>targets</code> 的順序，每隔 400 毫秒出現一個；收合時全部同時收起。搭配 <code>animation="fade"</code>，適合上課時一步一步揭曉答案。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">
 <div class="btn-row">
-  <ui-btn icon="bi-play-fill" icon-active="bi-arrow-counterclockwise" theme="orange"
+  <ui-btn icon="bi-play-fill" icon-active="bi-arrow-counterclockwise" theme="energetic"
           targets="step-1 step-2 step-3" stagger="400" animation="fade"
           label-open="重來">依序揭曉</ui-btn>
 </div>
 <div class="split">
-  <div class="card-box bp-border-orange" id="step-1" style="display:none"><b class="bp-text-orange">1</b> near my home</div>
+  <div class="card-box bp-border-energetic" id="step-1" style="display:none"><b class="bp-text-energetic">1</b> near my home</div>
   <div class="card-box bp-border-playful" id="step-2" style="display:none"><b class="bp-text-playful">2</b> within walking distance</div>
   <div class="card-box bp-border-yellow" id="step-3" style="display:none"><b class="bp-text-yellow">3</b> a stone's throw from my place</div>
 </div>
@@ -129,10 +129,10 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例四：調整間隔與淡入速度</h2>
     <p class="bp-text-shell">兩個屬性分工：<code>stagger</code> 是「下一個什麼時候開始」，<code>anim-duration</code> 是「每一個淡入要花多久」，單位都是毫秒。<code>anim-duration</code> 預設 320，現在可以設超過 600，淡入不會被提前截斷。stagger 比 anim-duration 短時，前一個還沒完全出現，下一個就開始，畫面會有接力的感覺。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">
@@ -163,10 +163,10 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <h2 class="fs-large bp-text-yellow">範例五：揭曉 mini-table 的儲存格</h2>
     <p class="bp-text-shell">需要同時載入 <code>mini/mini-table.js</code>。<code>mini-table-id</code> 指定表格，<code>target-cell</code> 指定儲存格，座標和 Excel 一樣：欄用字母、列用數字，表頭算第 1 列。內容寫在 <code>target-cell-content</code>，或用 <code>target-cell-source</code> 從 template 讀。再按一次會恢復原本的內容。揭曉時格子內框會短暫亮起按鈕的顏色。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
       <div class="col-6">
         <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
-        <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
       </div>
     </div>
     <script type="text/plain" class="demo-src">

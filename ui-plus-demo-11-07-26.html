@@ -8,8 +8,8 @@
 <style>
 :root{
   --bg:#0C0D0C; --shell:#C6C7BD; --vanilla:#DBEDD8; --yellow:#E3D322; --pink:#FF91D7; --red:#EF6661;
-  --orange:#FF5530; --green:#71CD76; --blue:#5DBAE8; --indigo:#778CE1; --violet:#B484E8; --gray:#86877F;
-  --key:#51DBCF; --key-deep:#176878; --calm:#A3C4BC; --quiet:#A9B8E0; --playful:#FFA987; --urgent:#FF2E63;
+  --energetic:#B6FF00; --green:#71CD76; --blue:#5DBAE8; --indigo:#778CE1; --violet:#B484E8; --gray:#86877F;
+  --key:#51DBCF; --bg-alternative:#3B2A20; --calm:#A3C4BC; --quiet:#8EA4DE; --playful:#FFA987; --urgent:#FF2E63;
 }
 *{box-sizing:border-box;}
 body{margin:0;background:var(--bg);color:var(--vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;font-size:1rem;}
@@ -20,13 +20,13 @@ h1{font-size:2.2rem;color:var(--key);margin:0 0 8px 0;}
 .demo h2{font-size:1.4rem;color:var(--yellow);margin:0 0 6px 0;}
 .demo .desc{color:var(--shell);margin:0 0 16px 0;font-size:.95rem;line-height:1.6;}
 .demo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
-.stage{display:flex;flex-direction:column;gap:20px;padding:20px;border:1px dashed var(--key-deep);border-radius:8px;}
+.stage{display:flex;flex-direction:column;gap:20px;padding:20px;border:1px dashed var(--bg-alternative);border-radius:8px;}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:16px;}
 .row-label{width:120px;flex-shrink:0;font-family:monospace;font-size:.85rem;color:var(--quiet);}
 .panel{color:var(--shell);background:var(--bg);border-left:4px solid var(--key);padding:12px 16px;margin:12px 0 0 0;font-size:.95rem;}
 .big-ctx{font-size:1.5rem;}
 .code-label{font-size:.8rem;color:var(--gray);margin:0 0 6px 0;letter-spacing:1px;}
-.code-box{background:var(--bg);border:1px solid var(--key-deep);border-radius:8px;padding:16px;margin:0;max-height:640px;overflow:auto;}
+.code-box{background:var(--bg);border:1px solid var(--bg-alternative);border-radius:8px;padding:16px;margin:0;max-height:640px;overflow:auto;}
 .code-box code{color:var(--calm);font-size:.82rem;white-space:pre;font-family:monospace;}
 table.ref{width:100%;border-collapse:collapse;font-size:.9rem;}
 table.ref th,table.ref td{border-bottom:1px solid var(--gray);padding:8px 12px;text-align:left;vertical-align:top;color:var(--vanilla);}

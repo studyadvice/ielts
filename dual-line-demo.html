@@ -16,14 +16,14 @@
     --violet: #B484E8;
     --green:  #71CD76;
     --warning:  #EF6661;
-    --orange:   #F79C40;
+    --energetic:   #B6FF00;
     --blue:      #5DBAE8;
     --green:     #71CD76;
     --yellow:   #E3D322;
     --info:     #778CE1;
     --blue:    #5DBAE8;
     --pink:     #FF91D7;
-    --orange:   #F79C40;
+    --energetic:   #B6FF00;
     --border:   #1e2320;
   }
 
@@ -127,7 +127,7 @@
   .str { color: var(--green); }
   .cmt { color: #354535; font-style: italic; }
   .tag { color: var(--blue); }
-  .atr { color: var(--orange); }
+  .atr { color: var(--energetic); }
   .val { color: var(--yellow); }
   .fn  { color: var(--green); }
 
@@ -191,7 +191,7 @@
   }
   .badge-solid   { background:#1e2820; color: var(--green); }
   .badge-dashed  { background:#1e1a28; color: var(--violet); }
-  .badge-dotted  { background:#28201e; color: var(--orange); }
+  .badge-dotted  { background:#28201e; color: var(--energetic); }
 </style>
 </head>
 <body>
@@ -217,8 +217,8 @@
   <div class="demo-label" style="margin-top:16px"><b>solid</b> — warning : blue = 7:3，2px</div>
   <dual-hr color-left="red" color-right="blue" ratio="7:3" thickness="2px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>solid</b> — orange : blue = 2:8，4px</div>
-  <dual-hr color-left="orange" color-right="blue" ratio="2:8" thickness="4px"></dual-hr>
+  <div class="demo-label" style="margin-top:16px"><b>solid</b> — energetic : blue = 2:8，4px</div>
+  <dual-hr color-left="energetic" color-right="blue" ratio="2:8" thickness="4px"></dual-hr>
 
   <div class="demo-label" style="margin-top:16px"><b>solid</b> — 自訂 hex：#ff3e80 : #00e5b0 = 5:5，2px</div>
   <dual-hr color-left="#ff3e80" color-right="#00e5b0" ratio="5:5" thickness="2px"></dual-hr>
@@ -229,8 +229,8 @@
   <div class="demo-label"><b>dashed</b> — yellow : blue = 3:7，1px，dash=8px gap=5px（預設）</div>
   <dual-hr color-left="yellow" color-right="blue" ratio="3:7" line-style="dashed"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — violet : orange = 1:1，3px，dash=10px gap=6px</div>
-  <dual-hr color-left="violet" color-right="orange" ratio="1:1" thickness="3px"
+  <div class="demo-label" style="margin-top:16px"><b>dashed</b> — violet : energetic = 1:1，3px，dash=10px gap=6px</div>
+  <dual-hr color-left="violet" color-right="energetic" ratio="1:1" thickness="3px"
            line-style="dashed" dash="10px" gap="6px"></dual-hr>
 
   <div class="demo-label" style="margin-top:16px"><b>dashed</b> — warning : green = 7:3，2px，細密 dash=4px gap=3px</div>
@@ -248,12 +248,12 @@
   <dual-hr color-left="yellow" color-right="blue" ratio="5:5" thickness="4px"
            line-style="dotted" dash="4px" gap="5px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — orange : violet = 3:7，8px，大圓點</div>
-  <dual-hr color-left="orange" color-right="violet" ratio="3:7" thickness="8px"
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — energetic : violet = 3:7，8px，大圓點</div>
+  <dual-hr color-left="energetic" color-right="violet" ratio="3:7" thickness="8px"
            line-style="dotted" dash="8px" gap="6px"></dual-hr>
 
-  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — green : orange = 6:4，6px</div>
-  <dual-hr color-left="green" color-right="orange" ratio="6:4" thickness="6px"
+  <div class="demo-label" style="margin-top:16px"><b>dotted</b> — green : energetic = 6:4，6px</div>
+  <dual-hr color-left="green" color-right="energetic" ratio="6:4" thickness="6px"
            line-style="dotted" dash="6px" gap="5px"></dual-hr>
 
   <div class="demo-label" style="margin-top:16px"><b>dotted</b> — 細線 2px（退化為短方塊）— blue : pink = 1:1</div>
@@ -274,8 +274,8 @@
     <div class="vr-label">yellow:blue<br>5:5 · 1px · solid</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="violet" color-bottom="orange" ratio="3:7" thickness="3px" height="100px"></dual-vr>
-    <div class="vr-label">violet:orange<br>3:7 · 3px · solid</div>
+    <dual-vr color-top="violet" color-bottom="energetic" ratio="3:7" thickness="3px" height="100px"></dual-vr>
+    <div class="vr-label">violet:energetic<br>3:7 · 3px · solid</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
     <dual-vr color-top="red" color-bottom="green" ratio="6:4" thickness="2px" height="100px"></dual-vr>
@@ -299,9 +299,9 @@
     <div class="vr-label">yellow:blue<br>dashed · 預設</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="violet" color-bottom="orange" ratio="3:7" thickness="3px" height="120px"
+    <dual-vr color-top="violet" color-bottom="energetic" ratio="3:7" thickness="3px" height="120px"
              line-style="dashed" dash="10px" gap="6px"></dual-vr>
-    <div class="vr-label">violet:orange<br>3:7 · 3px · dashed</div>
+    <div class="vr-label">violet:energetic<br>3:7 · 3px · dashed</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
     <dual-vr color-top="red" color-bottom="green" ratio="6:4" thickness="2px" height="120px"
@@ -309,9 +309,9 @@
     <div class="vr-label">red:green<br>6:4 · 細密 dashed</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="orange" color-bottom="indigo" ratio="1:1" thickness="2px" height="120px"
+    <dual-vr color-top="energetic" color-bottom="indigo" ratio="1:1" thickness="2px" height="120px"
              line-style="dashed" dash="16px" gap="8px"></dual-vr>
-    <div class="vr-label">orange:indigo<br>1:1 · 寬鬆 dashed</div>
+    <div class="vr-label">energetic:indigo<br>1:1 · 寬鬆 dashed</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
     <dual-vr color-top="green" color-bottom="blue" ratio="7:3" thickness="2px" height="120px"
@@ -328,14 +328,14 @@
     <div class="vr-label">yellow:blue<br>4px · dotted</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="orange" color-bottom="violet" ratio="3:7" thickness="8px" height="120px"
+    <dual-vr color-top="energetic" color-bottom="violet" ratio="3:7" thickness="8px" height="120px"
              line-style="dotted" dash="8px" gap="6px"></dual-vr>
-    <div class="vr-label">orange:violet<br>8px · 大圓點</div>
+    <div class="vr-label">energetic:violet<br>8px · 大圓點</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
-    <dual-vr color-top="green" color-bottom="orange" ratio="6:4" thickness="6px" height="120px"
+    <dual-vr color-top="green" color-bottom="energetic" ratio="6:4" thickness="6px" height="120px"
              line-style="dotted" dash="6px" gap="5px"></dual-vr>
-    <div class="vr-label">green:orange<br>6px · dotted</div>
+    <div class="vr-label">green:energetic<br>6px · dotted</div>
   </div>
   <div class="vr-item" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
     <dual-vr color-top="pink" color-bottom="indigo" ratio="1:1" thickness="10px" height="120px"
@@ -378,7 +378,7 @@
   <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
     <button onclick="setPreset('A')"
       style="background:#1a1c1a;border:1px solid #2e332e;color:var(--yellow);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
-      Preset A：orange + blue
+      Preset A：energetic + blue
     </button>
     <button onclick="setPreset('B')"
       style="background:#1a1c1a;border:1px solid #2e332e;color:var(--violet);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
@@ -386,7 +386,7 @@
     </button>
     <button onclick="setPreset('C')"
       style="background:#1a1c1a;border:1px solid #2e332e;color:var(--green);padding:5px 14px;border-radius:5px;cursor:pointer;font-size:.8rem">
-      Preset C：green + orange · dotted 4px
+      Preset C：green + energetic · dotted 4px
     </button>
   </div>
 </div>
@@ -394,7 +394,7 @@
 <pre>
 <span class="cmt">// 設定 &lt;dual-hr&gt; 全域預設</span>
 <span class="fn">DualLine</span>.configureHR({
-  colorLeft:  <span class="str">'orange'</span>,
+  colorLeft:  <span class="str">'energetic'</span>,
   colorRight: <span class="str">'blue'</span>,
   ratio:      <span class="str">'6:4'</span>,
   thickness:  <span class="str">'2px'</span>,
@@ -474,9 +474,9 @@
   // ── 色票格 ─────────────────────────────────────────────────
   const PALETTE_COLORS = {
     shell:'#c6c7bd', violet:'#B484E8', green:'#71CD76',
-    red:'#EF6661', orange:'#F79C40', blue:'#5DBAE8',
+    red:'#EF6661', energetic:'#B6FF00', blue:'#5DBAE8',
     green:'#71CD76', yellow:'#E3D322', indigo:'#778CE1',
-    blue:'#5DBAE8', pink:'#FF91D7', orange:'#F79C40',
+    blue:'#5DBAE8', pink:'#FF91D7', dreamy:'#DE8EC9',
   };
   const grid = document.getElementById('palette-grid');
   Object.entries(PALETTE_COLORS).forEach(([name, hex]) => {
@@ -488,9 +488,9 @@
 
   // ── 全域配置 Demo ──────────────────────────────────────────
   const presets = {
-    A: { colorLeft:'orange',   colorRight:'blue',    ratio:'6:4', thickness:'2px', lineStyle:'solid'  },
+    A: { colorLeft:'energetic',   colorRight:'blue',    ratio:'6:4', thickness:'2px', lineStyle:'solid'  },
     B: { colorLeft:'violet', colorRight:'blue',      ratio:'5:5', thickness:'2px', lineStyle:'dashed', dash:'8px',  gap:'5px' },
-    C: { colorLeft:'green',     colorRight:'orange',   ratio:'4:6', thickness:'4px', lineStyle:'dotted', dash:'4px',  gap:'4px' },
+    C: { colorLeft:'green',     colorRight:'energetic',   ratio:'4:6', thickness:'4px', lineStyle:'dotted', dash:'4px',  gap:'4px' },
   };
   function setPreset(key) {
     // 只更新 #api-demo-hr 這一條，示範動態切換

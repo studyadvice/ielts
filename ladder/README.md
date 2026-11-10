@@ -12,7 +12,7 @@
 - 原生 Custom Elements，不依賴任何框架。
 - 不使用 shadow DOM，CSS 由 JS 檔自動注入，一個 `.js` 檔即可使用。
 - 所有部位的配色、字體大小、間距、外框都可用屬性自訂。
-- 支援預設收合、鍵盤切換、`<c-blue>` 等色名標籤（舊的 `<c-shell>` 到 `<c-orange>` 仍可用）。
+- 支援預設收合、鍵盤切換、`<c-blue>` 等色名標籤（舊的 `<c-shell>` 到 `<c-energetic>` 仍可用）。
 - 寬螢幕排版，適合教學頁與錄影講解。
 
 ```html
@@ -178,7 +178,7 @@
 
 | 屬性 | 預設值 | 說明 |
 |---|---|---|
-| `theme` | `default` | 一次套用整組強調色，可用 `default`、`violet`、`blue`、`green`、`yellow`、`orange`、`pink`、`indigo`、`shell`、`vanilla`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。名稱不存在時退回 `default`。 |
+| `theme` | `default` | 一次套用整組強調色，可用 `default`、`violet`、`blue`、`green`、`yellow`、`energetic`、`dreamy`、`pink`、`indigo`、`shell`、`vanilla`、`red`、`gray`、`key`、`calm`、`quiet`、`playful`、`urgent`。名稱不存在時退回 `default`。 |
 | `margin` | `6px 12px` | 元件對外間距。 |
 | `padding` | `6px 12px` | 元件對內間距。 |
 | `bg` | `#0C0D0C` | 元件背景色。 |

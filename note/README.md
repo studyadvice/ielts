@@ -59,7 +59,7 @@
 - `annotate` 可依文字精準指定要加註的位置，適合後台編輯器輸出的文章。
 - 23 個內建主題名稱（含別名），可自訂主題。
 - 金色電流主題：電流環、電光線、閃電、光暈，且可單點、全域或依主題開關。
-- 內建 17 色配色（16 色加上 `gold`），以 `BpNotice.palette` 公開，方便與其他元件共用。
+- 內建 18 色配色（17 色加上 `gold`），以 `BpNotice.palette` 公開，方便與其他元件共用。
 
 ## 快速開始
 
@@ -150,9 +150,9 @@
 | `success`、`green`、`correct` | `#71CD76` | |
 | `green`、`highlight` | `#71CD76` | |
 | `note`、`yellow` | `#E3D322` | |
-| `orange` | `#FF5530` | |
+| `energetic` | `#B6FF00` | |
 | `pink` | `#FF91D7` | |
-| `orange` | `#FF5530` | |
+| `dreamy` | `#DE8EC9` | |
 | `vanilla` | `#DBEDD8` | |
 | `green` | `#71CD76` | |
 | `focus` | `#DBEDD8` | |
@@ -281,7 +281,7 @@ PopoverConfig.addTheme('emerald-volt', {
 
 預設圖示：`announcement` 為 `bi-megaphone-fill`，`promo` 為 `bi-tag-fill`，`sticky` 為 `bi-info-circle-fill`。
 
-`color` 可以填的名稱有 `violet`、`blue`、`green`、`yellow`、`orange`、`pink`、`vanilla`、`indigo`、`shell`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent` 以及 `gold`。`gold` 有深金底色與緩慢掃過的閃光。
+`color` 可以填的名稱有 `violet`、`blue`、`green`、`yellow`、`energetic`、`dreamy`、`pink`、`vanilla`、`indigo`、`shell`、`red`、`gray`、`key`、`calm`、`quiet`、`playful`、`urgent` 以及 `gold`。`gold` 有深金底色與緩慢掃過的閃光。
 
 ### 事件
 

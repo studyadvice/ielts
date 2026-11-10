@@ -40,7 +40,7 @@
 | `row-style` | `lines`、`dashed`、`striped`、`none` | 依外觀 | 列與列之間改成細線、虛線、交錯底色或無線，蓋過外觀本身的設定。 |
 | `first-col` | `filled`、`accent`、`bold` | 無 | 第一欄改成實心色帶、強調色粗體或白色粗體，讓第一欄變成項目欄。 |
 | `mark-color` | 色名或色碼 | 同 `color` | 強調列（列首寫 `!`）的顏色。 |
-| `color` | 色名或色碼 | 依外觀 | 強調色，用 17 色的色名。 |
+| `color` | 色名或色碼 | 依外觀 | 強調色，用 18 色的色名。 |
 | `font-size` | CSS 長度 | `1rem` | 字級。 |
 
 ## 預排外觀 pre-theme
@@ -50,7 +50,7 @@
 | `clean` | 灰色表頭，列與列之間一條細線，左右不留白 | `gray` | 資料卡片，就像 Top accounts 那種卡片 |
 | `ledger` | 表頭粗體加強調色底線，內容列交錯底色 | `blue` | 列數多、需要對行的清單 |
 | `grid` | 每一格都有框線，框線是強調色調暗 | `shell` | 對照表、需要清楚分格的內容 |
-| `banner` | 表頭是實心色帶 | `key-deep` | 一張卡片裡要凸顯欄位名稱 |
+| `banner` | 表頭是實心色帶 | `bg-alternative` | 一張卡片裡要凸顯欄位名稱 |
 | `compact` | 小字、緊湊、虛線分隔 | `gray` | 塞進小卡片的補充資料 |
 | `bare` | 沒有任何線，表頭用強調色 | `key` | 簡短的兩三列資料 |
 | `score` | 第一欄強調色粗體，數字欄放大 | `key` | 排名、分數、KPI |
@@ -58,7 +58,7 @@
 | `frame` | 強調色圓角外框，表頭下方一條強調色線 | `key` | 想讓整張表自成一塊的重點資料 |
 | `side` | 第一欄是實心色帶 | `indigo` | 「項目｜說明」的對照表，可以不寫表頭 |
 
-`banner`、`side` 與 `head-style="filled"` 用 `key-deep` 當色帶時自動配白字，其他顏色配深色字。
+`banner`、`side` 與 `head-style="filled"` 用 `bg-alternative` 當色帶時自動配白字，其他顏色配深色字。
 
 ## 屬性解說
 

@@ -11,7 +11,7 @@
 html,body{height:100%;margin:0;}
 body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
 .shell{display:grid;grid-template-columns:320px minmax(0,1fr);height:100vh;}
-.side{border-right:1px solid var(--bp-key-deep);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
+.side{border-right:1px solid var(--bp-bg-alternative);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
 .side h1{font-size:1.4rem;margin:0 0 6px 0;}
 .side .lead{font-size:.85rem;line-height:1.6;margin:0 0 12px 0;}
 .grp{margin:14px 0 2px 0;letter-spacing:1px;}
@@ -23,7 +23,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 .part-btn.on{border-color:var(--bp-key);background:#14302E;color:var(--bp-vanilla);}
 .side-link{font-size:.9rem;text-decoration:none;padding:4px 10px;}
 .main{display:flex;flex-direction:column;min-width:0;}
-.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-key-deep);}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-bg-alternative);}
 .bar .now{font-size:1rem;}
 .bar .from{font-family:ui-monospace,monospace;font-size:.8rem;margin-left:auto;}
 #stage{flex:1;width:100%;border:0;background:var(--bp-base);}
@@ -72,7 +72,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   table.ref th{background:#1a1c1a;color:#5DBAE8;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
   table.ref td{padding:7px 10px;border-bottom:1px solid #222422;vertical-align:top}
   table.ref td:first-child{color:#E3D322;font-family:Consolas,monospace;white-space:nowrap}
-  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#F79C40;white-space:nowrap}
+  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#B6FF00;white-space:nowrap}
   .swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;font-size:.8rem}
   .swatches span{background:#161816;border-radius:6px;padding:6px 8px}
   .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
@@ -151,7 +151,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     progress-text="第 {n} 階，共 {total} 階"
     progress-text-color="#5DBAE8"
     next-text="下一階"
-    pill-bg="#F79C40">
+    pill-bg="#B6FF00">
     <ladder-step label="籠統說法">
       <step-title>原本的說法</step-title>
       <step-body>The bus was <mark>so crowded</mark>.</step-body>
@@ -179,7 +179,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   progress-color="#5DBAE8" progress-color-end="#B484E8"
   progress-text="第 {n} 階，共 {total} 階"
   next-text="下一階"
-  pill-bg="#F79C40"&gt;
+  pill-bg="#B6FF00"&gt;
   ...
 &lt;/ui-detail-ladder&gt;</pre>
 </div>
@@ -198,8 +198,8 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     line-active-color="#71CD76"
     current-color="#FF91D7"
     body-font-size="1.25rem"
-    title-color="#F79C40"
-    note-color="#F79C40"
+    title-color="#B6FF00"
+    note-color="#B6FF00"
     hl-bg="#E3D322"
     progress-color="#FF91D7"
     start="2">
@@ -260,7 +260,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <step-note>我一週跑三次，通常是上班前沿著河堤跑。</step-note>
     </ladder-step>
   </ui-detail-ladder>
-<pre><span style="color:#F79C40">/* v1.0：沒有收合功能，元件一律展開 */</span>
+<pre><span style="color:#B6FF00">/* v1.0：沒有收合功能，元件一律展開 */</span>
 &lt;ui-detail-ladder border="true"&gt;
   ...
 &lt;/ui-detail-ladder&gt;
@@ -300,7 +300,7 @@ ini-collapse 不必給值；寫成 ini-collapse="false" 等同不收合。
       <i class="bi bi-keyboard"></i> 把游標移到元件上（或點一下元件），再按 Ctrl+Shift+↑ 或 Ctrl+Shift+↓。
     </div>
   </div>
-<pre><span style="color:#F79C40">/* v1.0：只能用滑鼠點階梯或按鈕 */</span>
+<pre><span style="color:#B6FF00">/* v1.0：只能用滑鼠點階梯或按鈕 */</span>
 
 <span style="color:#71CD76">/* v1.1：預設啟用鍵盤，不需任何設定 */</span>
 &lt;ui-detail-ladder direction="down"&gt;
@@ -333,11 +333,11 @@ ini-collapse 不必給值；寫成 ini-collapse="false" 等同不收合。
       <step-body>There's <mark>a night market two streets away</mark>.</step-body>
     </ladder-step>
     <ladder-step label="加上感官">
-      <step-title icon="bi bi-fire" icon-color="#F79C40">完整寫法也可以（bi bi-fire）</step-title>
+      <step-title icon="bi bi-fire" icon-color="#B6FF00">完整寫法也可以（bi bi-fire）</step-title>
       <step-body>There's a night market two streets away, <mark>and you can smell the grilled squid from my balcony</mark>.</step-body>
     </ladder-step>
   </ui-detail-ladder>
-<pre><span style="color:#F79C40">/* v1.0：圖示要自己寫在標題裡 */</span>
+<pre><span style="color:#B6FF00">/* v1.0：圖示要自己寫在標題裡 */</span>
 &lt;step-title&gt;&lt;i class="bi bi-star-fill"&gt;&lt;/i&gt; 標題&lt;/step-title&gt;
 
 <span style="color:#71CD76">/* v1.1：直接用 icon 屬性 */</span>
@@ -349,7 +349,7 @@ icon="star-fill"
 icon="bi bi-star-fill"
 
 /* 單一圖示改色 */
-&lt;step-title icon="bi-fire" icon-color="#F79C40"&gt;
+&lt;step-title icon="bi-fire" icon-color="#B6FF00"&gt;
 
 /* 整個元件的圖示統一改色（預設 #E3D322） */
 &lt;ui-detail-ladder title-icon-color="#FF91D7"&gt;</pre>
@@ -374,7 +374,7 @@ icon="bi bi-star-fill"
   <span style="color:#B484E8">c2 violet</span>
   <span style="color:#5DBAE8">c3 blue</span>
   <span style="color:#EF6661">c4 warning</span>
-  <span style="color:#F79C40">c5 orange</span>
+  <span style="color:#B6FF00">c5 energetic</span>
   <span style="color:#5DBAE8">c6 blue</span>
   <span style="color:#71CD76">c7 green</span>
   <span style="color:#71CD76">c8 green</span>
@@ -385,7 +385,7 @@ icon="bi bi-star-fill"
   <span style="color:#778CE1">c13 info</span>
   <span style="color:#778CE1">c14 indigo</span>
   <span style="color:#FF91D7">c15 pink</span>
-  <span style="color:#F79C40">c16 orange</span>
+  <span style="color:#B6FF00">c16 energetic</span>
 </div>
 
 <!-- ========== 屬性表 ========== -->
@@ -513,12 +513,12 @@ icon="bi bi-star-fill"
   p.lead-text{color:#C6C7BD;font-size:.95rem}
   .demo-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
   pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
-  pre .cm{color:#F79C40}
+  pre .cm{color:#B6FF00}
   table.ref{width:100%;border-collapse:collapse;font-size:.85rem}
   table.ref th{background:#1a1c1a;color:#5DBAE8;text-align:left;padding:8px 10px;border-bottom:1px solid #3a3b39}
   table.ref td{padding:7px 10px;border-bottom:1px solid #222422;vertical-align:top}
   table.ref td:first-child{color:#E3D322;font-family:Consolas,monospace;white-space:nowrap}
-  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#F79C40;white-space:nowrap}
+  table.ref td:nth-child(2){font-family:Consolas,monospace;color:#B6FF00;white-space:nowrap}
   .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.85rem;padding:8px 14px;margin:8px 12px 0 12px}
   .tagdemo span{display:inline-block;border-radius:999px;padding:0 10px;color:#0C0D0C;font-size:.8rem;margin:0 6px 0 0}
 </style>
@@ -596,7 +596,7 @@ icon="bi bi-star-fill"
     </ins-line>
     <ins-line heading="What are the downsides?">
       Rent eats up <hl why="用比例取代 expensive，具體又好懂。" tag="lr">almost half of a starting salary</hl>,
-      so a lot of my friends <hl why="生活化的動詞片語，表示和別人合租。" tag="搭配詞" tag-color="#F79C40">end up sharing a flat</hl>.
+      so a lot of my friends <hl why="生活化的動詞片語，表示和別人合租。" tag="搭配詞" tag-color="#B6FF00">end up sharing a flat</hl>.
     </ins-line>
     <ins-line heading="Will this change in the future?">
       <hl why="未來進行式表達「照現況發展下去」的推測。" tag="gra">If remote work keeps growing</hl>,
@@ -619,7 +619,7 @@ icon="bi bi-star-fill"
   &lt;ins-line heading="What are the downsides?"&gt;
     ...
     &lt;hl why="生活化的動詞片語"
-        tag="搭配詞" tag-color="#F79C40"&gt;end up sharing a flat&lt;/hl&gt;
+        tag="搭配詞" tag-color="#B6FF00"&gt;end up sharing a flat&lt;/hl&gt;
   &lt;/ins-line&gt;
 &lt;/ui-insight&gt;
 
@@ -702,7 +702,7 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
   <span style="background:#71CD76">lr 詞彙</span>
   <span style="background:#B484E8">gra 文法</span>
   <span style="background:#5DBAE8">fc 連貫</span>
-  <span style="background:#F79C40">p 發音</span>
+  <span style="background:#B6FF00">p 發音</span>
   <span style="background:#FF91D7">其他文字（tag-default-bg）</span>
 </p>
 
@@ -830,9 +830,9 @@ tag 填 lr、gra、fc、p 會變成內建標籤；
 <style>
 :root{
   --c-base:#0C0D0C; --c-shell:#C6C7BD; --c-violet:#B484E8; --c-blue:#5DBAE8; --c-warning:#EF6661;
-  --c-orange:#F79C40; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
+  --c-energetic:#B6FF00; --c-blue:#5DBAE8; --c-green:#71CD76; --c-green:#71CD76; --c-vanilla:#DBEDD8;
   --c-yellow:#E3D322; --c-focus:#DBEDD8; --c-green:#71CD76; --c-info:#778CE1; --c-indigo:#778CE1;
-  --c-pink:#FF91D7; --c-orange:#F79C40;
+  --c-pink:#FF91D7; --c-energetic:#B6FF00;
   --bs-body-bg:#0C0D0C; --bs-body-color:#C6C7BD;
 }
 body{background:var(--c-base);color:var(--c-shell);font-size:1rem}
@@ -897,10 +897,10 @@ table{font-size:0.875rem}
         </ins-line>
       </ui-insight>
 
-      <div class="tag-lbl lbl-after" style="margin-top:20px">範例 B　hl-hot-bg="violet"　tag-color="orange"</div>
+      <div class="tag-lbl lbl-after" style="margin-top:20px">範例 B　hl-hot-bg="violet"　tag-color="energetic"</div>
       <ui-insight hl-hot-bg="LAVENDER" hl-hot-color="base" hl-line-color="violet" sup-color="violet" note-word-color="violet" note-num-bg="violet" card-active-border="violet">
         <ins-line heading="大小寫不拘">
-          She <hl word="took it in her stride" tag="自訂標籤" tag-color="orange" why="tag-color 也能填色名，這裡用 orange。意思是從容面對。">took it in her stride</hl> and kept going.
+          She <hl word="took it in her stride" tag="自訂標籤" tag-color="energetic" why="tag-color 也能填色名，這裡用 energetic。意思是從容面對。">took it in her stride</hl> and kept going.
         </ins-line>
         <ins-line heading="第二句">
           That was <hl word="a blessing in disguise" tag="lr" why="塞翁失馬，表面是壞事，後來變成好事。">a blessing in disguise</hl>.
@@ -1040,11 +1040,11 @@ _css(name) {
   <div class="tag-lbl lbl-after" style="margin-top:28px">範例 E　theme 搭配個別屬性覆蓋</div>
   <div class="row g-4">
     <div class="col-12 col-xl-7">
-      <ui-insight theme="green" hl-hot-bg="pink" card-active-border="orange">
+      <ui-insight theme="green" hl-hot-bg="pink" card-active-border="energetic">
         <ins-line heading="theme=green，只覆蓋兩個屬性">
           She <hl word="took it in her stride" tag="lr" why="亮點底色被覆蓋成 pink，其他顏色（底線、上標、說明編號）仍是 green。">took it in her stride</hl> and kept going.
         </ins-line>
-        <ins-line heading="卡片外框被覆蓋成 orange">
+        <ins-line heading="卡片外框被覆蓋成 energetic">
           That was <hl word="a blessing in disguise" tag="lr" why="塞翁失馬，表面是壞事，後來變成好事。">a blessing in disguise</hl>.
         </ins-line>
       </ui-insight>
@@ -1052,7 +1052,7 @@ _css(name) {
     <div class="col-12 col-xl-5">
       <pre class="codebox">&lt;ui-insight <span class="s">theme="green"</span>
             <span class="s">hl-hot-bg="pink"</span>
-            <span class="s">card-active-border="orange"</span>&gt;
+            <span class="s">card-active-border="energetic"</span>&gt;
   ...
 &lt;/ui-insight&gt;</pre>
     </div>
@@ -1065,9 +1065,9 @@ _css(name) {
 <script>
 (() => {
   const NAMES = {
-    base:'#0C0D0C', shell:'#C6C7BD', violet:'#B484E8', blue:'#5DBAE8', red:'#EF6661', orange:'#F79C40',
+    base:'#0C0D0C', shell:'#C6C7BD', violet:'#B484E8', blue:'#5DBAE8', red:'#EF6661', energetic:'#B6FF00',
     blue:'#5DBAE8', green:'#71CD76', green:'#71CD76', vanilla:'#DBEDD8', yellow:'#E3D322', vanilla:'#DBEDD8',
-    green:'#71CD76', indigo:'#778CE1', indigo:'#778CE1', pink:'#FF91D7', orange:'#F79C40'
+    green:'#71CD76', indigo:'#778CE1', indigo:'#778CE1', pink:'#FF91D7', dreamy:'#DE8EC9'
   };
 
   const sw = document.getElementById('swatches');

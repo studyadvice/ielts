@@ -20,7 +20,7 @@
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
 | `variant` | `outline`、`solid`、`soft`、`ghost`、`link`、`gradient`、`gradient-outline` | `outline` | 按鈕外觀。寫錯時退回 `outline`。 |
-| `color` | 品牌色名 | `blue` | 主色。可用 `shell`、`vanilla`、`yellow`、`pink`、`red`、`orange`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。寫錯時退回預設色。 |
+| `color` | 品牌色名 | `blue` | 主色。可用 `shell`、`vanilla`、`yellow`、`pink`、`red`、`energetic`、`dreamy`、`green`、`blue`、`indigo`、`violet`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。寫錯時退回預設色。 |
 | `color2` | 品牌色名 | `violet` | 漸層的第二色，只在 `gradient`、`gradient-outline` 使用。 |
 | `angle` | `90deg`、`135deg`、`to right` 等 | `135deg` | 漸層方向。 |
 | `shape` | `rounded`、`pill`、`square` | `rounded` | 按鈕外形。 |
@@ -78,7 +78,7 @@
 **雙色漸層**
 
 ```html
-<ui-check variant="gradient" color="orange" color2="pink" shape="pill" size="md">這段我讀懂了</ui-check>
+<ui-check variant="gradient" color="energetic" color2="pink" shape="pill" size="md">這段我讀懂了</ui-check>
 <ui-check variant="gradient" color="green" color2="yellow" angle="90deg" size="md">這段我讀懂了</ui-check>
 <ui-check variant="gradient-outline" color="blue" color2="violet" shape="pill" size="md">這段我讀懂了</ui-check>
 ```

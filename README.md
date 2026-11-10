@@ -18,7 +18,7 @@
 
 ## 色票
 
-所有元件（含子資料夾）共用 17 個色名，頁面底色為 `#0C0D0C`。11-06-26 起不再支援舊色名（`lavender`、`sky`、`ocean` 等）與數字色彩標籤（`<c1>`～`<c21>`）。
+所有元件（含子資料夾）共用 18 個色名，頁面底色為 `#0C0D0C`。11-06-26 起不再支援舊色名（`lavender`、`sky`、`ocean` 等）與數字色彩標籤（`<c1>`～`<c21>`）。
 
 | 色名 | 色碼 | 用途 |
 | --- | --- | --- |
@@ -27,20 +27,21 @@
 | `yellow` | `#E3D322` | 黃 |
 | `pink` | `#FF91D7` | 粉紅 |
 | `red` | `#EF6661` | 紅，答錯 |
-| `orange` | `#FF5530` | 朱紅，一般強調 |
+| `energetic` | `#B6FF00` | 螢光綠，活力強調 |
 | `green` | `#71CD76` | 綠，答對 |
 | `blue` | `#5DBAE8` | 藍 |
 | `indigo` | `#778CE1` | 靛 |
 | `violet` | `#B484E8` | 紫 |
 | `gray` | `#86877F` | 灰 |
 | `key` | `#51DBCF` | 深底上的亮色重點文字 |
-| `key-deep` | `#176878` | 配白字的深色重點底 |
+| `bg-alternative` | `#3B2A20` | 配白字的深色重點底 |
 | `calm` | `#A3C4BC` | 平靜，放鬆的提示 |
-| `quiet` | `#A9B8E0` | 安靜，備註與次要資訊 |
+| `quiet` | `#8EA4DE` | 安靜，備註與次要資訊 |
 | `playful` | `#FFA987` | 輕鬆，遊戲與活動 |
 | `urgent` | `#FF2E63` | 緊急，截止與限時 |
+| `dreamy` | `#DE8EC9` | 夢幻，柔和的裝飾重點 |
 
-`key-deep` 底色很深，當底色時請配白字；其餘 16 色當底色時配深色字。
+`bg-alternative` 底色很深，當底色時請配白字；其餘 17 色當底色時配深色字。
 
 ## 色名標籤
 
@@ -167,7 +168,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 **逐步取代、滑入動畫與完成後顯示結論**
 
 ```html
-<arrow-flow theme="orange" reveal="single" animation="slide" gap="64px" on-complete="done-1">
+<arrow-flow theme="energetic" reveal="single" animation="slide" gap="64px" on-complete="done-1">
   <flow-step title="Step 1">第一步內容</flow-step>
   <flow-step title="Step 2" header-color="violet" border-color="indigo">第二步內容</flow-step>
   <flow-step title="Step 3">第三步內容</flow-step>
@@ -178,14 +179,14 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 **分支與合流**
 
 ```html
-<arrow-flow theme="green" arrow-tip="lg" branch-label-theme="orange" branch-dim="0.85">
+<arrow-flow theme="green" arrow-tip="lg" branch-label-theme="energetic" branch-dim="0.85">
   <flow-step title="確認題型">判斷是圖表題還是流程題。</flow-step>
   <flow-branch>
     <branch-option label="圖表題" theme="blue">
       <flow-step title="找趨勢">先看最高點與最低點。</flow-step>
       <flow-step title="找比較">挑兩組資料互相比較。</flow-step>
     </branch-option>
-    <branch-option label="流程題" theme="orange">
+    <branch-option label="流程題" theme="energetic">
       <flow-step title="找階段">依順序列出每個階段。</flow-step>
     </branch-option>
   </flow-branch>
@@ -326,7 +327,7 @@ ArrowFlow.config({ theme: 'blue', arrowTip: 'lg', gap: '80px', headerGradient: '
 
 ### 屬性解說
 
-- **主題**：`data-theme` 一次設定一般色、進行中色、完成色、標題色與編號圓圈底色。可用名稱有 `violet`、`blue`、`indigo`、`green`、`yellow`、`orange`、`pink`、`shell`、`vanilla`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。套用主題後，個別的 `data-color-*` 仍可再覆寫。
+- **主題**：`data-theme` 一次設定一般色、進行中色、完成色、標題色與編號圓圈底色。可用名稱有 `violet`、`blue`、`indigo`、`green`、`yellow`、`energetic`、`dreamy`、`pink`、`shell`、`vanilla`、`red`、`gray`、`key`、`calm`、`quiet`、`playful`、`urgent`。套用主題後，個別的 `data-color-*` 仍可再覆寫。
 - **卡片底色自動推算**：只覆寫 `data-color-active`、`data-color-done` 或 `data-color-error`，而沒有指定對應的 `data-card-bg-*` 時，元件會依該色推算淡色卡片底色，讓顏色保持一致。
 - **推進模式**：`mode="progress"` 會在每張卡片右下角放推進按鈕，按下即把下一步設為進行中；按下最後一步則全部標記完成並觸發 `bps:complete`。`mode="progress-show"` 行為相同，但尚未輪到的步驟完全隱藏，按下按鈕才以動畫逐張出現。推進模式不會自動設定起點，請在第一個 `<bp-step>` 加上 `data-state="active"`。
 - **推進按鈕形狀**：只有圖示時是正圓形，只有文字或圖文並列時是膠囊形，圖示與文字都為空時不放按鈕。
@@ -358,7 +359,7 @@ ArrowFlow.config({ theme: 'blue', arrowTip: 'lg', gap: '80px', headerGradient: '
 **垂直排列與虛線連接**
 
 ```html
-<bp-stepper data-theme="orange" data-layout="vertical" data-connector="dashed" data-card-width="280px">
+<bp-stepper data-theme="energetic" data-layout="vertical" data-connector="dashed" data-card-width="280px">
   <bp-step><bp-step-title>聽題</bp-step-title><bp-step-content>記下關鍵字。</bp-step-content></bp-step>
   <bp-step><bp-step-title>回答</bp-step-title><bp-step-content>先給結論再補理由。</bp-step-content></bp-step>
 </bp-stepper>
@@ -470,7 +471,7 @@ BPStepper.THEMES;                       // 主題設定
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 主題名稱 | `green` | 意群按鈕的配色。可用 `shell`、`violet`、`green`、`orange`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
+| `theme` | 主題名稱 | `green` | 意群按鈕的配色。可用 `shell`、`violet`、`green`、`energetic`、`dreamy`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `level-colors` | 逗號分隔的顏色 | 內建八色 | 依序覆寫第 1、2、3 級的圓點顏色。 |
 | `border-width` | 長度 | `1.5px` | 意群按鈕的邊框粗細。 |
 | `border-style` | CSS 邊框樣式 | `solid` | 意群按鈕的邊框樣式。 |
@@ -642,7 +643,7 @@ window.ChunkDemoConfig = { defaultTheme: 'blue', showPreview: true, mode: 'dots'
 ```html
 <dual-hr></dual-hr>
 <dual-hr color-left="pink" color-right="indigo" ratio="2:8" thickness="3px"></dual-hr>
-<dual-hr color-left="orange" color-right="transparent" ratio="3:7" thickness="2px"></dual-hr>
+<dual-hr color-left="energetic" color-right="transparent" ratio="3:7" thickness="2px"></dual-hr>
 ```
 
 **虛線、點線與箭頭**
@@ -759,7 +760,7 @@ DualLine.palette;                                        // 目前的色盤
 <ui-list mode="fab" position="right" bottom="120px">
   <list-item icon="arrow-up" label="TOP" href="#top"></list-item>
   <list-item icon="journal-text" label="筆記" href="#notes"></list-item>
-  <list-item icon="box-arrow-up-right" label="官網" accent="orange"
+  <list-item icon="box-arrow-up-right" label="官網" accent="energetic"
              href="https://example.com" link-target="_blank"></list-item>
 </ui-list>
 ```
@@ -847,7 +848,7 @@ DualLine.palette;                                        // 目前的色盤
 **圖示模式與兩欄網格**
 
 ```html
-<ui-list mode="icon" cols="2" last-span theme-color="orange" hover-fx="lift" width="80%/480px">
+<ui-list mode="icon" cols="2" last-span theme-color="energetic" hover-fx="lift" width="80%/480px">
   <list-item icon="lightbulb">先想例子再下筆。</list-item>
   <list-item icon="clock">每段控制在五分鐘內。</list-item>
   <list-item icon="check2-circle" accent="green" hover-fx="zoom">最後一列橫跨整排。</list-item>
@@ -964,7 +965,7 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 
 ```html
 <phrase-chip data-phrase="recharge my batteries" data-theme="pink" data-shape="rounded" data-size="lg" data-icon="stars"></phrase-chip>
-<phrase-chip data-phrase="set aside" data-theme="orange" data-shape="underline" data-hide-translation="true">
+<phrase-chip data-phrase="set aside" data-theme="energetic" data-shape="underline" data-hide-translation="true">
   set aside
   <phrase-card>
     <phrase-example>I <b>set aside</b> an hour every day for reading.</phrase-example>
@@ -979,7 +980,7 @@ NumericList.effects;       // 可用的 hover-fx 名稱
 ```html
 <phrase-upgrade data-anim="strike-fade" data-theme="yellow" data-anim-duration="1.2s">
   <phrase-stage text-color="shell">very tired</phrase-stage>
-  <phrase-stage text-color="orange">exhausted</phrase-stage>
+  <phrase-stage text-color="energetic">exhausted</phrase-stage>
   <phrase-stage text-color="green">running on empty</phrase-stage>
 </phrase-upgrade>
 
@@ -1392,7 +1393,7 @@ PracticeTracker.phraseCollectedOrder;  // 依收藏順序排列的片語
 **起訖畫面裝飾、按鈕文字與頁首同步**
 
 ```html
-<slider-show theme="orange" start-style="gradient-border" start-colors="pink,indigo"
+<slider-show theme="energetic" start-style="gradient-border" start-colors="pink,indigo"
              end-style="corner-tag" end-colors="green,yellow"
              next-part-btn-text="繼續" finish-btn-text="結束練習" show-restart="false"
              update-title="true" title-template="第 {slide} / {total} 張">
@@ -1535,7 +1536,7 @@ s.setAttribute('current-part', '2');  // 跳到第二部分
 | `btn-color` | 跟隨 `accent-color` | 按鈕外框，主要按鈕的底色。 |
 | `alert-color` | 跟隨 `accent-color` | 批改完成提示框的顏色。 |
 
-顏色值可以是品牌色名稱（不分大小寫，`bg` 與 `background` 都等於 `base`）、`名稱/不透明度`（例如 `blue/0.9`）、`#hex`、`rgb()`、`rgba()`、`hsl()` 或 CSS 顏色關鍵字。不透明度低於 0.78 的 `rgba()` 會被忽略，`名稱/不透明度` 會被提高到 0.78。無法辨識的值會在主控台警告並改用預設色。可用的品牌色名稱有 `base`、`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。
+顏色值可以是品牌色名稱（不分大小寫，`bg` 與 `background` 都等於 `base`）、`名稱/不透明度`（例如 `blue/0.9`）、`#hex`、`rgb()`、`rgba()`、`hsl()` 或 CSS 顏色關鍵字。不透明度低於 0.78 的 `rgba()` 會被忽略，`名稱/不透明度` 會被提高到 0.78。無法辨識的值會在主控台警告並改用預設色。可用的品牌色名稱有 `base`、`shell`、`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。
 
 ### 互動方式
 

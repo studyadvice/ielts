@@ -11,7 +11,7 @@
 html,body{height:100%;margin:0;}
 body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
 .shell{display:grid;grid-template-columns:320px minmax(0,1fr);height:100vh;}
-.side{border-right:1px solid var(--bp-key-deep);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
+.side{border-right:1px solid var(--bp-bg-alternative);padding:24px 16px 24px 20px;overflow:auto;display:flex;flex-direction:column;gap:6px;}
 .side h1{font-size:1.4rem;margin:0 0 6px 0;}
 .side .lead{font-size:.85rem;line-height:1.6;margin:0 0 12px 0;}
 .grp{margin:14px 0 2px 0;letter-spacing:1px;}
@@ -23,7 +23,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 .part-btn.on{border-color:var(--bp-key);background:#14302E;color:var(--bp-vanilla);}
 .side-link{font-size:.9rem;text-decoration:none;padding:4px 10px;}
 .main{display:flex;flex-direction:column;min-width:0;}
-.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-key-deep);}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bp-bg-alternative);}
 .bar .now{font-size:1rem;}
 .bar .from{font-family:ui-monospace,monospace;font-size:.8rem;margin-left:auto;}
 #stage{flex:1;width:100%;border:0;background:var(--bp-base);}
@@ -127,13 +127,13 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     badge="剩 2 間">
     <p>每晚 4,800 元起。</p>
     <button detail="c2-b-room">房型</button>
-    <button detail="c2-b-rule" color="orange" detail-title="入住須知">須知</button>
+    <button detail="c2-b-rule" color="energetic" detail-title="入住須知">須知</button>
   </card-item>
   <card-item span="2" label="城市旅店" note="台北 · 商務房，步行 3 分鐘到捷運"
     image="https://picsum.photos/seed/city/400/300" detail="c2-c" color="blue">
     <p>平日每晚 2,600 元，週末 3,000 元。</p>
   </card-item>
-  <card-item label="合作平台" note="另開視窗" icon="box-arrow-up-right" color="orange"
+  <card-item label="合作平台" note="另開視窗" icon="box-arrow-up-right" color="energetic"
     href="https://getbootstrap.com" target="_blank"></card-item>
   <card-item label="湖畔營地" note="整修中" icon="tree-fill" disabled detail="c2-a"></card-item>
 </ui-cards>
@@ -155,7 +155,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <card-item label="今日訂單" icon="cart-check-fill" color="blue" source="c3-a"></card-item>
   <card-item label="新會員" icon="person-plus-fill" color="green" source="c3-b"></card-item>
   <card-item label="待出貨" icon="box-seam-fill" color="yellow" source="c3-c"></card-item>
-  <card-item label="退貨申請" icon="arrow-return-left" color="orange" source="c3-d" badge="新"></card-item>
+  <card-item label="退貨申請" icon="arrow-return-left" color="energetic" source="c3-d" badge="新"></card-item>
 </ui-cards>
 
 <template id="c3-a"><p style="font-size:1.6rem;font-weight:700;">128</p></template>
@@ -447,7 +447,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <style>
   :root {
     --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
-    --red: #EF6661; --orange: #FF5530; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --red: #EF6661; --energetic: #B6FF00; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
     --violet: #B484E8; --gray: #86877F;
   }
   body { background: var(--bg); color: var(--shell); font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; }
@@ -630,7 +630,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 
 <template id="th-key" theme="gold electric"><p>第一句就用 <b>a stone's throw from</b>，一次交代地點。</p></template>
 <template id="th-model" theme="top-bar head-filled" color="key"><p>I'd like to talk about a trip I took last spring. It was a real eye-opener for me, mainly because it made me rethink how I spend my weekends.</p></template>
-<template id="th-warn" theme="tint head-tab" color="orange"><p>不要照搬題目的句子，換一個說法開頭。</p></template>
+<template id="th-warn" theme="tint head-tab" color="energetic"><p>不要照搬題目的句子，換一個說法開頭。</p></template>
 <template id="th-ex" theme="corner head-under" color="blue"><p>It's <b>a stone's throw from</b> the station.</p></template>
 <template id="th-more" theme="hatch compact head-chip" color="calm"><p>同義說法：within walking distance、just around the corner。</p></template>
 <template id="th-must" theme="double pulse" color="pink"><p>Part 2 準備的一分鐘，先寫四個關鍵字。</p></template>
@@ -664,7 +664,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 </template>
 
 <template id="ex9">
-<ui-cards cols="2" auto-flip="3000" flip-toggle="false" flip-color="orange" panel-title="{label}" placeholder="按「看例句」會在這裡顯示。">
+<ui-cards cols="2" auto-flip="3000" flip-toggle="false" flip-color="energetic" panel-title="{label}" placeholder="按「看例句」會在這裡顯示。">
   <card-item label="Do you like mornings?" back="Honestly, I'm <c-green>not much of a morning person</c-green>.">
     <button detail="ex-morning" detail-title="例句">看例句</button>
   </card-item>
@@ -715,7 +715,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <ui-cards cols="3" card-style="filled" color="#71CD76">
   <card-item icon="1-circle" label="Part 1" note="兩三句即可"></card-item>
   <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#778CE1"></card-item>
-  <card-item icon="3-circle" label="Part 3" note="延伸討論" card-style="outline" color="#FF5530"></card-item>
+  <card-item icon="3-circle" label="Part 3" note="延伸討論" card-style="outline" color="#B6FF00"></card-item>
 </ui-cards>
 </template>
 
@@ -733,7 +733,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <ui-cards cols="3" accent="#B484E8" active-style="filled" panel="right" panel-columns="8,4"
           panel-title="{label}" placeholder="點選一張卡片。">
   <card-item icon="1-circle" label="Part 1" note="兩三句即可" color="#71CD76" detail="d-p1"></card-item>
-  <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#FF5530" detail="d-p2"></card-item>
+  <card-item icon="2-circle" label="Part 2" note="一到兩分鐘" color="#B6FF00" detail="d-p2"></card-item>
   <card-item icon="3-circle" label="Part 3" note="延伸討論" color="#FF91D7" detail="d-p3"></card-item>
 </ui-cards>
 </template>
@@ -841,7 +841,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <div id="s1-ship" hidden>
   <p>倉庫正在包裝，預計今日出貨。</p>
   <button detail="s1-items">商品明細</button>
-  <button detail="s1-addr" color="orange" detail-title="收件資訊">收件地址</button>
+  <button detail="s1-addr" color="energetic" detail-title="收件資訊">收件地址</button>
 </div>
 <div id="s1-deliver" hidden><p>尚未開始配送。</p></div>
 <div id="s1-done" hidden><p>完成後可在這裡填寫評價。</p></div>
@@ -862,7 +862,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <step-item label="規劃設計" note="10 月" icon="pencil-square" status="current" source="s2-plan"></step-item>
   <step-item label="開發" note="11 月" icon="code-slash" source="s2-dev" badge="3"></step-item>
   <step-item label="內部測試" note="暫停中" icon="bug-fill" disabled></step-item>
-  <step-item label="上線" note="12 月" icon="rocket-takeoff-fill" color="orange" source="s2-launch"></step-item>
+  <step-item label="上線" note="12 月" icon="rocket-takeoff-fill" color="energetic" source="s2-launch"></step-item>
   <step-item label="專案說明" note="另開視窗" icon="box-arrow-up-right" color="blue"
     href="https://getbootstrap.com" target="_blank"></step-item>
 </ui-steps>

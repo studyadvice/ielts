@@ -30,7 +30,7 @@
 
 | 屬性 | 值 | 預設 | 說明 |
 | --- | --- | --- | --- |
-| `theme` | 品牌色名稱或色碼，可加 `-outline` 後綴 | `shell` | 主題色，例如 `blue`、`blue-outline`。可用名稱：`shell`、`violet`、`green`、`orange`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
+| `theme` | 品牌色名稱或色碼，可加 `-outline` 後綴 | `shell` | 主題色，例如 `blue`、`blue-outline`。可用名稱：`shell`、`violet`、`green`、`energetic`、`dreamy`、`blue`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `outline` | `true` | `false` | 外框樣式，與 `theme="xxx-outline"` 效果相同。 |
 | `size` | `xs`、`sm`、`md`、`re`、`lg`、`xl` | `re` | 尺寸。`re` 為 1.01rem，`lg` 為 1.363rem，`xl` 為 1.758rem，`md` 保留給舊頁面。 |
 | `font-size` | 長度 | 無 | 自訂字級，覆蓋 `size` 的字級。 |
@@ -113,7 +113,7 @@
 <card-badge theme="violet" text="標籤"></card-badge>
 <card-badge theme="blue" icon="bi-bell" text="通知"></card-badge>
 <card-badge theme="green-outline" text="完成"></card-badge>
-<card-badge theme="orange" size="lg" font-size="1.2rem" padding="4px 16px" text="大尺寸"></card-badge>
+<card-badge theme="energetic" size="lg" font-size="1.2rem" padding="4px 16px" text="大尺寸"></card-badge>
 ```
 
 **日期、截止日與計數**

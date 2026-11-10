@@ -12,7 +12,7 @@
 body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
 .page{padding:32px 300px 120px 40px;}
 .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px 0;}
-.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-key-deep);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
+.toc a{font-size:.85rem;text-decoration:none;border:1px solid var(--bp-bg-alternative);border-radius:16px;padding:4px 12px;color:var(--bp-calm);}
 .toc a:hover{border-color:var(--bp-key);color:var(--bp-key);}
 .status{display:flex;flex-wrap:wrap;align-items:center;gap:20px;border-radius:10px;padding:12px 18px;margin:0 0 32px 0;position:sticky;top:8px;z-index:50;background:#141514;}
 .status b{color:var(--bp-yellow);}
@@ -56,7 +56,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <a href="#ref">屬性與 API</a>
   </nav>
 
-  <div class="status bp-border-key-deep">
+  <div class="status bp-border-bg-alternative">
     <span>已完成：<b id="st-done">0</b> / <b id="st-total">0</b></span>
     <span>Modal 條件：已瀏覽 <b id="st-sec">0</b> / <b id="st-need-sec">0</b> 段，已過 <b id="st-time">0</b> / <b id="st-need-time">0</b> 秒</span>
     <span>Modal：<b id="st-state">等待中</b></span>
@@ -69,7 +69,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   <div class="demo bp-border-gray" id="ex-setup">
     <h2 class="fs-large bp-text-yellow">範例一：面板設定與 click-go</h2>
     <p class="desc bp-text-shell">右下角的面板就是這段程式碼產生的。<code>data-click-go</code> 讓格子可以點，點了會平滑捲動到對應的段落；滑過格子會看到段落 id。這個設定只在載入時讀取一次。點面板標題列可以收合，收合後標題右側會顯示「已完成／總數」，全部完成時換成完成色。</p>
-    <pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">&lt;practice-tracker
+    <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm">&lt;practice-tracker
   data-title="練習進度"
   data-click-go="true"
   data-cells-per-row="5"
@@ -94,7 +94,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <p class="desc bp-text-shell"><code>data-cell-shape</code> 設定格子形狀，共六種。載入後也能用 <code>PracticeTracker.changeShape()</code> 即時切換，不必重新初始化。按下方按鈕，右下角面板的格子會跟著換。</p>
     <div class="row g-4">
       <div class="col-6">
-        <div class="stage bp-border-key-deep" style="gap:0">
+        <div class="stage bp-border-bg-alternative" style="gap:0">
           <div class="shape-row"><code>square</code><div class="shape-cells"><pt-cell></pt-cell><pt-cell></pt-cell><pt-cell class="is-done"></pt-cell><pt-cell class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">預設，沿用圓角設定</span></div>
           <div class="shape-row"><code>circle</code><div class="shape-cells"><pt-cell data-shape="circle"></pt-cell><pt-cell data-shape="circle"></pt-cell><pt-cell data-shape="circle" class="is-done"></pt-cell><pt-cell data-shape="circle" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">圓形</span></div>
           <div class="shape-row"><code>star</code><div class="shape-cells lg"><pt-cell data-shape="star"></pt-cell><pt-cell data-shape="star"></pt-cell><pt-cell data-shape="star" class="is-done"></pt-cell><pt-cell data-shape="star" class="is-done"></pt-cell></div><span class="fs-small bp-text-gray">五角星</span></div>
@@ -111,7 +111,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
           </div>
         </div>
       </div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">&lt;!-- 載入時決定 --&gt;
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm">&lt;!-- 載入時決定 --&gt;
 &lt;practice-tracker data-cell-shape="star"&gt;&lt;/practice-tracker&gt;
 
 &lt;!-- 載入後即時切換；無效的值會退回 square --&gt;
@@ -123,8 +123,8 @@ PracticeTracker.changeShape('heart');</code></pre></div>
     <h2 class="fs-large bp-text-yellow">範例三：內建標記完成按鈕</h2>
     <p class="desc bp-text-shell">段落上寫任何 <code>data-btn*</code> 屬性，結尾就會自動長出一顆「標記完成」按鈕，不必自己寫函式。<code>data-btn-style</code> 有七種：<code>solid</code>、<code>outline</code>（預設）、<code>pill</code>、<code>ghost</code>、<code>block</code>、<code>split</code>、<code>check</code>；另外可調文字、完成後文字、顏色、大小、寬度與對齊。想自己決定按鈕位置，就在段落裡放 <code>&lt;pt-done-btn&gt;</code>。按下後發出 <code>pt:section-done</code> 事件，右上角的提示就是由它產生。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <section id="ex-01" data-btn-style="solid">
@@ -163,8 +163,8 @@ PracticeTracker.changeShape('heart');</code></pre></div>
     <h2 class="fs-large bp-text-yellow">範例四：從外部標記完成</h2>
     <p class="desc bp-text-shell">不用內建按鈕時，有兩種方式通知面板：呼叫 <code>PracticeTracker.markDone(id)</code>，或從 <code>document</code> 發出 <code>pt:stage-complete</code> 事件並在 <code>detail.sectionId</code> 帶上段落 id。重複標記沒有副作用。這兩段沒有 <code>data-btn*</code> 屬性，所以不會長出內建按鈕。</p>
     <div class="row g-4">
-      <div class="col-6"><div class="stage bp-border-key-deep"></div></div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm"></code></pre></div>
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre></div>
     </div>
     <script type="text/plain" class="demo-src">
 <section id="ex-08">
@@ -187,7 +187,7 @@ PracticeTracker.changeShape('heart');</code></pre></div>
     <p class="desc bp-text-shell"><code>data-promo-target</code> 指定一個隱藏的區塊，條件達成時把它的內容放進 Modal 彈出一次。本頁的條件是載入滿 0.5 分鐘，且至少有效瀏覽 3 個段落；進度顯示在頁面上方的狀態列。有效瀏覽是指段落可見達到門檻（預設 40%）並連續停留 2 秒，快速捲過不算。條件達成後會等捲動停止約 1.5 秒才彈出；若有其他 Modal 或 offcanvas 開著，則等它關閉。同一次載入只彈一次，不使用 localStorage；把 <code>data-promo-min-sections</code> 設為 0 就只看時間。顯示與關閉時分別發出 <code>pt:promo-shown</code> 與 <code>pt:promo-closed</code>。需要 Bootstrap 的 JS。</p>
     <div class="row g-4">
       <div class="col-6">
-        <div class="stage bp-border-key-deep">
+        <div class="stage bp-border-bg-alternative">
           <p class="fs-small bp-text-gray" style="margin:0">Modal 的內容來源，平常保持隱藏：</p>
           <div id="promo-1" style="display:none">
             <h4>本週加開口說模考</h4>
@@ -200,7 +200,7 @@ PracticeTracker.changeShape('heart');</code></pre></div>
           <div class="ctrl"><button type="button" class="btn btn-sm btn-yellow-outline" onclick="PracticeTracker.showPromo()"><i class="bi bi-megaphone"></i> PracticeTracker.showPromo()</button></div>
         </div>
       </div>
-      <div class="col-6"><pre class="code-box bp-bg-base bp-border-key-deep"><code class="bp-text-calm">&lt;div id="promo-1" style="display:none"&gt;
+      <div class="col-6"><pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm">&lt;div id="promo-1" style="display:none"&gt;
   &lt;h4&gt;本週加開口說模考&lt;/h4&gt;
   &lt;p&gt;…&lt;/p&gt;
 &lt;/div&gt;

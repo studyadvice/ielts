@@ -15,7 +15,7 @@
       --violet: #B484E8;
       --blue:      #5DBAE8;
       --warning:  #EF6661;
-      --orange:   #F79C40;
+      --energetic:   #B6FF00;
       --blue:    #5DBAE8;
       --green:     #71CD76;
       --green:     #71CD76;
@@ -26,7 +26,7 @@
       --info:     #778CE1;
       --indigo:   #778CE1;
       --pink:     #FF91D7;
-      --orange:   #F79C40;
+      --energetic:   #B6FF00;
     }
 
     html { scroll-behavior: smooth; }
@@ -184,7 +184,7 @@
       font-family: 'Cascadia Code', 'Fira Code', monospace;
       font-size: 0.9rem;
       font-weight: 700;
-      color: var(--orange);
+      color: var(--energetic);
       text-align: right;
     }
     .tip-row arrow-flow { flex: 1; }
@@ -209,7 +209,7 @@
       line-height: 1.5;
     }
     .config-code .c-key   { color: var(--violet); }
-    .config-code .c-str   { color: var(--orange); }
+    .config-code .c-str   { color: var(--energetic); }
     .config-code .c-num   { color: var(--yellow); }
     .config-code .c-fn    { color: var(--blue); }
     .config-code .c-cm    { color: rgba(198,199,189,0.4); }
@@ -275,7 +275,7 @@
     }
     .api-block pre { margin: 0; white-space: pre; color: inherit; background: transparent; }
     .a-attr  { color: var(--blue); }
-    .a-val   { color: var(--orange); }
+    .a-val   { color: var(--energetic); }
     .a-cm    { color: rgba(198,199,189,0.38); }
     .a-tag   { color: var(--violet); }
     .a-js    { color: var(--green); }
@@ -377,7 +377,7 @@
         </h2>
         <p class="sec-desc">
           <code>theme="green"</code> 設定全域色 · 第 2 步驟個別設定
-          <code>header-color="red"</code> · <code>border-color="orange"</code> ·
+          <code>header-color="red"</code> · <code>border-color="energetic"</code> ·
           <code>arrow-tip="lg"</code>
         </p>
       </div>
@@ -387,7 +387,7 @@
           填寫收件人資訊及訂購品項。支援多筆批次上傳（CSV 格式），
           單次最多 500 筆。
         </flow-step>
-        <flow-step title="⚠ 付款驗證" header-color="red" border-color="orange">
+        <flow-step title="⚠ 付款驗證" header-color="red" border-color="energetic">
           <strong>請注意：</strong>此步驟將進行信用卡授權確認。
           授權失敗時訂單將自動取消。
           <p>請確認以下事項已完成：</p>
@@ -457,11 +457,11 @@
         </h2>
         <p class="sec-desc">
           <code>reveal="single"</code> 前框淡出保留版面 ·
-          <code>animation="slide"</code> · <code>theme="orange"</code> · 四步驟行程規劃
+          <code>animation="slide"</code> · <code>theme="energetic"</code> · 四步驟行程規劃
         </p>
       </div>
 
-      <arrow-flow theme="orange" reveal="single" animation="slide" gap="64px">
+      <arrow-flow theme="energetic" reveal="single" animation="slide" gap="64px">
         <flow-step title="Day 1 — 抵達">
           入住飯店後整理行李，傍晚步行至鄰近夜市探索在地美食。
           建議早點休息以備隔日滿檔行程。
@@ -649,7 +649,7 @@
     <section class="demo-sec">
       <div class="sec-head">
         <h2 class="sec-title">
-          <span class="sec-num" style="background:rgba(237,161,9,0.14);border-color:rgba(237,161,9,0.5);color:var(--orange)">+</span>框寬度設定
+          <span class="sec-num" style="background:rgba(237,161,9,0.14);border-color:rgba(237,161,9,0.5);color:var(--energetic)">+</span>框寬度設定
         </h2>
         <p class="sec-desc">
           <code>step-width</code> 屬性設定所有框的固定寬度 ·
@@ -740,8 +740,8 @@ el.addEventListener(<span class="a-val">'step-change'</span>,   e =&gt; console.
 el.addEventListener(<span class="a-val">'flow-complete'</span>, e =&gt; console.log(e.detail.totalSteps));
 
 <span class="a-cm">/* ─── 品牌色名 ── 17 色 ─────────────────────────────────────────────── */</span>
-bg  shell  violet  blue  warning  orange  blue  green  green
-vanilla  yellow  focus  green  info  indigo  pink  orange</pre>
+bg  shell  violet  blue  warning  energetic  blue  green  green
+vanilla  yellow  focus  green  info  indigo  pink  dreamy</pre>
       </div>
     </section>
 

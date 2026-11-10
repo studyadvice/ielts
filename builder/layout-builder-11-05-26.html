@@ -10,7 +10,7 @@
   :root {
     --bg: #0C0D0C; --panel: #141514; --panel-2: #1B1C1B; --line: #2C2D2B;
     --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7; --red: #EF6661;
-    --orange: #FF5530; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1; --violet: #B484E8; --gray: #86877F;
+    --energetic: #B6FF00; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1; --violet: #B484E8; --gray: #86877F;
   }
   *, *::before, *::after { box-sizing: border-box; }
   html, body { background: var(--bg); color: var(--shell); }
@@ -55,7 +55,7 @@
   .chip.c-blue { border-color: var(--blue); color: var(--blue); }
   .chip.c-pink { border-color: var(--pink); color: var(--pink); }
   .chip.c-green { border-color: var(--green); color: var(--green); }
-  .chip.c-orange { border-color: var(--orange); color: var(--orange); }
+  .chip.c-energetic { border-color: var(--energetic); color: var(--energetic); }
   .chip.c-violet { border-color: var(--violet); color: var(--violet); }
   .chip.c-yellow { border-color: var(--yellow); color: var(--yellow); }
   .warn { color: var(--red); font-size: 0.78rem; padding: 0 10px 6px 10px; }
@@ -130,7 +130,7 @@
   /* 提示訊息（Bootstrap alert） */
   .toast-zone { position: fixed; top: 16px; right: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 360px; }
   .toast-zone .alert { margin: 0; background: #1B1C1B; color: var(--vanilla); border: 1px solid var(--green); font-size: 0.9rem; padding: 10px 40px 10px 14px; }
-  .toast-zone .alert.alert-warning { border-color: var(--orange); }
+  .toast-zone .alert.alert-warning { border-color: var(--energetic); }
   .toast-zone .alert.alert-danger { border-color: var(--red); }
   .toast-zone .btn-close { filter: invert(1); }
 
@@ -213,9 +213,9 @@
     '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">',
     '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">'
   ];
-  var PALETTE = { shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7', red: '#EF6661', orange: '#FF5530',
+  var PALETTE = { shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7', red: '#EF6661', energetic: '#B6FF00', dreamy: '#DE8EC9',
                   green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8', gray: '#86877F',
-                  key: '#51DBCF', 'key-deep': '#176878', calm: '#A3C4BC', quiet: '#A9B8E0', playful: '#FFA987', urgent: '#FF2E63' };
+                  key: '#51DBCF', 'bg-alternative': '#3B2A20', calm: '#A3C4BC', quiet: '#8EA4DE', playful: '#FFA987', urgent: '#FF2E63' };
   var NAMES = Object.keys(PALETTE);
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -471,7 +471,7 @@
     '問答揭曉': function () {
       var t = tableDefault(); t.a.theme = 'violet';
       [['Do you like mornings?', 'Honestly, I\'m <c-green>not much of a morning person</c-green>.'],
-       ['What do you usually do on weekends?', 'I tend to <c-orange>unwind</c-orange> by going for a long walk.']].forEach(function (q) {
+       ['What do you usually do on weekends?', 'I tend to <c-energetic>unwind</c-energetic> by going for a long walk.']].forEach(function (q) {
         var r = newRow('ui-row', 1); delete r.a['col-border'];
         r.cols[0].content = q[0]; r.cols[0].a['show-next'] = '@bare'; r.cols[0].a.icon = 'bi-chat-left-text';
         var a = newRow('ui-row', 1); delete a.a['col-border'];
@@ -493,7 +493,7 @@
       return t;
     },
     '逐步箭頭': function () {
-      var t = tableDefault(); t.a.theme = 'orange';
+      var t = tableDefault(); t.a.theme = 'energetic';
       var h = newRow('ui-row', 3, '1:1:1'); h.cols[0].content = '原句'; h.cols[1].content = '換詞'; h.cols[2].content = '換句型';
       h.cols.forEach(function (c) { c.a.inverse = true; }); t.items.push(h);
       var r = newRow('ui-row', 3, '1:1:1'); r.a.arrow = 'click';
@@ -509,7 +509,7 @@
       r1.cols[1].items = 'I\'m from <c-blue>a coastal city</c-blue> in the south.\nIt\'s <c-green>a laid-back place</c-green> with great seafood.';
       r1.cols[1].a['carousel-interval'] = '2500'; r1.cols[1].a['progress-bar'] = true; r1.cols[1].a['item-number'] = 'count';
       var r2 = newRow('ui-row', 2, '1:2'); r2.cols[0].content = 'Do you like living there?';
-      r2.cols[1].content = 'Yes, it\'s <c-orange>quiet but never boring</c-orange>.'; r2.cols[1].a.expandable = true;
+      r2.cols[1].content = 'Yes, it\'s <c-energetic>quiet but never boring</c-energetic>.'; r2.cols[1].a.expandable = true;
       t.items.push(r1, r2);
       t.items.push({ kind: 'group', a: { 'title-left': 'Part 1：Work', 'title-right': '1 題', 'ini-collapse': true }, extra: '' });
       var r3 = newRow('ui-row', 2, '1:2'); r3.cols[0].content = 'What do you do?'; r3.cols[1].content = 'I\'m <c-violet>an IELTS teacher</c-violet>.';
@@ -609,7 +609,7 @@
       var g = infoDefault();
       var a = newRegion(1, 'countdown'); a.a.countdown = '3000'; a.content = '<h4>第一步：讀題</h4>\n<p>先找出題目的<c-blue>關鍵字</c-blue>，倒數條跑完後自動進入下一步。</p>';
       var b = newRegion(2, 'manual'); b.a.color = 'green'; b.a['manual-label'] = '我準備好了 ▶';
-      b.content = '<h4>第二步：想一個例子</h4>\n<p>用<c-orange>具體的人事時地物</c-orange>撐起答案。</p>';
+      b.content = '<h4>第二步：想一個例子</h4>\n<p>用<c-energetic>具體的人事時地物</c-energetic>撐起答案。</p>';
       var c = newRegion(3, 'end'); c.gold = true; c.a.color = 'gold'; c.content = '<h4>完成</h4>\n<p>開口說說看。</p>';
       g.regions.push(a, b, c); return g;
     },
@@ -631,7 +631,7 @@
       var g = infoDefault(); g.a.layout = 'horizontal'; g.a['cols-per-row'] = '4'; g.a['cascade-interval'] = '250';
       g.a['auto-start'] = true; g.a['show-controls'] = 'false';
       [['blue', '聽力', '四個段落，三十分鐘。'], ['green', '閱讀', '三篇文章，六十分鐘。'],
-       ['orange', '寫作', '兩個任務，六十分鐘。'], ['pink', '口說', '三個部分，十一到十四分鐘。']].forEach(function (c, i) {
+       ['energetic', '寫作', '兩個任務，六十分鐘。'], ['pink', '口說', '三個部分，十一到十四分鐘。']].forEach(function (c, i) {
         var r = newRegion(i + 1, 'end'); r.a.color = c[0]; r.content = '<h4>' + c[1] + '</h4>\n<p>' + c[2] + '</p>'; g.regions.push(r);
       });
       return g;
@@ -651,7 +651,7 @@
       var g = infoDefault(); g.a['show-score'] = true;
       var q = newRegion(1, 'quiz'); q.a.id = 'q1'; q.a['quiz-label'] = '第 1 題'; q.content = '<p>Which is more natural?</p>';
       q.choices = 'I very like cooking.\nI\'m really into cooking.'; q.a.answer = 'b'; q.a['correct-next'] = 'q2'; q.a['wrong-next'] = 'q1-help';
-      var h = newRegion(2, 'manual'); h.a.id = 'q1-help'; h.a.color = 'orange'; h.a.next = 'q2'; h.a['manual-label'] = '我懂了 ▶'; h.item = false;
+      var h = newRegion(2, 'manual'); h.a.id = 'q1-help'; h.a.color = 'energetic'; h.a.next = 'q2'; h.a['manual-label'] = '我懂了 ▶'; h.item = false;
       h.content = '<h4>補充</h4>\n<p><c-red>very like</c-red> 不自然，改用 <c-green>really like</c-green> 或 <c-green>be into</c-green>。</p>';
       var q2 = newRegion(3, 'quiz'); q2.a.id = 'q2'; q2.a['quiz-label'] = '第 2 題'; q2.content = '<p>Pick the better opener.</p>';
       q2.choices = 'I\'m going to talk about my hometown.\nThe place I\'d like to describe is a small fishing town.'; q2.a.answer = 'b';
@@ -811,7 +811,7 @@
     if (a['mask-text']) out.push(['遮罩' + (a['mask-order'] ? ' #' + a['mask-order'] : ''), 'c-pink']);
     if (a['show-next']) out.push(['點擊顯示下一列', 'c-blue']);
     if (a.expandable) out.push(['展開長文', 'c-blue']);
-    if ((c.items || '').trim()) out.push(['輪播 ' + c.items.split('\n').filter(function (s) { return s.trim(); }).length + ' 項', 'c-orange']);
+    if ((c.items || '').trim()) out.push(['輪播 ' + c.items.split('\n').filter(function (s) { return s.trim(); }).length + ' 項', 'c-energetic']);
     if (a.arrow) out.push(['箭頭 ' + (a.arrow === '@bare' ? '' : a.arrow), 'c-violet']);
     if (a.icon) out.push([a.icon, '']);
     if (a.span) out.push(['跨 ' + a.span, '']);
@@ -843,7 +843,7 @@
       if (it.kind === 'group') {
         h.push('<div class="st-item st-group' + (isSel ? ' sel' : '') + '"><div class="st-head" data-pick="item" data-i="' + i + '">' +
           '<span class="st-tag">&lt;ui-group&gt;</span><b style="color:var(--vanilla)">' + esc(it.a['title-left'] || '（無標題）') + '</b>' +
-          '<span class="chip">' + esc(it.a['title-right'] || '') + '</span>' + (it.a['ini-collapse'] ? '<span class="chip c-orange">收合</span>' : '') +
+          '<span class="chip">' + esc(it.a['title-right'] || '') + '</span>' + (it.a['ini-collapse'] ? '<span class="chip c-energetic">收合</span>' : '') +
           '<span class="grow"></span>' + tools + '</div></div>');
         return;
       }
@@ -852,7 +852,7 @@
       var tpl = useCw ? cw.map(function (x) { return x + 'fr'; }).join(' ') : 'repeat(' + Math.max(it.cols.length, 1) + ', minmax(0, 1fr))';
       var rowChips = [];
       if (it.a['col-widths']) rowChips.push('<span class="chip">' + esc(it.a['col-widths']) + '</span>');
-      if (it.a.hidden) rowChips.push('<span class="chip c-orange">先隱藏</span>');
+      if (it.a.hidden) rowChips.push('<span class="chip c-energetic">先隱藏</span>');
       if (it.a.arrow) rowChips.push('<span class="chip c-violet">整列箭頭</span>');
       if (it.a['auto-number']) rowChips.push('<span class="chip">編號 ' + esc(it.a['auto-number']) + '</span>');
       if (it.a['can-hide'] && it.tag === 'ui-row-enhance') rowChips.push('<span class="chip c-green">眼睛</span>');
@@ -888,7 +888,7 @@
     var gChips = [];
     if (m.a.layout === 'horizontal') gChips.push('<span class="chip c-blue">橫向 ' + esc(m.a['cols-per-row'] || 4) + ' 欄</span>');
     if (m.a['auto-start']) gChips.push('<span class="chip c-green">自動開始</span>');
-    if (m.a['global-progress']) gChips.push('<span class="chip c-orange">進度條</span>');
+    if (m.a['global-progress']) gChips.push('<span class="chip c-energetic">進度條</span>');
     if (m.a['show-score']) gChips.push('<span class="chip c-pink">計分板</span>');
     if (+m.a['cascade-interval'] > 0) gChips.push('<span class="chip c-violet">依序登場</span>');
     h.push('<div class="st-table-head' + (sel.type === 'group' ? ' sel' : '') + '" data-pick="group"><span class="st-tag">&lt;info-region-group&gt;</span>' +

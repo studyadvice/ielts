@@ -128,7 +128,7 @@
 **輪播、開始按鈕與燃燒進度條**
 
 ```html
-<cell-drawer theme="orange" mode="carousel" carousel-interval="2500" btn-start
+<cell-drawer theme="energetic" mode="carousel" carousel-interval="2500" btn-start
              progress-style="fuse" progress-height="3" show-countdown>
   <cell-level hint-page>按下開始播放</cell-level>
   <cell-level>Fluency</cell-level>

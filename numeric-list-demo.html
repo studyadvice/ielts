@@ -18,10 +18,10 @@
       --green:     #71CD76;
       --green:  #71CD76;
       --yellow:   #E3D322;
-      --orange:   #F79C40;
+      --energetic:   #B6FF00;
       --warning:  #EF6661;
       --indigo:   #778CE1;
-      --orange:   #F79C40;
+      --energetic:   #B6FF00;
       --pink:     #FF91D7;
     }
     *, *::before, *::after { box-sizing: border-box; }
@@ -142,11 +142,11 @@
     <div class="split split-2">
       <!-- Salmon theme -->
       <div class="demo-box">
-        <div class="demo-label">Salmon 主題 — 數字統一 #F79C40</div>
-        <ui-list id="list-orange" width="100%" gap="4px">
+        <div class="demo-label">Salmon 主題 — 數字統一 #B6FF00</div>
+        <ui-list id="list-energetic" width="100%" gap="4px">
           <list-item>
             <p class="fw-bold">主題統一色</p>
-            <p class="text-muted">themeColor = numberColor = #F79C40</p>
+            <p class="text-muted">themeColor = numberColor = #B6FF00</p>
           </list-item>
           <list-item>
             <p class="fw-bold">hover 邊框自動跟 theme 走</p>
@@ -182,17 +182,17 @@
     <div style="margin-top:24px;">
       <pre><code><span class="hl-cmt">// Salmon 主題：numberColor → 自動同步 themeColor + borderHoverColor</span>
 NumericList.setup({
-  <span class="hl-key">numberColor</span>:      <span class="hl-str">'#F79C40'</span>,   <span class="hl-cmt">// ← 觸發自動同步</span>
+  <span class="hl-key">numberColor</span>:      <span class="hl-str">'#B6FF00'</span>,   <span class="hl-cmt">// ← 觸發自動同步</span>
   <span class="hl-key">numberBg</span>:         <span class="hl-str">'#200f0a'</span>,
   <span class="hl-key">borderColor</span>:      <span class="hl-str">'#3d1e14'</span>,
   <span class="hl-key">numberDivider</span>:    <span class="hl-str">'#3a1a10'</span>,
   <span class="hl-key">activeBackground</span>: <span class="hl-str">'#1a0e0a'</span>,
 });
-<span class="hl-cmt">// 結果：themeColor = '#F79C40'，borderHoverColor = '#F79C40'</span>
+<span class="hl-cmt">// 結果：themeColor = '#B6FF00'，borderHoverColor = '#B6FF00'</span>
 
 <span class="hl-cmt">// 手動覆蓋 hover 色（不跟 theme 走）：</span>
 NumericList.setup({
-  <span class="hl-key">numberColor</span>:      <span class="hl-str">'#F79C40'</span>,
+  <span class="hl-key">numberColor</span>:      <span class="hl-str">'#B6FF00'</span>,
   <span class="hl-key">borderHoverColor</span>: <span class="hl-str">'#E3D322'</span>,   <span class="hl-cmt">// ← 明確傳入，不自動同步</span>
 });
 
@@ -470,7 +470,7 @@ NumericList.setup({ <span class="hl-key">themeColor</span>: <span class="hl-val"
   (function () {
     /* Salmon 清單 */
     NumericList.setup({
-      numberColor:      '#F79C40',
+      numberColor:      '#B6FF00',
       numberBg:         '#200f0a',
       borderColor:      '#3d1e14',
       numberDivider:    '#3a1a10',
@@ -478,7 +478,7 @@ NumericList.setup({ <span class="hl-key">themeColor</span>: <span class="hl-val"
       backgroundColor:  '#0C0D0C',
       textColor:        '#C6C7BD',
     });
-    NumericList.render(document.getElementById('list-orange'));
+    NumericList.render(document.getElementById('list-energetic'));
 
     /* Teal 清單 */
     NumericList.setup({
@@ -546,7 +546,7 @@ NumericList.setup({ <span class="hl-key">themeColor</span>: <span class="hl-val"
 
   function applySalmon() {
     NumericList.setup({
-      numberColor:      '#F79C40',
+      numberColor:      '#B6FF00',
       numberBg:         '#200f0a',
       borderColor:      '#3d1e14',
       numberDivider:    '#3a1a10',
@@ -556,7 +556,7 @@ NumericList.setup({ <span class="hl-key">themeColor</span>: <span class="hl-val"
     });
     NumericList.render(document.getElementById('demo-rt'));
     showAlert('alert-rt',
-      '已套用 <strong>Salmon</strong> 主題。themeColor = borderHoverColor = <code>#F79C40</code>。',
+      '已套用 <strong>Salmon</strong> 主題。themeColor = borderHoverColor = <code>#B6FF00</code>。',
       'warning');
   }
 

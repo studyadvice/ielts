@@ -154,7 +154,7 @@ body {
 }
 .ref-tbl .n { font-family: monospace; color: #71CD76; white-space: nowrap; }
 .ref-tbl .t { font-family: monospace; color: #B484E8; white-space: nowrap; font-size: .68rem; }
-.ref-tbl .d { font-family: monospace; color: #F79C40; font-size: .68rem; }
+.ref-tbl .d { font-family: monospace; color: #B6FF00; font-size: .68rem; }
 .ref-tbl .new-star::after { content: ' ★'; color: #71CD76; font-size: .55rem; }
 /* ── color grid ── */
 .color-grid {
@@ -370,7 +370,7 @@ body {
         <div class="color-chip" style="background:#B484E8;color:#0C0D0C">violet</div>
         <div class="color-chip" style="background:#5DBAE8;color:#0C0D0C">blue</div>
         <div class="color-chip" style="background:#EF6661;color:#0C0D0C">warning</div>
-        <div class="color-chip" style="background:#F79C40;color:#0C0D0C">orange</div>
+        <div class="color-chip" style="background:#B6FF00;color:#0C0D0C">energetic</div>
         <div class="color-chip" style="background:#5DBAE8;color:#0C0D0C">blue</div>
         <div class="color-chip" style="background:#71CD76;color:#0C0D0C">green</div>
         <div class="color-chip" style="background:#71CD76;color:#0C0D0C">green</div>
@@ -381,7 +381,7 @@ body {
         <div class="color-chip" style="background:#778CE1;color:#fff">info</div>
         <div class="color-chip" style="background:#778CE1;color:#fff">indigo</div>
         <div class="color-chip" style="background:#FF91D7;color:#0C0D0C">pink</div>
-        <div class="color-chip" style="background:#F79C40;color:#0C0D0C">orange</div>
+        <div class="color-chip" style="background:#DE8EC9;color:#0C0D0C">dreamy</div>
       </div>`,
       demos: [
         {
@@ -506,7 +506,7 @@ body {
         },
         {
           label: 'show-badge — 右下角頁碼',
-          code: `<cell-drawer theme="orange" show-badge>
+          code: `<cell-drawer theme="energetic" show-badge>
   <cell-level>第一頁（右下角看到 1/3）</cell-level>
   <cell-level>第二頁（2/3）</cell-level>
   <cell-level>第三頁（3/3）</cell-level>
@@ -571,7 +571,7 @@ body {
         },
         {
           label: 'no-loop — 最後一頁停止 ＋ carousel-pause="false"',
-          code: `<cell-drawer theme="orange"
+          code: `<cell-drawer theme="energetic"
   mode="carousel"
   carousel-interval="1800"
   no-loop
@@ -722,7 +722,7 @@ body {
         },
         {
           label: 'slide-font-family — serif 字體',
-          code: `<cell-drawer theme="orange"
+          code: `<cell-drawer theme="energetic"
   slide-font-family="Georgia, 'Times New Roman', serif"
   slide-font-size=".9rem">
   <cell-level>Georgia serif 字體，適合引用文字</cell-level>
@@ -752,9 +752,9 @@ body {
         },
         {
           label: '半透明色調',
-          code: `<cell-drawer theme="orange"
+          code: `<cell-drawer theme="energetic"
   surface-bg="rgba(237,161,9,.1)">
-  <cell-level>orange 半透明暖色底</cell-level>
+  <cell-level>energetic 半透明暖色底</cell-level>
   <cell-level>第二頁</cell-level>
 </cell-drawer>`,
           layout: 'w60',
@@ -910,13 +910,13 @@ body {
         },
         {
           label: 'countdown-font-size + countdown-font-family',
-          code: `<cell-drawer theme="orange"
+          code: `<cell-drawer theme="energetic"
   mode="carousel"
   carousel-interval="4000"
   progress-style="fuse"
   btn-start
   show-countdown
-  countdown-color="#F79C40"
+  countdown-color="#B6FF00"
   countdown-font-size=".78rem"
   countdown-font-family="'Georgia', serif">
   <cell-level>倒數放大為 .78rem，serif 字體</cell-level>

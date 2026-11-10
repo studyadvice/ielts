@@ -23,7 +23,7 @@
 <!-- 原地取代 -->
 <ui-icon-anim icons="bi-sun,bi-cloud-sun,bi-cloud,bi-cloud-rain"
   interval="800" effect="fade" size="lg"
-  colors="yellow,orange,shell,blue"></ui-icon-anim>
+  colors="yellow,energetic,shell,blue"></ui-icon-anim>
 
 <!-- 由左至右排出 -->
 <ui-icon-anim mode="sequence" icons="bi-star-fill,bi-star-fill,bi-star-fill"
@@ -71,7 +71,7 @@
   bi-cloud-sun
   bi-cloud-rain-heavy
 </div>
-<div id="weatherColors" hidden>yellow, orange, blue</div>
+<div id="weatherColors" hidden>yellow, energetic, blue</div>
 
 <ui-icon-anim icons-from="weatherIcons" colors-from="#weatherColors"></ui-icon-anim>
 ```
@@ -123,7 +123,7 @@ document.addEventListener('before-navigate', e => {
 | `interval` | `1000` | 切換間隔（毫秒），最小 100 |
 | `mode` | `replace` | `replace` 原地取代、`sequence` 由左至右排出 |
 | `effect` | `fade` | `fade`、`scale`、`flip`、`none` |
-| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`violet`、`blue`、`orange`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`key-deep`、`calm`、`quiet`、`playful`、`urgent`。 |
+| `colors` | 繼承文字色 | 調色盤名稱或 HEX，逗點分隔一一對應。可用名稱：`base`、`shell`、`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。 |
 | `size` | `md` | `sm`、`md`、`lg`、`xl`、數字（rem）或含單位值 |
 | `gap` | `8` | sequence 模式間距（px） |
 | `hold` | 同 `interval` | sequence 模式排滿後停留時間（毫秒） |
