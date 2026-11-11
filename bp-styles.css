@@ -1,8 +1,14 @@
-/* ── 品牌色票（18 色）：shell vanilla yellow pink red energetic dreamy green blue indigo violet gray key bg-alternative calm quiet playful urgent ── */
+/* ── 品牌色票（19 色）
+   底色 2 色：base（別名 background）、bg-alternative
+   品牌色 17 色：shell vanilla yellow pink red green blue indigo violet gray key calm quiet playful urgent energetic dreamy
+   輔助色（不屬於品牌色票，只用於元件內部深色底與滑過狀態）：fill、fill-hover ── */
 :root {
   --bp-base:       #0C0D0C;
+  --bp-background: var(--bp-base);  /* base 的別名 */
+  /* 輔助色 */
   --bp-fill:       #333333;
   --bp-fill-hover: #3a3a3a;
+  /* 品牌色 */
   --bp-shell:       #C6C7BD;
   --bp-vanilla:     #DBEDD8;
   --bp-yellow:      #E3D322;
@@ -25,6 +31,7 @@
 
 /* ── 文字色 ── */
 .bp-text-base       { color: var(--bp-base); }
+.bp-text-background { color: var(--bp-background); }
 .bp-text-fill       { color: var(--bp-fill); }
 .bp-text-fill-hover { color: var(--bp-fill-hover); }
 .bp-text-shell    { color: var(--bp-shell); }
@@ -47,7 +54,7 @@
 .bp-text-urgent   { color: var(--bp-urgent); }
 
 /* ── 背景色 ── */
-.bp-bg-background { background-color: var(--bp-base); }
+.bp-bg-background { background-color: var(--bp-background); }
 .bp-bg-base       { background-color: var(--bp-base); }
 .bp-bg-fill       { background-color: var(--bp-fill); }
 .bp-bg-fill-hover { background-color: var(--bp-fill-hover); }
@@ -72,6 +79,7 @@
 
 /* ── 邊框色 ── */
 .bp-border-base       { border: 1px solid var(--bp-base); }
+.bp-border-background { border: 1px solid var(--bp-background); }
 .bp-border-fill       { border: 1px solid var(--bp-fill); }
 .bp-border-fill-hover { border: 1px solid var(--bp-fill-hover); }
 .bp-border-shell    { border: 1px solid var(--bp-shell); }
