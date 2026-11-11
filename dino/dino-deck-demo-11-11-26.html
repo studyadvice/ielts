@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>dino-deck 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+  :root { font-size: 16px; }
+  body { background: #0C0D0C; color: #C6C7BD; padding: 28px; font-family: "微軟正黑體", "Inter", sans-serif; min-width: 988px; }
+  h2 { color: #51DBCF; font-size: 1.8rem; }
+  h4 { color: #E3D322; font-size: 1.25rem; margin-bottom: 12px; }
+  p.note { color: #86877F; font-size: 1rem; margin: 0 0 16px; }
+  section { margin-bottom: 48px; }
+  pre.demo-code { margin: 16px 0 0; padding: 14px 18px; background: #161716; color: #C6C7BD; border: 1px solid #86877F; border-radius: 8px; font-size: 0.85rem; white-space: pre-wrap; }
+  .btn-theme { background: #0C0D0C; color: #DBEDD8; border: 1px solid #86877F; font-size: 0.95rem; padding: 6px 14px; }
+  .btn-theme:hover, .btn-theme.on { border-color: #51DBCF; color: #51DBCF; background: #0C0D0C; }
+  #event-box .alert { background: #51DBCF; color: #0C0D0C; border: none; font-size: 0.95rem; }
+  table.attrs { width: 100%; font-size: 0.95rem; border-collapse: collapse; }
+  table.attrs td { border: 1px solid #3B2A20; padding: 8px 12px; vertical-align: top; }
+  table.attrs td:first-child { color: #51DBCF; white-space: nowrap; width: 220px; }
+</style>
+</head>
+<body>
+<div style="max-width: 1500px">
+  <h2>&lt;dino-deck&gt; 恐龍噴火字卡</h2>
+  <p class="note">點擊左側字卡：卡片飛入文字區變成恐龍，噴火後例句飛出，恐龍退場。動畫中點別張卡會直接中斷並換播；同一張卡可重播；有額外資訊的例句會出現 ▾，點例句即可展開。</p>
+  <div id="event-box"></div>
+
+  <!-- 範例 1 -->
+  <section>
+    <h4>1. 預設主題 ember，搭配 template 與屬性</h4>
+    <div class="d-flex gap-2 mb-3" id="theme-btns">
+      <button type="button" class="btn btn-theme on" data-theme="ember">ember</button>
+      <button type="button" class="btn btn-theme" data-theme="night">night</button>
+      <button type="button" class="btn btn-theme" data-theme="candy">candy</button>
+      <button type="button" class="btn btn-theme" data-theme="shell">shell</button>
+    </div>
+    <dino-deck id="deck1">
+      <dino-card example-template="ex-across" extra-template="xi-across">across from my place</dino-card>
+      <dino-card example="It's only &lt;mark&gt;a five-minute walk from&lt;/mark&gt; the station, so I never need a taxi."
+                 extra-info="句型：&lt;b&gt;a + 時間 + walk/drive/ride + from + 地點&lt;/b&gt;。時間中間要加連字號，而且 minute 不加 s。">a five-minute walk from ...</dino-card>
+      <dino-card example-template="ex-close">just around the corner from where I live, which is honestly the best thing about the neighbourhood</dino-card>
+      <dino-card example="I go there &lt;mark&gt;whenever I need a change of scenery&lt;/mark&gt;.">whenever I need a change of scenery</dino-card>
+    </dino-deck>
+
+<pre class="demo-code">&lt;dino-deck&gt;
+  &lt;dino-card example-template="ex-across" extra-template="xi-across"&gt;across from my place&lt;/dino-card&gt;
+  &lt;dino-card example="It's only &amp;lt;mark&amp;gt;a five-minute walk from&amp;lt;/mark&amp;gt; the station..." extra-info="..."&gt;a five-minute walk from ...&lt;/dino-card&gt;
+&lt;/dino-deck&gt;
+
+&lt;template id="ex-across"&gt;The cafe &lt;mark&gt;across from my place&lt;/mark&gt; is where I work remotely most often.&lt;/template&gt;
+&lt;template id="xi-across"&gt;...&lt;/template&gt;</pre>
+  </section>
+
+  <!-- 範例 2 -->
+  <section>
+    <h4>2. shell 主題，自訂邊框、圓角、卡片間距與截斷行數</h4>
+    <p class="note">第三張卡只有 1 行可顯示，過長部分以 ... 截斷，滑鼠停留可看全文。第二張卡用 bg、border 個別覆蓋顏色與邊框。</p>
+    <dino-deck theme="shell" card-width="260" card-gap="10" card-radius="10" card-border="3 dashed indigo"
+               stage-border="4 double gray" stage-radius="16" card-lines="1" stage-min-height="240">
+      <dino-card example="My parents were &lt;mark&gt;anxious to know&lt;/mark&gt; my exam results.">anxious to know</dino-card>
+      <dino-card bg="playful" border="3 solid red" example="It's hard &lt;mark&gt;to find a quiet café&lt;/mark&gt; on weekends."
+                 extra-info="&lt;b&gt;It's + 形容詞 + to V&lt;/b&gt;：虛主詞 it 代替後面的不定詞片語。">to find a quiet café</dino-card>
+      <dino-card example="I visit the library &lt;mark&gt;at least twice a week, sometimes more during exam season&lt;/mark&gt;.">at least twice a week, sometimes more during exam season</dino-card>
+    </dino-deck>
+<pre class="demo-code">&lt;dino-deck theme="shell" card-width="260" card-gap="10" card-radius="10" card-border="3 dashed indigo"
+           stage-border="4 double gray" stage-radius="16" card-lines="1" stage-min-height="240"&gt;
+  &lt;dino-card bg="playful" border="3 solid red" example="..." extra-info="..."&gt;to find a quiet café&lt;/dino-card&gt;
+&lt;/dino-deck&gt;</pre>
+  </section>
+
+  <!-- 範例 3 -->
+  <section>
+    <h4>3. 個別覆蓋主題色，以及錯誤提示</h4>
+    <p class="note">第二張卡指向不存在的 template，第三張卡沒有例句，都會在顯示區出現提示框。</p>
+    <dino-deck theme="night" stage-bg="bg-alternative" mark-color="pink" card-bg="yellow,green" dino-bg="background" dino-line="key" stage-font-size="1.4rem">
+      <dino-card example="I usually take the bus, &lt;mark&gt;but on sunny days I'd rather cycle&lt;/mark&gt;."
+                 extra-info="&lt;ul class=&quot;mb-0&quot;&gt;&lt;li&gt;would rather + 原形動詞&lt;/li&gt;&lt;li&gt;I'd = I would&lt;/li&gt;&lt;/ul&gt;">I'd rather cycle</dino-card>
+      <dino-card example-template="no-such-id">template 不存在</dino-card>
+      <dino-card>沒有例句的卡片</dino-card>
+    </dino-deck>
+<pre class="demo-code">&lt;dino-deck theme="night" stage-bg="bg-alternative" mark-color="pink" card-bg="yellow,green" dino-bg="background" dino-line="key"&gt;...&lt;/dino-deck&gt;</pre>
+  </section>
+
+  <!-- 屬性速查 -->
+  <section>
+    <h4>屬性速查</h4>
+    <table class="attrs">
+      <tr><td>theme</td><td>ember（預設）、night、candy、shell</td></tr>
+      <tr><td>stage-bg、stage-color</td><td>顯示區底色與文字色；色票名稱（如 bg-alternative、key）或任何 CSS 顏色</td></tr>
+      <tr><td>stage-border、card-border</td><td>邊框，例如 <code>2 solid key</code>、<code>3px dashed #FF91D7</code>、<code>4 double gray</code>，<code>none</code> 為無邊框</td></tr>
+      <tr><td>stage-radius、card-radius</td><td>圓角，數字預設為 px</td></tr>
+      <tr><td>stage-min-height、stage-padding、stage-font-size</td><td>顯示區最小高度、內距（px）、例句字級（rem）</td></tr>
+      <tr><td>card-bg</td><td>字卡底色，可用逗號列出多色依序輪替，例如 <code>vanilla,quiet</code></td></tr>
+      <tr><td>card-color、card-width、card-gap、card-padding、card-font-size</td><td>字卡文字色、寬度、間距、內距與字級</td></tr>
+      <tr><td>card-lines</td><td>字卡最多顯示行數，超過以 ... 截斷，預設 2</td></tr>
+      <tr><td>mark-color、extra-color、active-color</td><td>例句中 &lt;mark&gt; 的顏色、額外資訊顏色、目前字卡外框色</td></tr>
+      <tr><td>dino-bg、dino-line、dino-height</td><td>恐龍底框色、描邊色、高度</td></tr>
+      <tr><td>dino-card：example、example-template</td><td>例句全文，支援 HTML；template 優先</td></tr>
+      <tr><td>dino-card：extra-info、extra-template</td><td>額外資訊，有內容才顯示，點例句展開或收合</td></tr>
+      <tr><td>dino-card：bg、color、border</td><td>單張字卡覆蓋主題配色與邊框</td></tr>
+      <tr><td>事件</td><td><code>dino:play</code>、<code>dino:sentence</code>、<code>dino:done</code>、<code>dino:extra</code></td></tr>
+      <tr><td>方法</td><td><code>deck.play(cardOrIndex)</code>、<code>deck.clear()</code></td></tr>
+    </table>
+  </section>
+</div>
+
+<template id="ex-across">The cafe <mark>across from my place</mark> is where I work remotely most often.</template>
+<template id="xi-across">
+  <b>across from</b>：在正對面，美式用法；英式也常說 <b>opposite</b>。<br>
+  相關說法：<i>next to</i>（隔壁）、<i>down the street from</i>（同一條街再過去一點）。
+</template>
+<template id="ex-close">The bakery is <mark>just around the corner from where I live</mark>, so I pick up bread on my way home.</template>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="dino-deck.js"></script>
+<script>
+(function () {
+  var deck1 = document.getElementById('deck1');
+  document.getElementById('theme-btns').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-theme]');
+    if (!b) return;
+    deck1.setAttribute('theme', b.dataset.theme);
+    this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  });
+  // 用 Bootstrap alert 顯示最近一次事件
+  var box = document.getElementById('event-box');
+  function show(msg) {
+    box.innerHTML = '<div class="alert alert-dismissible fade show" role="alert">' + msg +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  }
+  function name(e) { return e.detail.card ? e.detail.card.textContent.replace(/\s+/g, ' ').trim().replace(/</g, '&lt;') : ''; }
+  document.addEventListener('dino:done', function (e) { show('dino:done：' + name(e)); });
+  document.addEventListener('dino:extra', function (e) { show('dino:extra：' + (e.detail.open ? '展開' : '收合') + '，' + name(e)); });
+})();
+</script>
+</body>
+</html>

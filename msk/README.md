@@ -4,13 +4,15 @@
 
 可以放在一般段落，也能正常運作於 `<ui-table>` 的格子（含樹狀巢狀、輪播、extra-info）與 `<ui-cards>` 的卡片、template 面板。
 
-- 版本：1.0.0
+- 版本：1.1.0
 - 建立日期：11-09-26
+- 更新日期：11-11-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-mask.js` | `<ui-mask>` | 行內或區塊文字遮罩，點擊或滑過揭曉。 |
-| `ui-mask-demo-11-09-26.html` | | 互動範例，含 ui-table 與 ui-cards 內的用法。 |
+| `ui-mask-demo-11-09-26.html` | | 互動範例，含 ui-table 與 ui-cards 內的用法（v1.0.0）。 |
+| `ui-mask-demo-11-11-26.html` | | v1.1.0 互動範例，含提示文字修改前後對照。 |
 
 ## 目錄
 
@@ -44,7 +46,8 @@
 | `blur` | 數字或 CSS 長度 | `5` | 搭配 `mask-style="blur"`，模糊程度。純數字視為 px。 |
 | `line-width` | 數字或 CSS 長度 | `2` | 搭配 `mask-style="underline"`，底線粗細。 |
 | `display` | `inline`、`inline-block`、`block` | `inline` | 行內遮罩或區塊遮罩。 |
-| `label` | 文字 | 無 | 提示語。區塊與 inline-block 模式顯示在遮罩正中央；行內模式改為滑鼠提示，揭曉後移除。 |
+| `label` | 文字 | 無 | 提示語。區塊與 inline-block 模式顯示在遮罩正中央；行內模式預設改為滑鼠提示，揭曉後移除。 |
+| `label-mode` | `show` | 無 | 行內遮罩也把提示語顯示在遮罩上，遮罩期間暫時變成 inline-block。 |
 | `label-color` | 色票名稱或 CSS 顏色 | 依遮罩色自動選深色或淺色 | 提示語顏色。 |
 | `radius` | 數字或 CSS 長度 | `4` | 圓角，純數字視為 px。 |
 | `padding` | 一到四個數字或 CSS 長度 | `0 2` | 內距，純數字視為 px。 |
@@ -96,6 +99,16 @@
 ```
 
 提示語只在遮罩期間顯示，揭曉後消失。
+
+v1.1.0 起：
+
+- 提示語不換行。內容比提示語短時，遮罩自動撐到提示語的寬度；放在窄格裡空間仍不夠時，以 `...` 截斷。
+- 有提示語時，原文完全隱藏，不會和提示語重疊（`blur` 樣式保留淡淡的光暈）。
+- 行內遮罩加上 `label-mode="show"` 也能直接顯示提示語：
+
+```html
+I usually <ui-mask label="點我看答案" label-mode="show" color="pink">take the bus</ui-mask> to work.
+```
 
 ## 在 ui-table 與 ui-cards 裡使用
 
