@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>資料流動中心 demo：ui-cards + arrow-flow + ui-drill + ui-table</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1700px;margin:0 auto;padding:24px 32px 64px 32px;}
+  .hd{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-bottom:1px solid #3B2A20;padding:0 0 16px 0;margin:0 0 28px 0;}
+  .hd h1{font-size:1.9rem;font-weight:800;color:#DBEDD8;margin:0;letter-spacing:0.02em;}
+  .hd h1 i{color:#51DBCF;margin:0 10px 0 0;}
+  .hd .sub{font-size:0.95rem;color:#86877F;margin:6px 0 0 0;}
+  .hd .live{display:inline-flex;align-items:center;gap:8px;font-size:0.85rem;color:#71CD76;border:1px solid #71CD76;border-radius:999px;padding:4px 14px;}
+  .hd .live::before{content:"";width:8px;height:8px;border-radius:50%;background:#71CD76;animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
+  section{margin:0 0 40px 0;}
+  .sec-title{display:flex;align-items:baseline;gap:12px;margin:0 0 14px 0;}
+  .sec-title h2{font-size:1.25rem;font-weight:700;color:#B484E8;margin:0;}
+  .sec-title .tag{font-size:0.75rem;color:#0C0D0C;background:#51DBCF;border-radius:4px;padding:2px 8px;font-weight:700;}
+  .sec-title .tag.c2{background:#E3D322;}
+  .sec-title .tag.c3{background:#FFA987;}
+  .sec-title .tag.c4{background:#DE8EC9;}
+  .sec-title p{margin:0 0 0 auto;font-size:0.85rem;color:#86877F;}
+  .kpi{font-size:2.2rem;font-weight:800;line-height:1.1;margin:4px 0 2px 0;}
+  .kpi small{font-size:0.8rem;font-weight:400;margin:0 0 0 6px;}
+  .delta-up{color:#B6FF00;font-size:0.85rem;}
+  .delta-down{color:#FF2E63;font-size:0.85rem;}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.85rem;}
+  .pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:0.75rem;font-weight:700;color:#0C0D0C;}
+  .pill.ok{background:#71CD76;}.pill.wait{background:#E3D322;}.pill.err{background:#EF6661;}.pill.run{background:#5DBAE8;}
+  .two{display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:start;}
+  .note{border-left:3px solid #778CE1;padding:8px 14px;color:#DBEDD8;font-size:0.9rem;margin:12px 0 0 0;}
+  .code-box{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:16px 20px;color:#C6C7BD;font-size:0.8rem;white-space:pre;overflow:auto;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <div>
+      <h1><i class="bi bi-diagram-3-fill"></i>IELTS 學習資料流動中心</h1>
+      <p class="sub">資料來源 → 處理管線 → 分層鑽取 → 事件流。全部用現有元件組合，沒有新增 JS 元件。</p>
+    </div>
+    <span class="live">資料同步中 · 最後更新 14:46</span>
+  </div>
+
+  <!-- ══════════ 1. 資料來源儀表 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>1. 資料來源</h2><span class="tag">ui-cards</span><p>點卡片，右側顯示該來源的即時紀錄表（ui-table 輪播 + 遮罩）。</p></div>
+
+    <ui-cards cols="4" gap="16" card-style="filled" color="bg-alternative" accent="key" active-style="filled"
+              hover-color="vanilla" hover-width="2" media-position="inline" icon-size="1.6" icon-color="key"
+              panel="right" panel-columns="7,5" panel-title="{label}：最近紀錄" panel-title-color="key"
+              panel-badge="LIVE" panel-badge-icon="broadcast" panel-badge-color="green"
+              placeholder="請點選一個資料來源。" active-detail="src-speaking">
+      <card-item label="口說錄音" note="Speaking Part 2" icon="mic-fill" badge="12" badge-color="urgent" tags="音檔,逐字稿" detail="src-speaking">
+        <div class="kpi">248<small>筆</small></div><span class="delta-up"><i class="bi bi-arrow-up-short"></i>今日 +12</span>
+      </card-item>
+      <card-item label="寫作稿件" note="Task 1 / Task 2" icon="pencil-square" badge="5" badge-color="yellow" tags="文字,批改" detail="src-writing">
+        <div class="kpi">131<small>篇</small></div><span class="delta-up"><i class="bi bi-arrow-up-short"></i>今日 +5</span>
+      </card-item>
+      <card-item label="單字測驗" note="Vocabulary bank" icon="card-text" tags="選擇題,配對" detail="src-vocab">
+        <div class="kpi">3,902<small>題</small></div><span class="delta-down"><i class="bi bi-arrow-down-short"></i>今日 -40</span>
+      </card-item>
+      <card-item label="模擬考" note="Full mock test" icon="clipboard2-data-fill" badge="新" badge-color="energetic" tags="四科,計時" detail="src-mock">
+        <div class="kpi">17<small>場</small></div><span class="delta-up"><i class="bi bi-arrow-up-short"></i>本週 +3</span>
+      </card-item>
+    </ui-cards>
+
+    <template id="src-speaking">
+      <ui-table theme="key" font-size="0.9rem">
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col inverse>時間</ui-col><ui-col inverse>學生 / 題目</ui-col><ui-col inverse>狀態</ui-col><ui-col inverse>評分</ui-col>
+        </ui-row>
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col class="mono">14:41</ui-col><ui-col>Amy · Describe a river</ui-col><ui-col><span class="pill run">轉錄中</span></ui-col><ui-col mask-text="評分中">6.5</ui-col>
+        </ui-row>
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col class="mono">14:33</ui-col><ui-col>Ken · A skill you learned</ui-col><ui-col><span class="pill ok">已分析</span></ui-col><ui-col mask-text="點我看分數" mask-color="green">7.0</ui-col>
+        </ui-row>
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col class="mono">14:20</ui-col>
+          <ui-col carousel-interval="2200" progress-bar progress-bar-color1="key" progress-bar-color2="pink">
+            <cell-item>Lily · A memorable trip</cell-item>
+            <cell-item>Lily · A gift you received</cell-item>
+            <cell-item>Lily · Your favourite app</cell-item>
+          </ui-col>
+          <ui-col><span class="pill wait">排隊中</span></ui-col><ui-col>－</ui-col>
+        </ui-row>
+      </ui-table>
+      <div class="note">轉錄完成後會自動進入「處理管線」第二步。</div>
+    </template>
+    <template id="src-writing">
+      <ui-table theme="yellow" font-size="0.9rem">
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col inverse>時間</ui-col><ui-col inverse>學生 / 題型</ui-col><ui-col inverse>字數</ui-col><ui-col inverse>狀態</ui-col>
+        </ui-row>
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col class="mono">14:38</ui-col><ui-col>Ben · Task 2 Opinion</ui-col><ui-col>287</ui-col><ui-col><span class="pill run">批改中</span></ui-col>
+        </ui-row>
+        <ui-row col-widths="2:3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col class="mono">13:55</ui-col><ui-col>Amy · Task 1 Line graph</ui-col><ui-col>162</ui-col><ui-col><span class="pill err">字數不足</span></ui-col>
+        </ui-row>
+      </ui-table>
+    </template>
+    <template id="src-vocab">
+      <ui-table theme="violet" font-size="0.9rem">
+        <ui-row col-widths="3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col inverse>題庫</ui-col><ui-col inverse>今日作答</ui-col><ui-col inverse>正確率</ui-col>
+        </ui-row>
+        <ui-row col-widths="3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col>Academic Word List 1-5</ui-col><ui-col>412</ui-col><ui-col><c-green>81%</c-green></ui-col>
+        </ui-row>
+        <ui-row col-widths="3:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col>Collocations: environment</ui-col><ui-col>96</ui-col><ui-col><c-red>58%</c-red></ui-col>
+        </ui-row>
+      </ui-table>
+    </template>
+    <template id="src-mock">
+      <ui-table theme="energetic" font-size="0.9rem">
+        <ui-row col-widths="2:2:2:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col inverse>場次</ui-col><ui-col inverse>L</ui-col><ui-col inverse>R</ui-col><ui-col inverse>W</ui-col><ui-col inverse>S</ui-col>
+        </ui-row>
+        <ui-row col-widths="2:2:2:2:2" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col>#17 · 11/10</ui-col><ui-col>7.5</ui-col><ui-col>7.0</ui-col><ui-col mask-text="批改中">6.5</ui-col><ui-col mask-text="待口試">－</ui-col>
+        </ui-row>
+      </ui-table>
+    </template>
+  </section>
+
+  <!-- ══════════ 2. 處理管線 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>2. 處理管線</h2><span class="tag c2">arrow-flow</span><p>逐步點開，走完後下方出現摘要。點右側箭頭往下走。</p></div>
+
+    <arrow-flow theme="blue" reveal="cumulative" animation="fade" on-complete="flow-done"
+                header-gradient="down" header-accent-line="left" arrow-glow arrow-tip="md"
+                header-font-size="1rem" content-font-size="0.95rem">
+      <flow-step title="1 匯入">口說音檔、作文、測驗答案進入暫存區，依學生與日期建立批次。<br><span class="mono">batch_20261111_03</span></flow-step>
+      <flow-step title="2 清洗" header-color="indigo" border-color="indigo">語音轉文字、字數檢查、去除空白與重複送出；不合格的退回「警示」事件流。</flow-step>
+      <flow-step title="3 評分" header-color="green" border-color="green">AI 依四項評分標準給出初評；寫作另排入教師人工複評佇列，平均 1.5 天回覆。</flow-step>
+      <flow-step title="4 回饋" header-color="violet" border-color="violet">結果寫入學生儀表板，並推送通知；同步更新單字弱點清單。</flow-step>
+    </arrow-flow>
+
+    <div id="flow-done" class="alert alert-success mt-3 mb-0" role="alert">
+      <i class="bi bi-check2-circle"></i> 管線走完：本批次共 29 筆，26 筆已回饋，3 筆進入警示。往下看「分層鑽取」可以看到每一筆的去向。
+    </div>
+  </section>
+
+  <!-- ══════════ 3. 分層鑽取 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>3. 分層鑽取</h2><span class="tag c3">ui-drill + ui-table</span><p>左欄選資料層，中欄選批次，右欄是樹狀明細；明細列上的箭頭可逐格揭示。</p></div>
+
+    <ui-drill bordered arrows arrow-style="circle" arrow-icon="arrow-right-short" arrow-size="30" arrow-color="gray" arrow-active-color="key"
+              columns="2,3,7" height="520" tile-cols="1" tile-shape="rounded" tile-label="below" tile-size="56" icon-size="1.6" accent="key"
+              button-color="indigo" mid-title="{label}" right-title="{label}"
+              mid-placeholder="先選左側的資料層。" right-placeholder="選一個批次，這裡會展開樹狀明細。">
+      <drill-tile group="資料層" icon="database-fill" label="原始資料" source="layer-raw" badge="29"></drill-tile>
+      <drill-tile group="資料層" icon="funnel-fill" label="處理中" source="layer-proc" badge="3"></drill-tile>
+      <drill-tile group="資料層" icon="graph-up-arrow" label="已分析" source="layer-done"></drill-tile>
+      <drill-tile group="輸出" icon="send-fill" label="已回饋" source="layer-sent" color="energetic" active-color="energetic"></drill-tile>
+      <drill-tile group="輸出" icon="archive-fill" label="封存" disabled></drill-tile>
+    </ui-drill>
+
+    <template id="layer-raw">
+      <button detail="b-03" label="批次 03（今日）" color="key">batch_20261111_03 · 29 筆</button>
+      <button detail="b-02" label="批次 02">batch_20261111_02 · 41 筆</button>
+      <button detail="b-01" label="批次 01">batch_20261110_01 · 38 筆</button>
+    </template>
+    <template id="layer-proc">
+      <button detail="b-03" label="處理中 · 批次 03" color="yellow">3 筆仍在清洗</button>
+    </template>
+    <template id="layer-done">
+      <button detail="b-02" label="已分析 · 批次 02" color="green">41 筆完成分析</button>
+      <button detail="b-01" label="已分析 · 批次 01" color="green">38 筆完成分析</button>
+    </template>
+    <template id="layer-sent">
+      <button detail="b-01" label="已回饋 · 批次 01" color="energetic">38 筆已推送</button>
+    </template>
+
+    <template id="b-03">
+      <ui-table theme="key" tree-line tree-icon="caret" font-size="0.92rem">
+        <ui-row-enhance col-widths="3:2:2:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px" tree-open>
+          <ui-col><c-key>口說</c-key> 12 筆</ui-col><ui-col>來源：mic</ui-col><ui-col><span class="pill run">9 / 12</span></ui-col><ui-col>平均 6.6</ui-col>
+          <ui-row-enhance arrow="click" arrow-color="pink">
+            <ui-col>Amy · Describe a river</ui-col><ui-col>轉錄 1,120 字</ui-col><ui-col>流暢度 6.5</ui-col><ui-col>弱點：連接詞重複</ui-col>
+          </ui-row-enhance>
+          <ui-row-enhance arrow="click" arrow-color="pink">
+            <ui-col>Ken · A skill you learned</ui-col><ui-col>轉錄 980 字</ui-col><ui-col>流暢度 7.0</ui-col><ui-col>弱點：時態</ui-col>
+          </ui-row-enhance>
+          <ui-row-enhance>
+            <ui-col>Lily · 3 題</ui-col><ui-col><span class="pill wait">排隊中</span></ui-col><ui-col>－</ui-col><ui-col>－</ui-col>
+          </ui-row-enhance>
+        </ui-row-enhance>
+        <ui-row-enhance col-widths="3:2:2:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col><c-yellow>寫作</c-yellow> 5 篇</ui-col><ui-col>來源：editor</ui-col><ui-col><span class="pill run">4 / 5</span></ui-col><ui-col>平均 6.3</ui-col>
+          <ui-row-enhance arrow="click" arrow-color="yellow">
+            <ui-col>Ben · Task 2 Opinion</ui-col><ui-col>287 字</ui-col><ui-col>TR 6.5 · CC 6.0</ui-col><ui-col>弱點：段落主題句</ui-col>
+          </ui-row-enhance>
+          <ui-row-enhance>
+            <ui-col>Amy · Task 1 Line graph</ui-col><ui-col>162 字</ui-col><ui-col><span class="pill err">退回</span></ui-col><ui-col>字數不足 150</ui-col>
+          </ui-row-enhance>
+        </ui-row-enhance>
+        <ui-row-enhance col-widths="3:2:2:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col><c-violet>單字</c-violet> 12 組</ui-col><ui-col>來源：quiz</ui-col><ui-col><span class="pill ok">12 / 12</span></ui-col><ui-col>正確率 74%</ui-col>
+          <ui-row-enhance>
+            <ui-col>AWL 1-5</ui-col><ui-col>412 題</ui-col><ui-col><c-green>81%</c-green></ui-col><ui-col>寫入弱點清單 18 字</ui-col>
+          </ui-row-enhance>
+          <ui-row-enhance>
+            <ui-col>Collocations: environment</ui-col><ui-col>96 題</ui-col><ui-col><c-red>58%</c-red></ui-col><ui-col>觸發補強測驗</ui-col>
+          </ui-row-enhance>
+        </ui-row-enhance>
+      </ui-table>
+      <div class="note">列上的三角形是 <code>arrow="click"</code>，可逐格揭示：轉錄 ▶ 評分 ▶ 弱點。</div>
+    </template>
+    <template id="b-02">
+      <ui-table theme="green" tree-line font-size="0.92rem">
+        <ui-row-enhance col-widths="3:2:2:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px" tree-open>
+          <ui-col>批次 02 · 41 筆</ui-col><ui-col>11/11 09:00</ui-col><ui-col><span class="pill ok">完成</span></ui-col><ui-col>耗時 2 分 14 秒</ui-col>
+          <ui-row-enhance><ui-col>口說 18</ui-col><ui-col>AI 初評</ui-col><ui-col>平均 6.4</ui-col><ui-col>3 筆轉教師複評</ui-col></ui-row-enhance>
+          <ui-row-enhance><ui-col>寫作 9</ui-col><ui-col>教師人工評</ui-col><ui-col>平均 6.0</ui-col><ui-col>全部回覆</ui-col></ui-row-enhance>
+          <ui-row-enhance><ui-col>單字 14</ui-col><ui-col>自動</ui-col><ui-col>正確率 77%</ui-col><ui-col>弱點清單 +22</ui-col></ui-row-enhance>
+        </ui-row-enhance>
+      </ui-table>
+    </template>
+    <template id="b-01">
+      <ui-table theme="energetic" font-size="0.92rem">
+        <ui-row col-widths="3:2:2:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col inverse>批次 01</ui-col><ui-col inverse>推送時間</ui-col><ui-col inverse>已讀</ui-col><ui-col inverse>備註</ui-col>
+        </ui-row>
+        <ui-row col-widths="3:2:2:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px">
+          <ui-col>38 筆</ui-col><ui-col>11/10 18:20</ui-col><ui-col><c-green>31 / 38</c-green></ui-col><ui-col expandable>7 位學生尚未開啟通知，系統會在 24 小時後以 email 再提醒一次，並在儀表板標示未讀。</ui-col>
+        </ui-row>
+      </ui-table>
+    </template>
+  </section>
+
+  <!-- ══════════ 4. 事件流 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>4. 事件流</h2><span class="tag c4">ui-drill layout="stack"</span><p>收件匣版面：左欄分類，右上清單，右下細節。未讀會自動計數。</p></div>
+
+    <div class="two">
+      <ui-drill layout="stack" bordered height="460" stack-ratio="3,2" columns="3,9,9" tile-cols="1" tile-shape="rounded" tile-count="unread" mark-read auto-open
+                accent="pink" rightup-label="top" rightup-lines="1" rightup-divider="dashed" rightup-divider-color="gray"
+                mid-title="{label}" right-title="{label}" list-empty="目前沒有事件。">
+        <drill-tile icon="lightning-charge-fill" label="即時" source="ev-live">
+          <rightup-item label="批次 03 清洗完成" meta="14:44" badge="pipeline" unread detail="ev-1">26 筆進入評分，3 筆退回警示。</rightup-item>
+          <rightup-item label="Ken 的口說評分完成" meta="14:33" unread detail="ev-2">總分 7.0，已推送通知。</rightup-item>
+          <rightup-item label="單字補強測驗已派發" meta="14:10" detail="ev-3">Collocations: environment，12 位學生。</rightup-item>
+        </drill-tile>
+        <drill-tile icon="exclamation-triangle-fill" label="警示" source="ev-warn" color="urgent" active-color="urgent">
+          <rightup-item label="Amy · Task 1 字數不足" meta="13:55" badge="退回" unread detail="ev-4">162 字，低於 150 字門檻以上的建議值。</rightup-item>
+          <rightup-item label="Lily · 音檔過短" meta="13:40" badge="退回" unread detail="ev-5">錄音 38 秒，需要至少 60 秒。</rightup-item>
+          <rightup-item label="轉錄服務延遲" meta="12:02" detail="ev-6">平均等待 3 分 40 秒，已自動擴充。</rightup-item>
+        </drill-tile>
+        <drill-tile icon="archive-fill" label="已歸檔" source="ev-old">
+          <rightup-item label="批次 01 推送完成" meta="11/10" detail="ev-7">38 筆，已讀 31。</rightup-item>
+        </drill-tile>
+      </ui-drill>
+
+      <ui-cards title="資料流統計" title-color="dreamy" cols="2" gap="14" card-style="filled" color="bg-alternative" hover-all hover-color="dreamy"
+                flip-toggle flip-color="violet" flip-hint="點擊翻回" auto-flip="4000">
+        <card-item label="今日吞吐" icon="speedometer2" icon-color="dreamy" back="<p class='mb-0'>口說 12 · 寫作 5 · 單字 12 · 模考 0。<br>比昨日多 8 筆。</p>"><div class="kpi">29</div><span class="delta-up">+8 vs 昨日</span></card-item>
+        <card-item label="平均處理時間" icon="hourglass-split" icon-color="dreamy" back="<p class='mb-0'>清洗 12 秒、AI 初評 41 秒、推送 3 秒。</p>"><div class="kpi">56<small>秒</small></div><span class="delta-up">-9 秒</span></card-item>
+        <card-item label="退回率" icon="arrow-return-left" icon-color="dreamy" back="<p class='mb-0'>3 / 29。原因：字數不足 1、音檔過短 1、重複送出 1。</p>"><div class="kpi">10%</div><span class="delta-down">+3%</span></card-item>
+        <card-item label="教師佇列" icon="person-workspace" icon-color="dreamy" back="<p class='mb-0'>9 篇寫作等待人工評，預計 1.5 天。</p>"><div class="kpi">9</div><span class="delta-down">+2</span></card-item>
+      </ui-cards>
+    </div>
+
+    <template id="ev-1"><p>批次 <span class="mono">batch_20261111_03</span> 的清洗已完成。</p>
+      <ui-table theme="pink" font-size="0.88rem"><ui-row col-widths="1:1:1" border="1px solid" col-border="1px solid" cell-padding="6px 10px"><ui-col>進入評分</ui-col><ui-col>退回</ui-col><ui-col>耗時</ui-col></ui-row><ui-row col-widths="1:1:1" border="1px solid" col-border="1px solid" cell-padding="6px 10px"><ui-col><c-green>26</c-green></ui-col><ui-col><c-red>3</c-red></ui-col><ui-col>12 秒</ui-col></ui-row></ui-table></template>
+    <template id="ev-2"><p>Ken 的 Part 2「A skill you learned」評分完成：<c-green>7.0</c-green>。弱點：時態一致性。已推送通知。</p></template>
+    <template id="ev-3"><p>因正確率低於 60%，系統對 12 位學生派發 Collocations 補強測驗，截止 11/13。</p></template>
+    <template id="ev-4"><p>Amy 的 Task 1 只有 162 字。已退回並附上建議：補充第二段的趨勢比較。</p></template>
+    <template id="ev-5"><p>Lily 的錄音只有 38 秒，低於 60 秒門檻。已請學生重錄。</p></template>
+    <template id="ev-6"><p>12:02 轉錄服務等待時間拉長到 3 分 40 秒，已自動擴充到 4 個工作節點，12:20 恢復正常。</p></template>
+    <template id="ev-7"><p>批次 01 的 38 筆回饋已於 11/10 18:20 推送，31 位已讀。</p></template>
+  </section>
+
+  <!-- ══════════ 組合說明 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>這個 demo 怎麼接起來</h2><p>只有一段膠水程式碼，不改任何元件。</p></div>
+    <div class="code-box">&lt;script src="tbl/ui-table.js"&gt;&lt;/script&gt;
+&lt;script src="layout/ui-cards.js"&gt;&lt;/script&gt;
+&lt;script src="layout/ui-drill.js"&gt;&lt;/script&gt;
+&lt;script src="arrow-flow.js"&gt;&lt;/script&gt;
+
+&lt;!-- ui-drill / ui-cards 會「複製」template 內容；
+     被複製出來的 &lt;ui-table&gt; 不會自己渲染，所以用 MutationObserver 補一次 UiTable.init() --&gt;
+new MutationObserver(list =&gt; {
+  if (list.some(m =&gt; [...m.addedNodes].some(n =&gt; n.nodeType === 1 &amp;&amp; (n.matches('ui-table') || n.querySelector('ui-table')))))
+    UiTable.init();
+}).observe(document.body, { childList: true, subtree: true });</div>
+  </section>
+
+</div>
+
+<script src="tbl/ui-table.js"></script>
+<script src="layout/ui-cards.js"></script>
+<script src="layout/ui-drill.js"></script>
+<script src="arrow-flow.js"></script>
+<script>
+  /* 膠水：被 ui-drill / ui-cards 複製出來的 ui-table 需要補渲染 */
+  new MutationObserver(list => {
+    if (list.some(m => [...m.addedNodes].some(n => n.nodeType === 1 && (n.matches('ui-table') || n.querySelector('ui-table'))))) {
+      UiTable.init();
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+</script>
+</body>
+</html>

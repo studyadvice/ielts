@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-stream 內容流 v0.3：範例與屬性總覽</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  section{margin:0 0 48px 0;}
+  .sec-title{display:flex;align-items:baseline;gap:12px;margin:0 0 14px 0;}
+  .sec-title h2{font-size:1.25rem;font-weight:700;color:#B484E8;margin:0;}
+  .sec-title p{margin:0 0 0 auto;font-size:0.85rem;color:#86877F;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:0;white-space:pre-wrap;}
+  mark{background:#E3D322;color:#0C0D0C;padding:0 4px;border-radius:3px;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;margin:0 0 28px 0;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;font-weight:700;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#86877F;white-space:nowrap;}
+  table.attr td:nth-child(3){color:#E3D322;white-space:nowrap;}
+  h3.cat{font-size:1.05rem;font-weight:700;margin:24px 0 8px 0;padding:0 0 0 12px;border-left:4px solid #FF91D7;color:#FF91D7;}
+  h3.cat.c-key{border-color:#51DBCF;color:#51DBCF;}h3.cat.c-yellow{border-color:#E3D322;color:#E3D322;}h3.cat.c-green{border-color:#71CD76;color:#71CD76;}h3.cat.c-blue{border-color:#5DBAE8;color:#5DBAE8;}h3.cat.c-playful{border-color:#FFA987;color:#FFA987;}h3.cat.c-dreamy{border-color:#DE8EC9;color:#DE8EC9;}h3.cat.c-energetic{border-color:#B6FF00;color:#B6FF00;}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px 0;}
+  .btns .btn{font-size:0.85rem;}
+  .log{margin:0;font-size:0.9rem;}
+  .diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .diff h4{font-size:0.95rem;margin:0 0 8px 0;}
+  .diff h4.old{color:#EF6661;}.diff h4.new{color:#71CD76;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;ui-stream&gt;</code> 內容流 v0.3</h1>
+  <p class="sub">聊天室回放式的內容流動介面。單一 ui-stream.js，CSS 內建，不用 Shadow DOM。本頁上半是範例與程式碼對照，下半是依分類整理的屬性總覽，最後是版本對照。</p>
+
+  <!-- ══════════ 範例 1 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 1：批改過程重播</h2><p>控制列、進度條、逐字打出（含 mark 底色同步出現）、暫停點、暫停後揭露參考答案。</p></div>
+    <div class="two">
+      <ui-stream id="ex1" title="Speaking Part 2：Describe a river" controls progress autoplay speed="26" delay="700" height="520" accent="key">
+        <stream-item from="student" name="Amy" time="14:41">I think the river is very beautiful and there are many trees.</stream-item>
+        <stream-item from="teacher" name="老師" time="14:42" typed pause="先想想：老師會先改哪個字？" reveal="ans-1">beautiful 和 many 都太籠統了。先把 beautiful 換成能「看見」的描述。</stream-item>
+        <stream-item from="teacher" name="老師" typed>試試看：The river <mark>winds through</mark> the valley, <mark>lined with</mark> willow trees.</stream-item>
+        <stream-item from="system">字彙資源 6.0 → 6.5</stream-item>
+        <stream-item from="student" name="Amy" time="14:45">The river winds through the valley, lined with willow trees, and the water is very clear.</stream-item>
+        <stream-item from="teacher" name="老師" typed badge="升級" badge-color="energetic">很好。最後一句的 very clear 也可以升級：<mark>crystal clear</mark> 或 <mark>so clear you can see the riverbed</mark>。</stream-item>
+        <stream-item from="system" delay="1200">本題完成。</stream-item>
+      </ui-stream>
+      <div>
+        <div class="alert alert-dark log" id="log1">事件會顯示在這裡。</div>
+        <pre>&lt;ui-stream title="Speaking Part 2：Describe a river"
+           controls progress autoplay speed="26" delay="700" height="520" accent="key"&gt;
+  &lt;stream-item from="student" name="Amy" time="14:41"&gt;I think the river is…&lt;/stream-item&gt;
+  &lt;stream-item from="teacher" name="老師" time="14:42" typed
+               pause="先想想：老師會先改哪個字？" reveal="ans-1"&gt;beautiful 和 many 都太籠統了…&lt;/stream-item&gt;
+  &lt;stream-item from="teacher" typed&gt;試試看：The river &lt;mark&gt;winds through&lt;/mark&gt;…&lt;/stream-item&gt;
+  &lt;stream-item from="system"&gt;字彙資源 6.0 → 6.5&lt;/stream-item&gt;
+  &lt;stream-item from="teacher" typed badge="升級" badge-color="energetic"&gt;很好…&lt;/stream-item&gt;
+  &lt;stream-item from="system" delay="1200"&gt;本題完成。&lt;/stream-item&gt;
+&lt;/ui-stream&gt;
+
+&lt;template id="ans-1"&gt;&lt;p&gt;參考答案：…&lt;/p&gt;&lt;/template&gt;   ← 按「繼續」後插入內容流</pre>
+      </div>
+    </div>
+    <template id="ans-1"><p><b>參考答案：</b>beautiful → <c-key>picturesque</c-key> / <c-key>lined with willow trees</c-key>；many → <c-key>dozens of</c-key> / <c-key>rows of</c-key>。</p></template>
+  </section>
+
+  <!-- ══════════ 範例 2 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 2：自訂角色、控制列在下、pop 動畫</h2><p>stream-role 新增「考官」與「考生」，system 改色；avatar-size、bubble-width、bubble-radius 調整版面。</p></div>
+    <div class="two">
+      <ui-stream id="ex2" controls controls-position="bottom" counter="false" animation="pop" height="420"
+                 avatar-size="44" bubble-width="70" bubble-radius="4" gap="18" accent="playful" system-color="indigo" border-color="gray" labels="開始,停,下一句,再來一次">
+        <stream-role name="examiner" label="Examiner" color="playful" icon="person-badge-fill" side="left" style="filled"></stream-role>
+        <stream-role name="candidate" label="Candidate" color="blue" icon="person-fill" side="right" style="outline"></stream-role>
+        <stream-item from="system">Part 3 討論：Rivers and cities</stream-item>
+        <stream-item from="examiner" typed>Why do you think so many cities were built next to rivers?</stream-item>
+        <stream-item from="candidate" name="Ken" pause="換你答一次，再看範例">Because… water. People need water to drink and to grow food.</stream-item>
+        <stream-item from="examiner" typed badge="追問" badge-color="urgent">Can you think of any other reasons, apart from drinking water?</stream-item>
+        <stream-item from="candidate" name="Ken" source="ken-2"></stream-item>
+        <stream-item from="system">注意 Ken 第二次用了 <c-playful>apart from</c-playful> 和 <c-playful>trade routes</c-playful>，回應了考官的用字。</stream-item>
+      </ui-stream>
+      <div>
+        <pre>&lt;ui-stream controls controls-position="bottom" counter="false" animation="pop" height="420"
+           avatar-size="44" bubble-width="70" bubble-radius="4" gap="18"
+           accent="playful" system-color="indigo" border-color="gray"
+           labels="開始,停,下一句,再來一次"&gt;
+  &lt;stream-role name="examiner" label="Examiner" color="playful" icon="person-badge-fill"
+               side="left" style="filled"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="candidate" label="Candidate" color="blue" side="right" style="outline"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="examiner" typed&gt;Why do you think…&lt;/stream-item&gt;
+  &lt;stream-item from="candidate" name="Ken" pause="換你答一次，再看範例"&gt;Because… water.&lt;/stream-item&gt;
+  &lt;stream-item from="candidate" name="Ken" source="ken-2"&gt;&lt;/stream-item&gt;   ← 內容來自 template
+&lt;/ui-stream&gt;</pre>
+      </div>
+    </div>
+    <template id="ken-2"><p>Apart from drinking water, rivers were <c-blue>trade routes</c-blue>. Goods could be moved by boat long before there were decent roads, so <c-blue>merchants settled</c-blue> where the river was easiest to cross.</p></template>
+  </section>
+
+  <!-- ══════════ 範例 3 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 3：JSON 資料、全部逐字、無外框、API 與事件</h2><p>data-id 讀全域變數（src 讀網址也可以），type-all 讓每一則都逐字打出，loop 播完重來。</p></div>
+    <div class="two">
+      <div>
+        <div class="btns">
+          <button class="btn btn-outline-info" onclick="ex3.play()">play()</button>
+          <button class="btn btn-outline-info" onclick="ex3.pause()">pause()</button>
+          <button class="btn btn-outline-info" onclick="ex3.next()">next()</button>
+          <button class="btn btn-outline-info" onclick="ex3.goto(2)">goto(2)</button>
+          <button class="btn btn-outline-info" onclick="ex3.finish()">finish()</button>
+          <button class="btn btn-outline-info" onclick="ex3.replay()">replay()</button>
+        </div>
+        <ui-stream id="ex3" data-id="streamData" type-all speed="18" delay="900" loop bordered="false" avatar="false" height="360" accent="dreamy" cursor="false"></ui-stream>
+        <div class="alert alert-dark log" id="log3">事件會顯示在這裡。</div>
+      </div>
+      <pre>&lt;script&gt;
+window.streamData = {
+  roles: { coach: { color: "dreamy", icon: "chat-heart-fill", side: "right", style: "filled", label: "Coach" } },
+  items: [
+    { from: "student", name: "Lily", text: "I go to the river every weekends." },
+    { from: "coach", html: "every &lt;mark&gt;weekend&lt;/mark&gt;，every 後面接單數。", typed: true },
+    { from: "student", name: "Lily", text: "I go to the river every weekend.", badge: "修正" },
+    { from: "system", text: "文法準確度 +1" }
+  ]
+};
+&lt;/script&gt;
+&lt;ui-stream data-id="streamData" type-all speed="18" delay="900" loop
+           bordered="false" avatar="false" height="360" accent="dreamy" cursor="false"&gt;&lt;/ui-stream&gt;
+
+const s = document.querySelector('ui-stream');
+s.play(); s.pause(); s.toggle(); s.next(); s.replay(); s.goto(2); s.finish();
+s.index; s.total;
+s.addEventListener('ui-stream:item',   e =&gt; e.detail);  // { index, item, role }
+s.addEventListener('ui-stream:typed',  e =&gt; e.detail);  // { index }
+s.addEventListener('ui-stream:pause',  e =&gt; e.detail);  // { index, text }
+s.addEventListener('ui-stream:resume', e =&gt; e.detail);  // { index }
+s.addEventListener('ui-stream:done',   e =&gt; e.detail);  // { total }
+
+// 全域預設（載入 ui-stream.js 之前）
+window.UiStreamConfig = { speed: 20, delay: 800, teacherColor: 'green' };</pre>
+    </div>
+  </section>
+
+  <!-- ══════════ 範例 4 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 4：v0.3 新增屬性一次看</h2><p>step 逐則、速度選單、三種間隔、頭像靠下、底色與 mark 色、整頁遮罩暫停、輸入中動畫、highlight、reveal-target、add()、export()。</p></div>
+    <div class="two">
+      <div>
+        <div class="btns">
+          <button class="btn btn-outline-info" onclick="ex4.add({from:'student',name:'Amy',text:'老師，那 very big 可以換什麼？'})">add() 加一則學生問題</button>
+          <button class="btn btn-outline-info" onclick="document.getElementById('exp4').textContent = ex4.export()">export() 純文字</button>
+          <button class="btn btn-outline-info" onclick="document.getElementById('exp4').textContent = ex4.export('html')">export('html')</button>
+        </div>
+        <ui-stream id="ex4" controls step speed-control progress height="520"
+                   gap="22" gap-same="6" gap-system="30" bubble-padding="12px 18px" line-height="1.8" avatar-position="bottom"
+                   background="bg-alternative" border-color="shell" mark-color="energetic" accent="yellow"
+                   pause-style="overlay" typing-indicator labels=",,,">
+          <stream-role name="teacher" text-color="vanilla" color="indigo"></stream-role>
+          <stream-role name="student" image="https://i.pravatar.cc/80?img=47"></stream-role>
+          <stream-item from="system">step 模式：每一則都要按「下一則」。gap-system 讓這一則前後留白更多。</stream-item>
+          <stream-item from="student" name="Amy">The city is very big and very crowded.</stream-item>
+          <stream-item from="student" name="Amy">And there are a lot of cars.</stream-item>
+          <stream-item from="teacher" name="老師" typed highlight>兩個 very 都可以升級：very big → <mark>sprawling</mark>，very crowded → <mark>densely populated</mark>。</stream-item>
+          <stream-item from="teacher" name="老師" typed pause="遮罩暫停：按任何地方繼續" reveal="ans-4" reveal-target="side-4">a lot of cars → <mark>heavy traffic</mark>。參考答案會揭露到右側的區塊，不是插在內容流裡。</stream-item>
+          <stream-item from="student" name="Amy" gap="48">（這一則用 gap="48" 單獨留白）The city is sprawling and densely populated, with heavy traffic.</stream-item>
+        </ui-stream>
+        <pre id="exp4" style="margin:12px 0 0 0;">export() 的結果會顯示在這裡。</pre>
+      </div>
+      <div>
+        <div id="side-4" class="alert alert-dark" hidden></div>
+        <pre>&lt;ui-stream controls step speed-control progress height="520"
+           gap="22" gap-same="6" gap-system="30"
+           bubble-padding="12px 18px" line-height="1.8" avatar-position="bottom"
+           background="bg-alternative" border-color="shell" mark-color="energetic" accent="yellow"
+           pause-style="overlay" typing-indicator labels=",,,"&gt;
+  &lt;stream-role name="teacher" text-color="vanilla" color="indigo"&gt;&lt;/stream-role&gt;   ← 覆寫內建角色
+  &lt;stream-role name="student" image="https://…/avatar.jpg"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="student" name="Amy"&gt;The city is very big…&lt;/stream-item&gt;
+  &lt;stream-item from="student" name="Amy"&gt;And there are a lot of cars.&lt;/stream-item&gt;   ← 同角色連續，用 gap-same
+  &lt;stream-item from="teacher" typed highlight&gt;兩個 very 都可以升級…&lt;/stream-item&gt;
+  &lt;stream-item from="teacher" typed pause="遮罩暫停：按任何地方繼續"
+               reveal="ans-4" reveal-target="side-4"&gt;…&lt;/stream-item&gt;
+  &lt;stream-item from="student" gap="48"&gt;…&lt;/stream-item&gt;   ← 單則留白
+&lt;/ui-stream&gt;
+
+&lt;div id="side-4" hidden&gt;&lt;/div&gt;   ← reveal-target：揭露到內容流外面
+
+ex4.add({ from: 'student', name: 'Amy', text: '…' });   // 動態加一則
+ex4.export();        // 純文字，每行「名稱 時間：內容」
+ex4.export('html');  // 訊息的 HTML</pre>
+      </div>
+    </div>
+    <template id="ans-4"><p><b>參考答案：</b>The city is <c-energetic>sprawling</c-energetic> and <c-energetic>densely populated</c-energetic>, and the <c-energetic>traffic is heavy</c-energetic> at almost any hour.</p></template>
+  </section>
+
+  <!-- ══════════ 屬性總覽 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>屬性總覽（依分類）</h2><p>數字單位：px；字級：rem 或 CSS 長度；顏色：品牌色名稱或色碼。布林屬性寫 <code>false</code> 可以關掉預設開啟的功能。</p></div>
+
+    <h3 class="cat c-key">一、播放控制（ui-stream）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>autoplay</td><td>布林</td><td>關</td><td>載入後自動開始播放。</td></tr>
+      <tr><td>speed</td><td>毫秒</td><td>30</td><td>逐字打出時每個字的間隔。</td></tr>
+      <tr><td>delay</td><td>毫秒</td><td>600</td><td>一則結束到下一則出現的間隔。</td></tr>
+      <tr><td>start</td><td>整數</td><td>0</td><td>載入時直接顯示到第幾則（不播動畫），從那裡開始。</td></tr>
+      <tr><td>loop</td><td>布林</td><td>關</td><td>播完清空重來。</td></tr>
+      <tr><td>type-all</td><td>布林</td><td>關</td><td>每一則都逐字打出，不必個別寫 typed。</td></tr>
+      <tr><td>auto-scroll</td><td>布林</td><td>開</td><td>新內容出現時自動捲到底。設 false 則由使用者自己捲。</td></tr>
+      <tr><td>step</td><td>布林</td><td>關</td><td>逐則模式：每一則播完就停，要按「下一則」或 play() 才出下一則。上課逐則講解用。</td></tr>
+    </table>
+
+    <h3 class="cat c-yellow">二、控制列與進度（ui-stream）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>controls</td><td>布林</td><td>關</td><td>顯示控制列：播放 / 暫停切換、下一則、重播。</td></tr>
+      <tr><td>controls-position</td><td>top、bottom</td><td>top</td><td>控制列放在內容流上方或下方。</td></tr>
+      <tr><td>counter</td><td>布林</td><td>開</td><td>控制列右側的「目前 / 總數」。</td></tr>
+      <tr><td>progress</td><td>布林</td><td>關</td><td>控制列下方 3px 進度條，用 accent 色。</td></tr>
+      <tr><td>labels</td><td>逗號分隔四個文字</td><td>播放,暫停,下一則,重播</td><td>按鈕文字。留空字串只顯示圖示，例如 <code>labels=",,,"</code>。</td></tr>
+      <tr><td>speed-control</td><td>布林</td><td>關</td><td>控制列多一個速度選單（0.5x、1x、1.5x、2x），同時影響逐字速度與則間延遲。</td></tr>
+    </table>
+
+    <h3 class="cat c-green">三、版面（ui-stream）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>title</td><td>文字</td><td>無</td><td>元件上方標題，讀取後移除屬性，避免瀏覽器提示。</td></tr>
+      <tr><td>height</td><td>px</td><td>自動</td><td>整體固定高度，內容超出時在內部捲動。</td></tr>
+      <tr><td>gap</td><td>px</td><td>14</td><td>訊息之間的上下間隔。</td></tr>
+      <tr><td>gap-same</td><td>px</td><td>同 gap</td><td>同一角色連續發言時的間隔，通常比 gap 小。</td></tr>
+      <tr><td>gap-system</td><td>px</td><td>同 gap</td><td>system 訊息前後的間隔，讓它像分隔線。</td></tr>
+      <tr><td>padding</td><td>px</td><td>16</td><td>內容流四周內距。</td></tr>
+      <tr><td>bubble-width</td><td>百分比數字</td><td>78</td><td>氣泡最大寬度，佔內容流寬度的百分比。system 固定 90。</td></tr>
+      <tr><td>bubble-radius</td><td>px</td><td>12</td><td>氣泡圓角。</td></tr>
+      <tr><td>bubble-padding</td><td>CSS padding 值</td><td>10px 14px</td><td>氣泡內距。</td></tr>
+      <tr><td>line-height</td><td>數字</td><td>1.6</td><td>氣泡行高。</td></tr>
+      <tr><td>font-size</td><td>rem 或長度</td><td>1rem</td><td>整體字級。</td></tr>
+      <tr><td>meta-size</td><td>rem 或長度</td><td>0.75rem</td><td>名稱、時間那一行的字級。</td></tr>
+      <tr><td>avatar</td><td>布林</td><td>開</td><td>顯示頭像圓圈。</td></tr>
+      <tr><td>avatar-size</td><td>px</td><td>36</td><td>頭像直徑，圖示大小自動跟隨。</td></tr>
+      <tr><td>avatar-position</td><td>top、bottom</td><td>top</td><td>頭像和名稱列對齊（top）或和氣泡底對齊（bottom）。</td></tr>
+      <tr><td>bordered</td><td>布林</td><td>開</td><td>外框與圓角。設 false 時控制列的分隔線仍保留。</td></tr>
+    </table>
+
+    <h3 class="cat c-blue">四、色彩（ui-stream）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>accent</td><td>顏色</td><td>key</td><td>控制列按鈕、進度條、揭露區塊的框線。</td></tr>
+      <tr><td>border-color</td><td>顏色</td><td>bg-alternative</td><td>外框與控制列分隔線。</td></tr>
+      <tr><td>text-color</td><td>顏色</td><td>vanilla</td><td>外框式氣泡的文字色。實心氣泡文字預設深色，可用角色的 text-color 覆寫。</td></tr>
+      <tr><td>background</td><td>顏色</td><td>base</td><td>內容流與外框式氣泡的底色。</td></tr>
+      <tr><td>mark-color</td><td>顏色</td><td>無</td><td>氣泡裡 <code>&lt;mark&gt;</code> 的底色，文字自動深色。不設則用頁面 CSS。</td></tr>
+      <tr><td>teacher-color</td><td>顏色</td><td>key</td><td>內建 teacher 角色的顏色。</td></tr>
+      <tr><td>student-color</td><td>顏色</td><td>violet</td><td>內建 student 角色的顏色。</td></tr>
+      <tr><td>system-color</td><td>顏色</td><td>gray</td><td>內建 system 角色的顏色。</td></tr>
+      <tr><td>pause-color</td><td>顏色</td><td>yellow</td><td>暫停按鈕的顏色。</td></tr>
+    </table>
+
+    <h3 class="cat c-playful">五、動畫與暫停（ui-stream）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>animation</td><td>slide、pop、fade</td><td>slide</td><td>訊息出現的方式。slide 從所屬側邊滑入，pop 由小放大，fade 只淡入。</td></tr>
+      <tr><td>cursor</td><td>布林</td><td>開</td><td>逐字打出時的閃爍游標。</td></tr>
+      <tr><td>pause-icon</td><td>Bootstrap Icons 名稱</td><td>hand-index-thumb</td><td>暫停按鈕圖示。</td></tr>
+      <tr><td>pause-text</td><td>文字</td><td>點一下繼續</td><td>stream-item 的 pause 沒給文字時的預設提示。</td></tr>
+      <tr><td>pause-style</td><td>button、overlay</td><td>button</td><td>button 在內容流裡放一顆按鈕；overlay 用實色遮罩蓋住整個內容流，按任何地方繼續。</td></tr>
+      <tr><td>typing-indicator</td><td>布林</td><td>關</td><td>逐字開始前先出現跳動的三個點約 0.7 秒，模擬對方正在輸入。</td></tr>
+    </table>
+
+    <h3 class="cat c-dreamy">六、角色（stream-role）</h3>
+    <p style="font-size:0.9rem;color:#86877F;margin:0 0 8px 0;">內建 teacher（右側、實心）、student（左側、外框）、system（置中、虛線）。寫 <code>&lt;stream-role name="teacher"&gt;</code> 可以覆寫內建角色，寫新的 name 就是新角色。</p>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>name</td><td>文字</td><td>必填</td><td>角色代號，stream-item 的 from 用這個。</td></tr>
+      <tr><td>label</td><td>文字</td><td>無</td><td>stream-item 沒給 name 時顯示的名稱。</td></tr>
+      <tr><td>color</td><td>顏色</td><td>shell</td><td>這個角色的頭像、名稱、氣泡色。</td></tr>
+      <tr><td>icon</td><td>Bootstrap Icons 名稱</td><td>person-fill</td><td>頭像圖示。</td></tr>
+      <tr><td>side</td><td>left、right、center</td><td>left</td><td>氣泡靠哪一邊。center 不顯示頭像。</td></tr>
+      <tr><td>style</td><td>filled、outline、dashed</td><td>outline</td><td>氣泡樣式。</td></tr>
+      <tr><td>image</td><td>圖片網址</td><td>無</td><td>這個角色的預設頭像圖片，不必每則寫。</td></tr>
+      <tr><td>text-color</td><td>顏色</td><td>自動</td><td>這個角色氣泡的文字色，覆寫自動判斷（實心深色、外框 text-color）。</td></tr>
+    </table>
+
+    <h3 class="cat c-energetic">七、訊息（stream-item）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>from</td><td>角色 name</td><td>student</td><td>內建 teacher、student、system，或 stream-role 定義的角色。</td></tr>
+      <tr><td>name</td><td>文字</td><td>角色 label</td><td>顯示名稱。</td></tr>
+      <tr><td>time</td><td>文字</td><td>無</td><td>名稱旁的時間，純文字不做格式化。</td></tr>
+      <tr><td>badge</td><td>文字</td><td>無</td><td>名稱列右側的小角標，例如「追問」、「修正」。</td></tr>
+      <tr><td>badge-color</td><td>顏色</td><td>角色色</td><td>角標底色。</td></tr>
+      <tr><td>icon</td><td>Bootstrap Icons 名稱</td><td>角色 icon</td><td>只覆寫這一則的頭像圖示。</td></tr>
+      <tr><td>image</td><td>圖片網址</td><td>無</td><td>以圖片當頭像，優先於 icon。</td></tr>
+      <tr><td>color</td><td>顏色</td><td>角色色</td><td>只覆寫這一則的顏色。</td></tr>
+      <tr><td>source</td><td>元素 id</td><td>無</td><td>內容改從 template 或任何帶 id 的元素複製，適合長內容或多則共用。</td></tr>
+      <tr><td>typed</td><td>布林</td><td>關</td><td>逐字打出。HTML 標籤（mark、c-key 等）會隨文字一起出現。</td></tr>
+      <tr><td>speed</td><td>毫秒</td><td>沿用容器</td><td>只覆寫這一則的逐字速度。</td></tr>
+      <tr><td>delay</td><td>毫秒</td><td>沿用容器</td><td>這一則結束後到下一則的間隔。</td></tr>
+      <tr><td>pause</td><td>文字或空值</td><td>無</td><td>這一則之後停下來，顯示按鈕，按了才繼續。空值用 pause-text。</td></tr>
+      <tr><td>reveal</td><td>元素 id</td><td>無</td><td>這一則之後（有 pause 則在按下繼續後）插入該 id 的內容，例如參考答案。</td></tr>
+      <tr><td>reveal-target</td><td>元素 id</td><td>無</td><td>搭配 reveal：內容不插在內容流裡，改放進這個元素並顯示它（移除 hidden）。</td></tr>
+      <tr><td>gap</td><td>px</td><td>無</td><td>這一則前面的間隔，覆寫 gap、gap-same、gap-system。</td></tr>
+      <tr><td>highlight</td><td>布林</td><td>關</td><td>這一則出現（打完）時氣泡用 accent 色閃三下。</td></tr>
+    </table>
+
+    <h3 class="cat">八、資料與程式</h3>
+    <table class="attr"><tr><th>項目</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>src</td><td>URL</td><td>無</td><td>從網址讀取 JSON。</td></tr>
+      <tr><td>data-id</td><td>全域變數名稱</td><td>無</td><td>從 window[data-id] 讀取 JSON。JSON 格式：陣列，或 <code>{ roles, items }</code>；item 的 <code>text</code> 為純文字、<code>html</code> 為 HTML，其他欄位同 stream-item 屬性的駝峰寫法。</td></tr>
+      <tr><td>方法</td><td colspan="3">play()、pause()、toggle()、next()、replay()、goto(i)、finish()；add(item) 動態加一則（物件欄位同 JSON item，播放到底時會自動播出）；export() 回傳純文字、export('html') 回傳訊息 HTML；唯讀屬性 index、total。</td></tr>
+      <tr><td>事件</td><td colspan="3">ui-stream:item、ui-stream:typed、ui-stream:pause、ui-stream:resume、ui-stream:done，都會冒泡。</td></tr>
+      <tr><td>UiStreamConfig</td><td colspan="3">載入前設定 window.UiStreamConfig，欄位同 ui-stream 屬性的駝峰寫法（如 controlsPosition），所有實例的預設值。載入後可讀 window.UiStream.config。</td></tr>
+    </table>
+  </section>
+
+  <!-- ══════════ 版本對照 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>v0.1 → v0.2 → v0.3 改了什麼</h2></div>
+    <div class="diff">
+      <div><h4 class="old"><i class="bi bi-x-circle"></i> v0.1（粗製版）</h4><pre>只有 teacher / student / system 三種角色，寫死。
+typed 先轉純文字打出，打完才換回 HTML，
+途中看不到 mark 底色。
+暫停只能停，不能在繼續後給東西。
+控制列固定在上方，按鈕文字固定。
+沒有 JSON、沒有全域設定、沒有 goto / finish。</pre></div>
+      <div><h4 class="new"><i class="bi bi-check-circle"></i> v0.2</h4><pre>&lt;stream-role&gt; 自訂角色：顏色、圖示、側邊、氣泡樣式。
+逐字打出改為逐節點，mark、c-key 隨文字出現。
+pause 之後可以 reveal 一段隱藏內容（參考答案）。
+controls-position、labels、counter、progress。
+badge、image、color、source、speed、delay 可逐則設定。
+src / data-id JSON 模式，window.UiStreamConfig 全域預設。
+goto(i)、finish()、toggle()，新增 typed / resume 事件。
+start、loop、type-all、auto-scroll、cursor、animation。</pre></div>
+      <div></div>
+      <div><h4 class="new"><i class="bi bi-check-circle"></i> v0.3（依討論清單實作，排除 sound、hotkeys、columns、detail）</h4><pre>播放：step 逐則模式。
+控制列：speed-control 速度選單。
+版面：gap-same、gap-system、bubble-padding、line-height、avatar-position。
+色彩：background、mark-color。
+暫停與動畫：pause-style="overlay"、typing-indicator。
+角色：image、text-color。
+訊息：gap、reveal-target、highlight。
+程式：add(item)、export(format)。</pre></div>
+  </section>
+</div>
+
+<script>
+window.streamData = {
+  roles: { coach: { color: 'dreamy', icon: 'chat-heart-fill', side: 'right', style: 'filled', label: 'Coach' } },
+  items: [
+    { from: 'student', name: 'Lily', text: 'I go to the river every weekends.' },
+    { from: 'coach', html: 'every <mark>weekend</mark>，every 後面接單數。', typed: true },
+    { from: 'student', name: 'Lily', text: 'I go to the river every weekend.', badge: '修正' },
+    { from: 'system', text: '文法準確度 +1' }
+  ]
+};
+</script>
+<script src="../tbl/ui-table.js"></script>
+<script src="ui-stream.js"></script>
+<script>
+  const hook = (id, logId) => {
+    const s = document.getElementById(id), log = document.getElementById(logId);
+    ['item', 'typed', 'pause', 'resume', 'done'].forEach(ev => s.addEventListener('ui-stream:' + ev, e => {
+      const d = Object.assign({}, e.detail); delete d.item;
+      log.textContent = `ui-stream:${ev} → ${JSON.stringify(d)}`;
+    }));
+  };
+  hook('ex1', 'log1'); hook('ex3', 'log3');
+  document.getElementById('ex4').addEventListener('ui-stream:item', () => {});
+</script>
+</body>
+</html>

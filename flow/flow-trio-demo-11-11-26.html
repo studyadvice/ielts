@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>粗製 demo：ui-stream、ui-metro、ui-orbit</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  section{margin:0 0 48px 0;}
+  .sec-title{display:flex;align-items:baseline;gap:12px;margin:0 0 14px 0;}
+  .sec-title h2{font-size:1.25rem;font-weight:700;color:#B484E8;margin:0;}
+  .sec-title code{color:#E3D322;font-size:0.85rem;}
+  .sec-title p{margin:0 0 0 auto;font-size:0.85rem;color:#86877F;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:16px 0 0 0;}
+  .log{margin:12px 0 0 0;}
+  mark{background:#E3D322;color:#0C0D0C;padding:0 4px;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>內容流動三件組（粗製版）</h1>
+  <p class="sub">ui-stream 內容流、ui-metro 捷運路線圖、ui-orbit 軌道。三支獨立 .js，單檔含 CSS，不用 Shadow DOM。先看畫面與互動感，細節之後再磨。</p>
+
+  <!-- ══════════ ui-stream ══════════ -->
+  <section>
+    <div class="sec-title"><h2>1. ui-stream 內容流</h2><code>&lt;ui-stream&gt;</code><p>批改過程重播：學生句子滑入，老師回饋逐字打出，遇到暫停點停下來讓學生先猜。</p></div>
+    <div class="two">
+      <ui-stream id="st" controls autoplay speed="28" delay="700" height="460" accent="key" student-color="violet" teacher-color="key">
+        <stream-item from="student" name="Amy" time="14:41">I think the river is very beautiful and there are many trees.</stream-item>
+        <stream-item from="teacher" name="老師" time="14:42" typed pause="先想想：老師會先改哪個字？">beautiful 和 many 都太籠統了。先把 beautiful 換成能「看見」的描述。</stream-item>
+        <stream-item from="teacher" name="老師" typed>試試看：The river <mark>winds through</mark> the valley, <mark>lined with</mark> willow trees.</stream-item>
+        <stream-item from="system">字彙資源 6.0 → 6.5</stream-item>
+        <stream-item from="student" name="Amy" time="14:45">The river winds through the valley, lined with willow trees, and the water is very clear.</stream-item>
+        <stream-item from="teacher" name="老師" typed pause="很清楚了，再來一題嗎？">很好。最後一句的 very clear 也可以升級：<mark>crystal clear</mark> 或 <mark>so clear you can see the riverbed</mark>。</stream-item>
+        <stream-item from="system">本題完成，進入下一題。</stream-item>
+      </ui-stream>
+      <div>
+        <div class="alert alert-dark log" id="st-log">事件會顯示在這裡。</div>
+        <pre>&lt;ui-stream controls autoplay speed="28" delay="700" height="460"
+           accent="key" student-color="violet" teacher-color="key"&gt;
+  &lt;stream-item from="student" name="Amy" time="14:41"&gt;I think the river is…&lt;/stream-item&gt;
+  &lt;stream-item from="teacher" name="老師" typed
+               pause="先想想：老師會先改哪個字？"&gt;beautiful 和 many 都太籠統了…&lt;/stream-item&gt;
+  &lt;stream-item from="system"&gt;字彙資源 6.0 → 6.5&lt;/stream-item&gt;
+&lt;/ui-stream&gt;
+
+屬性：autoplay、controls、speed（逐字毫秒）、delay（則與則之間）、height、
+      accent、teacher-color、student-color、system-color
+stream-item：from=teacher|student|system、name、time、typed、pause="提示文字"、icon
+方法：play() pause() next() replay()
+事件：ui-stream:item、ui-stream:pause、ui-stream:done</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ ui-metro ══════════ -->
+  <section>
+    <div class="sec-title"><h2>2. ui-metro 捷運路線圖</h2><code>&lt;ui-metro&gt;</code><p>三條路線是三種 Task 2 結構，白圈是轉乘站（共用段落）。點站點，下方顯示該段寫法，其他路線變暗。</p></div>
+
+    <ui-metro title="Task 2 三種結構，哪裡一樣、哪裡分岔" gap-x="170" gap-y="78" stop-size="20" label-size="0.85"
+              panel-title="{line} · {label}" placeholder="點一個站點，看這一段要寫什麼。">
+      <metro-line name="完全同意型" color="key">
+        <metro-stop key="intro" label="開頭：改寫題目 + 立場" detail="m-intro"></metro-stop>
+        <metro-stop key="a1" label="論點一" detail="m-a1"></metro-stop>
+        <metro-stop key="a2" label="論點二" detail="m-a2"></metro-stop>
+        <metro-stop key="concl" label="結論：重申立場" detail="m-concl"></metro-stop>
+      </metro-line>
+      <metro-line name="折衷型" color="playful">
+        <metro-stop key="intro" label="開頭" detail="m-intro"></metro-stop>
+        <metro-stop key="a1" label="論點一" detail="m-a1"></metro-stop>
+        <metro-stop key="but" label="轉折：但是……" detail="m-but"></metro-stop>
+        <metro-stop key="concl" label="結論" detail="m-concl2"></metro-stop>
+      </metro-line>
+      <metro-line name="雙面討論型" color="dreamy">
+        <metro-stop key="intro" label="開頭" detail="m-intro"></metro-stop>
+        <metro-stop key="side-a" label="正方觀點" detail="m-sidea"></metro-stop>
+        <metro-stop key="side-b" label="反方觀點" detail="m-sideb"></metro-stop>
+        <metro-stop key="own" label="我的看法" detail="m-own"></metro-stop>
+        <metro-stop key="concl" label="結論" detail="m-concl"></metro-stop>
+      </metro-line>
+    </ui-metro>
+
+    <template id="m-intro"><p>兩句就好：第一句改寫題目（換詞、換句型），第二句明確說立場。三種結構的開頭寫法相同，所以是轉乘站。</p><p>例：<c-key>While some argue that…, I firmly believe that…</c-key></p></template>
+    <template id="m-a1"><p>主題句 → 解釋 → 例子 → 回扣。完全同意型和折衷型共用這一段。</p></template>
+    <template id="m-a2"><p>第二個論點要和第一個「不同面向」，例如第一段談經濟、第二段談社會。</p></template>
+    <template id="m-but"><p>折衷型的關鍵段：承認反方有道理，但提出限制條件。常用 <c-playful>Admittedly… However…</c-playful>。</p></template>
+    <template id="m-sidea"><p>客觀陳述正方理由，先不給自己的意見。用 <c-dreamy>Proponents argue that…</c-dreamy> 開頭。</p></template>
+    <template id="m-sideb"><p>同樣客觀陳述反方，段落長度和正方差不多，考官會看平衡。</p></template>
+    <template id="m-own"><p>雙面討論型必須有這一段，否則 Task Response 會被扣分。可以獨立一段，也可以併入結論。</p></template>
+    <template id="m-concl"><p>重申立場，不要出現新論點。一到兩句。</p></template>
+    <template id="m-concl2"><p>折衷型的結論要把「條件」再講一次：<c-playful>…provided that…</c-playful>。</p></template>
+
+    <pre>&lt;ui-metro title="…" gap-x="170" gap-y="78" stop-size="20" panel-title="{line} · {label}"&gt;
+  &lt;metro-line name="完全同意型" color="key"&gt;
+    &lt;metro-stop key="intro" label="開頭" detail="m-intro"&gt;&lt;/metro-stop&gt;   ← 同 key = 轉乘站
+    &lt;metro-stop key="a1" label="論點一" detail="m-a1"&gt;&lt;/metro-stop&gt;
+    &lt;metro-stop key="concl" label="結論" detail="m-concl"&gt;&lt;/metro-stop&gt;
+  &lt;/metro-line&gt;
+  …
+&lt;/ui-metro&gt;
+事件：ui-metro:select { line, key, label }</pre>
+  </section>
+
+  <!-- ══════════ ui-orbit ══════════ -->
+  <section>
+    <div class="sec-title"><h2>3. ui-orbit 軌道</h2><code>&lt;ui-orbit&gt;</code><p>Part 2 題卡在中心，想法繞著轉。點一個想法，它飛進右側插槽並展開細節；再點圖示送回軌道。</p></div>
+
+    <ui-orbit size="460" radius="150" item-size="68" period="36" accent="pink" pause-on-hover slot-title="{label}">
+      <orbit-core icon="chat-quote-fill" label="Describe a river you have visited" color="yellow"></orbit-core>
+      <orbit-item icon="geo-alt-fill" label="在哪裡" detail="o-where" color="key"></orbit-item>
+      <orbit-item icon="eye-fill" label="看到什麼" detail="o-see" color="green"></orbit-item>
+      <orbit-item icon="people-fill" label="和誰去" detail="o-who" color="violet"></orbit-item>
+      <orbit-item icon="emoji-smile-fill" label="感受" detail="o-feel" color="playful"></orbit-item>
+      <orbit-item icon="clock-history" label="什麼時候" detail="o-when" color="blue"></orbit-item>
+      <orbit-item icon="lightbulb-fill" label="為什麼難忘" detail="o-why" color="energetic"></orbit-item>
+      <orbit-item icon="translate" label="可用字彙" detail="o-vocab" color="dreamy" ring="2"></orbit-item>
+      <orbit-item icon="diagram-2-fill" label="句型" detail="o-gram" color="pink" ring="2"></orbit-item>
+      <orbit-item icon="exclamation-diamond-fill" label="常見錯誤" detail="o-err" color="urgent" ring="2"></orbit-item>
+    </ui-orbit>
+
+    <template id="o-where"><p>先給一個具體地名，再用一句話定位：<c-key>a river that runs through the old town of…</c-key>。避免只說 in my hometown。</p></template>
+    <template id="o-see"><p>三個可以「看見」的細節：水的狀態、岸邊的東西、人在做什麼。例：<c-green>fishermen casting their nets at dawn</c-green>。</p></template>
+    <template id="o-who"><p>講人的時候順便講關係和當時的對話，可以自然帶出過去式和間接引語。</p></template>
+    <template id="o-feel"><p>不要只說 happy。試試 <c-playful>a sense of calm</c-playful>、<c-playful>completely absorbed in the scenery</c-playful>。</p></template>
+    <template id="o-when"><p>時間 + 情境：<c-blue>It was during the summer holiday two years ago, when…</c-blue>。</p></template>
+    <template id="o-why"><p>這是收尾的重點，考官最常追問。給一個「改變」：去之前和去之後有什麼不同。</p></template>
+    <template id="o-vocab"><p>meander、riverbank、tranquil、crystal clear、teeming with fish、reflect the sky。</p></template>
+    <template id="o-gram"><p>過去進行式描寫背景：<c-pink>The sun was setting as we…</c-pink>；分詞片語加細節：<c-pink>lined with willow trees</c-pink>。</p></template>
+    <template id="o-err"><p>river 不是 lake 也不是 stream，注意量詞；「水很乾淨」不要說 the water is very clean，用 clear。</p></template>
+
+    <pre>&lt;ui-orbit size="460" radius="150" item-size="68" period="36" accent="pink" pause-on-hover&gt;
+  &lt;orbit-core icon="chat-quote-fill" label="Describe a river…" color="yellow"&gt;&lt;/orbit-core&gt;
+  &lt;orbit-item icon="geo-alt-fill" label="在哪裡" detail="o-where" color="key"&gt;&lt;/orbit-item&gt;
+  &lt;orbit-item icon="translate" label="可用字彙" detail="o-vocab" ring="2"&gt;&lt;/orbit-item&gt;   ← ring="2" 外圈
+&lt;/ui-orbit&gt;
+事件：ui-orbit:dock、ui-orbit:release { label }</pre>
+  </section>
+</div>
+
+<script src="../tbl/ui-table.js"></script>
+<script src="ui-stream.js"></script>
+<script src="ui-metro.js"></script>
+<script src="ui-orbit.js"></script>
+<script>
+  const log = document.getElementById('st-log');
+  document.getElementById('st').addEventListener('ui-stream:pause', e => log.textContent = `ui-stream:pause → 第 ${e.detail.index + 1} 則：「${e.detail.text}」`);
+  document.getElementById('st').addEventListener('ui-stream:done', () => log.textContent = 'ui-stream:done → 播完了。');
+</script>
+</body>
+</html>
