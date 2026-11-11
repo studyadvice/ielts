@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lens-read 點擊放大鏡</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1500px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#51DBCF;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;margin:0 0 24px 0;line-height:1.7;}
+.demo{border:1px solid #86877F;border-radius:12px;padding:24px;margin:0 0 32px 0;}
+.demo h2{font-size:1.25rem;color:#E3D322;margin:0 0 8px 0;}
+.demo .note{color:#86877F;font-size:0.95rem;margin:0 0 16px 0;}
+.grid2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:24px;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:24px;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:520px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;font-size:0.95rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:#51DBCF;}
+.ref code{color:#FFA987;}
+#log .alert{background:#51DBCF;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;lens-read&gt; 點擊放大鏡（粗製版）</h1>
+  <p class="sub">v0.3.0（11-12-26）：新增 pin，開鏡後固定位置，只有 × 能關閉，見範例六。<br>v0.2.0（11-12-26）：標註改為 above、below、extra-info，支援 HTML 與 template，見範例四、五。<br>主文保持乾淨，有標註的字只留一條虛線底線。點一下，放大鏡出現在點擊處，鏡內放大並顯示文法標註與中文；拖曳鏡面可移動，點一下鏡面或按右上角 ×、Esc 關閉。點鏡外其他地方，放大鏡會滑過去。適合觸控筆與螢幕錄影。</p>
+  <div id="log"></div>
+
+  <section class="demo" data-demo>
+    <h2>範例一：Task 1 圖表描述（預設樣式）</h2>
+    <p class="note">鏡內上方粉紅字是中文，下方青色字是文法或用法說明。</p>
+    <div class="grid2">
+      <div class="stage"></div>
+      <pre class="code-box"><code></code></pre>
+    </div>
+    <script type="text/plain" class="demo-src">
+<lens-read>
+  <p>The line graph <lens-word zh="說明" note="圖表描述常用動詞">illustrates</lens-word> the number of tourists visiting
+  Taiwan between 2000 and 2020. Overall, the figure <lens-word zh="急遽上升" note="過去式＋副詞">rose sharply</lens-word>,
+  although there was <lens-word zh="短暫下滑" note="a ＋ 形容詞 ＋ 名詞">a temporary dip</lens-word> in 2003.
+  By 2020, the total had <lens-word zh="達到高峰" note="過去完成式：在某時間點之前">reached a peak</lens-word> of
+  roughly eleven million, <lens-word zh="幾乎是三倍" note="分詞構句補充結果">almost tripling</lens-word> the original figure.</p>
+</lens-read>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例二：只顯示中文，大鏡片，高倍率</h2>
+    <p class="note">show="zh" 只顯示中文；radius="140"、zoom="1.8"；鏡框改成粉紅虛線，底線提示改成波浪線。</p>
+    <div class="grid2">
+      <div class="stage"></div>
+      <pre class="code-box"><code></code></pre>
+    </div>
+    <script type="text/plain" class="demo-src">
+<lens-read show="zh" radius="140" zoom="1.8" lens-border="3 dashed pink"
+           lens-bg="background" word-color="playful" cue="wavy" cue-color="pink">
+  <p>Urban gardens are becoming <lens-word zh="越來越普遍">increasingly common</lens-word> in large cities.
+  Supporters argue that they <lens-word zh="促進">foster</lens-word> a sense of community, while critics claim the land
+  could be used <lens-word zh="更有效率地">more efficiently</lens-word> for housing.</p>
+</lens-read>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例三：滑鼠滑過也能開鏡（trigger="hover"）</h2>
+    <p class="note">trigger="hover" 時，滑鼠移入即開鏡、移出即關閉；觸控筆仍是點擊操作。close-button="off" 隱藏關閉鈕。</p>
+    <div class="grid2">
+      <div class="stage"></div>
+      <pre class="code-box"><code></code></pre>
+    </div>
+    <script type="text/plain" class="demo-src">
+<lens-read trigger="hover" show="note" radius="90" zoom="1.5" close-button="off"
+           lens-bg="bg-alternative" lens-border="2 solid violet" note-color="energetic">
+  <p>If I <lens-word note="假設語氣：過去式">had</lens-word> more free time, I <lens-word note="would ＋ 原形動詞">would learn</lens-word>
+  to play the guitar, <lens-word note="關係副詞子句">which is something I have always wanted to do</lens-word>.</p>
+</lens-read>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>修訂一（v0.2.0）範例四：above、below、extra-info，全部支援 HTML</h2>
+    <p class="note">標註不再限定中文與說明。字上方用 above，字下方用 below，可以寫 &lt;b&gt;、&lt;i&gt; 等簡單標籤；extra-info 會在鏡片下方出現說明框，顯示鏡心最靠近的那個字。較長的內容用 above-template、below-template、extra-template 讀取 &lt;template&gt;。</p>
+    <div class="grid2">
+      <div class="stage"></div>
+      <pre class="code-box"><code></code></pre>
+    </div>
+    <script type="text/plain" class="demo-src">
+<lens-read radius="110" zoom="1.5">
+  <p>Many people believe that working from home <lens-word above="提高" below="<b>V</b> ＋ productivity"
+  extra-info="<b>boost</b> 比 increase 更口語、更有力，適合 Speaking。">boosts</lens-word> productivity.
+  However, others <lens-word above="主張" below="argue <b>that</b> ＋ 子句" extra-template="x-argue">argue</lens-word>
+  that it <lens-word above="<i>模糊了</i>界線" below="blur the line(s) <b>between</b> A and B"
+  extra-template="x-blur">blurs the line between</lens-word> work and personal life.</p>
+</lens-read>
+
+<template id="x-argue">
+  <b>argue that</b>：提出主張並給理由。<br>
+  同義：<i>claim</i>（較不確定）、<i>maintain</i>（堅持）、<i>contend</i>（正式）。
+</template>
+<template id="x-blur">
+  Task 2 好用片語，可以這樣延伸：
+  <ul><li>blur the boundaries between …</li><li>make it hard to switch off</li></ul>
+</template>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>修訂一（v0.2.0）範例五：說明框在上方，只顯示 below 與 extra</h2>
+    <p class="note">show="below extra" 用空白列出要顯示的標註；extra-position="above" 讓說明框出現在鏡片上方；說明框配色可自訂。</p>
+    <div class="grid2">
+      <div class="stage" style="padding-top:150px"></div>
+      <pre class="code-box"><code></code></pre>
+    </div>
+    <script type="text/plain" class="demo-src">
+<lens-read show="below extra" extra-position="above" line-gap="2.2" lens-border="3 solid green"
+           extra-bg="bg-alternative" extra-text="vanilla" extra-border="2 dashed green" extra-width="280">
+  <p>The proportion of students who cycle to school <lens-word below="<b>doubled</b>：翻倍"
+  extra-info="描述倍數：<b>doubled</b>、<b>tripled</b>、<b>fell by half</b>">doubled</lens-word> over the decade.</p>
+</lens-read>
+    </script>
+  </section>
+
+  <section class="demo">
+    <h2>修訂一（v0.2.0）修改前後對照</h2>
+<pre class="code-box"><code>修改前（v0.1.0）：只有 zh 和 note 兩種，而且只接受純文字
+&lt;lens-word zh="急遽上升" note="過去式＋副詞"&gt;rose sharply&lt;/lens-word&gt;
+
+修改後（v0.2.0）：above、below、extra-info，三者都支援 HTML，也能讀取 template
+&lt;lens-word above="急遽上升" below="&lt;b&gt;V-ed&lt;/b&gt; ＋ adv." extra-info="也可以說 &lt;i&gt;soared&lt;/i&gt;"&gt;rose sharply&lt;/lens-word&gt;
+&lt;lens-word above="主張" extra-template="x-argue"&gt;argue&lt;/lens-word&gt;
+
+舊寫法不必修改：zh 等同 above、note 等同 below；zh-color、note-color 也照常有效。
+show 改為空白分隔的清單：above below extra（預設全部顯示）；舊值 zh、note、both 仍可用。</code></pre>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>修訂二（v0.3.0）範例六：固定位置（pin）</h2>
+    <p class="note">加上 pin 後，點一下開鏡，放大鏡就固定在那裡：點別處、拖曳、點鏡面、按 Esc 都不會移動或關閉，只有右上角的 × 能關閉。適合錄影時停在一個重點上講解。即使寫了 close-button="off"，固定模式仍會顯示 ×。</p>
+    <div class="grid2">
+      <div class="stage"></div>
+      <pre class="code-box"><code></code></pre>
+    </div>
+    <script type="text/plain" class="demo-src">
+<lens-read pin radius="110" zoom="1.5">
+  <p>Governments should <lens-word above="投資" below="invest <b>in</b> ＋ N"
+  extra-info="搭配詞：<b>invest heavily in</b>、<b>invest more in</b>">invest in</lens-word> public transport
+  <lens-word above="而不是" below="<b>rather than</b> ＋ V-ing / N">rather than</lens-word> building more roads.</p>
+</lens-read>
+    </script>
+  </section>
+
+  <section class="demo">
+    <h2>修訂二（v0.3.0）修改前後對照</h2>
+<pre class="code-box"><code>修改前（v0.2.0）：點鏡外會移過去，拖曳會移動，點鏡面或 Esc 會關閉
+&lt;lens-read radius="110"&gt;...&lt;/lens-read&gt;
+
+修改後（v0.3.0）：加上 pin，開鏡後固定不動，只有 × 能關閉
+&lt;lens-read pin radius="110"&gt;...&lt;/lens-read&gt;
+&lt;lens-read pin="off"&gt;...&lt;/lens-read&gt;     寫 off 等同沒有 pin</code></pre>
+  </section>
+
+  <section class="demo">
+    <h2>可自訂的屬性</h2>
+    <p class="note">顏色可寫色票名稱（background、bg-alternative、shell、vanilla、yellow、pink、red、green、blue、indigo、violet、gray、key、calm、quiet、playful、urgent、energetic、dreamy）或任何 CSS 顏色；純數字視為 px。</p>
+    <table class="ref">
+      <thead><tr><th style="width:200px">屬性</th><th style="width:160px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>trigger</code></td><td><code>click</code></td><td><code>click</code>：點擊開鏡、拖曳移動、點鏡面關閉。<code>hover</code>：滑鼠移入開鏡、移出關閉，觸控筆仍用點擊。</td></tr>
+        <tr><td><code>pin</code></td><td>無</td><td>v0.3.0 新增。開鏡後固定位置：點別處、拖曳、點鏡面、Esc 都不會移動或關閉，只有 × 能關閉；此時 × 一律顯示。<code>pin="off"</code> 等同未設定。設定 pin 時 <code>trigger="hover"</code> 不作用。</td></tr>
+        <tr><td><code>radius</code></td><td><code>100</code></td><td>鏡片半徑（px），最小 30。</td></tr>
+        <tr><td><code>zoom</code></td><td><code>1.4</code></td><td>鏡內放大倍率，1 到 4。</td></tr>
+        <tr><td><code>show</code></td><td>全部</td><td>要顯示的標註，空白分隔：<code>above</code>、<code>below</code>、<code>extra</code>，例如 <code>show="below extra"</code>。舊值 <code>zh</code>、<code>note</code>、<code>both</code> 仍可用。</td></tr>
+        <tr><td><code>lens-bg</code></td><td><code>bg-alternative</code></td><td>鏡片底色。</td></tr>
+        <tr><td><code>lens-text</code></td><td><code>vanilla</code></td><td>鏡內一般文字顏色。</td></tr>
+        <tr><td><code>lens-border</code></td><td><code>3 solid key</code></td><td>鏡框，例如 <code>3 dashed pink</code>；<code>none</code> 為無鏡框。關閉鈕跟著鏡框顏色。</td></tr>
+        <tr><td><code>word-color</code></td><td><code>yellow</code></td><td>鏡內標註字的顏色。</td></tr>
+        <tr><td><code>above-color</code></td><td><code>pink</code></td><td>字上方標註的顏色（舊名 <code>zh-color</code>）。</td></tr>
+        <tr><td><code>below-color</code></td><td><code>key</code></td><td>字下方標註的顏色（舊名 <code>note-color</code>）。</td></tr>
+        <tr><td><code>extra-position</code></td><td><code>below</code></td><td>extra-info 說明框出現在鏡片下方或上方：<code>below</code>、<code>above</code>。</td></tr>
+        <tr><td><code>extra-bg</code>、<code>extra-text</code></td><td><code>background</code>、<code>vanilla</code></td><td>說明框底色與文字色。</td></tr>
+        <tr><td><code>extra-border</code></td><td>同鏡框顏色</td><td>說明框邊框，例如 <code>2 dashed green</code>，<code>none</code> 為無邊框。</td></tr>
+        <tr><td><code>extra-width</code></td><td><code>320</code></td><td>說明框最大寬度（px），最小 160。</td></tr>
+        <tr><td><code>text-color</code></td><td><code>shell</code></td><td>主文顏色。</td></tr>
+        <tr><td><code>page-bg</code></td><td><code>background</code></td><td>關閉鈕的底色，配合網頁底色。</td></tr>
+        <tr><td><code>line-gap</code></td><td><code>2.6</code></td><td>行高倍數，要留空間給上下兩行標註；只顯示一種標註時可降到 2.2。</td></tr>
+        <tr><td><code>cue</code></td><td><code>dotted</code></td><td>主文中標註字的提示底線：<code>dotted</code>、<code>dashed</code>、<code>solid</code>、<code>wavy</code>、<code>none</code>。</td></tr>
+        <tr><td><code>cue-color</code></td><td><code>gray</code></td><td>提示底線顏色。</td></tr>
+        <tr><td><code>close-on-tap</code></td><td><code>on</code></td><td>點一下鏡面（沒有拖曳）是否關閉；<code>off</code> 時只能用 × 或 Esc 關閉。</td></tr>
+        <tr><td><code>close-button</code></td><td><code>on</code></td><td><code>off</code> 隱藏鏡框右上角的 ×。</td></tr>
+        <tr><td><code>&lt;lens-word&gt;</code></td><td></td><td>要標註的字詞，內文可含 HTML。屬性：<code>above</code>（字上方）、<code>below</code>（字下方）、<code>extra-info</code>（鏡片旁的說明框），都支援 HTML，可只寫其中幾個。舊屬性 <code>zh</code>、<code>note</code> 分別等同 above、below。</td></tr>
+        <tr><td><code>above-template</code>、<code>below-template</code>、<code>extra-template</code></td><td></td><td>寫在 <code>&lt;lens-word&gt;</code> 上，讀取對應 id 的 <code>&lt;template&gt;</code>，優先於同名屬性。找不到時在主控台提示並改用屬性。</td></tr>
+        <tr><td>事件</td><td></td><td><code>lens-read:open</code>、<code>lens-read:move</code>、<code>lens-read:close</code>，<code>e.detail</code> 含鏡心座標 <code>x</code>、<code>y</code>。</td></tr>
+        <tr><td>方法</td><td></td><td><code>el.open(x, y)</code>（相對於元件左上角的 px）、<code>el.close()</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+/* 用 Bootstrap alert 顯示最近一次事件 */
+['lens-read:open', 'lens-read:move', 'lens-read:close'].forEach(n => {
+  document.addEventListener(n, e => {
+    document.getElementById('log').innerHTML = '<div class="alert alert-dismissible fade show" role="alert">' + n +
+      '（x ' + Math.round(e.detail.x) + '，y ' + Math.round(e.detail.y) + '）' +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lens-read.js"></script>
+</body>
+</html>
