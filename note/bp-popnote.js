@@ -907,6 +907,9 @@
     modalSize   : '',
     modalStatic : false,
     fx          : true,
+    foldSide    : 'right',   /* 摺角便條：right、left、below */
+    foldWidth   : '280px',   /* 摺角便條寬度（right、left） */
+    foldCorner  : 22,        /* 摺角大小（px） */
   };
 
   G.BpPopnote = {
@@ -1617,6 +1620,12 @@
       '[data-popover-title],[data-popover-content],[data-popover-target]'
     );
 
+    if (trigger && trigger.hasAttribute('data-popover-fold')) {
+      /* 摺角便條只由摺角開關，點段落其他地方不跳出提示 */
+      closePop();
+      return;
+    }
+
     if (trigger) {
       e.stopPropagation();
 
@@ -1661,6 +1670,231 @@
   });
 
   injectPopnoteCSS();
+
+  /* ══ 摺角便條：data-popover-fold ═══════════════════════════════════════
+     段落右上角（或左上角）出現摺起的紙角，點摺角在段落旁邊展開便條，正文位置不動。
+     內容與主題沿用 data-popover-title、data-popover-content、data-popover-target、data-popover-theme。 */
+  const FOLD_SEL = '[data-popover-fold]';
+  const FOLD_CSS = `
+    .xpop-fold {
+      position: relative;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 0px;
+      column-gap: 0px;
+      border-bottom: none !important;
+      cursor: auto;
+      transition: grid-template-columns .38s ease, column-gap .38s ease, grid-template-rows .38s ease, row-gap .38s ease;
+    }
+    .xpop-fold.xpop-fold-open { grid-template-columns: minmax(0, 1fr) var(--xpop-fold-w, 280px); column-gap: 16px; }
+    .xpop-fold[data-fold-side="left"] { grid-template-columns: 0px minmax(0, 1fr); }
+    .xpop-fold[data-fold-side="left"].xpop-fold-open { grid-template-columns: var(--xpop-fold-w, 280px) minmax(0, 1fr); }
+    .xpop-fold[data-fold-side="left"] > .xpop-fold-body { order: 2; }
+    .xpop-fold[data-fold-side="left"] > .xpop-fold-slot { order: 1; }
+    .xpop-fold[data-fold-side="below"] { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 0fr; row-gap: 0px; }
+    .xpop-fold[data-fold-side="below"].xpop-fold-open { grid-template-rows: auto 1fr; row-gap: 12px; }
+
+    .xpop-fold-body { position: relative; min-width: 0; padding-right: calc(var(--xpop-fold-c, 22px) + 8px); }
+    .xpop-fold[data-fold-side="left"] > .xpop-fold-body { padding-right: 0; padding-left: calc(var(--xpop-fold-c, 22px) + 8px); }
+
+    .xpop-fold-slot { min-width: 0; min-height: 0; overflow: hidden; perspective: 900px; }
+    /* 收合完成後不佔高度，避免收起的便條把段落撐高 */
+    .xpop-fold.xpop-fold-shut > .xpop-fold-slot { height: 0; }
+    /* 左右兩側的便條固定寬度，展開過程中文字不會被擠成一字一行 */
+    .xpop-fold:not([data-fold-side="below"]) .xpop-fold-note { width: var(--xpop-fold-w, 280px); box-sizing: border-box; }
+    .xpop-fold[data-fold-side="left"] .xpop-fold-slot { display: flex; justify-content: flex-end; }
+    .xpop-fold-note.xpop-panel-wrap {
+      animation: none;
+      box-shadow: none;
+      transform-origin: left center;
+      transform: rotateY(-82deg);
+      opacity: 0;
+      transition: transform .42s cubic-bezier(.3,.7,.3,1) .04s, opacity .22s ease;
+    }
+    .xpop-fold[data-fold-side="left"] .xpop-fold-note { transform-origin: right center; transform: rotateY(82deg); }
+    .xpop-fold[data-fold-side="below"] .xpop-fold-note { transform-origin: center top; transform: rotateX(-82deg); }
+    .xpop-fold.xpop-fold-open .xpop-fold-note { transform: none; opacity: 1; }
+    .xpop-fold-note .xpop-fold-text { padding: 10px 16px 14px; color: #c6c7bd; }
+    .xpop-fold-note .xpop-header + .xpop-fold-text { padding-top: 4px; }
+    .xpop-fold-note .xpop-fold-text > :first-child { margin-top: 0; }
+    .xpop-fold-note .xpop-fold-text > :last-child { margin-bottom: 0; }
+
+    /* 摺角：整個方塊都可點擊，三角形畫在 ::before；關閉時是往內摺的三角，展開時翻成另一半 */
+    .xpop-fold-corner {
+      position: absolute; top: 0; right: 0;
+      width: var(--xpop-fold-c, 22px); height: var(--xpop-fold-c, 22px);
+      padding: 0; margin: 0; border: none; background: none; cursor: pointer;
+      transform-origin: top right;
+      transition: transform .18s ease;
+      z-index: 2;
+    }
+    .xpop-fold-corner::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--xpop-border-color, #B484E8);
+      clip-path: polygon(0 0, 100% 100%, 0 100%);
+      transition: clip-path .32s ease;
+    }
+    .xpop-fold-corner:hover { transform: scale(1.18); }
+    .xpop-fold-corner:focus-visible { outline: 2px solid var(--xpop-border-color, #B484E8); outline-offset: 3px; }
+    .xpop-fold.xpop-fold-open > .xpop-fold-body > .xpop-fold-corner::before { clip-path: polygon(0 0, 100% 0, 100% 100%); }
+    .xpop-fold[data-fold-side="left"] > .xpop-fold-body > .xpop-fold-corner { right: auto; left: 0; transform-origin: top left; }
+    .xpop-fold[data-fold-side="left"] > .xpop-fold-body > .xpop-fold-corner::before { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+    .xpop-fold[data-fold-side="left"].xpop-fold-open > .xpop-fold-body > .xpop-fold-corner::before { clip-path: polygon(0 0, 100% 0, 0 100%); }
+  `;
+
+  function injectFoldCSS() {
+    if (document.getElementById('bpn-fold-css')) return;
+    const st = document.createElement('style');
+    st.id = 'bpn-fold-css';
+    st.textContent = FOLD_CSS;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function foldLen(v, fb) {
+    v = String(v == null ? '' : v).trim();
+    if (!v) return fb;
+    return /^\d+(\.\d+)?$/.test(v) ? v + 'px' : v;
+  }
+
+  function initFold(el) {
+    if (el.dataset.foldInit) return;
+    el.dataset.foldInit = '1';
+    injectFoldCSS();
+    let side = String(el.dataset.popoverFold || config.foldSide || 'right').trim().toLowerCase();
+    if (side !== 'left' && side !== 'below') side = 'right';
+    const theme = getTheme(ra(el, 'popoverTheme', config.theme));
+
+    el.classList.add('xpop-fold', 'xpop-fold-shut');
+    el.dataset.foldSide = side;
+    el.style.setProperty('--xpop-fold-w', foldLen(el.dataset.popoverFoldWidth, config.foldWidth));
+    el.style.setProperty('--xpop-fold-c', foldLen(el.dataset.popoverFoldCorner, config.foldCorner + 'px'));
+    el.style.setProperty('--xpop-border-color', theme.borderColor);
+
+    const body = document.createElement('div');
+    body.className = 'xpop-fold-body';
+    while (el.firstChild) body.appendChild(el.firstChild);
+    const corner = document.createElement('button');
+    corner.type = 'button';
+    corner.className = 'xpop-fold-corner';
+    corner.setAttribute('aria-label', '展開便條');
+    corner.setAttribute('aria-expanded', 'false');
+    body.appendChild(corner);
+    const slot = document.createElement('div');
+    slot.className = 'xpop-fold-slot';
+    el.appendChild(body);
+    el.appendChild(slot);
+
+    corner.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setFold(el, !el.classList.contains('xpop-fold-open'));
+    });
+    if (el.hasAttribute('data-popover-fold-open')) setFold(el, true, true);
+  }
+
+  /* 第一次展開時才組便條內容，template 可以放在頁面任何位置 */
+  function buildFoldNote(el) {
+    const theme = getTheme(ra(el, 'popoverTheme', config.theme));
+    const note = document.createElement('div');
+    note.className = 'xpop-panel-wrap xpop-fold-note';
+    note.style.setProperty('--xpop-bg',           theme.bg);
+    note.style.setProperty('--xpop-title-color',  theme.titleColor);
+    note.style.setProperty('--xpop-border-color', theme.borderColor);
+    note.style.setProperty('--xpop-font-size',    ra(el, 'popoverFontsize', config.fontSize));
+    note.style.borderStyle = ra(el, 'popoverBorder', config.borderStyle);
+    applyFx(note, theme, fxOf(el, theme));
+    const hdr = document.createElement('div');
+    hdr.className = 'xpop-header';
+    hdr.innerHTML = el.dataset.popoverTitle || '';
+    const text = document.createElement('div');
+    text.className = 'xpop-fold-text';
+    text.innerHTML = extractContent(el);
+    note.appendChild(hdr);
+    note.appendChild(text);
+    return note;
+  }
+
+  function setFold(el, open, instant) {
+    if (!el || !el.dataset.foldInit) return;
+    open = !!open;
+    if (open === el.classList.contains('xpop-fold-open')) return;
+    const slot = el.querySelector(':scope > .xpop-fold-slot');
+    const corner = el.querySelector(':scope > .xpop-fold-body > .xpop-fold-corner');
+    if (open) {
+      if (!slot.firstChild) slot.appendChild(buildFoldNote(el));
+      const group = el.dataset.popoverFoldGroup;
+      if (group) {
+        document.querySelectorAll('.xpop-fold.xpop-fold-open').forEach(function (o) {
+          if (o !== el && o.dataset.popoverFoldGroup === group) setFold(o, false);
+        });
+      }
+    }
+    clearTimeout(el._foldShutTm);
+    if (open) el.classList.remove('xpop-fold-shut');
+    if (instant) el.style.transition = 'none';
+    el.classList.toggle('xpop-fold-open', open);
+    if (instant) { void el.offsetHeight; el.style.transition = ''; }
+    if (!open) {
+      /* 等摺回動畫跑完再收掉高度 */
+      if (instant) el.classList.add('xpop-fold-shut');
+      else el._foldShutTm = setTimeout(function () {
+        if (!el.classList.contains('xpop-fold-open')) el.classList.add('xpop-fold-shut');
+      }, 460);
+    }
+    if (corner) {
+      corner.setAttribute('aria-expanded', String(open));
+      corner.setAttribute('aria-label', open ? '收起便條' : '展開便條');
+    }
+    el.dispatchEvent(new CustomEvent('bpn-fold', { bubbles: true, detail: { open: open } }));
+  }
+
+  function initFolds(root) {
+    (root || document).querySelectorAll(FOLD_SEL + ':not([data-fold-init])').forEach(initFold);
+  }
+
+  function toFoldEl(t) {
+    if (typeof t === 'string') { try { return document.querySelector(t); } catch (e) { return null; } }
+    return t;
+  }
+
+  G.BpPopnote.initFolds = initFolds;
+  /* fold(元素或選擇器, true/false)；第二個參數省略時切換 */
+  G.BpPopnote.fold = function (target, open) {
+    const el = toFoldEl(target);
+    if (!el) return;
+    setFold(el, open === undefined ? !el.classList.contains('xpop-fold-open') : open);
+  };
+  /* foldAll(true/false, 範圍選擇器或元素) */
+  G.BpPopnote.foldAll = function (open, scope) {
+    const root = toFoldEl(scope) || document;
+    root.querySelectorAll('.xpop-fold').forEach(function (el) { setFold(el, open !== false); });
+  };
+
+  function startFolds() {
+    initFolds();
+    if (typeof MutationObserver === 'undefined' || !document.body) return;
+    let queued = false;
+    new MutationObserver(function (muts) {
+      if (queued) return;
+      for (let i = 0; i < muts.length; i++) {
+        const added = muts[i].addedNodes;
+        for (let j = 0; j < added.length; j++) {
+          const n = added[j];
+          if (n.nodeType !== 1) continue;
+          if ((n.matches && n.matches(FOLD_SEL + ':not([data-fold-init])')) ||
+              (n.querySelector && n.querySelector(FOLD_SEL + ':not([data-fold-init])'))) {
+            queued = true;
+            Promise.resolve().then(function () { queued = false; initFolds(); });
+            return;
+          }
+        }
+      }
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startFolds);
+  } else {
+    startFolds();
+  }
 
   function initTriggerHints() {
     const sel = '[data-popover-title],[data-popover-content],[data-popover-target]';

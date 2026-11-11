@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote 摺角便條</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+/* 只用底色、文字色與一個強調色（紫），間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1500px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#DBEDD8;margin:0 0 8px 0;}
+.sub{color:#86877F;font-size:1rem;line-height:1.7;margin:0 0 24px 0;}
+code{color:#B484E8;}
+section{margin:0 0 44px 0;}
+h2{font-size:1.25rem;color:#DBEDD8;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.note{color:#86877F;font-size:0.92rem;margin:0 0 16px 0;line-height:1.7;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;}
+.stage p{margin:0;line-height:1.75;font-size:1.05rem;}
+#essay{display:flex;flex-direction:column;gap:20px;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:16px 0 0 0;background:#0C0D0C;max-height:440px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ctrl{display:flex;gap:8px;}
+.ctrl button{background:#0C0D0C;color:#DBEDD8;border:1px solid #86877F;border-radius:6px;padding:6px 14px;font-size:0.9rem;}
+.ctrl button:hover{border-color:#B484E8;color:#B484E8;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:#DBEDD8;}
+#log{position:sticky;top:0;z-index:20;}
+#log .alert{background:#B484E8;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;margin:0 0 16px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>bp-popnote 摺角便條</h1>
+  <p class="sub">在段落加上 <code>data-popover-fold</code>，右上角會出現摺起的紙角。點摺角，便條像紙張翻開一樣展開在段落旁邊，正文位置不動；再點一次摺回去。內容與主題沿用 bp-popnote 原有的 <code>data-popover-title</code>、<code>data-popover-content</code>、<code>data-popover-target</code>、<code>data-popover-theme</code>。新增日期 11-12-26。</p>
+  <div id="log"></div>
+
+  <section data-demo>
+    <h2>範例一：範文批改，一段一張便條</h2>
+    <p class="note">點各段右上角的摺角看評語。下方按鈕呼叫 <code>BpPopnote.foldAll()</code>，一次全部展開或收合，適合複習。</p>
+    <div class="stage"></div>
+    <pre class="code-box"><code></code></pre>
+    <script type="text/plain" class="demo-src">
+<div class="ctrl">
+  <button type="button" onclick="BpPopnote.foldAll(true, '#essay')">全部展開</button>
+  <button type="button" onclick="BpPopnote.foldAll(false, '#essay')">全部收合</button>
+</div>
+<div id="essay">
+  <p data-popover-fold data-popover-title="開頭段"
+     data-popover-content="改寫題目而不是照抄：<b>working from home</b> 換成 <b>remote work</b>，並在最後一句清楚表態。">
+    In recent years, remote work has become increasingly common. While some argue that it boosts
+    productivity, I believe its drawbacks outweigh its benefits for most employees.
+  </p>
+  <p data-popover-fold data-popover-title="主體段一"
+     data-popover-content="主題句清楚，但例子太籠統。加一個具體情境，例如 <i>a parent juggling meetings and childcare</i>。">
+    Supporters claim that working from home saves time and allows people to focus.
+    Without a daily commute, employees have more energy for their tasks.
+  </p>
+  <p data-popover-fold data-popover-title="主體段二" data-popover-target="#fb-p3">
+    However, remote work blurs the line between work and personal life, which can lead to burnout.
+  </p>
+</div>
+
+<template id="fb-p3">
+  <p>好的論點，可以再展開兩步：</p>
+  <ul><li>為什麼界線會模糊：家裡就是辦公室</li><li>結果：難以下班、長期疲勞</li></ul>
+</template>
+    </script>
+  </section>
+
+  <section data-demo>
+    <h2>範例二：同組只開一張，固定寬度</h2>
+    <p class="note"><code>data-popover-fold-group</code> 相同的段落，打開一張時其他自動摺回。<code>data-popover-fold-width</code> 設定便條寬度。</p>
+    <div class="stage"></div>
+    <pre class="code-box"><code></code></pre>
+    <script type="text/plain" class="demo-src">
+<p data-popover-fold data-popover-fold-group="t1" data-popover-fold-width="320"
+   data-popover-title="Overview" data-popover-content="Task 1 的總覽句不放數字，只寫最明顯的兩個趨勢。">
+  Overall, the number of visitors rose steadily, while spending per visitor remained stable.
+</p>
+<p data-popover-fold data-popover-fold-group="t1" data-popover-fold-width="320"
+   data-popover-title="Details" data-popover-content="細節段要比較，不要逐年列數字：<b>twice as many as</b>、<b>by contrast</b>。">
+  In 2010, around two million tourists visited the city, roughly twice as many as in 2000.
+</p>
+    </script>
+  </section>
+
+  <section data-demo>
+    <h2>範例三：便條在左側或下方，換主題色</h2>
+    <p class="note"><code>data-popover-fold="left"</code> 摺角在左上，便條開在左邊；<code>"below"</code> 便條往下展開，適合窄欄。第二段示範 <code>data-popover-theme="note"</code> 換成黃色，其餘維持預設紫色。</p>
+    <div class="stage"></div>
+    <pre class="code-box"><code></code></pre>
+    <script type="text/plain" class="demo-src">
+<p data-popover-fold="left" data-popover-title="開頭"
+   data-popover-content="Part 2 第一句直接回答題目，不要先講背景。">
+  The skill I would like to talk about is cooking, which I picked up during my first year at university.
+</p>
+<p data-popover-fold="below" data-popover-theme="note" data-popover-title="延伸"
+   data-popover-content="用一個小故事收尾：第一次煮給室友吃的經驗，比列出好處更自然。">
+  I learned it mainly because I was tired of eating instant noodles every night.
+</p>
+<p data-popover-fold data-popover-fold-open data-popover-title="預設展開"
+   data-popover-content="加上 <code>data-popover-fold-open</code>，載入時就是展開狀態。">
+  This paragraph starts with its note already open.
+</p>
+    </script>
+  </section>
+
+  <section>
+    <h2>屬性與 API</h2>
+    <table class="ref">
+      <thead><tr><th style="width:280px">屬性</th><th style="width:160px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-popover-fold</code></td><td><code>right</code></td><td>開啟摺角便條。<code>right</code>、<code>left</code>、<code>below</code> 決定便條的位置。只寫屬性不給值即為 right。</td></tr>
+        <tr><td><code>data-popover-fold-width</code></td><td><code>280px</code></td><td>便條寬度（right、left），純數字視為 px。</td></tr>
+        <tr><td><code>data-popover-fold-corner</code></td><td><code>22</code></td><td>摺角大小（px）。</td></tr>
+        <tr><td><code>data-popover-fold-group</code></td><td>無</td><td>同組只能同時開一張。</td></tr>
+        <tr><td><code>data-popover-fold-open</code></td><td>無</td><td>載入時就展開。</td></tr>
+        <tr><td><code>data-popover-title</code>、<code>data-popover-content</code>、<code>data-popover-target</code></td><td></td><td>沿用原有屬性：標題、內容（HTML）、讀取 <code>&lt;template&gt;</code> 的選擇器。</td></tr>
+        <tr><td><code>data-popover-theme</code>、<code>data-popover-fontsize</code>、<code>data-popover-border</code></td><td>沿用全域</td><td>沿用原有主題與外觀；摺角顏色跟著主題的框線色。</td></tr>
+        <tr><td><code>BpPopnote.fold(el, open)</code></td><td></td><td>開啟或收合單張；省略 <code>open</code> 為切換。<code>el</code> 可以是元素或選擇器。</td></tr>
+        <tr><td><code>BpPopnote.foldAll(open, scope)</code></td><td></td><td>一次開啟或收合，<code>scope</code> 可限定範圍。</td></tr>
+        <tr><td><code>BpPopnote.initFolds()</code></td><td></td><td>手動初始化；動態插入的段落會自動初始化，通常不需要呼叫。</td></tr>
+        <tr><td><code>bpn-fold</code> 事件</td><td></td><td>開合時從段落冒泡，<code>e.detail.open</code> 為 true 或 false。</td></tr>
+        <tr><td><code>PopoverConfig.set()</code></td><td></td><td>全域預設：<code>foldSide</code>、<code>foldWidth</code>、<code>foldCorner</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+  /* 用 Bootstrap alert 顯示最近一次開合 */
+  document.addEventListener('bpn-fold', e => {
+    const t = e.target.getAttribute('data-popover-title') || '便條';
+    document.getElementById('log').innerHTML = '<div class="alert alert-dismissible fade show" role="alert">bpn-fold：「' + t + '」' +
+      (e.detail.open ? '展開' : '收合') + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="bp-popnote.js"></script>
+</body>
+</html>

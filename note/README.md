@@ -2,7 +2,7 @@
 
 單一 JavaScript 檔案的頁面提示工具包，包含兩個元件：
 
-- **Popnote**：用 `data-popover-*` 屬性把任何文字變成提示框，支援浮動提示、輪播、固定面板、Modal 與 Offcanvas。
+- **Popnote**：用 `data-popover-*` 屬性把任何文字變成提示框，支援浮動提示、輪播、固定面板、摺角便條、Modal 與 Offcanvas。
 - **Notice**：語意標籤 `<bp-notice>`，用來做公告列、促銷列與黏底提示。
 
 另有 `BpPopnote.annotate()`，可以不改 HTML，直接依文字內容替既有文章加上提示。最新加入 **金色電流主題**：金色配色加上沿邊框繞行的電流動畫。
@@ -20,6 +20,7 @@
   - [全域設定](#全域設定)
   - [自訂主題](#自訂主題)
   - [annotate：依文字自動加註](#annotate依文字自動加註)
+- [摺角便條](#摺角便條)
 - [金色電流主題](#金色電流主題)
   - [使用](#使用)
   - [三個層級的開關](#三個層級的開關)
@@ -209,6 +210,43 @@ BpPopnote.clearAnnotations('#article');  // 清除指定範圍內的加註，不
 ```
 
 規則除了 `text`、`within`、`occurrence`、`context` 之外，其餘欄位會對應到同名的 `data-popover-*` 屬性：`title`、`content`、`target`、`theme`、`placement`、`panel`、`label`、`maxwidth`、`fontsize`、`carouselAnim`、`modal`、`arrow`、`hint`（只有 `false` 有效）、`hintStyle`、`color`、`interval`、`offset`、`showBtn`、`btnHref`、`url`、`urlText`、`urlAlign`、`fx`。
+
+## 摺角便條
+
+在段落加上 `data-popover-fold`，右上角會出現摺起的紙角。點摺角，便條像紙張翻開一樣展開在段落旁邊，正文位置不動；再點一次摺回去。適合範文批改、逐段評語，或錄影時先給學生看乾淨的段落、講到時再翻開。點段落其他地方不會跳出提示。
+
+```html
+<p data-popover-fold data-popover-title="開頭段"
+   data-popover-content="改寫題目而不是照抄，並在最後一句清楚表態。">
+  In recent years, remote work has become increasingly common ...
+</p>
+
+<p data-popover-fold="below" data-popover-target="#fb-p2">...</p>
+<template id="fb-p2"><p>較長的評語可以放在 template。</p></template>
+
+<button onclick="BpPopnote.foldAll(true)">全部展開</button>
+```
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `data-popover-fold` | `right` | 開啟摺角便條。`right`、`left`、`below` 決定便條位置，只寫屬性不給值即為 `right`。 |
+| `data-popover-fold-width` | `280px` | 便條寬度（`right`、`left`），純數字視為 px。 |
+| `data-popover-fold-corner` | `22` | 摺角大小（px）。 |
+| `data-popover-fold-group` | 無 | 同組只能同時開一張。 |
+| `data-popover-fold-open` | 無 | 載入時就展開。 |
+
+內容與外觀沿用原有屬性：`data-popover-title`、`data-popover-content`、`data-popover-target`、`data-popover-theme`、`data-popover-fontsize`、`data-popover-border`、`data-popover-fx`。摺角顏色跟著主題的框線色，每張便條只用一個強調色。
+
+| API | 說明 |
+| --- | --- |
+| `BpPopnote.fold(el, open)` | 開啟或收合單張；省略 `open` 為切換。`el` 可以是元素或選擇器。 |
+| `BpPopnote.foldAll(open, scope)` | 一次開啟或收合，`scope` 可限定範圍。 |
+| `BpPopnote.initFolds()` | 手動初始化。頁面載入後才插入的段落會自動初始化，通常不需要呼叫。 |
+| `bpn-fold` 事件 | 開合時從段落冒泡，`e.detail.open` 為 `true` 或 `false`。 |
+
+全域預設：`PopoverConfig.set({ foldSide: 'right', foldWidth: '280px', foldCorner: 22 })`。
+
+範例：`bp-popnote-demo-11-12-26.html`。
 
 ## 金色電流主題
 
