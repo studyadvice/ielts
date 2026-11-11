@@ -112,7 +112,7 @@ ui-drill rightup-item[detail]{cursor:pointer;}
 ui-drill rightup-item[detail]:hover .uid-ru-body{color:${PALETTE.vanilla};}
 ui-drill rightup-item.uid-on{box-shadow:inset 3px 0 0 var(--uid-tile-on);padding-left:12px;}
 
-ui-drill .uid-head{font-size:1.1rem;font-weight:700;color:${PALETTE.violet};margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid ${PALETTE.violet};}
+ui-drill .uid-head{font-size:1.1rem;font-weight:700;color:var(--uid-head,${PALETTE.blue});margin:0 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid var(--uid-head-line,var(--uid-head,${PALETTE.blue}));}
 ui-drill .uid-head:empty{display:none;}
 ui-drill .uid-body{line-height:1.7;}
 ui-drill .uid-body > :first-child{margin-top:0;}
@@ -256,6 +256,10 @@ ${variantCSS}
       s.setProperty('--uid-tile', color(a('tile-color')) || PALETTE.shell);
       s.setProperty('--uid-tile-on', color(a('accent')) || PALETTE.blue);
       s.setProperty('--uid-icon', color(a('icon-color')) || PALETTE.base);
+      /* 欄位標題（mid-title、right-title、rightup-title）的文字色與下方分隔線色 */
+      const headC = color(a('head-color')) || PALETTE.blue;
+      s.setProperty('--uid-head', headC);
+      s.setProperty('--uid-head-line', color(a('head-line-color')) || headC);
 
       const wrap = this._wrap = el('div', 'uid-wrap');
       if (has('height')) wrap.style.height = num(a('height'), 0) + 'px';
