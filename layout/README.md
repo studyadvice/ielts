@@ -688,11 +688,19 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `flip-bar-color` | 兩者皆可 | 顏色 | 倒數條顏色，預設跟隨卡片色。 |
 | `flip-color` | 兩者皆可 | 顏色 | 翻面期間的卡片色，翻回時恢復。 |
 | `flip-animation` | 兩者皆可 | `fade`、`slide`、`none` | 翻面動畫，預設 `fade`。 |
+| `flip-deck` | `<ui-cards>` | 2 以上的整數、`all`、`false` | 翻面牌組（11-11-26 新增）：連續 N 張有 `auto-flip` 的翻面卡片合成同一格，翻回正面時直接換成下一張的正面。`all` 為連續的全部合成一格；不寫或 `false` 維持原狀，每張各佔一格。 |
+| `flip-deck="false"` | `<card-item>` | 布林 | 這張不參與合併。 |
+| `deck-start` | `<card-item>` | 布林 | 從這張另起一組。 |
+| `deck-loop` | `<ui-cards>` | `false` | 最後一張翻回後停在那張的正面。預設回到第一張。 |
+| `deck-counter` | `<ui-cards>` | `false` | 不顯示右下角的「目前 / 總數」。 |
 
 - 寫在 `<ui-cards>` 上的 `flip-*` 是整組預設值，卡片自己的設定優先。
 - 翻面時卡片維持原本高度，背面較短也不會讓版面跳動。
 - 翻面卡片可以用 Tab 取得焦點，按 Enter 或空白鍵翻面。
 - 翻面卡片本身的 `detail`、`href` 不作用；要開細節請在卡片內放 `detail` 按鈕。
+- 翻面牌組只合併「連續」且有 `auto-flip` 的翻面卡片；沒有 `auto-flip`、停用或寫了 `flip-deck="false"` 的卡片會中斷合併，維持獨立一格。
+- 翻面牌組的格子高度取組內最高的一張，換張時版面不會跳動；組內第一張的 `span` 會套用到整格。
+- 翻回的方式不限：倒數結束、點擊翻回（`flip-toggle`）或 `flip(卡片, false)` 都會換到下一張；`unflipAll()` 只翻回、不換張。
 
 ### 細節按鈕屬性
 
@@ -812,6 +820,19 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 <template id="bk-pervasive"><p>widespread、prevalent</p></template>
 ```
 
+**翻面牌組（每三張合成一格）**
+
+```html
+<ui-cards cols="2" flip-deck="3" auto-flip="2500" flip-toggle flip-color="green">
+  <card-item label="mitigate" back="減輕、緩和"></card-item>
+  <card-item label="pervasive" back="普遍的"></card-item>
+  <card-item label="resilient" back="有韌性的"></card-item>
+  <card-item label="tangible" back="具體的"></card-item>
+  <card-item label="viable" back="可行的"></card-item>
+  <card-item label="scrutiny" back="仔細審查"></card-item>
+</ui-cards>
+```
+
 **顯示按鈕與內容區角標**
 
 ```html
@@ -832,12 +853,16 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | --- | --- | --- | --- |
 | `ui-cards:reveal` | 被顯示的區塊（會冒泡） | `{ id, removed, button }` | `reveal` 按鈕顯示區塊時。 |
 | `ui-cards:flip` | 被翻面的卡片（會冒泡） | `{ card, flipped }` | 卡片翻面或翻回時。 |
+| `ui-cards:deck` | 換上來的卡片（會冒泡） | `{ card, index, total, from }` | 翻面牌組換到下一張時。 |
 
 ```js
 const uc = document.querySelector('ui-cards');
 uc.flip(0);          // 第一張卡片翻面或翻回；也可以傳入 card-item 元素
 uc.flip(0, false);   // 強制翻回
-uc.unflipAll();      // 全部翻回正面
+uc.unflipAll();      // 全部翻回正面（翻面牌組不換張）
+uc.resetDecks();     // 翻面牌組全部回到第一張的正面
+uc.decks;            // 翻面牌組清單：[{ cards, index }, ...]
+uc.flip(4);          // 牌組裡沒在顯示的卡片，會先換到那一張再翻面
 ```
 
 ---
@@ -1009,3 +1034,14 @@ uc.unflipAll();      // 全部翻回正面
 - **`head-tab` 與 `panel-height`：** 內容區可捲動時，頁籤改成放在框內左上角，避免被裁掉。
 - **電流的閃電：** 在右上角；有角標或用 `head-filled` 時移到右下角。
 
+## 授權
+
+MIT License
+
+Copyright (c) 2026 studyadvice
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

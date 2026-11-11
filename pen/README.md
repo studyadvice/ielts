@@ -179,10 +179,43 @@ NG 02  按鍵 06:51.0    建議剪輯點 06:48.0
 | `target` | `_blank` | 同分頁 | 另開分頁 |
 | `offset` | 數字 | 16 | 同頁跳轉時保留的上方距離（px），給固定頁首用 |
 | `clear-ink` | 布林屬性 | 不清除 | 跳轉前先清除繪圖層筆跡 |
+| `transition` | 見下方轉場清單 | 無 | 跳轉時播放簡報式轉場（11-11-26 新增）。不寫或寫 `none` 時維持原本的平滑捲動 |
+| `transition-ms` | 150 至 3000 | 600 | 轉場時間（毫秒） |
+| `transition-edge` | 品牌色名稱或色碼 | 無 | 移動中畫面邊緣的亮色線，深色背景切換時讓動態更明顯 |
 
 標籤內的文字會顯示在圖示右側當標籤，留空則只顯示圖示。
 
 使用 `dot-style="icon"` 時，若頁面還沒引入 Bootstrap Icons，元件會自動從 jsDelivr 載入一次；已引入則不重複載入。缺少 `icon` 屬性時退回 `circle-fill`。
+
+#### 轉場（View Transitions API）
+
+瀏覽器先拍下舊畫面，換成新畫面後在兩者之間做動畫，新舊畫面會同時出現，效果接近簡報切換投影片。
+
+```html
+<dot-go href="#part2" transition="cube" transition-edge="key">下一段</dot-go>
+<dot-go href="lesson-02.html" transition="push-left" transition-ms="800">下一課</dot-go>
+
+<!-- 全頁預設：寫在工具列（或繪圖層）上，<dot-go> 自己的屬性優先 -->
+<ui-ink-bar data-transition="push" data-transition-edge="key"></ui-ink-bar>
+```
+
+| 種類 | 效果 |
+|---|---|
+| `fade` | 交叉淡化 |
+| `push`、`push-left`、`push-right`、`push-up`、`push-down` | 新畫面把舊畫面推出去 |
+| `cover`、`cover-*` | 新畫面滑入蓋住舊畫面 |
+| `uncover`、`uncover-*` | 舊畫面滑走，露出新畫面 |
+| `zoom-in`、`zoom-out` | 新畫面從小放大，或舊畫面縮小離開 |
+| `flip`、`flip-*` | 以畫面中線為軸 3D 翻轉 |
+| `cube`、`cube-*` | 立方體旋轉 |
+| `morph` | 其餘畫面交叉淡化，只讓 `data-morph` 元素移動變形 |
+
+- **方向**：`push`、`cover`、`uncover`、`flip`、`cube` 不寫方向時自動判斷。同頁往下跳時新畫面從下方進來，往上跳時從上方進來；跨頁一律從右邊進來。
+- **轉化**：新舊兩處的對應元素加上相同的 `data-morph="名稱"`，轉場時會從舊位置移動並變形到新位置，任何種類都能搭配。
+- **深色背景**：兩個深色畫面互相淡化幾乎看不出來，建議選推入、覆蓋、翻轉、立方體這類靠位移的效果，並加上 `transition-edge`。
+- **跨頁轉場**：出發頁與目的頁都要在 `<head>` 裡載入 `ink-pen.js`，且兩頁同網域。放在 `</body>` 前的話，目的頁來不及在第一次繪製前宣告轉場，會直接換頁，console 也會提示。只有從 `<dot-go>` 出發的換頁會播放，一般連結、上一頁與重新整理都維持原狀。
+- **固定介面**：工具列與 NG 遮罩不參與轉場，停在原位。
+- **支援度**：同頁需要 Chrome、Edge 111 或 Safari 18 以上，跨頁需要 Chrome、Edge 126 或 Safari 18.2 以上。不支援時直接照原本方式跳轉，不會出錯。錄影建議用 Chrome 或 Edge。
 
 | 方法 | 說明 |
 |---|---|
@@ -221,6 +254,9 @@ document.addEventListener('dot-go', function (e) {
 | `toggleAnswers()` | 只要還有沒顯示的就全部顯示，否則全部收起 |
 | `dots()` | 頁面上所有 `<dot-go>` |
 | `dotStyles` | 支援的圖示樣式清單 |
+| `transitions` | 支援的轉場種類清單 |
+| `transitionSupport` | 瀏覽器支援狀況 `{ sameDocument, crossDocument }` |
+| `transition(name, fn, opts)` | 自訂換畫面時套用轉場，`fn` 負責實際換畫面；`opts` 可給 `ms`、`edge`、`direction`、`scope` |
 | `palette`、`penColorOptions` | 配色表與筆色選單 |
 | `widthRange`、`handwriteRange`、`slotRange` | 各項數值範圍 |
 
@@ -249,4 +285,16 @@ document.addEventListener('dot-go', function (e) {
 
 ## 示範
 
-`ink-pen-demo-10-31-26.html` 與 `ink-pen.js` 放在同一資料夾，用瀏覽器開啟即可。NG 標記的示範在 `ink-pen-demo-11-10-26.html`。
+`ink-pen-demo-10-31-26.html` 與 `ink-pen.js` 放在同一資料夾，用瀏覽器開啟即可。NG 標記的示範在 `ink-pen-demo-11-10-26.html`，`<dot-go>` 轉場的示範在 `ink-pen-demo-11-11-26.html`。
+
+## 授權
+
+MIT License
+
+Copyright (c) 2026 studyadvice
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

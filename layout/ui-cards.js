@@ -178,7 +178,7 @@ ui-cards card-item[disabled]{border-style:dashed;cursor:not-allowed;filter:grays
 ui-cards card-item[data-flip]{cursor:pointer;}
 ui-cards card-item[data-flip]:focus-visible{outline:2px solid ${PALETTE.vanilla};outline-offset:2px;}
 ui-cards card-item > .uic-back{display:none;padding:var(--uic-pad);grid-column:1 / -1;grid-row:1 / -1;}
-ui-cards card-item[data-flipped] > :not(.uic-back):not(.uic-badge):not(.uic-flipbar){display:none;}
+ui-cards card-item[data-flipped] > :not(.uic-back):not(.uic-badge):not(.uic-flipbar):not(.uic-deck-count){display:none;}
 ui-cards card-item[data-flipped] > .uic-back{display:block;}
 ui-cards card-item[data-flip-anim="fade"][data-flipped] > .uic-back,
 ui-cards card-item[data-flip-anim="fade"].uic-unflip > *{animation:uic-fade .35s ease;}
@@ -186,6 +186,12 @@ ui-cards card-item[data-flip-anim="slide"][data-flipped] > .uic-back,
 ui-cards card-item[data-flip-anim="slide"].uic-unflip > *{animation:uic-slide .35s ease;}
 ui-cards .uic-flip-hint{font-size:0.75rem;color:${PALETTE.indigo};margin:10px 0 0 0;}
 ui-cards .uic-flipbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--uic-flipbar, var(--uic-c));transform-origin:left center;animation:uic-count linear forwards;}
+/* 翻面牌組（flip-deck）：同一格疊放多張卡片，只顯示目前這張；格子高度取最高的一張，換張時版面不跳動 */
+ui-cards .uic-deck{display:grid;min-width:0;}
+ui-cards .uic-deck > card-item{grid-area:1 / 1;min-width:0;}
+ui-cards .uic-deck > card-item:not([data-deck-on]){visibility:hidden;}
+ui-cards .uic-deck-count{position:absolute;right:10px;bottom:9px;z-index:1;font-size:0.7rem;line-height:1;color:${PALETTE.gray};pointer-events:none;}
+ui-cards card-item[data-style="filled"] .uic-deck-count{color:var(--uic-on);}
 @keyframes uic-fade{from{opacity:0}to{opacity:1}}
 @keyframes uic-slide{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
 @keyframes uic-count{from{transform:scaleX(1)}to{transform:scaleX(0)}}
@@ -360,6 +366,7 @@ ${variantCSS}
         grid.append(c);
       });
       wrap.append(grid);
+      this._buildDecks();
       this._decorateButtons(grid);
 
       /* 內容區：有任何 detail 才建立 */
@@ -666,8 +673,9 @@ ${variantCSS}
       p.col.style.setProperty('--uic-pbadge-w', (bd.offsetWidth + 16) + 'px');
     }
 
-    /* 翻面；want 為 true／false 時強制指定狀態（API 與倒數用），省略時切換 */
-    _flip(c, want) {
+    /* 翻面；want 為 true／false 時強制指定狀態（API 與倒數用），省略時切換。
+       stay 為 true 時，牌組裡的卡片翻回後不換下一張（unflipAll、resetDecks 用） */
+    _flip(c, want, stay) {
       const on = c.hasAttribute('data-flipped');
       const next = want == null ? !on : !!want;
       if (next === on) return;
@@ -700,16 +708,120 @@ ${variantCSS}
       }
       c.setAttribute('aria-pressed', String(next));
       c.dispatchEvent(new CustomEvent('ui-cards:flip', { bubbles: true, detail: { card: c, flipped: next } }));
+      if (!next && !stay && c._deck) this._deckNext(c);
+    }
+
+    /* ---------- 翻面牌組（flip-deck） ----------
+       連續 N 張有 auto-flip 的翻面卡片合成同一格：翻回正面時直接換成下一張的正面。
+       flip-deck 不寫或寫 false 時維持原狀，每張各佔一格。 */
+    _buildDecks() {
+      this._decks = [];
+      const mode = (this.getAttribute('flip-deck') || '').trim().toLowerCase();
+      if (!mode || mode === 'false') return;
+      const size = mode === 'all' ? Infinity : parseInt(mode, 10);
+      if (!(size >= 2)) {
+        console.warn('[ui-cards] flip-deck 需為 2 以上的整數或 all，目前為「' + mode + '」，已略過');
+        return;
+      }
+      const ok = c => c.hasAttribute('data-flip') && !c.hasAttribute('disabled') && c._autoFlip > 0
+        && (c.getAttribute('flip-deck') || '').trim().toLowerCase() !== 'false';
+      const groups = [];
+      let cur = [];
+      const close = () => { if (cur.length > 1) groups.push(cur); cur = []; };
+      (this._cards || []).forEach(c => {
+        if (!ok(c)) { close(); return; }
+        if (cur.length && (cur.length >= size || c.hasAttribute('deck-start'))) close();
+        cur.push(c);
+      });
+      close();
+      if (!groups.length) {
+        console.warn('[ui-cards] flip-deck 只合併連續、且有 auto-flip 的翻面卡片，目前沒有可合併的卡片');
+        return;
+      }
+      const loop = (this.getAttribute('deck-loop') || '').trim().toLowerCase() !== 'false';
+      const counter = (this.getAttribute('deck-counter') || '').trim().toLowerCase() !== 'false';
+      groups.forEach(cards => {
+        const wrap = el('div', 'uic-deck');
+        cards[0].before(wrap);
+        const span = cards[0].style.gridColumn;
+        if (span) wrap.style.gridColumn = span;
+        const deck = { wrap, cards, i: 0, loop };
+        cards.forEach((c, k) => {
+          c.style.removeProperty('grid-column');
+          c._deck = deck;
+          c._deckIdx = k;
+          if (counter) c.append(el('div', 'uic-deck-count', `${k + 1} / ${cards.length}`));
+          wrap.append(c);
+        });
+        this._decks.push(deck);
+        this._deckShow(deck, 0, false);
+      });
+    }
+
+    _deckShow(deck, i, animate) {
+      deck.cards.forEach((c, k) => {
+        const on = k === i;
+        c.toggleAttribute('data-deck-on', on);
+        c.inert = !on;   /* 疊在下面的卡片不能點、也不會被 Tab 選到 */
+      });
+      deck.i = i;
+      if (animate) {
+        const c = deck.cards[i];
+        c.classList.remove('uic-unflip');
+        void c.offsetWidth;
+        c.classList.add('uic-unflip');
+        setTimeout(() => c.classList.remove('uic-unflip'), 400);
+      }
+    }
+
+    /* 目前這張翻回正面後換下一張；最後一張依 deck-loop 決定回到第一張或停住 */
+    _deckNext(c) {
+      const d = c._deck;
+      if (!d || d.cards[d.i] !== c) return;
+      let n = d.i + 1;
+      if (n >= d.cards.length) {
+        if (!d.loop) return;
+        n = 0;
+      }
+      const hadFocus = document.activeElement === c;
+      this._deckShow(d, n, true);
+      const nc = d.cards[n];
+      if (hadFocus) nc.focus();
+      nc.dispatchEvent(new CustomEvent('ui-cards:deck', {
+        bubbles: true,
+        detail: { card: nc, index: n, total: d.cards.length, from: c }
+      }));
     }
 
     /* API：flip(卡片元素或索引, true／false／省略)、unflipAll() */
     flip(target, state) {
       const c = typeof target === 'number' ? (this._cards || [])[target] : target;
-      if (c && c.hasAttribute('data-flip')) this._flip(c, state == null ? !c.hasAttribute('data-flipped') : state);
+      if (!c || !c.hasAttribute('data-flip')) return;
+      /* 牌組裡沒在顯示的卡片：先換到那一張 */
+      const d = c._deck;
+      if (d && d.cards[d.i] !== c) {
+        const shown = d.cards[d.i];
+        if (shown.hasAttribute('data-flipped')) this._flip(shown, false, true);
+        this._deckShow(d, c._deckIdx, true);
+      }
+      this._flip(c, state == null ? !c.hasAttribute('data-flipped') : state);
     }
 
     unflipAll() {
-      (this._cards || []).forEach(c => { if (c.hasAttribute('data-flipped')) this._flip(c, false); });
+      (this._cards || []).forEach(c => { if (c.hasAttribute('data-flipped')) this._flip(c, false, true); });
+    }
+
+    /* 翻面牌組：全部回到第一張的正面；decks 取得每組的卡片與目前位置 */
+    resetDecks() {
+      (this._decks || []).forEach(d => {
+        const shown = d.cards[d.i];
+        if (shown.hasAttribute('data-flipped')) this._flip(shown, false, true);
+        if (d.i !== 0) this._deckShow(d, 0, true);
+      });
+    }
+
+    get decks() {
+      return (this._decks || []).map(d => ({ cards: d.cards.slice(), index: d.i }));
     }
 
     _clear() {

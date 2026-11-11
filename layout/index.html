@@ -38,6 +38,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <button type="button" class="part-btn" data-go="ui-cards-11-03-26"><span class="d bp-text-yellow">11-03-26</span><span class="t">ui-cards 示範</span></button>
       <button type="button" class="part-btn" data-go="ui-cards-11-04-26"><span class="d bp-text-yellow">11-04-26</span><span class="t">ui-cards 示範 | 11-04-26</span></button>
       <button type="button" class="part-btn" data-go="ui-cards-11-05-26"><span class="d bp-text-yellow">11-05-26</span><span class="t">ui-cards 範例：卡片實心與選中實心</span></button>
+      <button type="button" class="part-btn" data-go="ui-cards-11-11-26"><span class="d bp-text-yellow">11-11-26</span><span class="t">ui-cards 範例：翻面牌組 flip-deck</span></button>
       <p class="grp fs-small bp-text-gray">ui-steps</p>
       <button type="button" class="part-btn" data-go="ui-steps-11-03-26"><span class="d bp-text-yellow">11-03-26</span><span class="t">ui-steps 示範</span></button>
       <p class="grp fs-small bp-text-gray">其他頁面</p>
@@ -785,6 +786,139 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 <script src="ui-cards.js"></script>
 <script src="../mini/mini-table.js"></script>
+</template>
+<template data-part id="ui-cards-11-11-26" data-component="ui-cards" data-date="11-11-26"
+          data-title="ui-cards 範例：翻面牌組 flip-deck" data-html-attrs="lang=&quot;zh-Hant&quot; data-bs-theme=&quot;dark&quot;" data-from="ui-cards-demo-11-11-26.html">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 範例：翻面牌組 flip-deck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../bp-styles.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{font-size:1rem;margin:0 0 12px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  .old{color:#EF6661} .new{color:#71CD76}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  code{color:#FF91D7}
+  .note{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.9rem;padding:10px 16px;margin:12px 0 0 0}
+  .tools{display:flex;gap:12px;align-items:center;margin:16px 0 0 0}
+  #log{font-size:.85rem;margin:12px 0 0 0;padding:8px 16px}
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+<h1>ui-cards：翻面牌組 <code>flip-deck</code></h1>
+<div class="alert note"><i class="bi bi-layers" style="color:#778CE1"></i>
+  有 <code>auto-flip</code> 的翻面卡片，可以把連續 N 張合成同一格：翻面後倒數結束（或點擊翻回），這一格直接換成下一張的正面，右下角顯示「目前 / 總數」。
+  不寫 <code>flip-deck</code> 或寫 <code>flip-deck="false"</code> 時維持原狀，每張各佔一格。
+  格子高度取組內最高的一張，換張時版面不會跳動。
+</div>
+
+<h2>同一組六張單字卡：維持現狀 vs 合併成牌組</h2>
+<div class="cmp">
+  <div>
+    <h3 class="old"><i class="bi bi-grid-3x2"></i> 不寫 flip-deck（六張各佔一格）</h3>
+    <ui-cards cols="3" auto-flip="2500" flip-toggle flip-color="green" flip-hint="點擊翻回">
+      <card-item label="mitigate" note="點卡片看意思" back="<b>減輕、緩和</b><br>mitigate the impact of"></card-item>
+      <card-item label="pervasive" note="點卡片看意思" back="<b>普遍的</b><br>widespread、prevalent"></card-item>
+      <card-item label="resilient" note="點卡片看意思" back="<b>有韌性的</b><br>bounce back quickly"></card-item>
+      <card-item label="tangible" note="點卡片看意思" back="<b>具體的、有形的</b><br>tangible benefits"></card-item>
+      <card-item label="viable" note="點卡片看意思" back="<b>可行的</b><br>a viable option"></card-item>
+      <card-item label="scrutiny" note="點卡片看意思" back="<b>仔細審查</b><br>under close scrutiny"></card-item>
+    </ui-cards>
+  </div>
+  <div>
+    <h3 class="new"><i class="bi bi-layers"></i> flip-deck="3"（每三張合成一格）</h3>
+    <ui-cards id="deckDemo" cols="2" flip-deck="3" auto-flip="2500" flip-toggle flip-color="green" flip-hint="點擊翻回，換下一張">
+      <card-item label="mitigate" note="點卡片看意思" back="<b>減輕、緩和</b><br>mitigate the impact of"></card-item>
+      <card-item label="pervasive" note="點卡片看意思" back="<b>普遍的</b><br>widespread、prevalent"></card-item>
+      <card-item label="resilient" note="點卡片看意思" back="<b>有韌性的</b><br>bounce back quickly"></card-item>
+      <card-item label="tangible" note="點卡片看意思" back="<b>具體的、有形的</b><br>tangible benefits"></card-item>
+      <card-item label="viable" note="點卡片看意思" back="<b>可行的</b><br>a viable option"></card-item>
+      <card-item label="scrutiny" note="點卡片看意思" back="<b>仔細審查</b><br>under close scrutiny"></card-item>
+    </ui-cards>
+    <div class="tools">
+      <button type="button" class="btn btn-sm btn-key-outline" id="btnReset"><i class="bi bi-arrow-counterclockwise"></i> resetDecks()</button>
+      <button type="button" class="btn btn-sm btn-violet-outline" id="btnJump"><i class="bi bi-skip-forward"></i> flip(4)：直接翻第 5 張</button>
+    </div>
+    <div class="alert alert-dark" id="log">ui-cards:deck 事件會顯示在這裡。</div>
+  </div>
+</div>
+
+<h2>flip-deck="all"、deck-start 與 deck-loop="false"</h2>
+<div class="cmp">
+  <ui-cards cols="3" flip-deck="all" deck-loop="false" auto-flip="2000" flip-color="yellow" color="indigo">
+    <card-item label="Part 1：第一題" note="all：連續的卡片全部合成一格" back="Do you work or study?"></card-item>
+    <card-item label="Part 1：第二題" note="all：連續的卡片全部合成一格" back="What do you like about your job?"></card-item>
+    <card-item label="Part 1：第三題" note="all：連續的卡片全部合成一格" back="Would you change jobs in the future?"></card-item>
+    <card-item label="Part 2：題卡" note="deck-start：從這張另起一組" deck-start back="Describe a book you enjoyed."></card-item>
+    <card-item label="Part 2：提示" note="deck-start：從這張另起一組" back="what it is, when you read it, why you liked it"></card-item>
+    <card-item label="Part 3：不自動翻回" note="沒有 auto-flip，不參與合併" auto-flip="0" flip-toggle back="Why do people read less nowadays?"></card-item>
+  </ui-cards>
+  <div>
+    <ul style="font-size:.9rem;line-height:1.9;margin:0;padding:0 0 0 20px">
+      <li><code>flip-deck="all"</code>：連續、有 <code>auto-flip</code> 的卡片全部合成一格。</li>
+      <li><code>deck-start</code>：寫在卡片上，從這張另起一組，所以 Part 1 與 Part 2 分成兩格。</li>
+      <li>最後一張「Part 3」寫了 <code>auto-flip="0"</code>，不符合條件，維持獨立一格。卡片也可以寫 <code>flip-deck="false"</code> 排除自己。</li>
+      <li><code>deck-loop="false"</code>：最後一張翻回後停在那張的正面，不會回到第一張。</li>
+    </ul>
+  </div>
+</div>
+
+<h2>程式碼對照</h2>
+<div class="cmp">
+  <div><h3 class="old"><i class="bi bi-x-circle"></i> 原本（每張各佔一格）</h3><pre>&lt;ui-cards cols="3" auto-flip="2500" flip-toggle&gt;
+  &lt;card-item label="mitigate" back="減輕"&gt;&lt;/card-item&gt;
+  &lt;card-item label="pervasive" back="普遍的"&gt;&lt;/card-item&gt;
+  &lt;card-item label="resilient" back="有韌性的"&gt;&lt;/card-item&gt;
+&lt;/ui-cards&gt;</pre></div>
+  <div><h3 class="new"><i class="bi bi-check-circle"></i> 11-11-26（三張合成一格）</h3><pre>&lt;ui-cards cols="3" auto-flip="2500" flip-toggle
+  flip-deck="3"&gt;          &lt;!-- 2 以上的整數或 all；false 為維持原狀 --&gt;
+  &lt;card-item label="mitigate" back="減輕"&gt;&lt;/card-item&gt;
+  &lt;card-item label="pervasive" back="普遍的"&gt;&lt;/card-item&gt;
+  &lt;card-item label="resilient" back="有韌性的"&gt;&lt;/card-item&gt;
+&lt;/ui-cards&gt;
+
+&lt;!-- 其他屬性 --&gt;
+deck-loop="false"     最後一張翻回後停住（預設回到第一張）
+deck-counter="false"  不顯示「目前 / 總數」
+&lt;card-item deck-start&gt;      從這張另起一組
+&lt;card-item flip-deck="false"&gt; 這張不參與合併
+
+// API 與事件
+uc.resetDecks();   // 全部回到第一張的正面
+uc.decks;          // [{ cards, index }, ...]
+uc.flip(4);        // 牌組裡的卡片會先換到那一張再翻面
+uc.addEventListener('ui-cards:deck', e =&gt; e.detail); // { card, index, total, from }</pre></div>
+</div>
+</div>
+
+<script src="ui-cards.js"></script>
+<script>
+  (function () {
+    const uc = document.getElementById('deckDemo');
+    const log = document.getElementById('log');
+    uc.addEventListener('ui-cards:deck', (e) => {
+      const d = e.detail;
+      log.className = 'alert alert-success';
+      log.textContent = `ui-cards:deck → 換到「${d.card.getAttribute('label')}」，第 ${d.index + 1} / ${d.total} 張（上一張：${d.from.getAttribute('label')}）`;
+    });
+    document.getElementById('btnReset').addEventListener('click', () => {
+      uc.resetDecks();
+      log.className = 'alert alert-info';
+      log.textContent = 'resetDecks()：所有牌組回到第一張的正面。';
+    });
+    document.getElementById('btnJump').addEventListener('click', () => {
+      uc.flip(4);
+      log.className = 'alert alert-info';
+      log.textContent = 'flip(4)：第二組先換到「viable」，再翻面。';
+    });
+  })();
+</script>
 </template>
 <template data-part id="ui-steps-11-03-26" data-component="ui-steps" data-date="11-03-26"
           data-title="ui-steps 示範" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-steps-demo-11-03-26.html">
