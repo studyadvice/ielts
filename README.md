@@ -2092,6 +2092,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `group` | 空 | 同組按鈕互斥，打開一個時其他自動收合（手風琴效果）。 |
 | `href` | 空 | 點擊後前往的網址。與 `target` 同時設定時，會先切換目標再跳頁。 |
 | `href-target` | `_self` | 開啟位置，`_blank` 為新分頁。按住 Ctrl 或 Cmd 點擊也會開新分頁。 |
+| `remove-target` | 空 | 點擊後把這些 id 的元素從網頁移除，重新整理前不會復原；id 用逗號或空白分隔，`#` 可省略。見下方「移除元素」。 |
 
 **浮動提示**
 
@@ -2125,6 +2126,19 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 - `<template>` 在第一次展開時才渲染到緊接其後的 `<div class="ubtn-tpl-out" data-ubtn-from="模板id">`，之後的開合都作用在這個 div，輸入過的內容會保留。template 的 `class` 與 `style` 會帶到這個 div，內容裡的 ui-plus 元件會自動初始化。
 - 多顆按鈕指向同一個 template 時共用同一份輸出。
 - 渲染後在 template 上觸發會冒泡的 `ubtn-template-rendered` 事件，`e.detail` 含 `template`、`output`、`button`。
+
+**移除元素**
+
+```html
+<div id="tip-intro">作答說明……</div>
+<ui-btn icon="bi-x-circle" theme="red" remove-target="tip-intro">我讀完了，關掉說明</ui-btn>
+```
+
+- 元素先依 `animation` 與 `anim-duration` 收合，再從網頁刪除；`animation="none"` 時立即刪除。重新整理網頁前不會復原。
+- 可以和 `target`、`href`、`alert` 等一起使用，同一次點擊會先開合目標，再移除元素。
+- 只寫 `remove-target` 時，按鈕不會去開合緊接在後面的元素，目標全部移除後按鈕自動停用。
+- 移除後在 `<ui-btn>` 上觸發會冒泡的 `ubtn-removed` 事件，`e.detail` 含 `ids`（這次移除的 id）與 `button`。
+- 範例：`ui-plus-demo-11-11-26.html`。
 
 **揭曉 mini-table 的儲存格**
 

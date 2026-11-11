@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-btn 移除元素</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="bp-styles.css">
+<style>
+/* 只放 bp-styles.css 沒有的版面設定；間距一律 px */
+body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;}
+.page{padding:32px 40px 80px 40px;}
+.demo{border-radius:12px;padding:24px;margin:0 0 32px 0;}
+.stage{border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.btn-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;}
+.card-box{border-radius:8px;padding:12px 16px;line-height:1.7;}
+.card-box h3{font-size:1.05rem;margin:0 0 6px 0;}
+.card-box p{margin:0;}
+.code-box{border-radius:8px;padding:16px;margin:0;max-height:640px;overflow:auto;}
+.code-box code{font-size:.82rem;white-space:pre;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;}
+.ref th,.ref td{border-bottom:1px solid var(--bp-gray);padding:8px 12px;text-align:left;vertical-align:top;}
+.ref code{color:var(--bp-playful);}
+#rm-log .alert{background:var(--bp-key);color:var(--bp-base);border:none;font-size:.95rem;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1 class="fs-larger bp-text-key">ui-btn 移除元素</h1>
+  <p class="fs-regular bp-text-calm" style="margin:0 0 24px 0">ui-plus.js 的 <code>&lt;ui-btn&gt;</code> 新增 <code>remove-target</code> 屬性：點擊後把指定 id 的元素從網頁移除，重新整理網頁前不會復原。建立日期 11-11-26。</p>
+  <div id="rm-log"></div>
+
+  <section class="demo bp-border-gray" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例一：移除一個 div</h2>
+    <p class="bp-text-shell">最常見的用法：讀完就關掉的說明框。按鈕只負責移除，目標移除後按鈕自動停用。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="card-box bp-border-yellow" id="tip-intro">
+  <h3 class="bp-text-yellow">作答說明</h3>
+  <p>Part 2 有一分鐘準備時間，先寫下三個關鍵詞，再開始說。</p>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-x-circle" theme="red" remove-target="tip-intro">我讀完了，關掉說明</ui-btn>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例二：一次移除多個元素，淡出</h2>
+    <p class="bp-text-shell"><code>remove-target</code> 和 <code>targets</code> 一樣，可以寫多個 id，逗號或空白分隔，<code>#</code> 可省略。動畫沿用 <code>animation</code> 與 <code>anim-duration</code>；<code>animation="none"</code> 時立即移除。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<div class="card-box bp-border-green" id="wrong-a">
+  <p><s>I very like it.</s> 刪掉這種常見錯誤。</p>
+</div>
+<div class="card-box bp-border-blue" id="wrong-b">
+  <p><s>It makes me relax.</s> 刪掉這種常見錯誤。</p>
+</div>
+<div class="card-box bp-border-violet">
+  <p>這張卡不在 remove-target 裡，會留下來。</p>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-trash3" theme="pink" animation="fade" anim-duration="600"
+          remove-target="wrong-a, #wrong-b">刪掉兩個錯誤句</ui-btn>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray" data-demo>
+    <h2 class="fs-large bp-text-yellow">範例三：展開答案，同時移除提示</h2>
+    <p class="bp-text-shell">和 <code>target</code> 一起使用時，同一次點擊會展開答案並移除提示。按鈕還有展開與收合的功能，所以不會停用；提示移除後不會再出現。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<p class="bp-text-shell">Do you prefer to study alone or with others?</p>
+<div class="card-box bp-border-indigo" id="hint-1">
+  <p class="bp-text-indigo">提示：先選一邊，再給一個具體情境。</p>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-eye" icon-active="bi-eye-slash" theme="key" chevron
+          target="ans-1" remove-target="hint-1" label-open="收起答案">看參考答案</ui-btn>
+</div>
+<div class="card-box bp-border-key" id="ans-1" style="display:none">
+  <p>Definitely alone. When I study with friends, we end up chatting about everything except the exam.</p>
+</div>
+    </script>
+  </section>
+
+  <section class="demo bp-border-gray">
+    <h2 class="fs-large bp-text-yellow">新增的屬性與事件</h2>
+    <table class="ref">
+      <thead><tr><th class="bp-text-key" style="width:200px">項目</th><th class="bp-text-key" style="width:300px">範例</th><th class="bp-text-key">說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>remove-target</code></td><td><code>remove-target="a, b #c"</code></td><td>新增。點擊後要移除的元素 id，逗號或空白分隔，<code>#</code> 可省略。元素先依 <code>animation</code> 收合，再從網頁刪除；重新整理網頁前不會復原。找不到的 id 會在主控台提示。</td></tr>
+        <tr><td>按鈕停用</td><td></td><td>按鈕只設定 <code>remove-target</code>，沒有 <code>target</code>、<code>href</code>、<code>alert</code>、<code>mini-table-id</code>、<code>unlock-chunk</code> 時，目標全部移除後按鈕自動停用。</td></tr>
+        <tr><td>緊鄰元素</td><td></td><td>只寫 <code>remove-target</code> 時，按鈕不會再去開合緊接在後面的元素。</td></tr>
+        <tr><td><code>ubtn-removed</code> 事件</td><td><code>e.detail.ids</code></td><td>新增。從 <code>&lt;ui-btn&gt;</code> 冒泡，<code>e.detail</code> 含 <code>ids</code>（這次移除的 id）與 <code>button</code>。</td></tr>
+      </tbody>
+    </table>
+<pre class="code-box bp-bg-base bp-border-bg-alternative" style="margin:16px 0 0 0"><code class="bp-text-calm">修改前：沒有移除功能，只能用 target 收合，收合後仍留在網頁裡，再按一次就會回來
+&lt;ui-btn target="tip-intro"&gt;關掉說明&lt;/ui-btn&gt;
+
+修改後：remove-target 直接把元素從網頁刪除，不會再出現
+&lt;ui-btn remove-target="tip-intro"&gt;我讀完了，關掉說明&lt;/ui-btn&gt;</code></pre>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+/* 用 Bootstrap alert 顯示移除事件 */
+document.addEventListener('ubtn-removed', function (e) {
+  document.getElementById('rm-log').innerHTML =
+    '<div class="alert alert-dismissible fade show" role="alert">ubtn-removed：已移除 #' + e.detail.ids.join('、#') +
+    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-plus.js?v=11-11-26"></script>
+</body>
+</html>

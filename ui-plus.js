@@ -1446,6 +1446,8 @@
     this.targetIds   = parseIdList((el.getAttribute('target') || '') + ',' +
                                    (el.getAttribute('targets') || ''));
     this.targetId    = this.targetIds[0] || '';
+    /* remove-target：點擊後把這些 id 的元素從網頁移除，重新整理前不會復原 */
+    this.removeIds   = parseIdList(el.getAttribute('remove-target') || '');
     this.stagger     = Math.max(0, parseInt(el.getAttribute('stagger'), 10) || 0);
 
     /* 搭配 mini-table.js：揭曉表格裡指定的儲存格（座標同 Excel，表頭算第 1 列）。
@@ -1503,7 +1505,7 @@
         if (t) srcs.push(t);
         else console.warn('[ui-btn] 找不到 target: #' + id);
       });
-    } else if (!this.href && !this.cellTableId) {
+    } else if (!this.href && !this.cellTableId && !this.removeIds.length) {
       if (this._nextSib) srcs.push(this._nextSib);
       else if (!this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 或 targets 屬性。');
     }
@@ -1633,7 +1635,8 @@
     }
 
     btn.addEventListener('click', function (e) {
-      if (!self.href || self.targetIds.length || self.cellTableId) self._toggle();
+      if ((!self.href && !self.removeIds.length) || self.targetIds.length || self.cellTableId) self._toggle();
+      if (self.removeIds.length) self._removeTargets();
       if (self.alertMsg) showAlert(self.alertMsg, self.alertOpts);
       if (self.href) {
         var t = self.hrefTarget;
@@ -1651,6 +1654,40 @@
     this.el.style.display = 'none';
     this._btn  = btn;
     this._wrap = wrap;
+  };
+
+  /* 移除 remove-target 指定的元素：依 animation 收合後從網頁刪除，不可復原。
+     按鈕若沒有其他功能（展開、跳頁、提示、儲存格、解鎖），全部移除後改為停用 */
+  UiBtn.prototype._removeTargets = function () {
+    var self = this, removed = [], missing = [];
+    var dur = this.animation === 'none' ? 0 : this.animDur;
+    this.removeIds.forEach(function (id) {
+      var t = document.getElementById(id);
+      if (!t) { if ((self._removed || []).indexOf(id) < 0) missing.push(id); return; }
+      if (t._ubtnRemoving) return;
+      t._ubtnRemoving = true;
+      removed.push(id);
+      (self._removed = self._removed || []).push(id);
+      if (!dur || !isShown(t)) { t.remove(); return; }
+      animClose(t, self.animation, dur);
+      setTimeout(function () { t.remove(); if (_gateInstances.length) _syncGateLimit(); }, dur + 60);
+    });
+    if (missing.length) console.warn('[ui-btn] remove-target 找不到元素（可能已經移除）：#' + missing.join('、#'));
+    if (_gateInstances.length) _syncGateLimit();
+    var onlyRemove = !this.targetIds.length && !this.href && !this.alertMsg && !this.cellTableId && !this.unlockChunkTargets.length;
+    var left = this.removeIds.some(function (id) {
+      var t = document.getElementById(id);
+      return t && !t._ubtnRemoving;
+    });
+    if (onlyRemove && !left) {
+      this.disabled = true;
+      this._btn.setAttribute('disabled', '');
+    }
+    if (removed.length) {
+      this.el.dispatchEvent(new CustomEvent('ubtn-removed', {
+        bubbles: true, detail: { ids: removed, button: this.el }
+      }));
+    }
   };
 
   UiBtn.prototype._toggle = function () {
