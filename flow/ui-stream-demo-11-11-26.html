@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-stream 內容流 v0.3：範例與屬性總覽</title>
+<title>ui-stream 內容流：範例與屬性總覽</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -311,35 +311,6 @@ ex4.export('html');  // 訊息的 HTML</pre>
       <tr><td>事件</td><td colspan="3">ui-stream:item、ui-stream:typed、ui-stream:pause、ui-stream:resume、ui-stream:done，都會冒泡。</td></tr>
       <tr><td>UiStreamConfig</td><td colspan="3">載入前設定 window.UiStreamConfig，欄位同 ui-stream 屬性的駝峰寫法（如 controlsPosition），所有實例的預設值。載入後可讀 window.UiStream.config。</td></tr>
     </table>
-  </section>
-
-  <!-- ══════════ 版本對照 ══════════ -->
-  <section>
-    <div class="sec-title"><h2>v0.1 → v0.2 → v0.3 改了什麼</h2></div>
-    <div class="diff">
-      <div><h4 class="old"><i class="bi bi-x-circle"></i> v0.1（粗製版）</h4><pre>只有 teacher / student / system 三種角色，寫死。
-typed 先轉純文字打出，打完才換回 HTML，
-途中看不到 mark 底色。
-暫停只能停，不能在繼續後給東西。
-控制列固定在上方，按鈕文字固定。
-沒有 JSON、沒有全域設定、沒有 goto / finish。</pre></div>
-      <div><h4 class="new"><i class="bi bi-check-circle"></i> v0.2</h4><pre>&lt;stream-role&gt; 自訂角色：顏色、圖示、側邊、氣泡樣式。
-逐字打出改為逐節點，mark、c-key 隨文字出現。
-pause 之後可以 reveal 一段隱藏內容（參考答案）。
-controls-position、labels、counter、progress。
-badge、image、color、source、speed、delay 可逐則設定。
-src / data-id JSON 模式，window.UiStreamConfig 全域預設。
-goto(i)、finish()、toggle()，新增 typed / resume 事件。
-start、loop、type-all、auto-scroll、cursor、animation。</pre></div>
-      <div></div>
-      <div><h4 class="new"><i class="bi bi-check-circle"></i> v0.3（依討論清單實作，排除 sound、hotkeys、columns、detail）</h4><pre>播放：step 逐則模式。
-控制列：speed-control 速度選單。
-版面：gap-same、gap-system、bubble-padding、line-height、avatar-position。
-色彩：background、mark-color。
-暫停與動畫：pause-style="overlay"、typing-indicator。
-角色：image、text-color。
-訊息：gap、reveal-target、highlight。
-程式：add(item)、export(format)。</pre></div>
   </section>
 </div>
 
