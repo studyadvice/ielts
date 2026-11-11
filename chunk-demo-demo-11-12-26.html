@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chunk-demo 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+/* 版面：左側實際元件、右側程式碼；間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;font-size:1rem;min-width:988px;}
+.page{max-width:1600px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#51DBCF;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;line-height:1.7;margin:0 0 20px 0;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
+.toc a{color:#DBEDD8;border:1px solid #86877F;border-radius:20px;padding:4px 14px;font-size:0.9rem;text-decoration:none;}
+.toc a:hover{border-color:#51DBCF;color:#51DBCF;}
+.part{margin:0 0 48px 0;}
+.part > h2{font-size:1.4rem;color:#E3D322;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.part > .lead{color:#86877F;font-size:0.95rem;margin:0 0 20px 0;line-height:1.7;}
+.demo{margin:0 0 28px 0;}
+.demo h3{font-size:1.1rem;color:#B484E8;margin:0 0 6px 0;}
+.demo .note{color:#86877F;font-size:0.9rem;margin:0 0 12px 0;line-height:1.7;}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:480px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;}
+.ctrl button{background:#0C0D0C;color:#DBEDD8;border:1px solid #86877F;border-radius:6px;padding:6px 14px;font-size:0.9rem;}
+.ctrl button:hover,.ctrl button.on{border-color:#51DBCF;color:#51DBCF;}
+.theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.theme-card{border:1px solid #3B2A20;border-radius:8px;padding:12px 14px;min-width:0;}
+.theme-card .t-name{font-size:0.85rem;font-weight:700;margin:0 0 6px 0;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:#51DBCF;}
+.ref code{color:#FFA987;}
+.ref h4{font-size:1rem;color:#B484E8;margin:16px 0 8px 0;}
+#log{position:sticky;top:0;z-index:20;}
+#log .alert{background:#51DBCF;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;margin:0 0 16px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;chunk-demo&gt; 意群替換示範</h1>
+  <p class="sub">把一個句子拆成固定文字與可替換的意群，每個意群可以在不同程度的寫法之間切換，示範同一句話如何由簡到繁。本頁合併了先前所有的示範檔（11-12-26），每個範例左邊是實際元件，右邊是對應的程式碼。</p>
+  <nav class="toc">
+    <a href="#basic">1. 基本用法</a>
+    <a href="#modes">2. 三種切換模式</a>
+    <a href="#lines">3. 預覽、翻譯與備註</a>
+    <a href="#mask">4. 遮罩與鎖定</a>
+    <a href="#look">5. 外觀</a>
+    <a href="#themes">6. 主題一覽</a>
+    <a href="#advanced">7. 進階設定</a>
+    <a href="#ref">8. 屬性速查</a>
+    <a href="#history">9. 舊示範檔對照</a>
+  </nav>
+  <div id="log"></div>
+
+  <!-- 1 -->
+  <section class="part" id="basic">
+    <h2>1. 基本用法</h2>
+    <p class="lead">句子樣板用 <code>{0}</code>、<code>{1}</code> 標出意群的位置，每個 <code>&lt;cd-chunk&gt;</code> 對應一個位置，裡面的 <code>&lt;cd-level&gt;</code> 依序是程度 1、2、3 的寫法。點意群按鈕即可切換。</p>
+
+    <div class="demo" data-demo>
+      <h3>子元素語法，含圖示與標籤</h3>
+      <p class="note"><code>icon</code> 與 <code>label</code> 顯示在下拉選單上方；<code>show-preview</code> 在句子下方組出目前的整句。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="blue" sentence="The cafe {0} is really {1}." show-preview="true">
+  <cd-chunk id="0" icon="📍" label="Location">
+    <cd-level>near my condo</cd-level>
+    <cd-level>around the corner of my place</cd-level>
+    <cd-level>just a five-minute walk from my rented apartment</cd-level>
+  </cd-chunk>
+  <cd-chunk id="1" icon="✨" label="Quality">
+    <cd-level>nice</cd-level>
+    <cd-level>quite pleasant</cd-level>
+    <cd-level>an absolute gem of a spot</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>寫法裡可以放 HTML，id 可省略</h3>
+      <p class="note">沒寫 <code>id</code> 時依順序對應 <code>{0}</code>、<code>{1}</code>；<code>&lt;cd-level&gt;</code> 內可用 <code>&lt;strong&gt;</code>、<code>&lt;em&gt;</code>。<code>border-style</code> 改變按鈕邊框樣式。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="indigo" border-style="dashed" show-preview="true"
+            sentence="The IELTS speaking test was {0}, but I {1}.">
+  <cd-chunk icon="😅" label="Difficulty">
+    <cd-level>hard</cd-level>
+    <cd-level>quite <strong>challenging</strong></cd-level>
+    <cd-level>a genuinely <em>gruelling</em> test of my composure</cd-level>
+  </cd-chunk>
+  <cd-chunk icon="💪" label="Response">
+    <cd-level>did okay</cd-level>
+    <cd-level>held my own</cd-level>
+    <cd-level>managed to stay composed and give it my best shot</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="part" id="modes">
+    <h2>2. 三種切換模式</h2>
+    <p class="lead"><code>dropdown</code> 點意群展開下拉選單；<code>dots</code> 點意群在旁邊彈出一排圓點；<code>dots-ext</code> 把所有意群的圓點集中到句子上方或下方的面板。</p>
+
+    <div class="demo" data-demo>
+      <h3>同一個元件即時切換模式</h3>
+      <p class="note">按下方按鈕改寫 <code>mode</code> 與 <code>dots-pos</code> 屬性，元件會立即重繪，目前選擇的寫法會保留。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div class="ctrl" id="mode-ctrl">
+  <button type="button" class="on" data-mode="dropdown">dropdown</button>
+  <button type="button" data-mode="dots">dots</button>
+  <button type="button" data-mode="dots-ext" data-pos="bottom">dots-ext，面板在下</button>
+  <button type="button" data-mode="dots-ext" data-pos="top">dots-ext，面板在上</button>
+</div>
+<chunk-demo id="live-demo" mode="dropdown" theme="yellow" show-preview="true"
+            sentence="The committee {0} the proposal after {1} concerns about its feasibility.">
+  <cd-chunk label="動詞">
+    <cd-level>accepted</cd-level>
+    <cd-level>rejected</cd-level>
+    <cd-level>deferred</cd-level>
+  </cd-chunk>
+  <cd-chunk label="動名詞片語">
+    <cd-level>raising</cd-level>
+    <cd-level>voicing serious</cd-level>
+    <cd-level>extensively documenting</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>dots：圓點浮層，最多可到第 5 級</h3>
+      <p class="note">不寫 <code>label</code> 時浮層只有圓點。<code>level</code> 決定圓點顏色，可以超過三級。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo mode="dots" theme="red" show-preview="true"
+            sentence="He spoke in a {0} tone that made everyone feel {1}.">
+  <cd-chunk>
+    <cd-level level="1">calm</cd-level>
+    <cd-level level="2">cold</cd-level>
+    <cd-level level="3">sharp</cd-level>
+    <cd-level level="4">dismissive</cd-level>
+    <cd-level level="5">condescending</cd-level>
+  </cd-chunk>
+  <cd-chunk>
+    <cd-level level="1">slightly uneasy</cd-level>
+    <cd-level level="2">visibly uncomfortable</cd-level>
+    <cd-level level="3">deeply unsettled</cd-level>
+    <cd-level level="4">profoundly offended</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>dots-ext：有無 label 的差別</h3>
+      <p class="note">面板每一列前會顯示 <code>label</code>；沒有 label 時只顯示圓點，意群多時較難對應，建議加上。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo mode="dots-ext" theme="blue" sentence="The data was {0} and the results were {1}.">
+  <cd-chunk><cd-level>collected</cd-level><cd-level>analyzed</cd-level><cd-level>verified</cd-level></cd-chunk>
+  <cd-chunk><cd-level>accurate</cd-level><cd-level>inconclusive</cd-level><cd-level>significant</cd-level></cd-chunk>
+</chunk-demo>
+
+<chunk-demo mode="dots-ext" theme="blue" sentence="The data was {0} and the results were {1}.">
+  <cd-chunk label="動詞（被動）"><cd-level>collected</cd-level><cd-level>analyzed</cd-level><cd-level>verified</cd-level></cd-chunk>
+  <cd-chunk label="形容詞"><cd-level>accurate</cd-level><cd-level>inconclusive</cd-level><cd-level>significant</cd-level></cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="part" id="lines">
+    <h2>3. 預覽、翻譯與備註</h2>
+    <p class="lead">句子下方可以疊三列：<code>show-preview</code> 整句預覽、<code>show-translation</code> 翻譯、<code>show-note</code> 備註。翻譯樣板同樣用 <code>{id}</code> 標位置，填入各寫法的 <code>trans</code>；沒填 trans 時沿用英文。</p>
+
+    <div class="demo" data-demo>
+      <h3>三列全開，翻譯語序可以和英文不同</h3>
+      <p class="note">id 不必從 0 開始；翻譯樣板依中文語序排列 <code>{3}{1}去{2}</code>。<code>note</code> 可寫 HTML。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="green" dropdown-width="260px"
+            sentence="I {1} to {2} {3}." translation="我{3}{1}去{2}。"
+            note="頻率副詞片語放句尾，<b>every day</b> 是兩個字；everyday 是形容詞。"
+            show-preview="true" show-translation="true" show-note="true">
+  <cd-chunk id="1" icon="🚶" label="交通方式">
+    <cd-level trans="走路">walk</cd-level>
+    <cd-level trans="騎腳踏車">ride my bike</cd-level>
+    <cd-level trans="搭公車">take the bus</cd-level>
+  </cd-chunk>
+  <cd-chunk id="2" icon="📍" label="目的地">
+    <cd-level trans="學校">school</cd-level>
+    <cd-level trans="公園">the park</cd-level>
+    <cd-level trans="超市">the supermarket</cd-level>
+  </cd-chunk>
+  <cd-chunk id="3" icon="🕐" label="頻率">
+    <cd-level trans="每天">every day</cd-level>
+    <cd-level trans="每週">every week</cd-level>
+    <cd-level trans="偶爾">sometimes</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>dots-ext 面板加上翻譯與縮排</h3>
+      <p class="note"><code>translation-indent</code>、<code>preview-indent</code> 讓下方各列往右縮，和句子文字對齊。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo mode="dots-ext" theme="violet" show-preview="true" show-translation="true"
+            preview-indent="22" translation-indent="22"
+            sentence="Despite {0} weather, the team {1} the summit before dawn."
+            translation="儘管天氣{0}，團隊還是在黎明前{1}了山頂。">
+  <cd-chunk label="形容詞">
+    <cd-level trans="惡劣">harsh</cd-level>
+    <cd-level trans="嚴酷">brutal</cd-level>
+    <cd-level trans="變幻莫測">unpredictable</cd-level>
+  </cd-chunk>
+  <cd-chunk label="動詞">
+    <cd-level trans="抵達">reached</cd-level>
+    <cd-level trans="征服">conquered</cd-level>
+    <cd-level trans="成功登上">successfully summited</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="part" id="mask">
+    <h2>4. 遮罩與鎖定</h2>
+    <p class="lead"><code>mask-mode</code> 讓意群先顯示為色塊，點開過才露出文字，適合先讓學生想再對答案。<code>lock-chunks</code> 鎖住的意群顯示目前寫法但不能切換，可用 <code>unlockChunk()</code> 解鎖，也能搭配 ui-plus.js 的 <code>ui-btn unlock-chunk</code>。</p>
+
+    <div class="demo" data-demo>
+      <h3>遮罩，搭配翻譯</h3>
+      <p class="note">翻譯列的對應位置也會一起遮住。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo mask-mode="true" theme="energetic" show-translation="true"
+            sentence="The {1} is {2} and {3}." translation="這個{1}{2}而且{3}。">
+  <cd-chunk id="1" label="名詞">
+    <cd-level trans="城市">city</cd-level><cd-level trans="海灘">beach</cd-level><cd-level trans="森林">forest</cd-level>
+  </cd-chunk>
+  <cd-chunk id="2" label="形容詞 A">
+    <cd-level trans="繁忙">busy</cd-level><cd-level trans="寧靜">peaceful</cd-level><cd-level trans="廣闊">vast</cd-level>
+  </cd-chunk>
+  <cd-chunk id="3" label="形容詞 B">
+    <cd-level trans="充滿活力">vibrant</cd-level><cd-level trans="令人放鬆">relaxing</cd-level><cd-level trans="神秘">mysterious</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>鎖定意群，用按鈕解鎖</h3>
+      <p class="note">第二個意群（id 1）一開始鎖住。按鈕呼叫 <code>unlockChunk(1)</code> 與 <code>lockChunk(1)</code>。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo id="cd-lock" mode="dots-ext" dots-pos="top" mask-mode="true" lock-chunks="1" theme="vanilla"
+            show-preview="true" sentence="The government {0} a new policy that {1} the rights of migrant workers.">
+  <cd-chunk id="0" label="動詞">
+    <cd-level>introduced</cd-level><cd-level>proposed</cd-level><cd-level>quietly implemented</cd-level>
+  </cd-chunk>
+  <cd-chunk id="1" label="動詞">
+    <cd-level>expanded</cd-level><cd-level>restricted</cd-level><cd-level>fundamentally redefined</cd-level>
+  </cd-chunk>
+</chunk-demo>
+<div class="ctrl">
+  <button type="button" data-lock="unlock">解鎖第二個意群</button>
+  <button type="button" data-lock="lock">再鎖起來</button>
+</div>
+      </script>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="part" id="look">
+    <h2>5. 外觀</h2>
+    <p class="lead">按鈕配色由 <code>theme</code> 決定；程度圓點的顏色用 <code>level-colors</code> 覆寫，可以寫品牌色名稱，不分大小寫。寬度、邊框、外距與句子框內距都能調整。</p>
+
+    <div class="demo" data-demo>
+      <h3>level-colors 用品牌色名稱</h3>
+      <p class="note">依序覆寫第 1、2、3 級圓點。寫 <code>green</code> 會是品牌綠 #71CD76，不是 CSS 原生的綠；<code>theme</code> 也不分大小寫。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="Violet" level-colors="red, Key, energetic" show-preview="true"
+            sentence="I {0} my homework {1}.">
+  <cd-chunk label="動詞片語">
+    <cd-level>do</cd-level>
+    <cd-level>carefully complete</cd-level>
+    <cd-level>diligently and thoroughly complete</cd-level>
+  </cd-chunk>
+  <cd-chunk label="頻率" current-level="2">
+    <cd-level>every day</cd-level>
+    <cd-level>without fail</cd-level>
+    <cd-level>with great consistency</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>隱藏圓點，固定按鈕與選單寬度</h3>
+      <p class="note"><code>show-dots="false"</code> 隱藏按鈕上的程度圓點；<code>button-width</code> 讓按鈕寬度一致，切換時句子不會跳動；<code>dropdown-width</code> 設定選單最小寬度。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo show-dots="false" button-width="200px" dropdown-width="300px" theme="key"
+            sentence="{0} is a key skill for {1} learners.">
+  <cd-chunk label="主題">
+    <cd-level>Listening</cd-level>
+    <cd-level>Active listening with note-taking</cd-level>
+    <cd-level>Comprehensive input processing</cd-level>
+  </cd-chunk>
+  <cd-chunk label="學習者">
+    <cd-level>adult</cd-level>
+    <cd-level>intermediate-level adult</cd-level>
+    <cd-level>highly motivated adult</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>長意群自動獨佔一行，調整句子框</h3>
+      <p class="note">意群按鈕寬度超過句子框的 <code>long-chunk-threshold</code>（預設 0.52）時自動換到獨立一行；選第 3 級試試。<code>bar-padding</code>、<code>bar-line-height</code>、<code>margin-bottom</code> 調整句子框與外距。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="playful" long-chunk-threshold="0.4" bar-padding="20px 24px 12px" bar-line-height="2.4"
+            margin-bottom="8px" show-preview="true"
+            sentence="My hometown is {0} and the people there are {1}.">
+  <cd-chunk icon="🏙️">
+    <cd-level>a small city</cd-level>
+    <cd-level>a fairly modest-sized city</cd-level>
+    <cd-level>a mid-sized industrial city nestled in the south of the country</cd-level>
+  </cd-chunk>
+  <cd-chunk icon="😊">
+    <cd-level>friendly</cd-level>
+    <cd-level>warm and welcoming</cd-level>
+    <cd-level>remarkably hospitable and refreshingly down-to-earth</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="part" id="themes">
+    <h2>6. 主題一覽</h2>
+    <p class="lead">17 個品牌色主題，寫法 <code>theme="名稱"</code>，不分大小寫。以下由同一段 HTML 依序套用各主題產生。</p>
+    <div class="theme-grid" id="theme-grid"></div>
+<pre class="code-box" style="margin:16px 0 0 0"><code>&lt;chunk-demo theme="green" sentence="The weekend trip was {0}."&gt;
+  &lt;cd-chunk&gt;
+    &lt;cd-level&gt;fun&lt;/cd-level&gt;
+    &lt;cd-level&gt;a real breath of fresh air&lt;/cd-level&gt;
+    &lt;cd-level&gt;exactly the escape I had been craving&lt;/cd-level&gt;
+  &lt;/cd-chunk&gt;
+&lt;/chunk-demo&gt;</code></pre>
+  </section>
+
+  <!-- 7 -->
+  <section class="part" id="advanced">
+    <h2>7. 進階設定</h2>
+    <p class="lead">設定的優先順序：元素屬性 &gt; <code>data-config</code> &gt; <code>window.ChunkDemoConfig</code> &gt; 內建預設。</p>
+
+    <div class="demo" data-demo>
+      <h3>以 JSON 提供意群</h3>
+      <p class="note">沒有 <code>&lt;cd-chunk&gt;</code> 子元素時，改讀 <code>chunks</code> 屬性的 JSON。適合由程式產生內容。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="calm" show-preview="true" sentence="The new policy was {0}."
+            chunks='[{"id":0,"label":"形容詞","levels":[{"level":1,"text":"good"},{"level":2,"text":"well received"},{"level":3,"text":"remarkably effective"}]}]'>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>data-config 一次覆寫多項設定</h3>
+      <p class="note">鍵名同 <code>ChunkDemoConfig</code>，例如預覽列文字色 <code>previewTextColor</code>、遮罩色 <code>maskColor</code>、句子框底色 <code>sentenceBg</code>。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<chunk-demo theme="pink" show-preview="true" mask-mode="true"
+            data-config='{"previewTextColor":"#FF91D7","maskColor":"#3B2A20","sentenceBg":"#0C0D0C"}'
+            sentence="The weekend trip to {0} was {1}.">
+  <cd-chunk icon="🗺️">
+    <cd-level>Taipei</cd-level>
+    <cd-level>the northern coast</cd-level>
+    <cd-level>the scenic mountain villages up north</cd-level>
+  </cd-chunk>
+  <cd-chunk icon="💬">
+    <cd-level>fun</cd-level>
+    <cd-level>a real breath of fresh air</cd-level>
+    <cd-level>exactly the kind of escape I had been craving</cd-level>
+  </cd-chunk>
+</chunk-demo>
+      </script>
+    </div>
+
+    <div class="demo">
+      <h3>全頁預設值與 JavaScript API</h3>
+      <p class="note"><code>ChunkDemoConfig</code> 要在載入 chunk-demo.js 之前設定，會影響整頁，所以這裡只列程式碼。</p>
+<pre class="code-box"><code>&lt;script&gt;
+  window.ChunkDemoConfig = {
+    defaultTheme: 'blue',      // 沒寫 theme 時使用
+    showPreview: true,
+    mode: 'dots',
+    chunkBorderWidth: '1.5px',
+    chunkBorderStyle: 'solid',
+    previewBorderColor: null   // null 表示跟隨 theme 色
+  };
+&lt;/script&gt;
+&lt;script src="chunk-demo.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  const cd = document.querySelector('chunk-demo');
+  cd.unlockChunk(1);   // 解鎖 id 為 1 的意群
+  cd.lockChunk(0);     // 鎖定 id 為 0 的意群
+&lt;/script&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="part" id="ref">
+    <h2>8. 屬性速查</h2>
+    <table class="ref">
+      <thead><tr><th style="width:240px">屬性</th><th style="width:220px">值（預設）</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3"><h4>&lt;chunk-demo&gt; 內容</h4></td></tr>
+        <tr><td><code>sentence</code></td><td>文字</td><td>句子樣板，用 <code>{0}</code>、<code>{1}</code> 標出意群位置。</td></tr>
+        <tr><td><code>chunks</code></td><td>JSON</td><td>沒有 <code>&lt;cd-chunk&gt;</code> 時改用 JSON 提供意群。</td></tr>
+        <tr><td><code>translation</code></td><td>文字</td><td>翻譯樣板，用 <code>{id}</code> 填入各寫法的 <code>trans</code>。</td></tr>
+        <tr><td><code>note</code></td><td>HTML</td><td>句子下方的備註。</td></tr>
+        <tr><td><code>lock-chunks</code></td><td>逗號分隔的 id</td><td>先鎖住這些意群。</td></tr>
+        <tr><td colspan="3"><h4>&lt;chunk-demo&gt; 顯示與互動</h4></td></tr>
+        <tr><td><code>mode</code></td><td><code>dropdown</code>、<code>dots</code>、<code>dots-ext</code>（dropdown）</td><td>切換寫法的方式。</td></tr>
+        <tr><td><code>dots-pos</code></td><td><code>bottom</code>、<code>top</code>（bottom）</td><td>dots-ext 面板位置。</td></tr>
+        <tr><td><code>show-dots</code></td><td><code>true</code>、<code>false</code>（true）</td><td>意群按鈕上的程度圓點。</td></tr>
+        <tr><td><code>show-preview</code></td><td><code>true</code>、<code>false</code>（false）</td><td>整句預覽列。</td></tr>
+        <tr><td><code>show-translation</code></td><td><code>true</code>、<code>false</code>（false）</td><td>翻譯列，需要 <code>translation</code>。</td></tr>
+        <tr><td><code>show-note</code></td><td><code>true</code>、<code>false</code>（false）</td><td>備註列，需要 <code>note</code>。</td></tr>
+        <tr><td><code>mask-mode</code></td><td><code>true</code>、<code>false</code>（false）</td><td>意群先遮住，點開過才露出。</td></tr>
+        <tr><td><code>long-chunk-threshold</code></td><td>0 到 1（0.52）</td><td>按鈕寬度超過句子框此比例時獨佔一行。</td></tr>
+        <tr><td colspan="3"><h4>&lt;chunk-demo&gt; 外觀</h4></td></tr>
+        <tr><td><code>theme</code></td><td>主題名稱（green）</td><td>shell、violet、green、energetic、dreamy、blue、vanilla、yellow、indigo、pink、red、gray、key、calm、quiet、playful、urgent，不分大小寫。</td></tr>
+        <tr><td><code>level-colors</code></td><td>逗號分隔的顏色</td><td>依序覆寫第 1、2、3 級圓點顏色，可寫品牌色名稱。</td></tr>
+        <tr><td><code>border-width</code>、<code>border-style</code></td><td>（1.5px、solid）</td><td>意群按鈕邊框。</td></tr>
+        <tr><td><code>width</code>、<code>dropdown-width</code>、<code>button-width</code></td><td>長度</td><td>元件寬度、選單最小寬度、按鈕最小寬度。</td></tr>
+        <tr><td><code>preview-indent</code>、<code>translation-indent</code>、<code>note-indent</code></td><td>數字 px（0）</td><td>預覽、翻譯、備註列的縮排。</td></tr>
+        <tr><td><code>margin</code>、<code>margin-top</code> 等</td><td>長度</td><td>元件外距。</td></tr>
+        <tr><td><code>bar-padding</code></td><td>CSS padding（16px 22px 8px）</td><td>句子框內距。</td></tr>
+        <tr><td><code>bar-line-height</code></td><td>數字（2.2）</td><td>句子框行高。</td></tr>
+        <tr><td><code>data-config</code></td><td>JSON</td><td>一次覆寫多項設定，鍵名同 <code>ChunkDemoConfig</code>。</td></tr>
+        <tr><td colspan="3"><h4>&lt;cd-chunk&gt; 與 &lt;cd-level&gt;</h4></td></tr>
+        <tr><td><code>id</code></td><td>整數（依順序）</td><td><code>&lt;cd-chunk&gt;</code> 對應句子裡的 <code>{id}</code>。</td></tr>
+        <tr><td><code>label</code>、<code>icon</code></td><td>文字、emoji</td><td><code>&lt;cd-chunk&gt;</code> 在選單或面板上的標籤與圖示。</td></tr>
+        <tr><td><code>current-level</code></td><td>整數（1）</td><td><code>&lt;cd-chunk&gt;</code> 一開始使用的寫法。</td></tr>
+        <tr><td><code>level</code></td><td>整數（依順序）</td><td><code>&lt;cd-level&gt;</code> 的程度編號，決定圓點顏色。</td></tr>
+        <tr><td><code>trans</code></td><td>文字</td><td><code>&lt;cd-level&gt;</code> 的翻譯，填入 <code>translation</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 9 -->
+  <section class="part" id="history">
+    <h2>9. 舊示範檔對照</h2>
+    <p class="lead">以下五個檔案已合併進本頁並移除，內容對應如下。</p>
+    <table class="ref">
+      <thead><tr><th style="width:320px">移除的檔案</th><th>內容現在在</th></tr></thead>
+      <tbody>
+        <tr><td><code>chunk-demo.html</code>（v2.2）</td><td>1. 基本用法、5. 外觀、6. 主題一覽、7. data-config</td></tr>
+        <tr><td><code>chunk-demo-v3-examples.html</code></td><td>5. 外觀（show-dots、寬度、level-colors）、4. 遮罩</td></tr>
+        <tr><td><code>chunk-demo-translation-demo.html</code>（v4）</td><td>3. 預覽、翻譯與備註、4. 遮罩搭配翻譯</td></tr>
+        <tr><td><code>chunk-demo-demo-new.html</code></td><td>2. 三種切換模式、3. dots-ext 加翻譯、4. 遮罩與鎖定</td></tr>
+        <tr><td><code>chunk-demo-demo-11-11-26.html</code></td><td>5. level-colors 用品牌色名稱</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+
+  /* 主題一覽 */
+  const COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  const grid = document.getElementById('theme-grid');
+  Object.keys(COLORS).forEach(t => {
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="theme-card"><div class="t-name" style="color:' + COLORS[t] + '">' + t + '　' + COLORS[t] + '</div>' +
+      '<chunk-demo theme="' + t + '" sentence="The weekend trip was {0}."><cd-chunk>' +
+      '<cd-level>fun</cd-level><cd-level>a real breath of fresh air</cd-level><cd-level>exactly the escape I had been craving</cd-level>' +
+      '</cd-chunk></chunk-demo></div>');
+  });
+
+  /* Bootstrap alert 回饋 */
+  const log = msg => {
+    document.getElementById('log').innerHTML = '<div class="alert alert-dismissible fade show" role="alert">' + msg +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  };
+
+  /* 模式切換 */
+  document.getElementById('mode-ctrl').addEventListener('click', e => {
+    const b = e.target.closest('button[data-mode]');
+    if (!b) return;
+    const cd = document.getElementById('live-demo');
+    if (b.dataset.pos) cd.setAttribute('dots-pos', b.dataset.pos);
+    cd.setAttribute('mode', b.dataset.mode);
+    e.currentTarget.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    log('mode="' + b.dataset.mode + '"' + (b.dataset.pos ? '，dots-pos="' + b.dataset.pos + '"' : ''));
+  });
+
+  /* 鎖定與解鎖 */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('button[data-lock]');
+    if (!b) return;
+    const cd = document.getElementById('cd-lock');
+    if (b.dataset.lock === 'unlock') { cd.unlockChunk(1); log('已呼叫 unlockChunk(1)，第二個意群可以切換了。'); }
+    else { cd.lockChunk(1); log('已呼叫 lockChunk(1)，第二個意群鎖住了。'); }
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="chunk-demo.js"></script>
+</body>
+</html>

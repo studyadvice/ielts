@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-fillin 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+/* 版面：左側實際元件、右側程式碼；間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;font-size:1rem;min-width:988px;}
+.page{max-width:1600px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#51DBCF;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;line-height:1.7;margin:0 0 20px 0;}
+code{color:#FFA987;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
+.toc a{color:#DBEDD8;border:1px solid #86877F;border-radius:20px;padding:4px 14px;font-size:0.9rem;text-decoration:none;}
+.toc a:hover{border-color:#51DBCF;color:#51DBCF;}
+.part{margin:0 0 48px 0;}
+.part > h2{font-size:1.4rem;color:#E3D322;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.part > .lead{color:#86877F;font-size:0.95rem;margin:0 0 20px 0;line-height:1.7;}
+.demo{margin:0 0 28px 0;}
+.demo h3{font-size:1.1rem;color:#B484E8;margin:0 0 6px 0;}
+.demo .note{color:#86877F;font-size:0.9rem;margin:0 0 12px 0;line-height:1.7;}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:480px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.cap{font-size:0.85rem;color:#86877F;margin:0;}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.ctrl button,.dbtn{background:#0C0D0C;color:#DBEDD8;border:1px solid #86877F;border-radius:6px;padding:6px 14px;font-size:0.9rem;}
+.ctrl button:hover,.ctrl button.on,.dbtn:hover{border-color:#51DBCF;color:#51DBCF;}
+.panel{border:1px dashed #86877F;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.field-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px;}
+.field-grid label{display:flex;flex-direction:column;gap:4px;font-size:0.8rem;color:#A3C4BC;font-family:ui-monospace,monospace;min-width:0;}
+.field-grid input,.field-grid select{background:#0C0D0C;color:#DBEDD8;border:1px solid #86877F;border-radius:4px;padding:4px 8px;font-size:0.9rem;min-width:0;}
+.swatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;}
+.sw{display:flex;align-items:center;gap:10px;background:#0C0D0C;border:1px solid #3B2A20;border-radius:6px;padding:6px 10px;color:#C6C7BD;font-size:0.85rem;text-align:left;}
+.sw:hover{border-color:#51DBCF;}
+.sw i{width:22px;height:22px;border-radius:4px;flex:none;border:1px solid #3B2A20;}
+.sw small{display:block;color:#86877F;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:#51DBCF;}
+.ref h4{font-size:1rem;color:#B484E8;margin:16px 0 8px 0;}
+#ev-log{font-family:ui-monospace,monospace;font-size:0.8rem;color:#A3C4BC;border:1px solid #3B2A20;border-radius:6px;padding:10px 12px;max-height:180px;overflow:auto;white-space:pre-wrap;min-height:44px;}
+#log{position:sticky;top:0;z-index:20;}
+#log .alert{background:#51DBCF;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;margin:0 0 16px 0;}
+
+/* 範例六：results-id 結果區塊的樣式（頁面自己寫的，元件不提供版面） */
+#q6-results{border:1px solid #3B2A20;border-radius:8px;padding:12px 16px;}
+#q6-results h4{font-size:1rem;color:#E3D322;margin:0 0 8px 0;}
+#q6-results [data-uf-results]{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 0 0;}
+#q6-results [data-uf-results]:empty::before{content:"提交後，結果會出現在這裡。";color:#86877F;}
+#q6-results .uf-result{padding:8px 12px;border:1px solid;border-radius:6px;}
+#q6-results [data-state="correct"]{color:#71CD76;}
+#q6-results [data-state="incorrect"]{color:#EF6661;}
+#q6-results [data-answered="false"]{border-style:dashed;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;ui-fillin&gt; 挖空練習</h1>
+  <p class="sub">把一段文字中用大括號標記的位置換成空格，學生從下拉選單選答案，或直接輸入。文末附答案總表與「提交」「重做」按鈕，提交後逐格標示對錯。本頁合併了先前的兩個示範檔（11-12-26），每個範例左邊是實際元件，右邊是同一段原始碼。</p>
+  <nav class="toc">
+    <a href="#choice">1. 選擇題</a>
+    <a href="#multi">2. 複選題</a>
+    <a href="#text">3. 輸入題</a>
+    <a href="#escape">4. 跳脫字元與例外</a>
+    <a href="#list">5. 清單、隨機與文字</a>
+    <a href="#results">6. 結果輸出</a>
+    <a href="#color">7. 配色</a>
+    <a href="#size">8. 字級與內距</a>
+    <a href="#events">9. 事件與方法</a>
+    <a href="#errors">10. 錯誤處理</a>
+    <a href="#ref">11. 屬性速查</a>
+    <a href="#history">12. 舊示範檔對照</a>
+  </nav>
+  <div id="log"></div>
+
+  <!-- 1 -->
+  <section class="part" id="choice">
+    <h2>1. 選擇題</h2>
+    <p class="lead">用 <code>{*正確答案|選項二|選項三}</code> 標記空格，正確答案前加 <code>*</code>。題目寫在獨立的來源區塊，<code>&lt;main-box source="id"&gt;</code> 載入時把它複製進來，再把來源清空並隱藏。</p>
+    <div class="demo" data-demo>
+      <h3>單選題，答案總表自動產生</h3>
+      <p class="note">點空格，選項在旁邊浮出，選完自動關閉，答案表同步更新。沒作答就提交的題目顯示為未作答；提交後空格鎖定，按「重做」重新作答。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q1" hidden>
+  <p>The line graph {*illustrates|illustrate|illustrating} how many tourists visited the city,
+  and the figures {*rose|rise|rised} steadily between 2010 and 2020.</p>
+</div>
+<ui-fillin>
+  <main-box source="q1"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="part" id="multi">
+    <h2>2. 複選題</h2>
+    <p class="lead">標記兩個以上的 <code>*</code> 就是複選，選單上方顯示「可複選」，可以連續勾選，點選單外或按 Esc 關閉。必須選中全部正確選項、而且沒有多選，才算答對。</p>
+    <div class="demo" data-demo>
+      <h3>單選與複選混用</h3>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q2" hidden>
+  <p>Choose all the contrast words: {*however|*whereas|therefore|*although}.
+  Customers who order online {*receive|receives|received} free delivery.</p>
+</div>
+<ui-fillin>
+  <main-box source="q2"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="part" id="text">
+    <h2>3. 輸入題</h2>
+    <p class="lead"><code>mode="text"</code> 時直接在空格內打字。大括號內用直線列出所有可接受的答案，符合任一個即算對，不使用 <code>*</code>。比對區分大小寫，前後空白會被忽略；空格寬度依最長的可接受答案估算。</p>
+    <div class="demo" data-demo>
+      <h3>全形自動轉半形，答錯時顯示正確答案</h3>
+      <p class="note"><code>normalize-width</code> 讓全形英數也能比對成功；<code>show-answer-on-wrong</code> 在答錯或未作答的空格旁顯示正確答案。試著在第一格輸入全形的 ｆｏｒ。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q3" hidden>
+  <p>She has lived here {for} ten years, {since|ever since} 2015.</p>
+  <p>The speed of light is about {300000|300,000} kilometres per second.</p>
+</div>
+<ui-fillin mode="text" normalize-width show-answer-on-wrong>
+  <main-box source="q3"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="part" id="escape">
+    <h2>4. 跳脫字元與例外</h2>
+    <p class="lead">答案裡要用 <code>|</code>、<code>{</code>、<code>}</code> 或開頭的 <code>*</code> 時，前面加反斜線。每個選項頭尾空白自動去除。只有一個選項的大括號不會變成空格，原樣保留為文字。</p>
+    <div class="demo" data-demo>
+      <h3>符號當選項、空白、單一選項</h3>
+      <p class="note">第一格正確答案是直線本身；第二格的選項前後有空白；句尾的 <code>{only one}</code> 維持原文。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q4" hidden>
+  <p>In a search box, the symbol {*\||\*|\{|\}} separates alternatives.
+  Trimmed options: {* alpha | beta | gamma }. This stays plain text: {only one}.</p>
+</div>
+<ui-fillin>
+  <main-box source="q4"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="part" id="list">
+    <h2>5. 清單、隨機與介面文字</h2>
+    <p class="lead">來源可以是 <code>&lt;ol&gt;</code> 或 <code>&lt;ul&gt;</code> 清單。題號依出現順序自動編排；所有按鈕與提示文字都能用 <code>label-*</code> 屬性改寫。</p>
+    <div class="demo" data-demo>
+      <h3>隨機排序、數字代號、自訂按鈕文字、指定答案表位置</h3>
+      <p class="note"><code>random</code> 打亂每個清單的項目順序，<code>reshuffle-on-reset</code> 按重做時再洗一次；<code>option-style="digit"</code> 把選項代號改成 1、2、3；<code>no-number-dot</code> 拿掉題號後的句點；把 <code>&lt;ans-box&gt;</code> 放在想要的位置，答案表就出現在那裡。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q5a" hidden>
+  <ol>
+    <li>The meeting {*starts|start|starting} at nine.</li>
+    <li>Please {*arrive|arrives|arrived} early.</li>
+    <li>If I {*were|was|am} you, I would take the earlier flight.</li>
+    <li>Every student {*must|musts|musting} bring a valid ticket.</li>
+  </ol>
+</div>
+<ui-fillin random reshuffle-on-reset option-style="digit" no-number-dot
+           label-submit="交卷" label-reset="再來一次" label-submitted="改好了，看看哪幾題錯。">
+  <main-box source="q5a"></main-box>
+  <p style="margin:12px 0 0 0">答案總表：</p>
+  <ans-box></ans-box>
+</ui-fillin>
+      </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>天干代號、隱藏題號與答案總表</h3>
+      <p class="note"><code>option-style="cjk"</code> 以甲、乙、丙標示選項；<code>hide-number</code> 不在空格上顯示題號；<code>hide-answer-table</code> 只保留按鈕。適合一句話內的小練習。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q5b" hidden>
+  <p>We {*have|has|having} finished the report, and the team {*is|are|be} ready for review.</p>
+</div>
+<ui-fillin option-style="cjk" hide-number hide-answer-table>
+  <main-box source="q5b"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="part" id="results">
+    <h2>6. 結果輸出</h2>
+    <p class="lead">加上 <code>results-id</code>，提交時元件在該元素內寫入每題一個 <code>&lt;div class="uf-result"&gt;</code>，帶有 <code>data-no</code>、<code>data-state</code>（correct、incorrect）與 <code>data-answered</code>（true、false）。元件只動帶 <code>data-uf-results</code> 的位置，其他內容不會被重建，排版完全由頁面決定。</p>
+    <div class="demo" data-demo>
+      <h3>結果區塊裡的其他元件不受影響</h3>
+      <p class="note">下方的計時器是另一個小元件，提交與重做時都持續運作。結果的樣式寫在本頁的 &lt;style&gt; 裡，列在右側程式碼下方。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side">
+          <pre class="code-box"><code></code></pre>
+          <p class="cap">本頁為結果區塊寫的樣式：</p>
+<pre class="code-box"><code>#q6-results [data-uf-results]{display:flex;flex-wrap:wrap;gap:12px;}
+#q6-results [data-uf-results]:empty::before{content:"提交後，結果會出現在這裡。";}
+#q6-results .uf-result{padding:8px 12px;border:1px solid;border-radius:6px;}
+#q6-results [data-state="correct"]{color:#71CD76;}
+#q6-results [data-state="incorrect"]{color:#EF6661;}
+#q6-results [data-answered="false"]{border-style:dashed;}</code></pre>
+        </div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div id="q6" hidden>
+  <p>She {*has|have|having} lived here {*since|for|from} 2020,
+  and she {*works|work|working} in the city centre.</p>
+</div>
+<ui-fillin results-id="q6-results">
+  <main-box source="q6"></main-box>
+</ui-fillin>
+<div id="q6-results">
+  <h4>批改結果</h4>
+  <demo-tick></demo-tick>
+  <div data-uf-results></div>
+</div>
+      </script>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="part" id="color">
+    <h2>7. 配色</h2>
+    <p class="lead">每個部位用 <code>部位-color</code> 設定，可以直接寫品牌色名稱（不分大小寫，<code>bg</code>、<code>background</code> 等於 <code>base</code>），或 <code>名稱/不透明度</code>，例如 <code>energetic/0.85</code>；低於 0.78 會自動提高到 0.78。未設定的部位多半沿用 <code>accent-color</code>。</p>
+
+    <div class="demo">
+      <h3>品牌色票</h3>
+      <p class="note">點色塊複製名稱。</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>直接寫色名</h3>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q7a" hidden>
+  <ol>
+    <li>The bar chart {*compares|compare|comparing} spending in three countries.</li>
+    <li>Choose the linking words for addition: {*moreover|*in addition|nevertheless}</li>
+  </ol>
+</div>
+<ui-fillin accent-color="blue" ok-color="green" bad-color="pink" line-color="violet" head-color="yellow">
+  <main-box source="q7a"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+
+    <div class="demo" data-demo>
+      <h3>色名加不透明度、細分部位</h3>
+      <p class="note">空格、已選答案、滑過選項、按鈕、提示框、外框各自設定。</p>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<div id="q7b" hidden>
+  <p>The early bird {*catches|catch|caught} the worm. Practice {*makes|make|made} perfect.
+  Actions speak louder {*than|then} words.</p>
+</div>
+<ui-fillin accent-color="energetic/0.85" blank-color="energetic" picked-color="green" hover-color="blue"
+           btn-color="indigo" alert-color="indigo" line-color="indigo/0.9" menu-color="bg-alternative">
+  <main-box source="q7b"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+
+    <div class="demo">
+      <h3>即時調色</h3>
+      <p class="note">改變下拉選單，元件立即套用，下方的開頭標籤同步更新。</p>
+      <div class="grid2">
+        <div class="stage">
+          <div class="panel"><div class="field-grid" id="color-panel"></div></div>
+          <div id="q7c" hidden>
+            <p>The proportion of students who cycle to school {*doubled|double|doubling} over the decade,
+            {*while|whereas|but} car use {*fell|fall|fallen} slightly.</p>
+          </div>
+          <ui-fillin id="color-live">
+            <main-box source="q7c"></main-box>
+          </ui-fillin>
+        </div>
+        <div class="side">
+          <pre class="code-box"><code id="color-tag"></code></pre>
+          <div class="ctrl"><button type="button" id="color-copy">複製開頭標籤</button><button type="button" id="color-clear">全部還原預設</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="part" id="size">
+    <h2>8. 字級與內距</h2>
+    <p class="lead"><code>font-size</code> 是基礎字級，純數字視為 rem，題幹、空格、選單、答案表與按鈕都依它縮放。七個部位的內距只接受 px 或純數字，最多四個值；無效值會被忽略並改用預設。下面的欄位都是即時套用，留空即還原。</p>
+    <div class="demo">
+      <div class="grid2">
+        <div class="stage">
+          <div class="panel">
+            <div class="field-grid" id="size-panel">
+              <label>font-size<input type="text" id="sz-font-size" data-attr="font-size" placeholder="1.125"></label>
+              <label>line-height<input type="text" id="sz-line-height" data-attr="line-height" placeholder="1.4"></label>
+              <label>radius<input type="text" id="sz-radius" data-attr="radius" placeholder="6px"></label>
+              <label>border-width<input type="text" id="sz-border-width" data-attr="border-width" placeholder="2px"></label>
+              <label>root-padding<input type="text" id="sz-root" data-attr="root-padding" placeholder="預設"></label>
+              <label>main-padding<input type="text" id="sz-main" data-attr="main-padding" placeholder="預設"></label>
+              <label>blank-padding<input type="text" id="sz-blank" data-attr="blank-padding" placeholder="預設"></label>
+              <label>menu-padding<input type="text" id="sz-menu" data-attr="menu-padding" placeholder="預設"></label>
+              <label>option-padding<input type="text" id="sz-option" data-attr="option-padding" placeholder="預設"></label>
+              <label>ans-padding<input type="text" id="sz-ans" data-attr="ans-padding" placeholder="預設"></label>
+              <label>btn-padding<input type="text" id="sz-btn" data-attr="btn-padding" placeholder="預設"></label>
+              <label>btn-radius<input type="text" id="sz-btn-radius" data-attr="btn-radius" placeholder="5px"></label>
+            </div>
+            <div class="ctrl">
+              <button type="button" data-size="large">字級 1.5、空格 4 12</button>
+              <button type="button" data-size="compact">緊湊</button>
+              <button type="button" data-size="clear">全部還原預設</button>
+            </div>
+          </div>
+          <div id="q8" hidden>
+            <p>Every student {*must|musts|musting} bring a {*valid|validly|validate} ticket to the hall.</p>
+          </div>
+          <ui-fillin id="size-live">
+            <main-box source="q8"></main-box>
+          </ui-fillin>
+        </div>
+        <div class="side"><pre class="code-box"><code id="size-tag"></code></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="part" id="events">
+    <h2>9. 事件與方法</h2>
+    <p class="lead">元件發出 <code>fillin-change</code>、<code>fillin-submit</code>、<code>fillin-reset</code> 三種會冒泡的事件，並提供 <code>submit()</code>、<code>reset()</code>、<code>closeMenu()</code>。下方按鈕在元件外面直接呼叫方法，事件紀錄顯示每次帶出的資料。</p>
+    <div class="demo" data-demo>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side">
+          <pre class="code-box"><code></code></pre>
+<pre class="code-box"><code>const f = document.getElementById('ev-demo');
+document.getElementById('ev-submit').onclick = () => f.submit();
+document.getElementById('ev-reset').onclick  = () => f.reset();
+
+['fillin-change', 'fillin-submit', 'fillin-reset'].forEach(name => {
+  f.addEventListener(name, e => console.log(name, e.detail));
+});</code></pre>
+        </div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div id="q9" hidden>
+  <p>If I {*were|was|am} you, I {*would|will|did} choose the earlier flight.</p>
+</div>
+<ui-fillin id="ev-demo">
+  <main-box source="q9"></main-box>
+</ui-fillin>
+<div class="ctrl">
+  <button type="button" id="ev-submit">呼叫 submit()</button>
+  <button type="button" id="ev-reset">呼叫 reset()</button>
+  <button type="button" id="ev-clear">清除紀錄</button>
+</div>
+<div id="ev-log"></div>
+      </script>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="part" id="errors">
+    <h2>10. 錯誤處理</h2>
+    <p class="lead">來源區塊找不到，或來源裡沒有任何可用的空格時，元件會顯示提示框說明原因，不會讓頁面出錯。提示文字可用 <code>label-no-source</code>、<code>label-no-blanks</code> 改寫。</p>
+    <div class="demo" data-demo>
+      <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<!-- source 指向不存在的 id -->
+<ui-fillin>
+  <main-box source="id-that-does-not-exist"></main-box>
+</ui-fillin>
+
+<!-- 來源內沒有任何可用的空格 -->
+<div id="q10" hidden>
+  <p>This sentence has no blank at all.</p>
+</div>
+<ui-fillin>
+  <main-box source="q10"></main-box>
+</ui-fillin>
+      </script>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="part" id="ref">
+    <h2>11. 屬性速查</h2>
+    <table class="ref">
+      <thead><tr><th style="width:280px">屬性</th><th style="width:200px">值（預設）</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3"><h4>標籤與挖空語法</h4></td></tr>
+        <tr><td><code>&lt;main-box source&gt;</code></td><td>元素 id，必填</td><td>題目來源區塊。載入時複製進來，再把來源清空並隱藏。</td></tr>
+        <tr><td><code>&lt;ans-box&gt;</code></td><td>選用</td><td>答案總表與按鈕的位置，未放置時自動建立在題目下方。</td></tr>
+        <tr><td><code>{*答案|選項|選項}</code></td><td>選擇題</td><td>至少兩個選項；兩個以上的 <code>*</code> 為複選。</td></tr>
+        <tr><td><code>{答案一|答案二}</code></td><td>輸入題</td><td><code>mode="text"</code> 時使用，符合任一個即算對。</td></tr>
+        <tr><td><code>\| \{ \} \*</code></td><td>跳脫</td><td>讓選項能出現這些符號。</td></tr>
+        <tr><td colspan="3"><h4>題目與行為</h4></td></tr>
+        <tr><td><code>mode</code></td><td><code>choice</code>、<code>text</code>（choice）</td><td>選擇題或輸入題。</td></tr>
+        <tr><td><code>option-style</code></td><td><code>alpha</code>、<code>digit</code>、<code>cjk</code>（alpha）</td><td>選項代號 A/B/C、1/2/3、甲/乙/丙。</td></tr>
+        <tr><td><code>random</code>、<code>reshuffle-on-reset</code></td><td>布林</td><td>清單項目隨機排序；重做時重新洗牌。</td></tr>
+        <tr><td><code>hide-number</code>、<code>no-number-dot</code></td><td>布林</td><td>不顯示題號；題號後不加句點。</td></tr>
+        <tr><td><code>hide-answer-table</code></td><td>布林</td><td>隱藏答案總表，只保留按鈕。</td></tr>
+        <tr><td><code>normalize-width</code></td><td>布林</td><td>輸入題比對前把全形英數與全形空白轉為半形。</td></tr>
+        <tr><td><code>show-answer-on-wrong</code></td><td>布林</td><td>輸入題提交後，答錯或未作答的空格旁顯示正確答案。</td></tr>
+        <tr><td><code>results-id</code></td><td>元素 id</td><td>提交後把每題結果寫進該元素。</td></tr>
+        <tr><td colspan="3"><h4>介面文字</h4></td></tr>
+        <tr><td><code>label-correct</code>、<code>label-incorrect</code>、<code>label-unanswered</code></td><td>正確、錯誤、未作答</td><td>答案表中的狀態文字。</td></tr>
+        <tr><td><code>label-submit</code>、<code>label-reset</code></td><td>提交答案、重做</td><td>按鈕文字。</td></tr>
+        <tr><td><code>label-submitted</code></td><td>已批改，請查看每題的對錯。</td><td>提交後的提示。</td></tr>
+        <tr><td><code>label-multi-hint</code></td><td>可複選</td><td>複選題選單上方的提示。</td></tr>
+        <tr><td><code>label-correct-answer-prefix</code></td><td>正確答案：</td><td>輸入題顯示正確答案的前綴。</td></tr>
+        <tr><td><code>label-no-source</code>、<code>label-no-blanks</code></td><td>內建訊息</td><td>錯誤提示文字。</td></tr>
+        <tr><td colspan="3"><h4>外觀</h4></td></tr>
+        <tr><td><code>font-size</code></td><td>（1.125rem）</td><td>基礎字級，純數字視為 rem。</td></tr>
+        <tr><td><code>line-height</code></td><td>（1.4）</td><td>只接受純數字，最大 1.5。</td></tr>
+        <tr><td><code>btn-font-size</code>、<code>btn-radius</code></td><td>（字級 0.8 倍、5px）</td><td>按鈕字級與圓角。</td></tr>
+        <tr><td><code>border-width</code>、<code>radius</code></td><td>（2px、6px）</td><td>外框粗細；空格與選單圓角。</td></tr>
+        <tr><td><code>blank-max-width</code>、<code>menu-max-width</code>、<code>menu-max-height</code></td><td>（20rem、24rem、60vh）</td><td>空格與選單的最大尺寸。</td></tr>
+        <tr><td><code>root-</code>、<code>main-</code>、<code>blank-</code>、<code>menu-</code>、<code>option-</code>、<code>ans-</code>、<code>btn-padding</code></td><td>px 或純數字</td><td>各部位內距，最多四個值。</td></tr>
+        <tr><td><code>line-color</code>、<code>line-alpha</code></td><td>（shell、0.78）</td><td>外框與分隔線顏色與不透明度，不透明度最低 0.78。</td></tr>
+        <tr><td colspan="3"><h4>顏色（部位-color）</h4></td></tr>
+        <tr><td><code>bg-color</code>、<code>text-color</code>、<code>accent-color</code></td><td>（base、shell、shell）</td><td>底色、文字、強調色；強調色是多數部位的預設值。</td></tr>
+        <tr><td><code>ok-color</code>、<code>bad-color</code></td><td>（green、warning）</td><td>答對、答錯。</td></tr>
+        <tr><td><code>blank-color</code>、<code>picked-color</code></td><td>沿用 accent、blank</td><td>空格外框與文字；已作答空格底色。</td></tr>
+        <tr><td><code>menu-color</code>、<code>hover-color</code></td><td>沿用 bg、accent</td><td>選單底色；選項滑過底色。</td></tr>
+        <tr><td><code>head-color</code>、<code>btn-color</code>、<code>alert-color</code></td><td>沿用 accent</td><td>答案表表頭；按鈕；批改提示框。</td></tr>
+        <tr><td colspan="3"><h4>事件與方法</h4></td></tr>
+        <tr><td><code>fillin-change</code></td><td><code>{ no, selected }</code> 或 <code>{ no, value }</code></td><td>作答內容改變時。</td></tr>
+        <tr><td><code>fillin-submit</code></td><td><code>{ results }</code></td><td>提交時，每題含 <code>no</code>、<code>correct</code>、<code>answered</code>。</td></tr>
+        <tr><td><code>fillin-reset</code></td><td>無</td><td>按下重做時。</td></tr>
+        <tr><td><code>submit()</code>、<code>reset()</code>、<code>closeMenu()</code></td><td>方法</td><td>提交批改；重做；關閉開啟中的選單。</td></tr>
+        <tr><td><code>UF.brand</code>、<code>UF.colorParts</code>、<code>UF.resolveColor()</code></td><td>靜態</td><td><code>UF = customElements.get('ui-fillin')</code>；色票、可設定顏色的部位、把顏色值轉成 CSS 色值。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 12 -->
+  <section class="part" id="history">
+    <h2>12. 舊示範檔對照</h2>
+    <p class="lead">以下兩個檔案已合併進本頁並移除。</p>
+    <table class="ref">
+      <thead><tr><th style="width:320px">移除的檔案</th><th>內容現在在</th></tr></thead>
+      <tbody>
+        <tr><td><code>ui-fillin-demo-10-06-26.html</code></td><td>1 到 4、6、8（內距與字級合併成一個面板）、9、10。舊頁的「主題變數 --uf-accent」已由 7. 配色的 <code>accent-color</code> 屬性取代。</td></tr>
+        <tr><td><code>ui-fillin-demo-11-04-26.html</code></td><td>7. 配色（品牌色票、直接寫色名、細分部位、即時調色）、3. 輸入題。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 範例六用的小元件：每秒計數，證明結果區塊裡的其他元件不會被重建 */
+customElements.define('demo-tick', class extends HTMLElement {
+  connectedCallback() {
+    let n = 0;
+    this.textContent = '其他元件仍在運作：0 秒';
+    this._t = setInterval(() => { n++; this.textContent = '其他元件仍在運作：' + n + ' 秒'; }, 1000);
+  }
+  disconnectedCallback() { clearInterval(this._t); }
+});
+
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-fillin.js"></script>
+<script>
+(() => {
+  const UF = customElements.get('ui-fillin');
+  const $ = id => document.getElementById(id);
+
+  /* Bootstrap alert 回饋 */
+  const log = msg => {
+    $('log').innerHTML = '<div class="alert alert-dismissible fade show" role="alert">' + msg +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  };
+  const copy = (text, okMsg) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => log(okMsg), () => log('無法存取剪貼簿，請手動複製。'));
+    } else {
+      log('這個瀏覽器不支援自動複製，請手動複製。');
+    }
+  };
+
+  /* 開頭標籤：列出元件目前的屬性 */
+  const tagOf = (el, skip) => {
+    const attrs = [...el.attributes].filter(a => !(skip || []).includes(a.name) && a.name !== 'style' && a.name !== 'class');
+    if (!attrs.length) return '<ui-fillin>';
+    return '<ui-fillin\n  ' + attrs.map(a => a.value === '' ? a.name : a.name + '="' + a.value + '"').join('\n  ') + '>';
+  };
+
+  /* 7. 品牌色票 */
+  const brand = UF.brand;
+  Object.keys(brand).forEach(name => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'sw';
+    b.innerHTML = '<i style="background:' + brand[name] + '"></i><span>' + name + '<small>' + brand[name] + '</small></span>';
+    b.addEventListener('click', () => copy(name, '已複製「' + name + '」。'));
+    $('swatches').appendChild(b);
+  });
+
+  /* 7. 即時調色 */
+  const colorLive = $('color-live');
+  const preset = { accent: 'blue', ok: 'green', bad: 'red', line: 'indigo' };
+  const renderColorTag = () => { $('color-tag').textContent = tagOf(colorLive, ['id']) + '\n  <main-box source="q7c"></main-box>\n</ui-fillin>'; };
+  UF.colorParts.forEach(part => {
+    const attr = part + '-color';
+    const lab = document.createElement('label');
+    lab.textContent = attr;
+    const sel = document.createElement('select');
+    sel.id = 'cp-' + part;
+    sel.innerHTML = '<option value="">（預設）</option>' + Object.keys(brand).map(n => '<option value="' + n + '">' + n + '</option>').join('');
+    if (preset[part]) { sel.value = preset[part]; colorLive.setAttribute(attr, preset[part]); }
+    sel.addEventListener('change', () => {
+      if (sel.value) colorLive.setAttribute(attr, sel.value); else colorLive.removeAttribute(attr);
+      renderColorTag();
+    });
+    lab.appendChild(sel);
+    $('color-panel').appendChild(lab);
+  });
+  renderColorTag();
+  $('color-copy').addEventListener('click', () => copy($('color-tag').textContent, '開頭標籤已複製。'));
+  $('color-clear').addEventListener('click', () => {
+    $('color-panel').querySelectorAll('select').forEach(s => { s.value = ''; });
+    UF.colorParts.forEach(p => colorLive.removeAttribute(p + '-color'));
+    renderColorTag();
+    log('已還原所有顏色為預設。');
+  });
+
+  /* 8. 字級與內距 */
+  const sizeLive = $('size-live');
+  const sizeInputs = [...$('size-panel').querySelectorAll('input[data-attr]')];
+  const renderSizeTag = () => { $('size-tag').textContent = tagOf(sizeLive, ['id']) + '\n  <main-box source="q8"></main-box>\n</ui-fillin>'; };
+  const applyInput = inp => {
+    const v = inp.value.trim();
+    if (v) sizeLive.setAttribute(inp.dataset.attr, v); else sizeLive.removeAttribute(inp.dataset.attr);
+  };
+  sizeInputs.forEach(inp => inp.addEventListener('input', () => { applyInput(inp); renderSizeTag(); }));
+  const PRESETS = {
+    large: { 'font-size': '1.5', 'blank-padding': '4 12' },
+    compact: { 'font-size': '1', 'root-padding': '8', 'main-padding': '8', 'blank-padding': '2 6', 'menu-padding': '6', 'option-padding': '4 8', 'ans-padding': '8', 'btn-padding': '4 12' },
+    clear: {}
+  };
+  document.querySelectorAll('button[data-size]').forEach(b => b.addEventListener('click', () => {
+    const p = PRESETS[b.dataset.size];
+    sizeInputs.forEach(inp => { inp.value = p[inp.dataset.attr] || ''; applyInput(inp); });
+    renderSizeTag();
+    log(b.dataset.size === 'clear' ? '已還原所有尺寸為預設。' : '已套用「' + b.textContent + '」。');
+  }));
+  renderSizeTag();
+
+  /* 9. 事件與方法 */
+  const ev = $('ev-demo');
+  const evLog = $('ev-log');
+  const write = line => { evLog.textContent = line + '\n' + evLog.textContent; };
+  ['fillin-change', 'fillin-submit', 'fillin-reset'].forEach(name => {
+    ev.addEventListener(name, e => write(name + '  ' + (e.detail ? JSON.stringify(e.detail) : '')));
+  });
+  $('ev-submit').addEventListener('click', () => ev.submit());
+  $('ev-reset').addEventListener('click', () => ev.reset());
+  $('ev-clear').addEventListener('click', () => { evLog.textContent = ''; });
+})();
+</script>
+</body>
+</html>
