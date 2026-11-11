@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dot-go 11-11-26：從 ink-pen.js 拆出的獨立元件</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:36px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{font-size:1rem;margin:16px 0 8px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .old{color:#EF6661} .new{color:#71CD76}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  code{color:#FF91D7}
+  .stage{border:1px solid #2a2b29;border-radius:8px;padding:16px}
+  .tool{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 12px 0}
+  .stat{display:grid;grid-template-columns:200px 1fr;gap:6px 16px;font-size:.9rem}
+  .stat b{color:#DBEDD8;font-weight:400}
+  .ok{color:#71CD76} .no{color:#86877F}
+  .slide{min-height:70vh;display:flex;flex-direction:column;justify-content:center;gap:16px;border-radius:12px;padding:40px 56px;margin:24px 0 0 0}
+  .slide h3{font-size:2.4rem;margin:0}
+  .slide p{font-size:1.15rem;margin:0}
+  .s1{border:1px solid #5DBAE8} .s1 h3{color:#5DBAE8}
+  .s2{background:#3B2A20;border:1px solid #FFA987} .s2 h3{color:#FFA987}
+  #msg .alert{background:#161816;color:#C6C7BD;font-size:.9rem;padding:10px 16px;margin:12px 0 0 0}
+  #msg .alert-success{border:1px solid #71CD76}
+  #msg .alert-info{border:1px solid #5DBAE8}
+</style>
+<!-- 跨頁轉場需要在 <head> 載入 dot-go.js；這一頁一開始只載入 dot-go.js -->
+<script src="dot-go.js"></script>
+</head>
+<body>
+<div class="page">
+<h1>dot-go.js：跳轉圓點與轉場拆成獨立元件</h1>
+<p>原本內建在 ink-pen.js 的 <code>&lt;dot-go&gt;</code> 與 View Transitions 轉場，現在是同資料夾的 dot-go.js。只用畫筆的頁面少載約 30 KB；只要跳轉圓點的頁面也不必載入整套畫筆。</p>
+
+<h2>1. 檔案拆分前後</h2>
+<div class="cmp">
+  <div><h3 class="old"><i class="bi bi-x-circle"></i> 原本</h3><pre>&lt;!-- 一支檔案包含畫筆、手寫、NG、dot-go、轉場（約 97 KB） --&gt;
+&lt;script src="ink-pen.js"&gt;&lt;/script&gt;</pre></div>
+  <div><h3 class="new"><i class="bi bi-check-circle"></i> 11-11-26</h3><pre>&lt;!-- 只要畫筆（約 69 KB） --&gt;
+&lt;script src="ink-pen.js"&gt;&lt;/script&gt;
+
+&lt;!-- 只要跳轉圓點與轉場（約 32 KB） --&gt;
+&lt;script src="dot-go.js"&gt;&lt;/script&gt;
+
+&lt;!-- 兩者都要：順序不拘；用到跨頁轉場時 dot-go.js 放在 &lt;head&gt; --&gt;
+&lt;script src="dot-go.js"&gt;&lt;/script&gt;
+&lt;script src="ink-pen.js"&gt;&lt;/script&gt;</pre></div>
+</div>
+
+<h2>2. 單獨使用與搭配畫筆</h2>
+<div class="stage">
+  <div class="tool">
+    <button type="button" class="btn btn-outline-info btn-sm" id="loadPen"><i class="bi bi-pen"></i> 現在才載入 ink-pen.js</button>
+    <span class="no" style="font-size:.85rem;">示範載入順序不拘：dot-go.js 已經在 &lt;head&gt;，ink-pen.js 之後才加入</span>
+  </div>
+  <div class="stat">
+    <span>window.DotGo</span><b id="stDot"></b>
+    <span>window.InkPen</span><b id="stPen"></b>
+    <span>InkPen.transition（相容介面）</span><b id="stBridge"></b>
+    <span>轉場支援</span><b id="stVt"></b>
+  </div>
+  <div id="msg"></div>
+  <p style="margin:16px 0 0 0;">
+    <dot-go href="#slide-1" theme="key" dot-style="star-fill" transition="push" transition-edge="key">第 1 張</dot-go>
+    <dot-go href="#slide-2" theme="playful" dot-style="square-fill" transition="cube" transition-edge="playful" clear-ink>第 2 張（先清筆跡）</dot-go>
+    <dot-go href="#slide-1" theme="violet" dot-style="icon" icon="bi-arrows-angle-expand" transition="zoom-in">放大到第 1 張</dot-go>
+  </p>
+  <p class="no" style="font-size:.85rem;margin:12px 0 0 0;">載入 ink-pen.js 後，用 Ctrl+Shift+1 開觸控筆。這一頁的繪圖層設了捲動鎖定，畫筆開著時頁面不能捲動，但圓點的同頁跳轉仍然放行；第 2 張的圓點加了 clear-ink，跳轉前會清掉筆跡。</p>
+</div>
+
+<section class="slide s1" id="slide-1">
+  <h3 data-morph="title">第 1 張</h3>
+  <p>沒有 ink-pen.js 時，圓點照常跳轉與播放轉場。</p>
+  <p><dot-go href="#slide-2" theme="playful" transition="push" transition-edge="playful">下一張</dot-go></p>
+</section>
+<section class="slide s2" id="slide-2">
+  <h3 data-morph="title">第 2 張</h3>
+  <p>標題加了相同的 data-morph，轉場時會從舊位置移動到新位置。</p>
+  <p><dot-go href="#slide-1" theme="key" transition="push" transition-edge="key">上一張</dot-go></p>
+</section>
+
+<h2>3. 對外介面</h2>
+<div class="cmp">
+  <div><h3 class="old"><i class="bi bi-x-circle"></i> 原本</h3><pre>InkPen.dots();
+InkPen.dotStyles;
+InkPen.transitions;
+InkPen.transitionSupport;
+InkPen.transition('zoom-in', () =&gt; { /* 換畫面 */ }, { ms: 800 });</pre></div>
+  <div><h3 class="new"><i class="bi bi-check-circle"></i> 11-11-26</h3><pre>// 新的介面
+DotGo.dots();
+DotGo.dotStyles;
+DotGo.transitions;
+DotGo.transitionSupport;
+DotGo.transition('zoom-in', () =&gt; { /* 換畫面 */ }, { ms: 800 });
+
+// 兩支都載入時，舊寫法 InkPen.dots()、InkPen.transition() 照常可用
+
+// 全頁預設轉場：沒有工具列的頁面可以寫在 &lt;body&gt; 上
+&lt;body data-transition="push" data-transition-edge="key"&gt;</pre></div>
+</div>
+
+<h2>4. 其他調整</h2>
+<div class="cmp">
+  <div><h3 class="old"><i class="bi bi-x-circle"></i> 原本</h3><pre>dot-go:hover { background: rgba(32,33,25,0.92); }
+樣式 id：ink-pen-dotgo-styles、ink-pen-vt-styles
+轉場屬性：html[data-ip-vt]</pre></div>
+  <div><h3 class="new"><i class="bi bi-check-circle"></i> 11-11-26</h3><pre>dot-go:hover { background: #202119; }   /* 改成實色 */
+樣式 id：dot-go-styles、dot-go-vt-styles
+轉場屬性：html[data-dg-vt]</pre></div>
+</div>
+</div>
+
+<script>
+  (function () {
+    const yes = (t) => '<span class="ok">' + t + '</span>';
+    const no = (t) => '<span class="no">' + t + '</span>';
+    const msg = (type, html) => {
+      document.getElementById('msg').innerHTML =
+        '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' + html +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+    };
+    const refresh = () => {
+      document.getElementById('stDot').innerHTML = window.DotGo ? yes('已載入，' + DotGo.dots().length + ' 個圓點') : no('未載入');
+      document.getElementById('stPen').innerHTML = window.InkPen ? yes('已載入') : no('未載入');
+      document.getElementById('stBridge').innerHTML =
+        window.InkPen ? (typeof InkPen.transition === 'function' ? yes('可用') : no('不可用')) : no('ink-pen.js 未載入');
+      const s = DotGo.transitionSupport;
+      document.getElementById('stVt').innerHTML = '同頁 ' + (s.sameDocument ? yes('支援') : no('不支援')) +
+        '，跨頁 ' + (s.crossDocument ? yes('支援') : no('不支援'));
+    };
+    refresh();
+
+    const btn = document.getElementById('loadPen');
+    btn.addEventListener('click', () => {
+      if (window.InkPen) { msg('info', 'ink-pen.js 已經載入了。'); return; }
+      btn.disabled = true;
+      const layer = document.createElement('ui-ink-layer');
+      layer.setAttribute('data-anchor', 'document');
+      layer.setAttribute('data-lock-scroll', 'true');
+      const bar = document.createElement('ui-ink-bar');
+      bar.setAttribute('data-pos', 'bl');
+      document.body.append(layer, bar);
+      const sc = document.createElement('script');
+      sc.src = 'ink-pen.js';
+      sc.onload = () => {
+        refresh();
+        msg('success', 'ink-pen.js 已載入，工具列在左下角。按 Ctrl+Shift+1 開觸控筆，再點上方的圓點試試。');
+      };
+      document.body.appendChild(sc);
+    });
+  })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

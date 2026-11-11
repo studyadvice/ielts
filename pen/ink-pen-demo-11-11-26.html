@@ -32,8 +32,9 @@
   .s4{background:#0C0D0C;border:1px solid #51DBCF} .s4 h3{color:#51DBCF;font-size:3.4rem}
 
 </style>
-<!-- 跨頁轉場需要在 <head> 載入 ink-pen.js -->
+<!-- 跨頁轉場需要在 <head> 載入 dot-go.js -->
 <script src="ink-pen.js"></script>
+<script src="dot-go.js"></script>
 </head>
 <body>
 <div class="page">
@@ -94,7 +95,7 @@
 </section>
 <section class="slide s4" id="vt-slide-4">
   <h3 data-morph="slide-title">4. 跨頁轉場</h3>
-  <p>下方第一個圓點會重新載入這一頁（不同網址），示範跨頁轉場固定使用 cube-left 加 key 亮線。出發頁與目的頁都必須在 &lt;head&gt; 載入 ink-pen.js。</p>
+  <p>下方第一個圓點會重新載入這一頁（不同網址），示範跨頁轉場固定使用 cube-left 加 key 亮線。出發頁與目的頁都必須在 &lt;head&gt; 載入 dot-go.js。</p>
   <div class="nav">
     <dot-go href="ink-pen-demo-11-11-26.html?from=cross#vt-slide-1" transition="cube-left" transition-ms="900" transition-edge="key" theme="key" dot-style="icon" icon="box-arrow-up-right" size="28">跨頁到第 1 張</dot-go>
     <dot-go href="#vt-slide-1" theme="key" dot-style="icon" icon="arrow-up-circle-fill" size="28" class="vt-dot">回第 1 張</dot-go>
@@ -115,7 +116,7 @@
 &lt;h3 data-morph=&quot;slide-title&quot;&gt;...&lt;/h3&gt;
 
 &lt;!-- 跨頁：兩頁都在 &lt;head&gt; 載入 --&gt;
-&lt;script src=&quot;ink-pen.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;dot-go.js&quot;&gt;&lt;/script&gt;
 
 &lt;!-- 程式呼叫 --&gt;
 InkPen.transition('zoom-in', () =&gt; { /* 換畫面 */ }, { ms: 800 });</pre></div>

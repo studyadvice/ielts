@@ -1,6 +1,11 @@
-# ink-pen.js
+# ink-pen.js 與 dot-go.js
 
-螢幕錄影教學用的極簡畫筆層。零依賴，單一 JavaScript 檔即可運作，提供觸控筆、雷射筆、行內手寫填空與跳轉圓點。
+螢幕錄影教學用的極簡畫筆層與跳轉圓點。兩支檔案都零依賴，各自單檔即可運作，可以分開使用，也可以一起使用。
+
+| 檔案 | 標籤 | 用途 |
+|---|---|---|
+| `ink-pen.js` | `<ui-ink-layer>`、`<ui-ink-bar>`、`<ink-handwrite>` | 觸控筆、雷射筆、行內手寫填空、NG 標記 |
+| `dot-go.js` | `<dot-go>` | 跳轉圓點與簡報式轉場（11-11-26 從 `ink-pen.js` 拆出） |
 
 適合用觸控筆在網頁教材上邊講解邊標註，錄成教學影片。元件不會在畫面上跳出任何提示訊息，設定錯誤只寫入主控台，避免錄影時出現干擾畫面的東西。
 
@@ -9,7 +14,7 @@
 - **全頁繪圖層**：觸控筆支援壓感，雷射筆帶殘影；筆跡可固定在視窗或跟著內容捲動。
 - **迷你工具列**：平時收合成一顆小圓鈕，可切換模式、筆色與粗細。
 - **行內手寫空格**：點一下開啟手寫視窗，寫完的筆跡自動裁切後填回空格，可附解答。
-- **跳轉圓點**：開著觸控筆也點得到，可跳到同頁標籤或其他網頁，支援 SVG 圖形與 Bootstrap Icons。
+- **跳轉圓點**（`dot-go.js`）：開著觸控筆也點得到，可跳到同頁標籤或其他網頁，支援 SVG 圖形、Bootstrap Icons 與簡報式轉場。
 - **NG 標記**：錄影中說錯了不必停下來，按快捷鍵讓整頁出現紅色遮罩 2 秒，同時記下時間點，剪輯時對照遮罩與清單即可找到要剪的位置。
 - **快捷鍵**：錄影時不必伸手找按鈕。
 
@@ -20,6 +25,8 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+  <script src="ink-pen.js"></script>
+  <script src="dot-go.js"></script>
 </head>
 <body>
   <ui-ink-layer></ui-ink-layer>
@@ -35,6 +42,16 @@
 
 按 `Ctrl+Shift+1` 開啟觸控筆，按 `` Ctrl+Shift+` `` 回到一般點選。
 
+只用畫筆的頁面不必載入 `dot-go.js`；只要跳轉圓點的頁面也不必載入 `ink-pen.js`。兩支檔案的載入順序不拘，但用到跨頁轉場時，`dot-go.js` 要放在 `<head>`。
+
+### 從舊版升級
+
+11-11-26 之前，`<dot-go>` 與轉場內建在 `ink-pen.js`。升級後，用到 `<dot-go>` 的頁面多載入一行 `dot-go.js` 即可，其餘寫法不變：
+
+- `InkPen.dots()`、`InkPen.transition()` 等介面，在兩支都載入時照常可用；新寫法是 `DotGo.dots()`、`DotGo.transition()`。
+- 寫在 `<ui-ink-bar>` 或 `<ui-ink-layer>` 上的 `data-transition` 全頁預設照常有效。
+- 只有自訂 CSS 覆寫轉場時要注意：`html[data-ip-vt]` 改名為 `html[data-dg-vt]`，`--ip-vt-ms` 改名為 `--dg-vt-ms`。
+
 ## 元件
 
 ### `<ui-ink-layer>` 全頁繪圖層
@@ -48,7 +65,7 @@
 
 兩種模式可隨時切換，既有筆跡會依當下捲動量自動換算座標，切換瞬間畫面不會跳動。
 
-鎖定捲動期間，滾輪、觸控拖曳、方向鍵、PageUp、PageDown、空白鍵與拖曳捲軸都無效，按工具列的「關」才能再捲動。`document` 模式在鎖定時，手指拖曳改為作畫。唯一例外是 `<dot-go>` 的同頁跳轉，仍會平滑捲動到目標。
+鎖定捲動期間，滾輪、觸控拖曳、方向鍵、PageUp、PageDown、空白鍵與拖曳捲軸都無效，按工具列的「關」才能再捲動。`document` 模式在鎖定時，手指拖曳改為作畫。唯一例外是 `<dot-go>` 的同頁跳轉（需載入 `dot-go.js`），仍會平滑捲動到目標。
 
 ```html
 <ui-ink-layer data-anchor="document" data-lock-scroll="pen"></ui-ink-layer>
@@ -69,6 +86,7 @@
 | `setAnchor(mode)`、`getAnchor()` | 切換座標模式 |
 | `setScrollLock(v)`、`getScrollLock()` | 設定或讀取捲動鎖定規則，`v` 為 `true`、`'pen'` 或 `false`；讀取值為 `all`、`pen`、`none` |
 | `isScrollLocked()` | 目前是否正在鎖定捲動 |
+| `allowScroll(ms)` | 鎖定期間暫時放行程式端捲動，預設 700 毫秒，`dot-go.js` 的同頁跳轉會呼叫 |
 | `clear()` | 清除全部筆跡 |
 | `isEmpty()` | 是否沒有任何筆跡 |
 
@@ -158,70 +176,6 @@ NG 02  按鍵 06:51.0    建議剪輯點 06:48.0
 
 筆跡粗細範圍 4 至 24，預設 10。色彩選單會跟著工具列，包含 `extra-color` 自訂色。
 
-### `<dot-go>` 跳轉圓點
-
-```html
-<dot-go href="#part2" theme="blue" dot-style="star-fill">Part 2</dot-go>
-<dot-go href="lesson-02.html" theme="pink" dot-style="square">下一課</dot-go>
-<dot-go href="#part3" theme="blue" dot-style="icon" icon="bi-translate">翻譯練習</dot-go>
-<dot-go href="https://www.ielts.org/" dot-style="icon" icon="bi-box-arrow-up-right" target="_blank"></dot-go>
-```
-
-圓點的層級高於繪圖層，所以在觸控筆或雷射筆模式下，筆尖點到圓點一樣會跳轉，不會被畫成一筆。
-
-| 屬性 | 值 | 預設 | 說明 |
-|---|---|---|---|
-| `href` | `#id` 或網址 | 無 | `#id` 為同頁平滑捲動，並讓目標閃一下外框；其餘當網址跳轉。未設定時圓點停用 |
-| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `blue` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。 |
-| `dot-style` | `circle`、`circle-fill`、`star`、`star-fill`、`square`、`square-fill`、`icon` | `circle-fill` | 圖示樣式 |
-| `icon` | Bootstrap Icons 名稱 | 無 | `dot-style="icon"` 時使用，寫 `bi-translate`、`translate` 或 `bi bi-translate` 皆可 |
-| `size` | 10 至 48 | 18 | 圖示大小（px） |
-| `target` | `_blank` | 同分頁 | 另開分頁 |
-| `offset` | 數字 | 16 | 同頁跳轉時保留的上方距離（px），給固定頁首用 |
-| `clear-ink` | 布林屬性 | 不清除 | 跳轉前先清除繪圖層筆跡 |
-| `transition` | 見下方轉場清單 | 無 | 跳轉時播放簡報式轉場（11-11-26 新增）。不寫或寫 `none` 時維持原本的平滑捲動 |
-| `transition-ms` | 150 至 3000 | 600 | 轉場時間（毫秒） |
-| `transition-edge` | 品牌色名稱或色碼 | 無 | 移動中畫面邊緣的亮色線，深色背景切換時讓動態更明顯 |
-
-標籤內的文字會顯示在圖示右側當標籤，留空則只顯示圖示。
-
-使用 `dot-style="icon"` 時，若頁面還沒引入 Bootstrap Icons，元件會自動從 jsDelivr 載入一次；已引入則不重複載入。缺少 `icon` 屬性時退回 `circle-fill`。
-
-#### 轉場（View Transitions API）
-
-瀏覽器先拍下舊畫面，換成新畫面後在兩者之間做動畫，新舊畫面會同時出現，效果接近簡報切換投影片。
-
-```html
-<dot-go href="#part2" transition="cube" transition-edge="key">下一段</dot-go>
-<dot-go href="lesson-02.html" transition="push-left" transition-ms="800">下一課</dot-go>
-
-<!-- 全頁預設：寫在工具列（或繪圖層）上，<dot-go> 自己的屬性優先 -->
-<ui-ink-bar data-transition="push" data-transition-edge="key"></ui-ink-bar>
-```
-
-| 種類 | 效果 |
-|---|---|
-| `fade` | 交叉淡化 |
-| `push`、`push-left`、`push-right`、`push-up`、`push-down` | 新畫面把舊畫面推出去 |
-| `cover`、`cover-*` | 新畫面滑入蓋住舊畫面 |
-| `uncover`、`uncover-*` | 舊畫面滑走，露出新畫面 |
-| `zoom-in`、`zoom-out` | 新畫面從小放大，或舊畫面縮小離開 |
-| `flip`、`flip-*` | 以畫面中線為軸 3D 翻轉 |
-| `cube`、`cube-*` | 立方體旋轉 |
-| `morph` | 其餘畫面交叉淡化，只讓 `data-morph` 元素移動變形 |
-
-- **方向**：`push`、`cover`、`uncover`、`flip`、`cube` 不寫方向時自動判斷。同頁往下跳時新畫面從下方進來，往上跳時從上方進來；跨頁一律從右邊進來。
-- **轉化**：新舊兩處的對應元素加上相同的 `data-morph="名稱"`，轉場時會從舊位置移動並變形到新位置，任何種類都能搭配。
-- **深色背景**：兩個深色畫面互相淡化幾乎看不出來，建議選推入、覆蓋、翻轉、立方體這類靠位移的效果，並加上 `transition-edge`。
-- **跨頁轉場**：出發頁與目的頁都要在 `<head>` 裡載入 `ink-pen.js`，且兩頁同網域。放在 `</body>` 前的話，目的頁來不及在第一次繪製前宣告轉場，會直接換頁，console 也會提示。只有從 `<dot-go>` 出發的換頁會播放，一般連結、上一頁與重新整理都維持原狀。
-- **固定介面**：工具列與 NG 遮罩不參與轉場，停在原位。
-- **支援度**：同頁需要 Chrome、Edge 111 或 Safari 18 以上，跨頁需要 Chrome、Edge 126 或 Safari 18.2 以上。不支援時直接照原本方式跳轉，不會出錯。錄影建議用 Chrome 或 Edge。
-
-| 方法 | 說明 |
-|---|---|
-| `go()` | 以程式觸發跳轉 |
-| `href`、`internal`、`dotStyle`、`size`、`color` | 唯讀屬性 |
-
 ## 事件
 
 所有事件都會冒泡，可在 `document` 統一監聽。
@@ -230,7 +184,7 @@ NG 02  按鍵 06:51.0    建議剪輯點 06:48.0
 |---|---|---|
 | `ink-written` | 手寫視窗確認填入 | `{ el, dataUrl, empty, slots }` |
 | `ink-answer` | 解答顯示或收起 | `{ el, shown, answer, slots }` |
-| `dot-go` | 跳轉前，可 `preventDefault()` 取消 | `{ el, href, internal, target }` |
+| `dot-go` | 跳轉前，可 `preventDefault()` 取消（`dot-go.js`） | `{ el, href, internal, target }` |
 | `ink-scroll-lock` | 捲動鎖定狀態改變 | `{ locked, rule, mode }` |
 
 ```js
@@ -252,13 +206,93 @@ document.addEventListener('dot-go', function (e) {
 | `clearBlanks()` | 清除所有空格的手寫筆跡 |
 | `showAnswers(on)` | 顯示或收起所有解答 |
 | `toggleAnswers()` | 只要還有沒顯示的就全部顯示，否則全部收起 |
+| `palette`、`penColorOptions` | 配色表與筆色選單 |
+| `widthRange`、`handwriteRange`、`slotRange` | 各項數值範圍 |
+
+## dot-go.js
+
+### `<dot-go>` 跳轉圓點
+
+```html
+<script src="dot-go.js"></script>
+```
+
+```html
+<dot-go href="#part2" theme="blue" dot-style="star-fill">Part 2</dot-go>
+<dot-go href="lesson-02.html" theme="pink" dot-style="square">下一課</dot-go>
+<dot-go href="#part3" theme="blue" dot-style="icon" icon="bi-translate">翻譯練習</dot-go>
+<dot-go href="https://www.ielts.org/" dot-style="icon" icon="bi-box-arrow-up-right" target="_blank"></dot-go>
+```
+
+圓點的層級高於 `ink-pen.js` 的繪圖層，所以在觸控筆或雷射筆模式下，筆尖點到圓點一樣會跳轉，不會被畫成一筆。沒有載入 `ink-pen.js` 時，圓點照常運作。
+
+| 屬性 | 值 | 預設 | 說明 |
+|---|---|---|---|
+| `href` | `#id` 或網址 | 無 | `#id` 為同頁平滑捲動，並讓目標閃一下外框；其餘當網址跳轉。未設定時圓點停用 |
+| `theme` | 配色表名稱、`#RGB`、`#RRGGBB` | `blue` | 圖示與標籤顏色。可用名稱：`bg`、`shell`、`violet`、`blue`、`energetic`、`dreamy`、`green`、`vanilla`、`yellow`、`indigo`、`pink`、`red`、`gray`、`key`、`bg-alternative`、`calm`、`quiet`、`playful`、`urgent`。 |
+| `dot-style` | `circle`、`circle-fill`、`star`、`star-fill`、`square`、`square-fill`、`icon` | `circle-fill` | 圖示樣式 |
+| `icon` | Bootstrap Icons 名稱 | 無 | `dot-style="icon"` 時使用，寫 `bi-translate`、`translate` 或 `bi bi-translate` 皆可 |
+| `size` | 10 至 48 | 18 | 圖示大小（px） |
+| `target` | `_blank` | 同分頁 | 另開分頁 |
+| `offset` | 數字 | 16 | 同頁跳轉時保留的上方距離（px），給固定頁首用 |
+| `clear-ink` | 布林屬性 | 不清除 | 跳轉前先清除繪圖層筆跡（需載入 `ink-pen.js`） |
+| `transition` | 見下方轉場清單 | 無 | 跳轉時播放簡報式轉場（11-11-26 新增）。不寫或寫 `none` 時維持原本的平滑捲動 |
+| `transition-ms` | 150 至 3000 | 600 | 轉場時間（毫秒） |
+| `transition-edge` | 品牌色名稱或色碼 | 無 | 移動中畫面邊緣的亮色線，深色背景切換時讓動態更明顯 |
+
+標籤內的文字會顯示在圖示右側當標籤，留空則只顯示圖示。
+
+使用 `dot-style="icon"` 時，若頁面還沒引入 Bootstrap Icons，元件會自動從 jsDelivr 載入一次；已引入則不重複載入。缺少 `icon` 屬性時退回 `circle-fill`。
+
+### 轉場（View Transitions API）
+
+瀏覽器先拍下舊畫面，換成新畫面後在兩者之間做動畫，新舊畫面會同時出現，效果接近簡報切換投影片。
+
+```html
+<dot-go href="#part2" transition="cube" transition-edge="key">下一段</dot-go>
+<dot-go href="lesson-02.html" transition="push-left" transition-ms="800">下一課</dot-go>
+
+<!-- 全頁預設：寫在 <body>、工具列或繪圖層上，<dot-go> 自己的屬性優先 -->
+<body data-transition="push" data-transition-edge="key">
+<ui-ink-bar data-transition="push" data-transition-edge="key"></ui-ink-bar>
+```
+
+| 種類 | 效果 |
+|---|---|
+| `fade` | 交叉淡化 |
+| `push`、`push-left`、`push-right`、`push-up`、`push-down` | 新畫面把舊畫面推出去 |
+| `cover`、`cover-*` | 新畫面滑入蓋住舊畫面 |
+| `uncover`、`uncover-*` | 舊畫面滑走，露出新畫面 |
+| `zoom-in`、`zoom-out` | 新畫面從小放大，或舊畫面縮小離開 |
+| `flip`、`flip-*` | 以畫面中線為軸 3D 翻轉 |
+| `cube`、`cube-*` | 立方體旋轉 |
+| `morph` | 其餘畫面交叉淡化，只讓 `data-morph` 元素移動變形 |
+
+- **方向**：`push`、`cover`、`uncover`、`flip`、`cube` 不寫方向時自動判斷。同頁往下跳時新畫面從下方進來，往上跳時從上方進來；跨頁一律從右邊進來。
+- **轉化**：新舊兩處的對應元素加上相同的 `data-morph="名稱"`，轉場時會從舊位置移動並變形到新位置，任何種類都能搭配。
+- **深色背景**：兩個深色畫面互相淡化幾乎看不出來，建議選推入、覆蓋、翻轉、立方體這類靠位移的效果，並加上 `transition-edge`。
+- **跨頁轉場**：出發頁與目的頁都要在 `<head>` 裡載入 `dot-go.js`，且兩頁同網域。放在 `</body>` 前的話，目的頁來不及在第一次繪製前宣告轉場，會直接換頁，console 也會提示。只有從 `<dot-go>` 出發的換頁會播放，一般連結、上一頁與重新整理都維持原狀。
+- **固定介面**：同時使用 `ink-pen.js` 時，工具列與 NG 遮罩不參與轉場，停在原位。
+- **支援度**：同頁需要 Chrome、Edge 111 或 Safari 18 以上，跨頁需要 Chrome、Edge 126 或 Safari 18.2 以上。不支援時直接照原本方式跳轉，不會出錯。錄影建議用 Chrome 或 Edge。
+
+| 方法 | 說明 |
+|---|---|
+| `go()` | 以程式觸發跳轉 |
+| `href`、`internal`、`dotStyle`、`size`、`color` | 唯讀屬性 |
+
+### 全域介面 `window.DotGo`
+
+| 成員 | 說明 |
+|---|---|
 | `dots()` | 頁面上所有 `<dot-go>` |
 | `dotStyles` | 支援的圖示樣式清單 |
 | `transitions` | 支援的轉場種類清單 |
 | `transitionSupport` | 瀏覽器支援狀況 `{ sameDocument, crossDocument }` |
 | `transition(name, fn, opts)` | 自訂換畫面時套用轉場，`fn` 負責實際換畫面；`opts` 可給 `ms`、`edge`、`direction`、`scope` |
-| `palette`、`penColorOptions` | 配色表與筆色選單 |
-| `widthRange`、`handwriteRange`、`slotRange` | 各項數值範圍 |
+| `palette` | 配色表 |
+
+兩支檔案都載入時，以上介面除了 `palette` 也會掛到 `window.InkPen`，舊頁面的寫法不必修改。
+
 
 ## 快捷鍵
 
@@ -285,7 +319,7 @@ document.addEventListener('dot-go', function (e) {
 
 ## 示範
 
-`ink-pen-demo-10-31-26.html` 與 `ink-pen.js` 放在同一資料夾，用瀏覽器開啟即可。NG 標記的示範在 `ink-pen-demo-11-10-26.html`，`<dot-go>` 轉場的示範在 `ink-pen-demo-11-11-26.html`。
+`ink-pen-demo-10-31-26.html` 與 `ink-pen.js`、`dot-go.js` 放在同一資料夾，用瀏覽器開啟即可。NG 標記的示範在 `ink-pen-demo-11-10-26.html`，`<dot-go>` 轉場的示範在 `ink-pen-demo-11-11-26.html`，拆分前後的對照與兩支檔案的配合在 `dot-go-demo-11-11-26.html`。
 
 ## 授權
 
