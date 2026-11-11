@@ -1,19 +1,10 @@
 /*!
- * ui-stream.js  v0.3
- * <ui-stream> 內容流：像聊天室回放。項目依序滑入，可逐字打出、可設暫停點、可在暫停後揭露隱藏區塊。
- * 單一檔案，CSS 內建，不使用 Shadow DOM。顏色可用品牌色名稱或色碼。數字單位 px，字級 rem。
- *
  * 標籤
  *   <ui-stream>        容器，播放、版面、角色色彩都寫在這裡。
  *   <stream-role>      自訂角色（可省略）。內建 teacher、student、system 三種。
  *   <stream-item>      一則訊息。
  *
  * 屬性分類請看 ui-stream-demo-11-11-26.html 的「屬性總覽」，程式內的預設值在 DEFAULTS。
- *
- * 方法：play() pause() toggle() next() replay() goto(i) finish() add(item) export(format)
- * 事件：ui-stream:item { index, item, role }、ui-stream:typed { index }、
- *       ui-stream:pause { index, text }、ui-stream:resume { index }、ui-stream:done { total }
- * 全域：window.UiStreamConfig = { speed, delay, ... }（在載入 ui-stream.js 之前設定，欄位同 ui-stream 屬性的駝峰寫法）
  */
 (() => {
   'use strict';
@@ -25,7 +16,6 @@
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const fs = v => /^\d*\.?\d+$/.test(String(v)) ? v + 'rem' : v;
 
-  /* ── 預設值（可用 window.UiStreamConfig 覆寫） ── */
   const DEFAULTS = {
     /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, typeAll: false, step: false,
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
