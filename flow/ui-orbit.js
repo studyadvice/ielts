@@ -1,5 +1,5 @@
 /*!
- * ui-orbit.js  v0.1（粗製版）
+ * ui-orbit.js
  * <ui-orbit> 軌道：題目在中心，想法繞著轉；點一個想法，它脫離軌道停進下方插槽並展開細節，再點就回去。
  *
  *  <ui-orbit size="420" radius="160" item-size="64" period="40" accent="pink" slot-title="{label}">
