@@ -1,5 +1,6 @@
 /*!
- * <dino-deck> 恐龍噴火字卡元件 v1.0.0（11-11-26）
+ * <dino-deck> 恐龍噴火字卡元件 v1.1.0（11-12-26）
+ * v1.1.0：恐龍預設去背，身體填色自動跟隨顯示區底色；dino-bg 改為選用，需要底框時再設定。
  * 點擊左側字卡，卡片飛入文字區變成描邊恐龍，恐龍噴火後例句從火焰處飛出，最後恐龍退場。
  * 不使用 shadow DOM，CSS 由本檔自動注入，不需要其他函式庫（有 Bootstrap 時錯誤提示可關閉）。
  *
@@ -27,35 +28,38 @@
       'stage-bg': '#3B2A20', 'stage-color': '#DBEDD8', 'stage-border': '2px solid #86877F',
       'card-bg': '#DBEDD8,#8EA4DE', 'card-color': '#0C0D0C', 'card-border': '2px solid #0C0D0C',
       'extra-color': '#A3C4BC', 'mark-color': '#E3D322', 'active-color': '#51DBCF',
-      'dino-bg': '#0C0D0C', 'dino-line': '#DBEDD8'
+      'dino-line': '#DBEDD8'
     },
     night: {
       'stage-bg': '#0C0D0C', 'stage-color': '#C6C7BD', 'stage-border': '2px solid #51DBCF',
       'card-bg': '#51DBCF,#A3C4BC', 'card-color': '#0C0D0C', 'card-border': '2px solid #0C0D0C',
       'extra-color': '#8EA4DE', 'mark-color': '#B6FF00', 'active-color': '#B6FF00',
-      'dino-bg': '#0C0D0C', 'dino-line': '#DBEDD8'
+      'dino-line': '#DBEDD8'
     },
     candy: {
       'stage-bg': '#0C0D0C', 'stage-color': '#DBEDD8', 'stage-border': '2px dashed #FF91D7',
       'card-bg': '#FF91D7,#DE8EC9,#B484E8', 'card-color': '#0C0D0C', 'card-border': '2px solid #0C0D0C',
       'extra-color': '#DE8EC9', 'mark-color': '#FFA987', 'active-color': '#E3D322',
-      'dino-bg': '#3B2A20', 'dino-line': '#DBEDD8'
+      'dino-line': '#DBEDD8'
     },
     shell: {
       'stage-bg': '#C6C7BD', 'stage-color': '#0C0D0C', 'stage-border': '2px solid #0C0D0C',
       'card-bg': '#DBEDD8,#5DBAE8', 'card-color': '#0C0D0C', 'card-border': '2px solid #0C0D0C',
       'extra-color': '#3B2A20', 'mark-color': '#3B2A20', 'active-color': '#FF2E63',
-      'dino-bg': '#0C0D0C', 'dino-line': '#DBEDD8'
+      'dino-line': '#0C0D0C'
     }
   };
 
   var DEFAULTS = {
     'stage-radius': '6px', 'stage-min-height': '320px', 'stage-font-size': '1.6rem', 'stage-padding': '24px',
     'card-radius': '0px', 'card-width': '220px', 'card-lines': '2', 'card-gap': '0px', 'card-font-size': '1.1rem',
-    'card-padding': '10px 12px', 'dino-height': '72px'
+    'card-padding': '10px 12px', 'dino-height': '72px', 'dino-bg': 'none'
   };
 
   var DECK_ATTRS = ['theme'].concat(Object.keys(THEMES.ember), Object.keys(DEFAULTS));
+
+  /* none、transparent 或空白視為不填底 */
+  function noBg(v) { v = (v || '').trim().toLowerCase(); return !v || v === 'none' || v === 'transparent'; }
   var CARD_ATTRS = ['bg', 'color', 'border', 'example', 'example-template', 'extra-info', 'extra-template'];
 
   /* 時間設定（毫秒） */
@@ -340,7 +344,7 @@
       s.setProperty('--dd-extra', color(v('extra-color')));
       s.setProperty('--dd-mark', color(v('mark-color')));
       s.setProperty('--dd-active', color(v('active-color')));
-      s.setProperty('--dd-dbg', color(v('dino-bg')));
+      s.setProperty('--dd-dbg', noBg(v('dino-bg')) ? 'transparent' : color(v('dino-bg')));
       s.setProperty('--dd-dh', px(v('dino-height')));
       this._paintCards();
     }
@@ -468,7 +472,9 @@
         say.appendChild(ex);
       }
       sen.style.opacity = '0';
-      var dino = makeDino(color(this._val('dino-bg')), color(this._val('dino-line')));
+      /* 去背時，身體用顯示區底色填滿，遮住後腿與身體重疊的線條，看起來就像透明 */
+      var dbg = this._val('dino-bg');
+      var dino = makeDino(noBg(dbg) ? color(this._val('stage-bg')) : color(dbg), color(this._val('dino-line')));
       dino.el.style.opacity = '0';
       slot.appendChild(dino.el);
       row.appendChild(slot); row.appendChild(say);

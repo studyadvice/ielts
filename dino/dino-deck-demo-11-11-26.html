@@ -72,7 +72,7 @@
   <!-- 範例 3 -->
   <section>
     <h4>3. 個別覆蓋主題色，以及錯誤提示</h4>
-    <p class="note">第二張卡指向不存在的 template，第三張卡沒有例句，都會在顯示區出現提示框。</p>
+    <p class="note">第二張卡指向不存在的 template，第三張卡沒有例句，都會在顯示區出現提示框。這組用 dino-bg 保留黑色底框，並把線條改成 key 色。</p>
     <dino-deck theme="night" stage-bg="bg-alternative" mark-color="pink" card-bg="yellow,green" dino-bg="background" dino-line="key" stage-font-size="1.4rem">
       <dino-card example="I usually take the bus, &lt;mark&gt;but on sunny days I'd rather cycle&lt;/mark&gt;."
                  extra-info="&lt;ul class=&quot;mb-0&quot;&gt;&lt;li&gt;would rather + 原形動詞&lt;/li&gt;&lt;li&gt;I'd = I would&lt;/li&gt;&lt;/ul&gt;">I'd rather cycle</dino-card>
@@ -80,6 +80,33 @@
       <dino-card>沒有例句的卡片</dino-card>
     </dino-deck>
 <pre class="demo-code">&lt;dino-deck theme="night" stage-bg="bg-alternative" mark-color="pink" card-bg="yellow,green" dino-bg="background" dino-line="key"&gt;...&lt;/dino-deck&gt;</pre>
+  </section>
+
+  <!-- 範例 4：v1.1.0 去背（11-12-26） -->
+  <section>
+    <h4>4. v1.1.0：恐龍去背（11-12-26）</h4>
+    <p class="note">左邊是修改前的樣子（用 <code>dino-bg</code> 指定底框色），右邊是修改後的預設：沒有底框，身體自動填入顯示區底色。兩邊都點第一張卡比較。</p>
+    <div style="display:flex; gap:24px">
+      <div style="flex:1 1 0; min-width:0">
+        <p class="note" style="margin-bottom:8px">修改前：黑色底框</p>
+        <dino-deck dino-bg="background" card-width="160" stage-min-height="200" stage-font-size="1.2rem">
+          <dino-card example="The cafe &lt;mark&gt;across from my place&lt;/mark&gt; is my second office.">across from my place</dino-card>
+        </dino-deck>
+      </div>
+      <div style="flex:1 1 0; min-width:0">
+        <p class="note" style="margin-bottom:8px">修改後：去背</p>
+        <dino-deck card-width="160" stage-min-height="200" stage-font-size="1.2rem">
+          <dino-card example="The cafe &lt;mark&gt;across from my place&lt;/mark&gt; is my second office.">across from my place</dino-card>
+        </dino-deck>
+      </div>
+    </div>
+<pre class="demo-code">修改前（v1.0.0）：每個主題都有 dino-bg，恐龍帶著一塊固定底色的方框，和顯示區底色不同時很突兀
+&lt;dino-deck&gt;...&lt;/dino-deck&gt;                         恐龍有 #0C0D0C 方框，顯示區是 #3B2A20
+
+修改後（v1.1.0）：預設去背，身體填色自動跟隨 stage-bg，換主題或改 stage-bg 都不必調整
+&lt;dino-deck&gt;...&lt;/dino-deck&gt;                         恐龍直接站在顯示區底色上
+&lt;dino-deck dino-bg="background"&gt;...&lt;/dino-deck&gt;    仍想要底框時，再指定 dino-bg
+shell 主題的恐龍線條改為 #0C0D0C，在淺色底上看得清楚</pre>
   </section>
 
   <!-- 屬性速查 -->
@@ -95,7 +122,7 @@
       <tr><td>card-color、card-width、card-gap、card-padding、card-font-size</td><td>字卡文字色、寬度、間距、內距與字級</td></tr>
       <tr><td>card-lines</td><td>字卡最多顯示行數，超過以 ... 截斷，預設 2</td></tr>
       <tr><td>mark-color、extra-color、active-color</td><td>例句中 &lt;mark&gt; 的顏色、額外資訊顏色、目前字卡外框色</td></tr>
-      <tr><td>dino-bg、dino-line、dino-height</td><td>恐龍底框色、描邊色、高度</td></tr>
+      <tr><td>dino-bg、dino-line、dino-height</td><td>dino-bg 預設 none（去背，身體自動填入顯示區底色），設定顏色時恐龍會有底框；描邊色；高度</td></tr>
       <tr><td>dino-card：example、example-template</td><td>例句全文，支援 HTML；template 優先</td></tr>
       <tr><td>dino-card：extra-info、extra-template</td><td>額外資訊，有內容才顯示，點例句展開或收合</td></tr>
       <tr><td>dino-card：bg、color、border</td><td>單張字卡覆蓋主題配色與邊框</td></tr>
