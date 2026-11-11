@@ -42,15 +42,6 @@
     return BRAND[v] || BRAND[k] || (/^#|^rgb/.test(v) ? v : BRAND.shell);
   }
 
-  function hexRgba(hex, a) {
-    a = Math.max(+a || 0, 0.78);
-    var h = hex.replace('#', '');
-    var r = parseInt(h.slice(0, 2), 16);
-    var g = parseInt(h.slice(2, 4), 16);
-    var b = parseInt(h.slice(4, 6), 16);
-    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
-  }
-
   function hexToRgb(hex) {
     var h = hex.replace('#', '');
     return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
@@ -62,16 +53,6 @@
       Math.round(BG_RGB[0] + alpha * (c[0] - BG_RGB[0])) + ',' +
       Math.round(BG_RGB[1] + alpha * (c[1] - BG_RGB[1])) + ',' +
       Math.round(BG_RGB[2] + alpha * (c[2] - BG_RGB[2])) + ')';
-  }
-
-  function mk(tag, cls) {
-    var el = document.createElement(tag);
-    if (cls) el.className = cls;
-    return el;
-  }
-
-  function qsa(sel, ctx) {
-    return Array.from((ctx || document).querySelectorAll(sel));
   }
 
   function rAF2(fn) {
@@ -191,89 +172,8 @@
     }
   }
 
-  var CSS_CLUSTER = [
-    'ui-cluster,cluster-node,cluster-item{display:none}',
-
-    '.uc-root{position:relative;display:inline-flex;flex-direction:column;align-items:center;' +
-      'font-size:var(--uc-fs,1rem);line-height:1.4;font-family:inherit}',
-    '.uc-stage{display:flex;flex-direction:column;align-items:center;width:100%}',
-    '.uc-nodes{display:flex;flex-direction:row;align-items:flex-start;' +
-      'gap:var(--uc-gap,24px);flex-wrap:wrap;justify-content:center}',
-
-    '.uc-circle{' +
-      'border-radius:50%;display:inline-flex;align-items:center;justify-content:center;' +
-      'cursor:pointer;position:relative;flex-shrink:0;' +
-      'transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;' +
-      'filter:brightness(.82);box-shadow:0 0 0 2px var(--uc-clr)}',
-    '.uc-circle:hover{transform:scale(1.08);filter:brightness(1.02);' +
-      'box-shadow:0 0 0 3px var(--uc-clr),0 4px 18px rgba(0,0,0,0.78)}',
-    '.uc-circle.done{cursor:default;filter:brightness(.68);box-shadow:0 0 0 2px var(--uc-clr)}',
-    '.uc-circle.done:hover{transform:none;filter:brightness(.68);' +
-      'box-shadow:0 0 0 2px var(--uc-clr)}',
-
-    '.uc-main-circle{width:var(--uc-sz,72px);height:var(--uc-sz,72px);' +
-      'background:var(--uc-clr);color:' + BG + '}',
-    '.uc-main-circle.burst{animation:uc-burst .32s ease-out forwards}',
-    '@keyframes uc-burst{' +
-      '0%{transform:scale(1);opacity:1}' +
-      '60%{transform:scale(1.22);opacity:0.6}' +
-      '100%{transform:scale(0);opacity:0}}',
-
-    '.uc-node-wrap{display:flex;flex-direction:column;align-items:center}',
-    '.uc-node-circle{' +
-      'width:var(--uc-nsz,56px);height:var(--uc-nsz,56px);' +
-      'background:var(--uc-nclr,var(--uc-clr));color:' + BG + ';' +
-      'opacity:0;transform:scale(0) translateY(-8px)}',
-    '.uc-node-circle.appear{animation:uc-appear .35s ease-out forwards}',
-    '@keyframes uc-appear{' +
-      '0%{opacity:0;transform:scale(0) translateY(-8px)}' +
-      '70%{opacity:1;transform:scale(1.08) translateY(0)}' +
-      '100%{opacity:1;transform:scale(1) translateY(0)}}',
-
-    '.uc-num{font-size:calc(var(--uc-fs,1rem)*1.1);font-weight:700;line-height:1;letter-spacing:-0.02em}',
-    '.uc-num-sm{font-size:calc(var(--uc-fs,1rem)*0.95);font-weight:700;line-height:1;letter-spacing:-0.02em}',
-
-    '.uc-label{font-size:calc(var(--uc-fs,1rem)*0.78);color:var(--uc-clr);' +
-      'font-weight:600;text-align:center;' +
-      'max-width:var(--uc-lw,90px);word-break:break-word;opacity:0.9;' +
-      'margin-top:var(--uc-lg,4px)}',
-    '.uc-label-sm{font-size:calc(var(--uc-fs,1rem)*0.72);color:var(--uc-nclr,var(--uc-clr));' +
-      'font-weight:600;text-align:center;' +
-      'max-width:var(--uc-nlw,76px);word-break:break-word;opacity:0.88;' +
-      'margin-top:var(--uc-nlg,6px)}',
-
-    '.uc-content{width:100%;max-height:0;overflow:hidden;opacity:0;' +
-      'transition:max-height .32s ease,opacity .28s ease;margin-top:0}',
-    '.uc-content.open{max-height:1200px;opacity:1;margin-top:12px}',
-    '.uc-content-inner{border:1px solid var(--uc-nclr,var(--uc-clr));border-radius:8px;overflow:hidden}',
-    '.uc-item{padding:10px 14px;border-bottom:1px solid #1B1C1B;' +
-      'color:#C6C7BD;font-size:var(--uc-fs,1rem);line-height:1.5}',
-    '.uc-item:last-child{border-bottom:none}',
-    '.uc-item:hover{background:#161716}',
-
-    '.uc-reset{position:absolute;top:0;right:0;' +
-      'background:#1F201E;border:1px solid #353633;' +
-      'border-radius:5px;padding:3px 8px;' +
-      'color:#8E8F88;cursor:pointer;' +
-      'font-size:0.72rem;font-weight:600;letter-spacing:0.04em;' +
-      'display:inline-flex;align-items:center;gap:5px;' +
-      'transition:background .15s,color .15s,border-color .15s}',
-    '.uc-reset:hover{background:#2D2E2C;color:#C6C7BD;border-color:#565753}',
-
-    '.uc-connector{width:2px;height:16px;background:var(--uc-clr);' +
-      'opacity:0;margin:0 auto;' +
-      'transition:opacity .25s ease .2s,height .3s ease .2s}',
-    '.uc-connector.show{opacity:0.78}',
-
-    '.uc-node-connector{width:2px;height:0;background:var(--uc-nclr,var(--uc-clr));' +
-      'opacity:0;margin:6px auto 0;' +
-      'transition:height .28s ease,opacity .25s ease}',
-    '.uc-node-connector.show{height:12px;opacity:0.78}'
-  ].join('\n');
-
   var CSS_READING = [
     'read-pulse,chalk-mark,col-pair{display:none}',
-    'chunk-spot,chunk-item,chunk-subitem{display:none}',
 
     '.urm-pulse{position:relative;display:block;padding-left:var(--urm-pg,14px)}',
     '.urm-pbar{position:absolute;left:0;top:0;' +
@@ -310,61 +210,7 @@
       'opacity:.65;pointer-events:none;' +
       'transition:transform .22s ease,opacity .22s ease}',
     '.urm-cp.urm-cp-lit{color:var(--urm-cp-c)}',
-    '.urm-cp.urm-cp-lit .urm-cp-dot{transform:translateX(-50%) scale(2.2);opacity:1}',
-
-    '.urm-cs{display:block}',
-    '.urm-cs-nav{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap}',
-    '.urm-cs-dot{display:inline-block;border-radius:50%;flex-shrink:0;' +
-      'background:var(--urm-cs-c,#E3D322);cursor:pointer;opacity:.48;' +
-      'outline:2px solid transparent;outline-offset:3px;' +
-      'transition:transform .22s ease,opacity .22s ease,outline-color .22s ease}',
-    '.urm-cs-dot:hover{opacity:.88;transform:scale(1.32)}',
-    '.urm-cs-dot.urm-cs-active{opacity:1;transform:scale(1.55);outline-color:var(--urm-cs-c)}',
-    '.urm-cs-text,.urm-cs-chunk{transition:opacity var(--urm-cs-dur,.3s) ease,color var(--urm-cs-dur,.3s) ease}',
-    '.urm-cs-body.urm-cs-dimmed .urm-cs-text,' +
-    '.urm-cs-body.urm-cs-dimmed .urm-cs-chunk:not(.urm-cs-lit){opacity:var(--urm-cs-dim,.22)}',
-    '.urm-cs-body.urm-cs-dimmed .urm-cs-chunk.urm-cs-lit{opacity:1;color:var(--urm-cs-c)}',
-    '[data-urm-cs-src]{display:none!important}',
-
-    '.urm-cs-annot{position:fixed;z-index:9200;max-width:380px;min-width:120px;' +
-      'padding:14px 18px;border-radius:11px;background:#141514;' +
-      'border:1px solid #2D2E2C;' +
-      'box-shadow:0 8px 32px rgba(0,0,0,0.88);' +
-      'font-size:.86rem;line-height:1.58;' +
-      'pointer-events:none;opacity:0;transform:translateY(6px);' +
-      'transition:opacity .2s ease,transform .2s ease}',
-    '.urm-cs-annot.urm-cs-av{opacity:1;transform:translateY(0)}',
-    '.urm-cs-annot p{margin-bottom:8px}',
-    '.urm-cs-annot p:last-child{margin-bottom:0}',
-    '.urm-cs-annot ul,.urm-cs-annot ol{padding-left:18px;margin-bottom:8px}',
-    '.urm-cs-annot li{margin-bottom:3px}',
-    '.urm-cs-annot strong,.urm-cs-annot b{color:#E3D322;font-weight:700}',
-    '.urm-cs-annot em,.urm-cs-annot i{color:#5DBAE8;font-style:italic}',
-    '.urm-cs-annot code{font-family:monospace;font-size:.88em;' +
-      'background:#222321;padding:1px 5px;border-radius:4px}',
-    '.urm-cs-annot pre{font-family:monospace;font-size:.82em;' +
-      'background:#1B1C1A;' +
-      'padding:10px 12px;border-radius:7px;' +
-      'overflow-x:auto;margin-bottom:8px;white-space:pre}',
-    '.urm-cs-annot table{border-collapse:collapse;width:100%;margin-bottom:8px}',
-    '.urm-cs-annot th,.urm-cs-annot td{padding:5px 10px;font-size:.83em;' +
-      'border:1px solid #2D2E2C}',
-    '.urm-cs-annot th{color:#E3D322;background:#191A18;font-weight:700}',
-    '.urm-cs-annot hr{border:none;border-top:1px solid #2A2B28;margin:8px 0}',
-
-    '.urm-cs-col{display:flex;flex-direction:column;align-items:center;gap:6px}',
-    '.urm-cs-subdots{display:flex;flex-direction:row;gap:4px;align-items:center}',
-    '.urm-cs-subdot{border-radius:50%;flex-shrink:0;' +
-      'background:var(--urm-cs-c,#E3D322);cursor:pointer;opacity:.35;' +
-      'outline:2px solid transparent;outline-offset:2px;' +
-      'transition:transform .22s ease,opacity .22s ease,outline-color .22s ease}',
-    '.urm-cs-subdot:hover{opacity:.82;transform:scale(1.28)}',
-    '.urm-cs-subdot.urm-cs-subactive{opacity:1;transform:scale(1.42);outline-color:var(--urm-cs-c)}',
-    '.urm-cs-subchunk{transition:opacity var(--urm-cs-dur,.3s) ease,color var(--urm-cs-dur,.3s) ease}',
-    '.urm-cs-chunk.urm-cs-subdimmed .urm-cs-subtext{opacity:var(--urm-cs-subdim,.45)}',
-    '.urm-cs-chunk.urm-cs-subdimmed .urm-cs-subchunk:not(.urm-cs-sublit){opacity:var(--urm-cs-subdim,.45)}',
-    '.urm-cs-chunk.urm-cs-subdimmed .urm-cs-subchunk.urm-cs-sublit{opacity:1;color:var(--urm-cs-c)}',
-    '.urm-cs-extra{line-height:1.5}'
+    '.urm-cp.urm-cp-lit .urm-cp-dot{transform:translateX(-50%) scale(2.2);opacity:1}'
   ].join('\n');
 
   var CSS_BTN = [
@@ -442,244 +288,9 @@
     if (document.getElementById('ui-components-css')) return;
     var s = document.createElement('style');
     s.id = 'ui-components-css';
-    s.textContent = CSS_CLUSTER + '\n' + CSS_READING + '\n' + CSS_BTN;
+    s.textContent = CSS_READING + '\n' + CSS_BTN;
     (document.head || document.documentElement).appendChild(s);
   })();
-
-  var UC_CFG = global.UiClusterConfig = Object.assign({
-    theme:          'shell',
-    size:           '72px',
-    nodeSize:       '56px',
-    gap:            '24px',
-    fontSize:       '1rem',
-    labelGap:       '4px',
-    labelWidth:     '90px',
-    nodeLabelGap:   '6px',
-    nodeLabelWidth: '76px'
-  }, global.UiClusterConfig || {});
-
-  var ICO_RESET = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"' +
-    ' stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
-    '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>' +
-    '<path d="M3 3v5h5"/></svg>';
-
-  function UiCluster(el) {
-    this.el             = el;
-    this.color          = resolveColor(el.getAttribute('theme') || el.getAttribute('color') || UC_CFG.theme) || BRAND.shell;
-    this.size           = el.getAttribute('size')             || UC_CFG.size;
-    this.nodeSize       = el.getAttribute('node-size')        || UC_CFG.nodeSize;
-    this.gap            = el.getAttribute('gap')              || UC_CFG.gap;
-    this.fs             = el.getAttribute('font-size')        || UC_CFG.fontSize;
-    this.label          = el.getAttribute('label')            || '';
-    this.labelGap       = el.getAttribute('label-gap')        || UC_CFG.labelGap;
-    this.labelWidth     = el.getAttribute('label-width')      || UC_CFG.labelWidth;
-    this.nodeLabelGap   = el.getAttribute('node-label-gap')   || UC_CFG.nodeLabelGap;
-    this.nodeLabelWidth = el.getAttribute('node-label-width') || UC_CFG.nodeLabelWidth;
-    this.hasReset       = el.hasAttribute('reset');
-    this.root           = null;
-  }
-
-  UiCluster.prototype.init = function () { this._render(); };
-
-  UiCluster.prototype.render = UiCluster.prototype._render = function () {
-    var nodeEls = qsa(':scope > cluster-node', this.el);
-    var itemEls = qsa(':scope > cluster-item', this.el);
-    if (!nodeEls.length && !itemEls.length) return;
-    if (!nodeEls.length && itemEls.length) { this._renderSingle(itemEls); return; }
-    this._renderDouble(nodeEls);
-  };
-
-  UiCluster.prototype._renderSingle = function (itemEls) {
-    var self = this;
-    var root = mk('div', 'uc-root');
-    root.style.cssText = [
-      '--uc-clr:' + this.color,
-      '--uc-sz:'  + this.size,
-      '--uc-fs:'  + this.fs,
-      '--uc-lg:'  + this.labelGap,
-      '--uc-lw:'  + this.labelWidth
-    ].join(';');
-    this.root = root;
-
-    if (this.hasReset) {
-      var resetBtn = mk('button', 'uc-reset');
-      resetBtn.innerHTML = ICO_RESET + '重設';
-      resetBtn.addEventListener('click', function () { self._reset(); });
-      root.appendChild(resetBtn);
-    }
-
-    var mainCircle = mk('div', 'uc-circle uc-main-circle');
-    mainCircle.style.background = this.color;
-    var mainNum = mk('span', 'uc-num');
-    mainNum.textContent = itemEls.length;
-    mainCircle.appendChild(mainNum);
-    root.appendChild(mainCircle);
-
-    if (this.label) {
-      var mainLabel = mk('div', 'uc-label');
-      mainLabel.textContent = this.label;
-      root.appendChild(mainLabel);
-    }
-
-    var connector = mk('div', 'uc-connector');
-    root.appendChild(connector);
-
-    var content = mk('div', 'uc-content');
-    var inner   = mk('div', 'uc-content-inner');
-    inner.style.borderColor = hexRgba(this.color, 0.78);
-    itemEls.forEach(function (itemEl) {
-      var row = mk('div', 'uc-item');
-      row.innerHTML = itemEl.innerHTML;
-      inner.appendChild(row);
-    });
-    content.appendChild(inner);
-    root.appendChild(content);
-
-    mainCircle.addEventListener('click', function () {
-      if (mainCircle.classList.contains('burst')) return;
-      mainCircle.classList.add('burst');
-      if (self.label) {
-        var lbl = root.querySelector('.uc-label');
-        if (lbl) { lbl.style.transition = 'opacity .2s'; lbl.style.opacity = '0'; }
-      }
-      setTimeout(function () {
-        mainCircle.style.display = 'none';
-        connector.classList.add('show');
-        content.classList.add('open');
-      }, 280);
-    });
-
-    this.el.before(root);
-    this.el.style.display = 'none';
-  };
-
-  UiCluster.prototype._renderDouble = function (nodeEls) {
-    var self = this;
-    var root = mk('div', 'uc-root');
-    root.style.cssText = [
-      '--uc-clr:' + this.color,
-      '--uc-sz:'  + this.size,
-      '--uc-nsz:' + this.nodeSize,
-      '--uc-gap:' + this.gap,
-      '--uc-fs:'  + this.fs,
-      '--uc-lg:'  + this.labelGap,
-      '--uc-lw:'  + this.labelWidth
-    ].join(';');
-    this.root = root;
-
-    if (this.hasReset) {
-      var resetBtn = mk('button', 'uc-reset');
-      resetBtn.innerHTML = ICO_RESET + '重設';
-      resetBtn.addEventListener('click', function () { self._reset(); });
-      root.appendChild(resetBtn);
-    }
-
-    var mainCircle = mk('div', 'uc-circle uc-main-circle');
-    var mainNum    = mk('span', 'uc-num');
-    mainNum.textContent = nodeEls.length;
-    mainCircle.appendChild(mainNum);
-    mainCircle.style.background = this.color;
-    root.appendChild(mainCircle);
-
-    if (this.label) {
-      var mainLabel = mk('div', 'uc-label');
-      mainLabel.textContent = this.label;
-      root.appendChild(mainLabel);
-    }
-
-    var connector = mk('div', 'uc-connector');
-    root.appendChild(connector);
-
-    var stage    = mk('div', 'uc-stage');
-    stage.style.display = 'none';
-    var nodesRow = mk('div', 'uc-nodes');
-    stage.appendChild(nodesRow);
-    root.appendChild(stage);
-
-    mainCircle.addEventListener('click', function () {
-      if (mainCircle.classList.contains('burst')) return;
-      mainCircle.classList.add('burst');
-      if (self.label) {
-        var lbl = root.querySelector('.uc-label');
-        if (lbl) { lbl.style.transition = 'opacity .2s'; lbl.style.opacity = '0'; }
-      }
-      setTimeout(function () {
-        mainCircle.style.display = 'none';
-        stage.style.display = 'flex';
-        connector.classList.add('show');
-        nodesRow.querySelectorAll('.uc-node-circle').forEach(function (nc, i) {
-          setTimeout(function () { nc.classList.add('appear'); }, i * 80);
-        });
-      }, 280);
-    });
-
-    nodeEls.forEach(function (nodeEl) {
-      var nodeColor = resolveColor(
-        nodeEl.getAttribute('theme') || nodeEl.getAttribute('color')
-      ) || self.color;
-      var nodeLabel = nodeEl.getAttribute('label') || '';
-      var items     = qsa(':scope > cluster-item', nodeEl);
-
-      var wrap = mk('div', 'uc-node-wrap');
-      wrap.style.setProperty('--uc-nclr', nodeColor);
-
-      var nLabelGap   = nodeEl.getAttribute('label-gap')  || self.nodeLabelGap;
-      var nLabelWidth = nodeEl.getAttribute('label-width') || self.nodeLabelWidth;
-      wrap.style.setProperty('--uc-nlg', nLabelGap);
-      wrap.style.setProperty('--uc-nlw', nLabelWidth);
-
-      var circle = mk('div', 'uc-circle uc-node-circle');
-      circle.style.background = nodeColor;
-      var num = mk('span', 'uc-num-sm');
-      num.textContent = items.length;
-      circle.appendChild(num);
-      wrap.appendChild(circle);
-
-      if (nodeLabel) {
-        var nlabel = mk('div', 'uc-label-sm');
-        nlabel.textContent = nodeLabel;
-        wrap.appendChild(nlabel);
-      }
-
-      var nodeConn = mk('div', 'uc-node-connector');
-      wrap.appendChild(nodeConn);
-
-      var content = mk('div', 'uc-content');
-      var inner   = mk('div', 'uc-content-inner');
-      inner.style.borderColor = hexRgba(nodeColor, 0.78);
-      items.forEach(function (itemEl) {
-        var row = mk('div', 'uc-item');
-        row.innerHTML = itemEl.innerHTML;
-        inner.appendChild(row);
-      });
-      content.appendChild(inner);
-      wrap.appendChild(content);
-      nodesRow.appendChild(wrap);
-
-      circle.addEventListener('click', function () {
-        if (circle.classList.contains('done')) return;
-        if (!circle.classList.contains('appear')) return;
-        circle.classList.add('done');
-        nodeConn.classList.add('show');
-        content.classList.add('open');
-      });
-    });
-
-    this.el.before(root);
-    this.el.style.display = 'none';
-  };
-
-  UiCluster.prototype._reset = function () {
-    if (this.root) { this.root.remove(); this.root = null; }
-    this.el.style.display = '';
-    this._render();
-  };
-
-  function bootCluster() {
-    document.querySelectorAll('ui-cluster').forEach(function (el) {
-      if (!el._uc) { el._uc = true; new UiCluster(el).init(); }
-    });
-  }
 
   var UR_CFG = global.UiReadingConfig = Object.assign({
     pulseColor:      'green',
@@ -693,13 +304,7 @@
     pulseTrigger:    'visible',
     chalkTheme:      'focus',
     chalkThickness:  2.5,
-    chalkDuration:   420,
-    chunkDotSize:    11,
-	chunkDotGap:     '12px',
-    chunkDim:        0.25,
-    chunkSubDim:     0.45,
-    chunkTransition: 300,
-    chunkTheme:      ''
+    chalkDuration:   420
   }, global.UiReadingConfig || {});
 
   function initPulse(el) {
@@ -977,286 +582,9 @@
     });
   }
 
-  var _csAnnotEl = null, _csAnnotTm = null;
-
-  function ensureCsAnnot() {
-    if (_csAnnotEl) return;
-    _csAnnotEl = document.createElement('div');
-    _csAnnotEl.className = 'urm-cs-annot';
-    document.body.appendChild(_csAnnotEl);
-  }
-
-  var _csPalette = [
-    BRAND.blue,   BRAND.yellow, BRAND.violet,   BRAND.playful,
-    BRAND.green,  BRAND.pink,   BRAND.red,      BRAND.indigo,
-    BRAND.vanilla, BRAND.gray
-  ];
-
-  function initChunkSpot(el) {
-    if (el.dataset.urm) return;
-    el.dataset.urm = '1';
-
-    var dotSize    = +(el.getAttribute('dot-size')        || UR_CFG.chunkDotSize);
-    var subDotSize = Math.round(dotSize * 0.7);
-    var dotGap     =   el.getAttribute('dot-gap')         || UR_CFG.chunkDotGap;
-    var dimVal     = +(el.getAttribute('dim')             || UR_CFG.chunkDim);
-    var subDimVal  = +(el.getAttribute('sub-dim')         || UR_CFG.chunkSubDim);
-    var dur        = +(el.getAttribute('duration')        || UR_CFG.chunkTransition);
-    var extraInfo  =   el.getAttribute('extra-info')      || '';
-    var extraGap   =   el.getAttribute('extra-info-gap')  || '6px';
-    var extraFs    =   el.getAttribute('extra-info-size') || '0.82rem';
-    var _extRaw    =   clr(el.getAttribute('theme')       || '');
-    var extraColor = _extRaw.charAt(0) === '#' ? _extRaw : BRAND.shell;
-
-    var segments = [], chunkMetas = [], palIdx = 0;
-    Array.from(el.childNodes).forEach(function (node) {
-      if (node.nodeType === 1 && node.tagName.toLowerCase() === 'chunk-item') {
-        var rawTheme = node.getAttribute('theme') || UR_CFG.chunkTheme;
-        var color    = rawTheme ? clr(rawTheme) : _csPalette[palIdx++ % _csPalette.length];
-        var subLabels = Array.from(node.querySelectorAll('chunk-subitem'))
-                          .map(function (e) { return e.getAttribute('label') || ''; });
-        var subCount    = 0;
-        var _SIRE       = /(<chunk-subitem[^>]*>[\s\S]*?<\/chunk-subitem>)/gi;
-        var _parts      = node.innerHTML.split(_SIRE);
-        var _hasSub     = _parts.length > 1;
-        var processedHtml = _parts.map(function (part) {
-          if (/^<chunk-subitem/i.test(part)) {
-            var inner = part.replace(/<chunk-subitem[^>]*>([\s\S]*?)<\/chunk-subitem>/i, '$1');
-            return '<span class="urm-cs-subchunk" data-sidx="' + (subCount++) + '">' + inner + '</span>';
-          }
-          return (_hasSub && part.trim()) ? '<span class="urm-cs-subtext">' + part + '</span>' : part;
-        }).join('');
-        segments.push({ type: 'chunk', idx: chunkMetas.length });
-        chunkMetas.push({
-          html:      processedHtml,
-          color:     color,
-          label:     node.getAttribute('label') || '',
-          subCount:  subCount,
-          subLabels: subLabels
-        });
-      } else if (node.nodeType === 3) {
-        if (node.textContent.trim() !== '') segments.push({ type: 'text', text: node.textContent });
-      } else if (node.nodeType === 1) {
-        segments.push({ type: 'elem', outer: node.outerHTML });
-      }
-    });
-
-    if (!chunkMetas.length) {
-      console.warn('[ui-reading] <chunk-spot> 內找不到 <chunk-item>，已略過。');
-      return;
-    }
-
-    var wrap = document.createElement('div');
-    wrap.className = 'urm-cs';
-    wrap.style.setProperty('--urm-cs-dim',    dimVal);
-    wrap.style.setProperty('--urm-cs-subdim', subDimVal);
-    wrap.style.setProperty('--urm-cs-dur',    dur + 'ms');
-
-    var nav = document.createElement('div');
-    nav.className = 'urm-cs-nav';
-    nav.style.gap = dotGap;
-
-    var dots    = [];
-    var subDots = [];
-
-    chunkMetas.forEach(function (meta, ci) {
-      var col = document.createElement('span');
-      col.className = 'urm-cs-col';
-      col.style.setProperty('--urm-cs-c', meta.color);
-
-      var dot = document.createElement('span');
-      dot.className = 'urm-cs-dot';
-      dot.style.width  = dotSize + 'px';
-      dot.style.height = dotSize + 'px';
-
-      if (meta.label) {
-        if (meta.label.charAt(0) === '#') {
-          var targetId = meta.label.slice(1);
-          var srcEl    = document.getElementById(targetId);
-          if (srcEl) srcEl.dataset.urmCsSrc = '1';
-
-          dot.addEventListener('mouseenter', function () {
-            var tEl = document.getElementById(targetId);
-            if (!tEl) return;
-            ensureCsAnnot();
-            clearTimeout(_csAnnotTm);
-            _csAnnotEl.innerHTML = tEl.innerHTML;
-            var r    = dot.getBoundingClientRect();
-            var left = Math.min(r.left, window.innerWidth - 396);
-            var top  = r.bottom + 9;
-            _csAnnotEl.style.visibility = 'hidden';
-            _csAnnotEl.style.top  = top + 'px';
-            _csAnnotEl.style.left = Math.max(8, left) + 'px';
-            _csAnnotEl.classList.add('urm-cs-av');
-            requestAnimationFrame(function () {
-              var ar = _csAnnotEl.getBoundingClientRect();
-              if (ar.bottom > window.innerHeight - 8) {
-                _csAnnotEl.style.top = Math.max(8, r.top - ar.height - 9) + 'px';
-              }
-              _csAnnotEl.style.visibility = '';
-            });
-          });
-
-          dot.addEventListener('mouseleave', function () {
-            _csAnnotTm = setTimeout(function () {
-              if (_csAnnotEl) _csAnnotEl.classList.remove('urm-cs-av');
-            }, 120);
-          });
-        } else {
-          dot.title = meta.label;
-        }
-      }
-
-      col.appendChild(dot);
-      dots.push(dot);
-      subDots.push([]);
-
-      if (meta.subCount > 0) {
-        var subRow = document.createElement('span');
-        subRow.className = 'urm-cs-subdots';
-        for (var si = 0; si < meta.subCount; si++) {
-          var sdot = document.createElement('span');
-          sdot.className = 'urm-cs-subdot';
-          sdot.style.width  = subDotSize + 'px';
-          sdot.style.height = subDotSize + 'px';
-          if (meta.subLabels[si]) sdot.dataset.subLabel = meta.subLabels[si];
-          subRow.appendChild(sdot);
-          subDots[ci].push(sdot);
-        }
-        col.appendChild(subRow);
-      }
-
-      nav.appendChild(col);
-    });
-
-    var body = document.createElement('div');
-    body.className = 'urm-cs-body';
-    var chunkSpans = [];
-
-    segments.forEach(function (seg) {
-      var s = document.createElement('span');
-      if (seg.type === 'chunk') {
-        var meta = chunkMetas[seg.idx];
-        s.className = 'urm-cs-chunk';
-        s.style.setProperty('--urm-cs-c', meta.color);
-        s.dataset.idx = seg.idx;
-        s.innerHTML   = meta.html;
-        chunkSpans.push(s);
-      } else if (seg.type === 'text') {
-        s.className   = 'urm-cs-text';
-        s.textContent = seg.text;
-      } else {
-        s.className = 'urm-cs-text';
-        s.innerHTML = seg.outer;
-      }
-      body.appendChild(s);
-    });
-
-    wrap.appendChild(nav);
-    wrap.appendChild(body);
-
-    if (extraInfo) {
-      var extra = document.createElement('div');
-      extra.className       = 'urm-cs-extra';
-      extra.style.marginTop = extraGap;
-      extra.style.fontSize  = extraFs;
-      extra.style.color     = hexRgba(extraColor, 0.78);
-      extra.innerHTML       = extraInfo;
-      wrap.appendChild(extra);
-    }
-
-    el.replaceWith(wrap);
-
-    var activeIdx    = -1;
-    var activeSubIdx = -1;
-
-    function activate(idx) {
-      if (activeIdx >= 0) {
-        chunkSpans[activeIdx].classList.remove('urm-cs-subdimmed');
-        subDots[activeIdx].forEach(function (d) { d.classList.remove('urm-cs-subactive'); });
-        chunkSpans[activeIdx].querySelectorAll('.urm-cs-subchunk')
-          .forEach(function (s) { s.classList.remove('urm-cs-sublit'); });
-        activeSubIdx = -1;
-      }
-      if (activeIdx === idx) {
-        activeIdx = -1;
-        body.classList.remove('urm-cs-dimmed');
-        dots.forEach(function (d) { d.classList.remove('urm-cs-active'); });
-        chunkSpans.forEach(function (s) { s.classList.remove('urm-cs-lit'); });
-      } else {
-        activeIdx = idx;
-        body.classList.add('urm-cs-dimmed');
-        dots.forEach(function (d, i) { d.classList.toggle('urm-cs-active', i === idx); });
-        chunkSpans.forEach(function (s, i) { s.classList.toggle('urm-cs-lit', i === idx); });
-      }
-    }
-
-    function activateSub(chunkIdx, subIdx) {
-      if (activeIdx !== chunkIdx) activate(chunkIdx);
-      var chunkSpan = chunkSpans[chunkIdx];
-      var subSpans  = chunkSpan.querySelectorAll('.urm-cs-subchunk');
-      if (activeSubIdx === subIdx) {
-        chunkSpan.classList.remove('urm-cs-subdimmed');
-        subDots[chunkIdx].forEach(function (d) { d.classList.remove('urm-cs-subactive'); });
-        subSpans.forEach(function (s) { s.classList.remove('urm-cs-sublit'); });
-        activeSubIdx = -1;
-      } else {
-        activeSubIdx = subIdx;
-        chunkSpan.classList.add('urm-cs-subdimmed');
-        subDots[chunkIdx].forEach(function (d, i) {
-          d.classList.toggle('urm-cs-subactive', i === subIdx);
-        });
-        subSpans.forEach(function (s) {
-          s.classList.toggle('urm-cs-sublit', +s.dataset.sidx === subIdx);
-        });
-      }
-    }
-
-    dots.forEach(function (dot, i) {
-      dot.addEventListener('click', function () { activate(i); });
-    });
-
-    subDots.forEach(function (sdArr, ci) {
-      sdArr.forEach(function (sdot, si) {
-        sdot.addEventListener('click', function (e) {
-          e.stopPropagation();
-          activateSub(ci, si);
-        });
-        var lbl = sdot.dataset.subLabel || '';
-        if (lbl) {
-          sdot.addEventListener('mouseenter', function () {
-            ensureCsAnnot();
-            clearTimeout(_csAnnotTm);
-            _csAnnotEl.innerHTML = lbl;
-            var r    = sdot.getBoundingClientRect();
-            var left = Math.min(r.left, window.innerWidth - 396);
-            var top  = r.bottom + 16;
-            _csAnnotEl.style.visibility = 'hidden';
-            _csAnnotEl.style.top  = top + 'px';
-            _csAnnotEl.style.left = Math.max(8, left) + 'px';
-            _csAnnotEl.classList.add('urm-cs-av');
-            requestAnimationFrame(function () {
-              var ar = _csAnnotEl.getBoundingClientRect();
-              if (ar.bottom > window.innerHeight - 8) {
-                _csAnnotEl.style.top = Math.max(8, r.top - ar.height - 9) + 'px';
-              }
-              _csAnnotEl.style.visibility = '';
-            });
-          });
-          sdot.addEventListener('mouseleave', function () {
-            _csAnnotTm = setTimeout(function () {
-              if (_csAnnotEl) _csAnnotEl.classList.remove('urm-cs-av');
-            }, 120);
-          });
-        }
-      });
-    });
-  }
-
   function bootReading() {
     document.querySelectorAll('read-pulse:not([data-urm])').forEach(initPulse);
     document.querySelectorAll('chalk-mark:not([data-urm])').forEach(initChalk);
-    document.querySelectorAll('chunk-spot:not([data-urm])').forEach(initChunkSpot);
     initColPairs();
   }
 
@@ -1345,7 +673,7 @@
     box.appendChild(tpl.content.cloneNode(true));
     tpl.after(box);
     tpl._ubtnOut = box;
-    /* 內容裡若有 ui-btn、read-pulse、ui-cluster 等本檔元件，一併初始化 */
+    /* 內容裡若有 ui-btn、read-pulse 等本檔元件，一併初始化 */
     boot();
     tpl.dispatchEvent(new CustomEvent('ubtn-template-rendered', {
       bubbles: true,
@@ -2012,7 +1340,6 @@
   }
 
   function boot() {
-    bootCluster();
     bootReading();
     bootBtn();
   }
@@ -2023,7 +1350,6 @@
     boot();
   }
 
-  global.UiCluster = { init: bootCluster, config: UC_CFG, colors: BRAND };
   global.UiReading = { init: bootReading, config: UR_CFG, colors: BRAND };
   global.UiBtn     = { init: bootBtn,     alert: showAlert, config: UB_CFG, colors: BRAND };
 

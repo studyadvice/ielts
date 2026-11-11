@@ -14,7 +14,7 @@
 | `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 |
 | `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 |
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題。 |
-| `ui-plus.js` | `<ui-cluster>` `<read-pulse>` `<chalk-mark>` `<col-pair>` `<chunk-spot>` `<ui-btn>` | 概念聚合圖、閱讀輔助標記與展開按鈕。 |
+| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` | 閱讀輔助標記與展開按鈕。 |
 
 ## 色票
 
@@ -1834,76 +1834,18 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 ## ui-plus.js
 
-一個檔案內含三組互相獨立的元件：概念聚合圖 `ui-cluster`、閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`、`chunk-spot`），以及展開按鈕 `ui-btn`。三組共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
+一個檔案內含兩組互相獨立的元件：閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`），以及展開按鈕 `ui-btn`。兩組共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
 
-顏色屬性可填色盤名稱，或以 `#`、`rgb` 開頭的 CSS 顏色。`ui-cluster` 會把顏色換算成框線色，只能解析六位數 `#hex`，所以在這個元件上請使用色盤名稱或六位數 `#hex`。
+顏色屬性可填色盤名稱，或以 `#`、`rgb` 開頭的 CSS 顏色。
 
 ### 標籤
 
 | 標籤 | 位置 | 用途 |
 | --- | --- | --- |
-| `<ui-cluster>` | 任意位置 | 概念聚合圖。 |
-| `<cluster-node>` | `<ui-cluster>` 內 | 第二層節點。 |
-| `<cluster-item>` | `<ui-cluster>` 或 `<cluster-node>` 內 | 清單項目。 |
 | `<read-pulse>` | 區塊 | 段落進度條。 |
 | `<chalk-mark>` | 行內 | 粉筆圈字。 |
 | `<col-pair>` | 行內 | 搭配詞連動。 |
-| `<chunk-spot>` | 區塊 | 意群聚焦容器。 |
-| `<chunk-item>` | `<chunk-spot>` 內 | 一個意群。 |
-| `<chunk-subitem>` | `<chunk-item>` 內 | 子意群。 |
 | `<ui-btn>` | 任意位置 | 展開按鈕。 |
-
-### ui-cluster：概念聚合圖
-
-用一個大圓圈顯示「共有幾項」，點擊後爆開成子節點或清單，適合讓學生先猜數量再看內容。
-
-```html
-<!-- 單層：點擊圓圈直接展開清單 -->
-<ui-cluster theme="blue" label="常見轉折詞">
-  <cluster-item>however</cluster-item>
-  <cluster-item>nevertheless</cluster-item>
-  <cluster-item>on the other hand</cluster-item>
-</ui-cluster>
-
-<!-- 雙層：主圓圈展開成節點，每個節點再展開各自的清單 -->
-<ui-cluster theme="violet" label="Task 2 題型" reset>
-  <cluster-node label="Opinion" theme="pink">
-    <cluster-item>To what extent do you agree or disagree?</cluster-item>
-    <cluster-item>Do you agree or disagree?</cluster-item>
-  </cluster-node>
-  <cluster-node label="Discussion" theme="blue">
-    <cluster-item>Discuss both views and give your own opinion.</cluster-item>
-  </cluster-node>
-</ui-cluster>
-```
-
-圓圈上的數字自動計算：單層為項目數；雙層的主圓圈為節點數，節點圓圈為該節點的項目數。`<ui-cluster>` 底下同時有 `cluster-node` 與直接的 `cluster-item` 時，以雙層為準。`cluster-item` 內可放任意 HTML。
-
-**`<ui-cluster>` 屬性**
-
-| 屬性 | 預設 | 說明 |
-| --- | --- | --- |
-| `theme`（或 `color`） | `shell` | 主圓圈與框線顏色。 |
-| `label` | 空 | 主圓圈下方的標籤文字，展開後淡出。 |
-| `size` | `72px` | 主圓圈直徑。 |
-| `node-size` | `56px` | 節點圓圈直徑。 |
-| `gap` | `24px` | 節點之間的間距。 |
-| `font-size` | `1rem` | 基礎字級，圓圈數字與標籤依此比例縮放。 |
-| `label-gap` | `4px` | 主標籤與圓圈的距離。 |
-| `label-width` | `90px` | 主標籤最大寬度。 |
-| `node-label-gap` | `6px` | 節點標籤與圓圈的距離。 |
-| `node-label-width` | `76px` | 節點標籤最大寬度。 |
-| `reset` | 布林 | 右上角顯示「重設」按鈕，可回到未展開狀態。 |
-
-**`<cluster-node>` 屬性**
-
-| 屬性 | 說明 |
-| --- | --- |
-| `theme`（或 `color`） | 節點顏色，未設定時沿用 `ui-cluster` 的顏色。 |
-| `label` | 節點下方的標籤文字。 |
-| `label-gap`、`label-width` | 個別覆寫節點標籤的距離與寬度。 |
-
-**全域設定**：在載入腳本之前定義 `window.UiClusterConfig`，可用鍵為 `theme`、`size`、`nodeSize`、`gap`、`fontSize`、`labelGap`、`labelWidth`、`nodeLabelGap`、`nodeLabelWidth`。
 
 ### 閱讀輔助標記
 
@@ -1967,47 +1909,6 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `theme` | 群組顏色，同組只要有一個設定即可。未設定時依內建色序自動分配。 |
 | `label` | 滑鼠停留時顯示的說明文字（瀏覽器原生提示）。 |
 
-#### chunk-spot：意群聚焦
-
-區塊標記。把句子切成數個 `<chunk-item>`，上方自動產生一排彩色圓點；點圓點會聚焦該意群並淡化其他文字，再點一次取消。意群內還可以再用 `<chunk-subitem>` 切出更細的子意群，對應的小圓點顯示在主圓點下方。
-
-```html
-<chunk-spot extra-info="點圓點可聚焦單一意群，再點一次取消。">
-  <chunk-item theme="blue" label="主詞片語">The number of students</chunk-item>
-  <chunk-item theme="yellow" label="#note-verb">has risen sharply</chunk-item>
-  <chunk-item label="時間">over the <chunk-subitem label="期間長度">past decade</chunk-subitem></chunk-item>.
-</chunk-spot>
-
-<div id="note-verb"><strong>has risen</strong>：主詞是 number，動詞用單數。</div>
-```
-
-**`<chunk-spot>` 屬性**
-
-| 屬性 | 預設 | 說明 |
-| --- | --- | --- |
-| `dot-size` | `11` | 主圓點直徑（px，填數字）。子圓點為其七成。 |
-| `dot-gap` | `12px` | 圓點之間的間距。 |
-| `dim` | `0.25` | 聚焦時其他文字的透明度。 |
-| `sub-dim` | `0.45` | 聚焦子意群時，同意群其餘文字的透明度。 |
-| `duration` | `300` | 淡入淡出的毫秒數。 |
-| `extra-info` | 空 | 顯示在句子下方的補充說明（可含 HTML）。 |
-| `extra-info-gap` | `6px` | 補充說明與句子的距離。 |
-| `extra-info-size` | `0.82rem` | 補充說明的字級。 |
-| `theme` | `shell` | 補充說明的文字顏色。 |
-
-**`<chunk-item>` 屬性**
-
-| 屬性 | 說明 |
-| --- | --- |
-| `theme` | 意群顏色。未設定時依內建色序自動分配。 |
-| `label` | 圓點的說明。一般文字以瀏覽器原生提示顯示；以 `#` 開頭時（例如 `#note-verb`）改為讀取該 id 元素的 HTML，以浮動面板顯示，來源元素會自動隱藏。 |
-
-**`<chunk-subitem>` 屬性**
-
-| 屬性 | 說明 |
-| --- | --- |
-| `label` | 滑鼠移入子圓點時，以浮動面板顯示的說明，可含 HTML。 |
-
 **全域設定**：在載入腳本之前定義 `window.UiReadingConfig`。
 
 | 鍵 | 預設 | 對應屬性 |
@@ -2021,11 +1922,6 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `chalkTheme` | `focus` | `chalk-mark` 的 `theme` |
 | `chalkThickness` | `2.5` | `chalk-mark` 的 `thickness` |
 | `chalkDuration` | `420` | `chalk-mark` 的 `duration` |
-| `chunkDotSize` | `11` | `chunk-spot` 的 `dot-size` |
-| `chunkDotGap` | `12px` | `chunk-spot` 的 `dot-gap` |
-| `chunkDim`、`chunkSubDim` | `0.25`、`0.45` | `chunk-spot` 的 `dim`、`sub-dim` |
-| `chunkTransition` | `300` | `chunk-spot` 的 `duration` |
-| `chunkTheme` | 空 | `chunk-item` 的預設 `theme` |
 
 ### ui-btn：展開按鈕
 
@@ -2171,8 +2067,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 ### JavaScript API
 
 ```js
-UiCluster.init();   // 渲染新插入的 <ui-cluster>
-UiReading.init();   // 處理新插入的 read-pulse、chalk-mark、col-pair、chunk-spot
+UiReading.init();   // 處理新插入的 read-pulse、chalk-mark、col-pair
 UiBtn.init();       // 處理新插入的 <ui-btn>
 
 // 直接跳出浮動提示（與 ui-btn 的 alert 屬性相同外觀）
@@ -2182,8 +2077,8 @@ const a = UiBtn.alert('已儲存', {
 a.dismiss();        // 手動關閉這一則
 UiBtn.alert.clear(); // 清除所有提示
 
-UiCluster.config; UiReading.config; UiBtn.config;  // 目前生效的設定
-UiCluster.colors;                                 // 色盤
+UiReading.config; UiBtn.config;  // 目前生效的設定
+UiReading.colors;                // 色盤
 ```
 
 已處理過的標籤會被標記，重複呼叫 `init()` 不會重複渲染。
