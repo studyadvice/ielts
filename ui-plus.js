@@ -190,6 +190,34 @@
       'background-color:transparent;' +
       'background-image:repeating-linear-gradient(to bottom,var(--urm-c) 0,var(--urm-c) 6px,transparent 6px,transparent 11px)}',
 
+    /* fuse：燃燒引信。條身由上方燒過的暗色漸變到火花處的亮色，底端火花閃爍、火星飛濺 */
+    '.urm-pulse[data-style="fuse"] .urm-pbar{overflow:visible;' +
+      'background:linear-gradient(to bottom,' +
+      'color-mix(in srgb,var(--urm-c) 22%,#0C0D0C) 0%,' +
+      'color-mix(in srgb,var(--urm-c) 80%,#0C0D0C) 100%)}',
+    '.urm-pulse[data-style="fuse"] .urm-pbar::after{content:"";position:absolute;left:50%;' +
+      'bottom:calc(var(--urm-tip,8px) * -.5);transform:translateX(-50%);' +
+      'width:var(--urm-tip,8px);height:var(--urm-tip,8px);border-radius:50%;' +
+      'background:radial-gradient(circle,#DBEDD8 0%,#DBEDD8 30%,var(--urm-c) 70%,var(--urm-c) 100%);' +
+      'box-shadow:0 0 var(--urm-tip,8px) calc(var(--urm-tip,8px) * .35) var(--urm-c),' +
+      '0 0 calc(var(--urm-tip,8px) * 2.5) calc(var(--urm-tip,8px) * .5) var(--urm-c);' +
+      'animation:urm-fuse-spark 90ms ease-in-out infinite alternate}',
+    '.urm-pulse[data-style="fuse"] .urm-pbar::before{content:"";position:absolute;' +
+      'left:calc(50% + var(--urm-tip,8px) * .45);bottom:calc(var(--urm-tip,8px) * .4);' +
+      'width:calc(var(--urm-tip,8px) * .35);height:calc(var(--urm-tip,8px) * .35);border-radius:50%;' +
+      'background:color-mix(in srgb,var(--urm-c) 70%,#DBEDD8);' +
+      'animation:urm-fuse-ember 130ms ease-in-out infinite alternate-reverse}',
+    '.urm-pulse[data-style="fuse"] .urm-pbar:not(.urm-pa)::after,' +
+    '.urm-pulse[data-style="fuse"] .urm-pbar:not(.urm-pa)::before,' +
+    '.urm-pulse[data-style="fuse"] .urm-pbar.urm-pd::after,' +
+    '.urm-pulse[data-style="fuse"] .urm-pbar.urm-pd::before{animation:none;display:none}',
+    '@keyframes urm-fuse-spark{' +
+      'from{transform:translateX(-50%) scale(1);opacity:1}' +
+      'to{transform:translateX(-50%) scale(1.3);opacity:.85}}',
+    '@keyframes urm-fuse-ember{' +
+      'from{transform:translate(0,0) scale(1);opacity:.9}' +
+      'to{transform:translate(3px,-4px) scale(.55);opacity:.3}}',
+
     '.urm-pbar2{position:absolute;left:var(--urm-pg2,9px);top:0;' +
       'width:var(--urm-pw2,2px);height:0;' +
       'border-radius:3px;pointer-events:none;opacity:0;transition:opacity .3s ease}',
@@ -302,6 +330,7 @@
     pulseGap:        14,
     pulseGap2:       9,
     pulseTrigger:    'visible',
+    pulseSparkSize:  8,
     chalkTheme:      'focus',
     chalkThickness:  2.5,
     chalkDuration:   420
@@ -323,21 +352,28 @@
     var speed2  = +(el.getAttribute('speed-2')       || Math.round(speed * 1.15));
     var trigger = el.getAttribute('trigger')         || UR_CFG.pulseTrigger;
     var repeat  = el.hasAttribute('repeat');
+    var spark   = +(el.getAttribute('spark-size')    || UR_CFG.pulseSparkSize) || 8;
     var isDouble = style === 'double';
 
     var wrap = document.createElement('div');
     wrap.className = 'urm-pulse';
     wrap.dataset.style = style;
+    /* 保留原始屬性：其他元件用 innerHTML 複製本區塊時，副本會失去互動，靠這份紀錄重建 */
+    var srcAttrs = {};
+    Array.from(el.attributes).forEach(function (a) { if (a.name !== 'data-urm') srcAttrs[a.name] = a.value; });
+    wrap.setAttribute('data-urm-pulse', JSON.stringify(srcAttrs));
+    _livePulses.add(wrap);
     wrap.style.setProperty('--urm-ps', speed + 'ms');
     wrap.style.setProperty('--urm-pw', pw);
     wrap.style.setProperty('--urm-pg', (isDouble ? gap + gap2 : gap) + 'px');
     wrap.style.setProperty('--urm-c', c);
     if (c2) wrap.style.setProperty('--urm-c2', c2);
     if (isDouble) wrap.style.setProperty('--urm-ps2', speed2 + 'ms');
+    if (style === 'fuse') wrap.style.setProperty('--urm-tip', Math.max(4, spark) + 'px');
 
     var bar = document.createElement('div');
     bar.className = 'urm-pbar';
-    if (style !== 'gradient' && style !== 'segmented') bar.style.background = c;
+    if (style !== 'gradient' && style !== 'segmented' && style !== 'fuse') bar.style.background = c;
     wrap.appendChild(bar);
 
     var bar2 = null;
@@ -582,7 +618,26 @@
     });
   }
 
+  /* 已綁定互動的 read-pulse 外框；不在這裡的 .urm-pulse 就是被複製出來的副本 */
+  var _livePulses = typeof WeakSet === 'function' ? new WeakSet() : { add: function () {}, has: function () { return true; } };
+
+  /* 把失去互動的副本還原成 <read-pulse> 再重新初始化 */
+  function revivePulse(wrap) {
+    if (_livePulses.has(wrap)) return;
+    var attrs = {};
+    try { attrs = JSON.parse(wrap.getAttribute('data-urm-pulse') || '{}'); } catch (e) { attrs = {}; }
+    var rp = document.createElement('read-pulse');
+    Object.keys(attrs).forEach(function (k) { rp.setAttribute(k, attrs[k]); });
+    Array.from(wrap.childNodes).forEach(function (n) {
+      if (n.nodeType === 1 && (n.classList.contains('urm-pbar') || n.classList.contains('urm-pbar2'))) return;
+      rp.appendChild(n);
+    });
+    wrap.replaceWith(rp);
+    initPulse(rp);
+  }
+
   function bootReading() {
+    document.querySelectorAll('.urm-pulse[data-urm-pulse]').forEach(revivePulse);
     document.querySelectorAll('read-pulse:not([data-urm])').forEach(initPulse);
     document.querySelectorAll('chalk-mark:not([data-urm])').forEach(initChalk);
     initColPairs();
@@ -1342,6 +1397,35 @@
   function boot() {
     bootReading();
     bootBtn();
+    watchReading();
+  }
+
+  /* 監看頁面：之後才出現的 read-pulse、chalk-mark、col-pair，或被其他元件（例如 ui-table、ui-cards）
+     複製出來的 read-pulse 副本，自動初始化。同一輪的多次變動合併成一次處理 */
+  var _watching = false, _rbQueued = false;
+  var READING_SEL = 'read-pulse:not([data-urm]),chalk-mark:not([data-urm]),col-pair:not([data-urm]),.urm-pulse[data-urm-pulse]';
+  function watchReading() {
+    if (_watching || typeof MutationObserver === 'undefined' || !document.body) return;
+    _watching = true;
+    new MutationObserver(function (muts) {
+      if (_rbQueued) return;
+      for (var i = 0; i < muts.length; i++) {
+        var added = muts[i].addedNodes;
+        for (var j = 0; j < added.length; j++) {
+          var n = added[j];
+          if (n.nodeType !== 1) continue;
+          var hit = (n.matches && n.matches(READING_SEL)) || (n.querySelector && n.querySelector(READING_SEL));
+          if (!hit) continue;
+          if (n.matches && n.matches('.urm-pulse') && _livePulses.has(n) && !n.querySelector(READING_SEL)) continue;
+          _rbQueued = true;
+          (window.queueMicrotask || function (f) { Promise.resolve().then(f); })(function () {
+            _rbQueued = false;
+            bootReading();
+          });
+          return;
+        }
+      }
+    }).observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {

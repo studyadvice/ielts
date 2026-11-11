@@ -1865,7 +1865,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | --- | --- | --- |
 | `color` | `green` | 色條顏色。 |
 | `color2` | 空 | 第二色。`gradient` 樣式的漸層終點色，或 `double` 樣式第二條色條的顏色。 |
-| `style` | `solid` | 色條樣式：`solid`、`gradient`（漸層）、`glow`（光暈）、`segmented`（虛線）、`double`（雙色條）。 |
+| `style` | `solid` | 色條樣式：`solid`、`gradient`（漸層）、`glow`（光暈）、`segmented`（虛線）、`double`（雙色條）、`fuse`（燃燒引信：條身由暗轉亮，底端有閃爍的火花與火星）。 |
 | `speed` | `2800` | 色條跑完全程的毫秒數。 |
 | `speed-2` | `speed` 的 1.15 倍 | `double` 樣式第二條色條的毫秒數。 |
 | `pulse-width` | `3px` | 色條寬度。 |
@@ -1874,6 +1874,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `gap-2` | `9` | 兩條色條之間的距離（px，填數字）。 |
 | `trigger` | `visible` | 觸發方式：`visible`（捲動到可見時）、`click`、`hover`。 |
 | `repeat` | 布林 | 可重複觸發。未設定時只播放一次。 |
+| `spark-size` | `8` | `fuse` 樣式的火花直徑（px，填數字），最小 4。 |
 
 `style` 與 HTML 原生的 `style` 屬性同名。原始的 `<read-pulse>` 會被取代，所以不會影響版面，但編輯器可能會把它標示為無效的 CSS。
 
@@ -1919,6 +1920,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `pulseWidth`、`pulseWidth2` | `3px`、`2px` | `read-pulse` 的 `pulse-width`、`pulse-width-2` |
 | `pulseGap`、`pulseGap2` | `14`、`9` | `read-pulse` 的 `gap`、`gap-2` |
 | `pulseTrigger` | `visible` | `read-pulse` 的 `trigger` |
+| `pulseSparkSize` | `8` | `read-pulse` 的 `spark-size` |
 | `chalkTheme` | `focus` | `chalk-mark` 的 `theme` |
 | `chalkThickness` | `2.5` | `chalk-mark` 的 `thickness` |
 | `chalkDuration` | `420` | `chalk-mark` 的 `duration` |
@@ -2082,6 +2084,8 @@ UiReading.colors;                // 色盤
 ```
 
 已處理過的標籤會被標記，重複呼叫 `init()` 不會重複渲染。
+
+頁面載入後才出現的 `read-pulse`、`chalk-mark`、`col-pair`（例如由 `ui-btn`、`ui-cards` 展開的 template，或用程式插入的內容）會自動初始化，不必手動呼叫 `UiReading.init()`。其他元件用 innerHTML 複製已初始化的 `read-pulse` 時（例如 `ui-table` 的儲存格），副本也會自動恢復動畫，與腳本載入順序無關。
 
 ## 授權
 
