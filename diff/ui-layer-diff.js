@@ -21,6 +21,7 @@
   if (window.customElements && customElements.get('ui-layer-diff')) return;
 
   var PALETTE = {
+    base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
     bg: '#0C0D0C', shell: '#C6C7BD',
     vanilla: '#DBEDD8', yellow: '#E3D322',
     indigo: '#778CE1', pink: '#FF91D7',
@@ -47,7 +48,7 @@
   };
   /* v1.1：17 個品牌色都可當主題（原本 key、calm、quiet 等未建立，會退回 dark） */
   Object.keys(PALETTE).forEach(function (n) {
-    if (n === 'bg') return;
+    if (n === 'bg' || n === 'base') return;
     THEMES[n] = { bg: '#0C0D0C', text: '#C6C7BD', border: PALETTE[n], accent: PALETTE[n], add: '#71CD76', del: '#EF6661' };
   });
 

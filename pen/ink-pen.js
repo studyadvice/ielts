@@ -75,6 +75,14 @@
     'bg-alternative': '#3B2A20'
   };
 
+  /* 品牌色名稱轉換：不分大小寫，base 為 bg 的別名；不是名稱時原樣回傳 */
+  function brandOf(v) {
+    var t = String(v == null ? '' : v).trim();
+    var k = t.toLowerCase();
+    if (k === 'base') k = 'bg';
+    return Object.prototype.hasOwnProperty.call(PALETTE, k) ? PALETTE[k] : t;
+  }
+
   var PEN_OPTIONS = [
     ['vanilla', '香草白 vanilla'],
     ['blue', '藍 blue'],
@@ -559,7 +567,7 @@
     getMode() { return this._mode; }
 
     setColor(key) {
-      this._color = PALETTE[key] || key;
+      this._color = brandOf(key) || key;
       return this._color;
     }
     getColor() { return this._color; }
@@ -1008,7 +1016,7 @@
 
     _syncPen() {
       var key = this._select.value;
-      this._color = PALETTE[key] || key;
+      this._color = brandOf(key) || key;
       this._swatch.style.background = this._color;
       var n = Number(this._widthInput.value) || HW_DEFAULT;
       this._width = Math.min(HW_MAX, Math.max(HW_MIN, n));
@@ -1285,7 +1293,7 @@
    * 屬性：
    *   data-pos="br|bl|tr|tl"   擺放位置，預設右下角
    *   data-open="true"         載入時直接展開，預設收合成小圓鈕
-   *   extra-color="#FFFFFF"    追加一個自訂筆色，載入時自動選用
+   *   extra-color="#FFFFFF"    追加一個自訂筆色，載入時自動選用；也可填品牌色名稱，例如 extra-color="key"
    *   extra-label="純白"       自訂筆色的顯示名稱，省略時顯示色碼
    * ========================================================= */
   class UiInkBar extends HTMLElement {
@@ -1346,14 +1354,16 @@
 
     /* ---------- 色彩選單 ---------- */
     _extra() {
-      var hex = (this.getAttribute('extra-color') || '').trim();
-      if (!hex) return null;
+      var raw = (this.getAttribute('extra-color') || '').trim();
+      if (!raw) return null;
+      var hex = brandOf(raw);
       if (!HEX_RE.test(hex)) {
-        warn('extra-color 格式不符，請用 #RGB 或 #RRGGBB：' + hex);
+        warn('extra-color 格式不符，請用 #RGB、#RRGGBB 或品牌色名稱：' + raw);
         return null;
       }
       var label = (this.getAttribute('extra-label') || '').trim();
-      return { hex: hex.toUpperCase(), label: label || ('自訂 ' + hex.toUpperCase()) };
+      var named = hex !== raw;
+      return { hex: hex.toUpperCase(), label: label || ('自訂 ' + (named ? raw.toLowerCase() : hex.toUpperCase())) };
     }
 
     /* selectExtra 為 true 時，若有自訂色就自動選用 */

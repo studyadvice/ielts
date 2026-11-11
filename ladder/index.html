@@ -36,6 +36,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
     <p class="lead bp-text-calm">本資料夾的 <code>ui-detail-ladder</code> 與 <code>ui-insight</code> 範例合併為一頁。左側選擇元件與版本，右側顯示該版本完整的範例與程式碼對照。合併日期 11-10-26。</p>
       <p class="grp fs-small bp-text-gray">ui-detail-ladder</p>
       <button type="button" class="part-btn" data-go="ui-detail-ladder-11-01-26"><span class="d bp-text-yellow">11-01-26</span><span class="t">ui-detail-ladder 細節階梯元件範例</span></button>
+      <button type="button" class="part-btn" data-go="ui-detail-ladder-11-11-26"><span class="d bp-text-yellow">11-11-26</span><span class="t">ui-detail-ladder v1.2：品牌色名稱與 theme</span></button>
       <p class="grp fs-small bp-text-gray">ui-insight</p>
       <button type="button" class="part-btn" data-go="ui-insight-11-01-26"><span class="d bp-text-yellow">11-01-26</span><span class="t">ui-insight 亮點字詞解說元件範例</span></button>
       <button type="button" class="part-btn" data-go="ui-insight-11-02-26"><span class="d bp-text-yellow">11-02-26</span><span class="t">ui-insight 示範 11-02-26</span></button>
@@ -494,6 +495,212 @@ icon="bi bi-star-fill"
     const d = e.detail;
     document.getElementById('log5').innerHTML =
       `<i class="bi bi-keyboard"></i> 目前第 ${d.index} 階：${d.label}。`;
+  });
+</script>
+</template>
+<template data-part id="ui-detail-ladder-11-11-26" data-component="ui-detail-ladder" data-date="11-11-26"
+          data-title="ui-detail-ladder v1.2：品牌色名稱與 theme" data-html-attrs="lang=&quot;zh-Hant&quot; data-bs-theme=&quot;dark&quot;" data-from="ui-detail-ladder-demo-11-11-26.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-detail-ladder v1.2 範例：品牌色名稱</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:40px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{color:#5DBAE8;font-size:1rem;margin:20px 0 8px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .tag-old{color:#EF6661}
+  .tag-new{color:#71CD76}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:12px 0 0 0;white-space:pre-wrap}
+  code{color:#FF91D7}
+  .alert-dark-custom{background:#161816;border:1px solid #778CE1;color:#C6C7BD;font-size:.9rem;padding:10px 16px;margin:12px 0 0 0}
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+
+<h1>&lt;ui-detail-ladder&gt; v1.2：顏色屬性支援品牌色名稱</h1>
+<div class="alert alert-dark-custom">
+  <i class="bi bi-bug" style="color:#EF6661"></i>
+  問題：v1.1 的顏色屬性只認 <code>#hex</code> 或 CSS 原生色名。填 <code>key</code>、<code>base</code>、<code>vanilla</code>、<code>energetic</code> 這類品牌色名稱時，瀏覽器視為無效值，該部位直接變成黑色或透明；填 <code>pink</code>、<code>blue</code> 這類和 CSS 撞名的名稱，則會顯示 CSS 原生的粉紅與純藍，而非品牌色。v1.2 起所有顏色屬性都先轉換品牌色名稱，與 <code>ui-insight</code> 的寫法一致。
+</div>
+
+<h2>同一段設定在 v1.1 與 v1.2 的差異</h2>
+<div class="cmp">
+  <div>
+    <h3 class="tag-old"><i class="bi bi-x-circle"></i> v1.1（修正前的現象）</h3>
+    <ul style="font-size:.9rem;line-height:1.8;margin:0;padding:0 0 0 20px">
+      <li><code>bg="base"</code>：背景變透明。</li>
+      <li><code>title-color="key"</code>、<code>body-color="vanilla"</code>：文字變黑色，在深色底上幾乎看不見。</li>
+      <li><code>pill-bg="energetic"</code>：膠囊標籤沒有底色。</li>
+      <li><code>current-color="pink"</code>：顯示 CSS 原生粉紅 #FFC0CB，不是品牌 pink。</li>
+      <li><code>icon-color="yellow"</code>：顯示 CSS 原生純黃 #FFFF00。</li>
+    </ul>
+  </div>
+  <div>
+    <h3 class="tag-new"><i class="bi bi-check-circle"></i> v1.2（修正後，實際元件）</h3>
+    <ui-detail-ladder bg="base" title-color="key" body-color="vanilla" pill-bg="energetic"
+      current-color="pink" active-color="Blue" line-active-color="blue" hl-bg="yellow"
+      progress-color="green" progress-color-end="KEY" border="true" border-color="indigo">
+      <ladder-step label="籠統說法">
+        <step-title icon="chat-square-quote" icon-color="yellow">原本的說法</step-title>
+        <step-body>The bus was <mark>so crowded</mark>.</step-body>
+        <step-note>公車很擠。</step-note>
+      </ladder-step>
+      <ladder-step label="換成結果">
+        <step-title icon="bi-arrow-right-circle" icon-color="playful">用結果代替形容詞</step-title>
+        <step-body>The buses were so packed that <mark>I couldn't get on</mark>.</step-body>
+        <step-note>公車擠到我上不去。</step-note>
+      </ladder-step>
+      <ladder-step label="加上數字">
+        <step-title icon="bi bi-123" icon-color="dreamy">讓結果可以被衡量</step-title>
+        <step-body>The buses were so packed that <mark>I let three go by</mark>.</step-body>
+        <step-note>公車擠到我讓了三班過去。</step-note>
+      </ladder-step>
+    </ui-detail-ladder>
+  </div>
+</div>
+
+<h2>程式碼對照</h2>
+<div class="cmp">
+  <div>
+<pre><span style="color:#EF6661">/* v1.1：只能填 #hex，名稱會失效 */</span>
+&lt;ui-detail-ladder
+  bg="#0C0D0C"
+  title-color="#51DBCF"
+  body-color="#DBEDD8"
+  pill-bg="#B6FF00"
+  current-color="#FF91D7"&gt;
+  &lt;ladder-step label="籠統說法"&gt;
+    &lt;step-title icon="chat-square-quote"
+      icon-color="#E3D322"&gt;原本的說法&lt;/step-title&gt;
+    ...
+  &lt;/ladder-step&gt;
+&lt;/ui-detail-ladder&gt;</pre>
+  </div>
+  <div>
+<pre><span style="color:#71CD76">/* v1.2：品牌色名稱與 #hex 都可以，名稱不分大小寫 */</span>
+&lt;ui-detail-ladder
+  bg="base"
+  title-color="key"
+  body-color="vanilla"
+  pill-bg="energetic"
+  current-color="pink"
+  progress-color="green" progress-color-end="KEY"&gt;
+  &lt;ladder-step label="籠統說法"&gt;
+    &lt;step-title icon="chat-square-quote"
+      icon-color="yellow"&gt;原本的說法&lt;/step-title&gt;
+    ...
+  &lt;/ladder-step&gt;
+&lt;/ui-detail-ladder&gt;</pre>
+  </div>
+</div>
+
+<h2>可用的品牌色名稱</h2>
+<p style="font-size:.95rem;line-height:1.9">
+  <c-shell>shell</c-shell>、<c-vanilla>vanilla</c-vanilla>、<c-yellow>yellow</c-yellow>、<c-pink>pink</c-pink>、<c-red>red</c-red>、<c-green>green</c-green>、<c-blue>blue</c-blue>、<c-indigo>indigo</c-indigo>、<c-violet>violet</c-violet>、<c-gray>gray</c-gray>、<c-key>key</c-key>、<c-calm>calm</c-calm>、<c-quiet>quiet</c-quiet>、<c-playful>playful</c-playful>、<c-urgent>urgent</c-urgent>、<c-energetic>energetic</c-energetic>、<c-dreamy>dreamy</c-dreamy>，另有 <code>base</code>（#0C0D0C）與 <code>bg-alternative</code>（#3B2A20）。
+</p>
+
+<h2 style="color:#71CD76;border-bottom-color:#71CD76">v1.2 更新：theme 屬性</h2>
+<div class="alert alert-dark-custom" style="border-color:#71CD76">
+  <i class="bi bi-palette" style="color:#71CD76"></i>
+  寫法與 <code>ui-insight</code> 相同。<code>theme</code> 一次改變外框、階梯（已經過與目前）、垂直線、膠囊標籤、次標題、分隔線、<code>&lt;mark&gt;</code>、進度條、前進按鈕與收合標題列的顏色。優先順序：個別屬性 &gt; theme &gt; 內建預設。未知名稱退回 default。
+</div>
+
+<h3>即時切換</h3>
+<div style="display:flex;gap:12px;align-items:center;margin:0 0 12px 0">
+  <label for="themePick" style="font-size:.9rem">theme =</label>
+  <select id="themePick" class="form-select form-select-sm" style="width:200px"></select>
+  <span id="themeLog" style="font-size:.85rem;color:#86877F"></span>
+</div>
+<div class="cmp">
+  <ui-detail-ladder id="demoTheme" theme="violet" border="true" show-divider="true">
+    <ladder-step label="籠統說法">
+      <step-title icon="chat-square-quote">原本的說法</step-title>
+      <step-body>I like <mark>reading</mark>.</step-body>
+      <step-note>我喜歡閱讀。</step-note>
+    </ladder-step>
+    <ladder-step label="加上對象">
+      <step-title icon="book">說出讀什麼</step-title>
+      <step-body>I like reading <mark>crime novels</mark>.</step-body>
+      <step-note>我喜歡讀犯罪小說。</step-note>
+    </ladder-step>
+    <ladder-step label="加上情境">
+      <step-title icon="moon-stars">說出什麼時候讀</step-title>
+      <step-body>I like reading crime novels <mark>before bed, usually for half an hour</mark>.</step-body>
+      <step-note>我喜歡睡前讀犯罪小說，通常讀半小時。</step-note>
+    </ladder-step>
+  </ui-detail-ladder>
+<pre><span style="color:#EF6661">/* v1.1：每個部位都要各自指定 */</span>
+&lt;ui-detail-ladder
+  border="true" border-color="#B484E8"
+  active-color="#B484E8" current-color="#B484E8"
+  line-active-color="#B484E8"
+  pill-bg="#B484E8" title-color="#B484E8"
+  hl-bg="#B484E8" progress-color="#B484E8"&gt;
+
+<span style="color:#71CD76">/* v1.2：一個 theme 搞定 */</span>
+&lt;ui-detail-ladder theme="violet" border="true"&gt;
+
+<span style="color:#71CD76">/* JavaScript 取得所有主題名稱 */</span>
+customElements.get('ui-detail-ladder').themes
+<span style="color:#86877F">// ["default", "shell", "vanilla", ... "dreamy"]</span></pre>
+</div>
+
+<h3>theme 搭配個別屬性覆蓋</h3>
+<div class="cmp">
+  <ui-detail-ladder theme="key" pill-bg="playful" hl-bg="yellow" border="true" start="2">
+    <ladder-step label="籠統說法">
+      <step-title icon="geo-alt">原本的說法</step-title>
+      <step-body>My hometown is <mark>nice</mark>.</step-body>
+    </ladder-step>
+    <ladder-step label="換成特點">
+      <step-title icon="water">說出具體特點</step-title>
+      <step-body>My hometown is <mark>right by the sea</mark>.</step-body>
+    </ladder-step>
+    <ladder-step label="加上感受">
+      <step-title icon="heart">連結到自己</step-title>
+      <step-body>My hometown is right by the sea, <mark>so I grew up swimming every summer</mark>.</step-body>
+    </ladder-step>
+  </ui-detail-ladder>
+<pre><span style="color:#71CD76">/* 主色跟著 key，膠囊標籤與 mark 個別覆蓋 */</span>
+&lt;ui-detail-ladder theme="key"
+  pill-bg="playful" hl-bg="yellow"
+  border="true" start="2"&gt;
+  ...
+&lt;/ui-detail-ladder&gt;</pre>
+</div>
+
+<h3>主題總覽</h3>
+<div id="themeGrid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px"></div>
+
+</div>
+<script src="ui-detail-ladder.js"></script>
+<script>
+  const Ladder = customElements.get('ui-detail-ladder');
+  const pick = document.getElementById('themePick');
+  const target = document.getElementById('demoTheme');
+  Ladder.themes.forEach((t) => {
+    const o = document.createElement('option');
+    o.value = t; o.textContent = t; o.selected = t === 'violet';
+    pick.appendChild(o);
+  });
+  pick.addEventListener('change', () => {
+    target.setAttribute('theme', pick.value);
+    document.getElementById('themeLog').textContent = `已套用 theme="${pick.value}"`;
+  });
+
+  const grid = document.getElementById('themeGrid');
+  Ladder.themes.forEach((t) => {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div style="font-size:.85rem;color:#86877F;margin:0 0 4px 12px">theme="${t}"</div>
+      <ui-detail-ladder theme="${t}" border="true" rail-width="120px" show-buttons="false" start="2">
+        <ladder-step label="起點"><step-title>${t}</step-title><step-body>It was <mark>good</mark>.</step-body></ladder-step>
+        <ladder-step label="具體"><step-title>${t}</step-title><step-body>It was <mark>worth every penny</mark>.</step-body></ladder-step>
+      </ui-detail-ladder>`;
+    grid.appendChild(wrap);
   });
 </script>
 </template>

@@ -28,7 +28,11 @@
 
   const SIZE_KEYS = ['label', 'note', 'tag', 'body', 'footer', 'badge'];
 
-  const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
+  const color = v => {
+    if (!v) return '';
+    const t = v.trim(), k = t.toLowerCase();
+    return PALETTE[t] || PALETTE[k] || (k === 'base' ? '#0C0D0C' : t);
+  };
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
   const fs = v => {
     if (v == null) return '';
@@ -43,7 +47,7 @@
     });
   };
   const textOn = v => {
-    const k = (v || '').trim();
+    const k = (v || '').trim().toLowerCase();
     if (PALETTE[k]) return LIGHT_TEXT.has(k) ? PALETTE.vanilla : PALETTE.base;
     const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(k);
     if (!m) return PALETTE.base;
@@ -727,8 +731,9 @@ ${variantCSS}
         if ([...b.classList].some(c => c === 'btn' || c.startsWith('btn-'))) return;
         const v = b.getAttribute('color') || this._o.btnColor;
         b.classList.add('uic-btn');
-        if (PALETTE[v]) {
-          b.classList.add('uic-v-' + v);
+        const vk = String(v || '').trim().toLowerCase();
+        if (PALETTE[vk]) {
+          b.classList.add('uic-v-' + vk);
         } else {
           b.style.background = color(v);
           b.style.color = PALETTE.base;

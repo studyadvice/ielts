@@ -4,7 +4,7 @@
 
 | 元件 | 用途 | 版本 |
 |---|---|---|
-| `<ui-detail-ladder>` | 細節階梯：把籠統說法逐階升級成具體說法 | v1.1 |
+| `<ui-detail-ladder>` | 細節階梯：把籠統說法逐階升級成具體說法 | v1.2 |
 | `<ui-insight>` | 亮點字詞解說：左側句子卡片，右側顯示亮點字詞的解說 | v1.4 |
 
 ## 特色
@@ -72,6 +72,17 @@
 | `ini-title-color` | `#5DBAE8` | 標題列文字色。 |
 | `ini-title-bg` | `#161816` | 標題列底色。 |
 | `keyboard` | `true` | 是否啟用鍵盤切換。 |
+| `theme` | `default` | v1.2 新增。一次套用整組強調色，可用 `default` 與 17 個品牌色名稱，名稱不存在時退回 `default`。 |
+
+**主題與顏色（v1.2）**
+
+- `theme` 會改變外框、階梯（已經過與目前）、垂直線、膠囊標籤、次標題、分隔線、`<mark>`、進度條、前進按鈕與收合標題列的顏色。優先順序為：寫在標籤上的個別屬性 > `theme` > 內建預設。
+- 所有顏色屬性（含 `<step-title>` 的 `icon-color`）都可以直接填品牌色名稱，例如 `title-color="key"`、`bg="base"`，不分大小寫，也可以填 `#hex` 或 `rgb()`。v1.1 填名稱會失效，v1.2 已修正。
+- `customElements.get('ui-detail-ladder').themes` 可取得所有主題名稱。
+
+```html
+<ui-detail-ladder theme="key" pill-bg="playful" hl-bg="yellow">...</ui-detail-ladder>
+```
 
 **左側階梯**
 
@@ -344,3 +355,15 @@
 
 - 字體大小一律用 `rem`。
 - `margin`、`padding` 與各種間距一律用 `px`。
+
+## 授權
+
+MIT License
+
+Copyright (c) 2026 studyadvice
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

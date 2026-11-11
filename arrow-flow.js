@@ -142,7 +142,11 @@
   };
 
   /* ── 工具函式 ──────────────────────────────────────────────────────────────── */
-  const clr  = n => (!n ? null : (P[n] ?? n));
+  const clr  = n => {
+    if (!n) return null;
+    const k = String(n).trim().toLowerCase();
+    return P[n] ?? P[k] ?? (k === 'base' ? '#0C0D0C' : n);
+  };
   const toW  = v => (!v ? null : /^\d+$/.test(v) ? v + 'px' : v);
 
   function ctrst(hex) {

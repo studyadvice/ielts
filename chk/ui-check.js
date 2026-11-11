@@ -24,6 +24,7 @@
 
   /* ── 品牌色。與 inc/palette.php 的 brand_text_colors() 同步 ── */
   var COLORS = {
+    base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
     shell:   '#C6C7BD',
     vanilla: '#DBEDD8',
     yellow:  '#E3D322',

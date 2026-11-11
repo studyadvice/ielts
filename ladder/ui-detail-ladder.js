@@ -1,3 +1,14 @@
+/*!
+ * <ui-detail-ladder> 細節階梯元件 v1.2
+ * v1.2：修正顏色屬性填品牌色名稱時失效的問題。所有顏色屬性（含 <step-title> 的 icon-color）
+ *       可直接填品牌色名稱，例如 title-color="key"、bg="base"，名稱不分大小寫，
+ *       也仍可填 #hex 或 rgb()。
+ * v1.2：新增 theme 屬性，例如 theme="violet"，與 <ui-insight> 相同。影響強調色的個別屬性
+ *       預設都跟著 theme，有明確指定的屬性才會覆蓋。優先順序：個別屬性 > theme > 內建預設。
+ *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、green、
+ *       blue、indigo、violet、gray、key、calm、quiet、playful、urgent、energetic、dreamy），
+ *       名稱不分大小寫，不存在時退回 default。也可在執行中修改 theme，元件會立即重繪。
+ */
 (() => {
   if (customElements.get('ui-detail-ladder')) return;
 
@@ -48,6 +59,53 @@
     'ini-title-bg': '#161816'
   };
 
+  /* 品牌色名稱對照：顏色屬性可直接填名稱（不分大小寫） */
+  const COLOR_NAMES = {
+    base: '#0C0D0C', 'bg-alternative': '#3B2A20',
+    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
+    red: '#EF6661', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1',
+    violet: '#B484E8', gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC',
+    quiet: '#8EA4DE', playful: '#FFA987', urgent: '#FF2E63',
+    energetic: '#B6FF00', dreamy: '#DE8EC9'
+  };
+
+  /* CSS_ATTRS 之中屬於顏色的屬性，值會先經過品牌色名稱轉換 */
+  const COLOR_ATTRS = new Set([
+    'bg', 'border-color', 'label-color', 'active-color', 'current-color',
+    'line-color', 'line-active-color', 'pill-bg', 'pill-color', 'title-color',
+    'body-color', 'note-color', 'divider-color', 'hl-bg', 'hl-color',
+    'progress-color', 'progress-color-end', 'progress-track', 'progress-text-color',
+    'title-icon-color', 'ini-title-color', 'ini-title-bg'
+  ]);
+
+  const resolveColor = (v) => {
+    if (typeof v !== 'string') return v;
+    const k = v.trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(COLOR_NAMES, k) ? COLOR_NAMES[k] : v;
+  };
+
+  /* 主題：只列出與預設不同的顏色屬性，值可用品牌色名稱。
+   * a 為強調色，on 為疊在強調色上的文字色。default 為空物件，代表完全使用 CSS_ATTRS 的內建預設。 */
+  const accentTheme = (a, on = 'base') => ({
+    'border-color': a,
+    'active-color': a,
+    'current-color': a,
+    'line-active-color': a,
+    'pill-bg': a,
+    'pill-color': on,
+    'title-color': a,
+    'divider-color': a,
+    'hl-bg': a,
+    'hl-color': on,
+    'progress-color': a,
+    'ini-title-color': a
+  });
+
+  const THEMES = { default: {} };
+  ['shell', 'vanilla', 'yellow', 'pink', 'red', 'green', 'blue', 'indigo', 'violet', 'gray',
+    'key', 'calm', 'quiet', 'playful', 'urgent', 'energetic', 'dreamy'
+  ].forEach((n) => { THEMES[n] = accentTheme(n); });
+
   const OPT_ATTRS = {
     'direction': 'up',
     'border': 'false',
@@ -60,7 +118,8 @@
     'reset-text': '重來',
     'start': '1',
     'ini-title': '點擊展開',
-    'keyboard': 'true'
+    'keyboard': 'true',
+    'theme': 'default'
   };
 
   const STYLE = `
@@ -182,7 +241,21 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
 
     _css(name) {
       const v = this.getAttribute(name);
-      return v === null || v === '' ? CSS_ATTRS[name] : v;
+      const has = v !== null && v !== '';
+      if (!COLOR_ATTRS.has(name)) return has ? v : CSS_ATTRS[name];
+      /* 顏色屬性的優先順序：個別屬性 > theme > 內建預設 */
+      if (has) return resolveColor(v);
+      const tv = THEMES[this._themeName()][name];
+      return resolveColor(tv !== undefined ? tv : CSS_ATTRS[name]);
+    }
+
+    _themeName() {
+      const t = this._opt('theme').trim().toLowerCase();
+      return Object.prototype.hasOwnProperty.call(THEMES, t) ? t : 'default';
+    }
+
+    static get themes() {
+      return Object.keys(THEMES);
     }
 
     _init() {
@@ -300,7 +373,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       if (!s.icon) return '';
       let n = s.icon.trim().replace(/^bi\s+/, '');
       if (!n.startsWith('bi-')) n = `bi-${n}`;
-      const st = s.iconColor ? ` style="color:${s.iconColor}"` : '';
+      const st = s.iconColor ? ` style="color:${resolveColor(s.iconColor)}"` : '';
       return `<i class="bi ${n}"${st}></i>`;
     }
 

@@ -31,7 +31,11 @@
     triangle: '<path d="M7 4l13 8-13 8z" fill="currentColor"/>'
   };
 
-  const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
+  const color = v => {
+    if (!v) return '';
+    const t = v.trim(), k = t.toLowerCase();
+    return PALETTE[t] || PALETTE[k] || (k === 'base' ? '#0C0D0C' : t);
+  };
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
   const el = (tag, cls, text) => {
     const n = document.createElement(tag);
@@ -610,8 +614,9 @@ ${variantCSS}
         if ([...b.classList].some(c => c === 'btn' || c.startsWith('btn-'))) return;
         const v = b.getAttribute('color') || b.getAttribute('variant') || this._o.variant;
         b.classList.add('uid-btn');
-        if (PALETTE[v]) {
-          b.classList.add('uid-v-' + v);
+        const vk = String(v || '').trim().toLowerCase();
+        if (PALETTE[vk]) {
+          b.classList.add('uid-v-' + vk);
         } else {
           b.style.background = color(v);
           b.style.color = PALETTE.base;

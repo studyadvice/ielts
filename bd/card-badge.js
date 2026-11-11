@@ -46,6 +46,7 @@ class CardBadge extends HTMLElement {
   getBrandColors() {
     return {
       'background': '#0C0D0C',
+      base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
       'fill'      : '#1a1b1a',       // 元件內部深背景
       'shell'     : '#C6C7BD',       // main text
       'vanilla'   : '#DBEDD8',

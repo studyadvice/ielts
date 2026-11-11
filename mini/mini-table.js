@@ -60,7 +60,11 @@
   /* 各外觀的預設強調色 */
   const THEME_COLOR = { clean: 'gray', ledger: 'blue', grid: 'shell', banner: 'bg-alternative', compact: 'gray', bare: 'key', score: 'key', tiles: 'gray', frame: 'key', side: 'indigo' };
 
-  const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
+  const color = v => {
+    if (!v) return '';
+    const t = v.trim(), k = t.toLowerCase();
+    return PALETTE[t] || PALETTE[k] || (k === 'base' ? '#0C0D0C' : t);
+  };
   const onColor = v => (v && v.trim() === 'bg-alternative' ? '#FFFFFF' : BG);
 
   const STYLE_ID = 'mini-table-style';

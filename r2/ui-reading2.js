@@ -29,7 +29,7 @@
   const color = (v, d = '') => {
     if (!v) return d;
     v = String(v).trim();
-    return PALETTE[v] || v;
+    return PALETTE[v] || PALETTE[v.toLowerCase()] || v;
   };
   const mix = (c, t) => {
     const h = color(c, PALETTE.shell);

@@ -27,6 +27,13 @@
     'bg-alternative': '#3B2A20',
   };
 
+  /* 品牌色名稱轉換：不分大小寫，base 為 bg 的別名 */
+  const brandKey = (v) => {
+    let k = String(v == null ? '' : v).trim().toLowerCase();
+    if (k === 'base') k = 'bg';
+    return k;
+  };
+
   const SIZE_MAP = {
     sm: { font: '0.85rem', padY: '4px', padX: '10px' },
     md: { font: '1rem',    padY: '6px', padX: '14px' },
@@ -111,7 +118,7 @@
   /* 有 text-color 就覆蓋成該顏色（支援 BRAND 色票名稱或任意 CSS 色票字串），
      沒有就清掉 inline 覆蓋，讓文字色退回 phrase-upgrade 整體的 --pu-accent */
   function applyStageColor(wordEl, colorKey) {
-    if (colorKey) wordEl.style.color = BRAND[colorKey] || colorKey;
+    if (colorKey) wordEl.style.color = BRAND[brandKey(colorKey)] || colorKey;
     else wordEl.style.removeProperty('color');
   }
 
@@ -228,7 +235,7 @@
     el.innerHTML = '';
     el.classList.add('pu-ready');
 
-    const accentHex = BRAND[cfg.theme] || BRAND.blue;
+    const accentHex = BRAND[brandKey(cfg.theme)] || BRAND.blue;
     el.style.setProperty('--pu-accent', accentHex);
 
     const textWrap = doc.createElement('pu-text');
@@ -572,7 +579,7 @@ phrase-upgrade.is-final pu-hint { display: none; }
   function buildPanel(chip, cfg, exampleHTML, translationText) {
     const panel = doc.createElement('pc-panel');
     panel.style.setProperty('--pc-card-width', cfg.cardWidth);
-    const accentHex = BRAND[cfg.cardTheme] || BRAND[cfg.theme] || BRAND.blue;
+    const accentHex = BRAND[brandKey(cfg.cardTheme)] || BRAND[brandKey(cfg.theme)] || BRAND.blue;
     panel.style.setProperty('--pc-card-accent', accentHex);
 
     const head = doc.createElement('pc-panel-head');
@@ -655,7 +662,7 @@ phrase-upgrade.is-final pu-hint { display: none; }
     chip.setAttribute('data-shape', cfg.shape);
 
     const sizeCfg = SIZE_MAP[cfg.size] || SIZE_MAP.md;
-    const accentHex = BRAND[cfg.theme] || BRAND.blue;
+    const accentHex = BRAND[brandKey(cfg.theme)] || BRAND.blue;
     chip.style.setProperty('--pc-accent', accentHex);
     chip.style.setProperty('--pc-font', sizeCfg.font);
     chip.style.setProperty('--pc-pad-y', sizeCfg.padY);

@@ -40,7 +40,11 @@
   };
 
   /* ---------- 小工具 ---------- */
-  const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
+  const color = v => {
+    if (!v) return '';
+    const t = v.trim(), k = t.toLowerCase();
+    return PALETTE[t] || PALETTE[k] || (k === 'base' ? '#0C0D0C' : t);
+  };
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
   const el = (tag, cls, text) => {
     const n = document.createElement(tag);
@@ -421,8 +425,9 @@ ${variantCSS}
         if ([...b.classList].some(c => c === 'btn' || c.startsWith('btn-'))) return;
         const v = b.getAttribute('color') || this._o.btnColor;
         b.classList.add('uis-btn');
-        if (PALETTE[v]) {
-          b.classList.add('uis-v-' + v);
+        const vk = String(v || '').trim().toLowerCase();
+        if (PALETTE[vk]) {
+          b.classList.add('uis-v-' + vk);
         } else {
           b.style.background = color(v);
           b.style.color = PALETTE.base;

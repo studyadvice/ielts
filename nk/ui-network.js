@@ -3,6 +3,7 @@
   if (window.customElements.get('ui-network')) return;
 
   const PALETTE = Object.freeze({
+    base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
     'background': '#0C0D0C', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8', 'yellow': '#E3D322',
     'pink': '#FF91D7', 'red': '#EF6661', 'green': '#71CD76',
     'blue': '#5DBAE8', 'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F',

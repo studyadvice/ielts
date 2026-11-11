@@ -25,6 +25,15 @@
     'bg-alternative': '#3B2A20',
   };
 
+  /* 品牌色名稱轉換：不分大小寫，base 為頁面底色；不是名稱時原樣回傳 */
+  function brandOf(v) {
+    var t = String(v == null ? '' : v).trim();
+    var k = t.toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(PALETTE, t)) return PALETTE[t];
+    if (Object.prototype.hasOwnProperty.call(PALETTE, k)) return PALETTE[k];
+    return k === 'base' ? '#0C0D0C' : t;
+  }
+
   var NOTICE_COLOR_MAP = {
     yellow   : PALETTE.yellow,
     pink     : PALETTE.pink,
@@ -158,6 +167,9 @@
 
   function applyNoticeColor(box, colorAttr, isSticky) {
     if (!colorAttr) return;
+    var ck = String(colorAttr).trim().toLowerCase();
+    if (ck === 'gold' || Object.prototype.hasOwnProperty.call(NOTICE_COLOR_MAP, ck)) colorAttr = ck;
+    else colorAttr = brandOf(colorAttr);
     if (colorAttr === 'gold') {
       box.setAttribute('data-color', 'gold');
       return;
@@ -953,7 +965,7 @@
     const raw = trigger.dataset.popoverColor;
     let color;
     if (raw) {
-      color = (PALETTE[raw] || raw);
+      color = brandOf(raw);
     } else {
       color = theme.borderColor;
     }
@@ -1655,7 +1667,7 @@
     document.querySelectorAll(sel).forEach(function (el) {
       const raw = el.dataset.popoverColor;
       if (!raw) return;
-      const color = PALETTE[raw] || raw;
+      const color = brandOf(raw);
       el.style.setProperty('--xpop-hint-color', color);
       const rgb = hexToRgb(color);
       if (rgb) el.style.setProperty('--xpop-hint-rgb', rgb);

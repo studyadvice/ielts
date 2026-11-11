@@ -26,6 +26,7 @@
   };
 
   const BrandColors = {
+    base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
     bg:       '#0C0D0C',
     region:   '#333333',
     shell:    '#C6C7BD',
@@ -117,7 +118,7 @@
     const PAGE   = BrandColors.bg;  /* 頁面底色，計分板的混色基準 */
 
     /* 色彩 variant：自動從 BrandColors 生成，新增色票只需修改上方物件 */
-    const skip = new Set(['bg', 'region']);
+    const skip = new Set(['bg', 'base', 'region']);
 
     const COLOR_VARIANTS = Object.entries(BrandColors)
       .filter(([k]) => !skip.has(k))

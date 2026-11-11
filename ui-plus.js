@@ -29,13 +29,17 @@
   function resolveColor(v) {
     if (!v) return null;
     v = String(v).trim();
-    return BRAND[v] || (/^#|^rgb/.test(v) ? v : null);
+    var k = v.toLowerCase();
+    if (k === 'base') return '#0C0D0C';
+    return BRAND[v] || BRAND[k] || (/^#|^rgb/.test(v) ? v : null);
   }
 
   function clr(v) {
     if (!v) return BRAND.shell;
     v = String(v).trim();
-    return BRAND[v] || (/^#|^rgb/.test(v) ? v : BRAND.shell);
+    var k = v.toLowerCase();
+    if (k === 'base') return '#0C0D0C';
+    return BRAND[v] || BRAND[k] || (/^#|^rgb/.test(v) ? v : BRAND.shell);
   }
 
   function hexRgba(hex, a) {

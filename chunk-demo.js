@@ -258,6 +258,22 @@ chunk-demo { display: block; }
     (doc.head || doc.documentElement).appendChild(s);
   }
 
+  /* 品牌色名稱轉換：level-colors 等顏色值可填名稱（不分大小寫）、#hex 或任何 CSS 色彩 */
+  const BRAND = {
+    base: '#0C0D0C', 'bg-alternative': '#3B2A20',
+    shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
+    red: '#EF6661', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1',
+    violet: '#B484E8', gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC',
+    quiet: '#8EA4DE', playful: '#FFA987', urgent: '#FF2E63',
+    energetic: '#B6FF00', dreamy: '#DE8EC9'
+  };
+  const resolveColor = (v) => {
+    if (v === null || v === undefined) return '';
+    const t = String(v).trim();
+    const k = t.toLowerCase();
+    return Object.prototype.hasOwnProperty.call(BRAND, k) ? BRAND[k] : t;
+  };
+
   const DEFAULTS = {
     themes: {
       shell:    { border: '#C6C7BD', text: '#C6C7BD', bg: 'rgba(198,199,189,.09)' },
@@ -411,8 +427,8 @@ chunk-demo { display: block; }
         levelDotColors: { ...DEFAULTS.levelDotColors, ...(G.levelDotColors || {}), ...(E.levelDotColors || {}) },
       };
 
-      const name  = this.getAttribute('theme') || cfg.defaultTheme || 'green';
-      cfg._theme  = cfg.themes[name] || cfg.themes.green || DEFAULTS.themes.green;
+      const name  = String(this.getAttribute('theme') || cfg.defaultTheme || 'green').trim();
+      cfg._theme  = cfg.themes[name] || cfg.themes[name.toLowerCase()] || cfg.themes.green || DEFAULTS.themes.green;
 
       if (this.getAttribute('border-width')) cfg.chunkBorderWidth = this.getAttribute('border-width');
       if (this.getAttribute('border-style')) cfg.chunkBorderStyle = this.getAttribute('border-style');
@@ -812,7 +828,7 @@ chunk-demo { display: block; }
       }
 
       chunk.levels.forEach(lv => {
-        const dotC  = cfg.levelDotColors[lv.level] || '#C6C7BD';
+        const dotC  = resolveColor(cfg.levelDotColors[lv.level]) || '#C6C7BD';
         const isSel = lv.level === currentLevel;
 
         const row     = doc.createElement('div');
@@ -845,7 +861,7 @@ chunk-demo { display: block; }
       pill.style.borderColor = cfg.dropdownBorder;
 
       chunk.levels.forEach(lv => {
-        const dotC    = cfg.levelDotColors[lv.level] || '#C6C7BD';
+        const dotC    = resolveColor(cfg.levelDotColors[lv.level]) || '#C6C7BD';
         const isActive = lv.level === currentLevel;
 
         const dot     = doc.createElement('span');
@@ -891,7 +907,7 @@ chunk-demo { display: block; }
         dotsWrap.className = 'cd-dp-dots';
 
         chunk.levels.forEach(lv => {
-          const dotC    = cfg.levelDotColors[lv.level] || '#C6C7BD';
+          const dotC    = resolveColor(cfg.levelDotColors[lv.level]) || '#C6C7BD';
           const isActive = lv.level === currLvl;
 
           const dot = doc.createElement('span');

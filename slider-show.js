@@ -154,6 +154,7 @@ class SliderShow extends HTMLElement {
 
     const brandColors = {
       'background': '#0C0D0C',
+      base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
       'fill': '#1A1B1A',
       'shell': '#C6C7BD',
       'vanilla': '#DBEDD8',

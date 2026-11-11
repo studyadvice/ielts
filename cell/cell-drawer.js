@@ -26,6 +26,16 @@
     'bg-alternative': '#3B2A20',
   };
 
+  /* 品牌色名稱轉換：顏色屬性可填名稱（不分大小寫）、#hex 或任何 CSS 色彩 */
+  const resolveColor = (v) => {
+    if (v === null || v === undefined) return null;
+    const t = String(v).trim();
+    if (!t) return null;
+    const k = t.toLowerCase();
+    if (k === 'base') return BASE_BG;
+    return Object.prototype.hasOwnProperty.call(BRAND_COLORS, k) ? BRAND_COLORS[k] : t;
+  };
+
   const LEGACY_THEME_ALIASES = {
   };
 
@@ -663,7 +673,8 @@
 
     _theme () {
       const raw = this.getAttribute('theme') || DEFAULTS.theme;
-      const key = LEGACY_THEME_ALIASES[raw] || raw;
+      const k0  = String(raw).trim().toLowerCase();
+      const key = LEGACY_THEME_ALIASES[k0] || k0;
       return BRAND_COLORS[key] || raw;
     }
 
@@ -879,7 +890,7 @@
 
     _applySlideStyle () {
       if (!this._wrap) return;
-      const sc  = this.getAttribute('slide-color')       || DEFAULTS.slideColor;
+      const sc  = resolveColor(this.getAttribute('slide-color'))       || DEFAULTS.slideColor;
       const sp  = this.getAttribute('slide-padding')     || DEFAULTS.slidePadding;
       const slh = this.getAttribute('slide-line-height') || DEFAULTS.slideLineHeight;
       const fsz = this.getAttribute('slide-font-size')   || DEFAULTS.slideFontSize;
@@ -894,7 +905,7 @@
 
     _applySurfaceBg () {
       if (!this._wrap) return;
-      const bg = this.getAttribute('surface-bg') || DEFAULTS.surfaceBg;
+      const bg = resolveColor(this.getAttribute('surface-bg')) || DEFAULTS.surfaceBg;
       if (bg) {
         this._wrap.style.setProperty('--cd-surface', bg);
       } else {
@@ -905,15 +916,15 @@
 
     _applyDotStyle () {
       if (!this._wrap) return;
-      const dc  = this.getAttribute('dot-color')        || DEFAULTS.dotColor;
-      const dac = this.getAttribute('dot-active-color') || DEFAULTS.dotActiveColor;
+      const dc  = resolveColor(this.getAttribute('dot-color'))        || DEFAULTS.dotColor;
+      const dac = resolveColor(this.getAttribute('dot-active-color')) || DEFAULTS.dotActiveColor;
       this._wrap.style.setProperty('--cd-dot',        dc);
       this._wrap.style.setProperty('--cd-dot-active', dac);
     }
 
     _applyBadgeStyle () {
       if (!this._wrap) return;
-      const bc  = this.getAttribute('badge-color')       || DEFAULTS.badgeColor;
+      const bc  = resolveColor(this.getAttribute('badge-color'))       || DEFAULTS.badgeColor;
       const bfsz = this.getAttribute('badge-font-size');
       const bff  = this.getAttribute('badge-font-family');
       this._wrap.style.setProperty('--cd-badge-clr', bc);
@@ -925,7 +936,7 @@
 
     _applyCountdownStyle () {
       if (!this._wrap) return;
-      const cc   = this.getAttribute('countdown-color');
+      const cc   = resolveColor(this.getAttribute('countdown-color'));
       const cfsz = this.getAttribute('countdown-font-size');
       const cff  = this.getAttribute('countdown-font-family');
       if (cc)   this._wrap.style.setProperty('--cd-cd-clr',  cc);
@@ -973,8 +984,8 @@
       const autoText = lum > 140 ? BASE_BG : BRAND_COLORS.vanilla;
       const shade = 'color-mix(in srgb, ' + c + ' 60%, ' + BASE_BG + ')';
 
-      const startBg    = this.getAttribute('start-bg')    || DEFAULTS.startBg    || c;
-      const startColor = this.getAttribute('start-color') || DEFAULTS.startColor || autoText;
+      const startBg    = resolveColor(this.getAttribute('start-bg'))    || DEFAULTS.startBg    || c;
+      const startColor = resolveColor(this.getAttribute('start-color')) || DEFAULTS.startColor || autoText;
       const startFsz   = this.getAttribute('start-font-size');
       const startFf    = this.getAttribute('start-font-family');
 

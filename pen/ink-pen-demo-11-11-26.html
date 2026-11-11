@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ink-pen 的 extra-color 支援品牌色名稱</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:36px 0 12px 0;padding:0 0 8px 0;border-bottom:1px solid #2a2b29}
+  h3{font-size:1rem;margin:16px 0 8px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .old{color:#EF6661} .new{color:#71CD76}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  code{color:#FF91D7}
+  .alert-dark-custom{background:#161816;border:1px solid #EF6661;color:#C6C7BD;font-size:.9rem;padding:10px 16px;margin:12px 0 0 0}
+  .stage{border:1px solid #2a2b29;border-radius:8px;padding:16px}
+
+</style>
+</head>
+<body>
+<div class="page">
+<h1>ink-pen 的 extra-color 支援品牌色名稱</h1>
+<div class="alert alert-dark-custom"><i class="bi bi-bug" style="color:#EF6661"></i> 修正前，<code>&lt;ui-ink-bar&gt;</code> 的 <code>extra-color</code> 只收 <code>#RGB</code> 或 <code>#RRGGBB</code>，填 <code>key</code> 會跳警告並忽略。修正後也接受品牌色名稱，不分大小寫，未填 <code>extra-label</code> 時顯示「自訂 名稱」。<code>setColor()</code> 同樣不分大小寫。</div>
+
+<h2>修正後的實際元件</h2>
+<div class="stage">
+<p style="font-size:.9rem;margin:0">右下角工具列的色彩選單會多出「自訂 key」，並在載入時自動選用。</p>
+<ui-ink-layer></ui-ink-layer>
+<ui-ink-bar data-open="true" extra-color="KEY"></ui-ink-bar>
+</div>
+
+<h2>程式碼對照</h2>
+<div class="cmp">
+  <div><h3 class="old"><i class="bi bi-x-circle"></i> 修正前</h3><pre>&lt;ui-ink-bar extra-color=&quot;#51DBCF&quot;
+  extra-label=&quot;自訂 key&quot;&gt;&lt;/ui-ink-bar&gt;</pre></div>
+  <div><h3 class="new"><i class="bi bi-check-circle"></i> 修正後（11-11-26）</h3><pre>&lt;ui-ink-bar extra-color=&quot;KEY&quot;&gt;&lt;/ui-ink-bar&gt;</pre></div>
+</div>
+</div>
+<script src="ink-pen.js"></script>
+
+</body>
+</html>

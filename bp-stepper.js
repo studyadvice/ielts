@@ -24,6 +24,14 @@
     'bg-alternative': '#3B2A20',
   };
 
+  /* 品牌色名稱轉換：不分大小寫，base 為 bg 的別名；不是名稱時原樣回傳 */
+  const brandOf = (v) => {
+    if (typeof v !== 'string') return v;
+    let k = v.trim().toLowerCase();
+    if (k === 'base') k = 'bg';
+    return Object.prototype.hasOwnProperty.call(BRAND, k) ? BRAND[k] : v;
+  };
+
   const THEMES = {
     indigo:   { color: BRAND.indigo,   colorActive: BRAND.violet, colorDone: BRAND.green,   titleColor: BRAND.indigo,   badgeBg: 'rgba(119,140,225,0.12)'   },
     yellow:   { color: BRAND.yellow,   colorActive: BRAND.playful,   colorDone: BRAND.green,   titleColor: BRAND.yellow,   badgeBg: 'rgba(227,211,34,0.12)'   },
@@ -1203,7 +1211,8 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
   function initEl(el) {
     // 1. 套用主題預設與 data-* 屬性覆寫
     const cfg = Object.assign({}, defaults);
-    const theme = el.dataset.theme || cfg.theme;
+    const theme0 = el.dataset.theme || cfg.theme;
+    const theme = theme0 && !THEMES[theme0] ? String(theme0).trim().toLowerCase() : theme0;
     if (theme && THEMES[theme]) Object.assign(cfg, THEMES[theme]);
 
     Object.entries(DATA_MAP).forEach(([key, cssVar]) => {
@@ -1214,7 +1223,7 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
       //     • 碰巧是 CSS 原生色名（如 tomato）→ 顯示錯誤顏色
       //     • 非 CSS 色名（如 lagoon）         → 無效值，所有用該變數的規則全失效
       //       （連接線 ::after、箭頭 ::before 一起消失）
-      if (typeof val === 'string' && BRAND[val]) val = BRAND[val];
+      if (typeof val === 'string') val = brandOf(val);
       if (val) el.style.setProperty(cssVar, val);
     });
 
@@ -1231,7 +1240,7 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
         if (el.dataset[colorKey] === undefined) return;   // 未覆寫 → 沿用 theme/defaults
         if (el.dataset[bgKey]    !== undefined) return;   // 使用者自訂背景 → 不覆寫
         const raw = el.dataset[colorKey];
-        const hex = BRAND[raw] || raw;                    // 解析別名或直接使用十六進位
+        const hex = brandOf(raw);                         // 解析別名或直接使用十六進位
         const rgb = hexToRgb(hex);
         if (rgb) el.style.setProperty(cssVar, `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`);
       });
@@ -1312,7 +1321,7 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
       lbl.className = 'bps-connector-label';
       lbl.textContent = labelText;
       const lblColor = step.dataset.connectorLabelColor;
-      if (lblColor) lbl.style.color = lblColor;
+      if (lblColor) lbl.style.color = brandOf(lblColor);
       step.appendChild(lbl);
     });
 

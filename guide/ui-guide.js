@@ -39,7 +39,11 @@
     playful: '#FFA987', urgent: '#FF2E63', energetic: '#B6FF00', dreamy: '#DE8EC9', 'bg-alternative': '#3B2A20'
   };
   const BG = '#0C0D0C';
-  const color = v => (v ? (PALETTE[v.trim()] || v.trim()) : '');
+  const color = v => {
+    if (!v) return '';
+    const t = v.trim(), k = t.toLowerCase();
+    return PALETTE[t] || PALETTE[k] || (k === 'base' ? '#0C0D0C' : t);
+  };
   const onColor = v => (v && v.trim() === 'bg-alternative' ? '#FFFFFF' : BG);
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
   const SIDES = ['left', 'right', 'top', 'bottom'];

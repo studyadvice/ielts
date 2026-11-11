@@ -68,7 +68,10 @@
   function resolveColor(v, fallback) {
     var t = String(v || '').trim();
     if (!t) return fallback;
+    var tk = t.toLowerCase();
+    if (tk === 'base') tk = 'bg';
     if (PALETTE[t]) return PALETTE[t];
+    if (PALETTE[tk]) return PALETTE[tk];
     if (HEX_RE.test(t)) return t.toUpperCase();
     warn('無法辨識的顏色「' + t + '」，已改用預設色');
     return fallback;

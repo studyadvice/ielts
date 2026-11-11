@@ -5,6 +5,7 @@
    *  色票 PALETTE
    * ────────────────────────────────────────────────────────── */
   const PALETTE = {
+    base: '#0C0D0C',  /* 與 ui-insight 一致的頁面底色名稱 */
     bg:          '#0C0D0C',
     shell:       '#C6C7BD',
     vanilla:     '#DBEDD8',
