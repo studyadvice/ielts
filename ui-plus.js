@@ -335,7 +335,8 @@
     chalkThickness:  2.5,
     chalkDuration:   420,
     chalkDirection:  'ltr',
-    chalkArrowSize:  '8px'
+    chalkArrowSize:  '8px',
+    chalkArrowShape: 'triangle'
   }, global.UiReadingConfig || {});
 
   function initPulse(el) {
@@ -450,6 +451,12 @@
     if (arrowRaw === 'false' || arrowRaw === 'none') arrowRaw = null;
     /* arrow-to：弧線從本標記延伸到指定 id 的字（例如後位修飾所修飾的名詞），終點自動加箭頭，該字一併上色 */
     var arrowToId = (el.getAttribute('arrow-to') || '').replace(/^#/, '').trim();
+    /* arrow-shape：箭頭形狀，triangle 實心三角形（預設）、square 實心方塊、star 實心星星 */
+    var arrowShape = String(el.getAttribute('arrow-shape') || UR_CFG.chalkArrowShape || 'triangle').trim().toLowerCase();
+    if (arrowShape !== 'triangle' && arrowShape !== 'square' && arrowShape !== 'star') {
+      console.warn('[chalk-mark] arrow-shape 只能是 triangle、square、star，已改用 triangle：', arrowShape);
+      arrowShape = 'triangle';
+    }
     var arrowTarget = null, targetPrevColor = '';
 
     var wrap = document.createElement('span');
@@ -565,32 +572,70 @@
       chalkPath.setAttribute('stroke-linecap', 'round');
       chalkPath.setAttribute('d',              d);
       svgEl.appendChild(chalkPath);
-
-      if (arrowRaw !== null || arrowTarget) {
-        /* 箭頭方向沿終點的切線（二次曲線終點切線為控制點指向終點） */
-        var size  = Math.max(3, arrowSizePx());
-        var ang   = Math.atan2(y2 - cy, x2 - cx);
-        var wing  = Math.PI / 6.5;
-        var ax1 = x2 - size * Math.cos(ang - wing), ay1 = y2 - size * Math.sin(ang - wing);
-        var ax2 = x2 - size * Math.cos(ang + wing), ay2 = y2 - size * Math.sin(ang + wing);
-        arrowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        arrowPath.setAttribute('fill',            'none');
-        arrowPath.setAttribute('stroke',          c);
-        arrowPath.setAttribute('stroke-width',    thick);
-        arrowPath.setAttribute('stroke-linecap',  'round');
-        arrowPath.setAttribute('stroke-linejoin', 'round');
-        arrowPath.setAttribute('d', 'M ' + ax1.toFixed(2) + ' ' + ay1.toFixed(2) + ' L ' + x2 + ' ' + y2 +
-                                    ' L ' + ax2.toFixed(2) + ' ' + ay2.toFixed(2));
-        arrowPath.style.opacity    = '0';
-        arrowPath.style.transition = 'opacity .16s ease';
-        svgEl.appendChild(arrowPath);
-      }
       wrap.appendChild(svgEl);
 
       var len = chalkPath.getTotalLength();
-      chalkPath.setAttribute('stroke-dasharray',  len);
-      chalkPath.setAttribute('stroke-dashoffset', len);
-      return len;
+      var vis = len;   /* 弧線實際畫出的長度；有箭頭時縮短，讓線尾藏進箭頭形狀 */
+
+      if (arrowRaw !== null || arrowTarget) {
+        /* 實心箭頭。尺寸為形狀沿弧線方向的長度，形狀最前端落在弧線終點，不會壓到文字。
+           triangle：尖端在終點，長度 tl、底邊寬約 1.1 倍長度。
+           square：邊長 tl，一邊與弧線方向垂直。
+           star：五角星，一個尖角朝弧線方向，外接圓直徑為尺寸的 1.6 倍（星形較瘦，放大後視覺上與三角形相當）。
+           三種形狀的最小尺寸都依線寬調整，確保線尾藏得住。 */
+        var base = Math.max(3, arrowSizePx());
+        var tl, back;   /* back：弧線要縮短的長度，讓線尾停在形狀內部 */
+        if (arrowShape === 'square') {
+          tl = Math.max(base, thick * 2.4); back = tl * 0.5;
+        } else if (arrowShape === 'star') {
+          tl = Math.max(base * 1.6, thick * 4.2); back = tl * 0.5;
+        } else {
+          tl = Math.max(base, thick * 2.6); back = tl * 0.5;
+        }
+        /* 方向：形狀後端所在的弧線點指向終點，順著肉眼看到的弧線走向；
+           弧線太短時退回終點切線（控制點指向終點）。 */
+        var canTrim = len > tl * 1.5;
+        var ang;
+        if (canTrim) {
+          var bp = chalkPath.getPointAtLength(len - tl);
+          ang = Math.atan2(y2 - bp.y, x2 - bp.x);
+        } else {
+          ang = Math.atan2(y2 - cy, x2 - cx);
+        }
+        var ca = Math.cos(ang), sa = Math.sin(ang);
+        var tx2 = +x2, ty2 = +y2;
+        /* 以弧線方向為 u 軸、其法線為 v 軸，把局部座標換成 SVG 座標 */
+        var P = function (u, v) { return (tx2 + u * ca - v * sa).toFixed(2) + ' ' + (ty2 + u * sa + v * ca).toFixed(2); };
+        var shapeD;
+        if (arrowShape === 'square') {
+          var hs = tl / 2;
+          shapeD = 'M ' + P(0, -hs) + ' L ' + P(0, hs) + ' L ' + P(-tl, hs) + ' L ' + P(-tl, -hs) + ' Z';
+        } else if (arrowShape === 'star') {
+          var R = tl / 2, r = R * 0.45, pts = [];
+          for (var i = 0; i < 10; i++) {
+            var a = i * Math.PI / 5, rr = (i % 2) ? r : R;
+            pts.push(P(-R + rr * Math.cos(a), rr * Math.sin(a)));
+          }
+          shapeD = 'M ' + pts.join(' L ') + ' Z';
+        } else {
+          var hw = Math.max(tl * 0.55, thick * 1.3);
+          shapeD = 'M ' + P(0, 0) + ' L ' + P(-tl, -hw) + ' L ' + P(-tl, hw) + ' Z';
+        }
+        arrowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        arrowPath.setAttribute('fill',            c);
+        arrowPath.setAttribute('stroke',          c);
+        arrowPath.setAttribute('stroke-width',    '1');
+        arrowPath.setAttribute('stroke-linejoin', 'round');
+        arrowPath.setAttribute('d', shapeD);
+        arrowPath.style.opacity    = '0';
+        arrowPath.style.transition = 'opacity .16s ease';
+        svgEl.appendChild(arrowPath);
+        if (canTrim) vis = len - back;
+      }
+
+      chalkPath.setAttribute('stroke-dasharray',  vis + ' ' + len);
+      chalkPath.setAttribute('stroke-dashoffset', vis);
+      return vis;
     }
 
     function activate() {

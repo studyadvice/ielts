@@ -1895,7 +1895,8 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `duration` | `420` | 畫線動畫的毫秒數。 |
 | `active` | 布林 | 載入時就畫好弧線。元素尚未出現在畫面上時，會等到捲動到可見才畫。 |
 | `direction` | `ltr` | 畫線方向：`ltr` 由左往右，`rtl` 由右往左。 |
-| `arrow` | 無 | 在弧線終點加箭頭，線畫完才出現。只寫屬性為 `8px`；可填尺寸，例如 `12`、`10px`、`0.6rem`、`0.5em`（純數字視為 px）。 |
+| `arrow` | 無 | 在弧線終點加實心箭頭，線畫完才出現，方向順著弧線走向，形狀最前端落在弧線終點。尺寸為箭頭長度，只寫屬性為 `8px`；可填 `12`、`10px`、`0.6rem`、`0.5em`（純數字視為 px）。最小尺寸依線寬自動調整。 |
+| `arrow-shape` | `triangle` | 箭頭形狀：`triangle` 三角形、`square` 方塊、`star` 五角星（尖角朝弧線方向，外接圓直徑為尺寸的 1.6 倍）。其他值改用 `triangle` 並在主控台提示。 |
 
 | `arrow-to` | 無 | 目標元素的 id。弧線從本標記延伸到該元素，終點自動加箭頭（尺寸沿用 `arrow`，未設定為 8px），目標文字一併上色。找不到 id 時改畫一般弧線並在主控台提示。 |
 
@@ -1946,6 +1947,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `chalkDuration` | `420` | `chalk-mark` 的 `duration` |
 | `chalkDirection` | `ltr` | `chalk-mark` 的 `direction` |
 | `chalkArrowSize` | `8px` | `chalk-mark` 的 `arrow` 沒有填值時的尺寸 |
+| `chalkArrowShape` | `triangle` | `chalk-mark` 的 `arrow-shape` |
 
 ### ui-btn：展開按鈕
 

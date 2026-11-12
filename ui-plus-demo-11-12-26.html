@@ -477,6 +477,21 @@ code{color:#FFA987;}
   that are close to public transport and <chalk-mark theme="pink" arrow-to="h-apt" active>within walking distance of their campus</chalk-mark>.</p>
     </script>
     </div>
+    <div class="demo" data-demo>
+      <h3>arrow-shape 箭頭形狀</h3>
+      <p class="desc"><code>arrow-shape</code> 可選 <code>triangle</code>（預設）、<code>square</code>、<code>star</code>，三種都是實心，方向順著弧線，形狀最前端落在弧線終點。<code>arrow</code> 的尺寸照常使用；星星較瘦，會自動放大 1.6 倍。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell" style="line-height:3">a <chalk-mark theme="key" direction="rtl" arrow active>park with modern facilities</chalk-mark></p>
+<p class="bp-text-shell" style="line-height:3">a <chalk-mark theme="pink" direction="rtl" arrow="10" arrow-shape="square" active>park with modern facilities</chalk-mark></p>
+<p class="bp-text-shell" style="line-height:3">a <chalk-mark theme="yellow" direction="rtl" arrow="10" arrow-shape="star" active>park with modern facilities</chalk-mark></p>
+<p class="bp-text-shell" style="line-height:3">The <span id="h-star">man</span>
+  <chalk-mark theme="violet" arrow-to="h-star" arrow-shape="star" active>standing by the door</chalk-mark> is my teacher.</p>
+    </script>
+    </div>
   </section>
 
   <section class="part" id="colpair">
@@ -495,6 +510,43 @@ code{color:#FFA987;}
   <col-pair group="c2" theme="pink">raise</col-pair>
   <col-pair group="c2">taxes</col-pair> next year.</p>
 </script>
+    </div>
+  </section>
+
+  <section class="part" id="arrow-fix">
+    <h2>修改紀錄：chalk-mark 箭頭改為實心形狀（11-12-26）</h2>
+    <p class="lead">原本的箭頭是兩條開口的線，方向取弧線最末端的切線。弧線兩端很陡，最末端的切線和肉眼看到的走向不同，加上粗線的圓頭，箭頭看起來是歪的。現在改為實心三角形，方向取「三角形底邊所在的弧線點」指向終點，弧線縮短半個箭頭長，線尾藏進三角形。<code>arrow</code> 的尺寸仍是箭頭長度，寫法不變。上方「由右往左與箭頭」與「arrow-to」兩組範例就是新樣式。</p>
+    <p class="lead">同日再新增 <code>arrow-shape</code>：內建實心三角形、方塊、星星三種形狀，見上方「arrow-shape 箭頭形狀」範例。三種形狀共用同一套方向計算，以弧線方向為 u 軸、法線為 v 軸畫出形狀，再轉成 SVG 座標。</p>
+    <div class="grid2">
+      <div class="side"><p class="cap">修改前</p><pre class="code-box"><code>/* 箭頭方向沿終點的切線（控制點指向終點） */
+var ang  = Math.atan2(y2 - cy, x2 - cx);
+var wing = Math.PI / 6.5;
+var ax1 = x2 - size * Math.cos(ang - wing), ...;
+var ax2 = x2 - size * Math.cos(ang + wing), ...;
+arrowPath.setAttribute('fill',   'none');
+arrowPath.setAttribute('stroke-width', thick);
+arrowPath.setAttribute('d', 'M ax1 ay1 L x2 y2 L ax2 ay2');
+
+chalkPath.setAttribute('stroke-dasharray',  len);
+chalkPath.setAttribute('stroke-dashoffset', len);</code></pre></div>
+      <div class="side"><p class="cap">修改後</p><pre class="code-box"><code>/* 實心三角形：長度 tl，底邊半寬 hw */
+var tl = Math.max(3, arrowSizePx(), thick * 2.6);
+var hw = Math.max(tl * 0.55, thick * 1.3);
+/* 方向：底邊所在的弧線點指向終點 */
+var bp  = chalkPath.getPointAtLength(len - tl);
+var ang = Math.atan2(y2 - bp.y, x2 - bp.x);
+arrowPath.setAttribute('fill', c);
+arrowPath.setAttribute('d', 'M 尖端 L 底邊左 L 底邊右 Z');
+
+/* 弧線縮短半個箭頭長，線尾藏進箭頭形狀 */
+var vis = len - tl * 0.5;
+
+/* 新增 arrow-shape：square、star */
+&lt;chalk-mark arrow arrow-shape="square"&gt;...&lt;/chalk-mark&gt;
+&lt;chalk-mark arrow arrow-shape="star"&gt;...&lt;/chalk-mark&gt;
+UiReadingConfig = { chalkArrowShape: 'star' };   // 全站預設
+chalkPath.setAttribute('stroke-dasharray',  vis + ' ' + len);
+chalkPath.setAttribute('stroke-dashoffset', vis);</code></pre></div>
     </div>
   </section>
 
