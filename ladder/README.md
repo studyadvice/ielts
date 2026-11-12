@@ -4,7 +4,7 @@
 
 | 元件 | 用途 | 版本 |
 |---|---|---|
-| `<ui-detail-ladder>` | 細節階梯：把籠統說法逐階升級成具體說法 | v1.2 |
+| `<ui-detail-ladder>` | 細節階梯：把籠統說法逐階升級成具體說法 | v1.3 |
 | `<ui-insight>` | 亮點字詞解說：左側句子卡片，右側顯示亮點字詞的解說 | v1.4 |
 
 ## 特色
@@ -150,6 +150,32 @@
 | `current`、`total`、`isOpen` | 唯讀屬性 | 目前階數、總階數、是否展開。 |
 | `ladder-change` | 事件 | `detail` 內含 `index`、`total`、`label`。 |
 | `ladder-toggle` | 事件 | `detail` 內含 `open`。 |
+| `play()`、`pause()` | 方法 | 開始、暫停自動播放（v1.3）。stop 模式下在最後一階呼叫 `play()` 會從第 1 階重新開始。 |
+| `isPlaying` | 唯讀屬性 | 是否正在自動播放（v1.3）。 |
+| `ladder-play`、`ladder-pause`、`ladder-end` | 事件 | 開始、暫停、播完（v1.3）。`ladder-pause` 的 `detail.reason` 為 `user` 或 `end`。 |
+
+### 自動播放（v1.3）
+
+```html
+<ui-detail-ladder autoplay theme="blue">
+  <ladder-step label="籠統說法">...</ladder-step>
+  <ladder-step label="換成結果" dwell="12">...</ladder-step>
+  <ladder-step label="加上數字">...</ladder-step>
+</ui-detail-ladder>
+```
+
+| 屬性 | 預設 | 說明 |
+|---|---|---|
+| `autoplay` | 關閉 | 開啟自動播放。只寫屬性為每階 8 秒，寫數字改秒數，例如 `autoplay="5"`。 |
+| `<ladder-step dwell>` | 跟著 `autoplay` | 單獨設定這一階停留的秒數。 |
+| `autoplay-start` | `click` | `click` 按播放鍵或 Ctrl+Shift+空白鍵 才開始、`view` 捲進畫面就開始、`load` 載入就開始。 |
+| `autoplay-end` | `stop` | `stop` 停在最後一階、`loop` 回到第 1 階繼續。 |
+| `pause-on-hover` | `false` | `true` 時游標停在元件上暫停計時。 |
+| `show-timer` | `true` | 內容下方的倒數線，暫停時變灰。 |
+| `play-text`、`pause-text` | `播放`、`暫停` | 播放鍵文字。播放鍵出現在按鈕列，由 `show-buttons` 控制。 |
+
+- 點階梯、按「往上一階」或「重來」、用鍵盤切換時自動暫停。
+- 元件離開畫面、切到別的分頁、收合時暫時停止計時，條件解除後從原本的倒數位置繼續。
 
 ---
 
@@ -336,6 +362,7 @@
 |---|---|---|
 | Ctrl+Shift+↑ | 往畫面上方的階梯移動 | 上一句 |
 | Ctrl+Shift+↓ | 往畫面下方的階梯移動 | 下一句 |
+| Ctrl+Shift+空白鍵 | 切換自動播放（需有 `autoplay`） | 無 |
 
 - 作用於最近一次被游標指到、點擊或用 Tab 取得焦點的元件。
 - 在其他 `input`、`textarea` 打字時不攔截。

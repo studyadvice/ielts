@@ -1,5 +1,11 @@
 /*!
- * <ui-detail-ladder> 細節階梯元件 v1.2
+ * <ui-detail-ladder> 細節階梯元件 v1.3
+ * v1.3（11-12-26）：新增自動播放。加上 autoplay 屬性即開啟，每階預設停 8 秒，autoplay="12" 可改秒數，
+ *       <ladder-step dwell="15"> 可單獨改某一階。autoplay-start 決定何時開始（預設 click 按播放鍵、view 捲進畫面、
+ *       load 載入），autoplay-end 決定播完後（stop 停在最後一階、loop 回到第一階）。
+ *       點階梯、按鈕或用鍵盤切換時自動暫停；按鈕列多一顆播放／暫停鍵；Ctrl+Shift+空白鍵 切換播放。
+ *       元件離開畫面、切到別的分頁、收合時暫時停止計時。內容下方有倒數線（show-timer）。
+ *       方法 play()、pause()，屬性 isPlaying，事件 ladder-play、ladder-pause、ladder-end。
  * v1.2：修正顏色屬性填品牌色名稱時失效的問題。所有顏色屬性（含 <step-title> 的 icon-color）
  *       可直接填品牌色名稱，例如 title-color="key"、bg="base"，名稱不分大小寫，
  *       也仍可填 #hex 或 rgb()。
@@ -119,8 +125,15 @@
     'start': '1',
     'ini-title': '點擊展開',
     'keyboard': 'true',
-    'theme': 'default'
+    'theme': 'default',
+    'autoplay-start': 'click',
+    'autoplay-end': 'stop',
+    'pause-on-hover': 'false',
+    'show-timer': 'true',
+    'play-text': '播放',
+    'pause-text': '暫停'
   };
+  const AUTOPLAY_SEC = 8;
 
   const STYLE = `
 ui-detail-ladder{display:block;box-sizing:border-box;margin:var(--udl-margin);padding:var(--udl-padding);background:var(--udl-bg);border:var(--udl-border-line);border-radius:var(--udl-border-radius);color:var(--udl-body-color)}
@@ -167,6 +180,11 @@ ui-detail-ladder.udl-open .udl-head .udl-chev{transform:rotate(180deg)}
 ui-detail-ladder.udl-collapsible.udl-open .udl-wrap{margin:14px 0 0 0}
 ui-detail-ladder.udl-collapsible:not(.udl-open) .udl-wrap{display:none}
 ui-detail-ladder.udl-collapsible.udl-open .udl-wrap{animation:udl-fade .3s ease}
+ui-detail-ladder .udl-timer{height:3px;background:var(--udl-progress-track);border-radius:999px;overflow:hidden;margin:14px 0 0 0}
+ui-detail-ladder .udl-timer > i{display:block;height:100%;background:var(--udl-active-color);transform-origin:left center}
+ui-detail-ladder .udl-timer.is-paused > i{background:var(--udl-label-color)}
+ui-detail-ladder .udl-play{background:var(--udl-progress-track);color:var(--udl-active-color)}
+ui-detail-ladder .udl-play.is-playing{background:var(--udl-active-color);color:var(--udl-bg)}
 ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(--udl-current-color);outline-offset:3px}
 `;
 
@@ -181,19 +199,24 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
   let activeLadder = null;
   document.addEventListener('keydown', (e) => {
     if (!e.ctrlKey || !e.shiftKey || e.altKey || e.metaKey) return;
-    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    const isSpace = e.code === 'Space' || e.key === ' ';
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown' && !isSpace) return;
     const ae = document.activeElement;
     const inLadder = ae && ae.closest ? ae.closest('ui-detail-ladder') : null;
     const editing = ae && (ae.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName));
     if (editing && !inLadder) return;
     const target = inLadder || activeLadder;
     if (!target || !target.isConnected || typeof target._keyMove !== 'function') return;
+    if (isSpace) {
+      if (target._keyToggle()) e.preventDefault();
+      return;
+    }
     if (target._keyMove(e.key === 'ArrowUp' ? 'up' : 'down')) e.preventDefault();
   });
 
   class UiDetailLadder extends HTMLElement {
     static get observedAttributes() {
-      return [...Object.keys(CSS_ATTRS), ...Object.keys(OPT_ATTRS), 'ini-collapse'];
+      return [...Object.keys(CSS_ATTRS), ...Object.keys(OPT_ATTRS), 'ini-collapse', 'autoplay'];
     }
 
     constructor() {
@@ -202,10 +225,16 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       this._cur = 0;
       this._ready = false;
       this._open = true;
+      this._playing = false;
+      this._elapsed = 0;
+      this._holds = new Set();
+      this._raf = 0;
+      this._autoStarted = false;
+      this._auto = null;
     }
 
     connectedCallback() {
-      if (this._ready) return;
+      if (this._ready) { this._setupAuto(); return; }
       const init = () => this._init();
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init, { once: true });
@@ -216,6 +245,8 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
 
     disconnectedCallback() {
       if (this._ro) this._ro.disconnect();
+      this._teardownAuto();
+      if (this._raf) { cancelAnimationFrame(this._raf); this._raf = 0; }
     }
 
     attributeChangedCallback(name) {
@@ -223,6 +254,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       if (name === 'ini-collapse') this._open = !this._collapsible();
       this._applyVars();
       this._build();
+      if (name.indexOf('autoplay') === 0 || name === 'pause-on-hover') this._setupAuto();
     }
 
     _collapsible() {
@@ -274,7 +306,8 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
           icon: t ? (t.getAttribute('icon') || '') : '',
           iconColor: t ? (t.getAttribute('icon-color') || '') : '',
           body: pick('step-body'),
-          note: pick('step-note')
+          note: pick('step-note'),
+          dwell: parseFloat(n.getAttribute('dwell'))
         };
       });
       this.innerHTML = '';
@@ -296,6 +329,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       this._ro = new ResizeObserver(() => this._layoutLine());
       this._ro.observe(this);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this._layoutLine());
+      this._setupAuto();
     }
 
     _applyVars() {
@@ -342,10 +376,12 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
               <div class="udl-body"></div>
               <div class="udl-note"></div>
             </div>
+            ${this._hasAutoplay() && this._bool('show-timer') ? '<div class="udl-timer"><i></i></div>' : ''}
             ${this._bool('show-progress') ? '<div class="udl-progress"><div class="udl-track"><div class="udl-bar"></div></div><div class="udl-ptext"></div></div>' : ''}
             ${this._bool('show-buttons') ? `<div class="udl-btns">
               <button type="button" class="udl-btn udl-next"><span>${this._opt('next-text')}</span><i class="bi ${arrow}"></i></button>
               <button type="button" class="udl-btn udl-reset"><i class="bi bi-arrow-counterclockwise"></i><span>${this._opt('reset-text')}</span></button>
+              ${this._hasAutoplay() ? '<button type="button" class="udl-btn udl-play"><i class="bi bi-play-fill"></i><span></span></button>' : ''}
             </div>` : ''}
           </div>
         </div>`;
@@ -355,18 +391,22 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
         const r = document.createElement('div');
         r.className = 'udl-rung';
         r.innerHTML = `<span class="udl-dot">${i + 1}</span><span class="udl-label">${s.label}</span>`;
-        r.addEventListener('click', () => this.go(i + 1));
+        r.addEventListener('click', () => { this.pause(); this.go(i + 1); });
         box.appendChild(r);
       });
 
       const nx = this.querySelector('.udl-next');
       const rs = this.querySelector('.udl-reset');
-      if (nx) nx.addEventListener('click', () => this.next());
-      if (rs) rs.addEventListener('click', () => this.reset());
+      if (nx) nx.addEventListener('click', () => { this.pause(); this.next(); });
+      if (rs) rs.addEventListener('click', () => { this.pause(); this.reset(); });
+      const pl = this.querySelector('.udl-play');
+      if (pl) pl.addEventListener('click', () => (this._playing ? this.pause() : this.play()));
       const hd = this.querySelector('.udl-head');
       if (hd) hd.addEventListener('click', () => this.toggle());
 
       this._render(false);
+      this._syncPlayBtn();
+      this._renderTimer();
     }
 
     _iconHtml(s) {
@@ -383,6 +423,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       const down = this._opt('direction') === 'down';
       /* 方向鍵依畫面上的上下移動：由下往上排列時，上鍵是下一階 */
       const forward = down ? dir === 'down' : dir === 'up';
+      this.pause();
       if (forward) this.next(); else this.prev();
       this.classList.add('udl-kbd-active');
       return true;
@@ -463,6 +504,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       const idx = Math.min(Math.max(n - 1, 0), total - 1);
       if (idx === this._cur && this._ready) { this._render(false); return; }
       this._cur = idx;
+      this._elapsed = 0;
       this._render(true);
       this.dispatchEvent(new CustomEvent('ladder-change', {
         bubbles: true,
@@ -473,6 +515,152 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
     next() { this.go(this._cur + 2); }
     prev() { this.go(this._cur); }
     reset() { this.go(1); }
+
+    /* ── 自動播放（v1.3） ── */
+    _hasAutoplay() {
+      const v = this.getAttribute('autoplay');
+      return v !== null && v.trim().toLowerCase() !== 'false';
+    }
+
+    _dwell() {
+      const s = (this._steps || [])[this._cur];
+      if (s && s.dwell > 0) return s.dwell * 1000;
+      const v = parseFloat(this.getAttribute('autoplay'));
+      return (v > 0 ? v : AUTOPLAY_SEC) * 1000;
+    }
+
+    _loopMode() { return this._opt('autoplay-end').trim().toLowerCase() === 'loop'; }
+
+    _setupAuto() {
+      this._teardownAuto();
+      if (!this._ready || !this.isConnected) return;
+      if (!this._hasAutoplay()) {
+        if (this._playing) this.pause('off');
+        return;
+      }
+      const a = this._auto = {};
+      const hold = (k, on) => {
+        if (on) this._holds.add(k); else this._holds.delete(k);
+        this._renderTimer();
+      };
+      a.vis = () => hold('hidden', document.hidden);
+      document.addEventListener('visibilitychange', a.vis);
+      a.vis();
+      const start = this._opt('autoplay-start').trim().toLowerCase();
+      if ('IntersectionObserver' in window) {
+        hold('offscreen', true);
+        a.io = new IntersectionObserver((list) => {
+          const vis = list[list.length - 1].isIntersecting;
+          hold('offscreen', !vis);
+          if (vis && start === 'view' && !this._autoStarted) this.play();
+        }, { threshold: 0.35 });
+        a.io.observe(this);
+      } else if (start === 'view' && !this._autoStarted) {
+        this.play();
+      }
+      if (start === 'load' && !this._autoStarted) this.play();
+      if (this._opt('pause-on-hover').trim().toLowerCase() === 'true') {
+        a.en = () => hold('hover', true);
+        a.lv = () => hold('hover', false);
+        this.addEventListener('pointerenter', a.en);
+        this.addEventListener('pointerleave', a.lv);
+        hold('hover', this.matches(':hover'));
+      }
+      if (this._playing) this._loop();
+    }
+
+    _teardownAuto() {
+      const a = this._auto;
+      if (!a) return;
+      document.removeEventListener('visibilitychange', a.vis);
+      if (a.io) a.io.disconnect();
+      if (a.en) {
+        this.removeEventListener('pointerenter', a.en);
+        this.removeEventListener('pointerleave', a.lv);
+      }
+      this._holds.clear();
+      this._auto = null;
+    }
+
+    /* 播放中而且沒有任何暫時停止的原因（離開畫面、切換分頁、游標停留、收合）才計時 */
+    _canRun() {
+      return this._playing && this._holds.size === 0 && !(this._collapsible() && !this._open) && this.total > 1;
+    }
+
+    _loop() {
+      if (this._raf) return;
+      let last = null;
+      const f = (t) => {
+        this._raf = 0;
+        if (!this._playing) return;
+        if (this._canRun()) {
+          if (last !== null) this._elapsed += Math.min(t - last, 100);
+          last = t;
+          if (this._elapsed >= this._dwell()) this._advance();
+        } else {
+          last = null;
+        }
+        this._renderTimer();
+        if (this._playing) this._raf = requestAnimationFrame(f);
+      };
+      this._raf = requestAnimationFrame(f);
+    }
+
+    _advance() {
+      const total = this.total;
+      if (this._cur < total - 1) {
+        this.go(this._cur + 2);
+        if (this._cur === total - 1 && !this._loopMode()) {
+          this.pause('end');
+          this.dispatchEvent(new CustomEvent('ladder-end', { bubbles: true, detail: { total } }));
+        }
+      } else {
+        this.go(1);
+      }
+    }
+
+    _renderTimer() {
+      const el = this.querySelector('.udl-timer');
+      if (!el) return;
+      const r = Math.min(Math.max(1 - this._elapsed / this._dwell(), 0), 1);
+      el.firstElementChild.style.transform = `scaleX(${r})`;
+      el.classList.toggle('is-paused', !this._canRun());
+    }
+
+    _syncPlayBtn() {
+      const b = this.querySelector('.udl-play');
+      if (!b) return;
+      b.classList.toggle('is-playing', this._playing);
+      b.querySelector('i').className = `bi ${this._playing ? 'bi-pause-fill' : 'bi-play-fill'}`;
+      b.querySelector('span').textContent = this._opt(this._playing ? 'pause-text' : 'play-text');
+    }
+
+    _keyToggle() {
+      if (!this._bool('keyboard') || !this._hasAutoplay()) return false;
+      if (this._playing) this.pause(); else this.play();
+      return true;
+    }
+
+    get isPlaying() { return this._playing; }
+
+    play() {
+      if (this._playing || !this._ready) return;
+      if (this._cur >= this.total - 1 && !this._loopMode()) this.go(1);
+      this._autoStarted = true;
+      this._playing = true;
+      this._syncPlayBtn();
+      this.dispatchEvent(new CustomEvent('ladder-play', { bubbles: true, detail: { index: this._cur + 1 } }));
+      this._loop();
+    }
+
+    pause(reason = 'user') {
+      if (!this._playing) return;
+      this._playing = false;
+      if (this._raf) { cancelAnimationFrame(this._raf); this._raf = 0; }
+      this._syncPlayBtn();
+      this._renderTimer();
+      this.dispatchEvent(new CustomEvent('ladder-pause', { bubbles: true, detail: { index: this._cur + 1, reason } }));
+    }
 
     get isOpen() { return this._open; }
 
@@ -485,6 +673,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       this._open = v;
       this.classList.toggle('udl-open', v);
       if (v) requestAnimationFrame(() => this._layoutLine());
+      this._renderTimer();
       this.dispatchEvent(new CustomEvent('ladder-toggle', { bubbles: true, detail: { open: v } }));
     }
   }
