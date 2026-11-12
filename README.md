@@ -1892,6 +1892,14 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `thickness` | `2.5` | 弧線粗細（px，填數字）。 |
 | `duration` | `420` | 畫線動畫的毫秒數。 |
 | `active` | 布林 | 載入時就畫好弧線。元素尚未出現在畫面上時，會等到捲動到可見才畫。 |
+| `direction` | `ltr` | 畫線方向：`ltr` 由左往右，`rtl` 由右往左。 |
+| `arrow` | 無 | 在弧線終點加箭頭，線畫完才出現。只寫屬性為 `8px`；可填尺寸，例如 `12`、`10px`、`0.6rem`、`0.5em`（純數字視為 px）。 |
+
+搭配 `direction="rtl"` 與 `arrow` 可以標示後位修飾：把修飾語（或連同被修飾的名詞）包起來，箭頭從右往左指回前面。
+
+```html
+<p>The man <chalk-mark theme="key" direction="rtl" arrow="12">standing by the door</chalk-mark> is my teacher.</p>
+```
 
 #### col-pair：搭配詞連動
 
@@ -1924,6 +1932,8 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `chalkTheme` | `focus` | `chalk-mark` 的 `theme` |
 | `chalkThickness` | `2.5` | `chalk-mark` 的 `thickness` |
 | `chalkDuration` | `420` | `chalk-mark` 的 `duration` |
+| `chalkDirection` | `ltr` | `chalk-mark` 的 `direction` |
+| `chalkArrowSize` | `8px` | `chalk-mark` 的 `arrow` 沒有填值時的尺寸 |
 
 ### ui-btn：展開按鈕
 

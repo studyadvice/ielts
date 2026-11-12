@@ -28,7 +28,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 <body>
 <div class="page">
   <h1 class="fs-larger bp-text-key">ui-btn 移除元素</h1>
-  <p class="fs-regular bp-text-calm" style="margin:0 0 24px 0">ui-plus.js 的 <code>&lt;ui-btn&gt;</code> 新增 <code>remove-target</code> 屬性：點擊後把指定 id 的元素從網頁移除，重新整理網頁前不會復原。建立日期 11-11-26。<br>修訂二（11-12-26）：<code>&lt;read-pulse&gt;</code> 新增 <code>style="fuse"</code> 燃燒引信樣式，見最下方範例。</p>
+  <p class="fs-regular bp-text-calm" style="margin:0 0 24px 0">ui-plus.js 的 <code>&lt;ui-btn&gt;</code> 新增 <code>remove-target</code> 屬性：點擊後把指定 id 的元素從網頁移除，重新整理網頁前不會復原。建立日期 11-11-26。<br>修訂二（11-12-26）：<code>&lt;read-pulse&gt;</code> 新增 <code>style="fuse"</code> 燃燒引信樣式。<br>修訂三（11-12-26）：<code>&lt;chalk-mark&gt;</code> 新增 <code>direction="rtl"</code> 與 <code>arrow</code>，可標示後位修飾。</p>
   <div id="rm-log"></div>
 
   <section class="demo bp-border-gray" data-demo>
@@ -133,6 +133,29 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
 全域預設：window.UiReadingConfig = { pulseStyle: 'fuse', pulseSparkSize: 10 }</code></pre>
   </section>
 
+  <section class="demo bp-border-gray" data-demo>
+    <h2 class="fs-large bp-text-yellow">修訂三（11-12-26）：chalk-mark 由右往左與箭頭</h2>
+    <p class="bp-text-shell"><code>&lt;chalk-mark&gt;</code> 新增 <code>direction="rtl"</code>（弧線由右往左畫）與 <code>arrow</code>（終點加箭頭，線畫完才出現，可設尺寸）。兩者搭配可以標示後位修飾：箭頭從修飾語指回前面的名詞。點標記可以擦掉、再點一次重畫。</p>
+    <div class="row g-4">
+      <div class="col-6"><div class="stage bp-border-bg-alternative"></div></div>
+      <div class="col-6">
+        <p class="fs-small bp-text-gray" style="margin:0 0 6px 0">HTML</p>
+        <pre class="code-box bp-bg-base bp-border-bg-alternative"><code class="bp-text-calm"></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<p class="bp-text-shell" style="line-height:3">The man <chalk-mark theme="key" direction="rtl" arrow="12" active>standing by the door</chalk-mark> is my teacher.</p>
+<p class="bp-text-shell" style="line-height:3">I finally read <chalk-mark theme="yellow" direction="rtl" arrow active>the book that you recommended</chalk-mark>.</p>
+<p class="bp-text-shell" style="line-height:3">Kaohsiung is <chalk-mark theme="pink" direction="rtl" arrow="0.8rem" active>a city famous for its seafood</chalk-mark>.</p>
+    </script>
+<pre class="code-box bp-bg-base bp-border-bg-alternative" style="margin:16px 0 0 0"><code class="bp-text-calm">修改前：弧線只能由左往右，沒有箭頭
+&lt;chalk-mark theme="yellow"&gt;invest&lt;/chalk-mark&gt;
+
+修改後：direction 控制方向，arrow 加箭頭（只寫屬性為 8px，可填 12、10px、0.6rem、0.5em）
+&lt;chalk-mark theme="key" direction="rtl" arrow="12"&gt;standing by the door&lt;/chalk-mark&gt;
+全域預設：window.UiReadingConfig = { chalkDirection: 'rtl', chalkArrowSize: '0.6rem' }</code></pre>
+  </section>
+
   <section class="demo bp-border-gray">
     <h2 class="fs-large bp-text-yellow">新增的屬性與事件</h2>
     <table class="ref">
@@ -174,6 +197,6 @@ document.addEventListener('ubtn-removed', function (e) {
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-<script src="ui-plus.js?v=11-12-26"></script>
+<script src="ui-plus.js?v=11-12-26b"></script>
 </body>
 </html>

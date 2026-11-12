@@ -333,7 +333,9 @@
     pulseSparkSize:  8,
     chalkTheme:      'focus',
     chalkThickness:  2.5,
-    chalkDuration:   420
+    chalkDuration:   420,
+    chalkDirection:  'ltr',
+    chalkArrowSize:  '8px'
   }, global.UiReadingConfig || {});
 
   function initPulse(el) {
@@ -442,13 +444,28 @@
     var thick     = +(el.getAttribute('thickness')   || UR_CFG.chalkThickness);
     var dur       = +(el.getAttribute('duration')    || UR_CFG.chalkDuration);
     var preActive = el.hasAttribute('active');
+    /* direction="rtl"：由右往左畫；arrow：終點加箭頭，可填尺寸（px、rem、em，純數字視為 px） */
+    var rtl       = String(el.getAttribute('direction') || UR_CFG.chalkDirection).trim().toLowerCase() === 'rtl';
+    var arrowRaw  = el.hasAttribute('arrow') ? (el.getAttribute('arrow') || '').trim() : null;
+    if (arrowRaw === 'false' || arrowRaw === 'none') arrowRaw = null;
 
     var wrap = document.createElement('span');
     wrap.className = 'urm-chalk';
     wrap.innerHTML = el.innerHTML;
     el.replaceWith(wrap);
 
-    var svgEl = null, chalkPath = null, isActive = false;
+    var svgEl = null, chalkPath = null, arrowPath = null, isActive = false;
+
+    /* 箭頭尺寸換算成 px：rem 以根字級、em 以本元素字級為準 */
+    function arrowSizePx() {
+      var v = arrowRaw || String(UR_CFG.chalkArrowSize);
+      var m = /^(\d*\.?\d+)\s*(px|rem|em)?$/i.exec(v);
+      if (!m) { console.warn('[chalk-mark] arrow 尺寸格式無效（可用 8、8px、0.5rem、0.6em），已改用 8px：', v); return 8; }
+      var n = parseFloat(m[1]), unit = (m[2] || 'px').toLowerCase();
+      if (unit === 'rem') return n * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
+      if (unit === 'em')  return n * (parseFloat(getComputedStyle(wrap).fontSize) || 16);
+      return n;
+    }
     var _animId = null;
 
     function animateDash(path, fromOffset, toOffset, onDone) {
@@ -471,7 +488,7 @@
     }
 
     function buildArc() {
-      if (svgEl) { svgEl.remove(); svgEl = null; chalkPath = null; }
+      if (svgEl) { svgEl.remove(); svgEl = null; chalkPath = null; arrowPath = null; }
       if (_animId) { cancelAnimationFrame(_animId); _animId = null; }
       var rect = wrap.getBoundingClientRect();
       var w    = rect.width;
@@ -489,6 +506,7 @@
         'width:' + svgW + 'px;height:' + svgH + 'px';
 
       var x1 = pad, y1 = svgH - 2, cx = svgW / 2, cy = 3, x2 = svgW - pad, y2 = svgH - 2;
+      if (rtl) { var tx = x1; x1 = x2; x2 = tx; }
       var d = 'M ' + x1 + ' ' + y1 + ' Q ' + cx + ' ' + cy + ' ' + x2 + ' ' + y2;
 
       chalkPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -498,6 +516,26 @@
       chalkPath.setAttribute('stroke-linecap', 'round');
       chalkPath.setAttribute('d',              d);
       svgEl.appendChild(chalkPath);
+
+      if (arrowRaw !== null) {
+        /* 箭頭方向沿終點的切線（二次曲線終點切線為控制點指向終點） */
+        var size  = Math.max(3, arrowSizePx());
+        var ang   = Math.atan2(y2 - cy, x2 - cx);
+        var wing  = Math.PI / 6.5;
+        var ax1 = x2 - size * Math.cos(ang - wing), ay1 = y2 - size * Math.sin(ang - wing);
+        var ax2 = x2 - size * Math.cos(ang + wing), ay2 = y2 - size * Math.sin(ang + wing);
+        arrowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        arrowPath.setAttribute('fill',            'none');
+        arrowPath.setAttribute('stroke',          c);
+        arrowPath.setAttribute('stroke-width',    thick);
+        arrowPath.setAttribute('stroke-linecap',  'round');
+        arrowPath.setAttribute('stroke-linejoin', 'round');
+        arrowPath.setAttribute('d', 'M ' + ax1.toFixed(2) + ' ' + ay1.toFixed(2) + ' L ' + x2 + ' ' + y2 +
+                                    ' L ' + ax2.toFixed(2) + ' ' + ay2.toFixed(2));
+        arrowPath.style.opacity    = '0';
+        arrowPath.style.transition = 'opacity .16s ease';
+        svgEl.appendChild(arrowPath);
+      }
       wrap.appendChild(svgEl);
 
       var len = chalkPath.getTotalLength();
@@ -511,7 +549,10 @@
       wrap.style.color = c;
       var len = buildArc();
       if (len < 1) return;
-      animateDash(chalkPath, len, 0, null);
+      var _arrow = arrowPath;
+      animateDash(chalkPath, len, 0, function () {
+        if (_arrow && _arrow.isConnected && isActive) _arrow.style.opacity = '1';
+      });
     }
 
     function deactivate() {
@@ -521,7 +562,8 @@
       var len     = parseFloat(chalkPath.getAttribute('stroke-dasharray'))  || 0;
       var current = parseFloat(chalkPath.getAttribute('stroke-dashoffset')) || 0;
       var _path = chalkPath, _svg = svgEl;
-      svgEl = null; chalkPath = null;
+      if (arrowPath) { arrowPath.style.transition = 'none'; arrowPath.style.opacity = '0'; }
+      svgEl = null; chalkPath = null; arrowPath = null;
       animateDash(_path, current, len, function () {
         if (_svg && _svg.parentNode) _svg.remove();
       });
@@ -531,7 +573,7 @@
       if (isActive) {
         var arcLen = chalkPath ? parseFloat(chalkPath.getAttribute('stroke-dasharray')) || 0 : 0;
         if (arcLen < 1) {
-          if (svgEl) { svgEl.remove(); svgEl = null; chalkPath = null; }
+          if (svgEl) { svgEl.remove(); svgEl = null; chalkPath = null; arrowPath = null; }
           isActive = false;
           activate();
           return;
