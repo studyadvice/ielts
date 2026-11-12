@@ -1862,6 +1862,7 @@ cli.rate = 2;                              // 播放倍率
 | `controls` | 顯示 | 控制列：播放／暫停、重播、快轉（作答時為略過）、0.5×、1×、2×；`false` 隱藏。 |
 | `frame` | `mac` | 外框：`mac`、`win`、`none`。 |
 | `title` | `terminal` | 標題列文字。 |
+| `bar-color`、`title-color` | `bg-alternative`、`shell` | 標題列底色與標題文字色（Windows 外框的按鈕符號也跟著變色）。 |
 | `cursor` | `block` | 游標：`block`、`underline`、`bar`；打字時不閃爍，停下來才閃爍。 |
 | `end-prompt` | 顯示 | 播完後留一個提示符號與閃爍游標；`false` 不留。 |
 | `width` | `100%` | 最大寬度。 |

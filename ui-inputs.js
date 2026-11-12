@@ -1180,9 +1180,9 @@ ui-blank .ucli-bar{display:grid;grid-template-columns:72px minmax(0,1fr) 72px;al
 ui-blank .ucli-bar.is-win{grid-template-columns:minmax(0,1fr) auto;}
 ui-blank .ucli-dots{display:flex;gap:8px;}
 ui-blank .ucli-dots span{display:block;width:12px;height:12px;border-radius:50%;}
-ui-blank .ucli-title{font-size:.8125rem;color:#C6C7BD;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+ui-blank .ucli-title{font-size:.8125rem;color:var(--ucli-title,#C6C7BD);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 ui-blank .ucli-bar.is-win .ucli-title{text-align:left;}
-ui-blank .ucli-winbtns{display:flex;gap:18px;font-size:.8125rem;color:#C6C7BD;}
+ui-blank .ucli-winbtns{display:flex;gap:18px;font-size:.8125rem;color:var(--ucli-title,#C6C7BD);}
 ui-blank .ucli-screen{position:relative;box-sizing:border-box;padding:16px 20px;font-size:var(--ucli-font-size,1rem);line-height:1.6;color:var(--ucli-text,#C6C7BD);
   white-space:pre-wrap;word-break:break-word;min-height:var(--ucli-min-height,160px);height:var(--ucli-height,auto);overflow-y:auto;cursor:text;}
 ui-blank .ucli-line{min-height:1.6em;}
@@ -1247,6 +1247,8 @@ ui-blank .ucli-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       css('--ucli-in', parseColor(this.getAttribute('in-color')));
       css('--ucli-out', parseColor(this.getAttribute('out-color')));
       css('--ucli-ask', parseColor(this.getAttribute('ask-color')));
+      css('--ucli-bar', parseColor(this.getAttribute('bar-color')));
+      css('--ucli-title', parseColor(this.getAttribute('title-color')));
 
       const box = document.createElement('div');
       box.className = 'ucli';
