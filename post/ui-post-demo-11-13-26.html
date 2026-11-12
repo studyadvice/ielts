@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-post 元件示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<style>
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1600px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#FF91D7;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;line-height:1.7;margin:0 0 20px 0;}
+code{color:#FFA987;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
+.toc a{color:#DBEDD8;border:1px solid #86877F;border-radius:20px;padding:4px 14px;font-size:.9rem;text-decoration:none;}
+.toc a:hover{border-color:#FF91D7;color:#FF91D7;}
+.part{margin:0 0 48px 0;}
+.part > h2{font-size:1.4rem;color:#E3D322;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.part > .lead{color:#86877F;font-size:.95rem;margin:0 0 20px 0;line-height:1.7;}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:20px;min-width:0;}
+.cap{font-size:.8rem;color:#86877F;margin:0 0 6px 0;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:620px;overflow:auto;}
+.code-box code{font-size:.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;font-size:.92rem;margin:0 0 24px 0;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;color:#DBEDD8;}
+.ref th{color:#FF91D7;}
+.ref td:first-child{white-space:nowrap;}
+.ref-title{font-size:1.05rem;color:#B484E8;margin:16px 0 8px 0;}
+#log{position:fixed;right:24px;bottom:24px;width:360px;z-index:50;}
+#log .alert{background:#3B2A20;color:#DBEDD8;border:2px solid #FF91D7;font-size:.92rem;padding:10px 40px 10px 16px;margin:12px 0 0 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;ui-post&gt; 社群貼文留言動畫</h1>
+  <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。每個範例左邊是實際元件，右邊是同一段原始碼。</p>
+  <nav class="toc">
+    <a href="#basic">基本：愛心爆棚</a><a href="#fold">摺疊與小型愛心</a><a href="#look">外觀與文字</a><a href="#ref">屬性速查</a>
+  </nav>
+
+  <section class="part" id="basic">
+    <h2>基本：愛心爆棚</h2>
+    <p class="lead">元件完整進入畫面時開始播放。<code>best</code> 的留言一開始只有 2 個讚，爆發時數字一路飆升、愛心滿天飛，最後蓋上「最佳回答」並置頂；<code>low</code> 的留言變灰。<code>tags</code> 在爆發後出現，<code>examiner</code> 留言最後出現。</p>
+    <div class="grid2" data-demo>
+      <div class="stage"></div>
+      <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<ui-post author="IELTS Examiner" badge="Part 1" time="2h">
+  How often do you exercise?
+  <post-item author="Amy" likes="3" low tags="照抄題目:red,沒說運動項目:red">
+    I exercise almost every day.
+  </post-item>
+  <post-item author="Ben" likes="1280" best tags="具體運動:green,慣用語:yellow">
+    I go <c-key>jogging</c-key> every day, <c-yellow>rain or shine</c-yellow>.
+  </post-item>
+  <post-item author="Cathy" likes="27">
+    Not very often, maybe once a week.
+  </post-item>
+  <post-item author="Examiner" examiner>
+    Name the sport instead of repeating "exercise", and an idiom like
+    <b>rain or shine</b> shows lexical range.
+  </post-item>
+</ui-post>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="fold">
+    <h2>摺疊與小型愛心</h2>
+    <p class="lead"><code>low-style="fold"</code> 把低分留言摺疊成一行，點一下可以展開；<code>burst="small"</code> 只在愛心旁邊噴出少量愛心；<code>count-format="full"</code> 顯示完整數字。<code>sort="false"</code> 時最佳回答不置頂。</p>
+    <div class="grid2" data-demo>
+      <div class="stage"></div>
+      <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<ui-post author="Writing Coach" avatar="W" avatar-color="violet" time="5h" brand="IELTS Lounge"
+         low-style="fold" burst="small" count-format="full" surge="2500">
+  Fill in the blank: a solution _____ our main problem
+  <post-item author="Dan" likes="8" low>a solution for our main problem</post-item>
+  <post-item author="Eva" likes="4" low>a solution of our main problem</post-item>
+  <post-item author="Finn" likes="356" best tags="solution to:green">
+    a solution <c-green>to</c-green> our main problem
+  </post-item>
+</ui-post>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="look">
+    <h2>外觀與文字</h2>
+    <p class="lead">顏色可填色票名稱或色碼；徽章、輸入中、留言數等文字都能改成英文。<code>autoplay="false"</code> 時按 ▶ 才開始，錄影時比較好掌握開始時間。</p>
+    <div class="grid2" data-demo>
+      <div class="stage"></div>
+      <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      <script type="text/plain" class="demo-src">
+<ui-post author="Speaking Club" avatar="&#x1F3A4;" avatar-color="yellow" time="just now"
+         autoplay="false" width="560" font-size="1.05rem"
+         heart-color="pink" best-color="energetic" examiner-color="playful" bubble-color="#141614"
+         best-label="Top answer" examiner-label="Teacher" typing-label="is typing"
+         comment-label="comments" item-delay="400" typing="800" surge="3000">
+  Describe your hometown in one sentence.
+  <post-item author="Gina" likes="15" low="dim">My hometown is a good place.</post-item>
+  <post-item author="Hank" likes="2400" best>
+    It's a laid-back harbour city where you can grab fresh seafood at midnight.
+  </post-item>
+  <post-item author="Ms Lin" examiner tags="laid-back:green,grab:green">
+    "laid-back" and "grab" sound natural and specific.
+  </post-item>
+</ui-post>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="ref">
+    <h2>屬性速查</h2>
+    <p class="ref-title">&lt;ui-post&gt;</p>
+    <table class="ref">
+      <thead><tr><th style="width:220px">屬性</th><th style="width:160px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>author</code>、<code>time</code></td><td>IELTS Examiner、1h</td><td>貼文作者與時間。</td></tr>
+        <tr><td><code>avatar</code>、<code>avatar-color</code></td><td>作者首字、依名字配色</td><td>頭像可填文字、emoji 或圖片網址。</td></tr>
+        <tr><td><code>badge</code>、<code>brand</code></td><td>無</td><td>作者旁的徽章；時間後方的平台名稱。</td></tr>
+        <tr><td><code>likes</code></td><td>0</td><td>貼文本身的愛心數。</td></tr>
+        <tr><td><code>autoplay</code>、<code>rate</code></td><td>自動、1</td><td>完整進入畫面時開始；<code>false</code> 為手動。<code>rate</code> 是初始播放倍率。</td></tr>
+        <tr><td><code>start-delay</code>、<code>item-delay</code>、<code>typing</code></td><td>600、700、1100</td><td>開始前停頓、留言間隔、「正在輸入」動畫長度（毫秒）。</td></tr>
+        <tr><td><code>surge-delay</code>、<code>surge</code>、<code>end-delay</code></td><td>700、3500、900</td><td>爆發前停頓、愛心爆發時間、爆發後到考官留言的停頓。</td></tr>
+        <tr><td><code>burst</code></td><td>big</td><td>愛心噴發：<code>big</code>、<code>small</code>、<code>none</code>。</td></tr>
+        <tr><td><code>sort</code></td><td>true</td><td>最佳回答置頂。</td></tr>
+        <tr><td><code>low-style</code></td><td>dim</td><td>低分留言：<code>dim</code> 變灰、<code>fold</code> 摺疊、<code>keep</code> 不變。</td></tr>
+        <tr><td><code>count-format</code></td><td>short</td><td><code>short</code> 顯示 1.3K，<code>full</code> 顯示 1,280。</td></tr>
+        <tr><td><code>width</code>、<code>min-height</code>、<code>font-size</code></td><td>640px、80px、1rem</td><td>最大寬度、留言區最小高度、字級。</td></tr>
+        <tr><td><code>bg-color</code>、<code>bubble-color</code>、<code>text-color</code></td><td>#0C0D0C、bg-alternative、vanilla</td><td>底色、留言泡泡色、文字色。</td></tr>
+        <tr><td><code>heart-color</code>、<code>best-color</code>、<code>examiner-color</code></td><td>urgent、yellow、key</td><td>愛心、最佳回答、考官的顏色。</td></tr>
+        <tr><td><code>controls</code></td><td>顯示</td><td>控制列：播放／暫停、重播、0.5×、1×、2×。</td></tr>
+        <tr><td><code>best-label</code>、<code>examiner-label</code>、<code>fold-label</code></td><td>最佳回答、考官、摺疊說明</td><td>徽章與摺疊文字。</td></tr>
+        <tr><td><code>typing-label</code>、<code>comment-label</code>、<code>like-label</code></td><td>正在輸入、則留言、讚</td><td>介面文字。</td></tr>
+      </tbody>
+    </table>
+    <p class="ref-title">&lt;post-item&gt;</p>
+    <table class="ref">
+      <thead><tr><th style="width:220px">屬性</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>author</code>、<code>avatar</code>、<code>avatar-color</code>、<code>time</code></td><td>留言者、頭像、時間（預設「剛剛」）。</td></tr>
+        <tr><td><code>likes</code>、<code>start-likes</code></td><td>最後的愛心數；爆發前的愛心數（預設：最佳回答 2，其他為最後的 35%）。</td></tr>
+        <tr><td><code>best</code></td><td>最佳回答：爆發、徽章、置頂。可以有多則。</td></tr>
+        <tr><td><code>low</code></td><td>低分留言；可填 <code>dim</code>、<code>fold</code>、<code>keep</code> 覆蓋 <code>low-style</code>。</td></tr>
+        <tr><td><code>examiner</code></td><td>考官留言，換色並加徽章，預設在爆發後出現。</td></tr>
+        <tr><td><code>after</code></td><td>爆發後才出現；<code>after="false"</code> 讓考官留言提早出現。</td></tr>
+        <tr><td><code>tags</code></td><td>講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現。</td></tr>
+        <tr><td><code>liked</code></td><td>愛心一開始就是實心。</td></tr>
+        <tr><td><code>delay</code>、<code>typing</code></td><td>這一則的間隔與「正在輸入」毫秒數，<code>typing="0"</code> 不顯示輸入中。</td></tr>
+      </tbody>
+    </table>
+    <p class="ref-title">事件與方法</p>
+    <table class="ref">
+      <thead><tr><th style="width:220px">名稱</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>post-item-show</code></td><td>每則留言出現時觸發，<code>detail = { index, author, after }</code>。</td></tr>
+        <tr><td><code>post-surge-end</code></td><td>愛心爆發、置頂與標籤完成時觸發。</td></tr>
+        <tr><td><code>post-end</code></td><td>全部播完時觸發，右下角的通知就是監聽這個事件。</td></tr>
+        <tr><td><code>play()</code>、<code>pause()</code>、<code>restart()</code>、<code>rate</code></td><td>播放或繼續、暫停、從頭播放；<code>rate</code> 為播放倍率，可讀寫。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div id="log"></div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(d => {
+    const html = dedent(d.querySelector('.demo-src').textContent);
+    d.querySelector('.stage').innerHTML = html;
+    d.querySelector('.code-box code').textContent = html;
+  });
+})();
+</script>
+<script src="ui-post.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* 以 Bootstrap alert 顯示 post-end 事件，不使用 alert() */
+document.addEventListener('post-end', (e) => {
+  const log = document.getElementById('log');
+  const box = document.createElement('div');
+  box.className = 'alert alert-dismissible fade show';
+  box.setAttribute('role', 'alert');
+  box.innerHTML = 'post-end：播放完畢<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="關閉"></button>';
+  log.appendChild(box);
+  while (log.children.length > 3) log.firstElementChild.remove();
+  setTimeout(() => {
+    if (!box.isConnected) return;
+    if (window.bootstrap) bootstrap.Alert.getOrCreateInstance(box).close(); else box.remove();
+  }, 4000);
+});
+</script>
+</body>
+</html>
