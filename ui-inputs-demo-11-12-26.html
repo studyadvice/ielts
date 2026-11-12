@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-blank CLI 模式示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="bp-styles.css">
+<style>
+/* 版面：左側實際元件、右側程式碼；間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1600px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#51DBCF;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;line-height:1.7;margin:0 0 20px 0;}
+code{color:#FFA987;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
+.toc a{color:#DBEDD8;border:1px solid #86877F;border-radius:20px;padding:4px 14px;font-size:0.9rem;text-decoration:none;}
+.toc a:hover{border-color:#51DBCF;color:#51DBCF;}
+.part{margin:0 0 48px 0;}
+.part > h2{font-size:1.4rem;color:#E3D322;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.part > .lead{color:#86877F;font-size:0.95rem;margin:0 0 20px 0;line-height:1.7;}
+.demo{margin:0 0 32px 0;}
+.demo h3{font-size:1.1rem;color:#B484E8;margin:0 0 6px 0;}
+.demo .desc{color:#86877F;font-size:0.9rem;margin:0 0 12px 0;line-height:1.7;}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.side{min-width:0;}
+.cap{font-size:0.8rem;color:#86877F;margin:0 0 6px 0;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:560px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;margin:0 0 24px 0;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;color:#DBEDD8;}
+.ref th{color:#51DBCF;}
+.ref td:first-child{white-space:nowrap;}
+.ref-title{font-size:1.05rem;color:#B484E8;margin:16px 0 8px 0;}
+#log{position:fixed;right:24px;bottom:24px;width:380px;z-index:50;}
+#log .alert{background:#3B2A20;color:#DBEDD8;border:2px solid #51DBCF;font-size:0.92rem;padding:10px 40px 10px 16px;margin:12px 0 0 0;}
+#log .alert b{color:#E3D322;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-blank：CLI 模式</h1>
+  <p class="sub"><code>&lt;ui-blank mode="cli"&gt;</code> 把元件變成模擬的終端機畫面，用子標籤寫成一份「輸入、回應」交替的劇本，自動逐字打出來，看起來像在和電腦對話。內容不必是真實指令。劇本中可以插入 <code>&lt;cli-ask&gt;</code> 換使用者自己打，打什麼都接受，按 Enter 就繼續播放。每個範例左邊是實際元件，右邊是同一段原始碼。</p>
+  <nav class="toc">
+    <a href="#basic">自動播放對話</a><a href="#ask">換使用者輸入</a><a href="#look">外觀</a><a href="#speed">速度</a><a href="#ref">屬性速查</a><a href="#history">修改紀錄</a>
+  </nav>
+
+  <section class="part" id="basic">
+    <h2>自動播放對話</h2>
+    <p class="lead">元件完整進入畫面時開始播放。<code>&lt;cli-in&gt;</code> 是打字的輸入行，<code>&lt;cli-out&gt;</code> 是系統回應；每一行都能用 <code>prompt</code> 換提示符號，寫成角色名稱就像兩個人在對話。下方控制列可以暫停、重播、快轉與切換 0.5×、1×、2× 速度。</p>
+    <div class="demo" data-demo>
+      <h3>IELTS Part 1：hometown</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<ui-blank mode="cli" title="ielts-speaking" prompt="examiner $">
+  <cli-in>Let's talk about your hometown. Where is it?</cli-in>
+  <cli-out>Loading candidate.memories ... done</cli-out>
+  <cli-in prompt="you $">It's Kaohsiung, a harbour city in southern Taiwan.</cli-in>
+  <cli-in>What do you like most about it?</cli-in>
+  <cli-in prompt="you $">The seafood, definitely. And the weather is warm all year round.</cli-in>
+  <cli-out theme="green">[band 7] good use of "definitely" + reason</cli-out>
+</ui-blank>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="ask">
+    <h2>換使用者輸入</h2>
+    <p class="lead">播放到 <code>&lt;cli-ask&gt;</code> 會停下來等使用者打字，不比對答案，按 Enter 就繼續。<code>placeholder</code> 是灰色提示字；<code>sample</code> 是示範句，作答時按「略過」會自動打出來。方向鍵上下可叫回先前的輸入，中文輸入法也能正常選字。右下角的通知是監聽 <code>cli-answer</code> 事件的結果。</p>
+    <div class="demo" data-demo>
+      <h3>示範後換人回答</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<ui-blank mode="cli" title="practice" prompt="examiner $">
+  <cli-in>Do you prefer mornings or evenings?</cli-in>
+  <cli-in prompt="model $">I'm definitely a morning person. I usually go jogging before work.</cli-in>
+  <cli-out>Now it's your turn.</cli-out>
+  <cli-in>What do you usually do at the weekend?</cli-in>
+  <cli-ask prompt="you $" placeholder="type your answer and press Enter"
+           sample="I usually catch up with friends over brunch."></cli-ask>
+  <cli-out theme="key">Thanks! Answer saved.</cli-out>
+</ui-blank>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="look">
+    <h2>外觀</h2>
+    <p class="lead"><code>frame</code> 可選 <code>mac</code>（預設）、<code>win</code>、<code>none</code>；<code>cursor</code> 可選 <code>block</code>、<code>underline</code>、<code>bar</code>。設定 <code>height</code> 後畫面固定高度並自動捲到最後一行。行內可用 <code>&lt;c-key&gt;</code> 等色名標籤，<code>pre</code> 保留原始換行與空白。</p>
+    <div class="demo" data-demo>
+      <h3>Windows 外框、底線游標、固定高度</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<ui-blank mode="cli" frame="win" cursor="underline" title="C:\vocab" prompt="C:\vocab&gt;"
+          prompt-color="yellow" height="170">
+  <cli-in>show collocations "make"</cli-in>
+  <cli-out pre>
+    make a decision     做決定
+    make progress       進步
+    make an effort      努力
+  </cli-out>
+  <cli-in>compare make do</cli-in>
+  <cli-out><c-pink>make</c-pink> = create something new; <c-key>do</c-key> = perform a task</cli-out>
+  <cli-in>example</cli-in>
+  <cli-out>I need to <c-pink>make</c-pink> a decision before I <c-key>do</c-key> my homework.</cli-out>
+</ui-blank>
+</script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>不加外框、細直線游標、隱藏控制列</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<ui-blank mode="cli" frame="none" cursor="bar" controls="false" prompt="&gt;"
+          prompt-color="energetic" in-color="vanilla" out-color="violet" font-size="1.25rem">
+  <cli-in>translate 我很期待見到你</cli-in>
+  <cli-out>I'm looking forward to seeing you.</cli-out>
+  <cli-wait ms="600"></cli-wait>
+  <cli-out theme="playful">tip: look forward to + V-ing</cli-out>
+</ui-blank>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="speed">
+    <h2>速度</h2>
+    <p class="lead"><code>speed</code> 是輸入行每秒打幾個字（預設 20），<code>out-speed</code> 是系統回應每秒出現幾個字（預設 120，<code>0</code> 為整段直接出現），<code>line-delay</code> 是每行之間的停頓毫秒數。單一行也能用 <code>speed</code>、<code>delay</code> 覆蓋。<code>humanize="false"</code> 關閉打字的隨機快慢。<code>autoplay="false"</code> 時按 ▶ 或點畫面才開始。</p>
+    <div class="demo" data-demo>
+      <h3>慢速打字、回應直接出現、手動開始</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<ui-blank mode="cli" speed="9" out-speed="0" line-delay="900" autoplay="false" prompt="you $">
+  <cli-in>Describe a place you visited recently.</cli-in>
+  <cli-out>Thinking...</cli-out>
+  <cli-in speed="30" delay="300">I went to Tainan last month with my family.</cli-in>
+  <cli-out theme="green">Good opening: time + people.</cli-out>
+</ui-blank>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="ref">
+    <h2>屬性速查</h2>
+    <p class="ref-title">&lt;ui-blank mode="cli"&gt;</p>
+    <table class="ref">
+      <thead><tr><th style="width:200px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>mode</code></td><td>無</td><td>設為 <code>cli</code> 啟用 CLI 模式；其他值或不設定為原本的填充題。</td></tr>
+        <tr><td><code>prompt</code></td><td><code>$</code></td><td>預設提示符號，每一行可用自己的 <code>prompt</code> 覆蓋；設為空字串則不顯示。</td></tr>
+        <tr><td><code>speed</code></td><td><code>20</code></td><td>輸入行每秒打幾個字。</td></tr>
+        <tr><td><code>out-speed</code></td><td><code>120</code></td><td>系統回應每秒出現幾個字，<code>0</code> 為整段直接出現。</td></tr>
+        <tr><td><code>line-delay</code></td><td><code>450</code></td><td>每一行輸入之前的停頓（毫秒）。</td></tr>
+        <tr><td><code>humanize</code></td><td>開啟</td><td>打字帶隨機快慢，遇到空白與標點稍微停頓；<code>false</code> 為等速。</td></tr>
+        <tr><td><code>autoplay</code></td><td>自動</td><td>元件完整進入畫面時開始；<code>false</code> 時按 ▶ 或點畫面才開始。</td></tr>
+        <tr><td><code>controls</code></td><td>顯示</td><td>控制列：播放／暫停、重播、快轉（作答時為略過）、0.5×、1×、2×；<code>false</code> 隱藏。</td></tr>
+        <tr><td><code>frame</code></td><td><code>mac</code></td><td>外框：<code>mac</code>、<code>win</code>、<code>none</code>。</td></tr>
+        <tr><td><code>title</code></td><td><code>terminal</code></td><td>標題列文字。</td></tr>
+        <tr><td><code>cursor</code></td><td><code>block</code></td><td>游標：<code>block</code>、<code>underline</code>、<code>bar</code>。打字時不閃爍，停下來才閃爍。</td></tr>
+        <tr><td><code>end-prompt</code></td><td>顯示</td><td>播完後在最後留一個提示符號與閃爍游標；<code>false</code> 不留。</td></tr>
+        <tr><td><code>width</code></td><td><code>100%</code></td><td>最大寬度。</td></tr>
+        <tr><td><code>height</code>、<code>min-height</code></td><td>自動、<code>160</code></td><td>畫面高度；設定 <code>height</code> 後固定高度並自動捲到最後一行。純數字視為 px。</td></tr>
+        <tr><td><code>font-size</code></td><td><code>1rem</code></td><td>畫面字級。</td></tr>
+        <tr><td><code>bg-color</code>、<code>text-color</code></td><td><code>#0C0D0C</code>、<code>shell</code></td><td>畫面底色與一般文字色。</td></tr>
+        <tr><td><code>prompt-color</code></td><td><code>key</code></td><td>提示符號、游標、選中的速度按鈕。</td></tr>
+        <tr><td><code>in-color</code>、<code>out-color</code>、<code>ask-color</code></td><td><code>vanilla</code>、<code>calm</code>、<code>yellow</code></td><td>輸入行、系統回應、使用者輸入的文字色。</td></tr>
+      </tbody>
+    </table>
+    <p class="ref-title">劇本子標籤</p>
+    <table class="ref">
+      <thead><tr><th style="width:200px">子標籤</th><th style="width:200px">屬性</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;cli-in&gt;</code></td><td><code>prompt</code>、<code>speed</code>、<code>delay</code>、<code>theme</code></td><td>自動打字的輸入行。</td></tr>
+        <tr><td><code>&lt;cli-out&gt;</code></td><td><code>speed</code>、<code>delay</code>、<code>theme</code>、<code>pre</code></td><td>系統回應，沒有提示符號。<code>delay</code> 預設 250 毫秒；<code>pre</code> 保留原始換行與空白（自動去掉共同縮排）。</td></tr>
+        <tr><td><code>&lt;cli-ask&gt;</code></td><td><code>prompt</code>、<code>placeholder</code>、<code>sample</code>、<code>allow-empty</code>、<code>delay</code>、<code>theme</code></td><td>換使用者輸入，不比對答案，按 Enter 繼續；預設不接受空白輸入。</td></tr>
+        <tr><td><code>&lt;cli-wait&gt;</code></td><td><code>ms</code></td><td>停頓，預設 800 毫秒。</td></tr>
+      </tbody>
+    </table>
+    <p class="ref-title">事件與方法</p>
+    <table class="ref">
+      <thead><tr><th style="width:200px">名稱</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>cli-answer</code></td><td>使用者在 <code>&lt;cli-ask&gt;</code> 按下 Enter 或略過時觸發，<code>detail = { value, index }</code>。同時送出原有的 <code>blank-submit</code>，<code>valid</code> 為 <code>null</code>。</td></tr>
+        <tr><td><code>cli-end</code></td><td>劇本播完時觸發。</td></tr>
+        <tr><td><code>play()</code>、<code>pause()</code>、<code>restart()</code></td><td>播放或繼續、暫停、從頭播放；<code>reset()</code> 等同 <code>restart()</code>。</td></tr>
+        <tr><td><code>rate</code></td><td>播放倍率，可讀寫，例如 <code>el.rate = 2</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="part" id="history">
+    <h2>修改紀錄：新增 mode="cli"（11-12-26）</h2>
+    <p class="lead">原本的 <code>&lt;ui-blank&gt;</code> 填充題完全不受影響；只有加上 <code>mode="cli"</code> 的元件改走 CLI 流程。下面左邊是原本的填充題，右邊是新的 CLI 模式。</p>
+    <div class="demo" data-demo>
+      <h3>原本的填充題（未設定 mode）</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell">I usually go _____ before work.</p>
+<ui-blank expected-value="jogging" button-icon="bi-send" label-valid="Correct!"></ui-blank>
+</script>
+    </div>
+    <div class="grid2">
+      <div class="side"><p class="cap">修改前：只有填充題</p><pre class="code-box"><code>connectedCallback() {
+  injectBlankStyleOnce();
+  if (!this._built) this._build();
+  ...
+}</code></pre></div>
+      <div class="side"><p class="cap">修改後：mode="cli" 改走 CLI 流程</p><pre class="code-box"><code>connectedCallback() {
+  if (this.getAttribute('mode') === 'cli') {
+    if (this._cliBuilt) return;
+    injectCliStyleOnce();
+    // 文件還在解析時，等解析完成再讀取劇本
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', ...);
+    } else {
+      this._cliInit();
+    }
+    return;
+  }
+  injectBlankStyleOnce();
+  if (!this._built) this._build();
+  ...
+}
+
+/* CLI 方法集中在 CLI_METHODS，掛到 UiBlank.prototype */
+Object.defineProperties(UiBlank.prototype,
+  Object.getOwnPropertyDescriptors(CLI_METHODS));</code></pre></div>
+    </div>
+  </section>
+</div>
+
+<div id="log"></div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(d => {
+    const src = d.querySelector('.demo-src');
+    if (!src) return;
+    const html = dedent(src.textContent);
+    d.querySelector('.stage').innerHTML = html;
+    d.querySelector('.code-box code').textContent = html;
+  });
+})();
+</script>
+<script src="ui-inputs.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* 以 Bootstrap alert 顯示 cli-answer 事件，不使用 alert() */
+document.addEventListener('cli-answer', (e) => {
+  const log = document.getElementById('log');
+  const box = document.createElement('div');
+  box.className = 'alert alert-dismissible fade show';
+  box.setAttribute('role', 'alert');
+  box.innerHTML = 'cli-answer：<b></b>'
+    + '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="關閉"></button>';
+  box.querySelector('b').textContent = e.detail.value || '（略過）';
+  log.appendChild(box);
+  while (log.children.length > 3) log.firstElementChild.remove();
+  setTimeout(() => {
+    if (!box.isConnected) return;
+    if (window.bootstrap) bootstrap.Alert.getOrCreateInstance(box).close(); else box.remove();
+  }, 5000);
+});
+</script>
+</body>
+</html>

@@ -5,6 +5,8 @@
  * - <ui-otp>：單一 input 版 OTP 輸入／驗證元件，另外還有一個「生成模式」
  *   可以隨機產生一組驗證碼給使用者複製。
  * - <ui-blank>：單行輸入填充題元件，自帶 Bootstrap Icons 的送出按鈕與內建驗證。
+ *   mode="cli" 時改為模擬 CLI 畫面的對話播放器（自動打字播放，也可換使用者輸入），
+ *   說明見檔案後段的 <ui-blank mode="cli"> 區塊。
  *
  * ========================= <ui-otp> mode="input"（預設） =========================
  *
@@ -933,6 +935,10 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
   const MESSAGE_STYLES = ['plain', 'bordered', 'filled', 'accent-bar', 'icon-banner'];
 
   class UiBlank extends HTMLElement {
+    disconnectedCallback() {
+      if (this._cliBuilt && this._io) { this._io.disconnect(); this._io = null; }
+    }
+
     static get observedAttributes() {
       return [
         'placeholder', 'disabled',
@@ -957,6 +963,17 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
     }
 
     connectedCallback() {
+      if (this.getAttribute('mode') === 'cli') {
+        // CLI 模式要讀取子標籤劇本：文件還在解析時，等解析完成再建置
+        if (this._cliBuilt) return;
+        injectCliStyleOnce();   // 先隱藏劇本子標籤，避免解析期間閃出原文
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => { if (this.isConnected) this._cliInit(); }, { once: true });
+        } else {
+          this._cliInit();
+        }
+        return;
+      }
       injectBlankStyleOnce();
       if (!this._built) this._build();
       this._applyVars();
@@ -978,10 +995,11 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
     }
 
     // ---- 公開 API ----
-    get value() { return this._input.value; }
-    set value(v) { this._input.value = v == null ? '' : String(v); }
+    get value() { return this._input ? this._input.value : ''; }
+    set value(v) { if (this._input) this._input.value = v == null ? '' : String(v); }
 
     reset() {
+      if (this._cliBuilt) { this.restart(); return; }
       this._input.value = '';
       this._state = 'idle';
       this.classList.remove('is-valid', 'is-invalid');
@@ -989,6 +1007,7 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
     }
 
     setState(state) {
+      if (this._cliBuilt) return;
       if (!['idle', 'valid', 'invalid'].includes(state)) return;
       this._state = state;
       this.classList.toggle('is-valid', state === 'valid');
@@ -1000,7 +1019,7 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
       }
     }
 
-    focus() { this._input.focus(); }
+    focus() { if (this._input) this._input.focus(); }
 
     // ---- 內部建置 ----
     _build() {
@@ -1191,6 +1210,610 @@ ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
       this._renderMessage();
     }
   }
+
+
+  /* =========================================================================
+   * <ui-blank mode="cli">：模擬 CLI 畫面的對話播放器
+   *
+   * 用法：
+   * <ui-blank mode="cli" prompt="you $" speed="20">
+   *   <cli-in>describe my hometown</cli-in>
+   *   <cli-out>Kaohsiung: a harbour city famous for its seafood.</cli-out>
+   *   <cli-in prompt="examiner $">what do you usually do there?</cli-in>
+   *   <cli-ask placeholder="type anything" sample="I go jogging along the river."></cli-ask>
+   *   <cli-wait ms="800"></cli-wait>
+   * </ui-blank>
+   *
+   * 子標籤：
+   * - <cli-in>：自動打字的輸入行，前面有提示符號。屬性 prompt、speed、delay、theme。
+   * - <cli-out>：系統回應，沒有提示符號。屬性 speed、delay、theme、pre（保留原始換行與空白）。
+   * - <cli-ask>：換使用者自己打，不比對答案，按 Enter 就繼續播放。
+   *   屬性 prompt、placeholder（灰色提示字）、sample（按「略過」時自動打出的示範句）、allow-empty。
+   * - <cli-wait ms="800">：停頓。
+   * 行內可用 <c-key>、<c-yellow> 等色名標籤或 <b>、<br>，打字時保留格式。
+   *
+   * 事件：cli-answer（detail = { value, index }，同時送出 blank-submit，valid 為 null）、cli-end
+   * 方法：el.play()、el.pause()、el.restart()、el.reset()（同 restart）、el.rate（播放倍率）
+   * ========================================================================= */
+
+  const CLI_STYLE_ID = 'ui-blank-cli-style';
+  const CLI_CANCEL = { cancelled: true };
+  const CLI_RATES = [0.5, 1, 2];
+
+  function injectCliStyleOnce() {
+    if (document.getElementById(CLI_STYLE_ID)) return;
+    const style = document.createElement('style');
+    style.id = CLI_STYLE_ID;
+    style.textContent = `
+ui-blank[mode="cli"]{display:block;max-width:var(--ucli-width,100%);}
+ui-blank[mode="cli"] > cli-in,ui-blank[mode="cli"] > cli-out,ui-blank[mode="cli"] > cli-ask,ui-blank[mode="cli"] > cli-wait{display:none;}
+ui-blank .ucli,ui-blank .ucli *{box-sizing:border-box;}
+ui-blank .ucli{background:var(--ucli-bg,#0C0D0C);border:1px solid var(--ucli-border,#3B2A20);border-radius:10px;overflow:hidden;
+  font-family:ui-monospace,"Cascadia Code","JetBrains Mono",Consolas,"Noto Sans Mono CJK TC","Microsoft JhengHei",monospace;}
+ui-blank .ucli-bar{display:grid;grid-template-columns:72px minmax(0,1fr) 72px;align-items:center;background:var(--ucli-bar,#3B2A20);padding:8px 12px;}
+ui-blank .ucli-bar.is-win{grid-template-columns:minmax(0,1fr) auto;}
+ui-blank .ucli-dots{display:flex;gap:8px;}
+ui-blank .ucli-dots span{display:block;width:12px;height:12px;border-radius:50%;}
+ui-blank .ucli-title{font-size:.8125rem;color:#C6C7BD;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+ui-blank .ucli-bar.is-win .ucli-title{text-align:left;}
+ui-blank .ucli-winbtns{display:flex;gap:18px;font-size:.8125rem;color:#C6C7BD;}
+ui-blank .ucli-screen{position:relative;box-sizing:border-box;padding:16px 20px;font-size:var(--ucli-font-size,1rem);line-height:1.6;color:var(--ucli-text,#C6C7BD);
+  white-space:pre-wrap;word-break:break-word;min-height:var(--ucli-min-height,160px);height:var(--ucli-height,auto);overflow-y:auto;cursor:text;}
+ui-blank .ucli-line{min-height:1.6em;}
+ui-blank .ucli-prompt{color:var(--ucli-prompt,#51DBCF);font-weight:700;margin:0 10px 0 0;}
+ui-blank .ucli-in{color:var(--ucli-in,#DBEDD8);}
+ui-blank .ucli-out{color:var(--ucli-out,#A3C4BC);}
+ui-blank .ucli-ask{color:var(--ucli-ask,#E3D322);}
+ui-blank .ucli-ghost{color:#86877F;}
+ui-blank .ucli-cursor{display:inline-block;vertical-align:text-bottom;background:var(--ucli-cursor,#51DBCF);animation:ucli-blink 1.06s steps(1) infinite;}
+ui-blank .ucli-cursor.is-block{width:.6em;height:1.25em;}
+ui-blank .ucli-cursor.is-underline{width:.6em;height:2px;vertical-align:baseline;}
+ui-blank .ucli-cursor.is-bar{width:2px;height:1.25em;}
+ui-blank .ucli.is-typing .ucli-cursor{animation:none;}
+@keyframes ucli-blink{0%{visibility:visible}50%{visibility:hidden}}
+ui-blank .ucli-input{position:absolute;left:0;top:0;width:1px;height:1em;padding:0;margin:0;border:0;outline:0;opacity:0;font-size:16px;}
+ui-blank .ucli-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--ucli-border,#3B2A20);background:#151615;}
+ui-blank .ucli-btn{font-family:inherit;font-size:.8125rem;line-height:1.4;background:#0C0D0C;color:#C6C7BD;border:1px solid #86877F;border-radius:6px;padding:4px 10px;cursor:pointer;}
+ui-blank .ucli-btn:hover{border-color:var(--ucli-prompt,#51DBCF);color:var(--ucli-prompt,#51DBCF);}
+ui-blank .ucli-btn.is-on,ui-blank .ucli-btn.is-on:hover{background:var(--ucli-prompt,#51DBCF);border-color:var(--ucli-prompt,#51DBCF);color:#0C0D0C;}
+ui-blank .ucli-btn:disabled,ui-blank .ucli-btn:disabled:hover{background:#0C0D0C;border-color:#3B2A20;color:#86877F;cursor:not-allowed;}
+ui-blank .ucli-sep{width:1px;height:20px;background:#3B2A20;margin:0 4px;}
+ui-blank .ucli-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
+`;
+    document.head.appendChild(style);
+  }
+
+  const CLI_METHODS = {
+    /* ---- 建置 ---- */
+    _cliInit() {
+      if (this._cliBuilt) return;
+      this._cliBuilt = true;
+      injectCliStyleOnce();
+      this._cliSteps = Array.prototype.filter.call(this.children, (el) =>
+        /^CLI-(IN|OUT|ASK|WAIT)$/.test(el.tagName)).map((el) => ({
+          type: el.tagName.slice(4).toLowerCase(),
+          el: el.cloneNode(true)
+        }));
+      this._run = 0;
+      this._paused = false;
+      this._resumeQ = [];
+      this._rate = 1;
+      this._ff = false;
+      this._started = false;
+      this._history = [];
+      this._asking = null;
+      this._cliBuildDom();
+      this._cliIdleScreen();
+      this._cliSetupStart();
+    },
+
+    _cliBuildDom() {
+      this.innerHTML = '';
+      const css = (name, value) => { if (value) this.style.setProperty(name, value); };
+      css('--ucli-width', this.getAttribute('width'));
+      css('--ucli-font-size', this.getAttribute('font-size'));
+      css('--ucli-height', this._cliLen(this.getAttribute('height')));
+      css('--ucli-min-height', this._cliLen(this.getAttribute('min-height')));
+      css('--ucli-bg', parseColor(this.getAttribute('bg-color')));
+      css('--ucli-text', parseColor(this.getAttribute('text-color')));
+      css('--ucli-prompt', parseColor(this.getAttribute('prompt-color')));
+      css('--ucli-cursor', parseColor(this.getAttribute('prompt-color')));
+      css('--ucli-in', parseColor(this.getAttribute('in-color')));
+      css('--ucli-out', parseColor(this.getAttribute('out-color')));
+      css('--ucli-ask', parseColor(this.getAttribute('ask-color')));
+
+      const box = document.createElement('div');
+      box.className = 'ucli';
+      const frame = (this.getAttribute('frame') || 'mac').toLowerCase();
+      const title = this.getAttribute('title') || 'terminal';
+      if (frame === 'mac') {
+        const bar = document.createElement('div');
+        bar.className = 'ucli-bar';
+        bar.innerHTML = '<div class="ucli-dots"><span style="background:#EF6661"></span><span style="background:#E3D322"></span><span style="background:#71CD76"></span></div><div class="ucli-title"></div><div></div>';
+        bar.querySelector('.ucli-title').textContent = title;
+        box.appendChild(bar);
+      } else if (frame === 'win') {
+        const bar = document.createElement('div');
+        bar.className = 'ucli-bar is-win';
+        bar.innerHTML = '<div class="ucli-title"></div><div class="ucli-winbtns"><span>&#x2500;</span><span>&#x2610;</span><span>&#x2715;</span></div>';
+        bar.querySelector('.ucli-title').textContent = title;
+        box.appendChild(bar);
+      }
+      this.removeAttribute('title');   // 避免瀏覽器把 title 當成整個元件的滑鼠提示
+      this._cliTitle = title;
+
+      const screen = document.createElement('div');
+      screen.className = 'ucli-screen';
+      box.appendChild(screen);
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'ucli-input';
+      input.setAttribute('autocomplete', 'off');
+      input.setAttribute('autocapitalize', 'off');
+      input.setAttribute('spellcheck', 'false');
+      input.setAttribute('aria-label', this.getAttribute('aria-label') || 'CLI input');
+      input.tabIndex = -1;
+      screen.appendChild(input);
+      input.addEventListener('input', () => this._cliAskRender());
+      input.addEventListener('keydown', (e) => this._cliAskKey(e));
+      screen.addEventListener('click', () => {
+        if (this._asking) this._input.focus({ preventScroll: true });
+        else if (!this._started) this.play();
+      });
+
+      this._box = box;
+      this._screen = screen;
+      this._input = input;
+
+      if (this.getAttribute('controls') !== 'false') {
+        const bar = document.createElement('div');
+        bar.className = 'ucli-controls';
+        const btn = (cls, text, tip) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'ucli-btn ' + cls;
+          b.textContent = text;
+          b.title = tip;
+          bar.appendChild(b);
+          return b;
+        };
+        this._btnPlay = btn('ucli-play', '▶ 播放', '播放／暫停');
+        this._btnRestart = btn('ucli-restart', '↺ 重播', '從頭播放');
+        this._btnSkip = btn('ucli-skip', '⏭ 快轉', '快轉到下一個作答處；作答時則略過');
+        const sep = document.createElement('span');
+        sep.className = 'ucli-sep';
+        bar.appendChild(sep);
+        this._rateBtns = CLI_RATES.map((r) => {
+          const b = btn('ucli-rate', r + '×', '播放速度 ' + r + ' 倍');
+          b.addEventListener('click', () => { this.rate = r; });
+          return b;
+        });
+        this._stateEl = document.createElement('span');
+        this._stateEl.className = 'ucli-state';
+        bar.appendChild(this._stateEl);
+        this._btnPlay.addEventListener('click', () => {
+          if (!this._started || this._ended) this.play();
+          else if (this._paused) this.play();
+          else this.pause();
+        });
+        this._btnRestart.addEventListener('click', () => this.restart());
+        this._btnSkip.addEventListener('click', () => this._cliSkip());
+        box.appendChild(bar);
+      }
+      this.appendChild(box);
+      this._cliSyncControls();
+    },
+
+    _cliLen(v) {
+      if (!v) return null;
+      const s = String(v).trim();
+      return /^\d+(\.\d+)?$/.test(s) ? s + 'px' : s;
+    },
+
+    _cliNum(name, def, min, max) {
+      const v = parseFloat(this.getAttribute(name));
+      if (isNaN(v)) return def;
+      return Math.min(max, Math.max(min, v));
+    },
+
+    _cliStepNum(el, name, def) {
+      const v = parseFloat(el.getAttribute(name));
+      return isNaN(v) ? def : v;
+    },
+
+    /* 播放前的畫面：一個提示符號加閃爍游標 */
+    _cliIdleScreen() {
+      this._cliClear();
+      const first = this._cliSteps.find((s) => s.type === 'in' || s.type === 'ask');
+      const line = this._cliLine(first ? this._cliPromptOf(first.el) : this._cliPromptOf(null));
+      line.appendChild(this._cliCursor());
+      this._cliSetState(this.getAttribute('autoplay') === 'false' ? '按 ▶ 播放開始' : '');
+    },
+
+    _cliClear() {
+      Array.prototype.slice.call(this._screen.children).forEach((n) => { if (n !== this._input) n.remove(); });
+      this._box.classList.remove('is-typing');
+    },
+
+    _cliSetupStart() {
+      if (this.getAttribute('autoplay') === 'false') return;
+      if (!('IntersectionObserver' in window)) { this.play(); return; }
+      this._io = new IntersectionObserver((entries) => {
+        for (const en of entries) {
+          const enough = en.intersectionRatio >= 0.6 || en.intersectionRect.height >= window.innerHeight * 0.8;
+          if (en.isIntersecting && enough && !this._started) {
+            this.play();
+            this._io.disconnect();
+            this._io = null;
+            break;
+          }
+        }
+      }, { threshold: [0.2, 0.4, 0.6, 0.8, 1] });
+      this._io.observe(this);
+    },
+
+    /* ---- 公開方法 ---- */
+    play() {
+      if (!this._cliBuilt) return;
+      if (!this._started || this._ended) { this._cliRun(); return; }
+      if (this._paused) {
+        this._paused = false;
+        const q = this._resumeQ;
+        this._resumeQ = [];
+        q.forEach((fn) => fn());
+        this._cliSyncControls();
+      }
+    },
+
+    pause() {
+      if (!this._cliBuilt || !this._started || this._ended || this._asking) return;
+      this._paused = true;
+      this._box.classList.remove('is-typing');
+      this._cliSyncControls();
+    },
+
+    restart() {
+      if (!this._cliBuilt) return;
+      this._cliRun();
+    },
+
+    /* ---- 播放流程 ---- */
+    async _cliRun() {
+      const run = ++this._run;
+      this._started = true;
+      this._ended = false;
+      this._paused = false;
+      this._resumeQ = [];
+      this._ff = false;
+      this._asking = null;
+      this._input.value = '';
+      this._input.blur();
+      this._cliClear();
+      this._cliSyncControls();
+      try {
+        for (let i = 0; i < this._cliSteps.length; i++) {
+          await this._cliStep(this._cliSteps[i], i, run);
+        }
+        if (run !== this._run) return;
+        this._ended = true;
+        this._ff = false;
+        if (this.getAttribute('end-prompt') !== 'false') {
+          const line = this._cliLine(this._cliPromptOf(null));
+          line.appendChild(this._cliCursor());
+          this._cliScroll();
+        }
+        this._cliSyncControls();
+        this.dispatchEvent(new CustomEvent('cli-end', { bubbles: true }));
+      } catch (err) {
+        if (err !== CLI_CANCEL) throw err;
+      }
+    },
+
+    async _cliStep(step, index, run) {
+      const el = step.el;
+      const lineDelay = this._cliNum('line-delay', 450, 0, 10000);
+      if (step.type === 'wait') {
+        await this._cliWait(this._cliStepNum(el, 'ms', 800), run);
+        return;
+      }
+      if (step.type === 'in') {
+        await this._cliWait(this._cliStepNum(el, 'delay', lineDelay), run);
+        const line = this._cliLine(this._cliPromptOf(el));
+        const span = document.createElement('span');
+        span.className = 'ucli-in';
+        this._cliTheme(span, el);
+        line.appendChild(span);
+        const cur = this._cliCursor();
+        line.appendChild(cur);
+        this._cliScroll();
+        await this._cliWait(Math.min(lineDelay, 600) * 0.6, run);
+        const cps = this._cliStepNum(el, 'speed', this._cliNum('speed', 20, 1, 400));
+        await this._cliType(span, el, cps, this.getAttribute('humanize') !== 'false', run);
+        await this._cliWait(220, run);   // 按下 Enter 前的停頓
+        cur.remove();
+        return;
+      }
+      if (step.type === 'out') {
+        await this._cliWait(this._cliStepNum(el, 'delay', 250), run);
+        const line = this._cliLine(null);
+        const span = document.createElement('span');
+        span.className = 'ucli-out';
+        this._cliTheme(span, el);
+        line.appendChild(span);
+        const cps = this._cliStepNum(el, 'speed', this._cliNum('out-speed', 120, 0, 2000));
+        await this._cliType(span, el, cps, false, run);
+        return;
+      }
+      if (step.type === 'ask') {
+        await this._cliWait(this._cliStepNum(el, 'delay', lineDelay), run);
+        this._ff = false;
+        const value = await this._cliAsk(el, index, run);
+        this.dispatchEvent(new CustomEvent('cli-answer', { bubbles: true, detail: { value, index } }));
+        this.dispatchEvent(new CustomEvent('blank-submit', { bubbles: true, detail: { value: value.trim(), raw: value, valid: null } }));
+      }
+    },
+
+    /* 逐字打出：複製子標籤的結構，清空所有文字節點後依序補回字元，保留行內色名標籤等格式 */
+    async _cliType(span, srcEl, cps, human, run) {
+      const tpl = srcEl.cloneNode(true);
+      const keepWs = srcEl.hasAttribute('pre');
+      const texts = [];
+      const walker = document.createTreeWalker(tpl, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) texts.push(walker.currentNode);
+      if (keepWs) {
+        this._cliDedent(texts);
+      } else {
+        texts.forEach((t) => { t.data = t.data.replace(/\s+/g, ' '); });
+        const nonEmpty = texts.filter((t) => t.data.length);
+        if (nonEmpty.length) {
+          nonEmpty[0].data = nonEmpty[0].data.replace(/^ /, '');
+          const last = nonEmpty[nonEmpty.length - 1];
+          last.data = last.data.replace(/ $/, '');
+        }
+      }
+      const full = texts.map((t) => t.data);
+      texts.forEach((t) => { t.data = ''; });
+      while (tpl.firstChild) span.appendChild(tpl.firstChild);
+
+      if (!cps || this._ff) {
+        texts.forEach((t, i) => { t.data = full[i]; });
+        this._cliScroll();
+        return;
+      }
+      this._box.classList.add('is-typing');
+      const base = 1000 / cps;
+      for (let i = 0; i < texts.length; i++) {
+        const str = full[i];
+        let k = 0;
+        while (k < str.length) {
+          if (this._ff) { texts[i].data = str; k = str.length; break; }
+          // 每次至少等 16ms；速度很快時一次補多個字，避免計時器精度不足而變慢
+          const step = Math.max(1, Math.round(16 / (base / this._rate)));
+          const n = human ? 1 : step;
+          texts[i].data += str.slice(k, k + n);
+          const ch = str[k + n - 1];
+          k += n;
+          this._cliScroll();
+          let d = human ? base * (0.55 + Math.random() * 0.9) : base * n;
+          if (human && ch === ' ') d += base * 0.4;
+          if (human && /[,.;:!?，。；：！？]/.test(ch)) d += base * 3;
+          await this._cliWait(d, run, true);
+        }
+        for (let j = i + 1; j < texts.length && this._ff; j++) texts[j].data = full[j];
+        if (this._ff) break;
+      }
+      this._box.classList.remove('is-typing');
+      this._cliScroll();
+    },
+
+    _cliDedent(texts) {
+      const all = texts.map((t) => t.data).join('\u0000');
+      const lines = all.replace(/^\n+/, '').replace(/\s+$/, '').split('\n');
+      const ind = Math.min(...lines.filter((l) => l.replace(/\u0000/g, '').trim()).map((l) => l.match(/^[ \t]*/)[0].length));
+      const out = (ind > 0 && isFinite(ind)) ? lines.map((l) => l.slice(Math.min(ind, l.match(/^[ \t]*/)[0].length))).join('\n') : lines.join('\n');
+      const parts = out.split('\u0000');
+      texts.forEach((t, i) => { t.data = parts[i] || ''; });
+    },
+
+    /* 等待：受倍率、暫停、快轉、重播影響 */
+    _cliWait(ms, run, typing) {
+      return new Promise((resolve, reject) => {
+        const go = () => {
+          if (run !== this._run) { reject(CLI_CANCEL); return; }
+          if (this._paused) { this._resumeQ.push(go); return; }
+          if (this._ff || ms <= 0) { resolve(); return; }
+          setTimeout(() => {
+            if (run !== this._run) { reject(CLI_CANCEL); return; }
+            if (this._paused) {
+              if (typing) this._box.classList.remove('is-typing');
+              this._resumeQ.push(() => {
+                if (run !== this._run) { reject(CLI_CANCEL); return; }
+                if (typing) this._box.classList.add('is-typing');
+                resolve();
+              });
+              return;
+            }
+            resolve();
+          }, ms / this._rate);
+        };
+        go();
+      });
+    },
+
+    /* ---- 使用者作答 ---- */
+    _cliAsk(el, index, run) {
+      return new Promise((resolve, reject) => {
+        const line = this._cliLine(this._cliPromptOf(el));
+        const typed = document.createElement('span');
+        typed.className = 'ucli-ask';
+        this._cliTheme(typed, el);
+        const cur = this._cliCursor();
+        const ghost = document.createElement('span');
+        ghost.className = 'ucli-ghost';
+        ghost.textContent = el.getAttribute('placeholder') || '';
+        line.append(typed, cur, ghost);
+        this._input.value = '';
+        this._histPos = this._history.length;
+        this._asking = { el, line, typed, cur, ghost, run, index,
+          done: (v) => {
+            if (run !== this._run) { reject(CLI_CANCEL); return; }
+            this._asking = null;
+            ghost.remove();
+            cur.remove();
+            typed.textContent = v;
+            this._input.value = '';
+            this._input.blur();
+            if (v.trim()) this._history.push(v);
+            this._cliSyncControls();
+            resolve(v);
+          } };
+        this._cliSyncControls();
+        this._cliScroll();
+        this._cliPlaceInput();
+        const r = this.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) this._input.focus({ preventScroll: true });
+      });
+    },
+
+    _cliAskRender() {
+      const a = this._asking;
+      if (!a) return;
+      a.typed.textContent = this._input.value;
+      a.ghost.hidden = this._input.value.length > 0;
+      this._cliPlaceInput();
+      this._cliScroll();
+    },
+
+    _cliAskKey(e) {
+      const a = this._asking;
+      if (!a) return;
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const v = this._input.value;
+        if (!v.trim() && !a.el.hasAttribute('allow-empty')) return;
+        a.done(v);
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        if (!this._history.length) return;
+        e.preventDefault();
+        this._histPos = Math.max(0, Math.min(this._history.length, this._histPos + (e.key === 'ArrowUp' ? -1 : 1)));
+        this._input.value = this._history[this._histPos] || '';
+        this._cliAskRender();
+      }
+    },
+
+    _cliPlaceInput() {
+      const a = this._asking;
+      if (!a) return;
+      this._input.style.left = a.cur.offsetLeft + 'px';
+      this._input.style.top = a.cur.offsetTop + 'px';
+    },
+
+    /* 快轉：播放中快轉到下一個作答處；作答中則略過，有 sample 時自動打出示範句 */
+    async _cliSkip() {
+      if (!this._started || this._ended) return;
+      const a = this._asking;
+      if (!a) {
+        this._ff = true;
+        if (this._paused) this.play();
+        return;
+      }
+      if (this._skipping) return;
+      const sample = a.el.getAttribute('sample');
+      if (!sample) { a.done(''); return; }
+      this._skipping = true;
+      this._input.blur();
+      a.ghost.hidden = true;
+      const run = a.run;
+      try {
+        a.typed.textContent = '';
+        this._box.classList.add('is-typing');
+        const base = 1000 / this._cliNum('speed', 20, 1, 400);
+        for (const ch of sample) {
+          a.typed.textContent += ch;
+          this._cliScroll();
+          await this._cliWait(base * (0.55 + Math.random() * 0.9), run, true);
+        }
+        this._box.classList.remove('is-typing');
+        await this._cliWait(220, run);
+        if (this._asking === a) a.done(sample);
+      } catch (err) {
+        if (err !== CLI_CANCEL) throw err;
+      } finally {
+        this._skipping = false;
+      }
+    },
+
+    /* ---- 小工具 ---- */
+    _cliPromptOf(el) {
+      if (el && el.hasAttribute('prompt')) return el.getAttribute('prompt');
+      const p = this.getAttribute('prompt');
+      return p === null ? '$' : p;
+    },
+
+    _cliLine(prompt) {
+      const line = document.createElement('div');
+      line.className = 'ucli-line';
+      if (prompt) {
+        const p = document.createElement('span');
+        p.className = 'ucli-prompt';
+        p.textContent = prompt;
+        line.appendChild(p);
+      }
+      this._screen.insertBefore(line, this._input);
+      return line;
+    },
+
+    _cliCursor() {
+      const c = document.createElement('span');
+      const shape = (this.getAttribute('cursor') || 'block').toLowerCase();
+      c.className = 'ucli-cursor is-' + (['block', 'underline', 'bar'].indexOf(shape) !== -1 ? shape : 'block');
+      return c;
+    },
+
+    _cliTheme(span, el) {
+      const color = parseColor(el.getAttribute('theme'));
+      if (color) span.style.color = color;
+    },
+
+    _cliScroll() {
+      const s = this._screen;
+      if (s.scrollHeight > s.clientHeight) s.scrollTop = s.scrollHeight;
+    },
+
+    _cliSetState(text) {
+      if (this._stateEl) this._stateEl.textContent = text;
+    },
+
+    _cliSyncControls() {
+      if (!this._btnPlay) return;
+      const playing = this._started && !this._ended && !this._paused;
+      this._btnPlay.textContent = playing ? '❚❚ 暫停' : '▶ 播放';
+      this._btnPlay.disabled = !!this._asking;
+      this._btnSkip.textContent = this._asking ? '⏭ 略過' : '⏭ 快轉';
+      this._btnSkip.disabled = !this._started || this._ended;
+      this._btnRestart.disabled = !this._started;
+      this._rateBtns.forEach((b, i) => b.classList.toggle('is-on', CLI_RATES[i] === this._rate));
+      if (this._asking) this._cliSetState('輪到你輸入，按 Enter 繼續');
+      else if (this._ended) this._cliSetState('播放完畢');
+      else if (this._paused) this._cliSetState('已暫停');
+      else if (this._started) this._cliSetState('');
+    }
+  };
+
+  Object.defineProperty(CLI_METHODS, 'rate', {
+    enumerable: true,
+    get() { return this._rate || 1; },
+    set(v) {
+      const r = parseFloat(v);
+      if (!(r > 0)) return;
+      this._rate = Math.min(8, Math.max(0.1, r));
+      if (this._cliBuilt) this._cliSyncControls();
+    }
+  });
+
+  Object.defineProperties(UiBlank.prototype, Object.getOwnPropertyDescriptors(CLI_METHODS));
 
   customElements.define('ui-blank', UiBlank);
 })();

@@ -1635,14 +1635,17 @@ UF.resolveColor('blue/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時
 
 ## ui-inputs.js
 
-輸入與驗證類元件。`<ui-otp>` 是驗證碼輸入格，也能切換成「產生模式」隨機產生一組碼讓使用者複製，並可呼叫後端 API 查重；`<ui-blank>` 是附送出按鈕的單行填充題。兩者都提供前端比對與外部驗證兩種方式。圖示使用 Bootstrap Icons，顏色屬性可填品牌色名稱或任何 CSS 顏色。
+輸入與驗證類元件。`<ui-otp>` 是驗證碼輸入格，也能切換成「產生模式」隨機產生一組碼讓使用者複製，並可呼叫後端 API 查重；`<ui-blank>` 是附送出按鈕的單行填充題，設定 `mode="cli"` 時改為模擬 CLI 畫面的對話播放器。兩者都提供前端比對與外部驗證兩種方式。圖示使用 Bootstrap Icons，顏色屬性可填品牌色名稱或任何 CSS 顏色。
+
+互動範例：`ui-inputs-demo-10-23-26.html`；CLI 模式：`ui-inputs-demo-11-12-26.html`。
 
 ### 標籤
 
 | 標籤 | 用途 |
 | --- | --- |
 | `<ui-otp>` | 驗證碼輸入（`mode="input"`）或產生（`mode="generate"`）。 |
-| `<ui-blank>` | 單行填充題，內含輸入框與送出按鈕。 |
+| `<ui-blank>` | 單行填充題，內含輸入框與送出按鈕；`mode="cli"` 時為 CLI 對話播放器。 |
+| `<cli-in>`、`<cli-out>`、`<cli-ask>`、`<cli-wait>` | `<ui-blank mode="cli">` 的劇本子標籤。 |
 
 ### `<ui-otp>` 屬性：格式與驗證
 
@@ -1828,7 +1831,59 @@ otp.focus();
 
 const blank = document.querySelector('ui-blank');
 blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
+
+const cli = document.querySelector('ui-blank[mode="cli"]');
+cli.play(); cli.pause(); cli.restart();   // reset() 等同 restart()
+cli.rate = 2;                              // 播放倍率
 ```
+
+### `<ui-blank mode="cli">`：CLI 對話播放器
+
+把元件變成模擬的終端機畫面，用子標籤寫成「輸入、回應」交替的劇本，自動逐字打出來，看起來像在和電腦對話。內容不必是真實指令。劇本中可插入 `<cli-ask>` 換使用者自己打，不比對答案，按 Enter 就繼續播放。未設定 `mode="cli"` 的 `<ui-blank>` 不受影響。
+
+```html
+<ui-blank mode="cli" title="ielts-speaking" prompt="examiner $">
+  <cli-in>Let's talk about your hometown. Where is it?</cli-in>
+  <cli-out>Loading candidate.memories ... done</cli-out>
+  <cli-in prompt="you $">It's Kaohsiung, a harbour city in southern Taiwan.</cli-in>
+  <cli-ask prompt="you $" placeholder="type your answer" sample="I love the seafood there."></cli-ask>
+  <cli-out theme="green">Thanks! Answer saved.</cli-out>
+</ui-blank>
+```
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `prompt` | `$` | 預設提示符號，每一行可用自己的 `prompt` 覆蓋；空字串則不顯示。 |
+| `speed` | `20` | 輸入行每秒打幾個字。 |
+| `out-speed` | `120` | 系統回應每秒出現幾個字，`0` 為整段直接出現。 |
+| `line-delay` | `450` | 每一行輸入之前的停頓（毫秒）。 |
+| `humanize` | 開啟 | 打字帶隨機快慢，遇到空白與標點稍微停頓；`false` 為等速。 |
+| `autoplay` | 自動 | 元件完整進入畫面時開始；`false` 時按 ▶ 或點畫面才開始。 |
+| `controls` | 顯示 | 控制列：播放／暫停、重播、快轉（作答時為略過）、0.5×、1×、2×；`false` 隱藏。 |
+| `frame` | `mac` | 外框：`mac`、`win`、`none`。 |
+| `title` | `terminal` | 標題列文字。 |
+| `cursor` | `block` | 游標：`block`、`underline`、`bar`；打字時不閃爍，停下來才閃爍。 |
+| `end-prompt` | 顯示 | 播完後留一個提示符號與閃爍游標；`false` 不留。 |
+| `width` | `100%` | 最大寬度。 |
+| `height`、`min-height` | 自動、`160` | 畫面高度；設定 `height` 後固定高度並自動捲到最後一行。純數字視為 px。 |
+| `font-size` | `1rem` | 畫面字級。 |
+| `bg-color`、`text-color` | `#0C0D0C`、`shell` | 畫面底色與一般文字色。 |
+| `prompt-color` | `key` | 提示符號、游標、選中的速度按鈕。 |
+| `in-color`、`out-color`、`ask-color` | `vanilla`、`calm`、`yellow` | 輸入行、系統回應、使用者輸入的文字色。 |
+
+| 子標籤 | 屬性 | 說明 |
+| --- | --- | --- |
+| `<cli-in>` | `prompt`、`speed`、`delay`、`theme` | 自動打字的輸入行。 |
+| `<cli-out>` | `speed`、`delay`、`theme`、`pre` | 系統回應，沒有提示符號。`delay` 預設 250 毫秒；`pre` 保留原始換行與空白，並去掉共同縮排。 |
+| `<cli-ask>` | `prompt`、`placeholder`、`sample`、`allow-empty`、`delay`、`theme` | 換使用者輸入，不比對答案，按 Enter 繼續；預設不接受空白輸入。作答時按「略過」，有 `sample` 就自動打出示範句。方向鍵上下叫回先前的輸入。 |
+| `<cli-wait>` | `ms` | 停頓，預設 800 毫秒。 |
+
+行內可用 `<c-key>`、`<c-pink>` 等色名標籤或 `<b>`、`<br>`，打字時保留格式。
+
+| 事件 | 說明 |
+| --- | --- |
+| `cli-answer` | 使用者在 `<cli-ask>` 按下 Enter 或略過時觸發，`detail = { value, index }`。同時送出 `blank-submit`，`valid` 為 `null`。 |
+| `cli-end` | 劇本播完時觸發。 |
 
 ---
 
