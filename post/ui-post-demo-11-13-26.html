@@ -47,12 +47,12 @@ code{color:#FFA987;}
       <div class="stage"></div>
       <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
       <script type="text/plain" class="demo-src">
-<ui-post author="IELTS Examiner" badge="Part 1" time="2h">
+<ui-post author="IELTS Examiner" badge="Part 1" time="2h" shares="48">
   How often do you exercise?
   <post-item author="Amy" likes="3" low tags="照抄題目:red,沒說運動項目:red">
     I exercise almost every day.
   </post-item>
-  <post-item author="Ben" likes="1280" best tags="具體運動:green,慣用語:yellow">
+  <post-item author="Ben" likes="1280" shares="215" best tags="具體運動:green,慣用語:yellow">
     I go <c-key>jogging</c-key> every day, <c-yellow>rain or shine</c-yellow>.
   </post-item>
   <post-item author="Cathy" likes="27">
@@ -122,6 +122,7 @@ code{color:#FFA987;}
         <tr><td><code>avatar</code>、<code>avatar-color</code></td><td>作者首字、依名字配色</td><td>頭像可填文字、emoji 或圖片網址。</td></tr>
         <tr><td><code>badge</code>、<code>brand</code></td><td>無</td><td>作者旁的徽章；時間後方的平台名稱。</td></tr>
         <tr><td><code>likes</code></td><td>0</td><td>貼文本身的愛心數。</td></tr>
+        <tr><td><code>shares</code>、<code>share</code>、<code>share-label</code>、<code>share-color</code></td><td>0、顯示、分享、blue</td><td>貼文轉寄數；<code>share="false"</code> 隱藏轉寄圖示；轉寄文字；留言轉寄數爆發時的顏色。</td></tr>
         <tr><td><code>autoplay</code>、<code>rate</code></td><td>自動、1</td><td>完整進入畫面時開始；<code>false</code> 為手動。<code>rate</code> 是初始播放倍率。</td></tr>
         <tr><td><code>start-delay</code>、<code>item-delay</code>、<code>typing</code></td><td>600、700、1100</td><td>開始前停頓、留言間隔、「正在輸入」動畫長度（毫秒）。</td></tr>
         <tr><td><code>surge-delay</code>、<code>surge</code>、<code>end-delay</code></td><td>700、3500、900</td><td>爆發前停頓、愛心爆發時間、爆發後到考官留言的停頓。</td></tr>
@@ -143,6 +144,7 @@ code{color:#FFA987;}
       <tbody>
         <tr><td><code>author</code>、<code>avatar</code>、<code>avatar-color</code>、<code>time</code></td><td>留言者、頭像、時間（預設「剛剛」）。</td></tr>
         <tr><td><code>likes</code>、<code>start-likes</code></td><td>最後的愛心數；爆發前的愛心數（預設：最佳回答 2，其他為最後的 35%）。</td></tr>
+        <tr><td><code>shares</code>、<code>start-shares</code></td><td>轉寄數；設定後留言下方出現轉寄圖示，爆發時跟著愛心從 <code>start-shares</code>（預設 0）一起增加。</td></tr>
         <tr><td><code>best</code></td><td>最佳回答：爆發、徽章、置頂。可以有多則。</td></tr>
         <tr><td><code>low</code></td><td>低分留言；可填 <code>dim</code>、<code>fold</code>、<code>keep</code> 覆蓋 <code>low-style</code>。</td></tr>
         <tr><td><code>examiner</code></td><td>考官留言，換色並加徽章，預設在爆發後出現。</td></tr>

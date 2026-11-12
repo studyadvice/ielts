@@ -54,6 +54,8 @@
 | `avatar`、`avatar-color` | 作者首字、依名字配色 | 頭像可填文字、emoji 或圖片網址。 |
 | `badge`、`brand` | 無 | 作者旁的徽章；時間後方的平台名稱。 |
 | `likes` | `0` | 貼文本身的愛心數。 |
+| `shares` | `0` | 貼文轉寄數，0 時只顯示圖示。 |
+| `share`、`share-label`、`share-color` | 顯示、`分享`、`blue` | `share="false"` 隱藏轉寄圖示；轉寄文字；留言轉寄數爆發時的顏色。 |
 | `autoplay` | 自動 | `false` 時按 ▶ 才開始。 |
 | `rate` | `1` | 初始播放倍率。 |
 | `start-delay`、`item-delay`、`typing` | `600`、`700`、`1100` | 開始前停頓、留言間隔、「正在輸入」動畫長度（毫秒）。 |
@@ -75,6 +77,7 @@
 | --- | --- |
 | `author`、`avatar`、`avatar-color`、`time` | 留言者、頭像、時間（預設「剛剛」）。 |
 | `likes`、`start-likes` | 最後的愛心數；爆發前的愛心數（預設：最佳回答 2，其他為最後的 35%）。 |
+| `shares`、`start-shares` | 轉寄數；設定後留言下方出現轉寄圖示，爆發時跟著愛心從 `start-shares`（預設 0）一起增加。 |
 | `best` | 最佳回答：爆發、徽章、置頂。可以有多則。 |
 | `low` | 低分留言；可填 `dim`、`fold`、`keep` 覆蓋 `low-style`。 |
 | `examiner` | 考官留言，換色並加徽章，預設在爆發後出現。 |

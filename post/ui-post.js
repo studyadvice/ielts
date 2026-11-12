@@ -16,7 +16,8 @@
  *
  * <ui-post> 屬性：
  *   內容：author、avatar（文字、emoji 或圖片網址）、avatar-color、time、badge（作者旁徽章）、
- *         brand（時間後方的平台名稱）、likes（貼文愛心數）
+ *         brand（時間後方的平台名稱）、likes（貼文愛心數）、shares（貼文轉寄數）、
+ *         share（轉寄圖示，預設顯示，false 隱藏）、share-label（轉寄文字，預設「分享」）
  *   播放：autoplay（預設進入畫面時開始，false 為手動）、rate（初始倍率，預設 1）、
  *         start-delay（600）、item-delay（留言間隔 700）、typing（輸入中動畫 1100）、
  *         surge-delay（全部留言出現後到愛心爆發前的停頓 700）、surge（爆發時間 3500）、
@@ -29,6 +30,7 @@
  *
  * <post-item> 屬性：
  *   author、avatar、avatar-color、time、likes（最後的愛心數）、start-likes（爆發前的愛心數）、
+ *   shares（轉寄數，設定後留言下方出現轉寄圖示，爆發時跟著愛心一起增加）、start-shares、
  *   best（最佳回答）、low（低分，可填 dim、fold、keep 覆蓋 low-style）、
  *   examiner（考官留言，預設在爆發後出現）、after（爆發後才出現；after="false" 可讓考官留言提早）、
  *   tags（講評標籤，逗點分隔，可用「文字:色名」，在爆發後出現）、liked（愛心一開始就是實心）、
@@ -56,6 +58,7 @@
   const STYLE_ID = 'ui-post-style';
   const SVG_HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.5-9.2C1.1 7.9 3.2 4.3 6.8 4.3c2.1 0 3.5 1.1 4.2 2.3.7-1.2 2.1-2.3 4.2-2.3 3.6 0 5.7 3.6 4.3 7C17.6 15.9 12 20.5 12 20.5z"/></svg>';
   const SVG_COMMENT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v11H9l-5 4z"/></svg>';
+  const SVG_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 5l7 6.5-7 6.5v-3.8C8.4 14.2 5.3 15.9 3.5 19.5c.6-5.6 3.8-9.6 10-10.6z"/></svg>';
 
   const color = (v) => {
     if (v === null || v === undefined || String(v).trim() === '') return null;
@@ -97,6 +100,9 @@ ui-post .upo-time{font-size:.8rem;color:#86877F;}
 ui-post .upo-body{font-size:1.25em;line-height:1.5;font-weight:600;margin:0 0 14px 0;word-break:break-word;}
 ui-post .upo-actions{display:flex;gap:24px;font-size:.875rem;color:#C6C7BD;}
 ui-post .upo-act{display:inline-flex;align-items:center;gap:6px;}
+ui-post .upo-share-item{display:inline-flex;align-items:center;gap:6px;color:#C6C7BD;font-size:.875rem;font-weight:700;}
+ui-post .upo-share-item svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
+ui-post .upo-item.is-surging .upo-share-item{color:var(--upo-share,#5DBAE8);}
 ui-post .upo-act svg,ui-post .upo-heart svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
 ui-post .upo-list{padding:14px 16px 6px 16px;display:flex;flex-direction:column;gap:14px;min-height:var(--upo-min-height,80px);}
 ui-post .upo-item{display:flex;gap:10px;align-items:flex-start;animation:upo-in .35s ease-out;}
@@ -212,6 +218,7 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       css('--upo-heart', color(this.getAttribute('heart-color')));
       css('--upo-best', color(this.getAttribute('best-color')));
       css('--upo-examiner', color(this.getAttribute('examiner-color')));
+      css('--upo-share', color(this.getAttribute('share-color')));
 
       const box = document.createElement('div');
       box.className = 'upo';
@@ -241,6 +248,14 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       const actions = document.createElement('div');
       actions.className = 'upo-actions';
       actions.innerHTML = `<span class="upo-act">${SVG_HEART}<b></b></span><span class="upo-act">${SVG_COMMENT}<b class="upo-ccount">0</b><span class="upo-clabel"></span></span>`;
+      if (bool(this.getAttribute('share'), true)) {
+        const sh = document.createElement('span');
+        sh.className = 'upo-act upo-share';
+        sh.innerHTML = SVG_SHARE + '<b></b><span></span>';
+        sh.querySelector('b').textContent = this._fmt(Math.round(num(this.getAttribute('shares'), 0, 0, 1e9)));
+        sh.querySelector('span').textContent = this.getAttribute('share-label') || '分享';
+        actions.appendChild(sh);
+      }
       actions.querySelector('b').textContent = this._fmt(Math.round(num(this.getAttribute('likes'), 0, 0, 1e9)));
       actions.querySelector('.upo-clabel').textContent = this.getAttribute('comment-label') || '則留言';
       this._ccount = actions.querySelector('.upo-ccount');
@@ -443,6 +458,9 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       return {
         src, index, likes, best, examiner, after, low,
         start: Math.round(num(src.getAttribute('start-likes'), defStart, 0, 1e9)),
+        shares: src.hasAttribute('shares') ? Math.round(num(src.getAttribute('shares'), 0, 0, 1e9)) : null,
+        startShares: Math.round(num(src.getAttribute('start-shares'), 0, 0, 1e9)),
+        shareEl: null, curShares: 0,
         tags: (src.getAttribute('tags') || '').split(',').map((s) => s.trim()).filter(Boolean),
         el: null, heart: null, count: null, cur: 0
       };
@@ -492,6 +510,16 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       heart.innerHTML = SVG_HEART + '<b></b>';
       heart.title = this.getAttribute('like-label') || '讚';
       foot.append(time, heart);
+      if (m.shares !== null) {
+        const sh = document.createElement('span');
+        sh.className = 'upo-share-item';
+        sh.title = this.getAttribute('share-label') || '分享';
+        sh.innerHTML = SVG_SHARE + '<b></b>';
+        foot.appendChild(sh);
+        m.shareEl = sh.querySelector('b');
+        m.curShares = m.after ? m.shares : Math.min(m.startShares, m.shares);
+        m.shareEl.textContent = this._fmt(m.curShares);
+      }
       main.append(bubble, foot);
       el.appendChild(main);
       this._list.appendChild(el);
@@ -520,6 +548,10 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
           const k = m.best ? Math.pow(p, 2.6) : 1 - Math.pow(1 - p, 2);
           const v = Math.round(m.start + (m.likes - m.start) * k);
           if (v !== m.cur) { m.cur = v; m.count.textContent = this._fmt(v); }
+          if (m.shareEl) {
+            const sv = Math.round(m.startShares + (m.shares - m.startShares) * k);
+            if (sv !== m.curShares) { m.curShares = sv; m.shareEl.textContent = this._fmt(sv); }
+          }
           if (m.best && burst !== 'none') {
             const n = burst === 'small' ? (frame % 4 === 0 ? 1 : 0) : (p < 0.25 ? (frame % 2) : p < 0.6 ? 1 : 2 + (p > 0.85 ? 1 : 0));
             for (let i = 0; i < n; i++) this._heart(m.heart, burst === 'big' ? 1 : 0.5);
@@ -529,6 +561,7 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       items.forEach((m) => {
         m.cur = m.likes;
         m.count.textContent = this._fmt(m.likes);
+        if (m.shareEl) { m.curShares = m.shares; m.shareEl.textContent = this._fmt(m.shares); }
         m.el.classList.remove('is-surging', 'was-surging');
       });
     }
