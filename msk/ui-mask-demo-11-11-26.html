@@ -63,6 +63,702 @@
 <pre class="demo-code">&lt;ui-mask display="block" color="bg-alternative" label="先自己想想，再點我看答案" padding="14 18" radius="10"&gt;...&lt;/ui-mask&gt;</pre>
   </section>
 
+  <!-- v1.2.0 圖片遮罩（11-12-26） -->
+  <section class="mb-5">
+    <h4 class="bp-text-yellow"><i class="bi bi-image"></i> v1.2.0：圖片遮罩 &lt;mask-cover&gt;（11-12-26）</h4>
+    <p class="fs-5 bp-lnh-6">把 <code>&lt;mask-cover&gt;</code> 放進 <code>&lt;ui-mask display="block"&gt;</code> 的第一層，整個區塊就用一張圖遮住。<code>width</code> 指定圖片寬度、高度等比例縮放；區塊比圖片矮時，遮罩期間會撐到圖片高度，揭曉後縮回。圖片四周預設自動取 SVG 的底色。點圖片揭曉，設了 <code>toggle</code> 的再點一次會遮回。</p>
+
+    <h5 class="bp-text-key mt-4">範例一：src 讀取 SVG 檔，預設淡出（fade）</h5>
+    <ui-mask display="block" toggle label="先自己想想，再點開參考答案" color="key" radius="12">
+      <mask-cover src="classroom_adult_illu.svg" width="480"></mask-cover>
+      <div class="p-3 fs-5 bp-lnh-6">
+        <p class="bp-text-yellow mb-2">Describe a time you worked in a team.</p>
+        <p class="mb-0">Last year I joined a five-person project at work, and what struck me most was how much we relied on each other's strengths ...</p>
+      </div>
+    </ui-mask>
+
+    <h5 class="bp-text-key mt-4">範例二：直接貼 SVG，往上掀開（lift）</h5>
+    <ui-mask display="block" toggle color="violet" label="點擊掀開">
+      <mask-cover width="60%" effect="lift" duration="700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 600" width="1040" height="600">
+
+  <!-- 白色底 -->
+  <rect width="1040" height="600" fill="#FFFFFF"/>
+
+  <!-- 地板 -->
+  <rect x="8" y="530" width="1024" height="34" rx="17" fill="#C6C7BD"/>
+
+  <!-- 點綴 -->
+  <circle cx="276" cy="124" r="7" fill="#E3D322"/>
+  <circle cx="60" cy="104" r="6" fill="#FF91D7"/>
+  <circle cx="770" cy="100" r="5" fill="#B484E8"/>
+  <circle cx="1014" cy="128" r="5" fill="#B6FF00"/>
+  <circle cx="440" cy="40" r="5" fill="#EF6661"/>
+  <circle cx="24" cy="372" r="6" fill="#778CE1"/>
+  <circle cx="580" cy="46" r="5" fill="#51DBCF"/>
+  <path d="M120 60 L124 70 L134 74 L124 78 L120 88 L116 78 L106 74 L116 70 Z" fill="#51DBCF"/>
+  <path d="M954 80 L958 90 L968 94 L958 98 L954 108 L950 98 L940 94 L950 90 Z" fill="#FF91D7"/>
+  <path d="M350 30 L353 38 L361 41 L353 44 L350 52 L347 44 L339 41 L347 38 Z" fill="#FF2E63"/>
+
+  <!-- 吊燈 -->
+  <g>
+    <path d="M220 0 L220 50" stroke="#86877F" stroke-width="4"/>
+    <circle cx="220" cy="76" r="9" fill="#E3D322"/>
+    <path d="M194 76 A26 26 0 0 1 246 76 Z" fill="#EF6661"/>
+    <path d="M660 0 L660 28" stroke="#86877F" stroke-width="4"/>
+    <circle cx="660" cy="54" r="9" fill="#E3D322"/>
+    <path d="M634 54 A26 26 0 0 1 686 54 Z" fill="#778CE1"/>
+    <path d="M880 0 L880 44" stroke="#86877F" stroke-width="4"/>
+    <circle cx="880" cy="70" r="9" fill="#E3D322"/>
+    <path d="M854 70 A26 26 0 0 1 906 70 Z" fill="#51DBCF"/>
+  </g>
+
+  <!-- 窗戶 -->
+  <g>
+    <rect x="28" y="150" width="124" height="150" rx="8" fill="#C6C7BD"/>
+    <rect x="38" y="160" width="104" height="130" rx="3" fill="#5DBAE8"/>
+    <circle cx="118" cy="188" r="14" fill="#E3D322"/>
+    <g fill="#FFFFFF">
+      <circle cx="56" cy="254" r="9"/>
+      <circle cx="68" cy="249" r="12"/>
+      <circle cx="78" cy="255" r="8"/>
+      <rect x="56" y="254" width="22" height="9"/>
+    </g>
+    <rect x="87" y="160" width="6" height="130" fill="#C6C7BD"/>
+    <rect x="38" y="222" width="104" height="6" fill="#C6C7BD"/>
+    <rect x="20" y="296" width="140" height="10" rx="5" fill="#86877F"/>
+  </g>
+
+  <!-- 櫃子、地球儀、書與小盆栽 -->
+  <g>
+    <rect x="48" y="538" width="10" height="8" fill="#86877F"/>
+    <rect x="134" y="538" width="10" height="8" fill="#86877F"/>
+    <rect x="40" y="440" width="112" height="100" rx="6" fill="#A3C4BC"/>
+    <rect x="50" y="452" width="92" height="34" rx="4" fill="#DBEDD8"/>
+    <rect x="50" y="494" width="92" height="34" rx="4" fill="#DBEDD8"/>
+    <circle cx="96" cy="469" r="4" fill="#86877F"/>
+    <circle cx="96" cy="511" r="4" fill="#86877F"/>
+    <!-- 地球儀 -->
+    <rect x="58" y="432" width="36" height="8" rx="4" fill="#3B2A20"/>
+    <path d="M76 432 L76 420" stroke="#3B2A20" stroke-width="5" stroke-linecap="round"/>
+    <path d="M76 352 A34 34 0 0 0 76 420" fill="none" stroke="#3B2A20" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="76" cy="386" r="28" fill="#5DBAE8"/>
+    <path d="M62 372 C70 366 82 370 80 380 C78 388 68 386 64 392 C58 392 56 380 62 372Z" fill="#71CD76"/>
+    <path d="M84 392 C92 390 98 396 94 404 C88 408 82 402 84 392Z" fill="#71CD76"/>
+    <!-- 書堆 -->
+    <rect x="104" y="428" width="42" height="12" rx="2" fill="#EF6661"/>
+    <rect x="108" y="416" width="36" height="12" rx="2" fill="#E3D322"/>
+    <rect x="104" y="404" width="40" height="12" rx="2" fill="#778CE1"/>
+    <!-- 小盆栽 -->
+    <path d="M122 392 C110 390 106 380 106 372 C116 374 122 382 122 392Z" fill="#A3C4BC"/>
+    <path d="M126 392 C138 390 142 380 142 372 C132 374 126 382 126 392Z" fill="#A3C4BC"/>
+    <path d="M124 392 C116 382 116 370 124 362 C132 370 132 382 124 392Z" fill="#71CD76"/>
+    <rect x="113" y="390" width="22" height="14" rx="3" fill="#DE8EC9"/>
+  </g>
+
+  <!-- 壁掛黑板 -->
+  <g>
+    <rect x="300" y="76" width="310" height="188" rx="10" fill="#FFA987"/>
+    <rect x="312" y="88" width="286" height="164" rx="4" fill="#3B2A20"/>
+    <rect x="308" y="262" width="294" height="8" rx="4" fill="#86877F"/>
+
+    <!-- 甜甜圈圖 -->
+    <g stroke="#3B2A20" stroke-width="3" stroke-linejoin="round">
+      <path d="M366 158 L366 118 A40 40 0 0 1 396.6 183.7 Z" fill="#E3D322"/>
+      <path d="M366 158 L396.6 183.7 A40 40 0 0 1 340.3 188.6 Z" fill="#FF91D7"/>
+      <path d="M366 158 L340.3 188.6 A40 40 0 0 1 331.4 138 Z" fill="#5DBAE8"/>
+      <path d="M366 158 L331.4 138 A40 40 0 0 1 366 118 Z" fill="#71CD76"/>
+    </g>
+    <circle cx="366" cy="158" r="17" fill="#3B2A20"/>
+
+    <!-- 連結網路 -->
+    <g stroke="#DBEDD8" stroke-width="3" stroke-linecap="round">
+      <path d="M468 150 L434 120"/>
+      <path d="M468 150 L504 116"/>
+      <path d="M468 150 L438 188"/>
+      <path d="M468 150 L502 184"/>
+    </g>
+    <circle cx="468" cy="150" r="12" fill="#51DBCF"/>
+    <circle cx="434" cy="120" r="8" fill="#FF91D7"/>
+    <circle cx="504" cy="116" r="8" fill="#E3D322"/>
+    <circle cx="438" cy="188" r="8" fill="#B484E8"/>
+    <circle cx="502" cy="184" r="8" fill="#B6FF00"/>
+
+    <!-- 小長條圖 -->
+    <rect x="538" y="166" width="14" height="34" rx="3" fill="#FF91D7"/>
+    <rect x="558" y="144" width="14" height="56" rx="3" fill="#5DBAE8"/>
+    <rect x="578" y="124" width="14" height="76" rx="3" fill="#71CD76"/>
+    <path d="M532 203 L596 203" stroke="#DBEDD8" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- 進度軸 -->
+    <path d="M334 228 L580 228" stroke="#86877F" stroke-width="4" stroke-linecap="round"/>
+    <path d="M334 228 L416 228" stroke="#51DBCF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="334" cy="228" r="7" fill="#51DBCF"/>
+    <circle cx="416" cy="228" r="7" fill="#51DBCF"/>
+    <circle cx="498" cy="228" r="6" fill="#3B2A20" stroke="#DBEDD8" stroke-width="3"/>
+    <circle cx="580" cy="228" r="6" fill="#3B2A20" stroke="#DBEDD8" stroke-width="3"/>
+  </g>
+
+  <!-- 時鐘 -->
+  <g>
+    <circle cx="722" cy="170" r="38" fill="#778CE1"/>
+    <circle cx="722" cy="170" r="29" fill="#FFFFFF"/>
+    <g stroke="#86877F" stroke-width="4" stroke-linecap="round">
+      <path d="M722 146 L722 151"/>
+      <path d="M722 189 L722 194"/>
+      <path d="M698 170 L703 170"/>
+      <path d="M741 170 L746 170"/>
+    </g>
+    <path d="M722 170 L722 153" stroke="#0C0D0C" stroke-width="4" stroke-linecap="round"/>
+    <path d="M722 170 L736 178" stroke="#0C0D0C" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="722" cy="170" r="4" fill="#FF2E63"/>
+  </g>
+
+  <!-- 壁架：書、盆栽、獎盃 -->
+  <g>
+    <polygon points="820,224 820,246 842,224" fill="#86877F"/>
+    <polygon points="986,224 986,246 964,224" fill="#86877F"/>
+    <rect x="812" y="164" width="14" height="50" rx="2" fill="#EF6661"/>
+    <rect x="828" y="156" width="16" height="58" rx="2" fill="#5DBAE8"/>
+    <rect x="846" y="170" width="12" height="44" rx="2" fill="#E3D322"/>
+    <rect x="860" y="160" width="16" height="54" rx="2" fill="#B484E8"/>
+    <rect x="878" y="174" width="12" height="40" rx="2" fill="#FF91D7"/>
+    <path d="M920 194 C906 192 900 182 900 172 C912 174 920 182 920 194Z" fill="#A3C4BC"/>
+    <path d="M924 194 C938 192 944 182 944 172 C932 174 924 182 924 194Z" fill="#A3C4BC"/>
+    <path d="M922 194 C912 182 912 168 922 158 C932 168 932 182 922 194Z" fill="#71CD76"/>
+    <rect x="908" y="192" width="28" height="22" rx="4" fill="#DE8EC9"/>
+    <path d="M966 176 C956 176 956 190 968 190" fill="none" stroke="#E3D322" stroke-width="4" stroke-linecap="round"/>
+    <path d="M994 176 C1004 176 1004 190 992 190" fill="none" stroke="#E3D322" stroke-width="4" stroke-linecap="round"/>
+    <path d="M966 170 L994 170 C994 192 988 198 980 198 C972 198 966 192 966 170 Z" fill="#E3D322"/>
+    <rect x="977" y="196" width="6" height="12" fill="#E3D322"/>
+    <rect x="968" y="206" width="24" height="8" rx="2" fill="#3B2A20"/>
+    <rect x="800" y="214" width="206" height="10" rx="5" fill="#FFA987"/>
+  </g>
+
+  <!-- 對話框 -->
+  <g>
+    <rect x="226" y="226" width="56" height="40" rx="10" fill="#E3D322"/>
+    <polygon points="238,262 234,284 256,264" fill="#E3D322"/>
+    <polyline points="242,246 250,254 266,238" fill="none" stroke="#3B2A20" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="742" y="236" width="56" height="40" rx="10" fill="#8EA4DE"/>
+    <polygon points="756,272 744,292 774,274" fill="#8EA4DE"/>
+    <circle cx="770" cy="252" r="9" fill="#E3D322"/>
+    <rect x="766" y="259" width="8" height="7" rx="1.5" fill="#FFFFFF"/>
+  </g>
+
+  <!-- 會議桌 -->
+  <g>
+    <rect x="468" y="404" width="10" height="134" fill="#86877F"/>
+    <rect x="440" y="536" width="66" height="8" rx="4" fill="#86877F"/>
+    <rect x="388" y="394" width="170" height="10" rx="5" fill="#FFA987"/>
+    <rect x="464" y="378" width="16" height="16" rx="3" fill="#FF2E63"/>
+  </g>
+
+  <!-- 人物一：主講者，拿麥克風與平板 -->
+  <g transform="translate(8 0)">
+    <path d="M204 440 L196 532" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round"/>
+    <path d="M216 440 L232 532" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round"/>
+    <rect x="184" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="222" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="205" y="332" width="14" height="22" fill="#E0A27E"/>
+    <rect x="186" y="346" width="48" height="104" rx="18" fill="#51DBCF"/>
+    <circle cx="212" cy="316" r="22" fill="#E0A27E"/>
+    <path d="M190 316 C187 294 203 286 215 288 C231 288 237 302 233 312 C223 304 207 304 199 312 C197 316 195 322 194 326 Z" fill="#0C0D0C"/>
+    <!-- 平板 -->
+    <rect x="176" y="404" width="34" height="46" rx="4" fill="#0C0D0C"/>
+    <rect x="180" y="408" width="26" height="38" rx="2" fill="#5DBAE8"/>
+    <rect x="184" y="430" width="5" height="12" fill="#E3D322"/>
+    <rect x="191" y="422" width="5" height="20" fill="#FF91D7"/>
+    <rect x="198" y="426" width="5" height="16" fill="#B6FF00"/>
+    <path d="M198 372 L192 410" fill="none" stroke="#51DBCF" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="192" cy="414" r="8" fill="#E0A27E"/>
+    <!-- 麥克風 -->
+    <path d="M250 364 L244 340" stroke="#0C0D0C" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="242" cy="334" r="8" fill="#86877F"/>
+    <path d="M254.3 323.7 A16 16 0 0 1 254.3 344.3" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M260.4 318.6 A24 24 0 0 1 260.4 349.4" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M218 372 L248 398 L250 364" fill="none" stroke="#51DBCF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="250" cy="360" r="9" fill="#E0A27E"/>
+  </g>
+
+  <!-- 人物二：站著拿平板 -->
+  <g transform="translate(924 0) scale(-1 1)">
+    <path d="M204 440 L196 532" fill="none" stroke="#E3D322" stroke-width="22" stroke-linecap="round"/>
+    <path d="M216 440 L232 532" fill="none" stroke="#E3D322" stroke-width="22" stroke-linecap="round"/>
+    <rect x="184" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="222" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M227 300 C223 284 201 282 193 294 C183 306 183 342 187 366 L205 366 C199 342 201 318 207 306 Z" fill="#3B2A20"/>
+    <rect x="205" y="332" width="14" height="22" fill="#F2C7A5"/>
+    <rect x="186" y="346" width="48" height="104" rx="18" fill="#B484E8"/>
+    <circle cx="212" cy="316" r="22" fill="#F2C7A5"/>
+    <path d="M190 312 C189 292 205 286 217 290 C231 292 237 306 235 320 C229 308 217 302 203 304 C197 306 193 310 190 312 Z" fill="#3B2A20"/>
+    <!-- 平板 -->
+    <g transform="rotate(10 262 382)">
+      <rect x="246" y="360" width="32" height="44" rx="4" fill="#0C0D0C"/>
+      <rect x="250" y="364" width="24" height="36" rx="2" fill="#51DBCF"/>
+      <circle cx="262" cy="376" r="6" fill="#FF91D7"/>
+      <rect x="254" y="388" width="16" height="4" rx="2" fill="#FFFFFF"/>
+    </g>
+    <path d="M218 372 L236 404 L254 400" fill="none" stroke="#B484E8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="257" cy="399" r="8" fill="#F2C7A5"/>
+  </g>
+
+  <!-- 人物三：坐著用筆電（桌子左側） -->
+  <g transform="translate(210 0)">
+    <rect x="92" y="352" width="10" height="190" rx="5" fill="#8EA4DE"/>
+    <rect x="166" y="440" width="8" height="102" rx="4" fill="#8EA4DE"/>
+    <rect x="92" y="436" width="86" height="10" rx="5" fill="#8EA4DE"/>
+    <path d="M128 425 L178 427 L176 522" fill="none" stroke="#B484E8" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="164" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M128 425 L190 427 L192 522" fill="none" stroke="#B484E8" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="180" y="528" width="38" height="14" rx="7" fill="#0C0D0C"/>
+    <circle cx="111" cy="290" r="10" fill="#0C0D0C"/>
+    <rect x="122" y="322" width="14" height="22" fill="#8D5B3F"/>
+    <rect x="106" y="338" width="46" height="100" rx="18" fill="#FF91D7"/>
+    <circle cx="131" cy="306" r="22" fill="#8D5B3F"/>
+    <path d="M109 310 C105 286 119 278 133 280 C147 278 156 288 153 298 C143 292 129 292 121 298 C119 304 117 312 115 318 Z" fill="#0C0D0C"/>
+    <!-- 筆電 -->
+    <rect x="190" y="387" width="52" height="7" rx="3.5" fill="#86877F"/>
+    <path d="M240 389 L253 349" fill="none" stroke="#3B2A20" stroke-width="6" stroke-linecap="round"/>
+    <path d="M134 364 L150 388 L186 384" fill="none" stroke="#FF91D7" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="191" cy="382" r="8" fill="#8D5B3F"/>
+  </g>
+
+  <!-- 人物四：坐著用筆電（桌子右側） -->
+  <g transform="translate(736 0) scale(-1 1)">
+    <rect x="92" y="352" width="10" height="190" rx="5" fill="#8EA4DE"/>
+    <rect x="166" y="440" width="8" height="102" rx="4" fill="#8EA4DE"/>
+    <rect x="92" y="436" width="86" height="10" rx="5" fill="#8EA4DE"/>
+    <path d="M128 425 L178 427 L176 522" fill="none" stroke="#86877F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="164" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M128 425 L190 427 L192 522" fill="none" stroke="#86877F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="180" y="528" width="38" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="122" y="322" width="14" height="22" fill="#E0A27E"/>
+    <rect x="106" y="338" width="46" height="100" rx="18" fill="#EF6661"/>
+    <circle cx="131" cy="306" r="22" fill="#E0A27E"/>
+    <!-- 鬍子 -->
+    <path d="M153 308 A22 22 0 0 1 128 327.8 C138 321 143 314 144 306 Z" fill="#3B2A20"/>
+    <path d="M109 306 C106 284 122 276 134 278 C150 278 156 292 152 302 C142 294 126 294 118 302 C116 306 114 312 113 316 Z" fill="#3B2A20"/>
+    <!-- 筆電 -->
+    <rect x="190" y="387" width="52" height="7" rx="3.5" fill="#86877F"/>
+    <path d="M240 389 L253 349" fill="none" stroke="#3B2A20" stroke-width="6" stroke-linecap="round"/>
+    <path d="M134 364 L150 388 L186 384" fill="none" stroke="#EF6661" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="191" cy="382" r="8" fill="#E0A27E"/>
+  </g>
+
+  <!-- 人物五：坐著，筆電放腿上 -->
+  <g transform="translate(988 0) scale(-1 1)">
+    <rect x="92" y="352" width="10" height="190" rx="5" fill="#DE8EC9"/>
+    <rect x="166" y="440" width="8" height="102" rx="4" fill="#DE8EC9"/>
+    <rect x="92" y="436" width="86" height="10" rx="5" fill="#DE8EC9"/>
+    <path d="M128 425 L178 427 L176 522" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="164" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M128 425 L190 427 L192 522" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="180" y="528" width="38" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="122" y="322" width="14" height="22" fill="#F2C7A5"/>
+    <rect x="106" y="338" width="46" height="100" rx="18" fill="#71CD76"/>
+    <circle cx="131" cy="306" r="22" fill="#F2C7A5"/>
+    <path d="M109 306 C106 284 122 276 134 278 C150 278 156 292 152 302 C142 294 126 294 118 302 C116 306 114 312 113 316 Z" fill="#86877F"/>
+    <!-- 眼鏡 -->
+    <path d="M138 308 L120 306" stroke="#0C0D0C" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="144" cy="309" r="6" fill="#FFFFFF" stroke="#0C0D0C" stroke-width="2.5"/>
+    <!-- 筆電 -->
+    <rect x="150" y="410" width="52" height="7" rx="3.5" fill="#86877F"/>
+    <path d="M200 412 L213 372" fill="none" stroke="#0C0D0C" stroke-width="6" stroke-linecap="round"/>
+    <path d="M134 362 L148 398 L176 406" fill="none" stroke="#71CD76" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="180" cy="406" r="8" fill="#F2C7A5"/>
+  </g>
+
+  <!-- 人物六：站著拿麥克風回應 -->
+  <g transform="translate(1185 0) scale(-1 1)">
+    <path d="M204 440 L196 532" fill="none" stroke="#778CE1" stroke-width="22" stroke-linecap="round"/>
+    <path d="M216 440 L232 532" fill="none" stroke="#778CE1" stroke-width="22" stroke-linecap="round"/>
+    <rect x="184" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="222" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <circle cx="206" cy="308" r="28" fill="#0C0D0C"/>
+    <rect x="205" y="332" width="14" height="22" fill="#8D5B3F"/>
+    <rect x="186" y="346" width="48" height="104" rx="18" fill="#B6FF00"/>
+    <circle cx="214" cy="317" r="21" fill="#8D5B3F"/>
+    <path d="M196 306 C200 292 220 288 232 300 C222 298 208 300 196 306 Z" fill="#0C0D0C"/>
+    <path d="M198 372 L192 420" fill="none" stroke="#B6FF00" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="192" cy="426" r="8" fill="#8D5B3F"/>
+    <!-- 麥克風 -->
+    <path d="M250 364 L244 340" stroke="#0C0D0C" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="242" cy="334" r="8" fill="#86877F"/>
+    <path d="M254.3 323.7 A16 16 0 0 1 254.3 344.3" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M260.4 318.6 A24 24 0 0 1 260.4 349.4" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M218 372 L248 398 L250 364" fill="none" stroke="#B6FF00" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="250" cy="360" r="9" fill="#8D5B3F"/>
+  </g>
+</svg></mask-cover>
+      <div class="p-3 fs-5 bp-lnh-6">
+        <ol class="mb-0">
+          <li>Introduce the project in one sentence.</li>
+          <li>Say what your role was, with one concrete task.</li>
+          <li>Give one difficulty and how the team solved it.</li>
+          <li>Finish with what you learned about teamwork.</li>
+          <li>Keep each point to two or three sentences.</li>
+          <li>Use past tenses consistently.</li>
+        </ol>
+      </div>
+    </ui-mask>
+
+    <h5 class="bp-text-key mt-4">範例三：template 共用同一張圖，縮小消失（shrink），手動指定底色，圖片靠上</h5>
+    <template id="cover-classroom"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 600" width="1040" height="600">
+
+  <!-- 白色底 -->
+  <rect width="1040" height="600" fill="#FFFFFF"/>
+
+  <!-- 地板 -->
+  <rect x="8" y="530" width="1024" height="34" rx="17" fill="#C6C7BD"/>
+
+  <!-- 點綴 -->
+  <circle cx="276" cy="124" r="7" fill="#E3D322"/>
+  <circle cx="60" cy="104" r="6" fill="#FF91D7"/>
+  <circle cx="770" cy="100" r="5" fill="#B484E8"/>
+  <circle cx="1014" cy="128" r="5" fill="#B6FF00"/>
+  <circle cx="440" cy="40" r="5" fill="#EF6661"/>
+  <circle cx="24" cy="372" r="6" fill="#778CE1"/>
+  <circle cx="580" cy="46" r="5" fill="#51DBCF"/>
+  <path d="M120 60 L124 70 L134 74 L124 78 L120 88 L116 78 L106 74 L116 70 Z" fill="#51DBCF"/>
+  <path d="M954 80 L958 90 L968 94 L958 98 L954 108 L950 98 L940 94 L950 90 Z" fill="#FF91D7"/>
+  <path d="M350 30 L353 38 L361 41 L353 44 L350 52 L347 44 L339 41 L347 38 Z" fill="#FF2E63"/>
+
+  <!-- 吊燈 -->
+  <g>
+    <path d="M220 0 L220 50" stroke="#86877F" stroke-width="4"/>
+    <circle cx="220" cy="76" r="9" fill="#E3D322"/>
+    <path d="M194 76 A26 26 0 0 1 246 76 Z" fill="#EF6661"/>
+    <path d="M660 0 L660 28" stroke="#86877F" stroke-width="4"/>
+    <circle cx="660" cy="54" r="9" fill="#E3D322"/>
+    <path d="M634 54 A26 26 0 0 1 686 54 Z" fill="#778CE1"/>
+    <path d="M880 0 L880 44" stroke="#86877F" stroke-width="4"/>
+    <circle cx="880" cy="70" r="9" fill="#E3D322"/>
+    <path d="M854 70 A26 26 0 0 1 906 70 Z" fill="#51DBCF"/>
+  </g>
+
+  <!-- 窗戶 -->
+  <g>
+    <rect x="28" y="150" width="124" height="150" rx="8" fill="#C6C7BD"/>
+    <rect x="38" y="160" width="104" height="130" rx="3" fill="#5DBAE8"/>
+    <circle cx="118" cy="188" r="14" fill="#E3D322"/>
+    <g fill="#FFFFFF">
+      <circle cx="56" cy="254" r="9"/>
+      <circle cx="68" cy="249" r="12"/>
+      <circle cx="78" cy="255" r="8"/>
+      <rect x="56" y="254" width="22" height="9"/>
+    </g>
+    <rect x="87" y="160" width="6" height="130" fill="#C6C7BD"/>
+    <rect x="38" y="222" width="104" height="6" fill="#C6C7BD"/>
+    <rect x="20" y="296" width="140" height="10" rx="5" fill="#86877F"/>
+  </g>
+
+  <!-- 櫃子、地球儀、書與小盆栽 -->
+  <g>
+    <rect x="48" y="538" width="10" height="8" fill="#86877F"/>
+    <rect x="134" y="538" width="10" height="8" fill="#86877F"/>
+    <rect x="40" y="440" width="112" height="100" rx="6" fill="#A3C4BC"/>
+    <rect x="50" y="452" width="92" height="34" rx="4" fill="#DBEDD8"/>
+    <rect x="50" y="494" width="92" height="34" rx="4" fill="#DBEDD8"/>
+    <circle cx="96" cy="469" r="4" fill="#86877F"/>
+    <circle cx="96" cy="511" r="4" fill="#86877F"/>
+    <!-- 地球儀 -->
+    <rect x="58" y="432" width="36" height="8" rx="4" fill="#3B2A20"/>
+    <path d="M76 432 L76 420" stroke="#3B2A20" stroke-width="5" stroke-linecap="round"/>
+    <path d="M76 352 A34 34 0 0 0 76 420" fill="none" stroke="#3B2A20" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="76" cy="386" r="28" fill="#5DBAE8"/>
+    <path d="M62 372 C70 366 82 370 80 380 C78 388 68 386 64 392 C58 392 56 380 62 372Z" fill="#71CD76"/>
+    <path d="M84 392 C92 390 98 396 94 404 C88 408 82 402 84 392Z" fill="#71CD76"/>
+    <!-- 書堆 -->
+    <rect x="104" y="428" width="42" height="12" rx="2" fill="#EF6661"/>
+    <rect x="108" y="416" width="36" height="12" rx="2" fill="#E3D322"/>
+    <rect x="104" y="404" width="40" height="12" rx="2" fill="#778CE1"/>
+    <!-- 小盆栽 -->
+    <path d="M122 392 C110 390 106 380 106 372 C116 374 122 382 122 392Z" fill="#A3C4BC"/>
+    <path d="M126 392 C138 390 142 380 142 372 C132 374 126 382 126 392Z" fill="#A3C4BC"/>
+    <path d="M124 392 C116 382 116 370 124 362 C132 370 132 382 124 392Z" fill="#71CD76"/>
+    <rect x="113" y="390" width="22" height="14" rx="3" fill="#DE8EC9"/>
+  </g>
+
+  <!-- 壁掛黑板 -->
+  <g>
+    <rect x="300" y="76" width="310" height="188" rx="10" fill="#FFA987"/>
+    <rect x="312" y="88" width="286" height="164" rx="4" fill="#3B2A20"/>
+    <rect x="308" y="262" width="294" height="8" rx="4" fill="#86877F"/>
+
+    <!-- 甜甜圈圖 -->
+    <g stroke="#3B2A20" stroke-width="3" stroke-linejoin="round">
+      <path d="M366 158 L366 118 A40 40 0 0 1 396.6 183.7 Z" fill="#E3D322"/>
+      <path d="M366 158 L396.6 183.7 A40 40 0 0 1 340.3 188.6 Z" fill="#FF91D7"/>
+      <path d="M366 158 L340.3 188.6 A40 40 0 0 1 331.4 138 Z" fill="#5DBAE8"/>
+      <path d="M366 158 L331.4 138 A40 40 0 0 1 366 118 Z" fill="#71CD76"/>
+    </g>
+    <circle cx="366" cy="158" r="17" fill="#3B2A20"/>
+
+    <!-- 連結網路 -->
+    <g stroke="#DBEDD8" stroke-width="3" stroke-linecap="round">
+      <path d="M468 150 L434 120"/>
+      <path d="M468 150 L504 116"/>
+      <path d="M468 150 L438 188"/>
+      <path d="M468 150 L502 184"/>
+    </g>
+    <circle cx="468" cy="150" r="12" fill="#51DBCF"/>
+    <circle cx="434" cy="120" r="8" fill="#FF91D7"/>
+    <circle cx="504" cy="116" r="8" fill="#E3D322"/>
+    <circle cx="438" cy="188" r="8" fill="#B484E8"/>
+    <circle cx="502" cy="184" r="8" fill="#B6FF00"/>
+
+    <!-- 小長條圖 -->
+    <rect x="538" y="166" width="14" height="34" rx="3" fill="#FF91D7"/>
+    <rect x="558" y="144" width="14" height="56" rx="3" fill="#5DBAE8"/>
+    <rect x="578" y="124" width="14" height="76" rx="3" fill="#71CD76"/>
+    <path d="M532 203 L596 203" stroke="#DBEDD8" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- 進度軸 -->
+    <path d="M334 228 L580 228" stroke="#86877F" stroke-width="4" stroke-linecap="round"/>
+    <path d="M334 228 L416 228" stroke="#51DBCF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="334" cy="228" r="7" fill="#51DBCF"/>
+    <circle cx="416" cy="228" r="7" fill="#51DBCF"/>
+    <circle cx="498" cy="228" r="6" fill="#3B2A20" stroke="#DBEDD8" stroke-width="3"/>
+    <circle cx="580" cy="228" r="6" fill="#3B2A20" stroke="#DBEDD8" stroke-width="3"/>
+  </g>
+
+  <!-- 時鐘 -->
+  <g>
+    <circle cx="722" cy="170" r="38" fill="#778CE1"/>
+    <circle cx="722" cy="170" r="29" fill="#FFFFFF"/>
+    <g stroke="#86877F" stroke-width="4" stroke-linecap="round">
+      <path d="M722 146 L722 151"/>
+      <path d="M722 189 L722 194"/>
+      <path d="M698 170 L703 170"/>
+      <path d="M741 170 L746 170"/>
+    </g>
+    <path d="M722 170 L722 153" stroke="#0C0D0C" stroke-width="4" stroke-linecap="round"/>
+    <path d="M722 170 L736 178" stroke="#0C0D0C" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="722" cy="170" r="4" fill="#FF2E63"/>
+  </g>
+
+  <!-- 壁架：書、盆栽、獎盃 -->
+  <g>
+    <polygon points="820,224 820,246 842,224" fill="#86877F"/>
+    <polygon points="986,224 986,246 964,224" fill="#86877F"/>
+    <rect x="812" y="164" width="14" height="50" rx="2" fill="#EF6661"/>
+    <rect x="828" y="156" width="16" height="58" rx="2" fill="#5DBAE8"/>
+    <rect x="846" y="170" width="12" height="44" rx="2" fill="#E3D322"/>
+    <rect x="860" y="160" width="16" height="54" rx="2" fill="#B484E8"/>
+    <rect x="878" y="174" width="12" height="40" rx="2" fill="#FF91D7"/>
+    <path d="M920 194 C906 192 900 182 900 172 C912 174 920 182 920 194Z" fill="#A3C4BC"/>
+    <path d="M924 194 C938 192 944 182 944 172 C932 174 924 182 924 194Z" fill="#A3C4BC"/>
+    <path d="M922 194 C912 182 912 168 922 158 C932 168 932 182 922 194Z" fill="#71CD76"/>
+    <rect x="908" y="192" width="28" height="22" rx="4" fill="#DE8EC9"/>
+    <path d="M966 176 C956 176 956 190 968 190" fill="none" stroke="#E3D322" stroke-width="4" stroke-linecap="round"/>
+    <path d="M994 176 C1004 176 1004 190 992 190" fill="none" stroke="#E3D322" stroke-width="4" stroke-linecap="round"/>
+    <path d="M966 170 L994 170 C994 192 988 198 980 198 C972 198 966 192 966 170 Z" fill="#E3D322"/>
+    <rect x="977" y="196" width="6" height="12" fill="#E3D322"/>
+    <rect x="968" y="206" width="24" height="8" rx="2" fill="#3B2A20"/>
+    <rect x="800" y="214" width="206" height="10" rx="5" fill="#FFA987"/>
+  </g>
+
+  <!-- 對話框 -->
+  <g>
+    <rect x="226" y="226" width="56" height="40" rx="10" fill="#E3D322"/>
+    <polygon points="238,262 234,284 256,264" fill="#E3D322"/>
+    <polyline points="242,246 250,254 266,238" fill="none" stroke="#3B2A20" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="742" y="236" width="56" height="40" rx="10" fill="#8EA4DE"/>
+    <polygon points="756,272 744,292 774,274" fill="#8EA4DE"/>
+    <circle cx="770" cy="252" r="9" fill="#E3D322"/>
+    <rect x="766" y="259" width="8" height="7" rx="1.5" fill="#FFFFFF"/>
+  </g>
+
+  <!-- 會議桌 -->
+  <g>
+    <rect x="468" y="404" width="10" height="134" fill="#86877F"/>
+    <rect x="440" y="536" width="66" height="8" rx="4" fill="#86877F"/>
+    <rect x="388" y="394" width="170" height="10" rx="5" fill="#FFA987"/>
+    <rect x="464" y="378" width="16" height="16" rx="3" fill="#FF2E63"/>
+  </g>
+
+  <!-- 人物一：主講者，拿麥克風與平板 -->
+  <g transform="translate(8 0)">
+    <path d="M204 440 L196 532" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round"/>
+    <path d="M216 440 L232 532" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round"/>
+    <rect x="184" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="222" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="205" y="332" width="14" height="22" fill="#E0A27E"/>
+    <rect x="186" y="346" width="48" height="104" rx="18" fill="#51DBCF"/>
+    <circle cx="212" cy="316" r="22" fill="#E0A27E"/>
+    <path d="M190 316 C187 294 203 286 215 288 C231 288 237 302 233 312 C223 304 207 304 199 312 C197 316 195 322 194 326 Z" fill="#0C0D0C"/>
+    <!-- 平板 -->
+    <rect x="176" y="404" width="34" height="46" rx="4" fill="#0C0D0C"/>
+    <rect x="180" y="408" width="26" height="38" rx="2" fill="#5DBAE8"/>
+    <rect x="184" y="430" width="5" height="12" fill="#E3D322"/>
+    <rect x="191" y="422" width="5" height="20" fill="#FF91D7"/>
+    <rect x="198" y="426" width="5" height="16" fill="#B6FF00"/>
+    <path d="M198 372 L192 410" fill="none" stroke="#51DBCF" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="192" cy="414" r="8" fill="#E0A27E"/>
+    <!-- 麥克風 -->
+    <path d="M250 364 L244 340" stroke="#0C0D0C" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="242" cy="334" r="8" fill="#86877F"/>
+    <path d="M254.3 323.7 A16 16 0 0 1 254.3 344.3" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M260.4 318.6 A24 24 0 0 1 260.4 349.4" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M218 372 L248 398 L250 364" fill="none" stroke="#51DBCF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="250" cy="360" r="9" fill="#E0A27E"/>
+  </g>
+
+  <!-- 人物二：站著拿平板 -->
+  <g transform="translate(924 0) scale(-1 1)">
+    <path d="M204 440 L196 532" fill="none" stroke="#E3D322" stroke-width="22" stroke-linecap="round"/>
+    <path d="M216 440 L232 532" fill="none" stroke="#E3D322" stroke-width="22" stroke-linecap="round"/>
+    <rect x="184" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="222" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M227 300 C223 284 201 282 193 294 C183 306 183 342 187 366 L205 366 C199 342 201 318 207 306 Z" fill="#3B2A20"/>
+    <rect x="205" y="332" width="14" height="22" fill="#F2C7A5"/>
+    <rect x="186" y="346" width="48" height="104" rx="18" fill="#B484E8"/>
+    <circle cx="212" cy="316" r="22" fill="#F2C7A5"/>
+    <path d="M190 312 C189 292 205 286 217 290 C231 292 237 306 235 320 C229 308 217 302 203 304 C197 306 193 310 190 312 Z" fill="#3B2A20"/>
+    <!-- 平板 -->
+    <g transform="rotate(10 262 382)">
+      <rect x="246" y="360" width="32" height="44" rx="4" fill="#0C0D0C"/>
+      <rect x="250" y="364" width="24" height="36" rx="2" fill="#51DBCF"/>
+      <circle cx="262" cy="376" r="6" fill="#FF91D7"/>
+      <rect x="254" y="388" width="16" height="4" rx="2" fill="#FFFFFF"/>
+    </g>
+    <path d="M218 372 L236 404 L254 400" fill="none" stroke="#B484E8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="257" cy="399" r="8" fill="#F2C7A5"/>
+  </g>
+
+  <!-- 人物三：坐著用筆電（桌子左側） -->
+  <g transform="translate(210 0)">
+    <rect x="92" y="352" width="10" height="190" rx="5" fill="#8EA4DE"/>
+    <rect x="166" y="440" width="8" height="102" rx="4" fill="#8EA4DE"/>
+    <rect x="92" y="436" width="86" height="10" rx="5" fill="#8EA4DE"/>
+    <path d="M128 425 L178 427 L176 522" fill="none" stroke="#B484E8" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="164" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M128 425 L190 427 L192 522" fill="none" stroke="#B484E8" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="180" y="528" width="38" height="14" rx="7" fill="#0C0D0C"/>
+    <circle cx="111" cy="290" r="10" fill="#0C0D0C"/>
+    <rect x="122" y="322" width="14" height="22" fill="#8D5B3F"/>
+    <rect x="106" y="338" width="46" height="100" rx="18" fill="#FF91D7"/>
+    <circle cx="131" cy="306" r="22" fill="#8D5B3F"/>
+    <path d="M109 310 C105 286 119 278 133 280 C147 278 156 288 153 298 C143 292 129 292 121 298 C119 304 117 312 115 318 Z" fill="#0C0D0C"/>
+    <!-- 筆電 -->
+    <rect x="190" y="387" width="52" height="7" rx="3.5" fill="#86877F"/>
+    <path d="M240 389 L253 349" fill="none" stroke="#3B2A20" stroke-width="6" stroke-linecap="round"/>
+    <path d="M134 364 L150 388 L186 384" fill="none" stroke="#FF91D7" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="191" cy="382" r="8" fill="#8D5B3F"/>
+  </g>
+
+  <!-- 人物四：坐著用筆電（桌子右側） -->
+  <g transform="translate(736 0) scale(-1 1)">
+    <rect x="92" y="352" width="10" height="190" rx="5" fill="#8EA4DE"/>
+    <rect x="166" y="440" width="8" height="102" rx="4" fill="#8EA4DE"/>
+    <rect x="92" y="436" width="86" height="10" rx="5" fill="#8EA4DE"/>
+    <path d="M128 425 L178 427 L176 522" fill="none" stroke="#86877F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="164" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M128 425 L190 427 L192 522" fill="none" stroke="#86877F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="180" y="528" width="38" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="122" y="322" width="14" height="22" fill="#E0A27E"/>
+    <rect x="106" y="338" width="46" height="100" rx="18" fill="#EF6661"/>
+    <circle cx="131" cy="306" r="22" fill="#E0A27E"/>
+    <!-- 鬍子 -->
+    <path d="M153 308 A22 22 0 0 1 128 327.8 C138 321 143 314 144 306 Z" fill="#3B2A20"/>
+    <path d="M109 306 C106 284 122 276 134 278 C150 278 156 292 152 302 C142 294 126 294 118 302 C116 306 114 312 113 316 Z" fill="#3B2A20"/>
+    <!-- 筆電 -->
+    <rect x="190" y="387" width="52" height="7" rx="3.5" fill="#86877F"/>
+    <path d="M240 389 L253 349" fill="none" stroke="#3B2A20" stroke-width="6" stroke-linecap="round"/>
+    <path d="M134 364 L150 388 L186 384" fill="none" stroke="#EF6661" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="191" cy="382" r="8" fill="#E0A27E"/>
+  </g>
+
+  <!-- 人物五：坐著，筆電放腿上 -->
+  <g transform="translate(988 0) scale(-1 1)">
+    <rect x="92" y="352" width="10" height="190" rx="5" fill="#DE8EC9"/>
+    <rect x="166" y="440" width="8" height="102" rx="4" fill="#DE8EC9"/>
+    <rect x="92" y="436" width="86" height="10" rx="5" fill="#DE8EC9"/>
+    <path d="M128 425 L178 427 L176 522" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="164" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <path d="M128 425 L190 427 L192 522" fill="none" stroke="#3B2A20" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="180" y="528" width="38" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="122" y="322" width="14" height="22" fill="#F2C7A5"/>
+    <rect x="106" y="338" width="46" height="100" rx="18" fill="#71CD76"/>
+    <circle cx="131" cy="306" r="22" fill="#F2C7A5"/>
+    <path d="M109 306 C106 284 122 276 134 278 C150 278 156 292 152 302 C142 294 126 294 118 302 C116 306 114 312 113 316 Z" fill="#86877F"/>
+    <!-- 眼鏡 -->
+    <path d="M138 308 L120 306" stroke="#0C0D0C" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="144" cy="309" r="6" fill="#FFFFFF" stroke="#0C0D0C" stroke-width="2.5"/>
+    <!-- 筆電 -->
+    <rect x="150" y="410" width="52" height="7" rx="3.5" fill="#86877F"/>
+    <path d="M200 412 L213 372" fill="none" stroke="#0C0D0C" stroke-width="6" stroke-linecap="round"/>
+    <path d="M134 362 L148 398 L176 406" fill="none" stroke="#71CD76" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="180" cy="406" r="8" fill="#F2C7A5"/>
+  </g>
+
+  <!-- 人物六：站著拿麥克風回應 -->
+  <g transform="translate(1185 0) scale(-1 1)">
+    <path d="M204 440 L196 532" fill="none" stroke="#778CE1" stroke-width="22" stroke-linecap="round"/>
+    <path d="M216 440 L232 532" fill="none" stroke="#778CE1" stroke-width="22" stroke-linecap="round"/>
+    <rect x="184" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <rect x="222" y="528" width="36" height="14" rx="7" fill="#0C0D0C"/>
+    <circle cx="206" cy="308" r="28" fill="#0C0D0C"/>
+    <rect x="205" y="332" width="14" height="22" fill="#8D5B3F"/>
+    <rect x="186" y="346" width="48" height="104" rx="18" fill="#B6FF00"/>
+    <circle cx="214" cy="317" r="21" fill="#8D5B3F"/>
+    <path d="M196 306 C200 292 220 288 232 300 C222 298 208 300 196 306 Z" fill="#0C0D0C"/>
+    <path d="M198 372 L192 420" fill="none" stroke="#B6FF00" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="192" cy="426" r="8" fill="#8D5B3F"/>
+    <!-- 麥克風 -->
+    <path d="M250 364 L244 340" stroke="#0C0D0C" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="242" cy="334" r="8" fill="#86877F"/>
+    <path d="M254.3 323.7 A16 16 0 0 1 254.3 344.3" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M260.4 318.6 A24 24 0 0 1 260.4 349.4" fill="none" stroke="#FF2E63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M218 372 L248 398 L250 364" fill="none" stroke="#B6FF00" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="250" cy="360" r="9" fill="#8D5B3F"/>
+  </g>
+</svg></template>
+    <div class="d-flex gap-4">
+      <ui-mask display="block" toggle label="Part 1" color="pink" class="flex-fill">
+        <mask-cover template="cover-classroom" width="20rem" effect="shrink" bg="bg-alternative" position="top"></mask-cover>
+        <div class="p-3 fs-5">Do you prefer studying alone or with others?</div>
+      </ui-mask>
+      <ui-mask display="block" toggle label="Part 3" color="pink" class="flex-fill">
+        <mask-cover template="cover-classroom" width="20rem" effect="shrink" bg="bg-alternative" position="top"></mask-cover>
+        <div class="p-3 fs-5">Should schools put more emphasis on teamwork?</div>
+      </ui-mask>
+    </div>
+
+<pre class="demo-code">&lt;!-- 範例一：src 讀取 SVG 檔 --&gt;
+&lt;ui-mask display="block" toggle label="先自己想想，再點開參考答案" color="key" radius="12"&gt;
+  &lt;mask-cover src="classroom_adult_illu.svg" width="480"&gt;&lt;/mask-cover&gt;
+  &lt;div&gt;……要遮住的內容……&lt;/div&gt;
+&lt;/ui-mask&gt;
+
+&lt;!-- 範例二：直接貼 SVG --&gt;
+&lt;mask-cover width="60%" effect="lift" duration="700"&gt;&lt;svg viewBox="0 0 1040 600"&gt;…&lt;/svg&gt;&lt;/mask-cover&gt;
+
+&lt;!-- 範例三：template 共用同一張圖 --&gt;
+&lt;template id="cover-classroom"&gt;&lt;svg …&gt;…&lt;/svg&gt;&lt;/template&gt;
+&lt;mask-cover template="cover-classroom" width="20rem" effect="shrink" bg="bg-alternative" position="top"&gt;&lt;/mask-cover&gt;
+
+修改前（v1.1.0）：區塊遮罩只能是色塊、斜線、圓點、漸層等樣式
+修改後（v1.2.0）：ui-mask 第一層放 &lt;mask-cover&gt;，就改用圖片遮住整個區塊</pre>
+
+    <ui-table theme="gray" font-size="1rem" font-color="shell" class="mt-3">
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col><b>&lt;mask-cover&gt; 屬性</b></ui-col><ui-col><b>預設</b></ui-col><ui-col><b>說明</b></ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>src</ui-col><ui-col>無</ui-col><ui-col>圖片網址。.svg 檔會先讀取原始碼（為了偵測底色），讀不到就直接當圖片顯示；png、jpg 也可以用。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>template</ui-col><ui-col>無</ui-col><ui-col>讀取 &lt;template id&gt; 裡的 &lt;svg&gt;，適合同一張圖用在多個區塊。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>內嵌 &lt;svg&gt;</ui-col><ui-col></ui-col><ui-col>直接把 &lt;svg&gt; 寫在 &lt;mask-cover&gt; 裡。優先順序：內嵌 &gt; template &gt; src。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>width</ui-col><ui-col>100%</ui-col><ui-col>圖片寬度，可用 px、rem、em、%、vw，純數字視為 px；高度等比例縮放，最寬不超過區塊。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>bg</ui-col><ui-col>auto</ui-col><ui-col>圖片四周的底色。auto 會取 SVG 第一個鋪滿整張圖的矩形顏色，取不到時用 ui-mask 的 color；也可以寫色票名稱或 CSS 顏色。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>effect</ui-col><ui-col>fade</ui-col><ui-col>揭曉動畫：fade 淡出、lift 往上掀開、shrink 縮小消失；遮回時反向播放。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>duration</ui-col><ui-col>450</ui-col><ui-col>動畫時間（毫秒）。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>position</ui-col><ui-col>center</ui-col><ui-col>內容比圖片高時，圖片在區塊中的位置：top、center、bottom。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>padding</ui-col><ui-col>16</ui-col><ui-col>圖片四周的留白，純數字視為 px。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>alt</ui-col><ui-col>空</ui-col><ui-col>圖片替代文字。</ui-col></ui-row>
+      <ui-row col-widths="1:1:3" border="1px solid" col-border="1px solid" cell-padding="8px 12px"><ui-col>沿用 ui-mask</ui-col><ui-col></ui-col><ui-col>label 顯示在圖片下方的橫帶，橫帶顏色用 color，文字色用 label-color；toggle、trigger="hover"、revealed、radius、mask-reveal 事件、revealAll()、hideAll() 都照常運作。</ui-col></ui-row>
+    </ui-table>
+  </section>
+
   <!-- v1.1.0 label 修正（11-11-26） -->
   <section class="mb-5">
     <h4 class="bp-text-yellow"><i class="bi bi-wrench-adjustable"></i> v1.1.0：提示文字修正（11-11-26）</h4>
@@ -152,7 +848,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../tbl/ui-table.js"></script>
 <script src="../layout/ui-cards.js"></script>
-<script src="ui-mask.js"></script>
+<script src="ui-mask.js?v=1.2.0"></script>
 <script>
 (function () {
   var box = document.getElementById('event-box');

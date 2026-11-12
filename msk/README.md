@@ -1,18 +1,19 @@
 # ui-mask
 
-`<ui-mask>` 是行內文字遮罩元件。包住句子裡的任何一段文字，就會產生遮罩，點擊後揭曉原文。支援六種遮罩樣式、任意顏色與透明度，也能遮住整段文字並顯示提示語。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
+`<ui-mask>` 是行內文字遮罩元件。包住句子裡的任何一段文字，就會產生遮罩，點擊後揭曉原文。支援六種遮罩樣式、任意顏色與透明度，也能遮住整段文字並顯示提示語，或用一張 SVG 圖片遮住整個區塊。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
 可以放在一般段落，也能正常運作於 `<ui-table>` 的格子（含樹狀巢狀、輪播、extra-info）與 `<ui-cards>` 的卡片、template 面板。
 
-- 版本：1.1.0
+- 版本：1.2.0
 - 建立日期：11-09-26
-- 更新日期：11-11-26
+- 更新日期：11-12-26（新增圖片遮罩 `<mask-cover>`）
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
-| `ui-mask.js` | `<ui-mask>` | 行內或區塊文字遮罩，點擊或滑過揭曉。 |
+| `ui-mask.js` | `<ui-mask>`、`<mask-cover>` | 行內或區塊文字遮罩，以及區塊的圖片遮罩，點擊或滑過揭曉。 |
 | `ui-mask-demo-11-09-26.html` | | 互動範例，含 ui-table 與 ui-cards 內的用法（v1.0.0）。 |
-| `ui-mask-demo-11-11-26.html` | | v1.1.0 互動範例，含提示文字修改前後對照。 |
+| `ui-mask-demo-11-11-26.html` | | v1.1.0 提示文字修改前後對照，以及 v1.2.0 圖片遮罩範例。 |
+| `classroom_adult_illu.svg` | | 圖片遮罩範例用的插圖。 |
 
 ## 目錄
 
@@ -21,6 +22,7 @@
 - [遮罩樣式](#遮罩樣式)
 - [透明度](#透明度)
 - [區塊模式與提示文字](#區塊模式與提示文字)
+- [圖片遮罩](#圖片遮罩)
 - [在 ui-table 與 ui-cards 裡使用](#在-ui-table-與-ui-cards-裡使用)
 - [JavaScript API](#javascript-api)
 - [事件](#事件)
@@ -109,6 +111,42 @@ v1.1.0 起：
 ```html
 I usually <ui-mask label="點我看答案" label-mode="show" color="pink">take the bus</ui-mask> to work.
 ```
+
+## 圖片遮罩
+
+在 `<ui-mask display="block">` 的第一層放一個 `<mask-cover>`，整個區塊就改用一張圖片遮住。點擊圖片揭曉內容，設了 `toggle` 的再點一次會遮回。
+
+```html
+<ui-mask display="block" toggle label="先自己想想，再點開參考答案" color="key">
+  <mask-cover src="classroom_adult_illu.svg" width="480"></mask-cover>
+  <div>……要遮住的內容……</div>
+</ui-mask>
+
+<!-- 也可以直接貼 SVG，或用 template 讓多個區塊共用同一張圖 -->
+<mask-cover width="60%" effect="lift"><svg viewBox="0 0 1040 600">…</svg></mask-cover>
+<mask-cover template="cover-classroom" width="20rem"></mask-cover>
+```
+
+| `<mask-cover>` 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `src` | 無 | 圖片網址。`.svg` 檔會先讀取原始碼以偵測底色，讀不到就直接當圖片顯示；png、jpg 也能用。 |
+| `template` | 無 | 讀取 `<template id>` 裡的 `<svg>`。 |
+| 內嵌 `<svg>` | | 直接寫在 `<mask-cover>` 裡。優先順序：內嵌 > `template` > `src`。 |
+| `width` | `100%` | 圖片寬度，可用 px、rem、em、%、vw，純數字視為 px。高度依比例縮放，最寬不超過區塊。 |
+| `bg` | `auto` | 圖片四周的底色。`auto` 取 SVG 第一個鋪滿整張圖的矩形顏色，取不到時用 ui-mask 的 `color`；也可以寫色票名稱或 CSS 顏色。 |
+| `effect` | `fade` | 揭曉動畫：`fade` 淡出、`lift` 往上掀開、`shrink` 縮小消失。遮回時反向播放。 |
+| `duration` | `450` | 動畫時間（毫秒）。 |
+| `position` | `center` | 內容比圖片高時，圖片的位置：`top`、`center`、`bottom`。 |
+| `padding` | `16` | 圖片四周留白，純數字視為 px。 |
+| `alt` | 空 | 圖片替代文字。 |
+
+運作方式：
+
+- 遮罩期間，區塊至少撐到圖片（含提示語橫帶）的高度；揭曉後平滑縮回內容的高度。
+- 被遮的內容只是看不見，版面照常保留，所以裡面的 ui-table 等元件尺寸照樣正確；遮罩期間不能選取也不能點。
+- `label` 顯示在圖片下方的橫帶，橫帶顏色用 `color`，文字色用 `label-color`。`toggle`、`trigger="hover"`、`revealed`、`radius`、`mask-reveal` 事件、`revealAll()`、`hideAll()` 都照常運作。
+- SVG 一律轉成圖片顯示，同一張圖用在多處時，SVG 內的 id 與樣式不會互相干擾，也不會影響網頁。
+- 直接用瀏覽器開啟本機檔案（網址以 `file:` 開頭）時，瀏覽器不允許讀取 SVG 原始碼，`bg="auto"` 會改用 ui-mask 的 `color`。放上網站後就能正常偵測；要在本機預覽一致的效果，可以用 `template` 或直接貼 SVG，或明確設定 `bg`。
 
 ## 在 ui-table 與 ui-cards 裡使用
 
