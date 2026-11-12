@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>maze-quiz 元件示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<style>
+  body{background:#0C0D0C;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem}
+  .page{max-width:1680px;margin:0 auto;padding:40px 48px 80px}
+  h1{font-size:2.25rem;font-weight:800;color:#DBEDD8;margin:0 0 8px}
+  h2{font-size:1.375rem;font-weight:700;color:#51DBCF;margin:56px 0 8px}
+  h3{font-size:1.125rem;font-weight:700;color:#E3D322;margin:32px 0 12px}
+  .ver{display:inline-block;font-size:.75rem;font-weight:800;color:#0C0D0C;background:#B484E8;border-radius:999px;padding:2px 10px;margin:0 0 0 8px;vertical-align:middle}
+  .ver.v10{background:#86877F}
+  .ver.v3{background:#FFA987}
+  .lead-text{font-size:1.0625rem;color:#C6C7BD;margin:0 0 16px}
+  .note{font-size:.9375rem;color:#86877F;margin:0 0 16px}
+  .info-box{background:#3B2A20;border:1px solid #778CE1;color:#DBEDD8;border-radius:12px;padding:16px 20px;margin:16px 0 0}
+  .info-box + .info-box{margin-top:12px}
+  kbd{background:#C6C7BD;color:#0C0D0C;font-size:.875rem;font-weight:700;border-radius:6px;padding:2px 8px}
+  .divider{border:0;border-top:2px dashed #3B2A20;margin:64px 0 0}
+  .log-area{position:fixed;right:24px;bottom:24px;width:380px;z-index:10000}
+  .log-area .alert{background:#3B2A20;border:2px solid #71CD76;color:#DBEDD8;font-size:.9375rem;margin:0 0 12px;padding:12px 44px 12px 16px}
+  .log-area .alert strong{color:#E3D322}
+  pre.code{background:#151615;border:1px solid #3B2A20;border-radius:12px;color:#DBEDD8;font-size:.8125rem;padding:20px;margin:0;white-space:pre-wrap;word-break:break-word}
+  pre.code .c{color:#86877F}
+  pre.code .t{color:#5DBAE8}
+  pre.code .a{color:#FFA987}
+  pre.code .s{color:#B6FF00}
+  pre.code .add{color:#71CD76}
+  pre.code .del{color:#EF6661}
+  table.attr{width:100%;border-collapse:collapse;font-size:.9375rem}
+  table.attr th,table.attr td{border-bottom:1px solid #3B2A20;padding:10px 12px;text-align:left;vertical-align:top}
+  table.attr th{color:#A3C4BC;font-weight:700;background:#151615}
+  table.attr code{color:#FF91D7}
+  .two-col{display:flex;gap:32px;align-items:flex-start}
+  .two-col > div{flex:1 1 0;min-width:0}
+  .cmp{display:flex;gap:24px;align-items:stretch;margin:0 0 8px}
+  .cmp > div{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+  .cmp .cmp-head{font-size:.875rem;font-weight:700;margin:0 0 8px}
+  .cmp .cmp-head.old{color:#EF6661}
+  .cmp .cmp-head.new{color:#71CD76}
+  .cmp pre.code{flex:1 1 auto}
+  .cmp-desc{font-size:.9375rem;color:#C6C7BD;margin:0 0 12px}
+  /* 範例四：課堂版面 */
+  .lesson{display:flex;gap:32px;align-items:stretch}
+  .lesson .lesson-maze{flex:0 0 auto}
+  .lesson .lesson-card{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:16px;background:#151615;border:1px solid #3B2A20;border-radius:16px;padding:24px}
+  .lesson .lesson-card h4{font-size:1.25rem;font-weight:700;color:#FFA987;margin:0}
+  .lesson .lesson-card p{font-size:1rem;color:#C6C7BD;margin:0}
+  .far-panel{margin:120px 0 0;padding:32px;border:2px dashed #DE8EC9;border-radius:16px}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.0.0</span></h1>
+  <p class="lead-text">每次重新整理都會生成新的唯一解迷宮，從左下入口描繪路徑到右上出口，噴出彩帶後答案飛入空格。</p>
+  <div class="info-box">迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，因此入口到出口的路徑必定唯一。彩帶不使用透明度，改以縮小或落出畫面的方式退場。</div>
+  <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的迷宮。</div>
+
+  <!-- ===================== v1.0.0 範例 ===================== -->
+  <h2>範例一：基本用法（預設 10 × 12）<span class="ver v10">初版</span></h2>
+  <p class="note">捲動到畫面中自動播放。按「重播」重畫同一條路徑，按「換一個迷宮」生成新迷宮。</p>
+  <maze-quiz question="I go _____ every day." answer="jogging"></maze-quiz>
+
+  <h2>範例二：題庫隨機出題，寬版 18 × 11，加快速度<span class="ver v10">初版</span></h2>
+  <p class="note">元件內放 JSON 題庫，每次重新整理或換迷宮都會隨機換題，不會連續出現同一題。</p>
+  <maze-quiz cols="18" rows="11" speed="40">
+    <script type="application/json">
+      [
+        {"q": "I go _____ every day.", "a": "jogging"},
+        {"q": "My brother is very _____ in playing chess.", "a": "interested"},
+        {"q": "It has been raining _____ this morning.", "a": "since"},
+        {"q": "I'm looking forward _____ you soon.", "a": "to seeing"},
+        {"q": "She has lived here _____ ten years.", "a": "for"},
+        {"q": "If I _____ you, I would take the job.", "a": "were"}
+      ]
+    </script>
+  </maze-quiz>
+
+  <h2>範例三：手動開始，小迷宮 6 × 6，固定種子<span class="ver v10">初版</span></h2>
+  <p class="note">設定 <code>autoplay="false"</code> 後需按「開始解謎」或快捷鍵。設定 <code>seed</code> 後每次重新整理的第一個迷宮都相同，方便上課固定版面。</p>
+  <maze-quiz cols="6" rows="6" speed="140" autoplay="false" seed="ielts"
+             question="Could you _____ me a favor?" answer="do"></maze-quiz>
+
+  <hr class="divider">
+
+  <!-- ===================== v1.1.0 範例 ===================== -->
+  <h2>範例四：外部題目面板，指定迷宮寬度，路徑漸層<span class="ver">修改一</span></h2>
+  <p class="note">迷宮設定 <code>id="m4"</code>、<code>maze-width="420"</code>、<code>route-colors="#51DBCF,#FF91D7"</code>、<code>controls="maze"</code>。右側課堂卡片裡的 <code>&lt;maze-quiz-panel for="m4"&gt;</code> 就是它的題目區，答案標籤和彩帶會依迷宮大小等比縮小。</p>
+  <div class="lesson">
+    <div class="lesson-maze">
+      <maze-quiz id="m4" cols="9" rows="9" maze-width="420" route-colors="#51DBCF,#FF91D7" controls="maze"
+                 question="I usually _____ my homework after dinner." answer="do"></maze-quiz>
+    </div>
+    <div class="lesson-card">
+      <h4>Unit 3：Daily Routines</h4>
+      <p>這張卡片是一般網頁內容，題目面板可以放在任何位置，例如課文說明的下方。</p>
+      <maze-quiz-panel for="m4"></maze-quiz-panel>
+      <p>面板之後也可以繼續放其他內容。</p>
+    </div>
+  </div>
+
+  <h2>範例五：固定每格大小，按鈕放在迷宮下方<span class="ver">修改一</span></h2>
+  <p class="note">設定 <code>cell-size="24"</code>，迷宮寬度依格數自動計算為 16 × 24 加上外框留白。路徑漸層為 <code>#E3D322,#FF2E63</code>。</p>
+  <maze-quiz cols="16" rows="8" cell-size="24" route-colors="#E3D322,#FF2E63" controls="maze" speed="45"
+             question="Hardly _____ I arrived when it started to rain." answer="had"></maze-quiz>
+
+  <h2>範例六：面板放在頁面最底部，示範自動捲動<span class="ver">修改一</span></h2>
+  <p class="note">這個迷宮的題目面板放在本頁最底部。按「開始解謎」或快捷鍵後，答案從出口跳出時會自動平滑捲動到底部的空格再飛進去。</p>
+  <maze-quiz id="m6" cols="8" rows="7" maze-width="360" route-colors="#B6FF00,#778CE1" controls="maze" autoplay="false"
+             question="The more you practise, the _____ you get." answer="better"></maze-quiz>
+
+  <h2>範例七：自訂按鈕文字與尺寸，跳過彩帶，開始前隱藏迷宮<span class="ver v3">修改二</span></h2>
+  <p class="note">設定 <code>label-play="Start!"</code>、<code>label-replay="Again"</code>、<code>play-size="lg"</code>、<code>confetti="false"</code>、<code>hide-until-play</code>。按下開始後，迷宮從左下入口展開，抵達出口時不噴彩帶，答案直接跳出。</p>
+  <maze-quiz cols="10" rows="8" maze-width="520" autoplay="false" hide-until-play confetti="false"
+             label-play="Start!" label-replay="Again" play-size="lg" route-colors="key,dreamy"
+             question="She is used to _____ up early." answer="getting"></maze-quiz>
+
+  <h2>範例八：數字尺寸、色票名稱漸層、自訂遮罩文字<span class="ver v3">修改二</span></h2>
+  <p class="note">設定 <code>play-size="1.5"</code>（字級 1.5rem，內距等比放大）、<code>label-play="走迷宮"</code>、<code>label-cover="準備好了嗎？按下走迷宮"</code>、<code>route-colors="energetic,violet"</code>，保留彩帶。</p>
+  <maze-quiz cols="12" rows="9" cell-size="34" autoplay="false" hide-until-play
+             label-play="走迷宮" label-cover="準備好了嗎？按下走迷宮" play-size="1.5" route-colors="energetic,violet"
+             question="Not only _____ he late, but he also forgot his ticket." answer="was"></maze-quiz>
+
+  <hr class="divider">
+
+  <h2>屬性、事件與方法</h2>
+  <div class="two-col">
+    <div>
+      <table class="attr">
+        <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+        <tbody>
+          <tr><td><code>question</code></td><td>題目，用兩個以上的底線標示空格。</td><td>I go _____ every day.</td></tr>
+          <tr><td><code>answer</code></td><td>答案。</td><td>jogging</td></tr>
+          <tr><td><code>cols</code></td><td>欄數，範圍 2 到 40。</td><td>10</td></tr>
+          <tr><td><code>rows</code></td><td>列數，範圍 2 到 40。</td><td>12</td></tr>
+          <tr><td><code>speed</code></td><td>每一格的描繪毫秒數，總長限制在 1.2 到 15 秒之間。</td><td>70</td></tr>
+          <tr><td><code>autoplay</code></td><td>設為 false 時需手動開始；否則捲動到可見時自動播放。</td><td>自動</td></tr>
+          <tr><td><code>seed</code></td><td>亂數種子，可重現迷宮。</td><td>無</td></tr>
+          <tr><td><code>maze-width</code><span class="ver">修改一</span></td><td>迷宮區總寬度。純數字視為 px，也接受 40%、24rem 等寫法。與 cell-size 同時設定時以此為準。設定後取消高度上限。</td><td>自動</td></tr>
+          <tr><td><code>cell-size</code><span class="ver">修改一</span></td><td>每格大小（px），迷宮寬度依格數自動計算。設定後取消高度上限。</td><td>無</td></tr>
+          <tr><td><code>route-colors</code><span class="ver">修改一</span></td><td>路徑雙色漸層，以逗號分隔兩個色碼或色票名稱（例如 key,pink），沿路徑長度從入口過渡到出口。</td><td>#51DBCF 單色</td></tr>
+          <tr><td><code>controls</code><span class="ver">修改一</span></td><td>按鈕位置：panel 跟著題目面板、maze 放在迷宮下方、none 不顯示。</td><td>panel</td></tr>
+          <tr><td><code>hotkey</code><span class="ver">修改一</span></td><td>設為 false 時不回應快捷鍵。</td><td>回應</td></tr>
+          <tr><td><code>label-play</code><span class="ver v3">修改二</span></td><td>開始按鈕文字。</td><td>開始解謎</td></tr>
+          <tr><td><code>label-replay</code><span class="ver v3">修改二</span></td><td>答案揭曉後，開始按鈕改顯示的文字。</td><td>重播</td></tr>
+          <tr><td><code>label-new</code><span class="ver v3">修改二</span></td><td>換迷宮按鈕文字。</td><td>換一個迷宮</td></tr>
+          <tr><td><code>play-size</code><span class="ver v3">修改二</span></td><td>開始按鈕尺寸：sm、md、lg、xl，或純數字（字級 rem，內距等比放大，範圍 0.6 到 3）。</td><td>md</td></tr>
+          <tr><td><code>confetti</code><span class="ver v3">修改二</span></td><td>設為 false 時跳過噴彩帶動畫，答案仍會跳出並飛入空格。</td><td>噴彩帶</td></tr>
+          <tr><td><code>hide-until-play</code><span class="ver v3">修改二</span></td><td>只寫屬性名稱或設為 true 時，按下開始以前以遮罩隱藏整個迷宮；按下後從入口展開。</td><td>不隱藏</td></tr>
+          <tr><td><code>label-cover</code><span class="ver v3">修改二</span></td><td>隱藏時遮罩上的提示文字。</td><td>按下開始，迷宮就會出現</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <table class="attr">
+        <thead><tr><th>標籤／事件／方法</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;maze-quiz-panel for&gt;</code><span class="ver">修改一</span></td><td>外部題目面板，for 填迷宮的 id，可放在同一網頁任何位置。沒有對應面板時，迷宮維持內建左右版面。</td></tr>
+          <tr><td><code>Ctrl+Shift+數字鍵盤 5</code><span class="ver">修改一</span></td><td>啟動畫面中露出最多的迷宮，播放中則忽略。</td></tr>
+          <tr><td><code>maze-solved</code></td><td>路徑抵達出口時觸發。</td></tr>
+          <tr><td><code>answer-revealed</code></td><td>答案填入空格時觸發，右下角的通知就是監聽這個事件。</td></tr>
+          <tr><td><code>event.detail</code></td><td>含 question、answer、cols、rows、steps（路徑格數）。</td></tr>
+          <tr><td><code>play()</code></td><td>播放或重播目前的迷宮。</td></tr>
+          <tr><td><code>regenerate(autoPlay)</code></td><td>生成新迷宮，題庫模式下同時換題。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>程式碼</h2>
+  <pre class="code"><span class="c">&lt;!-- 載入元件 --&gt;</span>
+<span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"maze-quiz.js"</span><span class="t">&gt;&lt;/script&gt;</span>
+
+<span class="c">&lt;!-- 單一題目，內建題目區 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">question</span>=<span class="s">"I go _____ every day."</span> <span class="a">answer</span>=<span class="s">"jogging"</span> <span class="a">cols</span>=<span class="s">"10"</span> <span class="a">rows</span>=<span class="s">"12"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
+<span class="c">&lt;!-- 外部面板、指定寬度、路徑漸層、按鈕放迷宮下方 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">id</span>=<span class="s">"m4"</span> <span class="a">maze-width</span>=<span class="s">"420"</span> <span class="a">route-colors</span>=<span class="s">"#51DBCF,#FF91D7"</span> <span class="a">controls</span>=<span class="s">"maze"</span>
+           <span class="a">question</span>=<span class="s">"I usually _____ my homework after dinner."</span> <span class="a">answer</span>=<span class="s">"do"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+<span class="c">&lt;!-- 放在同一網頁任何位置 --&gt;</span>
+<span class="t">&lt;maze-quiz-panel</span> <span class="a">for</span>=<span class="s">"m4"</span><span class="t">&gt;&lt;/maze-quiz-panel&gt;</span>
+
+<span class="c">&lt;!-- 固定每格大小 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">cols</span>=<span class="s">"16"</span> <span class="a">rows</span>=<span class="s">"8"</span> <span class="a">cell-size</span>=<span class="s">"24"</span> <span class="a">route-colors</span>=<span class="s">"#E3D322,#FF2E63"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
+<span class="c">&lt;!-- 自訂按鈕、跳過彩帶、開始前隱藏迷宮 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">label-play</span>=<span class="s">"Start!"</span> <span class="a">play-size</span>=<span class="s">"lg"</span> <span class="a">confetti</span>=<span class="s">"false"</span> <span class="a">hide-until-play</span>
+           <span class="a">question</span>=<span class="s">"She is used to _____ up early."</span> <span class="a">answer</span>=<span class="s">"getting"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
+<span class="c">&lt;!-- 題庫 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">cols</span>=<span class="s">"18"</span> <span class="a">rows</span>=<span class="s">"11"</span><span class="t">&gt;</span>
+  <span class="t">&lt;script</span> <span class="a">type</span>=<span class="s">"application/json"</span><span class="t">&gt;</span>
+    [{"q": "I go _____ every day.", "a": "jogging"},
+     {"q": "She has lived here _____ ten years.", "a": "for"}]
+  <span class="t">&lt;/script&gt;</span>
+<span class="t">&lt;/maze-quiz&gt;</span>
+
+<span class="c">// 監聽答案揭曉</span>
+document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; console.log(e.detail.answer));</pre>
+
+  <hr class="divider">
+
+  <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
+  <h2>修改紀錄與程式碼對照</h2>
+  <p class="note">開發過程經過兩次修改，全部收錄在正式版本 1.0.0。每次修改都相容先前的寫法，不需改動既有頁面。</p>
+
+  <h3 style="color:#B484E8">修改一</h3>
+
+  <h3>1. 快捷鍵 Ctrl + Shift + 數字鍵盤 5</h3>
+  <p class="cmp-desc">以實體按鍵位置判斷，不論 NumLock 開關都能觸發；同頁多個迷宮時啟動露出面積最大的那一個。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">初版</div><pre class="code"><span class="c">// 只能按按鈕開始</span>
+this.$play.addEventListener('click', () =&gt; this.play());</pre></div>
+    <div><div class="cmp-head new">修改一</div><pre class="code"><span class="add">document.addEventListener('keydown', (e) =&gt; {
+  if (e.repeat || !e.ctrlKey || e.altKey || e.metaKey
+      || e.code !== 'Numpad5') return;
+  if (!e.shiftKey &amp;&amp; e.key !== 'Clear') return;
+  // 找出畫面中露出面積最大的迷宮
+  let best = null, bestArea = 0;
+  for (const m of INSTANCES) { ...計算可見面積... }
+  if (!best) return;
+  e.preventDefault();
+  best.play();
+});</span></pre></div>
+  </div>
+
+  <h3>2. 路徑雙色漸層 route-colors</h3>
+  <p class="cmp-desc">路徑會來回彎折，一般空間漸層會忽深忽淺，所以改為沿路徑長度切成 72 段插值上色，再用遮罩控制描繪進度。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">初版</div><pre class="code"><span class="c">&lt;!-- 單色路徑，直接對路徑做描繪動畫 --&gt;</span>
+<span class="del">&lt;path class="mq-route" d="..."
+      stroke="#51DBCF" .../&gt;</span>
+
+route.style.strokeDashoffset = L - len;</pre></div>
+    <div><div class="cmp-head new">修改一</div><pre class="code"><span class="add">&lt;mask id="mq-mask-1"&gt;
+  &lt;path class="mq-reveal" d="..." stroke="#FFFFFF" .../&gt;
+&lt;/mask&gt;
+&lt;g class="mq-route" mask="url(#mq-mask-1)"&gt;
+  &lt;path d="第 1 段" stroke="#51DBCF"/&gt;
+  ...
+  &lt;path d="第 72 段" stroke="#FF91D7"/&gt;
+&lt;/g&gt;</span>
+
+<span class="add">reveal.style.strokeDashoffset = L - len;</span></pre></div>
+  </div>
+
+  <h3>3. 外部題目面板 &lt;maze-quiz-panel&gt;</h3>
+  <p class="cmp-desc">題目區可拆到同一網頁任何位置；答案飛入時若空格不在畫面內，先平滑捲動過去。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">初版</div><pre class="code"><span class="c">&lt;!-- 題目區固定在迷宮右側 --&gt;</span>
+&lt;maze-quiz question="..." answer="..."&gt;&lt;/maze-quiz&gt;</pre></div>
+    <div><div class="cmp-head new">修改一</div><pre class="code">&lt;maze-quiz <span class="add">id="m4"</span> question="..." answer="..."&gt;&lt;/maze-quiz&gt;
+
+<span class="add">&lt;!-- 任何位置 --&gt;
+&lt;maze-quiz-panel for="m4"&gt;&lt;/maze-quiz-panel&gt;</span></pre></div>
+  </div>
+
+  <h3>4. 迷宮寬度 maze-width 與 cell-size，答案標籤與彩帶等比縮放</h3>
+  <p class="cmp-desc">以迷宮實際顯示尺寸計算縮放倍率（基準 560px，範圍 0.4 到 1.25 倍），套用到答案標籤字級、內距與彩帶大小；線條另設最細下限，迷宮很小時仍看得清楚。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">初版</div><pre class="code"><span class="c">/* 迷宮與題目區固定 3 比 2，高度上限 72vh */</span>
+maze-quiz .mq-stage{flex:3 1 0}
+maze-quiz .mq-svg{max-height:72vh}
+
+<span class="c">/* 答案標籤固定大小 */</span>
+.maze-quiz-chip{font-size:1.75rem;padding:8px 22px}</pre></div>
+    <div><div class="cmp-head new">修改一</div><pre class="code">&lt;maze-quiz <span class="add">maze-width="420"</span>&gt;
+&lt;maze-quiz <span class="add">cell-size="24"</span>&gt;
+
+<span class="add">this._k = clamp(迷宮顯示尺寸 / 560, 0.4, 1.25);
+chip.style.fontSize = (1.75 * k) + 'rem';
+chip.style.padding = `${8 * k}px ${22 * k}px`;
+Confetti.burst(x, y, { size: k });</span></pre></div>
+  </div>
+
+  <h3>5. 按鈕位置 controls</h3>
+  <div class="cmp">
+    <div><div class="cmp-head old">初版</div><pre class="code"><span class="c">&lt;!-- 按鈕固定在題目區 --&gt;</span></pre></div>
+    <div><div class="cmp-head new">修改一</div><pre class="code">&lt;maze-quiz <span class="add">controls="panel"</span>&gt;  <span class="c">預設</span>
+&lt;maze-quiz <span class="add">controls="maze"</span>&gt;   <span class="c">迷宮下方</span>
+&lt;maze-quiz <span class="add">controls="none"</span>&gt;   <span class="c">不顯示</span></pre></div>
+  </div>
+
+  <h3 style="color:#FFA987;margin-top:48px">修改二</h3>
+
+  <h3>6. 開始按鈕的文字與尺寸</h3>
+  <p class="cmp-desc">字級用 rem，內距用 px 並依字級等比放大；sm、md、lg、xl 分別是 0.875、1、1.25、1.5rem。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改一</div><pre class="code"><span class="c">// 文字寫死，尺寸固定</span>
+this.$play.textContent = '開始解謎';
+<span class="c">/* .mq-btn{font-size:1rem;padding:10px 22px} */</span></pre></div>
+    <div><div class="cmp-head new">修改二</div><pre class="code">&lt;maze-quiz <span class="add">label-play="Start!" label-replay="Again" play-size="lg"</span>&gt;
+
+<span class="add">this.$play.style.fontSize = size + 'rem';
+this.$play.style.padding =
+  `${Math.round(10 * size)}px ${Math.round(22 * size)}px`;</span></pre></div>
+  </div>
+
+  <h3>7. 跳過噴彩帶 confetti</h3>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改一</div><pre class="code">Confetti.burst(p.x, p.y, { ... });</pre></div>
+    <div><div class="cmp-head new">修改二</div><pre class="code">&lt;maze-quiz <span class="add">confetti="false"</span>&gt;
+
+<span class="add">if (this._confettiOn()) {</span>
+  Confetti.burst(p.x, p.y, { ... });
+<span class="add">}</span></pre></div>
+  </div>
+
+  <h3>8. 開始前隱藏迷宮 hide-until-play</h3>
+  <p class="cmp-desc">隱藏時保留迷宮的版面大小，以遮罩取代，避免頁面跳動；按下開始後以入口為圓心展開迷宮，展開完成才開始描繪路徑。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改一</div><pre class="code"><span class="c">// 迷宮一開始就顯示</span>
+begin();</pre></div>
+    <div><div class="cmp-head new">修改二</div><pre class="code">&lt;maze-quiz <span class="add">hide-until-play label-cover="準備好了嗎？"</span>&gt;
+
+<span class="add">if (this._concealed) this._later(run, this._unveil(), begin);
+else begin();
+
+this.$svg.animate([
+  { clipPath: 'circle(0% at 入口)' },
+  { clipPath: 'circle(150% at 入口)' }
+], { duration: 650 });</span></pre></div>
+  </div>
+
+  <!-- ===================== 範例六的面板 ===================== -->
+  <div class="far-panel">
+    <h3 style="margin-top:0">範例六的題目面板放在這裡</h3>
+    <p class="note">在範例六按下開始後，答案會在出口跳出，頁面自動捲到這裡再飛進空格。</p>
+    <maze-quiz-panel for="m6"></maze-quiz-panel>
+  </div>
+</div>
+
+<div class="log-area" id="logArea"></div>
+
+<script src="maze-quiz.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 以 Bootstrap alert 顯示揭曉通知，不使用 alert()
+  const logArea = document.getElementById('logArea');
+  document.addEventListener('answer-revealed', (e) => {
+    const d = e.detail;
+    const box = document.createElement('div');
+    box.className = 'alert alert-dismissible fade show';
+    box.setAttribute('role', 'alert');
+    box.innerHTML = '答案揭曉：<strong></strong><br>迷宮 ' + d.cols + ' × ' + d.rows + '，路徑 ' + d.steps + ' 格'
+      + '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="關閉"></button>';
+    box.querySelector('strong').textContent = d.answer;
+    logArea.appendChild(box);
+    while (logArea.children.length > 3) logArea.firstElementChild.remove();
+    setTimeout(() => {
+      if (!box.isConnected) return;
+      if (window.bootstrap) bootstrap.Alert.getOrCreateInstance(box).close(); else box.remove();
+    }, 6000);
+  });
+</script>
+</body>
+</html>
