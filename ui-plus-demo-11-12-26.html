@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-plus 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="bp-styles.css">
+<style>
+/* 版面：左側實際元件、右側程式碼；間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1600px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#51DBCF;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;line-height:1.7;margin:0 0 20px 0;}
+code{color:#FFA987;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px 0;}
+.toc a{color:#DBEDD8;border:1px solid #86877F;border-radius:20px;padding:4px 14px;font-size:0.9rem;text-decoration:none;}
+.toc a:hover{border-color:#51DBCF;color:#51DBCF;}
+.toc .grp{color:#86877F;font-size:0.85rem;padding:5px 4px 0 8px;}
+.part{margin:0 0 48px 0;}
+.part > h2{font-size:1.4rem;color:#E3D322;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.part > .lead{color:#86877F;font-size:0.95rem;margin:0 0 20px 0;line-height:1.7;}
+.demo{margin:0 0 28px 0;}
+.demo h3{font-size:1.1rem;color:#B484E8;margin:0 0 6px 0;}
+.demo .desc{color:#86877F;font-size:0.9rem;margin:0 0 12px 0;line-height:1.7;}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.side{min-width:0;}
+.cap{font-size:0.8rem;color:#86877F;margin:0 0 6px 0;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:520px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.btn-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;}
+.card-box{border-radius:8px;padding:12px 16px;line-height:1.7;}
+.card-box h3{font-size:1.05rem;margin:0 0 6px 0;}
+.card-box p{margin:0;}
+.split{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.size-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px;}
+.size-label{width:120px;flex-shrink:0;font-family:ui-monospace,monospace;font-size:0.85rem;color:#8EA4DE;}
+.big-ctx{font-size:1.5rem;}
+.log{font-family:ui-monospace,monospace;padding:8px 12px;border-radius:6px;min-height:36px;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;color:#DBEDD8;}
+.ref th{color:#51DBCF;}
+#log{position:sticky;top:0;z-index:20;}
+#log .alert{background:#51DBCF;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;margin:0 0 16px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-plus 示範</h1>
+  <p class="sub">ui-plus.js 內含兩組元件：展開按鈕 <code>&lt;ui-btn&gt;</code>，以及閱讀輔助標記 <code>&lt;read-pulse&gt;</code>、<code>&lt;chalk-mark&gt;</code>、<code>&lt;col-pair&gt;</code>。本頁合併了先前所有的 ui-plus 示範檔（11-12-26），每個範例左邊是實際元件，右邊是同一段原始碼。</p>
+  <nav class="toc">
+    <span class="grp">ui-btn</span>
+    <a href="#btn-size">尺寸</a><a href="#btn-multi">多目標與 template</a><a href="#btn-cell">mini-table 儲存格</a><a href="#btn-remove">移除元素</a><a href="#btn-ref">屬性速查</a>
+    <span class="grp">閱讀輔助</span>
+    <a href="#pulse">read-pulse</a><a href="#chalk">chalk-mark</a><a href="#colpair">col-pair</a>
+    <a href="#history">舊示範檔對照</a>
+  </nav>
+  <div id="log"></div>
+
+  <section class="part" id="btn-size">
+    <h2>ui-btn：尺寸</h2>
+    <p class="lead"><code>size</code> 除了 sm、md、lg，也接受 <code>2rem</code>、<code>1.2em</code>、<code>24px</code> 或純數字（視為 rem）。內距、圓角、圖示間距、展開箭頭都以 md 為基準等比例換算。</p>
+    <div class="demo" data-demo>
+      <h3>預設級距與自訂字級對照</h3>
+      <p class="desc">點按鈕會跳出浮動提示，顯示目前的 size。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="size-row">
+  <span class="size-label">sm / md / lg</span>
+  <ui-btn size="sm" icon="bi-star-fill" theme="yellow" alert="size=&quot;sm&quot;">按鈕</ui-btn>
+  <ui-btn size="md" icon="bi-star-fill" theme="yellow" alert="size=&quot;md&quot;">按鈕</ui-btn>
+  <ui-btn size="lg" icon="bi-star-fill" theme="yellow" alert="size=&quot;lg&quot;">按鈕</ui-btn>
+</div>
+<div class="size-row">
+  <span class="size-label">rem</span>
+  <ui-btn size="0.75rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;0.75rem&quot;">按鈕</ui-btn>
+  <ui-btn size="1.5rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;1.5rem&quot;">按鈕</ui-btn>
+  <ui-btn size="2rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;2rem&quot;">按鈕</ui-btn>
+</div>
+<div class="size-row">
+  <span class="size-label">px / 純數字</span>
+  <ui-btn size="20px" icon="bi-heart-fill" theme="pink" variant="outline" alert="size=&quot;20px&quot;">按鈕</ui-btn>
+  <ui-btn size="2.5" icon="bi-heart-fill" theme="pink" variant="outline" alert="size=&quot;2.5&quot;，視為 2.5rem">按鈕</ui-btn>
+</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>圓形圖示按鈕與展開箭頭</h3>
+      <p class="desc">沒有文字的圓形圖示按鈕，直徑與右下角的展開小圓點也會等比例縮放；帶 chevron 的按鈕，箭頭跟著字級變化。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="size-row">
+  <span class="size-label">圖示按鈕</span>
+  <ui-btn size="sm" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="sm"></ui-btn>
+  <ui-btn size="lg" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="lg"></ui-btn>
+  <ui-btn size="2rem" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="2rem"></ui-btn>
+  <ui-btn size="3rem" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip-a" tooltip="3rem"></ui-btn>
+</div>
+<div class="card-box bp-border-key" id="tip-a" style="display:none">任何一顆眼睛按鈕都能切換這段內容。</div>
+
+<div class="size-row">
+  <span class="size-label">chevron</span>
+  <ui-btn size="2rem" icon="bi-lightbulb" icon-active="bi-lightbulb-fill" theme="green"
+          chevron label-open="收起提示" target="tip-b">看提示</ui-btn>
+</div>
+<div class="card-box bp-border-key" id="tip-b" style="display:none">先找出題目中的關鍵字，再決定立場。</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>em 單位與格式錯誤</h3>
+      <p class="desc">em 以按鈕所在容器的字級為基準，這裡的容器字級為 1.5rem。格式錯誤的值會改用 md，並在主控台警告。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="size-row big-ctx">
+  <span class="size-label">父層 1.5rem</span>
+  <ui-btn size="1em" icon="bi-gem" theme="violet" alert="size=&quot;1em&quot;，等於 1.5rem">1em</ui-btn>
+  <ui-btn size="1.5rem" icon="bi-gem" theme="violet" alert="size=&quot;1.5rem&quot;">1.5rem</ui-btn>
+</div>
+<div class="size-row">
+  <span class="size-label">錯誤格式</span>
+  <ui-btn size="huge" icon="bi-x-octagon" theme="red" alert="size=&quot;huge&quot; 無效，已改用 md">huge</ui-btn>
+  <ui-btn size="2vw" icon="bi-x-octagon" theme="red" alert="size=&quot;2vw&quot; 無效，已改用 md">2vw</ui-btn>
+</div>
+    </script>
+    </div>
+    <div class="demo"><table class="ref">
+      <thead><tr><th style="width:220px">寫法</th><th style="width:220px">範例</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>預設級距</td><td><code>sm</code>、<code>md</code>、<code>lg</code></td><td>與原本相同，預設為 md。</td></tr>
+        <tr><td>rem</td><td><code>2rem</code></td><td>按鈕字級。內距、圓角、間距等以 md 為基準等比例換算為 px。</td></tr>
+        <tr><td>em</td><td><code>1.2em</code></td><td>以按鈕所在容器的字級為基準。</td></tr>
+        <tr><td>px</td><td><code>24px</code></td><td>直接指定字級像素，輸出時換算為 rem。</td></tr>
+        <tr><td>純數字</td><td><code>2</code></td><td>視為 rem，與 repo 其他元件的慣例一致。</td></tr>
+        <tr><td>無效值</td><td><code>huge</code>、<code>2vw</code></td><td>改用 md，並於主控台警告。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="part" id="btn-multi">
+    <h2>ui-btn：多目標、template 與依序出現</h2>
+    <p class="lead"><code>targets</code> 一次展開多個元素或 <code>&lt;template&gt;</code>，id 用空白或逗號分隔，<code>#</code> 可省略。<code>stagger</code> 控制依序出現的間隔，<code>anim-duration</code> 控制每一個淡入的時間。</p>
+    <div class="demo" data-demo>
+      <h3>一次展開散落各處的 div</h3>
+      <p class="desc">三個答題提示不必相鄰，也不必放在按鈕旁邊。第三個提示用 <code>bp-hidden</code> class 隱藏，同樣可以展開。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="btn-row">
+  <ui-btn icon="bi-lightbulb" icon-active="bi-lightbulb-fill" theme="green" chevron
+          targets="p2-who, p2-what #p2-why" label-open="收起三個提示">看 Part 2 答題提示</ui-btn>
+</div>
+<p class="bp-text-shell">Describe a place you like to visit in your free time.</p>
+<div class="card-box bp-border-green" id="p2-who" style="display:none">
+  <h3 class="bp-text-green">Where</h3><p>Name the place first, then add one detail that only you would know.</p>
+</div>
+<p class="bp-text-gray">（題目其他說明……）</p>
+<div class="card-box bp-border-blue" id="p2-what" style="display:none">
+  <h3 class="bp-text-blue">What you do there</h3><p>Use two or three chunks instead of a list of verbs.</p>
+</div>
+<div class="card-box bp-border-violet bp-hidden" id="p2-why">
+  <h3 class="bp-text-violet">Why you like it</h3><p>Finish with a feeling or a change it brought to you.</p>
+</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>template 延遲渲染，與 div 混合使用</h3>
+      <p class="desc">template 的內容在第一次展開時才複製到它後面的 div，之後的開合都作用在這個 div，所以輸入過的內容會保留。template 內的 ui-btn 會自動初始化。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre><p class="cap" style="margin:12px 0 0 0">JavaScript（監聽渲染事件，更新上方灰色列）</p><pre class="code-box"><code>document.addEventListener('ubtn-template-rendered', function (e) {
+  document.getElementById('tpl-log').textContent =
+    '已渲染 template #' + e.detail.template.id + '（事件 ubtn-template-rendered）';
+});</code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="btn-row">
+  <ui-btn icon="bi-eye" icon-active="bi-eye-slash" theme="key" variant="outline"
+          targets="ans-note tpl-model tpl-practice" label-open="收起範文與練習">看範文與練習</ui-btn>
+</div>
+<div class="card-box bp-border-key" id="ans-note" style="display:none">
+  先看範文怎麼把一個普通句子升級，再自己改寫一次。
+</div>
+<template id="tpl-model" class="card-box bp-border-yellow">
+  <p class="bp-text-yellow">Basic: There is a park near my home.</p>
+  <p>Upgraded: There's a riverside park just a stone's throw from my place.</p>
+  <div class="btn-row" style="margin:10px 0 0 0">
+    <ui-btn size="sm" theme="playful" target="tpl-model-why" chevron>為什麼更好</ui-btn>
+  </div>
+  <div id="tpl-model-why" style="display:none;margin:8px 0 0 0" class="bp-text-playful">
+    "a stone's throw from" 是自然的口語語塊，比 near 更有畫面。
+  </div>
+</template>
+<template id="tpl-practice" class="card-box bp-border-pink">
+  <label class="bp-text-pink" for="my-try">換你改寫：</label>
+  <textarea id="my-try" class="form-control" rows="12" placeholder="There is a supermarket near my home."></textarea>
+</template>
+<div class="log bp-bg-fill bp-text-quiet" id="tpl-log">尚未渲染任何 template</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>stagger 依序出現</h3>
+      <p class="desc"><code>stagger="400"</code> 讓目標每隔 400 毫秒出現一個；收合時全部同時收起。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="btn-row">
+  <ui-btn icon="bi-play-fill" icon-active="bi-arrow-counterclockwise" theme="energetic"
+          targets="step-1 step-2 step-3" stagger="400" animation="fade"
+          label-open="重來">依序揭曉</ui-btn>
+</div>
+<div class="split">
+  <div class="card-box bp-border-energetic" id="step-1" style="display:none"><b class="bp-text-energetic">1</b> near my home</div>
+  <div class="card-box bp-border-playful" id="step-2" style="display:none"><b class="bp-text-playful">2</b> within walking distance</div>
+  <div class="card-box bp-border-yellow" id="step-3" style="display:none"><b class="bp-text-yellow">3</b> a stone's throw from my place</div>
+</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>調整間隔與淡入速度</h3>
+      <p class="desc"><code>stagger</code> 是「下一個什麼時候開始」，<code>anim-duration</code> 是「每一個淡入要花多久」。stagger 比 anim-duration 短時，畫面會有接力的感覺。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="btn-row">
+  <ui-btn icon="bi-lightning-fill" theme="blue" animation="fade"
+          targets="fast-1 fast-2 fast-3" stagger="150" anim-duration="250"
+          label-open="收起">快：stagger 150、anim-duration 250</ui-btn>
+</div>
+<div class="split">
+  <div class="card-box bp-border-blue" id="fast-1" style="display:none">I'd say</div>
+  <div class="card-box bp-border-blue" id="fast-2" style="display:none">it's a stone's throw</div>
+  <div class="card-box bp-border-blue" id="fast-3" style="display:none">from my place.</div>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-hourglass-split" theme="violet" animation="fade"
+          targets="slow-1 slow-2 slow-3" stagger="1000" anim-duration="1500"
+          label-open="收起">慢：stagger 1000、anim-duration 1500</ui-btn>
+</div>
+<div class="split">
+  <div class="card-box bp-border-violet" id="slow-1" style="display:none">I'd say</div>
+  <div class="card-box bp-border-violet" id="slow-2" style="display:none">it's a stone's throw</div>
+  <div class="card-box bp-border-violet" id="slow-3" style="display:none">from my place.</div>
+</div>
+    </script>
+    </div>
+  </section>
+
+  <section class="part" id="btn-cell">
+    <h2>ui-btn：揭曉 mini-table 的儲存格</h2>
+    <p class="lead">需要同時載入 <code>mini/mini-table.js</code>。<code>mini-table-id</code> 指定表格，<code>target-cell</code> 指定儲存格（座標和 Excel 一樣，表頭算第 1 列），內容寫在 <code>target-cell-content</code> 或用 <code>target-cell-source</code> 從 template 讀。再按一次恢復原本內容。</p>
+    <div class="demo" data-demo>
+      <h3>揭曉儲存格</h3>
+      <p class="desc">多格時可用範圍 <code>C2:C4</code>，內容用 <code>|</code> 分隔，搭配 <code>stagger</code> 依序揭曉。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<mini-table id="upgrade-tbl" head="Basic | Upgraded | Why it works" pre-theme="grid" color="key">
+  near my home | ？ | ？
+  a nice place | ？ | ？
+  very crowded | ？ | ？
+</mini-table>
+
+<div class="btn-row">
+  <ui-btn theme="yellow" size="sm" mini-table-id="upgrade-tbl" target-cell="B2"
+          target-cell-content="<b>a stone's throw from my place</b>" label-open="收回 B2">B2</ui-btn>
+  <ui-btn theme="pink" size="sm" mini-table-id="upgrade-tbl" target-cell="B3"
+          target-cell-source="ans-b3" label-open="收回 B3">B3（template）</ui-btn>
+  <ui-btn theme="green" size="sm" mini-table-id="upgrade-tbl" target-cell="B4"
+          target-cell-content="packed to the rafters" label-open="收回 B4">B4</ui-btn>
+  <ui-btn theme="blue" size="sm" icon="bi-list-ol" mini-table-id="upgrade-tbl" target-cell="C2:C4"
+          target-cell-content="具體的距離感 | 有氛圍的形容 | 誇張的畫面" stagger="500"
+          label-open="收回說明">C2:C4 依序揭曉</ui-btn>
+</div>
+
+<template id="ans-b3">
+  a <c-key>cosy little spot</c-key> I keep going back to
+</template>
+    </script>
+    </div>
+  </section>
+
+  <section class="part" id="btn-remove">
+    <h2>ui-btn：移除元素</h2>
+    <p class="lead"><code>remove-target</code> 點擊後把指定 id 的元素從網頁移除，重新整理前不會復原。元素先依 <code>animation</code> 收合再刪除；按鈕只負責移除時，目標全部移除後自動停用。</p>
+    <div class="demo" data-demo>
+      <h3>移除一個 div</h3>
+      <p class="desc">讀完就關掉的說明框。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="card-box bp-border-yellow" id="tip-intro">
+  <h3 class="bp-text-yellow">作答說明</h3>
+  <p>Part 2 有一分鐘準備時間，先寫下三個關鍵詞，再開始說。</p>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-x-circle" theme="red" remove-target="tip-intro">我讀完了，關掉說明</ui-btn>
+</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>一次移除多個元素，淡出</h3>
+      <p class="desc">id 用逗號或空白分隔，動畫沿用 <code>animation</code> 與 <code>anim-duration</code>。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="card-box bp-border-green" id="wrong-a">
+  <p><s>I very like it.</s> 刪掉這種常見錯誤。</p>
+</div>
+<div class="card-box bp-border-blue" id="wrong-b">
+  <p><s>It makes me relax.</s> 刪掉這種常見錯誤。</p>
+</div>
+<div class="card-box bp-border-violet">
+  <p>這張卡不在 remove-target 裡，會留下來。</p>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-trash3" theme="pink" animation="fade" anim-duration="600"
+          remove-target="wrong-a, #wrong-b">刪掉兩個錯誤句</ui-btn>
+</div>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>展開答案，同時移除提示</h3>
+      <p class="desc">和 <code>target</code> 一起使用時，同一次點擊會展開答案並移除提示。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell">Do you prefer to study alone or with others?</p>
+<div class="card-box bp-border-indigo" id="hint-1">
+  <p class="bp-text-indigo">提示：先選一邊，再給一個具體情境。</p>
+</div>
+<div class="btn-row">
+  <ui-btn icon="bi-eye" icon-active="bi-eye-slash" theme="key" chevron
+          target="ans-1" remove-target="hint-1" label-open="收起答案">看參考答案</ui-btn>
+</div>
+<div class="card-box bp-border-key" id="ans-1" style="display:none">
+  <p>Definitely alone. When I study with friends, we end up chatting about everything except the exam.</p>
+</div>
+    </script>
+    </div>
+  </section>
+
+  <section class="part" id="btn-ref">
+    <h2>ui-btn：屬性速查</h2>
+    <p class="lead">多目標、儲存格與移除元素相關的屬性。完整屬性見 README。</p>
+    <div class="demo"><table class="ref">
+      <thead><tr><th class="bp-text-key" style="width:200px">屬性</th><th class="bp-text-key" style="width:260px">範例</th><th class="bp-text-key">說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>targets</code></td><td><code>targets="a, b #c"</code></td><td>新增。要一起開合的元素 id，逗號或空白分隔，<code>#</code> 可省略。目標可以是任何元素或 <code>&lt;template&gt;</code>。</td></tr>
+        <tr><td><code>target</code></td><td><code>target="a"</code></td><td>原有屬性，寫法不變；現在也接受多個 id。與 <code>targets</code> 同時存在時合併，重複的 id 只算一次。</td></tr>
+        <tr><td><code>stagger</code></td><td><code>stagger="400"</code></td><td>新增。展開時每個目標間隔的毫秒數，預設 0（同時展開）。收合一律同時進行。</td></tr>
+        <tr><td><code>anim-duration</code></td><td><code>anim-duration="1200"</code></td><td>原有屬性。每個目標展開或收合動畫的毫秒數，預設 320，fade 與 slide 都適用。修正後可設超過 600。全域預設可用 <code>UiBtnConfig.animDuration</code>。</td></tr>
+        <tr><td><code>mini-table-id</code></td><td><code>mini-table-id="mytbl"</code></td><td>新增。要操作的 <code>&lt;mini-table&gt;</code> 的 id，需載入 <code>mini/mini-table.js</code>。也接受少一個字母的 <code>min-table-id</code>。設定後按鈕不會再去開合緊接在後面的元素。</td></tr>
+        <tr><td><code>target-cell</code></td><td><code>target-cell="B2"</code><br><code>target-cell="B2 C3"</code><br><code>target-cell="C2:C4"</code></td><td>新增。儲存格座標，和 Excel 相同，表頭算第 1 列。可寫多格（逗號或空白分隔）與範圍，<code>$B$2</code> 的 <code>$</code> 會略過。不存在的格子會在主控台警告並略過。</td></tr>
+        <tr><td><code>target-cell-content</code></td><td><code>target-cell-content="&lt;b&gt;Cafe&lt;/b&gt;"</code></td><td>新增。要顯示的內容，可寫 HTML。多格時用 <code>|</code> 分隔，一格一段；只寫一段就每格都用同一段。內容本身要放 <code>|</code> 時寫成 <code>\|</code>。</td></tr>
+        <tr><td><code>target-cell-source</code></td><td><code>target-cell-source="ans"</code></td><td>新增。改從 <code>&lt;template&gt;</code> 或元素讀取內容，優先於 <code>target-cell-content</code>。適合較長的 HTML，多格時同樣用 <code>|</code> 分隔。</td></tr>
+        <tr><td><code>&lt;template&gt;</code> 目標</td><td><code>&lt;template id="t"&gt;</code></td><td>第一次展開時渲染到緊接其後的 <code>&lt;div class="ubtn-tpl-out" data-ubtn-from="t"&gt;</code>。多顆按鈕指向同一個 template 時共用同一份輸出。渲染後觸發會冒泡的 <code>ubtn-template-rendered</code> 事件，<code>e.detail</code> 含 <code>template</code>、<code>output</code>、<code>button</code>。</td></tr>
+      </tbody>
+    </table></div>
+    <div class="demo"><table class="ref">
+      <thead><tr><th class="bp-text-key" style="width:200px">項目</th><th class="bp-text-key" style="width:300px">範例</th><th class="bp-text-key">說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>remove-target</code></td><td><code>remove-target="a, b #c"</code></td><td>新增。點擊後要移除的元素 id，逗號或空白分隔，<code>#</code> 可省略。元素先依 <code>animation</code> 收合，再從網頁刪除；重新整理網頁前不會復原。找不到的 id 會在主控台提示。</td></tr>
+        <tr><td>按鈕停用</td><td></td><td>按鈕只設定 <code>remove-target</code>，沒有 <code>target</code>、<code>href</code>、<code>alert</code>、<code>mini-table-id</code>、<code>unlock-chunk</code> 時，目標全部移除後按鈕自動停用。</td></tr>
+        <tr><td>緊鄰元素</td><td></td><td>只寫 <code>remove-target</code> 時，按鈕不會再去開合緊接在後面的元素。</td></tr>
+        <tr><td><code>ubtn-removed</code> 事件</td><td><code>e.detail.ids</code></td><td>新增。從 <code>&lt;ui-btn&gt;</code> 冒泡，<code>e.detail</code> 含 <code>ids</code>（這次移除的 id）與 <code>button</code>。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="part" id="pulse">
+    <h2>read-pulse：段落進度條</h2>
+    <p class="lead">把一段內容包起來，左側色條由上往下跑過，提示「現在讀這段」。以下範例都設了 <code>trigger="click"</code> 與 <code>repeat</code>，點段落可以重播；預設的 <code>trigger="visible"</code> 會在捲動到可見時自動播放。</p>
+    <div class="demo" data-demo>
+      <h3>六種樣式</h3>
+      <p class="desc"><code>style</code> 可用 solid、gradient、glow、segmented、double、fuse；gradient 與 double 用到 <code>color2</code>。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<read-pulse style="solid" color="green" trigger="click" repeat><p class="bp-text-shell">solid：Over the past decade, the number of students studying abroad has risen sharply.</p></read-pulse>
+<read-pulse style="gradient" color="blue" color2="violet" trigger="click" repeat><p class="bp-text-shell">gradient：Universities have responded by expanding their international programmes.</p></read-pulse>
+<read-pulse style="glow" color="key" trigger="click" repeat><p class="bp-text-shell">glow：Many students now choose shorter exchange programmes.</p></read-pulse>
+<read-pulse style="segmented" color="yellow" trigger="click" repeat><p class="bp-text-shell">segmented：Costs remain the biggest barrier for most families.</p></read-pulse>
+<read-pulse style="double" color="pink" color2="indigo" trigger="click" repeat><p class="bp-text-shell">double：Online degrees offer a cheaper alternative.</p></read-pulse>
+</script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>fuse 燃燒引信</h3>
+      <p class="desc">條身從燒過的暗色漸變到火花處的亮色，底端有閃爍的火花與飛濺的火星。<code>spark-size</code> 調整火花大小（預設 8，最小 4）。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<read-pulse style="fuse" color="playful" speed="4000" trigger="click" repeat>
+  <p class="bp-text-shell">Over the past decade, the number of students studying abroad has risen sharply.</p>
+</read-pulse>
+<read-pulse style="fuse" color="energetic" speed="4000" pulse-width="4px" spark-size="12" trigger="click" repeat>
+  <p class="bp-text-shell">Universities have responded by expanding their international programmes.</p>
+</read-pulse>
+<read-pulse style="fuse" color="urgent" speed="2500" trigger="click" repeat>
+  <p class="bp-text-shell">Read this paragraph before the fuse burns out.</p>
+</read-pulse>
+    </script>
+    </div>
+  </section>
+
+  <section class="part" id="chalk">
+    <h2>chalk-mark：粉筆圈字</h2>
+    <p class="lead">點擊後在文字上方畫出粉筆弧線並把文字染色，再點一次擦掉。<code>direction="rtl"</code> 由右往左畫，<code>arrow</code> 在終點加箭頭，<code>arrow-to</code> 讓弧線跨出標記指向另一個字，適合標示後位修飾。</p>
+    <div class="demo" data-demo>
+      <h3>基本用法</h3>
+      <p class="desc">點標記畫線，再點擦掉。<code>thickness</code> 調整粗細，<code>duration</code> 調整畫線速度，<code>active</code> 載入時就畫好。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell" style="line-height:3">The government should <chalk-mark theme="yellow">invest</chalk-mark> more in
+  <chalk-mark theme="key" thickness="3.5" duration="800">public transport</chalk-mark>.</p>
+<p class="bp-text-shell" style="line-height:3">Prices have <chalk-mark theme="pink" active>risen sharply</chalk-mark> since 2020.</p>
+</script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>由右往左與箭頭</h3>
+      <p class="desc"><code>direction="rtl"</code> 搭配 <code>arrow</code>：把名詞連同修飾語一起包起來，箭頭落在整段最左端。箭頭尺寸可填 12、10px、0.6rem、0.5em。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell" style="line-height:3">The man <chalk-mark theme="key" direction="rtl" arrow="12" active>standing by the door</chalk-mark> is my teacher.</p>
+<p class="bp-text-shell" style="line-height:3">I finally read <chalk-mark theme="yellow" direction="rtl" arrow active>the book that you recommended</chalk-mark>.</p>
+<p class="bp-text-shell" style="line-height:3">Kaohsiung is <chalk-mark theme="pink" direction="rtl" arrow="0.8rem" active>a city famous for its seafood</chalk-mark>.</p>
+    </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>arrow-to 指向被修飾的名詞</h3>
+      <p class="desc">只包修飾語，名詞包一個帶 id 的 span。同一行時弧線從上方跨過；名詞在上一行時，弧線走兩行之間，箭頭從名詞下方往上指。縮放視窗看弧線跟著換行重畫。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell" style="line-height:3">The <span id="h-man">man</span>
+  <chalk-mark theme="key" arrow-to="h-man" active>standing by the door</chalk-mark> is my teacher.</p>
+<p class="bp-text-shell" style="line-height:3">I finally read <span id="h-book">the book</span>
+  <chalk-mark theme="yellow" arrow-to="h-book" arrow="12" active>that you recommended last summer</chalk-mark>.</p>
+<p class="bp-text-shell" style="line-height:3">Many students who live in large cities prefer <span id="h-apt">apartments</span>
+  that are close to public transport and <chalk-mark theme="pink" arrow-to="h-apt" active>within walking distance of their campus</chalk-mark>.</p>
+    </script>
+    </div>
+  </section>
+
+  <section class="part" id="colpair">
+    <h2>col-pair：搭配詞連動</h2>
+    <p class="lead">同一個 <code>group</code> 的字詞會連動：滑鼠移到其中一個，同組全部亮起並標上圓點。<code>theme</code> 設定群組顏色，同組只要一個設定即可。</p>
+    <div class="demo" data-demo>
+      <h3>代名詞與搭配詞</h3>
+      <p class="desc">把滑鼠移到 government、it、raise、taxes 上看看。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<p class="bp-text-shell" style="line-height:2">The <col-pair group="c1">government</col-pair> announced that
+  <col-pair group="c1">it</col-pair> would
+  <col-pair group="c2" theme="pink">raise</col-pair>
+  <col-pair group="c2">taxes</col-pair> next year.</p>
+</script>
+    </div>
+  </section>
+
+  <section class="part" id="history">
+    <h2>舊示範檔對照</h2>
+    <p class="lead">以下三個檔案已合併進本頁並移除（11-12-26）。</p>
+    <table class="ref">
+      <thead><tr><th style="width:320px">移除的檔案</th><th>內容現在在</th></tr></thead>
+      <tbody>
+        <tr><td><code>ui-plus-demo-11-07-26.html</code></td><td>ui-btn：尺寸</td></tr>
+        <tr><td><code>ui-plus-demo-11-10-26.html</code></td><td>ui-btn：多目標、template 與依序出現；揭曉 mini-table 的儲存格；屬性速查</td></tr>
+        <tr><td><code>ui-plus-demo-11-11-26.html</code></td><td>ui-btn：移除元素；read-pulse 的 fuse；chalk-mark 的由右往左、箭頭與 arrow-to</td></tr>
+      </tbody>
+    </table>
+    <p class="lead" style="margin:12px 0 0 0">新增的範例：read-pulse 六種樣式、chalk-mark 基本用法、col-pair。</p>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+})();
+document.addEventListener('ubtn-template-rendered', function (e) {
+  document.getElementById('tpl-log').textContent =
+    '已渲染 template #' + e.detail.template.id + '（事件 ubtn-template-rendered）';
+});
+/* 用 Bootstrap alert 顯示移除事件 */
+document.addEventListener('ubtn-removed', function (e) {
+  document.getElementById('log').innerHTML =
+    '<div class="alert alert-dismissible fade show" role="alert">ubtn-removed：已移除 #' + e.detail.ids.join('、#') +
+    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-plus.js?v=11-12-26d"></script>
+<script src="mini/mini-table.js?v=11-12-26"></script>
+</body>
+</html>

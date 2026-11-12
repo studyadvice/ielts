@@ -1836,6 +1836,8 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 
 一個檔案內含兩組互相獨立的元件：閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`），以及展開按鈕 `ui-btn`。兩組共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
 
+互動範例：`ui-plus-demo-11-12-26.html`（合併了先前所有的 ui-plus 示範檔）。
+
 顏色屬性可填色盤名稱，或以 `#`、`rgb` 開頭的 CSS 顏色。
 
 ### 標籤
@@ -1895,11 +1897,21 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 | `direction` | `ltr` | 畫線方向：`ltr` 由左往右，`rtl` 由右往左。 |
 | `arrow` | 無 | 在弧線終點加箭頭，線畫完才出現。只寫屬性為 `8px`；可填尺寸，例如 `12`、`10px`、`0.6rem`、`0.5em`（純數字視為 px）。 |
 
-搭配 `direction="rtl"` 與 `arrow` 可以標示後位修飾：把修飾語（或連同被修飾的名詞）包起來，箭頭從右往左指回前面。
+| `arrow-to` | 無 | 目標元素的 id。弧線從本標記延伸到該元素，終點自動加箭頭（尺寸沿用 `arrow`，未設定為 8px），目標文字一併上色。找不到 id 時改畫一般弧線並在主控台提示。 |
+
+標示後位修飾有兩種寫法：
+
+- 只包修飾語，用 `arrow-to` 指回被修飾的名詞。弧線跨出標記範圍，箭頭落在名詞上方，名詞也會跟著上色。
+- 把名詞連同修飾語一起包起來，用 `direction="rtl"` 加 `arrow`，箭頭落在整段的最左端。
 
 ```html
-<p>The man <chalk-mark theme="key" direction="rtl" arrow="12">standing by the door</chalk-mark> is my teacher.</p>
+<p>The <span id="n-man">man</span>
+   <chalk-mark theme="key" arrow-to="n-man">standing by the door</chalk-mark> is my teacher.</p>
+
+<p>I finally read <chalk-mark theme="yellow" direction="rtl" arrow>the book that you recommended</chalk-mark>.</p>
 ```
+
+`arrow-to` 的弧線依兩者的位置自動調整：在同一行時從上方跨過去，箭頭朝下；目標在上一行時，弧線走兩行之間的空隙，箭頭從目標下方往上指，不穿過文字。視窗縮放或換行後會自動重畫。
 
 #### col-pair：搭配詞連動
 
@@ -2050,7 +2062,7 @@ blank.value; blank.reset(); blank.setState('invalid'); blank.focus();
 - 可以和 `target`、`href`、`alert` 等一起使用，同一次點擊會先開合目標，再移除元素。
 - 只寫 `remove-target` 時，按鈕不會去開合緊接在後面的元素，目標全部移除後按鈕自動停用。
 - 移除後在 `<ui-btn>` 上觸發會冒泡的 `ubtn-removed` 事件，`e.detail` 含 `ids`（這次移除的 id）與 `button`。
-- 範例：`ui-plus-demo-11-11-26.html`。
+- 範例：`ui-plus-demo-11-12-26.html`。
 
 **揭曉 mini-table 的儲存格**
 

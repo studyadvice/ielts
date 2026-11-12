@@ -448,6 +448,9 @@
     var rtl       = String(el.getAttribute('direction') || UR_CFG.chalkDirection).trim().toLowerCase() === 'rtl';
     var arrowRaw  = el.hasAttribute('arrow') ? (el.getAttribute('arrow') || '').trim() : null;
     if (arrowRaw === 'false' || arrowRaw === 'none') arrowRaw = null;
+    /* arrow-to：弧線從本標記延伸到指定 id 的字（例如後位修飾所修飾的名詞），終點自動加箭頭，該字一併上色 */
+    var arrowToId = (el.getAttribute('arrow-to') || '').replace(/^#/, '').trim();
+    var arrowTarget = null, targetPrevColor = '';
 
     var wrap = document.createElement('span');
     wrap.className = 'urm-chalk';
@@ -507,7 +510,53 @@
 
       var x1 = pad, y1 = svgH - 2, cx = svgW / 2, cy = 3, x2 = svgW - pad, y2 = svgH - 2;
       if (rtl) { var tx = x1; x1 = x2; x2 = tx; }
-      var d = 'M ' + x1 + ' ' + y1 + ' Q ' + cx + ' ' + cy + ' ' + x2 + ' ' + y2;
+
+      arrowTarget = arrowToId ? document.getElementById(arrowToId) : null;
+      if (arrowToId && !arrowTarget && !wrap._urmWarned) {
+        wrap._urmWarned = true;
+        console.warn('[chalk-mark] arrow-to 找不到 id="' + arrowToId + '"，改畫一般弧線。');
+      }
+      if (arrowTarget) {
+        /* 座標以本標記左上角為原點：起點在本標記上緣中央，終點在目標字上緣中央（取最靠近的那一行） */
+        var sx = w / 2, sy = -2;
+        var best = null, bestD = Infinity;
+        Array.prototype.forEach.call(arrowTarget.getClientRects(), function (r) {
+          var mx = r.left + r.width / 2 - rect.left, my = r.top - rect.top;
+          var dd = Math.abs(mx - sx) + Math.abs(my - sy);
+          if (dd < bestD) { bestD = dd; best = { x: mx, y: my, h: r.height }; }
+        });
+        if (!best) { var br = arrowTarget.getBoundingClientRect(); best = { x: br.left + br.width / 2 - rect.left, y: br.top - rect.top, h: br.height }; }
+        /* 三次曲線，三種情況：
+           同一行：兩端都往上，像一座橋，箭頭朝下指著目標字。
+           目標在上方的行：從本標記上緣出發，走行距之間的空隙，箭頭從目標字下方往上指，不穿過文字。
+           目標在下方的行：反過來，從本標記下緣出發，箭頭從目標字上方往下指。 */
+        var ex = best.x, ey, c1x, c1y, c2x, c2y, k;
+        /* 跨行且幾乎上下對齊時，起點沿本標記上（下）緣往旁邊挪，讓曲線有水平距離，箭頭才不會擠成一團 */
+        if (Math.abs(best.y) > h * 0.5 && Math.abs(ex - sx) < h * 2.5) {
+          var room = h * 3;
+          sx = (ex + room <= w - 4) ? ex + room : Math.max(4, ex - room);
+        }
+        if (best.y < -h * 0.5) {
+          sy = -2; ey = best.y + best.h + 2;
+          k = Math.max(Math.abs(sy - ey) * 0.55, h * 0.4);
+          c1x = sx; c1y = sy - k; c2x = ex; c2y = ey + k;
+        } else if (best.y > h * 0.5) {
+          sy = h + 2; ey = best.y - 2;
+          k = Math.max(Math.abs(ey - sy) * 0.55, h * 0.4);
+          c1x = sx; c1y = sy + k; c2x = ex; c2y = ey - k;
+        } else {
+          ey = best.y - 2;
+          var dist = Math.abs(ex - sx);
+          k = Math.max(h * 0.8, Math.min(dist * 0.3, h * 2));
+          c1x = sx; c1y = sy - k; c2x = ex; c2y = ey - k;
+        }
+        x1 = sx; y1 = sy; x2 = ex; y2 = ey;
+        cx = c2x; cy = c2y;   /* 箭頭切線：第二控制點指向終點 */
+        svgEl.style.cssText = 'position:absolute;overflow:visible;pointer-events:none;left:0;top:0;width:1px;height:1px';
+      }
+      var d = arrowTarget
+        ? 'M ' + x1 + ' ' + y1 + ' C ' + c1x + ' ' + c1y + ' ' + c2x + ' ' + c2y + ' ' + x2 + ' ' + y2
+        : 'M ' + x1 + ' ' + y1 + ' Q ' + cx + ' ' + cy + ' ' + x2 + ' ' + y2;
 
       chalkPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       chalkPath.setAttribute('fill',           'none');
@@ -517,7 +566,7 @@
       chalkPath.setAttribute('d',              d);
       svgEl.appendChild(chalkPath);
 
-      if (arrowRaw !== null) {
+      if (arrowRaw !== null || arrowTarget) {
         /* 箭頭方向沿終點的切線（二次曲線終點切線為控制點指向終點） */
         var size  = Math.max(3, arrowSizePx());
         var ang   = Math.atan2(y2 - cy, x2 - cx);
@@ -548,6 +597,11 @@
       isActive = true;
       wrap.style.color = c;
       var len = buildArc();
+      if (arrowTarget) {
+        targetPrevColor = arrowTarget.style.color;
+        arrowTarget.style.transition = 'color .25s ease';
+        arrowTarget.style.color = c;
+      }
       if (len < 1) return;
       var _arrow = arrowPath;
       animateDash(chalkPath, len, 0, function () {
@@ -558,6 +612,7 @@
     function deactivate() {
       isActive = false;
       wrap.style.color = '';
+      if (arrowTarget) arrowTarget.style.color = targetPrevColor;
       if (!chalkPath) return;
       var len     = parseFloat(chalkPath.getAttribute('stroke-dasharray'))  || 0;
       var current = parseFloat(chalkPath.getAttribute('stroke-dashoffset')) || 0;
@@ -583,6 +638,21 @@
         activate();
       }
     });
+
+    /* arrow-to 的弧線跨越兩個元素，版面改變（視窗縮放、換行）時重畫到新位置 */
+    if (arrowToId) {
+      var _rzRaf = 0;
+      window.addEventListener('resize', function () {
+        if (!isActive || !chalkPath) return;
+        cancelAnimationFrame(_rzRaf);
+        _rzRaf = requestAnimationFrame(function () {
+          if (!isActive) return;
+          buildArc();
+          if (chalkPath) chalkPath.setAttribute('stroke-dashoffset', 0);
+          if (arrowPath) { arrowPath.style.transition = 'none'; arrowPath.style.opacity = '1'; }
+        });
+      });
+    }
 
     if (preActive) {
       setTimeout(function () {
