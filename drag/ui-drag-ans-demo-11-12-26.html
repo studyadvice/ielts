@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-drag-ans 拖曳填空</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+/* 版面：左側實際元件、右側程式碼；間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1600px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#51DBCF;margin:0 0 8px 0;}
+.sub{color:#A3C4BC;font-size:1rem;line-height:1.7;margin:0 0 24px 0;}
+code{color:#FFA987;}
+.part{margin:0 0 44px 0;}
+.part > h2{font-size:1.3rem;color:#E3D322;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.part > .lead{color:#86877F;font-size:0.92rem;margin:0 0 16px 0;line-height:1.7;}
+.grid2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:24px;align-items:start;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:24px;min-width:0;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:0;background:#0C0D0C;max-height:520px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;color:#DBEDD8;}
+.ref th{color:#51DBCF;}
+.ref h4{font-size:1rem;color:#B484E8;margin:16px 0 8px 0;}
+#log{position:sticky;top:0;z-index:20;}
+#log .alert{background:#51DBCF;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;margin:0 0 16px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;ui-drag-ans&gt; 拖曳填空</h1>
+  <p class="sub">題目中的空格用 <code>{答案}</code> 標記，元件自動產生對應的小卡。把小卡拖到正確的空格，或先點小卡再點空格，空格就換成格式化的答案，用掉的小卡消失；放錯會彈回原位。比對區分大小寫。滑鼠、觸控、觸控筆都能操作。建立日期 11-12-26。</p>
+  <div id="log"></div>
+
+  <section class="part" data-demo>
+    <h2>範例一：小卡在下方（預設）</h2>
+    <p class="lead"><code>&lt;drag-card&gt;</code> 是干擾卡，不屬於任何空格。全部完成後，剩下的干擾卡會淡出，並出現完成提示與「重做」按鈕。</p>
+    <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+    <script type="text/plain" class="demo-src">
+<ui-drag-ans frame-border="3 solid shell">
+  <p>The bus shelter right outside my house is {equipped with} a real-time display.</p>
+  <p>The bus stop {in view of} my house has a modern shelter.</p>
+  <drag-card>popular with</drag-card>
+</ui-drag-ans>
+    </script>
+  </section>
+
+  <section class="part" data-demo>
+    <h2>範例二：小卡在右側，自訂答對後的格式</h2>
+    <p class="lead">用 <code>&lt;drop-slot answer="答案"&gt;</code> 時，標籤裡的 HTML 就是答對後顯示的內容。這裡也示範方框空格（<code>slot-shape="box"</code>）與底線樣式的填入文字。</p>
+    <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+    <script type="text/plain" class="demo-src">
+<ui-drag-ans theme="violet" bank="right" bank-width="200" slot-shape="box"
+             filled-style="bold underline" frame-radius="12" card-radius="20">
+  <p>I usually <drop-slot answer="go jogging">go <b>jogging</b></drop-slot> in the park
+     <drop-slot answer="first thing in the morning">first thing <i>in the morning</i></drop-slot>,
+     because it helps me {clear my head} before work.</p>
+  <drag-card>go to jogging</drag-card>
+  <drag-card>at the first morning</drag-card>
+</ui-drag-ans>
+    </script>
+  </section>
+
+  <section class="part" data-demo>
+    <h2>範例三：小卡在左側，淺色主題與各部位覆蓋</h2>
+    <p class="lead"><code>theme="shell"</code> 是淺色底。題目框、空格、小卡、填入文字的框線樣式、粗細與顏色都用屬性覆蓋主題。<code>filled-style="highlight"</code> 讓填入的答案帶螢光底。</p>
+    <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+    <script type="text/plain" class="demo-src">
+<ui-drag-ans theme="shell" bank="left" bank-width="190"
+             frame-border="2 dashed indigo" frame-radius="10"
+             slot-border="3 solid indigo" card-border="2 solid indigo" card-bg="vanilla"
+             filled-color="indigo" filled-style="bold highlight" accent="indigo">
+  <p>Many people prefer to live {within walking distance of} a supermarket,
+     while others care more about being {close to} public transport.</p>
+  <drag-card>Close to</drag-card>
+  <drag-card>far away</drag-card>
+</ui-drag-ans>
+    </script>
+  </section>
+
+  <section class="part" data-demo>
+    <h2>範例四：和 ui-cards 協作</h2>
+    <p class="lead">第一張卡片的內文直接放 ui-drag-ans。第二張卡片點開後，內容區從 <code>&lt;template&gt;</code> 複製題目；第三張則從隱藏的 <code>&lt;div&gt;</code> 複製。被複製的題目都會重新建立成可作答的狀態，作答時的點擊也不會觸發卡片本身的點擊功能。</p>
+    <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+    <script type="text/plain" class="demo-src">
+<ui-cards cols="3" panel="below" accent="key">
+  <card-item icon="pencil-square" label="卡片內直接作答">
+    <ui-drag-ans font-size="1" card-font-size="0.9" frame-padding="12 16" card-padding="4 10">
+      <p>It's only {a stone's throw from} my place.</p>
+      <drag-card>a stone from</drag-card>
+    </ui-drag-ans>
+  </card-item>
+  <card-item icon="file-earmark-text" label="從 template 開啟" detail="tpl-q1"></card-item>
+  <card-item icon="files" label="從隱藏 div 開啟" detail="div-q2"></card-item>
+</ui-cards>
+
+<template id="tpl-q1">
+  <ui-drag-ans theme="pink">
+    <p>The café is {packed to the rafters} on weekends.</p>
+    <drag-card>packed with rafters</drag-card>
+  </ui-drag-ans>
+</template>
+
+<div id="div-q2" hidden>
+  <ui-drag-ans theme="violet">
+    <p>I'd say the library is {my go-to spot} for revision.</p>
+    <drag-card>my going spot</drag-card>
+  </ui-drag-ans>
+</div>
+    </script>
+  </section>
+
+  <section class="part" data-demo>
+    <h2>修訂 v1.1.0：放對時小卡逐漸縮小</h2>
+    <p class="lead">放對時，小卡會移到空格中央，逐漸縮小後消失，接著空格才顯示答案。縮小期間空格保持亮起，表示已收下這張卡。拖曳和「點小卡再點空格」都有這個動畫，最後一格的動畫結束後才出現完成提示。<code>shrink-duration</code> 調整縮小時間（毫秒，預設 450），<code>drop-anim="none"</code> 關閉動畫。左邊是慢速 900 毫秒，右邊是關閉動畫，可以對照。</p>
+    <div class="grid2"><div class="stage"></div><pre class="code-box"><code></code></pre></div>
+    <script type="text/plain" class="demo-src">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+  <ui-drag-ans shrink-duration="900" theme="violet" shuffle="false">
+    <p>My flat is {within walking distance of} the station.</p>
+    <drag-card>a long way from</drag-card>
+  </ui-drag-ans>
+  <ui-drag-ans drop-anim="none" shuffle="false">
+    <p>My flat is {within walking distance of} the station.</p>
+    <drag-card>a long way from</drag-card>
+  </ui-drag-ans>
+</div>
+    </script>
+  </section>
+
+  <section class="part">
+    <h2>修訂 v1.1.0：程式碼對照</h2>
+    <p class="lead">v1.0.0 放對時，小卡只淡出並縮到原大小的六成，空格立刻顯示答案。v1.1.0 改成小卡移到空格中央，逐漸縮小再顯示答案；點選作答時也會先複製一張小卡來播放動畫。</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <pre class="code-box"><code>/* v1.0.0 */
+_fill(slot, card, ghost) {
+  slot.innerHTML = slot._filledHtml || esc(slot.dataset.answer);
+  slot.classList.add('uda-filled');
+  if (ghost) {
+    var r = slot.getBoundingClientRect();
+    var a = ghost.animate([
+      { transform: ghost.style.transform, opacity: 1 },
+      { transform: 'translate(' + r.left + 'px,' + r.top + 'px) scale(.6)', opacity: 0 }
+    ], { duration: 220, easing: 'ease-in', fill: 'forwards' });
+    a.onfinish = function () { ghost.remove(); };
+  }
+  card.classList.remove('uda-lifted');
+  card.classList.add('uda-gone');
+  setTimeout(function () { card.remove(); }, 220);
+}</code></pre>
+      <pre class="code-box"><code>/* v1.1.0 */
+_fill(slot, card, ghost, instant) {
+  var dur = parseInt(this._val('shrink-duration'), 10);
+  if (!(dur >= 0)) dur = 450;
+  var anim = String(this._val('drop-anim')).toLowerCase() === 'none' || instant ? 'none' : 'shrink';
+  slot.classList.add('uda-filled');   /* 先鎖住空格 */
+  slot.classList.add('uda-wait');     /* 縮小期間空格保持亮起 */
+  function reveal() {
+    slot.innerHTML = slot._filledHtml || esc(slot.dataset.answer);
+    slot.classList.remove('uda-wait');
+  }
+  if (anim === 'shrink' &amp;&amp; dur &gt; 0) {
+    if (!ghost) ghost = this._makeGhost(card, card.getBoundingClientRect());
+    var r = slot.getBoundingClientRect();
+    var w = ghost.offsetWidth, h = ghost.offsetHeight;
+    var to = 'translate(' + (r.left + r.width / 2 - w / 2) + 'px,' +
+             (r.top + r.height / 2 - h / 2) + 'px)';
+    var a = ghost.animate([
+      { transform: ghost.style.transform, opacity: 1 },
+      { transform: to + ' scale(.75)', opacity: 1, offset: 0.35 },
+      { transform: to + ' scale(.4)',  opacity: 1, offset: 0.75 },
+      { transform: to + ' scale(.05)', opacity: 0 }
+    ], { duration: dur, easing: 'ease-in', fill: 'forwards' });
+    a.onfinish = function () { ghost.remove(); reveal(); };
+  } else {
+    if (ghost) ghost.remove();
+    reveal();
+    dur = 0;
+  }
+  card.classList.remove('uda-lifted');
+  card.classList.add('uda-gone');
+  setTimeout(function () { card.remove(); }, 220);
+  return dur;   /* 最後一格等動畫結束才觸發完成 */
+}</code></pre>
+    </div>
+  </section>
+
+  <section class="part">
+    <h2>屬性、事件與方法</h2>
+    <p class="lead">顏色可寫色票名稱（background、bg-alternative、shell、vanilla、yellow、pink、red、green、blue、indigo、violet、gray、key、calm、quiet、playful、urgent、energetic、dreamy）或任何 CSS 顏色；邊框寫成「粗細 樣式 顏色」，例如 <code>2 solid key</code>，純數字視為 px，<code>none</code> 為無邊框。</p>
+    <table class="ref">
+      <thead><tr><th style="width:260px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3"><h4>內容與行為</h4></td></tr>
+        <tr><td><code>{答案}</code></td><td></td><td>寫在題目文字中，產生空格與一張小卡。要顯示一般大括號時寫 <code>\{</code>、<code>\}</code>；code、pre 內的大括號不處理。</td></tr>
+        <tr><td><code>&lt;drop-slot answer&gt;</code></td><td></td><td>空格的另一種寫法，標籤裡的 HTML 是答對後顯示的內容。</td></tr>
+        <tr><td><code>&lt;drag-card&gt;</code></td><td></td><td>干擾卡。內文可含 HTML；比對值為文字內容，也可用 <code>value</code> 指定。</td></tr>
+        <tr><td><code>bank</code></td><td><code>bottom</code></td><td>小卡位置：<code>bottom</code>、<code>left</code>、<code>right</code>。</td></tr>
+        <tr><td><code>shuffle</code></td><td>開啟</td><td>小卡隨機排列；<code>shuffle="false"</code> 依出現順序（先干擾卡，再依空格順序）。</td></tr>
+        <tr><td><code>reset-button</code></td><td><code>done</code></td><td>「重做」按鈕：<code>done</code> 完成後出現、<code>always</code> 一直顯示、<code>none</code> 不顯示。</td></tr>
+        <tr><td><code>label-done</code>、<code>label-reset</code></td><td>全部完成！、重做</td><td>完成提示與按鈕文字。</td></tr>
+        <tr><td><code>drop-anim</code></td><td><code>shrink</code></td><td>放對時的動畫：<code>shrink</code> 小卡移到空格中央逐漸縮小，<code>none</code> 不播放。（v1.1.0）</td></tr>
+        <tr><td><code>shrink-duration</code></td><td><code>450</code></td><td>縮小動畫的時間，單位毫秒。（v1.1.0）</td></tr>
+        <tr><td colspan="3"><h4>主題與覆蓋</h4></td></tr>
+        <tr><td><code>theme</code></td><td><code>key</code></td><td><code>key</code>、<code>violet</code>、<code>pink</code>（深色底），<code>shell</code>（淺色底）。下列屬性都能覆蓋主題。</td></tr>
+        <tr><td><code>accent</code></td><td>依主題</td><td>強調色：選取中的小卡外框、拖曳經過空格的底色、完成提示。</td></tr>
+        <tr><td><code>frame-border</code>、<code>frame-radius</code>、<code>frame-bg</code>、<code>frame-color</code>、<code>frame-padding</code></td><td>依主題、0、依主題、依主題、24 40</td><td>題目框。</td></tr>
+        <tr><td><code>slot-border</code>、<code>slot-shape</code>、<code>slot-width</code>、<code>slot-hover-color</code></td><td>依主題、<code>line</code>、自動、依 accent</td><td>空格。<code>line</code> 只有底線，<code>box</code> 為方框；寬度預設依最長的答案自動計算，所有空格同寬。</td></tr>
+        <tr><td><code>card-border</code>、<code>card-radius</code>、<code>card-bg</code>、<code>card-color</code>、<code>card-padding</code></td><td>依主題、0、依主題、依主題、8 20</td><td>小卡。</td></tr>
+        <tr><td><code>bank-border</code>、<code>bank-bg</code>、<code>bank-gap</code>、<code>bank-padding</code>、<code>bank-width</code></td><td>none、透明、10、0、220</td><td>小卡區；<code>bank-width</code> 用於左右兩側。</td></tr>
+        <tr><td><code>filled-color</code>、<code>filled-style</code></td><td>依主題、<code>bold</code></td><td>填入的答案。<code>filled-style</code> 可組合 <code>bold</code>、<code>underline</code>、<code>highlight</code>、<code>italic</code>，空白分隔。</td></tr>
+        <tr><td><code>font-size</code>、<code>card-font-size</code></td><td>1.25、1</td><td>題目與小卡字級，純數字視為 rem。</td></tr>
+        <tr><td colspan="3"><h4>事件與方法</h4></td></tr>
+        <tr><td><code>drag-ans:correct</code></td><td><code>{ answer, slot }</code></td><td>放對時。</td></tr>
+        <tr><td><code>drag-ans:wrong</code></td><td><code>{ answer, expected, slot }</code></td><td>放錯時。</td></tr>
+        <tr><td><code>drag-ans:complete</code></td><td><code>{ wrong, total }</code></td><td>全部空格完成時，<code>wrong</code> 為放錯次數。</td></tr>
+        <tr><td><code>drag-ans:reset</code></td><td></td><td>重做時。</td></tr>
+        <tr><td><code>reset()</code>、<code>revealAll()</code>、<code>progress</code></td><td></td><td>重做；直接填入全部答案；目前進度 <code>{ filled, total, wrong }</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+  /* 用 Bootstrap alert 顯示完成事件 */
+  document.addEventListener('drag-ans:complete', e => {
+    document.getElementById('log').innerHTML = '<div class="alert alert-dismissible fade show" role="alert">drag-ans:complete：' +
+      e.detail.total + ' 個空格全部完成，放錯 ' + e.detail.wrong + ' 次。' +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../layout/ui-cards.js"></script>
+<script src="ui-drag-ans.js"></script>
+</body>
+</html>
