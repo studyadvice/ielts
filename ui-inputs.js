@@ -1,77 +1,3 @@
-/*!
- * ui-inputs.js — 輸入／驗證類元件集合
- *
- * 目前包含：
- * - <ui-otp>：單一 input 版 OTP 輸入／驗證元件，另外還有一個「生成模式」
- *   可以隨機產生一組驗證碼給使用者複製。
- * - <ui-blank>：單行輸入填充題元件，自帶 Bootstrap Icons 的送出按鈕與內建驗證。
- *   mode="cli" 時改為模擬 CLI 畫面的對話播放器（自動打字播放，也可換使用者輸入），
- *   說明見檔案後段的 <ui-blank mode="cli"> 區塊。
- *
- * ========================= <ui-otp> mode="input"（預設） =========================
- *
- * 用法：
- * <ui-otp length="6" groups="3,3" type="numeric" expected-value="123456"></ui-otp>
- *
- * 內部只有一個真正接收鍵盤輸入的 <input>（opacity:0，蓋滿整個元件，
- * 點任何一格都會聚焦到它），畫面上看到的每一格都是純展示用的 <div>，
- * 內容由 JS 依照 input 目前的 value 同步產生。好處是不用處理「跳格」
- * 「倒退鍵合併」這類焦點邏輯 —— 原生 input 本來就會處理游標移動、
- * 選取、刪除、貼上整串驗證碼；元件只負責把 value 拆開顯示、畫出目前
- * 作用中那一格的 focus ring，以及處理驗證。
- *
- * 三種驗證方式（依序判斷）：
- * 1. 給 check-url：填滿後自動打後端 API 確認這組碼是否存在資料庫（見下方
- *    「後端驗證／查重」說明），回來的結果決定 valid/invalid。
- * 2. 沒有 check-url、但有給 expected-value：前端比對，填滿自動比對。
- * 3. 兩者都沒給：外部非同步驗證模式，監聽 'otp-complete' 事件自行打 API，
- *    驗證完呼叫 el.setState('valid' | 'invalid' | 'idle')。
- *
- * 事件：
- * - 'otp-input'：每次內容變動，detail = { value, complete }
- * - 'otp-complete'：填滿整組格子時，detail = { value, valid }
- *   （valid 在前端比對／後端驗證模式下是 true/false，外部驗證模式下是 null）
- *
- * clear-on-invalid（布林）：驗證失敗時自動清空重輸，延遲時間由 clear-delay
- * 控制（毫秒，預設 700）。
- *
- * ========================= <ui-otp> mode="generate" =========================
- *
- * 用法：
- * <ui-otp mode="generate" length="16" separator="-" groups="4,4,4,4"
- *   check-url="check_code.php"></ui-otp>
- *
- * 連結到畫面時自動隨機產生一組碼（唯讀展示，非輸入），格子旁邊會有一個
- * 複製到剪貼簿的按鈕。格式可以用 length/groups/separator（跟 input 模式
- * 共用同一套概念），或是改用更彈性的 format 屬性直接寫版型字串，例如
- * format="OOOO-OOOOO-OOOOOO"，用 O 代表一個產生出來的字元，其他字元
- * 原樣當作固定分隔符號插入（有給 format 就以它為準，忽略 length/groups）。
- *
- * exclude-ambiguous（布林，預設開）：排除容易看錯的字元（0/O、1/I/l）。
- *
- * 後端驗證／查重（check-url，generate 與 input 模式共用同一套屬性）：
- * - check-url：後端驗證端點網址。
- * - check-method：GET 或 POST，預設 POST。
- * - check-param：送出碼時的參數名稱，預設 "code"。
- * - check-field：後端回傳 JSON 裡「是否存在」欄位的名稱，預設 "exists"
- *   （值是布林，true 代表已存在於資料庫）。
- * - check-max-retries：generate 模式下，重複就重骰的次數上限，預設 5。
- *
- * generate 模式事件：
- * - 'otp-check-start'：開始打 API 檢查，detail = { value }
- * - 'otp-check-result'：單次檢查結果，detail = { value, exists }
- * - 'otp-generated'：最終確定可用的碼，detail = { value, attempts }
- * - 'otp-check-exhausted'：超過重試上限仍重複，detail = { value, attempts }
- * - 'otp-check-error'：API 本身出錯，detail = { error }
- * - 'otp-copied'：複製成功，detail = { value }
- *
- * 公開方法／屬性（JS property，非 HTML attribute）：
- * - el.value（get/set）
- * - el.reset()：input 模式清空重填；generate 模式重新產生一組新碼
- * - el.generate()：generate 模式專用，手動重新產生（會重跑 check-url 查重）
- * - el.setState('valid' | 'invalid' | 'idle')
- * - el.focus()
- */
 (function () {
   'use strict';
 
@@ -1817,7 +1743,7 @@ ui-blank .ucli-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
 
   customElements.define('ui-blank', UiBlank);
 })();
-/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
+
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
