@@ -13,6 +13,7 @@
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
     /* 版面 */ height: 0, gap: 14, gapSame: -1, gapSystem: -1, padding: 16, bubbleWidth: 78, bubbleRadius: 12, bubblePadding: '10px 14px', lineHeight: 1.6,
                fontSize: '1rem', metaSize: '0.75rem', bordered: true, borderWidth: 1, bubbleBorderWidth: 0, avatar: true, avatarSize: 36, avatarPosition: 'top',
+    /* 標題 */ titleSize: '1.2rem', titleWeight: 700, titleColor: 'violet',
     /* 色彩 */ accent: 'key', borderColor: 'bg-alternative', textColor: 'vanilla', background: 'base', markColor: '',
                teacherColor: 'key', studentColor: 'violet', systemColor: 'gray', pauseColor: 'yellow',
     /* 動畫與暫停 */ animation: 'slide', cursor: true, typingIndicator: false, pauseIcon: 'hand-index-thumb', pauseText: '點一下繼續', pauseStyle: 'button'
@@ -29,7 +30,7 @@
   const CSS = `
 ui-stream{display:block;color:${PALETTE.shell};font-size:var(--us-fs);}
 ui-stream:not([data-ready]){visibility:hidden;}
-ui-stream .us-title{font-size:1.2rem;font-weight:700;color:${PALETTE.violet};margin:0 0 12px 0;}
+ui-stream .us-title{font-size:var(--us-tfs);font-weight:var(--us-tfw);color:var(--us-tc);margin:0 0 12px 0;}
 ui-stream .us-wrap{position:relative;border:var(--us-wbw,1px) solid var(--us-border);border-radius:10px;background:var(--us-bg);display:flex;flex-direction:column;overflow:hidden;}
 ui-stream .us-wrap.us-noborder{border:0;border-radius:0;}
 ui-stream .us-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--us-border);}
@@ -192,6 +193,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       sv('--us-pad', o.padding + 'px'); sv('--us-bw', o.bubbleWidth + '%'); sv('--us-br', o.bubbleRadius + 'px'); sv('--us-bp', o.bubblePadding); sv('--us-lh', o.lineHeight); sv('--us-av', o.avatarSize + 'px');
       sv('--us-accent', color(o.accent)); sv('--us-border', color(o.borderColor)); sv('--us-text', color(o.textColor)); sv('--us-pc', color(o.pauseColor)); sv('--us-bg', color(o.background));
       if (o.markColor) sv('--us-mark', color(o.markColor));
+      sv('--us-tfs', fs(o.titleSize)); sv('--us-tfw', o.titleWeight); sv('--us-tc', color(o.titleColor));
       sv('--us-wbw', Math.max(0, o.borderWidth) + 'px');
       if (o.bubbleBorderWidth > 0) sv('--us-bbw', o.bubbleBorderWidth + 'px');
       if (this._title) this.appendChild(el('div', 'us-title', this._title));

@@ -31,7 +31,7 @@
 <body>
 <div class="wrap">
   <h1><code>&lt;ui-stream&gt;</code> 內容流 v0.4：新增氣泡樣式與外框粗細</h1>
-  <p class="sub">新增 double（雙線框）、notch（切角框）、callout（引線框）三種氣泡樣式，以及 border-width（整個元件外框粗細）、bubble-border-width（氣泡邊框粗細）。完整用法請參考 ui-stream-demo-11-11-26.html。</p>
+  <p class="sub">新增 double（雙線框）、notch（切角框）、callout（引線框）三種氣泡樣式，以及 border-width（整個元件外框粗細）、bubble-border-width（氣泡邊框粗細）、title-size、title-weight、title-color（標題樣式）。完整用法請參考 ui-stream-demo-11-11-26.html。</p>
 
   <!-- ══════════ 範例 1 ══════════ -->
   <section>
@@ -90,6 +90,28 @@
     </div>
   </section>
 
+  <!-- ══════════ 範例 3 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 3：標題樣式</h2><p>title-size、title-weight、title-color 調整 title 的字級、粗細與顏色。</p></div>
+    <div class="two">
+      <div>
+        <ui-stream id="ex3a" autoplay delay="300" height="200" title="預設標題樣式">
+          <stream-item from="teacher" name="老師">預設為 1.2rem、700、violet。</stream-item>
+        </ui-stream>
+        <div style="height:16px"></div>
+        <ui-stream id="ex3b" autoplay delay="300" height="200" title="Speaking Part 3" title-size="1.6rem" title-weight="400" title-color="key">
+          <stream-item from="teacher" name="老師">標題改為 1.6rem、400、key。</stream-item>
+        </ui-stream>
+      </div>
+      <pre>&lt;ui-stream title="預設標題樣式"&gt;…&lt;/ui-stream&gt;
+
+&lt;ui-stream title="Speaking Part 3"
+           title-size="1.6rem" title-weight="400" title-color="key"&gt;
+  …
+&lt;/ui-stream&gt;</pre>
+    </div>
+  </section>
+
   <!-- ══════════ 屬性 ══════════ -->
   <section>
     <div class="sec-title"><h2>新增的屬性與樣式</h2></div>
@@ -97,11 +119,14 @@
       <tr><th>屬性／值</th><th>預設值</th><th>說明</th></tr>
       <tr><td>border-width</td><td>1</td><td>整個元件外框粗細（px）。bordered="false" 時仍為無外框。</td></tr>
       <tr><td>bubble-border-width</td><td>0</td><td>所有氣泡的邊框粗細（px）。0 表示依各樣式的預設值：filled、outline、dashed 為 1，double 為 4，notch 為 1.5，callout 為 3。</td></tr>
+      <tr><td>title-size</td><td>1.2rem</td><td>標題字級。只寫數字視為 rem。</td></tr>
+      <tr><td>title-weight</td><td>700</td><td>標題粗細，例如 400、700、800。</td></tr>
+      <tr><td>title-color</td><td>violet</td><td>標題顏色，可用色票名稱或 hex。</td></tr>
       <tr><td>style="double"</td><td></td><td>雙線框。雙線需要 3px 以上才看得出兩條線。</td></tr>
       <tr><td>style="notch"</td><td></td><td>切角框：邊框為角色色，底色是角色色和背景色調和出的實色。靠左切右上角，靠右切左上角，切角大小沿用 bubble-radius（最小 6px）。</td></tr>
       <tr><td>style="callout"</td><td></td><td>引線框：粗框外側有一條分離的直線，直線上拉出折線引線指向頭像。頭像在上（預設）時引線往上，avatar-position="bottom" 時往下。氣泡會往內縮 78px 讓出引線空間。</td></tr>
     </table>
-    <p style="color:#86877F;font-size:0.9rem">全域設定同樣適用：<code>window.UiStreamConfig = { borderWidth: 2, bubbleBorderWidth: 0 }</code>。JSON 的 roles 也可以寫 <code>"style": "notch"</code>。</p>
+    <p style="color:#86877F;font-size:0.9rem">全域設定同樣適用：<code>window.UiStreamConfig = { borderWidth: 2, bubbleBorderWidth: 0, titleSize: '1.4rem', titleColor: 'key' }</code>。JSON 的 roles 也可以寫 <code>"style": "notch"</code>。</p>
   </section>
 
   <!-- ══════════ 版本對照 ══════════ -->
@@ -113,6 +138,9 @@
 <pre>/* 預設值 */
 bordered: true, avatar: true, …
 
+/* 標題 */
+.us-title{font-size:1.2rem;font-weight:700;color:${PALETTE.violet};…}
+
 /* 外框與氣泡 */
 .us-wrap{border:1px solid var(--us-border);…}
 .us-bubble{border:1px solid var(--us-c);…}
@@ -123,6 +151,10 @@ bordered: true, avatar: true, …
         <h4 class="new">v0.4</h4>
 <pre>/* 預設值 */
 bordered: true, borderWidth: 1, bubbleBorderWidth: 0, avatar: true, …
+titleSize: '1.2rem', titleWeight: 700, titleColor: 'violet',
+
+/* 標題 */
+.us-title{font-size:var(--us-tfs);font-weight:var(--us-tfw);color:var(--us-tc);…}
 
 /* 外框與氣泡 */
 .us-wrap{border:var(--us-wbw,1px) solid var(--us-border);…}
