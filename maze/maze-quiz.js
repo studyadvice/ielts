@@ -1,5 +1,5 @@
 /*!
- * maze-quiz.js v1.4.0
+ * maze-quiz.js v1.5.0
  * <maze-quiz> 迷宮填空動畫元件，<maze-quiz-panel> 外部題目面板
  *
  * 每次載入隨機生成「唯一解」迷宮（遞迴回溯法產生的完美迷宮，任兩格之間只有一條路），
@@ -37,6 +37,8 @@
  *   entry-icon    入口改用 Bootstrap Icons 圖示，填圖示名稱，例如 "geo-alt-fill"（也接受 "bi-geo-alt-fill"）
  *   exit-icon     出口改用 Bootstrap Icons 圖示，例如 "flag-fill"
  *                 元件本身不載入圖示檔，網頁需自行引用 bootstrap-icons 的 CSS；未設定時維持圓點
+ *   exit-pulse    抵達出口時的放大倍率，範圍 1 到 4（預設 1.9）；1 等於不放大。圓點與 exit-icon 圖示都適用，
+ *                 圖示的範圍會跟著倍率加大，放大時不會被裁切
  *   chip-shape    出口答案標籤的形狀：pill（預設膠囊）、rounded（圓角）、square（直角），或純數字（圓角 px）
  *   chip-bg       答案標籤底色（預設 #E3D322）
  *   chip-color    答案標籤文字色（預設 #0C0D0C）
@@ -115,7 +117,7 @@ ${H} .mq-btn.mq-new:hover{background:#B484E8;color:#0C0D0C}
 ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#86877F;background:#0C0D0C;cursor:not-allowed}
 .maze-quiz-chip{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;font-family:"Segoe UI","Noto Sans TC",system-ui,sans-serif;font-weight:800;border-radius:999px;border-style:solid;border-color:#0C0D0C;background:#E3D322;color:#0C0D0C;white-space:nowrap;transform:translate(-50%,-50%) scale(0)}
 .maze-quiz-confetti{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:9998}
-@keyframes mq-pulse{0%{transform:scale(1)}50%{transform:scale(1.9)}100%{transform:scale(1)}}
+@keyframes mq-pulse{0%{transform:scale(1)}50%{transform:scale(var(--mq-pulse,1.9))}100%{transform:scale(1)}}
 @keyframes mq-fill{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
 `;
   /* 把屬性值的類別同步到元素上：移除上次加入、這次沒有的類別，回傳這次的類別清單 */
@@ -414,7 +416,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     static get observedAttributes() {
       return ['question', 'answer', 'cols', 'rows', 'maze-width', 'cell-size', 'route-colors', 'controls',
         'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play',
-        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon', 'panel-class'];
+        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon', 'panel-class', 'exit-pulse'];
     }
 
     constructor() {
@@ -500,6 +502,9 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
           break;
         case 'panel-class':
           this._applyPanelClass();
+          break;
+        case 'exit-pulse':
+          this._updateScale();
           break;
         case 'label-reveal':
         case 'show-reveal':
@@ -697,6 +702,8 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
 
     // 依迷宮實際顯示大小調整線條最細值，並計算答案標籤與彩帶的縮放倍率。
     _updateScale() {
+      const pulse = this._pulse();
+      if (this.$svg) this.$svg.style.setProperty('--mq-pulse', pulse);
       const vb = this._vb;
       if (!vb || !this.$walls) return;
       const r = this.$svg.getBoundingClientRect();
@@ -710,19 +717,26 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this.$reveal.setAttribute('stroke-width', route + 2 / s);
       const mark = Math.max(CELL * 0.2, 4 / s);
       const icon = Math.max(CELL * 0.6, 14 / s);
-      this._sizeMark(this.$in, this._entry, mark, icon);
-      this._sizeMark(this.$out, this._exit, mark, icon);
+      this._sizeMark(this.$in, this._entry, mark, icon, 2);
+      this._sizeMark(this.$out, this._exit, mark, icon, Math.max(2, pulse));
       this.$head.setAttribute('r', Math.max(CELL * 0.22, 4.5 / s));
       this.$head.setAttribute('stroke-width', Math.max(3, 1.5 / s));
     }
 
-    // 圓點設定半徑；圖示設定 foreignObject 範圍（取兩倍大小，讓脈動放大時不被裁切）。
-    _sizeMark(el, pt, r, icon) {
+    // 抵達出口時的放大倍率：1 到 4，預設 1.9。
+    _pulse() {
+      const v = parseFloat(this.getAttribute('exit-pulse'));
+      return Number.isFinite(v) ? clamp(v, 1, 4) : 1.9;
+    }
+
+    // 圓點設定半徑；圖示設定 foreignObject 範圍（box 倍的圖示大小，至少兩倍，讓脈動放大時不被裁切）。
+    _sizeMark(el, pt, r, icon, box) {
       if (el.tagName.toLowerCase() === 'circle') { el.setAttribute('r', r); return; }
-      el.setAttribute('x', pt[0] - icon);
-      el.setAttribute('y', pt[1] - icon);
-      el.setAttribute('width', icon * 2);
-      el.setAttribute('height', icon * 2);
+      const half = icon * box / 2;
+      el.setAttribute('x', pt[0] - half);
+      el.setAttribute('y', pt[1] - half);
+      el.setAttribute('width', half * 2);
+      el.setAttribute('height', half * 2);
       // 位於 SVG 內，px 即迷宮座標單位，會隨迷宮等比縮放。
       el.firstElementChild.style.fontSize = icon + 'px';
     }

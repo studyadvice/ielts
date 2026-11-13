@@ -22,6 +22,10 @@
   .ver.v7{background:#778CE1}
   .ver.v8{background:#E3D322}
   .ver.v9{background:#71CD76}
+  .ver.v10b{background:#FF91D7}
+  .pulse-row{display:flex;gap:32px}
+  .pulse-row > div{flex:1 1 0;min-width:0}
+  .pulse-row h4{font-size:1rem;font-weight:700;color:#FFA987;margin:0 0 8px}
   .switch-row{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 16px}
   .switch-row .btn{font-size:.9375rem;border-color:#778CE1;color:#778CE1;padding:6px 16px}
   .switch-row .btn.active,.switch-row .btn:hover{background:#778CE1;color:#0C0D0C;border-color:#778CE1}
@@ -67,7 +71,7 @@
 </head>
 <body>
 <div class="page">
-  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.4.0</span></h1>
+  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.5.0</span></h1>
   <p class="lead-text">每次重新整理都會生成新的唯一解迷宮，從左下入口描繪路徑到右上出口，噴出彩帶後答案飛入空格。</p>
   <div class="info-box">迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，因此入口到出口的路徑必定唯一。彩帶不使用透明度，改以縮小或落出畫面的方式退場。</div>
   <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的迷宮。</div>
@@ -257,6 +261,22 @@
     </script>
   </maze-quiz>
 
+  <!-- ===================== 修改九範例 ===================== -->
+  <h2>範例二十二：出口放大倍率 exit-pulse<span class="ver v10b">修改九</span></h2>
+  <p class="note">左邊 <code>exit-pulse="1.4"</code>（圓點出口），右邊 <code>exit-pulse="3"</code>（exit-icon 圖示出口，圖示範圍會跟著加大，不會被裁切）。預設是 1.9，設為 1 等於不放大。</p>
+  <div class="pulse-row">
+    <div>
+      <h4>exit-pulse="1.4"</h4>
+      <maze-quiz id="m22a" cols="8" rows="6" autoplay="false" exit-pulse="1.4" route-colors="key,pink"
+                 question="I have lived here _____ 2019." answer="since"></maze-quiz>
+    </div>
+    <div>
+      <h4>exit-pulse="3" exit-icon="flag-fill"</h4>
+      <maze-quiz id="m22b" cols="8" rows="6" autoplay="false" exit-pulse="3" exit-icon="flag-fill" route-colors="yellow,urgent"
+                 question="He is good _____ playing chess." answer="at"></maze-quiz>
+    </div>
+  </div>
+
   <hr class="divider">
 
   <h2>屬性、事件與方法</h2>
@@ -294,6 +314,7 @@
           <tr><td><code>chip-shape</code><span class="ver v6">修改五</span></td><td>出口答案標籤的形狀：pill 膠囊、rounded 圓角、square 直角，或純數字（圓角 px，隨迷宮大小等比縮放）。</td><td>pill</td></tr>
           <tr><td><code>chip-bg</code><span class="ver v6">修改五</span></td><td>答案標籤底色，接受色碼、色票名稱或 CSS 色名。</td><td>#E3D322</td></tr>
           <tr><td><code>chip-color</code><span class="ver v6">修改五</span></td><td>答案標籤文字色。</td><td>#0C0D0C</td></tr>
+          <tr><td><code>exit-pulse</code><span class="ver v10b">修改九</span></td><td>抵達出口時的放大倍率，範圍 1 到 4；1 等於不放大。圓點與 exit-icon 圖示都適用，圖示範圍會跟著倍率加大，不會被裁切。</td><td>1.9</td></tr>
           <tr><td><code>panel-class</code><span class="ver v8">修改七</span></td><td>內建題目區的額外 class，加在 .mq-panel 上，例如 p-3 bp-lnh-5，規則與外部面板的 extra-class 相同。有外部面板時內建題目區不顯示，此屬性不作用。可用 JS 隨時修改。</td><td>無</td></tr>
         </tbody>
       </table>
@@ -330,6 +351,9 @@
 
 <span class="c">&lt;!-- 面板額外的 class：Bootstrap 與 bp-styles.css 都可以 --&gt;</span>
 <span class="t">&lt;maze-quiz-panel</span> <span class="a">for</span>=<span class="s">"m4"</span> <span class="a">extra-class</span>=<span class="s">"p-3 bp-lnh-5"</span><span class="t">&gt;&lt;/maze-quiz-panel&gt;</span>
+
+<span class="c">&lt;!-- 出口放大倍率 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">exit-pulse</span>=<span class="s">"1.4"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
 
 <span class="c">&lt;!-- 題目換行 --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">question</span>=<span class="s">"A: Why are you so tired?&lt;br&gt;B: I _____ up all night studying."</span> <span class="a">answer</span>=<span class="s">"stayed"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
@@ -373,7 +397,7 @@ document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; cons
 
   <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
   <h2>修改紀錄與程式碼對照</h2>
-  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0，修改七收錄在 1.3.0，修改八收錄在 1.4.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
+  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0，修改七收錄在 1.3.0，修改八收錄在 1.4.0，修改九收錄在 1.5.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
 
   <h3 style="color:#B484E8">修改一</h3>
 
@@ -682,6 +706,25 @@ this.$question.append(blank, <span class="del">document.createTextNode(after)</s
 <span class="add">appendWithBreaks(this.$question, before);</span>
 this.$question.append(blank);
 <span class="add">appendWithBreaks(this.$question, after);</span></pre></div>
+  </div>
+
+  <h3 style="color:#FF91D7;margin-top:48px">修改九</h3>
+
+  <h3>19. 出口放大倍率 exit-pulse</h3>
+  <p class="cmp-desc">倍率原本寫死在 @keyframes。修改九改用 CSS 變數 --mq-pulse，寫在迷宮的 svg 上，不影響元件外殼的樣式。圖示出口的 foreignObject 原本固定是圖示的兩倍大，現在取「兩倍」與「倍率」較大的一個。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改八</div><pre class="code">@keyframes mq-pulse{50%{transform:<span class="del">scale(1.9)</span>}}
+
+<span class="c">// foreignObject 固定兩倍大</span>
+el.setAttribute('width', <span class="del">icon * 2</span>);</pre></div>
+    <div><div class="cmp-head new">修改九</div><pre class="code">&lt;maze-quiz <span class="add">exit-pulse="1.4"</span>&gt;
+
+@keyframes mq-pulse{50%{transform:<span class="add">scale(var(--mq-pulse,1.9))</span>}}
+
+<span class="add">const pulse = clamp(parseFloat(exit-pulse), 1, 4) || 1.9;
+this.$svg.style.setProperty('--mq-pulse', pulse);
+const half = icon * Math.max(2, pulse) / 2;</span>
+el.setAttribute('width', <span class="add">half * 2</span>);</pre></div>
   </div>
 
   <!-- ===================== 範例六的面板 ===================== -->

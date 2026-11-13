@@ -2,14 +2,14 @@
 
 `<maze-quiz>` 是迷宮填空動畫元件。每次載入都會隨機生成一座只有一條路的迷宮，從左下入口描繪路徑到右上出口，抵達後在出口噴出彩帶，答案從出口跳出並飛進題目的空格。題目區可以用 `<maze-quiz-panel>` 拆到同一網頁的任何位置。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.4.0
+- 版本：1.5.0
 - 建立日期：11-12-26
 - 更新日期：11-13-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `maze-quiz.js` | `<maze-quiz>`、`<maze-quiz-panel>` | 迷宮填空動畫與外部題目面板。 |
-| `maze-quiz-demo-11-13-26.html` | | 互動範例二十一則，附修改一到修改八的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
+| `maze-quiz-demo-11-13-26.html` | | 互動範例二十二則，附修改一到修改九的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
 
 ## 目錄
 
@@ -73,6 +73,7 @@
 | `reveal-bg` | 無背景 | 揭曉文字的背景色；設定後以圓角色塊呈現（內距 6px 16px）。 |
 | `entry-icon` | 綠色圓點 | 入口改用 Bootstrap Icons，填圖示名稱，例如 `geo-alt-fill`（也接受 `bi-geo-alt-fill`）。 |
 | `exit-icon` | 粉紅圓點 | 出口改用 Bootstrap Icons，例如 `flag-fill`，抵達時一樣會脈動。 |
+| `exit-pulse` | `1.9` | 抵達出口時的放大倍率，範圍 1 到 4；`1` 等於不放大。圓點與 `exit-icon` 圖示都適用，圖示範圍會跟著倍率加大，不會被裁切。 |
 | `chip-shape` | `pill` | 出口答案標籤的形狀：`pill` 膠囊、`rounded` 圓角、`square` 直角，或純數字（圓角 px，隨迷宮大小等比縮放）。 |
 | `chip-bg` | `#E3D322` | 答案標籤底色。 |
 | `chip-color` | `#0C0D0C` | 答案標籤文字色。 |
@@ -160,6 +161,7 @@ document.addEventListener('answer-revealed', e => console.log(e.detail.answer));
 
 | 版本 | 內容 |
 | --- | --- |
+| 1.5.0 | 新增 `exit-pulse`，可調整抵達出口時的放大倍率。 |
 | 1.4.0 | `question` 與題庫的 `q` 支援 `<br>` 換行。 |
 | 1.3.0 | `<maze-quiz>` 新增 `panel-class`，內建題目區也能直接加類別。 |
 | 1.2.0 | `<maze-quiz-panel>` 新增 `extra-class`；題目框的預設樣式降低權重，字級改以題目框為基準。 |
