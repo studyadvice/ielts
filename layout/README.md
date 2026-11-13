@@ -536,6 +536,27 @@
 | `align` | 內文對齊方式 |
 | `detail-title`／`toggle`／`disabled` | 與細節按鈕相同 |
 
+### template 快速分欄
+
+`source` 或 `detail` 指向的 `<template>` 裡，一行寫上 `|` 就會自動分欄。一行指的是 template 裡的一個換行，或一個 `<p>`、`<div>` 區塊。連續含 `|` 的行共用同一組欄位、上下對齊；欄數不同時，較短那行最後一欄延伸到底。分欄內可以放 `detail` 按鈕。沒有 `|` 的行照一般文字顯示，清單、表格等區塊照原樣保留。要顯示直線本身請寫 `\|`。只作用於 `<template>`，一般元素來源不分欄；沒有 `|` 的 template 完全不受影響。
+
+```html
+<template id="v-home" cols="auto 1fr auto">
+  <b>cosy</b> | 溫馨舒適 | <button detail="e-cosy" label="cosy">例句</button>
+  <b>spacious</b> | 寬敞 | <button detail="e-spacious" label="spacious">例句</button>
+</template>
+```
+
+| 屬性 | 放在 | 預設值 | 說明 |
+|---|---|---|---|
+| `split` | `<ui-drill>` 或 `<template>` | `true` | 設為 `false` 關閉分欄。 |
+| `split-cols` | `<ui-drill>`；template 上用 `cols` | （等寬） | 欄寬，寫法同 CSS `grid-template-columns`。 |
+| `split-divider` | `<ui-drill>`；template 上用 `col-divider` | `none` | 欄間直線：`none`、`solid`、`dashed`、`dotted`。 |
+| `split-divider-color` | `<ui-drill>` | `accent` | 欄間直線顏色。 |
+| `split-col-gap`、`split-row-gap` | `<ui-drill>` | `16`、`6` | 欄距、列距（px）。 |
+
+範例見 `ui-drill-demo-11-13-26.html`。
+
 ### CSS 覆寫
 
 元件不使用 Shadow DOM，所有類別都以 `uid-` 開頭，可以直接覆寫：

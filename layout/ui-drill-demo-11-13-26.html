@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-drill：template 快速分欄（11-13-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.6rem;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  h2{font-size:1.2rem;color:#B484E8;margin:0 0 8px 0;}
+  .desc{color:#A3C4BC;font-size:0.9rem;margin:0 0 12px 0;}
+  section{margin:0 0 48px 0;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:12px 0 0 0;white-space:pre-wrap;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#E3D322;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;ui-drill&gt;</code> template 快速分欄</h1>
+  <p class="sub">source 或 detail 指向的 &lt;template&gt; 裡，一行寫上 | 就會自動分欄；連續幾行共用欄位、上下對齊。分欄內可以放 detail 按鈕。沒有 | 的 template 完全不受影響。</p>
+
+  <section>
+    <h2>範例 1：單字表（中欄）與對照（右欄）</h2>
+    <p class="desc">中欄每行三欄：單字、中文、例句按鈕，欄寬用 cols="auto 1fr auto"。右欄是錯誤與正確的對照，加上欄間虛線。</p>
+    <ui-drill id="ex1" title="Speaking 主題字彙" columns="2,5,5" tile-cols="2" tile-label="below" accent="key"
+              mid-title="{label}" right-title="{label}" split-divider-color="calm">
+      <drill-tile icon="house" label="居住" source="v-home"></drill-tile>
+      <drill-tile icon="briefcase" label="工作" source="v-work"></drill-tile>
+    </ui-drill>
+<pre>&lt;ui-drill title="Speaking 主題字彙" accent="key" split-divider-color="calm" …&gt;
+  &lt;drill-tile icon="house" label="居住" source="v-home"&gt;&lt;/drill-tile&gt;
+  &lt;drill-tile icon="briefcase" label="工作" source="v-work"&gt;&lt;/drill-tile&gt;
+&lt;/ui-drill&gt;
+
+&lt;template id="v-home" cols="auto 1fr auto"&gt;
+  &lt;b&gt;cosy&lt;/b&gt; | 溫馨舒適 | &lt;button detail="e-cosy" label="cosy"&gt;例句&lt;/button&gt;
+  &lt;b&gt;spacious&lt;/b&gt; | 寬敞 | &lt;button detail="e-spacious" label="spacious"&gt;例句&lt;/button&gt;
+  &lt;b&gt;in the suburbs&lt;/b&gt; | 在郊區 | &lt;button detail="e-suburbs" label="in the suburbs"&gt;例句&lt;/button&gt;
+&lt;/template&gt;
+
+&lt;template id="e-cosy" col-divider="dashed"&gt;
+  &lt;c-red&gt;My room is very warm and good.&lt;/c-red&gt; | &lt;c-green&gt;My room is small but cosy.&lt;/c-green&gt;
+  太籠統 | 一個字就有畫面
+&lt;/template&gt;</pre>
+  </section>
+
+  <section>
+    <h2>範例 2：不受影響與關閉分欄</h2>
+    <p class="desc">「說明」的 template 沒有 |，照原樣顯示。「符號」的 template 加了 split="false"，| 照字面顯示；也可以在一般 template 裡寫 \| 顯示直線本身。</p>
+    <ui-drill id="ex2" title="其他" columns="2,5,5" tile-cols="2" tile-label="below" accent="violet" mid-title="{label}">
+      <drill-tile icon="info-circle" label="說明" source="o-plain"></drill-tile>
+      <drill-tile icon="slash-lg" label="符號" source="o-nosplit"></drill-tile>
+    </ui-drill>
+<pre>&lt;template id="o-plain"&gt;
+  &lt;p&gt;這個 template 沒有直線，所以完全照原樣顯示。&lt;/p&gt;
+&lt;/template&gt;
+
+&lt;template id="o-nosplit" split="false"&gt;
+  &lt;p&gt;Unix 管線：cat notes.txt | grep IELTS&lt;/p&gt;
+&lt;/template&gt;</pre>
+  </section>
+
+  <section>
+    <h2>新增屬性</h2>
+    <table class="attr">
+      <tr><th>屬性</th><th>預設值</th><th>說明</th></tr>
+      <tr><td>|（template 內容）</td><td></td><td>一行內用 | 分欄。一行是 template 裡的一個換行，或一個 &lt;p&gt;、&lt;div&gt; 區塊。連續含 | 的行共用欄位；欄數不同時，較短那行最後一欄延伸到底。\| 顯示直線本身。只作用於 &lt;template&gt;，一般元素來源不分欄。</td></tr>
+      <tr><td>split</td><td>true</td><td>寫在 ui-drill 上，設為 false 關閉分欄。template 上也可寫 split="false" 單獨關閉。</td></tr>
+      <tr><td>split-cols</td><td>（等寬）</td><td>欄寬，寫法同 CSS grid-template-columns，例如 auto 1fr auto。template 上用 cols 覆蓋。</td></tr>
+      <tr><td>split-divider</td><td>none</td><td>欄間直線：none、solid、dashed、dotted。template 上用 col-divider 覆蓋。</td></tr>
+      <tr><td>split-divider-color</td><td>accent</td><td>欄間直線顏色，可用色票名稱。</td></tr>
+      <tr><td>split-col-gap、split-row-gap</td><td>16、6</td><td>欄距、列距（px）。</td></tr>
+    </table>
+  </section>
+</div>
+
+<template id="v-home" cols="auto 1fr auto">
+  <b>cosy</b> | 溫馨舒適 | <button detail="e-cosy" label="cosy">例句</button>
+  <b>spacious</b> | 寬敞 | <button detail="e-spacious" label="spacious">例句</button>
+  <b>in the suburbs</b> | 在郊區 | <button detail="e-suburbs" label="in the suburbs">例句</button>
+</template>
+<template id="v-work" cols="auto 1fr auto">
+  <b>demanding</b> | 要求很高、很累人 | <button detail="e-demanding" label="demanding">例句</button>
+  <b>flexible hours</b> | 彈性工時 | <button detail="e-flexible" label="flexible hours">例句</button>
+</template>
+
+<template id="e-cosy" col-divider="dashed">
+  <c-red>My room is very warm and good.</c-red> | <c-green>My room is small but cosy.</c-green>
+  太籠統 | 一個字就有畫面
+</template>
+<template id="e-spacious" col-divider="dashed">
+  <c-red>The living room is very big.</c-red> | <c-green>The living room is surprisingly spacious.</c-green>
+</template>
+<template id="e-suburbs" col-divider="dashed">
+  <c-red>I live in a place far from the city.</c-red> | <c-green>I live in the suburbs, about 40 minutes from downtown.</c-green>
+</template>
+<template id="e-demanding" col-divider="dashed">
+  <c-red>My job is very tired.</c-red> | <c-green>My job is quite demanding.</c-green>
+  tired 是人的感受 | demanding 形容工作本身
+</template>
+<template id="e-flexible" col-divider="dashed">
+  <c-red>I can go to work any time.</c-red> | <c-green>We have flexible hours.</c-green>
+</template>
+
+<template id="o-plain">
+  <p>這個 template 沒有直線，所以完全照原樣顯示。</p>
+</template>
+<template id="o-nosplit" split="false">
+  <p>Unix 管線：cat notes.txt | grep IELTS</p>
+</template>
+
+<script src="ui-drill.js"></script>
+</body>
+</html>

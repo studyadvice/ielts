@@ -163,7 +163,9 @@
     'extra-font-size': '0.85rem',
     'extra-padding': '10px 12px',
     'extra-radius': '6px',
-    'extra-top': '12px'
+    'extra-top': '12px',
+    'extra-col-gap': '16px',
+    'extra-row-gap': '6px'
   };
 
   /* 其他屬性（開關與文字） */
@@ -180,7 +182,10 @@
     'ini-title': '點擊展開',
     'keyboard': 'true',
     'extra-info-style': 'outline',
-    'extra-info-label': '補充'
+    'extra-info-label': '補充',
+    'extra-info-split': 'true',
+    'extra-info-cols': '',
+    'extra-info-col-divider': 'none'
   };
 
   const EXTRA_STYLES = ['outline', 'dashed', 'divider', 'label'];
@@ -230,6 +235,10 @@ ui-insight .uin-extra-body > :last-child{margin-bottom:0}
 ui-insight .uin-extra[data-style="dashed"]{border-style:dashed;background:transparent}
 ui-insight .uin-extra[data-style="divider"]{border-width:1px 0 0 0;border-radius:0;background:transparent;padding:10px 2px 0 2px}
 ui-insight .uin-extra[data-style="label"]{margin:calc(var(--uin-extra-top) + 8px) 0 0 0;padding-top:16px}
+ui-insight .uin-cols{display:grid;column-gap:var(--uin-extra-col-gap);row-gap:var(--uin-extra-row-gap);margin:0 0 6px 0}
+ui-insight .uin-cols:last-child{margin-bottom:0}
+ui-insight .uin-col{min-width:0}
+ui-insight .uin-cols[data-divider] .uin-col:not(.is-first){border-left:1px var(--uin-col-divider) var(--uin-extra-border-color);padding-left:var(--uin-extra-col-gap)}
 ui-insight .uin-extra-label{position:absolute;top:-0.8em;left:10px;padding:0 8px;font-size:0.7rem;line-height:1.6;color:var(--uin-extra-border-color);background:var(--uin-panel-bg);border:1px solid var(--uin-extra-border-color);border-radius:999px;font-weight:600}
 ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-active-border);outline-offset:3px}
 `;
@@ -254,6 +263,99 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
     if (!target || !target.isConnected || typeof target._keyMove !== 'function') return;
     if (target._keyMove(e.key === 'ArrowUp' ? 'up' : 'down')) e.preventDefault();
   });
+
+  /* ── extra-info 快速分欄：template 內用 | 分欄，\| 為字面上的直線 ── */
+  const BLOCK_TAGS = new Set(['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE', 'SECTION', 'ARTICLE', 'HEADER', 'FOOTER']);
+  const KEEP_TAGS = new Set(['UL', 'OL', 'TABLE', 'PRE', 'HR', 'DL', 'FIGURE', 'IMG']);
+  const escHtml = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const hasBar = (t) => /(^|[^\\])\|/.test(t);
+
+  /* 依 | 切開 HTML 字串，略過標籤內的字元；\| 保留為 | */
+  function splitBars(html) {
+    const parts = [];
+    let cur = '', inTag = false;
+    for (let i = 0; i < html.length; i++) {
+      const ch = html[i];
+      if (ch === '<') inTag = true;
+      else if (ch === '>') inTag = false;
+      if (!inTag && ch === '\\' && html[i + 1] === '|') { cur += '|'; i++; continue; }
+      if (!inTag && ch === '|') { parts.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    parts.push(cur);
+    return parts.map((x) => x.trim());
+  }
+
+  /* 只把 \| 還原成 |（沒有真正分欄時使用） */
+  function unescapeBars(root) {
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (w.nextNode()) if (w.currentNode.data.indexOf('\\|') !== -1) w.currentNode.data = w.currentNode.data.replace(/\\\|/g, '|');
+  }
+
+  /* 把容器內容依「行」整理：文字換行或區塊元素各算一行；含 | 的行變成一列，連續的列共用一個 grid，欄位上下對齊 */
+  function applyColumns(root, cols, divider) {
+    if (!hasBar(root.textContent)) { unescapeBars(root); return; }
+    const lines = [];
+    let buf = '';
+    const flush = () => { if (buf.trim()) lines.push({ html: buf, inline: true }); buf = ''; };
+    [...root.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const segs = n.data.split(/\r?\n/);
+        segs.forEach((seg, k) => { if (k > 0) flush(); buf += escHtml(seg); });
+      } else if (n.nodeType === 1) {
+        if (BLOCK_TAGS.has(n.tagName) && hasBar(n.textContent)) { flush(); lines.push({ html: n.innerHTML, block: n }); }
+        else if (BLOCK_TAGS.has(n.tagName) || KEEP_TAGS.has(n.tagName)) { flush(); lines.push({ node: n }); }
+        else buf += n.outerHTML;
+      }
+    });
+    flush();
+
+    const out = document.createDocumentFragment();
+    let grid = null, plain = [];
+    const endPlain = () => {
+      if (!plain.length) return;
+      const d = document.createElement('div');
+      d.innerHTML = plain.join('\n');
+      unescapeBars(d);
+      out.appendChild(d);
+      plain = [];
+    };
+    const endGrid = () => {
+      if (!grid) return;
+      const n = Math.max(...grid.rows.map((r) => r.length));
+      const g = document.createElement('div');
+      g.className = 'uin-cols';
+      g.style.gridTemplateColumns = cols || `repeat(${n}, minmax(0, 1fr))`;
+      if (divider && divider !== 'none') { g.dataset.divider = ''; g.style.setProperty('--uin-col-divider', divider); }
+      grid.rows.forEach((cells) => {
+        cells.forEach((c, i) => {
+          const cell = document.createElement('div');
+          cell.className = 'uin-col' + (i === 0 ? ' is-first' : '');
+          cell.innerHTML = c;
+          if (i === cells.length - 1 && cells.length < n) cell.style.gridColumn = `span ${n - cells.length + 1}`;
+          g.appendChild(cell);
+        });
+      });
+      out.appendChild(g);
+      grid = null;
+    };
+    lines.forEach((ln) => {
+      if (ln.node) { endPlain(); endGrid(); unescapeBars(ln.node); out.appendChild(ln.node); return; }
+      if (hasBar(ln.html.replace(/<[^>]*>/g, ''))) {
+        endPlain();
+        if (!grid) grid = { rows: [] };
+        grid.rows.push(splitBars(ln.html));
+      } else {
+        endGrid();
+        if (ln.block) { const b = ln.block; b.innerHTML = ln.html; unescapeBars(b); endPlain(); out.appendChild(b); }
+        else plain.push(ln.html);
+      }
+    });
+    endPlain();
+    endGrid();
+    while (root.firstChild) root.removeChild(root.firstChild);
+    root.appendChild(out);
+  }
 
   const trimWord = (t) => t.replace(/\s+/g, ' ').trim().replace(/[\s,.;:!?，。；：！？、]+$/u, '');
 
@@ -481,6 +583,13 @@ ui-insight.uin-kbd-active .uin-card.is-on{outline:2px solid var(--uin-card-activ
           body.className = 'uin-extra-body';
           if (src instanceof HTMLTemplateElement) body.appendChild(src.content.cloneNode(true));
           else body.innerHTML = src.innerHTML;
+          /* 快速分欄：template 上的 split、cols、col-divider 優先於元件屬性 */
+          const sp = (src.getAttribute('split') || this._opt('extra-info-split')).trim().toLowerCase();
+          if (sp !== 'false' && src instanceof HTMLTemplateElement) {
+            const cols = (src.getAttribute('cols') || this._opt('extra-info-cols')).trim();
+            const div = (src.getAttribute('col-divider') || this._opt('extra-info-col-divider')).trim().toLowerCase();
+            applyColumns(body, cols, div);
+          }
           ex.appendChild(body);
         }
       }

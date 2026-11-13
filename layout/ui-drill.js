@@ -44,6 +44,99 @@
     return n;
   };
 
+  /* ── extra-info 快速分欄：template 內用 | 分欄，\| 為字面上的直線 ── */
+  const BLOCK_TAGS = new Set(['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE', 'SECTION', 'ARTICLE', 'HEADER', 'FOOTER']);
+  const KEEP_TAGS = new Set(['UL', 'OL', 'TABLE', 'PRE', 'HR', 'DL', 'FIGURE', 'IMG']);
+  const escHtml = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const hasBar = (t) => /(^|[^\\])\|/.test(t);
+
+  /* 依 | 切開 HTML 字串，略過標籤內的字元；\| 保留為 | */
+  function splitBars(html) {
+    const parts = [];
+    let cur = '', inTag = false;
+    for (let i = 0; i < html.length; i++) {
+      const ch = html[i];
+      if (ch === '<') inTag = true;
+      else if (ch === '>') inTag = false;
+      if (!inTag && ch === '\\' && html[i + 1] === '|') { cur += '|'; i++; continue; }
+      if (!inTag && ch === '|') { parts.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    parts.push(cur);
+    return parts.map((x) => x.trim());
+  }
+
+  /* 只把 \| 還原成 |（沒有真正分欄時使用） */
+  function unescapeBars(root) {
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (w.nextNode()) if (w.currentNode.data.indexOf('\\|') !== -1) w.currentNode.data = w.currentNode.data.replace(/\\\|/g, '|');
+  }
+
+  /* 把容器內容依「行」整理：文字換行或區塊元素各算一行；含 | 的行變成一列，連續的列共用一個 grid，欄位上下對齊 */
+  function applyColumns(root, cols, divider) {
+    if (!hasBar(root.textContent)) { unescapeBars(root); return; }
+    const lines = [];
+    let buf = '';
+    const flush = () => { if (buf.trim()) lines.push({ html: buf, inline: true }); buf = ''; };
+    [...root.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const segs = n.data.split(/\r?\n/);
+        segs.forEach((seg, k) => { if (k > 0) flush(); buf += escHtml(seg); });
+      } else if (n.nodeType === 1) {
+        if (BLOCK_TAGS.has(n.tagName) && hasBar(n.textContent)) { flush(); lines.push({ html: n.innerHTML, block: n }); }
+        else if (BLOCK_TAGS.has(n.tagName) || KEEP_TAGS.has(n.tagName)) { flush(); lines.push({ node: n }); }
+        else buf += n.outerHTML;
+      }
+    });
+    flush();
+
+    const out = document.createDocumentFragment();
+    let grid = null, plain = [];
+    const endPlain = () => {
+      if (!plain.length) return;
+      const d = document.createElement('div');
+      d.innerHTML = plain.join('\n');
+      unescapeBars(d);
+      out.appendChild(d);
+      plain = [];
+    };
+    const endGrid = () => {
+      if (!grid) return;
+      const n = Math.max(...grid.rows.map((r) => r.length));
+      const g = document.createElement('div');
+      g.className = 'uid-cols';
+      g.style.gridTemplateColumns = cols || `repeat(${n}, minmax(0, 1fr))`;
+      if (divider && divider !== 'none') { g.dataset.divider = ''; g.style.setProperty('--uid-col-divider', divider); }
+      grid.rows.forEach((cells) => {
+        cells.forEach((c, i) => {
+          const cell = document.createElement('div');
+          cell.className = 'uid-col' + (i === 0 ? ' is-first' : '');
+          cell.innerHTML = c;
+          if (i === cells.length - 1 && cells.length < n) cell.style.gridColumn = `span ${n - cells.length + 1}`;
+          g.appendChild(cell);
+        });
+      });
+      out.appendChild(g);
+      grid = null;
+    };
+    lines.forEach((ln) => {
+      if (ln.node) { endPlain(); endGrid(); unescapeBars(ln.node); out.appendChild(ln.node); return; }
+      if (hasBar(ln.html.replace(/<[^>]*>/g, ''))) {
+        endPlain();
+        if (!grid) grid = { rows: [] };
+        grid.rows.push(splitBars(ln.html));
+      } else {
+        endGrid();
+        if (ln.block) { const b = ln.block; b.innerHTML = ln.html; unescapeBars(b); endPlain(); out.appendChild(b); }
+        else plain.push(ln.html);
+      }
+    });
+    endPlain();
+    endGrid();
+    while (root.firstChild) root.removeChild(root.firstChild);
+    root.appendChild(out);
+  }
+
   const variantCSS = Object.entries(PALETTE)
     .filter(([k]) => k !== 'base')
     .map(([k, v]) => `ui-drill .uid-btn.uid-v-${k}{background:${v};color:${LIGHT_TEXT.has(k) ? PALETTE.vanilla : PALETTE.base};}`)
@@ -117,6 +210,10 @@ ui-drill .uid-head:empty{display:none;}
 ui-drill .uid-body{line-height:1.7;}
 ui-drill .uid-body > :first-child{margin-top:0;}
 ui-drill .uid-body > :last-child{margin-bottom:0;}
+ui-drill .uid-cols{display:grid;column-gap:var(--uid-scg);row-gap:var(--uid-srg);margin:0 0 6px 0;}
+ui-drill .uid-cols:last-child{margin-bottom:0;}
+ui-drill .uid-col{min-width:0;}
+ui-drill .uid-cols[data-divider] .uid-col:not(.is-first){border-left:1px var(--uid-col-divider) var(--uid-sdc);padding-left:var(--uid-scg);}
 ui-drill .uid-ph{color:${PALETTE.indigo};font-size:0.95rem;text-align:center;border:1px dashed ${PALETTE.indigo};border-radius:8px;padding:24px 16px;}
 ui-drill .uid-alert{background:${PALETTE.base};border:1px solid ${PALETTE.red};color:${PALETTE.red};border-radius:6px;padding:12px 16px;margin:0;font-size:0.95rem;}
 
@@ -229,7 +326,10 @@ ${variantCSS}
         hideEmptyRight: has('hide-empty-right'),
         toggle: has('toggle'),
         keyboard: has('keyboard'),
-        variant: a('button-color') || a('button-variant') || 'blue'
+        variant: a('button-color') || a('button-variant') || 'blue',
+        split: (a('split') || 'true').trim().toLowerCase() !== 'false',
+        splitCols: (a('split-cols') || '').trim(),
+        splitDivider: (a('split-divider') || 'none').trim().toLowerCase()
       };
       const heading = a('title');
       if (heading != null) this.removeAttribute('title');
@@ -238,6 +338,9 @@ ${variantCSS}
       s.setProperty('--uid-cols', `${cols[0]}fr ${cols[1]}fr ${cols[2]}fr`);
       s.setProperty('--uid-cols2', `${cols[0]}fr ${cols[1] + cols[2]}fr`);
       s.setProperty('--uid-gap', num(a('gap'), 16) + 'px');
+      s.setProperty('--uid-scg', num(a('split-col-gap'), 16) + 'px');
+      s.setProperty('--uid-srg', num(a('split-row-gap'), 6) + 'px');
+      s.setProperty('--uid-sdc', color(a('split-divider-color')) || o.accent);
       s.setProperty('--uid-tcols', o.tileCols);
       s.setProperty('--uid-size', num(a('tile-size'), tab ? 40 : 48) + 'px');
       s.setProperty('--uid-tgap', num(a('tile-gap'), tab ? 4 : 8) + 'px');
@@ -704,6 +807,12 @@ ${variantCSS}
       let node;
       if (src.localName === 'template') {
         node = src.content.cloneNode(true);
+        /* 快速分欄：template 上的 split、cols、col-divider 優先於元件屬性 */
+        const sp = src.getAttribute('split');
+        if (sp ? sp.trim().toLowerCase() !== 'false' : this._o.split) {
+          applyColumns(node, (src.getAttribute('cols') || this._o.splitCols).trim(),
+            (src.getAttribute('col-divider') || this._o.splitDivider).trim().toLowerCase());
+        }
       } else {
         node = src.cloneNode(true);
         node.removeAttribute('id');

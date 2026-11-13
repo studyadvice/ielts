@@ -5,7 +5,7 @@
 | 元件 | 用途 | 版本 |
 |---|---|---|
 | `<ui-detail-ladder>` | 細節階梯：把籠統說法逐階升級成具體說法 | v1.3 |
-| `<ui-insight>` | 亮點字詞解說：左側句子卡片，右側顯示亮點字詞的解說 | v1.4 |
+| `<ui-insight>` | 亮點字詞解說：左側句子卡片，右側顯示亮點字詞的解說 | v1.5 |
 
 ## 特色
 
@@ -331,6 +331,25 @@
 | `extra-padding` | `<ui-insight>` | `10px 12px` | 內距。 |
 | `extra-radius` | `<ui-insight>` | `6px` | 圓角。 |
 | `extra-top` | `<ui-insight>` | `12px` | 與上方亮點解說的距離。 |
+
+#### 快速分欄（v1.5）
+
+template 內一行寫上 `|` 就會自動分欄。一行指的是 template 裡的一個換行，或一個 `<p>`、`<div>` 區塊。連續含 `|` 的行共用同一組欄位、上下對齊；欄數不同時，較短那行的最後一欄延伸到底。沒有 `|` 的行照一般文字顯示，清單、表格等區塊照原樣保留。要顯示直線本身請寫 `\|`。沒有 `|` 的 template 完全不受影響。
+
+```html
+<template id="tpl-2" cols="auto 1fr" col-divider="solid">
+  tucked away | 藏在不起眼的地方
+  in an alley | 在一條小巷裡
+</template>
+```
+
+| 屬性 | 放在 | 預設值 | 說明 |
+|---|---|---|---|
+| `extra-info-split` | `<ui-insight>`；template 上用 `split` | `true` | 設為 `false` 關閉分欄。 |
+| `extra-info-cols` | `<ui-insight>`；template 上用 `cols` | （等寬） | 欄寬，寫法同 CSS `grid-template-columns`，例如 `auto 1fr`。 |
+| `extra-info-col-divider` | `<ui-insight>`；template 上用 `col-divider` | `none` | 欄間直線：`none`、`solid`、`dashed`、`dotted`，顏色沿用 `extra-border-color`。 |
+| `extra-col-gap` | `<ui-insight>` | `16px` | 欄距。 |
+| `extra-row-gap` | `<ui-insight>` | `6px` | 列距。 |
 
 ### JavaScript 介面
 
