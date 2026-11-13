@@ -96,6 +96,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`sb/`](sb/README.md) | `sentence-build.js` | `<sentence-build>` | 語塊組句練習。 |
 | [`scn/`](scn/README.md) | `ui-screen.js`、`ui-scroll-scene.js` | `<ui-screen>` `<ui-scroll-scene>` | 對照與敘事的視覺互動元件。 |
 | [`sthd/`](sthd/README.md) | `sticky-head.js` | `<sticky-head>` | 章節吸頂標題列與閱讀進度。 |
+| [`tl/`](tl/README.md) | `ui-timeline.js` | `<ui-timeline>` `<tl-item>` | 圓點時間軸：九套主題、逐一出現或逐一點亮，可展開隱藏的 div 或 template。 |
 | [`tbl/`](tbl/README.md) | `ui-table.js` | `<ui-table>` | 以語意標籤撰寫、CSS Grid 排版的互動表格。 |
 
 ## 目錄

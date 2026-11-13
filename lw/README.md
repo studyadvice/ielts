@@ -43,6 +43,7 @@
 | `ui-steps` | `steps:end` |
 | `sentence-build` | `sb:complete` |
 | `chunk-demo` | `chunk-end` |
+| `ui-timeline` | `timeline-end` |
 | `arrow-flow` | `flow-complete` |
 | `slider-show` | `finished` |
 | `ui-layer-diff` | `layerend` |

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-timeline 示範（11-14-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif;font-size:1rem;}
+  .wrap{max-width:1680px;margin:0 auto;padding:32px 40px 80px;}
+  h1{font-size:1.75rem;color:#DBEDD8;margin:0 0 8px;}
+  h2{font-size:1.25rem;color:#51DBCF;margin:0 0 12px;}
+  h3{font-size:1rem;color:#DBEDD8;margin:24px 0 8px;}
+  .lead-note{color:#86877F;font-size:.95rem;margin:0 0 24px;}
+  .demo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin:0 0 48px;padding:24px;border:1px solid #3B2A20;border-radius:12px;}
+  .demo.single{grid-template-columns:minmax(0,1fr);}
+  .demo p.desc{color:#A3C4BC;font-size:.95rem;margin:0 0 12px;}
+  pre.code{background:#151615;color:#C6C7BD;border:1px solid #3B2A20;border-radius:8px;padding:16px;font-size:.8125rem;line-height:1.55;
+    max-height:620px;overflow:auto;margin:0;white-space:pre;}
+  .themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+  .themes .name{margin:0 0 8px;color:#DBEDD8;font-size:.95rem;}
+  .themes .name code{color:#E3D322;}
+  .shapes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
+  .cmp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;}
+  .cmp h3{margin-top:0;}
+  .cmp pre{background:#151615;color:#C6C7BD;border:1px solid #3B2A20;border-radius:8px;padding:16px;font-size:.8125rem;line-height:1.55;overflow:auto;margin:0;white-space:pre;}
+  .cmp .add{color:#71CD76;}
+  .box{margin-top:16px;padding:16px 20px;border:1px solid #3B2A20;border-radius:10px;}
+  table.ref{width:100%;border-collapse:collapse;font-size:.875rem;margin:0 0 16px;}
+  table.ref th,table.ref td{border:1px solid #3B2A20;padding:6px 10px;vertical-align:top;}
+  table.ref th{background:#3B2A20;color:#DBEDD8;font-weight:600;}
+  table.ref code{color:#E3D322;}
+  #toast-area{position:fixed;right:24px;bottom:24px;z-index:50;width:360px;}
+  .alert-tl{background:#3B2A20;color:#DBEDD8;border:1px solid #71CD76;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>&lt;ui-timeline&gt; 圓點時間軸</h1>
+  <p class="lead-note">每一項的上方小字是 sub-heading，元件最上方是 heading。圓點顏色來自主題，可以逐一出現或逐一點亮，最後的連結可以展開隱藏的 div 或 template。</p>
+
+  <!-- 1 -->
+  <section class="demo single">
+    <div>
+      <h2>1. 九套內建主題</h2>
+      <p class="desc">arc、cool、warm 使用你的色票，顏色固定循環；ember、ocean、forest、dusk、aurora、mono 是我另外配的，會依項目數重新計算漸層，越上面越亮（aurora 是色相漸變）。</p>
+      <div class="themes" id="theme-grid"></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="demo">
+    <div>
+      <h2>2. 逐一出現＋展開 template</h2>
+      <p class="desc">play-mode="reveal"、autoplay="visible"：捲到畫面中才開始。全部出現後才顯示「查看全部紀錄」。template 裡放了一個 ui-play，第一次展開時才初始化，收合再展開會保留播放狀態。</p>
+      <div class="live">
+<ui-timeline heading="最新更新紀錄" theme="arc" play-mode="reveal" autoplay="visible" interval="700" effect="slide-up"
+             more-text="查看全部紀錄" more-target="#log-more">
+  <tl-item sub-heading="2 小時前">ui-play 新增<c-key>小畫家外框</c-key></tl-item>
+  <tl-item sub-heading="5 小時前">稿紙外框改為<c-playful>深色</c-playful></tl-item>
+  <tl-item sub-heading="5 小時前">新增滑鼠點擊推進 next-by</tl-item>
+  <tl-item sub-heading="11 小時前">劇本製作器 play-maker 上線</tl-item>
+  <tl-item sub-heading="昨天">元件串接 link-when</tl-item>
+  <tl-item sub-heading="2 天前">ui-fillin 合併示範檔</tl-item>
+  <tl-item sub-heading="3 天前">bp-stepper 推進模式</tl-item>
+  <tl-item sub-heading="5 天前">色名標籤全面統一</tl-item>
+</ui-timeline>
+<template id="log-more">
+  <ui-play frame="mac" frame-title="更新示範" step-mode="manual" next-by="both" font-size="1.125rem" min-height="160" style="margin-top:16px">
+    <stage-item><p id="lm1" style="margin:0">She have lived here since five years.</p></stage-item>
+    <script-item>
+      <swap-fx target="#lm1" text="have" to="has"></swap-fx>
+      <stamp-fx target="#lm1" text="has" color="green" offset-x="40" offset-y="44" start="with" delay="300">修正</stamp-fx>
+    </script-item>
+  </ui-play>
+</template>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 3 -->
+  <section class="demo">
+    <div>
+      <h2>3. 逐一點亮，循環播放</h2>
+      <p class="desc">play-mode="highlight"、loop：目前那一項的圓點放大、文字變亮，其他項目變暗。變暗用不透明的混色，不使用透明度。sub-heading 不一定是時間，這裡當成步驟名稱。</p>
+      <div class="live">
+<ui-timeline heading="Part 2 答題流程" theme="ocean" play-mode="highlight" autoplay="visible" interval="1400" loop>
+  <tl-item sub-heading="Step 1">讀題卡，圈出<c-key>關鍵字</c-key></tl-item>
+  <tl-item sub-heading="Step 2">一分鐘列大綱：what、when、why</tl-item>
+  <tl-item sub-heading="Step 3">開頭一句點題，不要背誦</tl-item>
+  <tl-item sub-heading="Step 4">每個重點加一個細節或例子</tl-item>
+  <tl-item sub-heading="Step 5">收尾說感受，自然停在兩分鐘</tl-item>
+</ui-timeline>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 4 -->
+  <section class="demo">
+    <div>
+      <h2>4. 點一下才播放＋展開 div（一次性）</h2>
+      <p class="desc">沒有 autoplay 時，點時間軸任何地方開始播放，適合錄影。more-target 指向頁面上的 div，元件載入時自動先隱藏；裡面的 ui-fillin 照常運作。more-mode="once" 展開後連結就消失。</p>
+      <div class="live">
+<ui-timeline heading="Task 1 趨勢詞" theme="ember" play-mode="reveal" interval="600"
+             more-text="做練習題" more-target="#trend-quiz" more-mode="once">
+  <tl-item sub-heading="大幅上升">soar、surge、rocket</tl-item>
+  <tl-item sub-heading="穩定上升">rise steadily、climb gradually</tl-item>
+  <tl-item sub-heading="持平">level off、remain stable</tl-item>
+  <tl-item sub-heading="小幅下降">dip slightly、ease</tl-item>
+  <tl-item sub-heading="大幅下降">plummet、plunge</tl-item>
+</ui-timeline>
+<div id="trend-quiz" class="box">
+  <ui-fillin>
+    <main-box source="trend-q"></main-box>
+  </ui-fillin>
+  <div id="trend-q">
+    <p>Sales {*soared|leveled off|dipped} from 20 to 95 units in just one year.</p>
+    <p>After 2015, the figure {eased|*remained stable|plunged} at around 40%.</p>
+  </div>
+</div>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 5 -->
+  <section class="demo">
+    <div>
+      <h2>5. 自訂顏色與單項顏色</h2>
+      <p class="desc">dot-colors 用 | 分隔，不夠時循環；單一項目可用 color 覆寫。bg-color="none" 讓元件透明，融入頁面背景。</p>
+      <div class="live">
+<ui-timeline heading="答錯原因" dot-colors="red|yellow|quiet" bg-color="none" padding="0" font-size="1.0625">
+  <tl-item sub-heading="文法">主詞動詞不一致：She <c-red>have</c-red></tl-item>
+  <tl-item sub-heading="用字">太籠統：very good</tl-item>
+  <tl-item sub-heading="結構">沒有主題句</tl-item>
+  <tl-item sub-heading="已修正" color="green">改寫後重新提交</tl-item>
+</ui-timeline>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 6 -->
+  <section class="demo single">
+    <div>
+      <h2>6. 圓點的替代形狀</h2>
+      <p class="desc">dot-shape 設定整個元件的形狀。number 與 icon 會自動放大到 22px；number 預設顯示 1、2、3，可用 dot-text 改成任何字；icon 使用 Bootstrap Icons。</p>
+      <div class="shapes" id="shape-grid"></div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="demo">
+    <div>
+      <h2>7. 數字形狀＋逐一點亮</h2>
+      <p class="desc">dot-shape="number" 很適合步驟流程。dot-text 可以把單一項目改成英文字母或符號，shape 可以讓單一項目換形狀，例如最後一項換成星形。</p>
+      <div class="live">
+<ui-timeline heading="Task 2 寫作順序" theme="dusk" dot-shape="number" play-mode="highlight" autoplay="visible" interval="1300">
+  <tl-item sub-heading="5 分鐘">讀題，找出<c-key>立場</c-key>與關鍵字</tl-item>
+  <tl-item sub-heading="5 分鐘">列大綱：兩個主要論點</tl-item>
+  <tl-item sub-heading="25 分鐘">寫四段：開頭、兩段主體、結論</tl-item>
+  <tl-item sub-heading="5 分鐘" dot-text="✓">檢查文法與拼字</tl-item>
+  <tl-item sub-heading="完成" shape="star" color="yellow">交卷</tl-item>
+</ui-timeline>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 8 -->
+  <section class="demo">
+    <div>
+      <h2>8. 圖示形狀</h2>
+      <p class="desc">dot-shape="icon" 搭配 dot-icon 設定全部項目的圖示，單一項目用 icon 覆寫。需要頁面載入 Bootstrap Icons。</p>
+      <div class="live">
+<ui-timeline heading="雅思四科" theme="cool" dot-shape="icon" dot-icon="bi-check-circle-fill" play-mode="reveal" autoplay="visible" interval="600">
+  <tl-item sub-heading="Listening" icon="bi-headphones">40 題，約 30 分鐘</tl-item>
+  <tl-item sub-heading="Reading" icon="bi-book">40 題，60 分鐘</tl-item>
+  <tl-item sub-heading="Writing" icon="bi-pencil">兩篇，60 分鐘</tl-item>
+  <tl-item sub-heading="Speaking" icon="bi-mic">三個部分，11 到 14 分鐘</tl-item>
+</ui-timeline>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 11-14-26 修改對照 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：新增圓點替代形狀</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：只有圓點</h3>
+<pre>&lt;ui-timeline theme="dusk"&gt;
+  &lt;tl-item sub-heading="5 分鐘"&gt;讀題&lt;/tl-item&gt;
+&lt;/ui-timeline&gt;</pre>
+        </div>
+        <div>
+          <h3>修改後：dot-shape 與單項覆寫</h3>
+<pre>&lt;ui-timeline theme="dusk" <span class="add">dot-shape="number"</span>&gt;
+  &lt;tl-item sub-heading="5 分鐘"&gt;讀題&lt;/tl-item&gt;
+  &lt;tl-item sub-heading="5 分鐘" <span class="add">dot-text="✓"</span>&gt;檢查&lt;/tl-item&gt;
+  &lt;tl-item sub-heading="完成" <span class="add">shape="star"</span>&gt;交卷&lt;/tl-item&gt;
+&lt;/ui-timeline&gt;
+
+<span class="add">&lt;ui-timeline dot-shape="icon" dot-icon="bi-check-circle-fill"&gt;
+  &lt;tl-item icon="bi-headphones"&gt;Listening&lt;/tl-item&gt;
+&lt;/ui-timeline&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 屬性 -->
+  <section class="demo single">
+    <div>
+      <h2>屬性對照</h2>
+      <h3>&lt;ui-timeline&gt;：內容與主題</h3>
+      <table class="ref">
+        <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
+        <tr><td><code>heading</code></td><td>元件最上方的標題，不寫就不顯示。</td><td>無</td></tr>
+        <tr><td><code>theme</code></td><td>arc、cool、warm（你的色票，循環）；ember、ocean、forest、dusk、aurora、mono（依項目數計算漸層）。主題同時決定底色、連接線與文字色。</td><td><code>arc</code></td></tr>
+        <tr><td><code>dot-colors</code></td><td>自訂圓點顏色，以 | 分隔，可填色名或色碼，不夠時循環；設了就忽略主題的圓點色。</td><td>無</td></tr>
+        <tr><td><code>bg-color</code> <code>line-color</code> <code>heading-color</code> <code>sub-color</code> <code>text-color</code> <code>more-color</code></td><td>覆寫主題的底色、連接線、標題、sub-heading、內容文字、連結文字。<code>bg-color="none"</code> 為透明。</td><td>依主題</td></tr>
+        <tr><td><code>dot-shape</code></td><td>circle、square、rounded、diamond、ring、ring-square、triangle、hexagon、star、number、icon。</td><td><code>circle</code></td></tr>
+        <tr><td><code>dot-icon</code></td><td>icon 形狀的預設圖示，Bootstrap Icons 類別名稱。</td><td><code>bi-circle-fill</code></td></tr>
+        <tr><td><code>ring-width</code> <code>number-color</code></td><td>ring 形狀的框線粗細（px）、number 形狀的數字顏色。</td><td><code>3</code>、同底色</td></tr>
+        <tr><td><code>dot-size</code> <code>dot-top</code> <code>gap</code></td><td>圓點直徑、圓點距離項目頂端的位置、項目間距（px）。number 與 icon 形狀預設為 22 與 1。</td><td><code>12</code>、<code>6</code>、<code>16</code></td></tr>
+        <tr><td><code>width</code> <code>padding</code> <code>radius</code></td><td>寬度、內距（px，最多四個值）、圓角。</td><td><code>100%</code>、<code>20 24</code>、<code>12</code></td></tr>
+        <tr><td><code>font-size</code> <code>heading-size</code></td><td>內容字級、標題字級；純數字視為 rem。</td><td><code>1</code>、<code>1.25</code></td></tr>
+      </table>
+      <h3>&lt;ui-timeline&gt;：播放</h3>
+      <table class="ref">
+        <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
+        <tr><td><code>play-mode</code></td><td>reveal（逐一出現）、highlight（逐一點亮）；不寫就是靜態顯示。</td><td>無</td></tr>
+        <tr><td><code>autoplay</code></td><td>true（載入就播）、visible（捲到畫面中才播）、false（點時間軸才播）。</td><td><code>false</code></td></tr>
+        <tr><td><code>interval</code> <code>speed</code></td><td>每一項之間的間隔、單一項目的動畫時間（ms）。</td><td><code>800</code>、<code>400</code></td></tr>
+        <tr><td><code>effect</code></td><td>fade、slide-up、slide-left、none；也用於展開內容。</td><td><code>fade</code></td></tr>
+        <tr><td><code>loop</code></td><td>只對 highlight 有效，播到最後一項再從頭開始。</td><td>關閉</td></tr>
+      </table>
+      <h3>&lt;ui-timeline&gt;：查看全部</h3>
+      <table class="ref">
+        <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
+        <tr><td><code>more-target</code></td><td>點擊後要顯示的 div 或 template（寫不寫 # 都可以）。沒設定就不顯示連結。div 會在載入時自動隱藏，展開時在原位置出現；template 第一次展開時才把內容放到元件正下方，裡面的元件此時才初始化。</td><td>無</td></tr>
+        <tr><td><code>more-text</code> <code>less-text</code></td><td>展開前、展開後的連結文字。</td><td><code>查看全部紀錄</code>、<code>收合</code></td></tr>
+        <tr><td><code>more-arrow</code></td><td>設為 false 不顯示 → 與 ↑ 箭頭。</td><td><code>true</code></td></tr>
+        <tr><td><code>more-mode</code></td><td>toggle（可收合，收合後再展開保留裡面元件的狀態）、once（展開後連結消失）。</td><td><code>toggle</code></td></tr>
+      </table>
+      <h3>&lt;tl-item&gt;</h3>
+      <table class="ref">
+        <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
+        <tr><td><code>sub-heading</code></td><td>項目上方的小字，可以是時間、步驟名稱或任何文字；不寫就不顯示。</td><td>無</td></tr>
+        <tr><td><code>color</code></td><td>單獨指定這一項的圓點顏色。</td><td>依主題</td></tr>
+        <tr><td><code>shape</code></td><td>單獨指定這一項的形狀，值同 dot-shape。</td><td>同元件</td></tr>
+        <tr><td><code>dot-text</code></td><td>number 形狀裡顯示的文字，例如 A、✓。</td><td>項目順序</td></tr>
+        <tr><td><code>icon</code></td><td>icon 形狀的圖示。</td><td>同 dot-icon</td></tr>
+      </table>
+      <p class="desc">內容可寫任何 HTML，支援 &lt;c-key&gt; 等色名標籤。</p>
+      <h3>事件與方法</h3>
+      <table class="ref">
+        <tr><th>名稱</th><th>說明</th></tr>
+        <tr><td><code>timeline-end</code></td><td>播完時發出（loop 時不發出）。link-when 的 <code>event="done"</code> 會自動對應到這個事件。</td></tr>
+        <tr><td><code>timeline-more</code></td><td>展開或收合時發出，<code>detail.open</code> 為 true 或 false。</td></tr>
+        <tr><td><code>el.play()</code> <code>el.stop()</code> <code>el.toggleMore(open)</code></td><td>開始播放、停止並顯示全部、展開或收合。link-when 的 <code>do="play"</code> 可直接使用。</td></tr>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div id="toast-area"></div>
+
+<script>
+  var themes = ['arc', 'cool', 'warm', 'ember', 'ocean', 'forest', 'dusk', 'aurora', 'mono'];
+  var items = ['ui-play 新增小畫家外框', '稿紙外框改為深色', '新增滑鼠點擊推進', '劇本製作器上線', '元件串接 link-when', 'ui-fillin 合併示範檔', 'bp-stepper 推進模式', '色名標籤全面統一'];
+  var subs = ['2 小時前', '5 小時前', '5 小時前', '11 小時前', '昨天', '2 天前', '3 天前', '5 天前'];
+  document.getElementById('theme-grid').innerHTML = themes.map(function (t) {
+    return '<div><p class="name">theme="<code>' + t + '</code>"</p><ui-timeline heading="最新更新紀錄" theme="' + t + '" font-size=".9375">' +
+      items.map(function (x, i) { return '<tl-item sub-heading="' + subs[i] + '">' + x + '</tl-item>'; }).join('') + '</ui-timeline></div>';
+  }).join('');
+  var shapes = ['circle', 'square', 'rounded', 'diamond', 'ring', 'ring-square', 'triangle', 'hexagon', 'star', 'number', 'icon'];
+  var sThemes = ['arc', 'warm', 'ocean', 'ember', 'aurora', 'cool', 'forest', 'dusk', 'warm', 'ocean', 'arc'];
+  document.getElementById('shape-grid').innerHTML = shapes.map(function (sh, k) {
+    return '<div><p class="name">dot-shape="<code>' + sh + '</code>"</p><ui-timeline theme="' + sThemes[k] + '" dot-shape="' + sh + '"' +
+      (sh === 'icon' ? ' dot-icon="bi-bookmark-star-fill"' : '') + ' font-size=".9375" padding="16 20">' +
+      items.slice(0, 4).map(function (x, i) { return '<tl-item sub-heading="' + subs[i] + '">' + x + '</tl-item>'; }).join('') + '</ui-timeline></div>';
+  }).join('');
+  document.querySelectorAll('.demo').forEach(function (sec) {
+    var live = sec.querySelector('.live'), pre = sec.querySelector('pre.code');
+    if (live && pre) pre.textContent = live.innerHTML.replace(/^\n+|\s+$/g, '');
+  });
+</script>
+<script src="../flow/ui-play.js"></script>
+<script src="../ui-fillin.js"></script>
+<script src="../lw/link-when.js"></script>
+<script src="ui-timeline.js"></script>
+<script>
+  document.addEventListener('timeline-end', function (e) {
+    var area = document.getElementById('toast-area');
+    var sec = e.target.closest('.demo');
+    if (!sec) return;
+    var div = document.createElement('div');
+    div.className = 'alert alert-tl alert-dismissible fade show';
+    div.innerHTML = '<i class="bi bi-check2-circle"></i> <span></span><button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>';
+    div.querySelector('span').textContent = sec.querySelector('h2').textContent + '：播放完畢';
+    area.appendChild(div);
+    setTimeout(function () { div.remove(); }, 4000);
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

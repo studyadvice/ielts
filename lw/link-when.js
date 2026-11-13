@@ -32,7 +32,8 @@
     'ui-mask': 'mask-reveal',
     'sentence-build': 'sb:complete',
     'ui-steps': 'steps:end',
-    'chunk-demo': 'chunk-end'
+    'chunk-demo': 'chunk-end',
+    'ui-timeline': 'timeline-end'
   };
   const doneEventOf = (el) => {
     const tag = el.localName;
