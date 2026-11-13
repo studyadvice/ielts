@@ -1,5 +1,5 @@
 /*!
- * maze-quiz.js v1.1.0
+ * maze-quiz.js v1.2.0
  * <maze-quiz> 迷宮填空動畫元件，<maze-quiz-panel> 外部題目面板
  *
  * 每次載入隨機生成「唯一解」迷宮（遞迴回溯法產生的完美迷宮，任兩格之間只有一條路），
@@ -41,6 +41,11 @@
  *
  * 外部面板：<maze-quiz-panel for="迷宮的 id"></maze-quiz-panel> 可放在同一網頁任何位置，
  *           有對應面板時迷宮不顯示內建題目區。答案飛入時若空格不在畫面內，會自動平滑捲動過去。
+ *   extra-class  額外的 class，加在面板內層的 .mq-panel（也就是棕色題目框）上，
+ *                例如 extra-class="p-3 bp-lnh-5"。可用 Bootstrap 或自訂 CSS，不需 !important 也能覆蓋預設值。
+ *                .mq-panel 的字級就是題目字級（預設 2.25rem），標題與揭曉文字以 em 等比跟著縮放
+ *                （最小 .75rem 與 1rem），
+ *                所以 fs-*、bp-lnh-* 這類 em 單位的類別都以題目字級為準；面板裡的按鈕不受影響。
  *
  * 快捷鍵：Ctrl + Shift + 數字鍵盤 5，啟動目前畫面中露出最多的迷宮。
  *
@@ -60,6 +65,9 @@
   /* ---------- 樣式（只注入一次） ---------- */
   const STYLE_ID = 'maze-quiz-style';
   const H = ':is(maze-quiz,maze-quiz-panel)';
+  // 可被 extra-class 覆蓋的預設值：權重只有一個 class（0,1,0），樣式表又插在 head 最前面，
+  // 所以同權重的 Bootstrap 或自訂類別（例如 .bp-lnh-5）排在後面就會勝出，不需要 !important。
+  const L = ':where(maze-quiz,maze-quiz-panel)';
   const STYLE_TEXT = `
 maze-quiz,maze-quiz-panel{display:block;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
 maze-quiz .mq-wrap{display:flex;gap:32px;align-items:stretch;background:#0C0D0C;border:1px solid #3B2A20;border-radius:16px;padding:24px}
@@ -85,17 +93,18 @@ maze-quiz .mq-icon i{display:block;line-height:1}
 maze-quiz .mq-icon i::before{display:block;vertical-align:top}
 maze-quiz .mq-mark-icon.is-hit .mq-icon i{animation:mq-pulse .6s ease-out 2}
 maze-quiz .mq-wrap > .mq-panel{flex:2 1 0;min-width:0}
-${H} .mq-panel{display:flex;flex-direction:column;justify-content:center;gap:24px;background:#3B2A20;border-radius:12px;padding:32px}
-${H} .mq-label{font-size:.875rem;font-weight:700;letter-spacing:.1em;color:#A3C4BC}
+${H} .mq-panel{display:flex;flex-direction:column;justify-content:center}
+${L} .mq-panel{gap:24px;background:#3B2A20;border-radius:12px;padding:32px;font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
+${H} .mq-label{font-size:max(.75rem, calc(.875em / 2.25));line-height:1.5;font-weight:700;letter-spacing:.1em;color:#A3C4BC}
 ${H} .mq-label.is-empty{display:none}
-${H} .mq-question{font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8;word-break:break-word}
+${H} .mq-question{font-size:1em;line-height:inherit;font-weight:inherit;color:inherit;word-break:break-word}
 ${H} .mq-blank{display:inline-block;text-align:center;border-bottom:3px solid #C6C7BD;color:#E3D322;margin:0 6px;padding:0 4px;line-height:1.2}
 ${H} .mq-blank.is-filled{border-bottom-color:#E3D322;animation:mq-fill .45s ease-out}
-${H} .mq-status{font-size:1.125rem;color:#C6C7BD;min-height:1.6em}
+${H} .mq-status{font-size:max(1rem, calc(1.125em / 2.25));line-height:1.5;font-weight:400;color:#C6C7BD;min-height:1.6em}
 ${H} .mq-status.has-bg{align-self:flex-start;max-width:100%;padding:6px 16px;border-radius:8px}
 ${H} .mq-actions{display:flex;gap:12px;flex-wrap:wrap}
 maze-quiz .mq-stage > .mq-actions{justify-content:center}
-${H} .mq-btn{font-size:1rem;font-weight:700;padding:10px 22px;border-radius:999px;border:2px solid #51DBCF;background:#0C0D0C;color:#51DBCF;cursor:pointer;transition:background .15s,color .15s}
+${H} .mq-btn{font-size:1rem;line-height:1.5;font-weight:700;padding:10px 22px;border-radius:999px;border:2px solid #51DBCF;background:#0C0D0C;color:#51DBCF;cursor:pointer;transition:background .15s,color .15s}
 ${H} .mq-btn:hover{background:#51DBCF;color:#0C0D0C}
 ${H} .mq-btn.mq-new{border-color:#B484E8;color:#B484E8}
 ${H} .mq-btn.mq-new:hover{background:#B484E8;color:#0C0D0C}
@@ -110,7 +119,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     const s = document.createElement('style');
     s.id = STYLE_ID;
     s.textContent = STYLE_TEXT;
-    document.head.appendChild(s);
+    document.head.prepend(s);
   }
 
   /* ---------- 工具 ---------- */
@@ -594,6 +603,8 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       const inner = document.createElement('div');
       inner.className = 'mq-panel';
       panelEl.replaceChildren(inner);
+      panelEl._extraApplied = [];
+      if (panelEl._applyExtraClass) panelEl._applyExtraClass();
       this._mountPanel(inner);
       this._applySize();
       if (refresh) this._refreshPanel();
@@ -1153,6 +1164,17 @@ ${mark('mq-out', exit, exitIcon, COLORS.exit)}
 
   /* ---------- 外部題目面板 ---------- */
   class MazeQuizPanel extends HTMLElement {
+    static get observedAttributes() { return ['extra-class']; }
+    attributeChangedCallback() { this._applyExtraClass(); }
+    /* extra-class 加在內層 .mq-panel；屬性改變時移除上次加入、這次沒有的類別 */
+    _applyExtraClass() {
+      const inner = this.firstElementChild;
+      if (!inner || !inner.classList.contains('mq-panel')) return;
+      const next = (this.getAttribute('extra-class') || '').split(/\s+/).filter(t => t && t !== 'mq-panel');
+      for (const t of this._extraApplied || []) if (!next.includes(t)) inner.classList.remove(t);
+      for (const t of next) inner.classList.add(t);
+      this._extraApplied = next;
+    }
     connectedCallback() {
       injectStyle();
       const id = this.getAttribute('for');

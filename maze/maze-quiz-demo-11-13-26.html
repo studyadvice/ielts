@@ -6,6 +6,7 @@
 <title>maze-quiz 元件示範</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../bp-styles.css">
 <style>
   body{background:#0C0D0C;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem}
   .page{max-width:1680px;margin:0 auto;padding:40px 48px 80px}
@@ -18,6 +19,12 @@
   .ver.v4{background:#5DBAE8}
   .ver.v5{background:#71CD76}
   .ver.v6{background:#DE8EC9}
+  .ver.v7{background:#778CE1}
+  .switch-row{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+  .switch-row .btn{font-size:.9375rem;border-color:#778CE1;color:#778CE1;padding:6px 16px}
+  .switch-row .btn.active,.switch-row .btn:hover{background:#778CE1;color:#0C0D0C;border-color:#778CE1}
+  .switch-now{font-size:.9375rem;color:#C6C7BD;margin:0 0 12px}
+  .switch-now code{color:#FF91D7}
   .lead-text{font-size:1.0625rem;color:#C6C7BD;margin:0 0 16px}
   .note{font-size:.9375rem;color:#86877F;margin:0 0 16px}
   .info-box{background:#3B2A20;border:1px solid #778CE1;color:#DBEDD8;border-radius:12px;padding:16px 20px;margin:16px 0 0}
@@ -58,7 +65,7 @@
 </head>
 <body>
 <div class="page">
-  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.1.0</span></h1>
+  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.2.0</span></h1>
   <p class="lead-text">每次重新整理都會生成新的唯一解迷宮，從左下入口描繪路徑到右上出口，噴出彩帶後答案飛入空格。</p>
   <div class="info-box">迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，因此入口到出口的路徑必定唯一。彩帶不使用透明度，改以縮小或落出畫面的方式退場。</div>
   <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的迷宮。</div>
@@ -179,6 +186,46 @@
              chip-shape="square" chip-bg="urgent" chip-color="#FFFFFF"
              question="The treasure was found _____ the old oak tree." answer="under"></maze-quiz>
 
+  <!-- ===================== 修改六範例 ===================== -->
+  <h2>範例十七：外部面板加上 extra-class="p-3 bp-lnh-5"<span class="ver v7">修改六</span></h2>
+  <p class="note">本頁引用 repo 的 <code>bp-styles.css</code>。<code>p-3</code> 把棕色框的內距從 32px 改成 Bootstrap 的 1rem；<code>bp-lnh-5</code> 是 <code>line-height:2.5em</code>，以題目字級計算，長題目換行時行距明顯拉開。左邊是同一題的預設面板，方便對照。</p>
+  <div class="lesson">
+    <div class="lesson-maze">
+      <maze-quiz id="m17" cols="9" rows="9" maze-width="380" route-colors="indigo,dreamy" controls="maze" autoplay="false"
+                 question="Although the weather forecast predicted heavy rain, we decided to _____ with our picnic plans anyway." answer="go ahead"></maze-quiz>
+    </div>
+    <div class="lesson-card">
+      <h4>預設面板（無 extra-class）</h4>
+      <maze-quiz-panel for="m17b"></maze-quiz-panel>
+      <h4>extra-class="p-3 bp-lnh-5"</h4>
+      <maze-quiz-panel for="m17" extra-class="p-3 bp-lnh-5"></maze-quiz-panel>
+    </div>
+  </div>
+  <maze-quiz id="m17b" style="display:none" cols="4" rows="4" autoplay="false" controls="none"
+             question="Although the weather forecast predicted heavy rain, we decided to _____ with our picnic plans anyway." answer="go ahead"></maze-quiz>
+
+  <h2>範例十八：用 JS 切換 extra-class，字級、行距與內距即時變化<span class="ver v7">修改六</span></h2>
+  <p class="note">按鈕會改寫 <code>&lt;maze-quiz-panel&gt;</code> 的 extra-class 屬性，元件會移除上一次加入的類別再套用新的。fs-* 設定的是題目字級，標題與揭曉文字等比縮放（最小 .75rem 與 1rem，避免小到看不清楚）；面板裡的按鈕維持 play-size 的大小。</p>
+  <div class="switch-row" id="switchRow">
+    <button type="button" class="btn active" data-cls="">預設</button>
+    <button type="button" class="btn" data-cls="fs-large">fs-large</button>
+    <button type="button" class="btn" data-cls="fs-5 p-3">fs-5 p-3</button>
+    <button type="button" class="btn" data-cls="fs-larger bp-lnh-6 text-center">fs-larger bp-lnh-6 text-center</button>
+    <button type="button" class="btn" data-cls="p-5 bp-lnh-4">p-5 bp-lnh-4</button>
+  </div>
+  <p class="switch-now">目前：<code id="switchNow">extra-class=""</code></p>
+  <div class="lesson">
+    <div class="lesson-maze">
+      <maze-quiz id="m18" cols="10" rows="8" maze-width="420" route-colors="key,energetic" autoplay="false"
+                 label-title="Unit 6 Phrasal Verbs" reveal-color="background" reveal-bg="yellow"
+                 question="Could you please _____ the music? The baby is finally asleep, and I would like to keep it that way." answer="turn down"></maze-quiz>
+    </div>
+    <div class="lesson-card">
+      <h4>可切換的題目面板</h4>
+      <maze-quiz-panel for="m18" id="p18"></maze-quiz-panel>
+    </div>
+  </div>
+
   <hr class="divider">
 
   <h2>屬性、事件與方法</h2>
@@ -224,6 +271,7 @@
         <thead><tr><th>標籤／事件／方法</th><th>說明</th></tr></thead>
         <tbody>
           <tr><td><code>&lt;maze-quiz-panel for&gt;</code><span class="ver">修改一</span></td><td>外部題目面板，for 填迷宮的 id，可放在同一網頁任何位置。沒有對應面板時，迷宮維持內建左右版面。</td></tr>
+          <tr><td><code>&lt;maze-quiz-panel extra-class&gt;</code><span class="ver v7">修改六</span></td><td>額外的 class，加在內層棕色框 .mq-panel 上，以空白分隔，例如 p-3 bp-lnh-5。不需 !important 就能覆蓋預設的內距、字級、行距、字重、文字色、底色與圓角。.mq-panel 的字級等於題目字級（預設 2.25rem），所以 fs-*、bp-lnh-* 等 em 類別都以題目字級為準；標題與揭曉文字等比縮放（最小 .75rem 與 1rem），按鈕不受影響。可用 JS 隨時修改。</td></tr>
           <tr><td><code>Ctrl+Shift+數字鍵盤 5</code><span class="ver">修改一</span></td><td>啟動畫面中露出最多的迷宮，播放中則忽略。</td></tr>
           <tr><td><code>maze-solved</code></td><td>路徑抵達出口時觸發。</td></tr>
           <tr><td><code>answer-revealed</code></td><td>答案填入空格時觸發，右下角的通知就是監聽這個事件。</td></tr>
@@ -247,6 +295,9 @@
            <span class="a">question</span>=<span class="s">"I usually _____ my homework after dinner."</span> <span class="a">answer</span>=<span class="s">"do"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
 <span class="c">&lt;!-- 放在同一網頁任何位置 --&gt;</span>
 <span class="t">&lt;maze-quiz-panel</span> <span class="a">for</span>=<span class="s">"m4"</span><span class="t">&gt;&lt;/maze-quiz-panel&gt;</span>
+
+<span class="c">&lt;!-- 面板額外的 class：Bootstrap 與 bp-styles.css 都可以 --&gt;</span>
+<span class="t">&lt;maze-quiz-panel</span> <span class="a">for</span>=<span class="s">"m4"</span> <span class="a">extra-class</span>=<span class="s">"p-3 bp-lnh-5"</span><span class="t">&gt;&lt;/maze-quiz-panel&gt;</span>
 
 <span class="c">&lt;!-- 固定每格大小 --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">cols</span>=<span class="s">"16"</span> <span class="a">rows</span>=<span class="s">"8"</span> <span class="a">cell-size</span>=<span class="s">"24"</span> <span class="a">route-colors</span>=<span class="s">"#E3D322,#FF2E63"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
@@ -284,7 +335,7 @@ document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; cons
 
   <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
   <h2>修改紀錄與程式碼對照</h2>
-  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
+  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
 
   <h3 style="color:#B484E8">修改一</h3>
 
@@ -515,6 +566,43 @@ chip.style.backgroundColor = chip-bg;
 chip.style.color = chip-color;</span></pre></div>
   </div>
 
+  <h3 style="color:#778CE1;margin-top:48px">修改六</h3>
+
+  <h3>16. 題目面板的 extra-class</h3>
+  <p class="cmp-desc">原本的字級寫死成 rem，只看 &lt;html&gt; 的字級，任何加在面板上的 fs-* 都不會影響題目；預設樣式的權重又高於一般類別，p-3、bp-lnh-5 這類沒有 !important 的類別也蓋不過去。修改六把可調整的屬性集中到 .mq-panel，並降低權重。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改五</div><pre class="code"><span class="c">/* 權重 (0,1,1)，一般類別蓋不過 */</span>
+:is(maze-quiz,maze-quiz-panel) .mq-panel{
+  ... <span class="del">background:#3B2A20;padding:32px</span>}
+<span class="del">.mq-label{font-size:.875rem}
+.mq-question{font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
+.mq-status{font-size:1.125rem}</span>
+
+<span class="c">// 樣式表加在 head 最後面</span>
+<span class="del">document.head.appendChild(s);</span>
+
+<span class="c">&lt;!-- class 只能加在外殼，碰不到棕色框 --&gt;</span>
+&lt;maze-quiz-panel for="m4"&gt;&lt;/maze-quiz-panel&gt;</pre></div>
+    <div><div class="cmp-head new">修改六</div><pre class="code"><span class="c">/* :where() 讓權重降為 (0,1,0)，同權重的類別排在後面就勝出 */</span>
+<span class="add">:where(maze-quiz,maze-quiz-panel) .mq-panel{
+  gap:24px;background:#3B2A20;border-radius:12px;padding:32px;
+  font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
+.mq-label{font-size:max(.75rem, calc(.875em / 2.25));line-height:1.5}
+.mq-question{font-size:1em;line-height:inherit;font-weight:inherit;color:inherit}
+.mq-status{font-size:max(1rem, calc(1.125em / 2.25));line-height:1.5}
+.mq-btn{font-size:1rem;line-height:1.5}</span>
+
+<span class="c">// 樣式表插在 head 最前面，頁面上的 CSS 都排在它後面</span>
+<span class="add">document.head.prepend(s);</span>
+
+&lt;maze-quiz-panel for="m4" <span class="add">extra-class="p-3 bp-lnh-5"</span>&gt;&lt;/maze-quiz-panel&gt;
+<span class="add">static get observedAttributes() { return ['extra-class']; }
+_applyExtraClass() {
+  // 移除上次加入、這次沒有的類別，再加入新的
+}</span></pre></div>
+  </div>
+  <p class="cmp-desc">為什麼字級要放在 .mq-panel：bp-lnh-5 是 line-height:2.5em，em 在套用類別的元素上換算成固定長度後才往下繼承。字級若留在題目上，2.5em 會用面板的 1rem 算成 40px，36px 的題目行距反而變擠。現在 .mq-panel 的字級就是題目字級，2.5em 會正確算成題目字級的 2.5 倍。標題、揭曉文字與按鈕各自設定行距，不會繼承到過大的行距。</p>
+
   <!-- ===================== 範例六的面板 ===================== -->
   <div class="far-panel">
     <h3 style="margin-top:0">範例六的題目面板放在這裡</h3>
@@ -528,6 +616,17 @@ chip.style.color = chip-color;</span></pre></div>
 <script src="maze-quiz.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+  // 範例十八：切換面板的 extra-class
+  const p18 = document.getElementById('p18');
+  const switchNow = document.getElementById('switchNow');
+  document.getElementById('switchRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-cls]');
+    if (!btn) return;
+    p18.setAttribute('extra-class', btn.dataset.cls);
+    switchNow.textContent = 'extra-class="' + btn.dataset.cls + '"';
+    document.querySelectorAll('#switchRow .btn').forEach(b => b.classList.toggle('active', b === btn));
+  });
+
   // 以 Bootstrap alert 顯示揭曉通知，不使用 alert()
   const logArea = document.getElementById('logArea');
   document.addEventListener('answer-revealed', (e) => {
