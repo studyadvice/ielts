@@ -61,6 +61,18 @@
     return hashStr(fallback);
   }
 
+  function colName(i) {
+    let s = '';
+    i += 1;
+    while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); }
+    return s;
+  }
+  function colIndex(letters) {
+    let n = 0;
+    for (const ch of letters.toUpperCase()) n = n * 26 + (ch.charCodeAt(0) - 64);
+    return n - 1;
+  }
+
   /* ---------------- 樣式 ---------------- */
   const STYLE_ID = 'ui-play-style';
   function injectStyle() {
@@ -80,7 +92,8 @@ ui-play .upl-canvas{position:relative;width:100%;padding:var(--upl-pad);text-ali
 ui-play .upl-under,ui-play .upl-over{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
 ui-play .upl-under{z-index:0;}
 ui-play stage-item{display:block;position:relative;z-index:1;}
-ui-play .upl-over{z-index:2;}
+ui-play .upl-over{z-index:3;}
+ui-play .upl-heads{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2;}
 ui-play .upl-over svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;}
 
 ui-play .upl-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--upl-bar);color:var(--upl-bar-text);
@@ -105,9 +118,37 @@ ui-play .upl.f-phone .upl-bar{justify-content:space-between;padding:10px 24px 6p
 ui-play .upl-notch{width:96px;height:24px;border-radius:12px;background:#000;}
 ui-play .upl-batt{display:inline-block;width:24px;height:12px;border:1.5px solid currentColor;border-radius:3px;padding:1px;vertical-align:middle;}
 ui-play .upl-batt i{display:block;width:70%;height:100%;background:currentColor;border-radius:1px;}
-ui-play .upl.f-paper .upl-canvas{background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(1lh - 1px),#A3C4BC calc(1lh - 1px),#A3C4BC 1lh);
+ui-play .upl.f-paper .upl-canvas{flex:1 1 auto;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(1lh - 1px),var(--upl-rule) calc(1lh - 1px),var(--upl-rule) 1lh);
   background-origin:content-box;background-clip:content-box;}
-ui-play .upl.f-paper .upl-canvas::before{content:'';position:absolute;left:40px;top:0;bottom:0;width:2px;background:#EF6661;}
+ui-play .upl.f-paper stage-item :is(p,ul,ol,h1,h2,h3,h4,h5,h6,blockquote){margin:0;}
+ui-play .upl.f-paper .upl-canvas::before{content:'';position:absolute;left:40px;top:0;bottom:0;width:var(--upl-mlw);background:var(--upl-mlc);}
+
+ui-play .upl.f-sheet .upl-canvas{flex:1 1 auto;padding:var(--upl-hh) 0 0 var(--upl-rw);
+  background-image:linear-gradient(to right,var(--upl-grid) 1px,transparent 1px),linear-gradient(to bottom,var(--upl-grid) 1px,transparent 1px);
+  background-size:var(--upl-cw) var(--upl-ch);background-position:var(--upl-rw) var(--upl-hh);}
+ui-play .upl.f-sheet stage-item{padding:0 6px;}
+ui-play .upl.f-sheet stage-item [cell]{position:absolute;margin:0;padding:0 6px;white-space:nowrap;line-height:var(--upl-ch);}
+ui-play .upl-colh,ui-play .upl-rowh{position:absolute;display:flex;background:var(--upl-bar);color:var(--upl-bar-text);overflow:hidden;
+  font-family:system-ui,"Segoe UI","Microsoft JhengHei",sans-serif;font-size:.9375rem;line-height:1;}
+ui-play .upl-colh{left:var(--upl-rw);top:0;right:0;height:var(--upl-hh);}
+ui-play .upl-rowh{left:0;top:var(--upl-hh);bottom:0;width:var(--upl-rw);flex-direction:column;}
+ui-play .upl-colh span{flex:0 0 var(--upl-cw);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--upl-hline);}
+ui-play .upl-rowh span{flex:0 0 var(--upl-ch);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--upl-hline);}
+ui-play .upl-corner{position:absolute;left:0;top:0;width:var(--upl-rw);height:var(--upl-hh);background:var(--upl-bar);
+  border-right:1px solid var(--upl-hline);border-bottom:1px solid var(--upl-hline);}
+ui-play .upl-corner i{position:absolute;right:4px;bottom:4px;width:0;height:0;border-left:14px solid transparent;border-bottom:14px solid var(--upl-corner);}
+
+ui-play .upl.f-notebook .upl-bar{align-items:flex-end;gap:16px;padding:10px 16px 0 16px;border-bottom:3px solid var(--upl-tab-active);}
+ui-play .upl-tabs{display:flex;align-items:flex-end;gap:4px;flex:1;min-width:0;overflow:hidden;padding-left:6px;}
+ui-play .upl-tab{position:relative;isolation:isolate;flex-shrink:0;padding:6px 22px 4px;color:#DBEDD8;font-size:1.125rem;line-height:1.4;white-space:nowrap;}
+ui-play .upl-tab::before{content:'';position:absolute;left:0;top:0;right:0;bottom:0;z-index:-1;background:var(--tab-fill);
+  border:2px solid var(--tab-c);border-bottom:0;border-radius:8px 8px 0 0;transform:perspective(40px) rotateX(5deg);transform-origin:bottom;}
+ui-play .upl-tab.is-active{padding-top:10px;padding-bottom:6px;font-size:1.25rem;}
+ui-play .upl-tab.is-add{padding:6px 18px 4px;font-weight:700;--tab-c:#86877F;--tab-fill:#3B2A20;}
+ui-play .upl-search{display:flex;align-items:center;gap:8px;flex:0 0 auto;width:var(--upl-search-w);margin-bottom:8px;padding:4px 10px;
+  background:var(--upl-bg);border:1px solid #86877F;color:#86877F;font-size:1rem;line-height:1.4;}
+ui-play .upl-search span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+ui-play .upl-search i{color:#5DBAE8;}
 
 ui-play .upl-controls{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--upl-bar);}
 ui-play .upl-controls.is-outside{background:transparent;padding:8px 0;}
@@ -139,12 +180,14 @@ ui-play .upl-ins{display:inline-block;}
   const FRAME_DEF = {
     none: { bw: '0px', radius: '0px' },
     plain: {},
-    mac: {},
-    win: { radius: '8px' },
+    mac: { bw: '2px' },
+    win: { radius: '8px', bw: '2px' },
     'win-classic': { bw: '2px', bs: 'outset', bc: '#DBEDD8', radius: '0px', bar: '#778CE1', barText: '#0C0D0C' },
     browser: {},
     phone: { width: '390px', bw: '10px', radius: '36px', minH: '640px' },
-    paper: { bg: '#DBEDD8', text: '#0C0D0C', bc: '#C6C7BD', radius: '4px', pad: '32px 32px 32px 64px' }
+    paper: { bg: '#DBEDD8', text: '#0C0D0C', bc: '#C6C7BD', radius: '4px', pad: '32px 32px 32px 64px' },
+    sheet: { radius: '0px', pad: '0px', bar: '#3B2A20', barText: '#C6C7BD' },
+    notebook: { radius: '8px' }
   };
 
   /* ---------------- 音效 ---------------- */
@@ -443,12 +486,60 @@ ui-play .upl-ins{display:inline-block;}
         });
       });
 
+      if (this._frame === 'sheet') this._initSheet();
+
       if ('ResizeObserver' in window) {
-        this._ro = new ResizeObserver(() => this._live.forEach((it) => it.place && it.place()));
+        this._ro = new ResizeObserver(() => {
+          if (this._frame === 'sheet') this._renderHeads();
+          this._live.forEach((it) => it.place && it.place());
+        });
         this._ro.observe(canvas);
       }
       this._syncControls();
       this._setupAutoplay();
+    }
+
+    /* ---------- sheet 外框 ---------- */
+    _initSheet() {
+      const heads = document.createElement('div');
+      heads.className = 'upl-heads';
+      heads.innerHTML = '<div class="upl-colh"></div><div class="upl-rowh"></div><div class="upl-corner"><i></i></div>';
+      this._canvas.appendChild(heads);
+      this._heads = heads;
+      this._headCount = '';
+      // 依 cell="B3" 或 cell="B3:D4" 定位舞台元素
+      this._stage.querySelectorAll('[cell]').forEach((el) => {
+        const m = /^([A-Z]+)(\d+)(?::([A-Z]+)(\d+))?$/i.exec((el.getAttribute('cell') || '').trim());
+        if (!m) return;
+        const c0 = colIndex(m[1]), r0 = parseInt(m[2], 10) - 1;
+        const c1 = m[3] ? colIndex(m[3]) : c0, r1 = m[4] ? parseInt(m[4], 10) - 1 : r0;
+        const cA = Math.min(c0, c1), cB = Math.max(c0, c1), rA = Math.min(r0, r1), rB = Math.max(r0, r1);
+        el.style.left = `calc(var(--upl-cw) * ${cA})`;
+        el.style.top = `calc(var(--upl-ch) * ${rA})`;
+        el.style.width = `calc(var(--upl-cw) * ${cB - cA + 1})`;
+        el.style.height = `calc(var(--upl-ch) * ${rB - rA + 1})`;
+      });
+      this._renderHeads();
+    }
+
+    _renderHeads() {
+      if (!this._heads) return;
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:absolute;visibility:hidden;width:var(--upl-cw);height:var(--upl-ch);';
+      this._heads.appendChild(probe);
+      const cw = probe.offsetWidth || 96, chh = probe.offsetHeight || 34;
+      probe.remove();
+      const cols = Math.ceil(this._canvas.clientWidth / cw) + 1;
+      const rows = Math.ceil(this._canvas.clientHeight / chh) + 1;
+      const key = cols + 'x' + rows;
+      if (key === this._headCount) return;
+      this._headCount = key;
+      let h = '';
+      for (let i = 0; i < cols; i++) h += '<span>' + colName(i) + '</span>';
+      this._heads.querySelector('.upl-colh').innerHTML = h;
+      h = '';
+      for (let i = 1; i <= rows; i++) h += '<span>' + i + '</span>';
+      this._heads.querySelector('.upl-rowh').innerHTML = h;
     }
 
     _attr(name, def) {
@@ -480,6 +571,20 @@ ui-play .upl-ins{display:inline-block;}
       set('--upl-lh', this._attr('line-height', fd.lh));
       set('--upl-text', color(this.getAttribute('text-color')) || fd.text);
       set('--upl-accent', color(this.getAttribute('accent-color')) || fd.accent);
+      // paper：橫線、左側紅線
+      set('--upl-rule', color(this.getAttribute('rule-color')) || '#A3C4BC');
+      set('--upl-mlw', len(this.getAttribute('margin-line-width')) || '3px');
+      set('--upl-mlc', color(this.getAttribute('margin-line-color')) || '#EF6661');
+      // sheet：儲存格、格線、欄列標頭
+      const ch = len(this.getAttribute('cell-height')) || '34px';
+      set('--upl-cw', len(this.getAttribute('cell-width')) || '96px');
+      set('--upl-ch', ch);
+      set('--upl-grid', color(this.getAttribute('grid-color')) || '#3B2A20');
+      set('--upl-hline', color(this.getAttribute('header-line-color')) || '#0C0D0C');
+      set('--upl-corner', color(this.getAttribute('corner-color')) || '#86877F');
+      set('--upl-rw', len(this.getAttribute('row-header-width')) || '48px');
+      set('--upl-hh', len(this.getAttribute('column-header-height')) || '30px');
+      if (this._frame === 'sheet' && !this.getAttribute('line-height')) set('--upl-lh', ch);
     }
 
     _buildBar() {
@@ -521,6 +626,39 @@ ui-play .upl-ins{display:inline-block;}
         url.className = 'upl-url';
         url.textContent = this.getAttribute('frame-url') || title;
         bar.append(dots(), nav, url);
+      } else if (f === 'notebook') {
+        // 分頁：tabs="快速筆記|新的節 1|新的節 2"，tab-colors 依序對應，tab-active 為第幾個（從 1 起算）
+        const names = (this.getAttribute('tabs') || title || '快速筆記').split('|').map((x) => x.trim()).filter(Boolean);
+        const cols = (this.getAttribute('tab-colors') || 'green|blue|playful|violet|pink|key').split('|').map((x) => color(x.trim()));
+        const act = Math.min(names.length, Math.max(1, parseInt(this.getAttribute('tab-active'), 10) || 1));
+        const tabs = document.createElement('div');
+        tabs.className = 'upl-tabs';
+        names.forEach((n, i) => {
+          const c = cols[i % cols.length];
+          const tb = document.createElement('div');
+          tb.className = 'upl-tab' + (i + 1 === act ? ' is-active' : '');
+          tb.style.setProperty('--tab-c', c);
+          tb.style.setProperty('--tab-fill', `color-mix(in srgb, ${c} 38%, #0C0D0C)`);
+          tb.textContent = n;
+          tabs.appendChild(tb);
+        });
+        if (this.getAttribute('tab-add') !== 'false') {
+          const add = document.createElement('div');
+          add.className = 'upl-tab is-add';
+          add.textContent = '+';
+          tabs.appendChild(add);
+        }
+        this.style.setProperty('--upl-tab-active', cols[(act - 1) % cols.length]);
+        bar.appendChild(tabs);
+        const ph = this.getAttribute('search');
+        if (ph !== 'false') {
+          const sb = document.createElement('div');
+          sb.className = 'upl-search';
+          sb.innerHTML = '<span></span><i class="bi bi-search"></i>';
+          sb.querySelector('span').textContent = ph || '搜尋筆記本';
+          this.style.setProperty('--upl-search-w', len(this.getAttribute('search-width')) || '280px');
+          bar.appendChild(sb);
+        }
       } else if (f === 'phone') {
         const time = document.createElement('span');
         time.textContent = title || '9:41';
@@ -716,15 +854,42 @@ ui-play .upl-ins{display:inline-block;}
       return span;
     }
 
+    // 印章、註解的對齊基準：區塊元素以文字實際範圍為準，不用整行寬度
     _rel(el) {
+      if (getComputedStyle(el).display !== 'inline') {
+        const ls = this._lines(el);
+        if (ls.length) {
+          const x1 = Math.min.apply(null, ls.map((r) => r.x)), y1 = Math.min.apply(null, ls.map((r) => r.y));
+          const x2 = Math.max.apply(null, ls.map((r) => r.x + r.w)), y2 = Math.max.apply(null, ls.map((r) => r.y + r.h));
+          return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+        }
+      }
       const c = this._canvas.getBoundingClientRect();
       const r = el.getBoundingClientRect();
       return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
     }
 
+    // 標記以「文字實際所在」為準：區塊元素（段落、儲存格）改量內文的行框，
+    // 圈選、底線才會貼著文字，而不是整個區塊的寬度
     _lines(el) {
       const c = this._canvas.getBoundingClientRect();
-      return Array.from(el.getClientRects()).filter((r) => r.width > 0.5)
+      let rects = Array.from(el.getClientRects());
+      if (getComputedStyle(el).display !== 'inline') {
+        const rg = document.createRange();
+        rg.selectNodeContents(el);
+        const inner = Array.from(rg.getClientRects()).filter((r) => r.width > 0.5 && r.height > 0.5);
+        if (inner.length) {
+          // 同一行的多個矩形合併成一個
+          const merged = [];
+          inner.forEach((r) => {
+            const m = merged.find((q) => Math.abs(q.top - r.top) < r.height * 0.5);
+            if (m) { const R = Math.max(m.right, r.right); m.left = Math.min(m.left, r.left); m.right = R; m.top = Math.min(m.top, r.top); m.bottom = Math.max(m.bottom, r.bottom); }
+            else merged.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+          });
+          rects = merged.map((m) => ({ left: m.left, top: m.top, width: m.right - m.left, height: m.bottom - m.top }));
+        }
+      }
+      return rects.filter((r) => r.width > 0.5)
         .map((r) => ({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height }));
     }
 

@@ -244,6 +244,58 @@
     <pre class="code"></pre>
   </section>
 
+  <!-- 9 -->
+  <section class="demo">
+    <div>
+      <h2>9. 試算表外框：Task 1 表格</h2>
+      <p class="desc">frame="sheet" 模擬 Excel 的欄名、列號與格線。舞台元素加上 cell="B3" 或 cell="A1:D1" 就會對齊到儲存格，其餘效果照常使用。</p>
+      <div class="live">
+<ui-play frame="sheet" step-mode="manual" font-size="1rem" min-height="420" cell-width="104">
+  <stage-item>
+    <div cell="A1:D1" style="color:#DBEDD8;font-weight:700">Coffee sales (tons)</div>
+    <div cell="A2">Year</div><div cell="B2">Taipei</div><div cell="C2">Tokyo</div><div cell="D2">Seoul</div>
+    <div cell="A3">2005</div><div cell="B3" style="text-align:right">120</div><div cell="C3" style="text-align:right">340</div><div cell="D3" style="text-align:right">210</div>
+    <div cell="A4">2010</div><div cell="B4" style="text-align:right">180</div><div cell="C4" style="text-align:right">330</div><div cell="D4" style="text-align:right">260</div>
+    <div cell="A5">2015</div><div cell="B5" id="peak" style="text-align:right">260</div><div cell="C5" style="text-align:right">310</div><div cell="D5" style="text-align:right">300</div>
+    <div cell="A6">2020</div><div cell="B6" style="text-align:right">190</div><div cell="C6" style="text-align:right">290</div><div cell="D6" style="text-align:right">350</div>
+    <div cell="A8:F8" id="desc" style="color:#DBEDD8">Sales in Taipei peaked at 260 tons in 2015.</div>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#peak" kind="circle" color="yellow"></mark-fx>
+    <stamp-fx target="#peak" anchor="right" offset-x="320" size="1rem" icon="bi-graph-up-arrow" color="pink" start="with" delay="400">最高點</stamp-fx>
+    <show-fx target="#desc" effect="fade"></show-fx>
+    <mark-fx target="#desc" text="peaked at" kind="highlight" color="key"></mark-fx>
+    <note-fx target="#desc" text="peaked at" position="bottom">描述最高點的動詞片語</note-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 10 -->
+  <section class="demo">
+    <div>
+      <h2>10. 筆記本外框：分頁標籤</h2>
+      <p class="desc">frame="notebook" 只模擬上方的分頁列與搜尋框。tabs 用 | 分隔，tab-colors 依序對應顏色，tab-active 指定目前分頁，底線顏色跟著目前分頁。</p>
+      <div class="live">
+<ui-play frame="notebook" tabs="快速筆記|新的節 1|新的節 2" tab-colors="green|blue|playful" tab-active="1" step-mode="manual" min-height="300">
+  <stage-item>
+    <p id="nb1" style="font-size:1.5rem;color:#DBEDD8;margin:0 0 16px">Part 2 cue card 筆記</p>
+    <p id="nb2">Describe a book you enjoyed reading.</p>
+    <p id="nb3">→ what it was / when you read it / why you liked it</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#nb2" text="a book" kind="underline" color="key"></mark-fx>
+    <show-fx target="#nb3" effect="fade"></show-fx>
+    <stamp-fx target="#nb3" anchor="right" offset-x="110" icon="bi-pencil" color="yellow" size="1.1rem">先列大綱</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
   <!-- 屬性對照 -->
   <section class="demo single">
     <div>
@@ -255,11 +307,17 @@
         <tr><td><code>aspect</code></td><td>固定比例，例如 16/9，設了就忽略 height</td><td>無</td></tr>
         <tr><td><code>padding</code></td><td>內容區內距</td><td><code>32px</code></td></tr>
         <tr><td><code>content-align</code> <code>content-valign</code></td><td>left、center、right／top、middle、bottom</td><td><code>left</code>、<code>top</code></td></tr>
-        <tr><td><code>frame</code></td><td>none、plain、mac、win、win-classic、browser、phone、paper</td><td><code>plain</code></td></tr>
+        <tr><td><code>frame</code></td><td>none、plain、mac、win、win-classic、browser、phone、paper、sheet、notebook</td><td><code>plain</code></td></tr>
         <tr><td><code>frame-title</code> <code>frame-icon</code> <code>frame-url</code></td><td>標題列文字、Bootstrap Icons 名稱、瀏覽器網址列；phone 外框的 frame-title 顯示在時間位置</td><td>無</td></tr>
-        <tr><td><code>border-width</code> <code>border-style</code> <code>border-color</code> <code>radius</code></td><td>外框粗細、樣式、顏色、圓角</td><td><code>1px</code>、<code>solid</code>、<code>bg-alternative</code>、<code>10px</code></td></tr>
+        <tr><td><code>border-width</code> <code>border-style</code> <code>border-color</code> <code>radius</code></td><td>外框粗細、樣式、顏色、圓角</td><td><code>1px</code>（win、mac 為 <code>2px</code>）、<code>solid</code>、<code>bg-alternative</code>、<code>10px</code></td></tr>
         <tr><td><code>bg-color</code> <code>bar-color</code> <code>bar-text-color</code></td><td>內容區背景、標題列背景、標題列文字</td><td><code>background</code>、<code>bg-alternative</code>、<code>shell</code></td></tr>
         <tr><td><code>font-family</code> <code>font-size</code> <code>line-height</code> <code>text-color</code></td><td>內容文字</td><td>系統字體、<code>1.25rem</code>、<code>1.7</code>、<code>shell</code></td></tr>
+        <tr><td><code>rule-color</code> <code>margin-line-width</code> <code>margin-line-color</code></td><td>paper 外框：橫線顏色、左側紅線粗細與顏色</td><td><code>calm</code>、<code>3px</code>、<code>red</code></td></tr>
+        <tr><td><code>cell-width</code> <code>cell-height</code> <code>grid-color</code></td><td>sheet 外框：儲存格寬高、格線顏色；未設 line-height 時，行高等於 cell-height</td><td><code>96px</code>、<code>34px</code>、<code>bg-alternative</code></td></tr>
+        <tr><td><code>row-header-width</code> <code>column-header-height</code> <code>header-line-color</code> <code>corner-color</code></td><td>sheet 外框：列號寬、欄名高、標頭分隔線、左上角三角形顏色；標頭底色與文字沿用 bar-color、bar-text-color</td><td><code>48px</code>、<code>30px</code>、<code>background</code>、<code>gray</code></td></tr>
+        <tr><td><code>tabs</code> <code>tab-colors</code> <code>tab-active</code> <code>tab-add</code></td><td>notebook 外框：分頁名稱與顏色（皆以 | 分隔，顏色不夠時循環使用）、目前分頁（從 1 起算）、是否顯示「+」分頁</td><td><code>快速筆記</code>、<code>green|blue|playful|violet|pink|key</code>、<code>1</code>、<code>true</code></td></tr>
+        <tr><td><code>search</code> <code>search-width</code></td><td>notebook 外框：搜尋框提示文字，設為 false 則不顯示；搜尋框寬度</td><td><code>搜尋筆記本</code>、<code>280px</code></td></tr>
+        <tr><td><code>cell</code>（舞台元素）</td><td>sheet 外框中，把元素定位到儲存格，例如 B3 或 A1:D1</td><td>無</td></tr>
         <tr><td><code>accent-color</code></td><td>註解外框與按鈕的主色</td><td><code>key</code></td></tr>
         <tr><td><code>autoplay</code></td><td>true、visible、false</td><td><code>false</code></td></tr>
         <tr><td><code>step-mode</code></td><td>manual、auto（忽略所有停頓點）、mixed</td><td><code>mixed</code></td></tr>
