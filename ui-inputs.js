@@ -32,9 +32,6 @@
     return BRAND_COLORS[key] || value;
   }
 
-  // 把 hex 色碼轉成帶透明度的 rgba（給 focus ring 陰影、填色訊息框用）；
-  // 若本來就不是 #hex（例如已經是 rgba 字串或色票解析失敗），原樣返回，
-  // 不強制套透明度，交給使用者自訂的值。
   function toRgba(color, alpha) {
     if (typeof color !== 'string') return color;
     const hex = color.trim();
@@ -45,7 +42,6 @@
     return `rgba(${r},${g},${b},${alpha})`;
   }
 
-  // 全形轉半形（數字／英文字母／常用符號／全形空白），供 normalize-width 用
   function normalizeWidth(str) {
     return str.replace(/[！-～]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
       .replace(/　/g, ' ');
@@ -706,38 +702,6 @@ ui-otp .uo-copy-btn .bi{ font-size:1.05em; line-height:1; }
 
   customElements.define('ui-otp', UiOtp);
 
-  /* =========================================================================
-   * <ui-blank> — 單行輸入填充題元件
-   *
-   * 用法：
-   * <ui-blank expected-value="apple" button-icon="bi-send"></ui-blank>
-   *
-   * 永遠區分大小寫（不提供 case-sensitive 開關）。答案比對支援多個可接受值，
-   * 用 "|" 分隔，例如 expected-value="台北|臺北"（兩個都要各自列出，不會
-   * 自動視為同義）。
-   *
-   * 兩種驗證模式（跟 <ui-otp> 一致）：
-   * 1. 前端比對：給 expected-value，按下送出鈕或 Enter 自動比對。
-   * 2. 外部非同步驗證：不給 expected-value，監聽 'blank-submit' 事件自行
-   *    打 API，驗證完呼叫 el.setState('valid' | 'invalid' | 'idle')。
-   *
-   * 事件：
-   * - 'blank-submit'：按下送出時，detail = { value, raw, valid }
-   *   （valid 在前端比對模式下是 true/false，外部驗證模式下是 null）
-   *
-   * 訊息顯示兩種模式：
-   * - 預設：顯示在元件內建、本體正下方的訊息區塊，可用 message-style 選
-   *   五種樣式之一（plain / bordered / filled / accent-bar / icon-banner）。
-   * - message-target="某個id"：改成把純文字訊息寫進頁面上該 <div id> 裡，
-   *   不套用任何 message-style 樣式，排版完全交給你自己控制。
-   *
-   * 公開方法／屬性：
-   * - el.value（get/set）
-   * - el.reset()
-   * - el.setState('valid' | 'invalid' | 'idle')
-   * - el.focus()
-   */
-
   const BLANK_STYLE_ID = 'ui-blank-style';
 
   function injectBlankStyleOnce() {
@@ -824,17 +788,16 @@ ui-blank .ub-message.is-style-plain{
   padding:var(--ub-message-padding,0px);
 }
 
-/* bordered：細邊框卡片 */
 ui-blank .ub-message.is-style-bordered{
   padding:var(--ub-message-padding,8px 12px);
-  border:1px solid currentColor;
+  border:3px solid currentColor;
   border-radius:var(--ub-message-radius,6px);
 }
 
 /* filled：淡化底色卡片 */
 ui-blank .ub-message.is-style-filled{
-  padding:var(--ub-message-padding,8px 12px);
-  border-radius:var(--ub-message-radius,6px);
+  padding:var(--ub-message-padding,6px 9px);
+  border-radius:var(--ub-message-radius,2px);
   background:var(--ub-message-fill,rgba(198,199,189,.15));
 }
 
@@ -846,14 +809,14 @@ ui-blank .ub-message.is-style-accent-bar{
 
 /* icon-banner：圖示 + 文字橫幅 */
 ui-blank .ub-message.is-style-icon-banner{
-  padding:var(--ub-message-padding,8px 14px);
-  border-radius:var(--ub-message-radius,6px);
+  padding:var(--ub-message-padding,6px 9px);
+  border-radius:var(--ub-message-radius,2px);
   background:var(--ub-message-fill,rgba(198,199,189,.15));
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
-ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.1em; }
+ui-blank .ub-message.is-style-icon-banner .bi{ font-size:1.15em; }
 `;
     document.head.appendChild(style);
   }
