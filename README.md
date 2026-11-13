@@ -1,20 +1,22 @@
 # 語意標籤 UI 元件集（根目錄）
 
-一組以語意標籤撰寫的瀏覽器元件，專為深色底的教學頁面設計。每個元件都是單一 `.js` 檔，載入後自動注入 CSS，不使用 Shadow DOM。這份文件涵蓋根目錄的所有 `.js`；子資料夾的元件請看各資料夾內的 README。
+一組以語意標籤撰寫的瀏覽器元件，專為深色底的教學頁面設計。每個元件都是單一 `.js` 檔，載入後自動注入 CSS，不使用 Shadow DOM。這份文件涵蓋根目錄的所有 `.js`；子資料夾的元件列在[子資料夾元件](#子資料夾元件)，詳細說明請看各資料夾內的 README。
 
-| 檔案 | 標籤 | 用途 |
-| --- | --- | --- |
-| `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 |
-| `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 |
-| `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 |
-| `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 |
-| `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 |
-| `phrase-chip.js` | `<phrase-chip>` `<phrase-upgrade>` | 可收藏的片語標籤與片語升級動畫。 |
-| `practice-tracker.js` | `<practice-tracker>` `<pt-done-btn>` | 學習進度面板、片語收藏與定時彈出視窗。 |
-| `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 |
-| `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 |
-| `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題。 |
-| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` | 閱讀輔助標記與展開按鈕。 |
+| 檔案 | 標籤 | 用途 | 範例頁 |
+| --- | --- | --- | --- |
+| `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-10-21-26.html`](arrow-flow-demo-10-21-26.html) |
+| `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-11-26.html`](bp-stepper-demo-11-11-26.html) |
+| `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 | [`chunk-demo-demo-11-12-26.html`](chunk-demo-demo-11-12-26.html) |
+| `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 | [`dual-line-demo-10-15-26.html`](dual-line-demo-10-15-26.html) |
+| `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-10-22-26.html`](numeric-list-demo-10-22-26.html) |
+| `phrase-chip.js` | `<phrase-chip>` `<phrase-upgrade>` | 可收藏的片語標籤與片語升級動畫。 | [`phrase-chip-demo-10-23-26.html`](phrase-chip-demo-10-23-26.html) |
+| `practice-tracker.js` | `<practice-tracker>` `<pt-done-btn>` | 學習進度面板、片語收藏與定時彈出視窗。 | [`practice-tracker-demo-11-10-26.html`](practice-tracker-demo-11-10-26.html)、[使用手冊](practice-tracker-manual-10-24-26.html) |
+| `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 | [`slider-show-demo-11-10-26.html`](slider-show-demo-11-10-26.html) |
+| `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 | [`ui-fillin-demo-11-12-26.html`](ui-fillin-demo-11-12-26.html) |
+| `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-12-26.html`](ui-inputs-demo-11-12-26.html) |
+| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` | 閱讀輔助標記與展開按鈕。 | [`ui-plus-demo-11-12-26.html`](ui-plus-demo-11-12-26.html) |
+
+跨元件範例：[`data-flow-demo-11-11-26.html`](data-flow-demo-11-11-26.html) 示範 `ui-cards`、`arrow-flow`、`ui-drill`、`ui-table` 組合成資料流動中心。
 
 ## 色票
 
@@ -54,20 +56,53 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 - 樣式只注入一次（`<style id="ui-color-tags">`），同時載入多個元件也不會重複。
 - `ui-table` 的 `inverse` 格子裡，色名標籤會變成品牌色底的小標籤。
 - 色名與色碼可從 `window.UiColorTags.colors` 讀取。
-- 範例頁：`color-tags-demo-11-05-26.html`。
 
 ## 工具頁
 
 | 檔案 | 用途 |
 | --- | --- |
-| [`builder/layout-builder-11-05-26.html`](builder/layout-builder-11-05-26.html) | `ui-table` 與 `info-region` 的視覺化編輯器：點格子或區塊調整屬性，即時預覽，複製程式碼，也能匯入既有程式碼繼續編輯。 |
+| [`layout/ui-conventions.html`](layout/ui-conventions.html) | `ui-drill`、`ui-cards`、`ui-steps` 共用的屬性命名約定。 |
 | [`layout/ui-cards-templates-11-05-26.html`](layout/ui-cards-templates-11-05-26.html) | `ui-cards` 十種資料呈現版型，每個版型附可複製的程式碼。 |
+| [`bd/card-badge-docs.html`](bd/card-badge-docs.html) | `card-badge` 使用手冊與視覺編輯器。 |
+
+## 子資料夾元件
+
+每個子資料夾放一組相關元件，載入方式與根目錄相同（單一 `.js`，自動注入 CSS，不使用 Shadow DOM），色票與色名標籤也通用。屬性與範例請看各資料夾的 README；有 `index.html` 的資料夾，該頁彙整了歷次範例。
+
+| 資料夾 | 檔案 | 主要標籤 | 用途 |
+| --- | --- | --- | --- |
+| [`bd/`](bd/README.md) | `card-badge.js` | `<card-badge>` | 多功能徽章：日期與截止日、未讀計數、過濾清單、複製文字、折疊、輪播等。 |
+| [`chk/`](chk/README.md) | `ui-check.js` | `<ui-check>` | 閱讀檢核點按鈕，可把紀錄送到後端。 |
+| [`diff/`](diff/README.md) | `ui-layer-diff.js` | `<ui-layer-diff>` | 從籠統到具體的逐層改寫，自動標出新增與取代的部分。 |
+| [`dino/`](dino/README.md) | `dino-deck.js` | `<dino-deck>` `<dino-card>` | 恐龍噴火字卡動畫，例句從火焰中飛出。 |
+| [`drag/`](drag/README.md) | `ui-drag-ans.js` | `<ui-drag-ans>` | 拖曳或點選小卡的填空題。 |
+| [`flow/`](flow/README.md) | `ui-play.js`、`ui-stream.js`、`ui-orbit.js` | `<ui-play>` `<ui-stream>` `<ui-orbit>` | 教學錄影用的模擬畫面播放器（外框、標記、印章等效果）、聊天室回放式的內容流、核心概念與環繞想法的軌道圖。 |
+| [`guide/`](guide/README.md) | `ui-guide.js` | `<ui-guide>` | 框住頁面元素，加上號碼、說明卡與自動折線的指引框。 |
+| [`ian/`](ian/README.md) | `ui-icon-ani.js` | `<ui-icon-anim>` | 把多個 Bootstrap Icons 組成播放動畫。 |
+| [`info/`](info/README.md) | `info-region.js` | `<info-region>` | 逐步顯示的說明、步驟與測驗區塊。 |
+| [`ladder/`](ladder/README.md) | `ui-detail-ladder.js`、`ui-insight.js` | `<ui-detail-ladder>` `<ui-insight>` | 細節階梯（籠統說法逐階升級）與亮點字詞解說。 |
+| [`layout/`](layout/README.md) | `ui-drill.js`、`ui-cards.js`、`ui-steps.js` | `<ui-drill>` `<ui-cards>` `<ui-steps>` | 逐層鑽取、卡片網格、步驟列三個版面元件。 |
+| [`lens/`](lens/README.md) | `lens-read.js` | `<lens-read>` `<lens-word>` | 點擊式放大鏡標註，適合觸控筆與螢幕錄影。 |
+| [`maze/`](maze/README.md) | `maze-quiz.js` | `<maze-quiz>` | 迷宮填空動畫，走出迷宮後答案飛進空格。 |
+| [`mini/`](mini/README.md) | `mini-table.js` | `<mini-table>` | 用 `\|` 分欄的輕量表格。 |
+| [`msk/`](msk/README.md) | `ui-mask.js` | `<ui-mask>` | 行內文字遮罩，點擊揭曉。 |
+| [`nk/`](nk/README.md) | `ui-network.js` | `<ui-network>` `<ui-node>` | 圖示節點自動排列並以三角網格連線。 |
+| [`note/`](note/README.md) | `bp-popnote.js` | （JavaScript 工具） | 頁面提示工具包。 |
+| [`pen/`](pen/README.md) | `ink-pen.js`、`dot-go.js` | `<ui-ink-layer>` `<dot-go>` | 螢幕錄影用的畫筆層與跳轉圓點。 |
+| [`pg/`](pg/README.md) | `ui-progrid.js` | `<ui-progrid>` | 可直接編輯的屬性面板。 |
+| [`post/`](post/README.md) | `ui-post.js` | `<ui-post>` | 社群貼文與留言動畫。 |
+| [`r2/`](r2/README.md) | `ui-reading2.js` | `<layer-switch>` `<ui-spotlight>` `<collocation-map>` | 閱讀輔助元件組。 |
+| [`sb/`](sb/README.md) | `sentence-build.js` | `<sentence-build>` | 語塊組句練習。 |
+| [`scn/`](scn/README.md) | `ui-screen.js`、`ui-scroll-scene.js` | `<ui-screen>` `<ui-scroll-scene>` | 對照與敘事的視覺互動元件。 |
+| [`sthd/`](sthd/README.md) | `sticky-head.js` | `<sticky-head>` | 章節吸頂標題列與閱讀進度。 |
+| [`tbl/`](tbl/README.md) | `ui-table.js` | `<ui-table>` | 以語意標籤撰寫、CSS Grid 排版的互動表格。 |
 
 ## 目錄
 
 - [色票](#色票)
 - [色名標籤](#色名標籤)
 - [工具頁](#工具頁)
+- [子資料夾元件](#子資料夾元件)
 - [arrow-flow.js](#arrow-flowjs)
 - [bp-stepper.js](#bp-stepperjs)
 - [chunk-demo.js](#chunk-demojs)
@@ -282,7 +317,7 @@ ArrowFlow.config({ theme: 'blue', arrowTip: 'lg', gap: '80px', headerGradient: '
 | `data-color` | `violet` | 一般狀態的邊框、連接線與編號圓圈色。 |
 | `data-color-active` | `blue` | 進行中狀態的顏色。 |
 | `data-color-done` | `green` | 完成狀態的顏色。 |
-| `data-color-error` | `warning` | 錯誤狀態的顏色。 |
+| `data-color-error` | `red` | 錯誤狀態的顏色。 |
 | `data-text-color` | `shell` | 內文顏色。 |
 | `data-title-color` | `violet` | 標題顏色。 |
 | `data-badge-bg` | `rgba(180,132,232,0.15)` | 編號圓圈底色。 |
@@ -1531,7 +1566,7 @@ s.setAttribute('current-part', '2');  // 跳到第二部分
 | `text-color` | `shell` | 文字色。 |
 | `accent-color` | `shell` | 強調色，也是下列多數部位的預設值。 |
 | `ok-color` | `green` | 答對的顏色。 |
-| `bad-color` | `warning` | 答錯的顏色。 |
+| `bad-color` | `red` | 答錯的顏色。 |
 | `blank-color` | 跟隨 `accent-color` | 空格外框與文字。 |
 | `picked-color` | 跟隨 `blank-color` | 已選答案的空格底色。 |
 | `menu-color` | 跟隨 `bg-color` | 下拉選單底色。 |
