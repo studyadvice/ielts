@@ -2,14 +2,14 @@
 
 `<maze-quiz>` 是迷宮填空動畫元件。每次載入都會隨機生成一座只有一條路的迷宮，從左下入口描繪路徑到右上出口，抵達後在出口噴出彩帶，答案從出口跳出並飛進題目的空格。題目區可以用 `<maze-quiz-panel>` 拆到同一網頁的任何位置。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.2.0
+- 版本：1.3.0
 - 建立日期：11-12-26
 - 更新日期：11-13-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `maze-quiz.js` | `<maze-quiz>`、`<maze-quiz-panel>` | 迷宮填空動畫與外部題目面板。 |
-| `maze-quiz-demo-11-13-26.html` | | 互動範例十八則，附修改一到修改六的程式碼對照。範例十七、十八引用 repo 根目錄的 `bp-styles.css`。 |
+| `maze-quiz-demo-11-13-26.html` | | 互動範例十九則，附修改一到修改七的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
 
 ## 目錄
 
@@ -17,7 +17,7 @@
 - [運作方式](#運作方式)
 - [屬性](#屬性)
 - [外部題目面板](#外部題目面板)
-- [面板額外類別 extra-class](#面板額外類別-extra-class)
+- [題目區額外類別 extra-class、panel-class](#題目區額外類別-extra-classpanel-class)
 - [題庫](#題庫)
 - [快捷鍵](#快捷鍵)
 - [事件與方法](#事件與方法)
@@ -75,6 +75,7 @@
 | `chip-shape` | `pill` | 出口答案標籤的形狀：`pill` 膠囊、`rounded` 圓角、`square` 直角，或純數字（圓角 px，隨迷宮大小等比縮放）。 |
 | `chip-bg` | `#E3D322` | 答案標籤底色。 |
 | `chip-color` | `#0C0D0C` | 答案標籤文字色。 |
+| `panel-class` | 無 | 內建題目區的額外 class，例如 `p-3 bp-lnh-5`，詳見[題目區額外類別](#題目區額外類別-extra-classpanel-class)。 |
 
 `reveal-color`、`reveal-bg`、`chip-bg`、`chip-color` 接受色碼、色票名稱或 CSS 色名。元件只輸出 `<i class="bi bi-名稱">`，不載入圖示檔，使用 `entry-icon`、`exit-icon` 的網頁需自行引用 bootstrap-icons 的 CSS：
 
@@ -98,15 +99,19 @@
 
 `for` 填迷宮的 `id`。有對應面板時，迷宮不顯示內建題目區；移除面板後自動恢復內建版面。
 
-## 面板額外類別 extra-class
+## 題目區額外類別 extra-class、panel-class
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/studyadvice/ielts@main/bp-styles.css">
 
+<!-- 外部面板 -->
 <maze-quiz-panel for="m1" extra-class="p-3 bp-lnh-5"></maze-quiz-panel>
+
+<!-- 內建題目區 -->
+<maze-quiz panel-class="p-3 bp-lnh-5" question="I go _____ every day." answer="jogging"></maze-quiz>
 ```
 
-`extra-class` 的類別以空白分隔，加在面板內層的棕色題目框 `.mq-panel` 上，不是外殼。Bootstrap 與 `bp-styles.css` 的類別都能用。
+外部面板用 `<maze-quiz-panel>` 的 `extra-class`，內建題目區用 `<maze-quiz>` 的 `panel-class`。類別以空白分隔，加在棕色題目框 `.mq-panel` 上，不是外殼或整個元件。Bootstrap 與 `bp-styles.css` 的類別都能用。有外部面板時內建題目區不顯示，`panel-class` 不作用。以下規則兩者相同。
 
 - 不需要 `!important`：題目框的內距、字級、行距、字重、文字色、底色、圓角與間距，預設樣式的權重都只有一個 class，元件的樣式表又插在 `<head>` 最前面，所以頁面上同權重的類別會勝出。
 - 題目框的字級就是題目字級（預設 2.25rem）。`fs-*` 設定的是題目字級，`bp-lnh-*` 這類 em 單位的行距也以題目字級計算，例如 `bp-lnh-5`（2.5em）在 36px 的題目上是 90px。
@@ -116,6 +121,7 @@
 
 ```js
 document.querySelector('maze-quiz-panel[for="m1"]').setAttribute('extra-class', 'fs-large text-center');
+document.querySelector('#m2').setAttribute('panel-class', 'fs-large text-center');
 ```
 
 ## 題庫
@@ -153,6 +159,7 @@ document.addEventListener('answer-revealed', e => console.log(e.detail.answer));
 
 | 版本 | 內容 |
 | --- | --- |
+| 1.3.0 | `<maze-quiz>` 新增 `panel-class`，內建題目區也能直接加類別。 |
 | 1.2.0 | `<maze-quiz-panel>` 新增 `extra-class`；題目框的預設樣式降低權重，字級改以題目框為基準。 |
 | 1.1.0 | `route-colors` 支援三色與多種分隔符號；新增 `label-title`、`label-reveal`、`show-reveal`、`reveal-color`、`reveal-bg`、`entry-icon`、`exit-icon`、`chip-shape`、`chip-bg`、`chip-color`；題目面板不再顯示迷宮尺寸文字。 |
 | 1.0.0 | 初版：迷宮生成與動畫、外部題目面板、`maze-width`、`cell-size`、`controls`、快捷鍵、按鈕文字與尺寸、`confetti`、`hide-until-play`。 |

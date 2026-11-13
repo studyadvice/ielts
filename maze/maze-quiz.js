@@ -1,5 +1,5 @@
 /*!
- * maze-quiz.js v1.2.0
+ * maze-quiz.js v1.3.0
  * <maze-quiz> 迷宮填空動畫元件，<maze-quiz-panel> 外部題目面板
  *
  * 每次載入隨機生成「唯一解」迷宮（遞迴回溯法產生的完美迷宮，任兩格之間只有一條路），
@@ -38,6 +38,8 @@
  *   chip-shape    出口答案標籤的形狀：pill（預設膠囊）、rounded（圓角）、square（直角），或純數字（圓角 px）
  *   chip-bg       答案標籤底色（預設 #E3D322）
  *   chip-color    答案標籤文字色（預設 #0C0D0C）
+ *   panel-class   內建題目區的額外 class，加在 .mq-panel 上，例如 panel-class="p-3 bp-lnh-5"，
+ *                 規則與 <maze-quiz-panel> 的 extra-class 相同；有外部面板時內建題目區不顯示，此屬性不作用
  *
  * 外部面板：<maze-quiz-panel for="迷宮的 id"></maze-quiz-panel> 可放在同一網頁任何位置，
  *           有對應面板時迷宮不顯示內建題目區。答案飛入時若空格不在畫面內，會自動平滑捲動過去。
@@ -114,6 +116,14 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
 @keyframes mq-pulse{0%{transform:scale(1)}50%{transform:scale(1.9)}100%{transform:scale(1)}}
 @keyframes mq-fill{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
 `;
+  /* 把屬性值的類別同步到元素上：移除上次加入、這次沒有的類別，回傳這次的類別清單 */
+  function syncClasses(el, prev, value) {
+    const next = (value || '').split(/\s+/).filter(t => t && t !== 'mq-panel');
+    for (const t of prev || []) if (!next.includes(t)) el.classList.remove(t);
+    for (const t of next) el.classList.add(t);
+    return next;
+  }
+
   function injectStyle() {
     if (document.getElementById(STYLE_ID)) return;
     const s = document.createElement('style');
@@ -394,7 +404,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     static get observedAttributes() {
       return ['question', 'answer', 'cols', 'rows', 'maze-width', 'cell-size', 'route-colors', 'controls',
         'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play',
-        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon'];
+        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon', 'panel-class'];
     }
 
     constructor() {
@@ -477,6 +487,9 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
           break;
         case 'label-title':
           this._applyTitle();
+          break;
+        case 'panel-class':
+          this._applyPanelClass();
           break;
         case 'label-reveal':
         case 'show-reveal':
@@ -588,6 +601,11 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     }
 
     /* ----- 外部面板 ----- */
+    _applyPanelClass() {
+      if (!this.$innerPanel) return;
+      this._panelClasses = syncClasses(this.$innerPanel, this._panelClasses, this.getAttribute('panel-class'));
+    }
+
     _findExternalPanel() {
       if (!this.id) return null;
       return document.querySelector(`maze-quiz-panel[for="${CSS.escape(this.id)}"]`);
@@ -1016,6 +1034,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this.$board = this.querySelector('.mq-board');
       this.$coverText = this.querySelector('.mq-cover-text');
       this.$innerPanel = this.querySelector('.mq-wrap > .mq-panel');
+      this._applyPanelClass();
       this.$actions = document.createElement('div');
       this.$actions.className = 'mq-actions';
       this.$actions.innerHTML = `
@@ -1170,10 +1189,7 @@ ${mark('mq-out', exit, exitIcon, COLORS.exit)}
     _applyExtraClass() {
       const inner = this.firstElementChild;
       if (!inner || !inner.classList.contains('mq-panel')) return;
-      const next = (this.getAttribute('extra-class') || '').split(/\s+/).filter(t => t && t !== 'mq-panel');
-      for (const t of this._extraApplied || []) if (!next.includes(t)) inner.classList.remove(t);
-      for (const t of next) inner.classList.add(t);
-      this._extraApplied = next;
+      this._extraApplied = syncClasses(inner, this._extraApplied, this.getAttribute('extra-class'));
     }
     connectedCallback() {
       injectStyle();
