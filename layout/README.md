@@ -1028,6 +1028,28 @@ uc.flip(4);          // 牌組裡沒在顯示的卡片，會先換到那一張�
 </ui-steps>
 ```
 
+### 推進與事件
+
+`<ui-steps>` 也能像播放器一樣推進，搭配 `lw/link-when.js` 就能和其他元件串接。推進到某一步時，若該步驟帶 `source`，內容區會一併切換。
+
+```js
+const st = document.querySelector('ui-steps');
+st.next();          // 前進一步
+st.prev();          // 後退一步
+st.setCurrent(3);   // 第 3 步設為目前步驟；超過步驟數代表全部完成
+st.play();          // 每隔 play-interval 毫秒（預設 1500）自動前進，走完自動停止
+st.pause();
+st.reset();         // 回到載入時的狀態
+st.current;         // 目前步驟（從 1 起算；0 為尚未開始，total + 1 為全部完成）
+st.total;
+```
+
+| 事件 | `detail` | 觸發時機 |
+| --- | --- | --- |
+| `steps:change` | `{ index, total, label }` | 目前步驟改變時。 |
+| `steps:end` | `{ total }` | 全部步驟完成時。 |
+| `steps:reset` | `{}` | 呼叫 `reset()` 時。 |
+
 ## 內容區主題
 
 內容區（panel detail）可以用關鍵字組合外觀。主題寫在內容來源的 `<template>` 上，就會跟著內容走，不管哪張卡打開都一樣。

@@ -627,6 +627,7 @@ sentence-build { display: block; }
       this._st.att++;
       const ok = this._z.length === this._ans.length &&
                  this._ans.every((ai,p) => this._z[p] === ai);
+      this._emit('sb:check', { correct: ok, attempts: this._st.att });
       if (ok) {
         this._st.done = this._st.locked = true;
         if (this._iv) clearInterval(this._iv);
@@ -635,6 +636,7 @@ sentence-build { display: block; }
         if (this.cfg.showLbls) this._rZ();
         if (this._eBChk) this._eBChk.disabled = true;
         this._showNext();
+        this._emit('sb:complete', { attempts: this._st.att, revealed: false });
       } else {
         this._fb(this.cfg.msgBad, 'red');
         this._mark(false);
@@ -692,6 +694,7 @@ sentence-build { display: block; }
       if (this._eBChk) this._eBChk.disabled = true;
       if (this._eBns)  this._eBns.style.display = 'none';
       this._showNext();
+      this._emit('sb:complete', { attempts: this._st.att, revealed: true });
     }
 
     /* ── Reset（重置當前題目，不換題） ── */
@@ -754,7 +757,16 @@ sentence-build { display: block; }
         this._fb('時間到！', 'red');
         if (this._eBns) this._eBns.style.display = '';
       }
+      this._emit('sb:timeout', { attempts: this._st.att });
     }
+
+    /* ── 事件與公開方法（供 link-when 等外部串接） ── */
+    _emit(name, detail) { this.dispatchEvent(new CustomEvent(name, { bubbles: true, detail })); }
+    check()        { this._chk(); }
+    showAnswer()   { this._sAns(); }
+    reset()        { this._rst(); this._emit('sb:reset', {}); }
+    nextQuestion() { this._nextQ(); }
+    get isDone()   { return !!this._st.done; }
   }
 
   customElements.define('sentence-build', SentenceBuild);

@@ -350,9 +350,12 @@ ui-play .upl-ins{display:inline-block;}
   function onGlobalKey(e) {
     const t = e.target;
     if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
-    let p = activePlayer && activePlayer.isConnected ? activePlayer : null;
+    /* 已播完或被隱藏的元件不再接收按鍵，改找畫面上的下一個 */
+    const usable = (q) => q && q.isConnected && !q._ended && q.getClientRects().length > 0;
+    let p = usable(activePlayer) ? activePlayer : null;
     if (!p) {
       for (const q of players) {
+        if (!usable(q)) continue;
         const r = q.getBoundingClientRect();
         if (r.bottom > 0 && r.top < window.innerHeight) { p = q; break; }
       }
@@ -765,6 +768,7 @@ ui-play .upl-ins{display:inline-block;}
     async _start(byKey) {
       if (this._started) return;
       this._started = true;
+      activePlayer = this;
       if (this._io) { this._io.disconnect(); this._io = null; }
       this._syncControls();
       const mode = this._attr('step-mode', 'mixed');

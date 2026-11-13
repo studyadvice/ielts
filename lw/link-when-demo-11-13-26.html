@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>link-when 元件串接示範（11-13-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 80px 32px;}
+  h1{font-size:1.6rem;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  h2{font-size:1.2rem;color:#B484E8;margin:0 0 8px 0;}
+  .desc{color:#A3C4BC;font-size:0.9rem;margin:0 0 12px 0;}
+  section{margin:0 0 56px 0;}
+  .two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:0;white-space:pre-wrap;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#E3D322;white-space:nowrap;}
+  .done-box{padding:12px 16px;border:1px solid #71CD76;border-radius:8px;color:#DBEDD8;margin:16px 0 0 0;}
+  #log{position:fixed;right:24px;bottom:24px;width:360px;z-index:50;}
+  .alert-lw{background:#3B2A20;color:#DBEDD8;border:1px solid #51DBCF;font-size:0.9rem;padding:8px 12px;margin:8px 0 0 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;link-when&gt;</code> 元件串接</h1>
+  <p class="sub">A 播完時對 B 執行動作，中間可以讓 A 淡出、收合或刪除，並讓 B 移到 A 的位置。本身不顯示任何畫面，不需要寫 JavaScript。不支援 ui-table 與 info-region。</p>
+
+  <!-- 範例 1 -->
+  <section>
+    <h2>範例 1：對話播完，換成模擬畫面（原地替換）</h2>
+    <p class="desc">ui-stream 播完 → 淡出 → ui-play 出現在同一個位置並開始播放。按「重新整理」可再看一次。</p>
+    <div class="two">
+      <div>
+        <ui-stream id="s1" autoplay delay="400" height="300" title="老師批改" title-size="1rem">
+          <stream-item from="student" name="Amy">Technology is very good for society.</stream-item>
+          <stream-item from="teacher" name="老師" typed speed="20">very good 太籠統了，我們來改。</stream-item>
+        </ui-stream>
+        <ui-play id="p1" hidden frame="win" frame-title="改寫示範" step-mode="auto" step-delay="500" font-size="1.4rem" min-height="300">
+          <stage-item><p id="p1s">Technology is very good for society.</p></stage-item>
+          <script-item>
+            <mark-fx target="#p1s" text="very good" kind="underline" color="red"></mark-fx>
+            <stamp-fx target="#p1s" text="very good" offset-y="54" shake="0">大錯特錯</stamp-fx>
+            <swap-fx target="#p1s" text="very good" to="indispensable"></swap-fx>
+          </script-item>
+        </ui-play>
+        <link-when source="#s1" event="done" target="#p1" do="play" delay="800" exit="fade" exit-speed="500" in-place></link-when>
+      </div>
+<pre>&lt;ui-stream id="s1" autoplay …&gt;…&lt;/ui-stream&gt;
+
+&lt;ui-play id="p1" hidden step-mode="auto" …&gt;…&lt;/ui-play&gt;
+
+&lt;link-when source="#s1" event="done"
+           target="#p1" do="play"
+           delay="800" exit="fade" exit-speed="500" in-place&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
+
+  <!-- 範例 2 -->
+  <section>
+    <h2>範例 2：組句答對，步驟前進一格</h2>
+    <p class="desc">sentence-build 答對（sb:complete）→ ui-steps 執行 next()。A 保留不動（exit 預設 none）。</p>
+    <div class="two">
+      <div>
+        <ui-steps id="st2" numbered line arrows accent="green" current="1">
+          <step-item label="組句"></step-item>
+          <step-item label="檢查"></step-item>
+          <step-item label="完成"></step-item>
+        </ui-steps>
+        <div style="height:12px"></div>
+        <sentence-build id="sb2" theme="green">
+          <chunk-item>The number of students</chunk-item>
+          <chunk-item>has risen</chunk-item>
+          <chunk-item>sharply</chunk-item>
+        </sentence-build>
+        <link-when source="#sb2" target="#st2" do="next"></link-when>
+      </div>
+<pre>&lt;ui-steps id="st2" numbered line arrows current="1"&gt;…&lt;/ui-steps&gt;
+&lt;sentence-build id="sb2"&gt;…&lt;/sentence-build&gt;
+
+&lt;!-- event 省略時就是 done，sentence-build 對應 sb:complete --&gt;
+&lt;link-when source="#sb2" target="#st2" do="next"&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
+
+  <!-- 範例 3 -->
+  <section>
+    <h2>範例 3：連續串接</h2>
+    <p class="desc">chunk-demo 每個意群都換過寫法（chunk-end）→ 收合 → bp-stepper 以 pop 出現並自動推進 → 推進完（bps:complete）→ 顯示結論。</p>
+    <div class="two">
+      <div>
+        <chunk-demo id="cd3" sentence="She {0} to the market {1}." theme="blue" mode="dots">
+          <cd-chunk id="0" label="動詞"><cd-level>went</cd-level><cd-level>hurried</cd-level><cd-level>rushed excitedly</cd-level></cd-chunk>
+          <cd-chunk id="1" label="時間"><cd-level>yesterday</cd-level><cd-level>early in the morning</cd-level></cd-chunk>
+        </chunk-demo>
+        <bp-stepper id="bp3" hidden data-theme="blue" data-play-interval="900">
+          <bp-step><bp-step-title>換動詞</bp-step-title></bp-step>
+          <bp-step><bp-step-title>加時間</bp-step-title></bp-step>
+          <bp-step><bp-step-title>完成</bp-step-title></bp-step>
+        </bp-stepper>
+        <div id="end3" class="done-box" hidden><i class="bi bi-lightbulb"></i> 同一句話，換一個意群就能升級。</div>
+        <link-when source="#cd3" target="#bp3" do="play" exit="collapse" enter="pop" in-place></link-when>
+        <link-when source="#bp3" target="#end3" do="show" enter="slide-up"></link-when>
+      </div>
+<pre>&lt;chunk-demo id="cd3" …&gt;…&lt;/chunk-demo&gt;
+&lt;bp-stepper id="bp3" hidden data-play-interval="900"&gt;…&lt;/bp-stepper&gt;
+&lt;div id="end3" hidden&gt;…&lt;/div&gt;
+
+&lt;link-when source="#cd3" target="#bp3" do="play"
+           exit="collapse" enter="pop" in-place&gt;&lt;/link-when&gt;
+&lt;link-when source="#bp3" target="#end3" do="show" enter="slide-up"&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
+
+  <!-- 屬性 -->
+  <section>
+    <h2>&lt;link-when&gt; 屬性</h2>
+    <table class="attr">
+      <tr><th>屬性</th><th>預設值</th><th>說明</th></tr>
+      <tr><td>source</td><td>必填</td><td>A 的選擇器。</td></tr>
+      <tr><td>event</td><td>done</td><td>done 代表 A 播完或完成，依元件自動對應（見下表）；也可寫任何事件名稱，例如 sb:check、ladder-change。</td></tr>
+      <tr><td>target</td><td>必填</td><td>B 的選擇器。B 可以先加 hidden 藏起來，觸發時會自動顯示。</td></tr>
+      <tr><td>do</td><td>play</td><td>對 B 做什麼：play、next、reset、show（只顯示）、hide、scroll（捲到 B），或 B 身上任何方法名稱。</td></tr>
+      <tr><td>delay</td><td>0</td><td>A 觸發後等多久才開始（ms）。</td></tr>
+      <tr><td>exit</td><td>none</td><td>A 的退場：none 保留；hide 隱藏；fade 淡出後隱藏；collapse 收合後隱藏；remove 從頁面刪除。</td></tr>
+      <tr><td>exit-speed</td><td>400</td><td>fade、collapse 的時間（ms）。</td></tr>
+      <tr><td>exit-gap</td><td>0</td><td>A 消失後，等多久 B 才開始（ms）。</td></tr>
+      <tr><td>in-place</td><td>不設</td><td>B 移到 A 原本的位置（A 被刪除也可以）。</td></tr>
+      <tr><td>enter</td><td>fade</td><td>B 原本隱藏時的進場效果：fade、slide-up、slide-down、zoom、pop、none。</td></tr>
+      <tr><td>enter-speed</td><td>500</td><td>進場時間（ms）。</td></tr>
+      <tr><td>once</td><td>true</td><td>只觸發一次；false 則每次 A 發出事件都觸發。</td></tr>
+    </table>
+    <p class="desc" style="margin-top:12px">順序：A 觸發 → delay → A 退場 → exit-gap → B 移位（in-place）→ B 進場 → 對 B 執行 do。過程中在 link-when 上發出 link-when:start 與 link-when:done 事件；也可以用 JavaScript 呼叫 el.fire() 手動觸發。</p>
+
+    <h2 style="margin-top:28px">event="done" 對照</h2>
+    <table class="attr">
+      <tr><th>元件</th><th>對應事件</th><th>說明</th></tr>
+      <tr><td>ui-play</td><td>play-end</td><td></td></tr>
+      <tr><td>ui-stream</td><td>ui-stream:done</td><td></td></tr>
+      <tr><td>ui-blank</td><td>cli-end／blank-submit</td><td>mode="cli" 為播完，其他為送出答案。</td></tr>
+      <tr><td>ui-detail-ladder</td><td>ladder-end</td><td></td></tr>
+      <tr><td>bp-stepper</td><td>bps:complete</td><td>本次新增 next()、play()、pause()、reset()、data-play-interval。</td></tr>
+      <tr><td>ui-steps</td><td>steps:end</td><td>本次新增，另有 steps:change；方法 next()、prev()、play()、pause()、reset()、setCurrent(n)，屬性 play-interval。</td></tr>
+      <tr><td>sentence-build</td><td>sb:complete</td><td>本次新增，答對或顯示答案時觸發；另有 sb:check、sb:timeout、sb:reset；方法 check()、showAnswer()、reset()、nextQuestion()。</td></tr>
+      <tr><td>chunk-demo</td><td>chunk-end</td><td>本次新增，每個未鎖定的意群都換過寫法時觸發一次；另有 chunk-change；方法 resetProgress()。</td></tr>
+      <tr><td>arrow-flow</td><td>flow-complete</td><td></td></tr>
+      <tr><td>slider-show</td><td>finished</td><td></td></tr>
+      <tr><td>ui-layer-diff</td><td>layerend</td><td></td></tr>
+      <tr><td>dino-deck</td><td>dino:done</td><td></td></tr>
+      <tr><td>ui-drag-ans</td><td>drag-ans:complete</td><td></td></tr>
+      <tr><td>ui-post</td><td>post-end</td><td></td></tr>
+      <tr><td>ui-screen</td><td>ui-screen:end</td><td></td></tr>
+      <tr><td>maze-quiz</td><td>maze-solved</td><td></td></tr>
+      <tr><td>ui-check</td><td>ui-check-done</td><td></td></tr>
+      <tr><td>ui-icon-anim</td><td>anim-end</td><td></td></tr>
+      <tr><td>ui-fillin</td><td>fillin-submit</td><td>送出即觸發，不分對錯。</td></tr>
+      <tr><td>ui-mask</td><td>mask-reveal</td><td></td></tr>
+    </table>
+  </section>
+</div>
+
+<div id="log"></div>
+
+<script src="../flow/ui-stream.js"></script>
+<script src="../flow/ui-play.js"></script>
+<script src="../sb/sentence-build.js"></script>
+<script src="../layout/ui-steps.js"></script>
+<script src="../chunk-demo.js"></script>
+<script src="../bp-stepper.js"></script>
+<script src="link-when.js"></script>
+<script>
+  /* 每次串接完成，在右下角以 Bootstrap alert 顯示 */
+  document.addEventListener('link-when:done', function (e) {
+    var t = e.detail.target, a = e.detail.source;
+    var d = document.createElement('div');
+    d.className = 'alert alert-lw';
+    d.textContent = '串接完成：' + (a ? a.localName + '#' + a.id : '?') + ' → ' + (t ? t.localName + '#' + t.id : '?');
+    document.getElementById('log').appendChild(d);
+    setTimeout(function () { d.remove(); }, 4000);
+  });
+</script>
+</body>
+</html>

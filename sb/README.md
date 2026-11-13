@@ -172,3 +172,25 @@
   </div>
 </div>
 ```
+
+## 事件與方法
+
+事件都會冒泡。
+
+| 事件 | `detail` | 觸發時機 |
+| --- | --- | --- |
+| `sb:check` | `{ correct, attempts }` | 每次按「確認」或自動檢查。 |
+| `sb:complete` | `{ attempts, revealed }` | 答對，或顯示答案時（`revealed` 為 `true`）。 |
+| `sb:timeout` | `{ attempts }` | 倒數結束。 |
+| `sb:reset` | `{}` | 呼叫 `reset()` 時。 |
+
+```js
+const sb = document.querySelector('sentence-build');
+sb.check();        // 檢查目前組合
+sb.showAnswer();   // 顯示答案
+sb.reset();        // 重置本題
+sb.nextQuestion(); // 題庫模式換下一題
+sb.isDone;         // 是否已完成
+```
+
+搭配 `lw/link-when.js`，可以在答對後自動觸發其他元件。

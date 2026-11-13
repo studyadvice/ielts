@@ -83,6 +83,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`ladder/`](ladder/README.md) | `ui-detail-ladder.js`、`ui-insight.js` | `<ui-detail-ladder>` `<ui-insight>` | 細節階梯（籠統說法逐階升級）與亮點字詞解說。 |
 | [`layout/`](layout/README.md) | `ui-drill.js`、`ui-cards.js`、`ui-steps.js` | `<ui-drill>` `<ui-cards>` `<ui-steps>` | 逐層鑽取、卡片網格、步驟列三個版面元件。 |
 | [`lens/`](lens/README.md) | `lens-read.js` | `<lens-read>` `<lens-word>` | 點擊式放大鏡標註，適合觸控筆與螢幕錄影。 |
+| [`lw/`](lw/README.md) | `link-when.js` | `<link-when>` | 元件串接：A 播完時對 B 執行動作，可讓 A 退場、B 原地替換。 |
 | [`maze/`](maze/README.md) | `maze-quiz.js` | `<maze-quiz>` | 迷宮填空動畫，走出迷宮後答案飛進空格。 |
 | [`mini/`](mini/README.md) | `mini-table.js` | `<mini-table>` | 用 `\|` 分欄的輕量表格。 |
 | [`msk/`](msk/README.md) | `ui-mask.js` | `<ui-mask>` | 行內文字遮罩，點擊揭曉。 |
@@ -449,6 +450,18 @@ ArrowFlow.config({ theme: 'blue', arrowTip: 'lg', gap: '80px', headerGradient: '
 | `bps:change` | `{ index, prevIndex, el }` | 進行中的步驟改變時。 |
 | `bps:complete` | `{ el }` | 所有步驟都標記完成時。 |
 
+元素本身也有方法，可直接呼叫或交給 `link-when`：
+
+```js
+const bp = document.querySelector('bp-stepper');
+bp.next();    // 前進一步；尚未開始時設第一步為進行中，progress-show 模式同時揭示下一步
+bp.play();    // 每隔 data-play-interval 毫秒（預設 1500）自動前進，走完自動停止
+bp.pause();
+bp.reset();   // 等同 BPStepper.resetStates(bp)
+bp.current;   // 目前步驟（從 1 起算；0 為尚未開始，total + 1 為全部完成）
+bp.total;
+```
+
 ### JavaScript API
 
 ```js
@@ -615,10 +628,18 @@ BPStepper.THEMES;                       // 主題設定
 const cd = document.querySelector('chunk-demo');
 cd.unlockChunk(1);   // 解鎖 id 為 1 的意群
 cd.lockChunk(0);     // 鎖定 id 為 0 的意群
+cd.resetProgress();  // 重新計算 chunk-end
 
 // 全頁預設值，要在元素初始化前設定
 window.ChunkDemoConfig = { defaultTheme: 'blue', showPreview: true, mode: 'dots' };
 ```
+
+### 事件
+
+| 事件 | `detail` | 觸發時機 |
+| --- | --- | --- |
+| `chunk-change` | `{ id, level }` | 使用者換了一個意群的寫法。 |
+| `chunk-end` | `{ total }` | 每個未鎖定的意群都至少換過一次寫法，只觸發一次。 |
 
 ---
 

@@ -202,11 +202,17 @@ ${variantCSS}
 
       const arrowProto = has('arrows') ? this._arrow(a) : null;
       this._items = items;
+      this._links = [];
+      /* 目前步驟（從 1 起算）；0 代表尚未開始，items.length + 1 代表全部完成 */
+      const ci = statuses.indexOf('current');
+      this._cur = ci >= 0 ? ci + 1 : (items.length && statuses.every(x => x === 'done') ? items.length + 1 : 0);
+      this._cur0 = this._cur;
       items.forEach((it, i) => {
         this._decorate(it, i, statuses[i]);
         track.append(it);
         if (i < items.length - 1) {
           const link = el('span', 'uis-link');
+          this._links.push(link);
           if (statuses[i] === 'done' && statuses[i + 1] !== 'todo') link.setAttribute('data-on', '');
           if (arrowProto) link.append(arrowProto.cloneNode(true));
           track.append(link);
@@ -278,6 +284,48 @@ ${variantCSS}
 
       this.setAttribute('data-ready', '');
     }
+
+    /* ── 推進 API（供 link-when 等外部串接） ── */
+    get current() { return this._cur || 0; }
+    get total() { return (this._items || []).length; }
+
+    /* 把第 n 步（從 1 起算）設為目前步驟；n 超過步驟數代表全部完成 */
+    setCurrent(n) {
+      const items = this._items || [];
+      if (!items.length) return;
+      n = Math.max(0, Math.min(Math.round(n), items.length + 1));
+      this._cur = n;
+      const st = items.map((_, i) => (i < n - 1 ? 'done' : (i === n - 1 ? 'current' : 'todo')));
+      items.forEach((it, i) => this._decorate(it, i, st[i]));
+      this._links.forEach((lk, i) => lk.toggleAttribute('data-on', st[i] === 'done' && st[i + 1] !== 'todo'));
+      if (n >= 1 && n <= items.length) {
+        const it = items[n - 1];
+        if (this._main && it.getAttribute('source') && !it.hasAttribute('disabled')) this._select(it);
+        this._emit('steps:change', { index: n, total: items.length, label: it.getAttribute('label') || '' });
+      }
+      if (n > items.length) {
+        this.pause();
+        this._emit('steps:end', { total: items.length });
+      }
+    }
+
+    next() { if (this._cur <= this.total) this.setCurrent(this._cur + 1); }
+    prev() { if (this._cur > 1) this.setCurrent(this._cur - 1); }
+    reset() { this.pause(); this.setCurrent(this._cur0 || 0); this._emit('steps:reset', {}); }
+
+    /* 自動推進：每隔 play-interval 毫秒前進一步，走完自動停止 */
+    play() {
+      if (this._timer || !this.total) return;
+      if (this._cur > this.total) this.setCurrent(0);
+      const ms = Math.max(200, num(this.getAttribute('play-interval'), 1500));
+      const tick = () => { this.next(); if (this._cur > this.total) this.pause(); };
+      if (this._cur === 0) tick();
+      this._timer = setInterval(tick, ms);
+    }
+    pause() { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
+    disconnectedCallback() { this.pause(); }
+
+    _emit(name, detail) { this.dispatchEvent(new CustomEvent(name, { bubbles: true, detail })); }
 
     _arrow(a) {
       const ar = el('span', 'uis-arrow');

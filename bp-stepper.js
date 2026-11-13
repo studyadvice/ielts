@@ -1422,8 +1422,49 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
     }
   }
 
+  function revealEnding(el) {
+    if (!el.dataset.showEnding) return;
+    const endingEl = document.getElementById(el.dataset.showEnding);
+    if (!endingEl) return;
+    endingEl.classList.remove('bps-ending-hidden');
+    void endingEl.offsetWidth;
+    endingEl.classList.add('bps-ending-reveal');
+  }
+
   customElements.define('bp-stepper', class extends HTMLElement {
-    connectedCallback() { setTimeout(() => initEl(this), 0); }
+    /* 只初始化一次：元素被搬移（例如 link-when 的 in-place）時不重建 */
+    connectedCallback() { if (this._bpsInit) return; this._bpsInit = true; setTimeout(() => initEl(this), 0); }
+    disconnectedCallback() { this.pause(); }
+
+    /* ── 元素方法（供 link-when 等外部串接） ── */
+    get current() {
+      const steps = [...getSteps(this)];
+      const i = steps.findIndex(s => s.dataset.state === 'active');
+      if (i >= 0) return i + 1;
+      return steps.length && steps.every(s => s.dataset.state === 'done') ? steps.length + 1 : 0;
+    }
+    get total() { return getSteps(this).length; }
+
+    /* 前進一步：尚未開始時設第一步為進行中；progress-show 模式會同時揭示下一步；走完觸發 bps:complete */
+    next() {
+      const n = this.total, cur = this.current;
+      if (!n || cur > n) return;
+      if (cur === 0) { setActive(this, 0); return; }
+      if (getMode(this) === 'progress-show') progressShowNext(this, cur - 1);
+      else setActive(this, cur);
+      if (cur >= n) { this.pause(); revealEnding(this); }
+    }
+
+    /* 自動推進：每隔 data-play-interval 毫秒（預設 1500）前進一步，走完自動停止 */
+    play() {
+      if (this._timer || !this.total) return;
+      if (this.current > this.total) this.reset();
+      const ms = Math.max(200, parseFloat(this.dataset.playInterval) || 1500);
+      if (this.current === 0) this.next();
+      this._timer = setInterval(() => this.next(), ms);
+    }
+    pause() { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
+    reset() { this.pause(); resetStates(this); }
   });
   customElements.define('bp-step',         class extends HTMLElement {});
   customElements.define('bp-step-title',   class extends HTMLElement {});

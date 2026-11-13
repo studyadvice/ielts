@@ -942,6 +942,7 @@ chunk-demo { display: block; }
       if (st.level === level) return;
 
       this._revealed.add(id);
+      this._picked(id, level);
 
       const chunk = this._chunks.find(c => c.id === id);
       const lvD   = chunk?.levels.find(l => l.level === level) || chunk?.levels[0];
@@ -1038,6 +1039,7 @@ chunk-demo { display: block; }
       if (st.level === level) { this._close(); return; }
 
       this._revealed.add(id);
+      this._picked(id, level);
       this._close();
 
       const chunk = this._chunks.find(c => c.id === id);
@@ -1147,6 +1149,7 @@ chunk-demo { display: block; }
 
     _pick(id, level) {
       const st = this._state.find(s => s.id === id);
+      if (st && st.level !== level) this._picked(id, level);
       if (st) st.level = level;
       this._revealed.add(id);
       this._close();
@@ -1173,6 +1176,24 @@ chunk-demo { display: block; }
       });
       return result;
     }
+
+    /* ── 事件（供 link-when 等外部串接）──
+       chunk-change：換了一種寫法；chunk-end：每個未鎖定的意群都至少換過一次寫法（只觸發一次） */
+    _picked(id, level) {
+      if (!this._touched) this._touched = new Set();
+      this._touched.add(id);
+      this._emit('chunk-change', { id, level });
+      const need = this._chunks.filter(c => !this._locked.has(c.id));
+      if (!this._ended && need.length && need.every(c => this._touched.has(c.id))) {
+        this._ended = true;
+        this._emit('chunk-end', { total: this._chunks.length });
+      }
+    }
+
+    _emit(name, detail) { this.dispatchEvent(new CustomEvent(name, { bubbles: true, detail })); }
+
+    /* 重新開始計算 chunk-end（寫法維持不變） */
+    resetProgress() { this._touched = new Set(); this._ended = false; }
 
     unlockChunk(id) {
       const n = parseInt(id, 10);
