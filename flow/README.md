@@ -4,7 +4,7 @@
 
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
-| `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤控制節奏。 | [`ui-play-demo-11-13-26.html`](ui-play-demo-11-13-26.html) |
+| `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
 | `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案。 | [`ui-stream-demo-11-13-26.html`](ui-stream-demo-11-13-26.html)、[`ui-stream-demo-11-11-26.html`](ui-stream-demo-11-11-26.html) |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
@@ -41,7 +41,7 @@
 </ui-play>
 ```
 
-點一下元件選定它，再按空白鍵或右方向鍵推進。頁面上有多個 `<ui-play>` 時，鍵盤只控制最後點選的那一個。
+點一下元件選定它，再按空白鍵或右方向鍵推進。頁面上有多個 `<ui-play>` 時，鍵盤只控制最後點選的那一個。設 `next-by="click"` 改成點內容區推進，`both` 則兩者皆可。
 
 ### 播放節奏
 
@@ -73,7 +73,7 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `frame` | `plain` | `none`、`plain`、`mac`、`win`（Windows 11）、`win-classic`（Windows 98）、`browser`、`phone`、`paper`（稿紙）、`sheet`（試算表）、`notebook`（筆記本分頁）。 |
+| `frame` | `plain` | `none`、`plain`、`mac`、`win`（Windows 11）、`win-classic`（Windows 98）、`browser`、`phone`、`paper`（稿紙）、`sheet`（試算表）、`notebook`（筆記本分頁）、`draw`（小畫家）。 |
 | `frame-title` | 無 | 標題列文字；`phone` 外框顯示在時間位置。 |
 | `frame-icon` | 無 | 標題列圖示，Bootstrap Icons 類別，例如 `bi-file-earmark-text`。 |
 | `frame-url` | 無 | `browser` 外框網址列文字。 |
@@ -89,9 +89,11 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `rule-color` | `calm` | 橫線顏色。 |
+| `rule-color` | `gray` | 橫線顏色。 |
 | `margin-line-width` | `3px` | 左側紅線粗細。 |
 | `margin-line-color` | `red` | 左側紅線顏色。 |
+
+稿紙預設為深色：底色 `bg-alternative`、文字 `vanilla`、外框 `gray`。要淺色稿紙可設 `bg-color="vanilla" text-color="background" rule-color="calm"`。
 
 稿紙內的段落、清單、標題間距會歸零，讓每行文字坐在橫線上。
 
@@ -131,6 +133,20 @@
 | `search` | `搜尋筆記本` | 搜尋框提示文字，`false` 不顯示搜尋框。 |
 | `search-width` | `280px` | 搜尋框寬度。 |
 
+分頁只是外觀，不能點擊切換。
+
+**小畫家 `draw`**
+
+模擬 Windows 小畫家的功能表列（檔案、編輯、檢視、儲存、分享、復原、取消復原）、功能區（選取項目、影像、工具、筆刷、色彩），以及左側筆刷大小滑桿。全部只是外觀。預設 `min-height` 為 `360px`，`padding` 為 `32px 32px 32px 88px`，左側留給滑桿。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `draw-tool` | `brush` | 選取中的工具：`select`、`pencil`、`eraser`、`fill`、`picker`、`text`、`zoom`、`brush`。 |
+| `draw-color` | `yellow` | 色彩群組的目前顏色。 |
+| `draw-select-color` | `quiet` | 選取框與滑桿圓鈕顏色。 |
+| `draw-slider` | `true` | 是否顯示左側滑桿；關閉時可用 `padding` 縮小左側留白。 |
+| `draw-size` | `0` | 滑桿位置 0 到 100，0 在最下方。 |
+
 ### `<ui-play>` 屬性：文字
 
 | 屬性 | 預設 | 說明 |
@@ -138,7 +154,7 @@
 | `font-family` | 系統字體 | 內容字體。 |
 | `font-size` | `1.25rem` | 內容字級。 |
 | `line-height` | `1.7` | 行高。 |
-| `text-color` | `shell` | 文字顏色；`paper` 為 `background`。 |
+| `text-color` | `shell` | 文字顏色；`paper` 為 `vanilla`。 |
 | `accent-color` | `key` | 註解外框與按鈕的主色。 |
 
 ### `<ui-play>` 屬性：播放
@@ -149,6 +165,7 @@
 | `step-mode` | `mixed` | `manual`、`mixed`、`auto`，見「播放節奏」。 |
 | `step-delay` | `600` | `after` 步驟之間的間隔（ms）。 |
 | `rate` | `1` | 播放倍率。 |
+| `next-by` | `key` | 推進方式：`key`（鍵盤）、`click`（點內容區，停用鍵盤）、`both`。點到舞台內的連結、按鈕、輸入框或正在選取文字時不推進。 |
 | `keyboard` | `true` | 是否啟用鍵盤。 |
 | `key-next` | `Space,ArrowRight` | 下一步按鍵，逗號分隔，可寫 `KeyN` 或 `n`。 |
 | `controls` | `none` | 播放／暫停按鈕：`none`、`hover`（滑鼠移入才出現）、`always`。 |
