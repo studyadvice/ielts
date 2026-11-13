@@ -1,5 +1,5 @@
 /*!
- * maze-quiz.js v1.3.0
+ * maze-quiz.js v1.4.0
  * <maze-quiz> 迷宮填空動畫元件，<maze-quiz-panel> 外部題目面板
  *
  * 每次載入隨機生成「唯一解」迷宮（遞迴回溯法產生的完美迷宮，任兩格之間只有一條路），
@@ -7,6 +7,8 @@
  *
  * <maze-quiz> 屬性：
  *   question      題目，用兩個以上的底線標示空格，例如 "I go _____ every day."
+ *                 可用 <br>（也接受 <br/>、<BR>）換行，例如 "Yesterday it rained.<br>I _____ at home."；
+ *                 其他標籤一律當作文字顯示，題庫的 q 也適用
  *   answer        答案，例如 "jogging"
  *   cols          欄數（2 到 40，預設 10）
  *   rows          列數（2 到 40，預設 12）
@@ -122,6 +124,14 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     for (const t of prev || []) if (!next.includes(t)) el.classList.remove(t);
     for (const t of next) el.classList.add(t);
     return next;
+  }
+
+  /* 以文字節點加入內容，只把 <br> 轉成換行；其他標籤原樣顯示為文字，不經過 innerHTML */
+  function appendWithBreaks(el, text) {
+    text.split(/<br\s*\/?>/i).forEach((part, i) => {
+      if (i) el.append(document.createElement('br'));
+      if (part) el.append(document.createTextNode(part));
+    });
   }
 
   function injectStyle() {
@@ -1166,11 +1176,12 @@ ${mark('mq-out', exit, exitIcon, COLORS.exit)}
       const before = m ? q.slice(0, m.index) : q + ' ';
       const after = m ? q.slice(m.index + m[0].length) : '';
       this.$question.textContent = '';
-      this.$question.append(document.createTextNode(before));
+      appendWithBreaks(this.$question, before);
       const blank = document.createElement('span');
       blank.className = 'mq-blank';
       blank.style.minWidth = `${Math.max(this._a.length + 2, 6)}ch`;
-      this.$question.append(blank, document.createTextNode(after));
+      this.$question.append(blank);
+      appendWithBreaks(this.$question, after);
       this.$blank = blank;
     }
 

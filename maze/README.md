@@ -2,14 +2,14 @@
 
 `<maze-quiz>` 是迷宮填空動畫元件。每次載入都會隨機生成一座只有一條路的迷宮，從左下入口描繪路徑到右上出口，抵達後在出口噴出彩帶，答案從出口跳出並飛進題目的空格。題目區可以用 `<maze-quiz-panel>` 拆到同一網頁的任何位置。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.3.0
+- 版本：1.4.0
 - 建立日期：11-12-26
 - 更新日期：11-13-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `maze-quiz.js` | `<maze-quiz>`、`<maze-quiz-panel>` | 迷宮填空動畫與外部題目面板。 |
-| `maze-quiz-demo-11-13-26.html` | | 互動範例十九則，附修改一到修改七的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
+| `maze-quiz-demo-11-13-26.html` | | 互動範例二十一則，附修改一到修改八的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
 
 ## 目錄
 
@@ -36,6 +36,7 @@
 
 - 迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，所以入口到出口的路徑必定唯一。
 - 題目用兩個以上的底線標示空格，例如 `I go _____ every day.`。沒有底線時，空格接在句尾。
+- 題目可用 `<br>` 換行（也接受 `<br/>`、`<BR>`），例如 `A: Why are you so tired?<br>B: I _____ up all night.`；其他標籤一律當作文字顯示，不會執行。題庫的 `q` 也適用。
 - 預設在元件幾乎完全進入畫面時自動播放，確保看得到左下入口。
 - 彩帶不使用透明度，以縮小或落出畫面的方式退場。
 - 答案標籤與彩帶依迷宮實際顯示大小等比縮放（基準 560px，範圍 0.4 到 1.25 倍）；迷宮很小時，牆壁與路徑仍保有最細下限。
@@ -47,7 +48,7 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `question` | `I go _____ every day.` | 題目。 |
+| `question` | `I go _____ every day.` | 題目，可用 `<br>` 換行。 |
 | `answer` | `jogging` | 答案。 |
 | `cols`、`rows` | `10`、`12` | 欄數與列數，範圍 2 到 40。 |
 | `speed` | `70` | 每一格的描繪毫秒數，總長限制在 1.2 到 15 秒之間。 |
@@ -159,6 +160,7 @@ document.addEventListener('answer-revealed', e => console.log(e.detail.answer));
 
 | 版本 | 內容 |
 | --- | --- |
+| 1.4.0 | `question` 與題庫的 `q` 支援 `<br>` 換行。 |
 | 1.3.0 | `<maze-quiz>` 新增 `panel-class`，內建題目區也能直接加類別。 |
 | 1.2.0 | `<maze-quiz-panel>` 新增 `extra-class`；題目框的預設樣式降低權重，字級改以題目框為基準。 |
 | 1.1.0 | `route-colors` 支援三色與多種分隔符號；新增 `label-title`、`label-reveal`、`show-reveal`、`reveal-color`、`reveal-bg`、`entry-icon`、`exit-icon`、`chip-shape`、`chip-bg`、`chip-color`；題目面板不再顯示迷宮尺寸文字。 |

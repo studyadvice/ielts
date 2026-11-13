@@ -21,6 +21,7 @@
   .ver.v6{background:#DE8EC9}
   .ver.v7{background:#778CE1}
   .ver.v8{background:#E3D322}
+  .ver.v9{background:#71CD76}
   .switch-row{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 16px}
   .switch-row .btn{font-size:.9375rem;border-color:#778CE1;color:#778CE1;padding:6px 16px}
   .switch-row .btn.active,.switch-row .btn:hover{background:#778CE1;color:#0C0D0C;border-color:#778CE1}
@@ -66,7 +67,7 @@
 </head>
 <body>
 <div class="page">
-  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.3.0</span></h1>
+  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.4.0</span></h1>
   <p class="lead-text">每次重新整理都會生成新的唯一解迷宮，從左下入口描繪路徑到右上出口，噴出彩帶後答案飛入空格。</p>
   <div class="info-box">迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，因此入口到出口的路徑必定唯一。彩帶不使用透明度，改以縮小或落出畫面的方式退場。</div>
   <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的迷宮。</div>
@@ -240,6 +241,22 @@
   <maze-quiz id="m19" cols="12" rows="9" autoplay="false" route-colors="playful,yellow" panel-class="p-3 bp-lnh-5"
              question="By the time we arrived at the station, the last train _____ already left." answer="had"></maze-quiz>
 
+  <!-- ===================== 修改八範例 ===================== -->
+  <h2>範例二十：題目用 &lt;br&gt; 換行<span class="ver v9">修改八</span></h2>
+  <p class="note">設定 <code>question="A: Why are you so tired?&lt;br&gt;B: I _____ up all night studying."</code>。<code>&lt;br&gt;</code>、<code>&lt;br/&gt;</code>、<code>&lt;BR&gt;</code> 都可以；其他標籤會當作文字顯示，不會執行。另外設定 <code>panel-class="bp-lnh-6"</code> 收緊行距，讓兩行對話更清楚。</p>
+  <maze-quiz cols="12" rows="9" autoplay="false" route-colors="green,blue" panel-class="bp-lnh-6"
+             question="A: Why are you so tired?<br>B: I _____ up all night studying." answer="stayed"></maze-quiz>
+
+  <h2>範例二十一：題庫的 q 也能換行，空格放在第二行開頭<span class="ver v9">修改八</span></h2>
+  <p class="note">題庫的 JSON 字串直接寫 <code>&lt;br&gt;</code>。按「換一個迷宮」會換題。</p>
+  <maze-quiz cols="12" rows="9" autoplay="false" route-colors="violet,pink">
+    <script type="application/json">
+      [{"q": "Complete the sentence:<br>_____ you ever been to Japan?", "a": "Have"},
+       {"q": "Line 1: The meeting was cancelled.<br/>Line 2: It was called _____ because of the storm.", "a": "off"},
+       {"q": "<b>is shown as text</b><BR>She _____ her keys again.", "a": "lost"}]
+    </script>
+  </maze-quiz>
+
   <hr class="divider">
 
   <h2>屬性、事件與方法</h2>
@@ -248,7 +265,7 @@
       <table class="attr">
         <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
         <tbody>
-          <tr><td><code>question</code></td><td>題目，用兩個以上的底線標示空格。</td><td>I go _____ every day.</td></tr>
+          <tr><td><code>question</code><span class="ver v9">修改八</span></td><td>題目，用兩個以上的底線標示空格。可用 &lt;br&gt; 換行（也接受 &lt;br/&gt;、&lt;BR&gt;），其他標籤當作文字顯示；題庫的 q 也適用。</td><td>I go _____ every day.</td></tr>
           <tr><td><code>answer</code></td><td>答案。</td><td>jogging</td></tr>
           <tr><td><code>cols</code></td><td>欄數，範圍 2 到 40。</td><td>10</td></tr>
           <tr><td><code>rows</code></td><td>列數，範圍 2 到 40。</td><td>12</td></tr>
@@ -314,6 +331,9 @@
 <span class="c">&lt;!-- 面板額外的 class：Bootstrap 與 bp-styles.css 都可以 --&gt;</span>
 <span class="t">&lt;maze-quiz-panel</span> <span class="a">for</span>=<span class="s">"m4"</span> <span class="a">extra-class</span>=<span class="s">"p-3 bp-lnh-5"</span><span class="t">&gt;&lt;/maze-quiz-panel&gt;</span>
 
+<span class="c">&lt;!-- 題目換行 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">question</span>=<span class="s">"A: Why are you so tired?&lt;br&gt;B: I _____ up all night studying."</span> <span class="a">answer</span>=<span class="s">"stayed"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
 <span class="c">&lt;!-- 內建題目區的額外 class --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">panel-class</span>=<span class="s">"p-3 bp-lnh-5"</span> <span class="a">question</span>=<span class="s">"..."</span> <span class="a">answer</span>=<span class="s">"..."</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
 
@@ -353,7 +373,7 @@ document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; cons
 
   <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
   <h2>修改紀錄與程式碼對照</h2>
-  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0，修改七收錄在 1.3.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
+  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0，修改七收錄在 1.3.0，修改八收錄在 1.4.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
 
   <h3 style="color:#B484E8">修改一</h3>
 
@@ -642,6 +662,26 @@ _applyPanelClass() {
   this._panelClasses = syncClasses(this.$innerPanel, this._panelClasses,
                                    this.getAttribute('panel-class'));
 }</span></pre></div>
+  </div>
+
+  <h3 style="color:#71CD76;margin-top:48px">修改八</h3>
+
+  <h3>18. question 支援 &lt;br&gt; 換行</h3>
+  <p class="cmp-desc">題目原本整段當文字節點，&lt;br&gt; 會原樣顯示。修改八把空格前後的文字依 &lt;br&gt; 切開，中間插入真正的 &lt;br&gt; 元素；仍然不使用 innerHTML，所以題目裡的其他標籤只會當作文字，不會被執行。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改七</div><pre class="code">this.$question.append(<span class="del">document.createTextNode(before)</span>);
+this.$question.append(blank, <span class="del">document.createTextNode(after)</span>);
+
+<span class="c">// 畫面顯示：A: Why are you so tired?&lt;br&gt;B: I ____ ...</span></pre></div>
+    <div><div class="cmp-head new">修改八</div><pre class="code"><span class="add">function appendWithBreaks(el, text) {
+  text.split(/&lt;br\s*\/?&gt;/i).forEach((part, i) =&gt; {
+    if (i) el.append(document.createElement('br'));
+    if (part) el.append(document.createTextNode(part));
+  });
+}</span>
+<span class="add">appendWithBreaks(this.$question, before);</span>
+this.$question.append(blank);
+<span class="add">appendWithBreaks(this.$question, after);</span></pre></div>
   </div>
 
   <!-- ===================== 範例六的面板 ===================== -->
