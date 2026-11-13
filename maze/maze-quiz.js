@@ -32,6 +32,12 @@
  *   show-reveal   設為 "false" 時，答案填入後不顯示狀態文字
  *   reveal-color  揭曉文字的文字色，接受色碼、色票名稱或 CSS 色名（預設 #C6C7BD）
  *   reveal-bg     揭曉文字的背景色；設定後揭曉文字以色塊呈現（預設無背景）
+ *   entry-icon    入口改用 Bootstrap Icons 圖示，填圖示名稱，例如 "geo-alt-fill"（也接受 "bi-geo-alt-fill"）
+ *   exit-icon     出口改用 Bootstrap Icons 圖示，例如 "flag-fill"
+ *                 元件本身不載入圖示檔，網頁需自行引用 bootstrap-icons 的 CSS；未設定時維持圓點
+ *   chip-shape    出口答案標籤的形狀：pill（預設膠囊）、rounded（圓角）、square（直角），或純數字（圓角 px）
+ *   chip-bg       答案標籤底色（預設 #E3D322）
+ *   chip-color    答案標籤文字色（預設 #0C0D0C）
  *
  * 外部面板：<maze-quiz-panel for="迷宮的 id"></maze-quiz-panel> 可放在同一網頁任何位置，
  *           有對應面板時迷宮不顯示內建題目區。答案飛入時若空格不在畫面內，會自動平滑捲動過去。
@@ -62,7 +68,7 @@ maze-quiz .mq-wrap.is-fit{width:fit-content;max-width:100%}
 maze-quiz .mq-stage{flex:3 1 0;min-width:0;max-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 maze-quiz .mq-stage.is-sized{flex:0 0 auto}
 maze-quiz .mq-board{position:relative;width:100%;display:flex;justify-content:center}
-maze-quiz .mq-svg{display:block;width:100%;height:auto}
+maze-quiz .mq-svg{display:block;width:100%;height:auto;overflow:visible}
 maze-quiz .mq-stage:not(.is-sized) .mq-svg{max-height:72vh}
 maze-quiz .mq-cover{display:none;position:absolute;left:0;top:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#151615;border:2px dashed #3B2A20;border-radius:12px;padding:16px;text-align:center}
 maze-quiz .mq-cover-mark{font-size:4rem;font-weight:800;line-height:1;color:#3B2A20}
@@ -72,6 +78,12 @@ maze-quiz .mq-board.is-concealed .mq-svg{visibility:hidden}
 maze-quiz .mq-route,maze-quiz .mq-head{visibility:hidden}
 maze-quiz .mq-out{transform-box:fill-box;transform-origin:center}
 maze-quiz .mq-out.is-hit{animation:mq-pulse .6s ease-out 2}
+maze-quiz .mq-mark-icon{overflow:visible}
+maze-quiz .mq-mark-icon.is-hit{animation:none}
+maze-quiz .mq-icon{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+maze-quiz .mq-icon i{display:block;line-height:1}
+maze-quiz .mq-icon i::before{display:block;vertical-align:top}
+maze-quiz .mq-mark-icon.is-hit .mq-icon i{animation:mq-pulse .6s ease-out 2}
 maze-quiz .mq-wrap > .mq-panel{flex:2 1 0;min-width:0}
 ${H} .mq-panel{display:flex;flex-direction:column;justify-content:center;gap:24px;background:#3B2A20;border-radius:12px;padding:32px}
 ${H} .mq-label{font-size:.875rem;font-weight:700;letter-spacing:.1em;color:#A3C4BC}
@@ -373,7 +385,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     static get observedAttributes() {
       return ['question', 'answer', 'cols', 'rows', 'maze-width', 'cell-size', 'route-colors', 'controls',
         'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play',
-        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg'];
+        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon'];
     }
 
     constructor() {
@@ -466,6 +478,8 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
           this._paintStatus();
           break;
         case 'route-colors':
+        case 'entry-icon':
+        case 'exit-icon':
           this._cancel();
           this._renderMaze();
           this._resetReveal();
@@ -656,10 +670,29 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this.$route.setAttribute('stroke-width', route);
       this.$reveal.setAttribute('stroke-width', route + 2 / s);
       const mark = Math.max(CELL * 0.2, 4 / s);
-      this.$in.setAttribute('r', mark);
-      this.$out.setAttribute('r', mark);
+      const icon = Math.max(CELL * 0.6, 14 / s);
+      this._sizeMark(this.$in, this._entry, mark, icon);
+      this._sizeMark(this.$out, this._exit, mark, icon);
       this.$head.setAttribute('r', Math.max(CELL * 0.22, 4.5 / s));
       this.$head.setAttribute('stroke-width', Math.max(3, 1.5 / s));
+    }
+
+    // 圓點設定半徑；圖示設定 foreignObject 範圍（取兩倍大小，讓脈動放大時不被裁切）。
+    _sizeMark(el, pt, r, icon) {
+      if (el.tagName.toLowerCase() === 'circle') { el.setAttribute('r', r); return; }
+      el.setAttribute('x', pt[0] - icon);
+      el.setAttribute('y', pt[1] - icon);
+      el.setAttribute('width', icon * 2);
+      el.setAttribute('height', icon * 2);
+      // 位於 SVG 內，px 即迷宮座標單位，會隨迷宮等比縮放。
+      el.firstElementChild.style.fontSize = icon + 'px';
+    }
+
+    // 取得 Bootstrap Icons 名稱，接受 "flag-fill"、"bi-flag-fill"、"bi bi-flag-fill"。
+    _iconName(attr) {
+      const raw = (this.getAttribute(attr) || '').trim().toLowerCase().split(/\s+/).pop() || '';
+      const name = raw.replace(/^bi-/, '');
+      return /^[a-z0-9-]+$/.test(name) ? name : '';
     }
 
     /* ----- 內部流程 ----- */
@@ -688,6 +721,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       chip.style.fontSize = (1.75 * k).toFixed(3) + 'rem';
       chip.style.padding = `${Math.round(8 * k)}px ${Math.round(22 * k)}px`;
       chip.style.borderWidth = Math.max(2, Math.round(3 * k)) + 'px';
+      this._styleChip(chip, k);
       document.body.appendChild(chip);
       this._chip = chip;
       this._chipLift = Math.round(30 * k);
@@ -825,6 +859,19 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         this.$play.style.padding = `${Math.round(10 * size)}px ${Math.round(22 * size)}px`;
         this.$play.style.borderWidth = Math.max(2, Math.round(2 * size)) + 'px';
       }
+    }
+
+    // 答案標籤的形狀與顏色；未設定時沿用樣式表的膠囊黃底深色字。
+    _styleChip(chip, k) {
+      const shape = (this.getAttribute('chip-shape') || '').trim().toLowerCase();
+      let radius = '';
+      if (shape === 'rounded') radius = Math.max(4, Math.round(12 * k)) + 'px';
+      else if (shape === 'square') radius = '0px';
+      else if (/^\d+(\.\d+)?$/.test(shape)) radius = Math.round(parseFloat(shape) * k) + 'px';
+      chip.style.borderRadius = radius;
+      const hex = (name) => { const c = parseColor(this.getAttribute(name)); return c ? mixHex(c, c, 0) : ''; };
+      chip.style.backgroundColor = hex('chip-bg');
+      chip.style.color = hex('chip-color');
     }
 
     _confettiOn() {
@@ -1013,7 +1060,12 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       const entry = [PAD + CELL / 2, h - PAD * 0.45];
       const exit = [PAD + (cols - 1) * CELL + CELL / 2, PAD * 0.45];
       this._exit = exit;
-      const raw = [entry, ...route.map(center), exit];
+      this._entry = entry;
+      // 使用圖示時，路徑停在迷宮邊界，不畫進圖示底下。
+      const entryIcon = this._iconName('entry-icon'), exitIcon = this._iconName('exit-icon');
+      const routeStart = entryIcon ? [entry[0], h - PAD - CELL * 0.1] : entry;
+      const routeEnd = exitIcon ? [exit[0], PAD + CELL * 0.1] : exit;
+      const raw = [routeStart, ...route.map(center), routeEnd];
       const pts = [raw[0]];
       for (let i = 1; i < raw.length - 1; i++) {
         const a = pts[pts.length - 1], b = raw[i], c = raw[i + 1];
@@ -1052,6 +1104,12 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         segs += `<path d="${d}" stroke="${colorAt(n === 1 ? 0 : (k + 0.5) / n)}"/>`;
       }
 
+      // 入口與出口：未指定圖示時畫圓點，指定時以 foreignObject 放入 Bootstrap Icons。
+      const mark = (cls, pt, icon, color) => icon
+        ? `<foreignObject class="${cls} mq-mark-icon" x="${pt[0] - CELL * 0.6}" y="${pt[1] - CELL * 0.6}" width="${CELL * 1.2}" height="${CELL * 1.2}">`
+          + `<div xmlns="http://www.w3.org/1999/xhtml" class="mq-icon" style="color:${color};font-size:${CELL * 0.6}px"><i class="bi bi-${icon}"></i></div></foreignObject>`
+        : `<circle class="${cls}" cx="${pt[0]}" cy="${pt[1]}" r="${CELL * 0.2}" fill="${color}"/>`;
+
       const maskId = `mq-mask-${this._uid}`;
       this.$svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       this.$svg.innerHTML = `
@@ -1060,9 +1118,9 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
 </mask></defs>
 <g class="mq-route" mask="url(#${maskId})" fill="none" stroke-width="${CELL * 0.3}" stroke-linecap="round" stroke-linejoin="round">${segs}</g>
 <path class="mq-walls" d="${walls}" fill="none" stroke="${COLORS.wall}" stroke-width="${CELL * 0.1}" stroke-linecap="square"/>
-<circle class="mq-in" cx="${entry[0]}" cy="${entry[1]}" r="${CELL * 0.2}" fill="${COLORS.entry}"/>
-<circle class="mq-out" cx="${exit[0]}" cy="${exit[1]}" r="${CELL * 0.2}" fill="${COLORS.exit}"/>
-<circle class="mq-head" cx="${entry[0]}" cy="${entry[1]}" r="${CELL * 0.22}" fill="${COLORS.head}" stroke="#0C0D0C" stroke-width="3"/>`;
+${mark('mq-in', entry, entryIcon, COLORS.entry)}
+${mark('mq-out', exit, exitIcon, COLORS.exit)}
+<circle class="mq-head" cx="${pts[0][0]}" cy="${pts[0][1]}" r="${CELL * 0.22}" fill="${COLORS.head}" stroke="#0C0D0C" stroke-width="3"/>`;
       this.$reveal = this.$svg.querySelector('.mq-reveal');
       this.$route = this.$svg.querySelector('.mq-route');
       this.$walls = this.$svg.querySelector('.mq-walls');

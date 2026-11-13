@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>maze-quiz 元件示範</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
   body{background:#0C0D0C;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem}
   .page{max-width:1680px;margin:0 auto;padding:40px 48px 80px}
@@ -16,6 +17,7 @@
   .ver.v3{background:#FFA987}
   .ver.v4{background:#5DBAE8}
   .ver.v5{background:#71CD76}
+  .ver.v6{background:#DE8EC9}
   .lead-text{font-size:1.0625rem;color:#C6C7BD;margin:0 0 16px}
   .note{font-size:.9375rem;color:#86877F;margin:0 0 16px}
   .info-box{background:#3B2A20;border:1px solid #778CE1;color:#DBEDD8;border-radius:12px;padding:16px 20px;margin:16px 0 0}
@@ -163,6 +165,20 @@
              reveal-color="#FF91D7"
              question="It's high time we _____ home." answer="went"></maze-quiz>
 
+  <h2>範例十五：入口與出口改用 Bootstrap Icons，方角答案標籤<span class="ver v6">修改五</span></h2>
+  <p class="note">設定 <code>entry-icon="person-walking"</code>、<code>exit-icon="flag-fill"</code>、<code>chip-shape="rounded"</code>、<code>chip-bg="key"</code>、<code>chip-color="background"</code>。元件不載入圖示檔，本頁在 head 自行引用 bootstrap-icons 的 CSS。</p>
+  <maze-quiz cols="12" rows="8" cell-size="40" autoplay="false" route-colors="green,key"
+             entry-icon="person-walking" exit-icon="flag-fill"
+             chip-shape="rounded" chip-bg="key" chip-color="background"
+             question="We'd better _____ now, or we'll miss the bus." answer="leave"></maze-quiz>
+
+  <h2>範例十六：寶藏圖示，直角紅底白字答案標籤<span class="ver v6">修改五</span></h2>
+  <p class="note">設定 <code>entry-icon="bi-compass"</code>（可加 bi- 前綴）、<code>exit-icon="gem"</code>、<code>chip-shape="square"</code>、<code>chip-bg="urgent"</code>、<code>chip-color="#FFFFFF"</code>。</p>
+  <maze-quiz cols="12" rows="8" cell-size="40" autoplay="false" route-colors="yellow,urgent"
+             entry-icon="bi-compass" exit-icon="gem"
+             chip-shape="square" chip-bg="urgent" chip-color="#FFFFFF"
+             question="The treasure was found _____ the old oak tree." answer="under"></maze-quiz>
+
   <hr class="divider">
 
   <h2>屬性、事件與方法</h2>
@@ -195,6 +211,11 @@
           <tr><td><code>show-reveal</code><span class="ver v4">修改三</span></td><td>設為 false 時，答案填入後不顯示狀態文字。</td><td>顯示</td></tr>
           <tr><td><code>reveal-color</code><span class="ver v5">修改四</span></td><td>揭曉文字的文字色，接受色碼、色票名稱或 CSS 色名。</td><td>#C6C7BD</td></tr>
           <tr><td><code>reveal-bg</code><span class="ver v5">修改四</span></td><td>揭曉文字的背景色；設定後揭曉文字以圓角色塊呈現（內距 6px 16px）。</td><td>無背景</td></tr>
+          <tr><td><code>entry-icon</code><span class="ver v6">修改五</span></td><td>入口改用 Bootstrap Icons，填圖示名稱（例如 geo-alt-fill，也接受 bi-geo-alt-fill）。元件不載入圖示檔，網頁需自行引用 bootstrap-icons 的 CSS。顏色沿用入口的 #71CD76。</td><td>綠色圓點</td></tr>
+          <tr><td><code>exit-icon</code><span class="ver v6">修改五</span></td><td>出口改用 Bootstrap Icons，規則同上。顏色沿用出口的 #FF91D7，抵達時一樣會脈動。</td><td>粉紅圓點</td></tr>
+          <tr><td><code>chip-shape</code><span class="ver v6">修改五</span></td><td>出口答案標籤的形狀：pill 膠囊、rounded 圓角、square 直角，或純數字（圓角 px，隨迷宮大小等比縮放）。</td><td>pill</td></tr>
+          <tr><td><code>chip-bg</code><span class="ver v6">修改五</span></td><td>答案標籤底色，接受色碼、色票名稱或 CSS 色名。</td><td>#E3D322</td></tr>
+          <tr><td><code>chip-color</code><span class="ver v6">修改五</span></td><td>答案標籤文字色。</td><td>#0C0D0C</td></tr>
         </tbody>
       </table>
     </div>
@@ -243,6 +264,11 @@
 <span class="c">&lt;!-- 揭曉文字的文字色與背景色 --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">reveal-color</span>=<span class="s">"background"</span> <span class="a">reveal-bg</span>=<span class="s">"yellow"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
 
+<span class="c">&lt;!-- 入口與出口圖示、答案標籤樣式（網頁需自行引用 bootstrap-icons 的 CSS） --&gt;</span>
+<span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">entry-icon</span>=<span class="s">"person-walking"</span> <span class="a">exit-icon</span>=<span class="s">"flag-fill"</span>
+           <span class="a">chip-shape</span>=<span class="s">"rounded"</span> <span class="a">chip-bg</span>=<span class="s">"key"</span> <span class="a">chip-color</span>=<span class="s">"background"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
 <span class="c">&lt;!-- 題庫 --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">cols</span>=<span class="s">"18"</span> <span class="a">rows</span>=<span class="s">"11"</span><span class="t">&gt;</span>
   <span class="t">&lt;script</span> <span class="a">type</span>=<span class="s">"application/json"</span><span class="t">&gt;</span>
@@ -258,7 +284,7 @@ document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; cons
 
   <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
   <h2>修改紀錄與程式碼對照</h2>
-  <p class="note">修改一與修改二收錄在 1.0.0，修改三與修改四收錄在 1.1.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
+  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
 
   <h3 style="color:#B484E8">修改一</h3>
 
@@ -457,6 +483,36 @@ this._setStatus(this._revealText(), <span class="add">true</span>);
   el.style.backgroundColor = on ? reveal-bg : '';
   el.classList.toggle('has-bg', !!bg);
 }</span></pre></div>
+  </div>
+
+  <h3 style="color:#DE8EC9;margin-top:48px">修改五</h3>
+
+  <h3>14. 入口與出口圖示 entry-icon、exit-icon</h3>
+  <p class="cmp-desc">圖示放在 SVG 的 foreignObject 裡，大小以迷宮座標計算，會跟著迷宮等比縮放。foreignObject 取圖示的兩倍範圍，出口脈動放大時不會被裁切。元件只輸出 &lt;i class="bi bi-名稱"&gt;，不載入任何圖示檔。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改四</div><pre class="code">&lt;circle class="mq-in" r="8" fill="#71CD76"/&gt;
+&lt;circle class="mq-out" r="8" fill="#FF91D7"/&gt;</pre></div>
+    <div><div class="cmp-head new">修改五</div><pre class="code">&lt;maze-quiz <span class="add">entry-icon="person-walking" exit-icon="flag-fill"</span>&gt;
+
+<span class="add">&lt;foreignObject class="mq-out mq-mark-icon" ...&gt;
+  &lt;div class="mq-icon" style="color:#FF91D7"&gt;
+    &lt;i class="bi bi-flag-fill"&gt;&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/foreignObject&gt;</span>
+<span class="c">&lt;!-- 未設定圖示時仍輸出原本的 circle --&gt;</span></pre></div>
+  </div>
+
+  <h3>15. 答案標籤形狀與顏色 chip-shape、chip-bg、chip-color</h3>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改四</div><pre class="code"><span class="c">/* 固定黃底膠囊 */</span>
+.maze-quiz-chip{border-radius:999px;background:#E3D322;color:#0C0D0C}</pre></div>
+    <div><div class="cmp-head new">修改五</div><pre class="code">&lt;maze-quiz <span class="add">chip-shape="rounded" chip-bg="key" chip-color="background"</span>&gt;
+
+<span class="add">if (shape === 'rounded') radius = Math.round(12 * k) + 'px';
+else if (shape === 'square') radius = '0px';
+else if (數字) radius = Math.round(數字 * k) + 'px';
+chip.style.backgroundColor = chip-bg;
+chip.style.color = chip-color;</span></pre></div>
   </div>
 
   <!-- ===================== 範例六的面板 ===================== -->
