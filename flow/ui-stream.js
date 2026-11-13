@@ -12,7 +12,7 @@
     /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, typeAll: false, step: false,
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
     /* 版面 */ height: 0, gap: 14, gapSame: -1, gapSystem: -1, padding: 16, bubbleWidth: 78, bubbleRadius: 12, bubblePadding: '10px 14px', lineHeight: 1.6,
-               fontSize: '1rem', metaSize: '0.75rem', bordered: true, borderWidth: 1, bubbleBorderWidth: 0, avatar: true, avatarSize: 36, avatarPosition: 'top',
+               fontSize: '1rem', metaSize: '0.75rem', bordered: true, borderWidth: 1, bubbleBorderWidth: 0, textAlign: '', avatar: true, avatarSize: 36, avatarPosition: 'top', avatarRepeat: 'all',
     /* 標題 */ titleSize: '1.2rem', titleWeight: 700, titleColor: 'violet',
     /* 色彩 */ accent: 'key', borderColor: 'bg-alternative', textColor: 'vanilla', background: 'base', markColor: '',
                teacherColor: 'key', studentColor: 'violet', systemColor: 'gray', pauseColor: 'yellow',
@@ -55,6 +55,7 @@ ui-stream .us-msg.us-center{align-self:center;max-width:90%;}
 ui-stream .us-feed .us-msg.on{opacity:1;transform:none;}
 ui-stream .us-avatar{flex:0 0 var(--us-av);width:var(--us-av);height:var(--us-av);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:calc(var(--us-av) * 0.5);color:${PALETTE.base};background:var(--us-c);overflow:hidden;}
 ui-stream .us-avatar img{width:100%;height:100%;object-fit:cover;}
+ui-stream .us-avatar.us-av-blank{visibility:hidden;}
 ui-stream .us-body{min-width:0;}
 ui-stream .us-meta{font-size:var(--us-ms);color:${PALETTE.gray};margin:0 0 4px 0;display:flex;gap:8px;align-items:baseline;}
 ui-stream .us-right .us-meta{justify-content:flex-end;}
@@ -147,7 +148,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
 
       this._roles = {};
       Object.entries(BUILTIN_ROLES).forEach(([n, r]) => { this._roles[n] = Object.assign({}, r, { color: color(this._opt[r.color]) }); });
-      this.querySelectorAll(':scope > stream-role').forEach(r => this._addRole(r.getAttribute('name'), { color: r.getAttribute('color'), icon: r.getAttribute('icon'), side: r.getAttribute('side'), style: r.getAttribute('style'), label: r.getAttribute('label'), image: r.getAttribute('image'), textColor: r.getAttribute('text-color') }));
+      this.querySelectorAll(':scope > stream-role').forEach(r => this._addRole(r.getAttribute('name'), { color: r.getAttribute('color'), icon: r.getAttribute('icon'), side: r.getAttribute('side'), style: r.getAttribute('style'), label: r.getAttribute('label'), image: r.getAttribute('image'), textColor: r.getAttribute('text-color'), textAlign: r.getAttribute('text-align') }));
 
       this._title = this.getAttribute('title'); this.removeAttribute('title');
       this._rate = 1;
@@ -160,7 +161,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
     _addRole(name, r) {
       if (!name) return;
       const base = this._roles[name] || { icon: 'person-fill', side: 'left', style: 'outline' };
-      this._roles[name] = { color: r.color ? color(r.color) : (base.color || PALETTE.shell), icon: r.icon != null ? r.icon : base.icon, side: r.side || base.side, style: r.style || base.style, label: r.label || base.label, image: r.image || base.image, textColor: r.textColor ? color(r.textColor) : base.textColor };
+      this._roles[name] = { color: r.color ? color(r.color) : (base.color || PALETTE.shell), icon: r.icon != null ? r.icon : base.icon, side: r.side || base.side, style: r.style || base.style, label: r.label || base.label, image: r.image || base.image, textColor: r.textColor ? color(r.textColor) : base.textColor, textAlign: r.textAlign || base.textAlign };
     }
     _normItem(d) {
       return Object.assign({ from: 'student', name: '', time: '', typed: false, html: '' }, d, { from: (d.from || 'student').toLowerCase(), html: d.html != null ? d.html : (d.text || '') });
@@ -173,7 +174,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
           from: it.getAttribute('from'), name: it.getAttribute('name'), time: it.getAttribute('time'),
           icon: it.getAttribute('icon'), image: it.getAttribute('image'), badge: it.getAttribute('badge'), badgeColor: it.getAttribute('badge-color'), color: it.getAttribute('color'),
           typed: it.hasAttribute('typed'), speed: it.getAttribute('speed'), delay: it.getAttribute('delay'), gap: it.getAttribute('gap'), highlight: it.hasAttribute('highlight'),
-          pause: it.getAttribute('pause'), reveal: it.getAttribute('reveal'), revealTarget: it.getAttribute('reveal-target'),
+          pause: it.getAttribute('pause'), reveal: it.getAttribute('reveal'), revealTarget: it.getAttribute('reveal-target'), textAlign: it.getAttribute('text-align'),
           html: srcId && !srcEl ? `<span class="us-err">找不到 #${srcId}</span>` : html
         });
       });
@@ -272,17 +273,26 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       msg.style.setProperty('--us-mt', this._gapFor(d, role) + 'px');
       if (role.textColor) msg.style.setProperty('--us-rt', role.textColor);
       if (d.badgeColor) msg.style.setProperty('--us-badge', color(d.badgeColor));
+      // 同一人連續發言：avatar-repeat="first" 只在第一則顯示頭像，"last" 只在最後一則顯示（空位保留，對齊不變）
+      const same = this._prev && this._prev.from === d.from && role.side !== 'center';
+      const rep = String(this._opt.avatarRepeat || 'all').toLowerCase();
       this._prev = { from: d.from, side: role.side };
       if (role.side !== 'center' && this._opt.avatar) {
         const av = el('div', 'us-avatar'); const img = d.image || role.image;
         if (img) { const im = el('img'); im.src = img; im.alt = d.name || ''; av.append(im); }
         else av.innerHTML = `<i class="bi bi-${d.icon || role.icon || 'person-fill'}"></i>`;
+        if (same && rep === 'first') av.classList.add('us-av-blank');
+        if (same && rep === 'last' && this._prevMsg) { const pa = this._prevMsg.querySelector('.us-avatar'); if (pa) pa.classList.add('us-av-blank'); }
         msg.append(av);
       }
+      this._prevMsg = msg;
       const body = el('div', 'us-body');
       const nm = d.name || role.label || '';
-      if (nm || d.time || d.badge) { const m = el('div', 'us-meta'); if (nm) m.append(el('b', null, nm)); if (d.time) m.append(el('span', null, d.time)); if (d.badge) m.append(el('span', 'us-badge', d.badge)); body.append(m); }
+      // avatar-repeat 不是 all 時，連續發言只在這一串的第一則顯示名字（時間、徽章照常）
+      const showName = nm && !(same && rep !== 'all');
+      if (showName || d.time || d.badge) { const m = el('div', 'us-meta'); if (showName) m.append(el('b', null, nm)); if (d.time) m.append(el('span', null, d.time)); if (d.badge) m.append(el('span', 'us-badge', d.badge)); body.append(m); }
       const bub = el('div', 'us-bubble'); body.append(bub); msg.append(body);
+      const ta = d.textAlign || role.textAlign || this._opt.textAlign; if (ta) bub.style.textAlign = ta;
       this._feed.append(msg);
       if (silent) { bub.innerHTML = d.html; msg.classList.add('on'); this._update(); return; }
       requestAnimationFrame(() => { msg.classList.add('on'); this._scroll(); });
@@ -342,4 +352,15 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
   customElements.define('stream-item', class extends HTMLElement {});
   customElements.define('ui-stream', UiStream);
   window.UiStream = { defaults: DEFAULTS, config: CFG, colors: PALETTE };
+})();
+/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
+(function () {
+  'use strict';
+  if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var css = [];
+  Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
+  var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');
+  (document.head || document.documentElement).appendChild(s);
+  if (typeof window !== 'undefined' && !window.UiColorTags) { window.UiColorTags = { colors: COLORS }; }
 })();

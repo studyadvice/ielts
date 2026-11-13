@@ -31,7 +31,7 @@
 <body>
 <div class="wrap">
   <h1><code>&lt;ui-stream&gt;</code> 內容流 v0.4：新增氣泡樣式與外框粗細</h1>
-  <p class="sub">新增 double（雙線框）、notch（切角框）、callout（引線框）三種氣泡樣式，以及 border-width（整個元件外框粗細）、bubble-border-width（氣泡邊框粗細）、title-size、title-weight、title-color（標題樣式）。完整用法請參考 ui-stream-demo-11-11-26.html。</p>
+  <p class="sub">新增 double（雙線框）、notch（切角框）、callout（引線框）三種氣泡樣式，以及 border-width（整個元件外框粗細）、bubble-border-width（氣泡邊框粗細）、title-size、title-weight、title-color（標題樣式）、text-align（訊息對齊）、avatar-repeat（連續發言頭像），並內建 &lt;c-色名&gt; 色彩標籤。完整用法請參考 ui-stream-demo-11-11-26.html。</p>
 
   <!-- ══════════ 範例 1 ══════════ -->
   <section>
@@ -112,6 +112,51 @@
     </div>
   </section>
 
+  <!-- ══════════ 範例 4 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 4：對齊、色彩標籤、連續發言頭像、圖片頭像</h2><p>text-align、&lt;c-色名&gt;、avatar-repeat、image。</p></div>
+    <div class="two">
+      <div>
+        <ui-stream id="ex4a" autoplay delay="300" height="640" avatar-repeat="first" title="avatar-repeat=&quot;first&quot;" title-size="1rem">
+          <stream-role name="amy" color="playful" side="left" label="Amy" image="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='240'%3E%3Crect width='400' height='240' fill='%233B2A20'/%3E%3Ccircle cx='200' cy='120' r='90' fill='%23FFA987'/%3E%3Ctext x='200' y='150' font-size='90' text-anchor='middle' fill='%230C0D0C' font-family='sans-serif'%3EA%3C/text%3E%3C/svg%3E"></stream-role>
+          <stream-item from="amy">I'd like to talk about <c-key>a book</c-key> I read last year.</stream-item>
+          <stream-item from="amy">It was <c-urgent>very good</c-urgent>.</stream-item>
+          <stream-item from="amy">And the ending was <c-calm>surprising</c-calm>.</stream-item>
+          <stream-item from="teacher" name="老師">連續三則只有第一則有頭像。</stream-item>
+          <stream-item from="teacher" name="老師">老師的第二則也一樣。</stream-item>
+          <stream-item from="system">系統訊息預設置中。<br>第二行比較短。</stream-item>
+          <stream-item from="system" text-align="left">這則加了 text-align="left"，<br>多行時就看得出靠左。</stream-item>
+        </ui-stream>
+        <div style="height:16px"></div>
+        <ui-stream id="ex4b" autoplay delay="300" height="330" avatar-repeat="last" avatar-position="bottom" title="avatar-repeat=&quot;last&quot;（搭配頭像在下）" title-size="1rem">
+          <stream-item from="student" name="Ben">First message.</stream-item>
+          <stream-item from="student" name="Ben">Second message.</stream-item>
+          <stream-item from="student" name="Ben">Only this last one keeps the avatar.</stream-item>
+        </ui-stream>
+      </div>
+      <pre>&lt;ui-stream avatar-repeat="first"&gt;
+  &lt;stream-role name="amy" color="playful" side="left" label="Amy"
+               image="avatar-amy.png"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="amy"&gt;I'd like to talk about &lt;c-key&gt;a book&lt;/c-key&gt; I read last year.&lt;/stream-item&gt;
+  &lt;stream-item from="amy"&gt;It was &lt;c-urgent&gt;very good&lt;/c-urgent&gt;.&lt;/stream-item&gt;
+  &lt;stream-item from="amy"&gt;And the ending was &lt;c-calm&gt;surprising&lt;/c-calm&gt;.&lt;/stream-item&gt;
+  &lt;stream-item from="teacher" name="老師"&gt;…&lt;/stream-item&gt;
+  &lt;stream-item from="system" text-align="left"&gt;…&lt;/stream-item&gt;
+&lt;/ui-stream&gt;
+
+&lt;ui-stream avatar-repeat="last" avatar-position="bottom"&gt;
+  &lt;stream-item from="student" name="Ben"&gt;First message.&lt;/stream-item&gt;
+  …
+&lt;/ui-stream&gt;
+
+&lt;!-- 對齊也可以設在角色或整個元件上 --&gt;
+&lt;stream-role name="t" text-align="right"&gt;&lt;/stream-role&gt;
+&lt;ui-stream text-align="left"&gt;…&lt;/ui-stream&gt;
+
+&lt;!-- 範例中的頭像是 400×240 的長方形圖，會自動裁切縮放成 avatar-size 的圓形 --&gt;</pre>
+    </div>
+  </section>
+
   <!-- ══════════ 屬性 ══════════ -->
   <section>
     <div class="sec-title"><h2>新增的屬性與樣式</h2></div>
@@ -122,6 +167,9 @@
       <tr><td>title-size</td><td>1.2rem</td><td>標題字級。只寫數字視為 rem。</td></tr>
       <tr><td>title-weight</td><td>700</td><td>標題粗細，例如 400、700、800。</td></tr>
       <tr><td>title-color</td><td>violet</td><td>標題顏色，可用色票名稱或 hex。</td></tr>
+      <tr><td>text-align</td><td></td><td>訊息內容對齊：left、center、right、justify。可設在 ui-stream（全部）、stream-role（該角色）或 stream-item（單則），越細的優先。未設定時維持原樣，system 置中、其他靠左。</td></tr>
+      <tr><td>avatar-repeat</td><td>all</td><td>同一人連續發言時的頭像：all 每則都顯示；first 只在第一則顯示；last 只在最後一則顯示（適合搭配 avatar-position="bottom"）。隱藏的頭像保留空位，訊息不會錯位。設為 first 或 last 時，名字只在連續發言的第一則顯示；時間與徽章照常顯示。</td></tr>
+      <tr><td>&lt;c-色名&gt;</td><td></td><td>訊息內可用 &lt;c-key&gt;、&lt;c-calm&gt;、&lt;c-urgent&gt; 等色名標籤，逐字打出時顏色同步出現。ui-stream.js 已內建，頁面上不需要其他元件。</td></tr>
       <tr><td>style="double"</td><td></td><td>雙線框。雙線需要 3px 以上才看得出兩條線。</td></tr>
       <tr><td>style="notch"</td><td></td><td>切角框：邊框為角色色，底色是角色色和背景色調和出的實色。靠左切右上角，靠右切左上角，切角大小沿用 bubble-radius（最小 6px）。</td></tr>
       <tr><td>style="callout"</td><td></td><td>引線框：粗框外側有一條分離的直線，直線上拉出折線引線指向頭像。頭像在上（預設）時引線往上，avatar-position="bottom" 時往下。氣泡會往內縮 78px 讓出引線空間。</td></tr>
