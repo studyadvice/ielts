@@ -23,6 +23,12 @@
   .ver.v8{background:#E3D322}
   .ver.v9{background:#71CD76}
   .ver.v10b{background:#FF91D7}
+  .ver.v11{background:#5DBAE8}
+  .explain-card{display:flex;gap:24px;align-items:flex-start;background:#151615;border:2px solid #71CD76;border-radius:16px;padding:24px 28px;margin:24px 0 0}
+  .explain-card .bi{font-size:2.25rem;color:#71CD76;line-height:1}
+  .explain-card h4{font-size:1.25rem;font-weight:700;color:#71CD76;margin:0 0 8px}
+  .explain-card p{font-size:1.0625rem;color:#DBEDD8;margin:0 0 6px}
+  .explain-card .ex{color:#E3D322;font-weight:700}
   .pulse-row{display:flex;gap:32px}
   .pulse-row > div{flex:1 1 0;min-width:0}
   .pulse-row h4{font-size:1rem;font-weight:700;color:#FFA987;margin:0 0 8px}
@@ -71,7 +77,7 @@
 </head>
 <body>
 <div class="page">
-  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.5.0</span></h1>
+  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.6.0</span></h1>
   <p class="lead-text">每次重新整理都會生成新的唯一解迷宮，從左下入口描繪路徑到右上出口，噴出彩帶後答案飛入空格。</p>
   <div class="info-box">迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，因此入口到出口的路徑必定唯一。彩帶不使用透明度，改以縮小或落出畫面的方式退場。</div>
   <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的迷宮。</div>
@@ -277,6 +283,22 @@
     </div>
   </div>
 
+  <!-- ===================== 修改十範例 ===================== -->
+  <h2>範例二十三：播放完畢後顯示 &lt;template&gt; 解說<span class="ver v11">修改十</span></h2>
+  <p class="note">設定 <code>show-template="tpl23"</code>。下方的 <code>&lt;template id="tpl23"&gt;</code> 原本不顯示，答案填入空格的動畫結束後，內容會出現在 template 所在的位置。按「重播」或「換一個迷宮」會先收起，播完再出現。</p>
+  <maze-quiz id="m23" cols="10" rows="7" autoplay="false" show-template="tpl23" route-colors="green,key"
+             question="If I _____ more time, I would learn to play the piano." answer="had"></maze-quiz>
+  <template id="tpl23">
+    <div class="explain-card">
+      <i class="bi bi-lightbulb-fill"></i>
+      <div>
+        <h4>文法解說：與現在事實相反的假設</h4>
+        <p>If 子句用過去式，主要子句用 would + 原形動詞，表示現在不太可能成真的情況。</p>
+        <p>例句：If I <span class="ex">had</span> more time, I <span class="ex">would learn</span> to play the piano.</p>
+      </div>
+    </div>
+  </template>
+
   <hr class="divider">
 
   <h2>屬性、事件與方法</h2>
@@ -315,6 +337,7 @@
           <tr><td><code>chip-bg</code><span class="ver v6">修改五</span></td><td>答案標籤底色，接受色碼、色票名稱或 CSS 色名。</td><td>#E3D322</td></tr>
           <tr><td><code>chip-color</code><span class="ver v6">修改五</span></td><td>答案標籤文字色。</td><td>#0C0D0C</td></tr>
           <tr><td><code>exit-pulse</code><span class="ver v10b">修改九</span></td><td>抵達出口時的放大倍率，範圍 1 到 4；1 等於不放大。圓點與 exit-icon 圖示都適用，圖示範圍會跟著倍率加大，不會被裁切。</td><td>1.9</td></tr>
+          <tr><td><code>show-template</code><span class="ver v11">修改十</span></td><td>全部播放完畢（答案填入空格的動畫結束）後，顯示指定 id 的 &lt;template&gt; 內容，可寫 tpl-1 或 #tpl-1。內容插在 template 的正後方；重播或換迷宮時先收起。找不到時在主控台提示。</td><td>無</td></tr>
           <tr><td><code>panel-class</code><span class="ver v8">修改七</span></td><td>內建題目區的額外 class，加在 .mq-panel 上，例如 p-3 bp-lnh-5，規則與外部面板的 extra-class 相同。有外部面板時內建題目區不顯示，此屬性不作用。可用 JS 隨時修改。</td><td>無</td></tr>
         </tbody>
       </table>
@@ -328,6 +351,7 @@
           <tr><td><code>Ctrl+Shift+數字鍵盤 5</code><span class="ver">修改一</span></td><td>啟動畫面中露出最多的迷宮，播放中則忽略。</td></tr>
           <tr><td><code>maze-solved</code></td><td>路徑抵達出口時觸發。</td></tr>
           <tr><td><code>answer-revealed</code></td><td>答案填入空格時觸發，右下角的通知就是監聽這個事件。</td></tr>
+          <tr><td><code>template-shown</code><span class="ver v11">修改十</span></td><td>show-template 的內容顯示後觸發。</td></tr>
           <tr><td><code>event.detail</code></td><td>含 question、answer、cols、rows、steps（路徑格數）。</td></tr>
           <tr><td><code>play()</code></td><td>播放或重播目前的迷宮。</td></tr>
           <tr><td><code>regenerate(autoPlay)</code></td><td>生成新迷宮，題庫模式下同時換題。</td></tr>
@@ -351,6 +375,12 @@
 
 <span class="c">&lt;!-- 面板額外的 class：Bootstrap 與 bp-styles.css 都可以 --&gt;</span>
 <span class="t">&lt;maze-quiz-panel</span> <span class="a">for</span>=<span class="s">"m4"</span> <span class="a">extra-class</span>=<span class="s">"p-3 bp-lnh-5"</span><span class="t">&gt;&lt;/maze-quiz-panel&gt;</span>
+
+<span class="c">&lt;!-- 播放完畢後顯示 template 內容，顯示在 template 所在的位置 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">show-template</span>=<span class="s">"tpl23"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+<span class="t">&lt;template</span> <span class="a">id</span>=<span class="s">"tpl23"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"explain-card"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/template&gt;</span>
 
 <span class="c">&lt;!-- 出口放大倍率 --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">exit-pulse</span>=<span class="s">"1.4"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
@@ -397,7 +427,7 @@ document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; cons
 
   <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
   <h2>修改紀錄與程式碼對照</h2>
-  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0，修改七收錄在 1.3.0，修改八收錄在 1.4.0，修改九收錄在 1.5.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
+  <p class="note">修改一與修改二收錄在 1.0.0，修改三到修改五收錄在 1.1.0，修改六收錄在 1.2.0，修改七收錄在 1.3.0，修改八收錄在 1.4.0，修改九收錄在 1.5.0，修改十收錄在 1.6.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
 
   <h3 style="color:#B484E8">修改一</h3>
 
@@ -725,6 +755,28 @@ el.setAttribute('width', <span class="del">icon * 2</span>);</pre></div>
 this.$svg.style.setProperty('--mq-pulse', pulse);
 const half = icon * Math.max(2, pulse) / 2;</span>
 el.setAttribute('width', <span class="add">half * 2</span>);</pre></div>
+  </div>
+
+  <h3 style="color:#5DBAE8;margin-top:48px">修改十</h3>
+
+  <h3>20. 播放完畢後顯示 &lt;template&gt;：show-template</h3>
+  <p class="cmp-desc">答案填入空格後再等 .45 秒的填入動畫，才複製 template 的內容插在 template 正後方，並觸發 template-shown 事件。不包額外的容器，元件記住插入的節點，重播、換迷宮或改屬性時逐一移除。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改九</div><pre class="code">this._emit('answer-revealed');
+<span class="c">// 播放到此結束，沒有後續內容</span></pre></div>
+    <div><div class="cmp-head new">修改十</div><pre class="code">&lt;maze-quiz <span class="add">show-template="tpl23"</span>&gt;
+
+this._emit('answer-revealed');
+<span class="add">this._later(run, 450, () =&gt; this._showTemplate());
+
+_showTemplate() {
+  const tpl = document.getElementById(id);
+  const frag = tpl.content.cloneNode(true);
+  this._tplNodes = [...frag.childNodes];
+  tpl.after(frag);
+  this._emit('template-shown');
+}
+_resetReveal() { this._hideTemplate(); ... }</span></pre></div>
   </div>
 
   <!-- ===================== 範例六的面板 ===================== -->

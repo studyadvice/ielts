@@ -1,5 +1,5 @@
 /*!
- * maze-quiz.js v1.5.0
+ * maze-quiz.js v1.6.0
  * <maze-quiz> 迷宮填空動畫元件，<maze-quiz-panel> 外部題目面板
  *
  * 每次載入隨機生成「唯一解」迷宮（遞迴回溯法產生的完美迷宮，任兩格之間只有一條路），
@@ -39,6 +39,9 @@
  *                 元件本身不載入圖示檔，網頁需自行引用 bootstrap-icons 的 CSS；未設定時維持圓點
  *   exit-pulse    抵達出口時的放大倍率，範圍 1 到 4（預設 1.9）；1 等於不放大。圓點與 exit-icon 圖示都適用，
  *                 圖示的範圍會跟著倍率加大，放大時不會被裁切
+ *   show-template 全部播放完畢（答案填入空格的動畫結束）後，顯示指定 id 的 <template> 內容，例如 show-template="tpl-1"。
+ *                 內容複製一份插在 <template> 的正後方，所以 <template> 放在哪裡就顯示在哪裡；
+ *                 重播或換迷宮時先收起，播完再顯示。找不到 id 或不是 <template> 時在主控台提示
  *   chip-shape    出口答案標籤的形狀：pill（預設膠囊）、rounded（圓角）、square（直角），或純數字（圓角 px）
  *   chip-bg       答案標籤底色（預設 #E3D322）
  *   chip-color    答案標籤文字色（預設 #0C0D0C）
@@ -58,7 +61,7 @@
  * 題庫：在元件內放入
  *   <script type="application/json">[{"q":"I go _____ every day.","a":"jogging"}]</script>
  *
- * 事件：maze-solved（路徑抵達出口）、answer-revealed（答案填入空格）
+ * 事件：maze-solved（路徑抵達出口）、answer-revealed（答案填入空格）、template-shown（show-template 的內容顯示後）
  *       detail 含 question、answer、cols、rows、steps
  * 方法：play() 播放或重播、regenerate(autoPlay) 換新迷宮
  *
@@ -416,7 +419,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     static get observedAttributes() {
       return ['question', 'answer', 'cols', 'rows', 'maze-width', 'cell-size', 'route-colors', 'controls',
         'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play',
-        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon', 'panel-class', 'exit-pulse'];
+        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'entry-icon', 'exit-icon', 'panel-class', 'exit-pulse', 'show-template'];
     }
 
     constructor() {
@@ -506,6 +509,10 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         case 'exit-pulse':
           this._updateScale();
           break;
+        case 'show-template':
+          this._hideTemplate();
+          if (this._revealed && !this._running) this._showTemplate();
+          break;
         case 'label-reveal':
         case 'show-reveal':
           if (this._revealed) this._setStatus(this._revealText(), true);
@@ -565,6 +572,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this._applySize();
       this._renderMaze();
       this._revealed = false;
+      this._hideTemplate();
       this._renderQuestion();
       this._played = false;
       this.$play.disabled = false;
@@ -838,11 +846,36 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         this.$play.disabled = false;
         this.$play.textContent = this._label('label-replay', '重播');
         this._emit('answer-revealed');
+        // 等空格的填入動畫（.45s）結束，才算全部播放完畢
+        if (this.hasAttribute('show-template')) this._later(run, 450, () => this._showTemplate());
       };
+    }
+
+    /* ----- show-template：播放完畢後顯示 <template> 內容 ----- */
+    _showTemplate() {
+      if (this._tplNodes) return;
+      const id = (this.getAttribute('show-template') || '').trim().replace(/^#/, '');
+      if (!id) return;
+      const tpl = document.getElementById(id);
+      if (!(tpl instanceof HTMLTemplateElement)) {
+        console.warn(`[maze-quiz] show-template 找不到 <template id="${id}">`);
+        return;
+      }
+      const frag = tpl.content.cloneNode(true);
+      this._tplNodes = [...frag.childNodes];
+      tpl.after(frag);
+      this._emit('template-shown');
+    }
+
+    _hideTemplate() {
+      if (!this._tplNodes) return;
+      this._tplNodes.forEach(n => n.remove());
+      this._tplNodes = null;
     }
 
     _resetReveal() {
       this._revealed = false;
+      this._hideTemplate();
       if (this.$blank) {
         this.$blank.textContent = '';
         this.$blank.classList.remove('is-filled');

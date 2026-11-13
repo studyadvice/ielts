@@ -2,14 +2,14 @@
 
 `<maze-quiz>` 是迷宮填空動畫元件。每次載入都會隨機生成一座只有一條路的迷宮，從左下入口描繪路徑到右上出口，抵達後在出口噴出彩帶，答案從出口跳出並飛進題目的空格。題目區可以用 `<maze-quiz-panel>` 拆到同一網頁的任何位置。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.5.0
+- 版本：1.6.0
 - 建立日期：11-12-26
 - 更新日期：11-13-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `maze-quiz.js` | `<maze-quiz>`、`<maze-quiz-panel>` | 迷宮填空動畫與外部題目面板。 |
-| `maze-quiz-demo-11-13-26.html` | | 互動範例二十二則，附修改一到修改九的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
+| `maze-quiz-demo-11-13-26.html` | | 互動範例二十三則，附修改一到修改十的程式碼對照。範例十七到十九引用 repo 根目錄的 `bp-styles.css`。 |
 
 ## 目錄
 
@@ -18,6 +18,7 @@
 - [屬性](#屬性)
 - [外部題目面板](#外部題目面板)
 - [題目區額外類別 extra-class、panel-class](#題目區額外類別-extra-classpanel-class)
+- [播放完畢後顯示 template](#播放完畢後顯示-template)
 - [題庫](#題庫)
 - [快捷鍵](#快捷鍵)
 - [事件與方法](#事件與方法)
@@ -74,6 +75,7 @@
 | `entry-icon` | 綠色圓點 | 入口改用 Bootstrap Icons，填圖示名稱，例如 `geo-alt-fill`（也接受 `bi-geo-alt-fill`）。 |
 | `exit-icon` | 粉紅圓點 | 出口改用 Bootstrap Icons，例如 `flag-fill`，抵達時一樣會脈動。 |
 | `exit-pulse` | `1.9` | 抵達出口時的放大倍率，範圍 1 到 4；`1` 等於不放大。圓點與 `exit-icon` 圖示都適用，圖示範圍會跟著倍率加大，不會被裁切。 |
+| `show-template` | 無 | 全部播放完畢（答案填入空格的動畫結束）後，顯示指定 id 的 `<template>` 內容，詳見[播放完畢後顯示 template](#播放完畢後顯示-template)。 |
 | `chip-shape` | `pill` | 出口答案標籤的形狀：`pill` 膠囊、`rounded` 圓角、`square` 直角，或純數字（圓角 px，隨迷宮大小等比縮放）。 |
 | `chip-bg` | `#E3D322` | 答案標籤底色。 |
 | `chip-color` | `#0C0D0C` | 答案標籤文字色。 |
@@ -126,6 +128,21 @@ document.querySelector('maze-quiz-panel[for="m1"]').setAttribute('extra-class', 
 document.querySelector('#m2').setAttribute('panel-class', 'fs-large text-center');
 ```
 
+## 播放完畢後顯示 template
+
+```html
+<maze-quiz show-template="tpl-1" question="If I _____ more time, I would learn to play the piano." answer="had"></maze-quiz>
+
+<template id="tpl-1">
+  <div class="explain-card">If 子句用過去式，主要子句用 would + 原形動詞。</div>
+</template>
+```
+
+- 答案填入空格的動畫結束後，元件複製 `<template>` 的內容，插在 `<template>` 的正後方，所以 `<template>` 放在哪裡，內容就顯示在哪裡。
+- 不包額外的容器；按「重播」、「換一個迷宮」或改寫 `show-template` 時，先移除這次插入的內容，播完再顯示。
+- 可寫 `tpl-1` 或 `#tpl-1`。找不到 id，或該元素不是 `<template>` 時，在主控台提示。
+- 內容顯示後觸發 `template-shown` 事件。
+
 ## 題庫
 
 ```html
@@ -149,6 +166,7 @@ document.querySelector('#m2').setAttribute('panel-class', 'fs-large text-center'
 | --- | --- |
 | `maze-solved` | 路徑抵達出口時觸發。 |
 | `answer-revealed` | 答案填入空格時觸發。 |
+| `template-shown` | `show-template` 的內容顯示後觸發。 |
 | `event.detail` | `question`、`answer`、`cols`、`rows`、`steps`（路徑格數）。 |
 | `play()` | 播放或重播目前的迷宮。 |
 | `regenerate(autoPlay)` | 生成新迷宮，題庫模式下同時換題；`autoPlay` 預設 `true`。 |
@@ -161,6 +179,7 @@ document.addEventListener('answer-revealed', e => console.log(e.detail.answer));
 
 | 版本 | 內容 |
 | --- | --- |
+| 1.6.0 | 新增 `show-template` 與 `template-shown` 事件，播放完畢後顯示 `<template>` 內容。 |
 | 1.5.0 | 新增 `exit-pulse`，可調整抵達出口時的放大倍率。 |
 | 1.4.0 | `question` 與題庫的 `q` 支援 `<br>` 換行。 |
 | 1.3.0 | `<maze-quiz>` 新增 `panel-class`，內建題目區也能直接加類別。 |
