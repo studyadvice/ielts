@@ -1,5 +1,5 @@
 /*!
- * maze-quiz.js v1.0.0
+ * maze-quiz.js v1.1.0
  * <maze-quiz> 迷宮填空動畫元件，<maze-quiz-panel> 外部題目面板
  *
  * 每次載入隨機生成「唯一解」迷宮（遞迴回溯法產生的完美迷宮，任兩格之間只有一條路），
@@ -15,7 +15,9 @@
  *   seed          指定亂數種子可固定迷宮；不填則每次重新整理都不同
  *   maze-width    迷宮區總寬度；純數字視為 px，也接受 40%、24rem 等寫法（優先於 cell-size）
  *   cell-size     每格大小（px），迷宮寬度依格數自動計算
- *   route-colors  路徑雙色漸層，例如 "#51DBCF,#FF91D7" 或 "key,pink"，沿路徑長度從入口過渡到出口
+ *   route-colors  路徑漸層，一到三個顏色，例如 "#51DBCF,#FF91D7" 或 "key,pink,yellow"，沿路徑長度從入口過渡到出口。
+ *                 可用色碼（#RGB、#RRGGBB，含透明度的寫法會忽略透明度）、色票名稱、CSS 色名或 rgb()、hsl()；
+ *                 以半形或全形逗號、頓號、分號或空白分隔皆可，無法辨識的顏色會在主控台提示
  *   controls      按鈕位置：panel（預設，跟著題目面板）、maze（迷宮下方）、none（不顯示）
  *   hotkey        設為 "false" 時不回應快捷鍵
  *   label-play    開始按鈕文字（預設「開始解謎」）
@@ -25,6 +27,11 @@
  *   confetti      設為 "false" 時跳過噴彩帶動畫
  *   hide-until-play  設為 "true"（或只寫屬性名稱）時，按下開始以前隱藏整個迷宮
  *   label-cover   隱藏時遮罩上的提示文字
+ *   label-title   題目面板上方的標題（預設「填空題」）；設為空字串時不顯示標題
+ *   label-reveal  答案填入後的狀態文字，{answer} 會換成答案（預設「答案揭曉：{answer}」）
+ *   show-reveal   設為 "false" 時，答案填入後不顯示狀態文字
+ *   reveal-color  揭曉文字的文字色，接受色碼、色票名稱或 CSS 色名（預設 #C6C7BD）
+ *   reveal-bg     揭曉文字的背景色；設定後揭曉文字以色塊呈現（預設無背景）
  *
  * 外部面板：<maze-quiz-panel for="迷宮的 id"></maze-quiz-panel> 可放在同一網頁任何位置，
  *           有對應面板時迷宮不顯示內建題目區。答案飛入時若空格不在畫面內，會自動平滑捲動過去。
@@ -68,11 +75,12 @@ maze-quiz .mq-out.is-hit{animation:mq-pulse .6s ease-out 2}
 maze-quiz .mq-wrap > .mq-panel{flex:2 1 0;min-width:0}
 ${H} .mq-panel{display:flex;flex-direction:column;justify-content:center;gap:24px;background:#3B2A20;border-radius:12px;padding:32px}
 ${H} .mq-label{font-size:.875rem;font-weight:700;letter-spacing:.1em;color:#A3C4BC}
+${H} .mq-label.is-empty{display:none}
 ${H} .mq-question{font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8;word-break:break-word}
 ${H} .mq-blank{display:inline-block;text-align:center;border-bottom:3px solid #C6C7BD;color:#E3D322;margin:0 6px;padding:0 4px;line-height:1.2}
 ${H} .mq-blank.is-filled{border-bottom-color:#E3D322;animation:mq-fill .45s ease-out}
 ${H} .mq-status{font-size:1.125rem;color:#C6C7BD;min-height:1.6em}
-${H} .mq-meta{font-size:.875rem;color:#86877F}
+${H} .mq-status.has-bg{align-self:flex-start;max-width:100%;padding:6px 16px;border-radius:8px}
 ${H} .mq-actions{display:flex;gap:12px;flex-wrap:wrap}
 maze-quiz .mq-stage > .mq-actions{justify-content:center}
 ${H} .mq-btn{font-size:1rem;font-weight:700;padding:10px 22px;border-radius:999px;border:2px solid #51DBCF;background:#0C0D0C;color:#51DBCF;cursor:pointer;transition:background .15s,color .15s}
@@ -121,14 +129,46 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
-  function parseHex(str) {
-    const key = String(str || '').trim().toLowerCase();
-    if (PALETTE[key]) str = PALETTE[key];
-    const m = String(str || '').trim().match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
-    if (!m) return null;
-    let h = m[1];
-    if (h.length === 3) h = h.split('').map(c => c + c).join('');
-    return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+  // 解析單一顏色，回傳 [r, g, b]；含透明度的寫法只取顏色，忽略透明度。
+  let colorProbe = null;
+  function parseColor(str) {
+    let s = String(str || '').trim();
+    if (!s) return null;
+    const key = s.toLowerCase();
+    if (PALETTE[key]) s = PALETTE[key];
+    const m = s.match(/^#?([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
+    if (m) {
+      let h = m[1];
+      if (h.length <= 4) h = h.split('').map(c => c + c).join('');
+      return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+    }
+    // CSS 色名、rgb()、hsl() 等交給瀏覽器解析；先後填入黑與白，兩次結果不同表示無法辨識。
+    if (!colorProbe) colorProbe = document.createElement('canvas').getContext('2d');
+    const ctx = colorProbe;
+    ctx.fillStyle = '#000000'; ctx.fillStyle = s; const a = ctx.fillStyle;
+    ctx.fillStyle = '#ffffff'; ctx.fillStyle = s; const b = ctx.fillStyle;
+    if (a !== b) return null;
+    if (a[0] === '#') return parseColor(a);
+    const n = a.match(/[\d.]+/g);
+    return n && n.length >= 3 ? n.slice(0, 3).map(v => Math.round(+v)) : null;
+  }
+  // 拆開顏色清單：半形或全形逗號、頓號、分號、空白都視為分隔，括號內的內容不拆。
+  function splitColors(str) {
+    const src = String(str || '').replace(/[，、；;]/g, ',');
+    const out = [];
+    let cur = '', depth = 0;
+    for (const ch of src) {
+      if (ch === '(') depth++;
+      else if (ch === ')') depth = Math.max(0, depth - 1);
+      if (depth === 0 && (ch === ',' || /\s/.test(ch))) {
+        if (cur.trim()) out.push(cur.trim());
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out;
   }
   function mixHex(a, b, t) {
     return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
@@ -332,7 +372,8 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
   class MazeQuiz extends HTMLElement {
     static get observedAttributes() {
       return ['question', 'answer', 'cols', 'rows', 'maze-width', 'cell-size', 'route-colors', 'controls',
-        'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play'];
+        'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play',
+        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg'];
     }
 
     constructor() {
@@ -353,7 +394,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this._extPanel = null;
       this._k = 1;
       this._statusText = '';
-      this._metaText = '';
+      this._warnedColors = '';
     }
 
     connectedCallback() {
@@ -413,6 +454,17 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         case 'hide-until-play':
           if (!this._played) this._setConcealed(this._wantsConceal());
           break;
+        case 'label-title':
+          this._applyTitle();
+          break;
+        case 'label-reveal':
+        case 'show-reveal':
+          if (this._revealed) this._setStatus(this._revealText(), true);
+          break;
+        case 'reveal-color':
+        case 'reveal-bg':
+          this._paintStatus();
+          break;
         case 'route-colors':
           this._cancel();
           this._renderMaze();
@@ -463,7 +515,6 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this._renderMaze();
       this._revealed = false;
       this._renderQuestion();
-      this._setMeta(`迷宮 ${cols} × ${rows}，唯一路徑共 ${this._steps} 格`);
       this._played = false;
       this.$play.disabled = false;
       this._applyButtons();
@@ -548,14 +599,14 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     _mountPanel(host) {
       this.$actions.remove();
       host.innerHTML = `
-<div class="mq-label">填空題</div>
+<div class="mq-label"></div>
 <div class="mq-question"></div>
-<div class="mq-status"></div>
-<div class="mq-meta"></div>`;
+<div class="mq-status"></div>`;
       this._panelHost = host;
+      this.$title = host.querySelector('.mq-label');
       this.$question = host.querySelector('.mq-question');
       this.$status = host.querySelector('.mq-status');
-      this.$meta = host.querySelector('.mq-meta');
+      this._applyTitle();
       this._placeControls();
     }
 
@@ -567,7 +618,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         this.$blank.classList.add('is-filled');
       }
       this.$status.textContent = this._statusText;
-      this.$meta.textContent = this._metaText;
+      this._paintStatus();
     }
 
     _placeControls() {
@@ -695,7 +746,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
           const b = this.$blank.getBoundingClientRect();
           Confetti.burst(b.left + b.width / 2, b.top, { angle: -90, spread: 55, count: 55, power: 0.6, size: this._k });
         }
-        this._setStatus(`答案揭曉：${this._a}`);
+        this._setStatus(this._revealText(), true);
         this._running = false;
         this.$play.disabled = false;
         this.$play.textContent = this._label('label-replay', '重播');
@@ -733,6 +784,20 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     _label(name, def) {
       const v = this.getAttribute(name);
       return (v !== null && v.trim() !== '') ? v : def;
+    }
+
+    // 題目面板標題：未設定用預設值，設為空字串則隱藏。
+    _applyTitle() {
+      if (!this.$title) return;
+      const v = this.getAttribute('label-title');
+      const text = v === null ? '填空題' : v.trim();
+      this.$title.textContent = text;
+      this.$title.classList.toggle('is-empty', text === '');
+    }
+
+    _revealText() {
+      if ((this.getAttribute('show-reveal') || '').trim().toLowerCase() === 'false') return '';
+      return this._label('label-reveal', '答案揭曉：{answer}').replace(/\{answer\}/g, this._a);
     }
 
     _readyText() {
@@ -792,8 +857,27 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       return dur;
     }
 
-    _setStatus(t) { this._statusText = t; if (this.$status) this.$status.textContent = t; }
-    _setMeta(t) { this._metaText = t; if (this.$meta) this.$meta.textContent = t; }
+    _setStatus(t, isReveal = false) {
+      this._statusText = t;
+      this._statusIsReveal = isReveal;
+      if (this.$status) this.$status.textContent = t;
+      this._paintStatus();
+    }
+
+    // 只有揭曉文字套用 reveal-color 與 reveal-bg，其他狀態文字維持預設樣式。
+    _paintStatus() {
+      const el = this.$status;
+      if (!el) return;
+      const on = !!this._statusIsReveal && this._statusText !== '';
+      const pick = (name) => {
+        const c = on ? parseColor(this.getAttribute(name)) : null;
+        return c ? mixHex(c, c, 0) : '';
+      };
+      const fg = pick('reveal-color'), bg = pick('reveal-bg');
+      el.style.color = fg;
+      el.style.backgroundColor = bg;
+      el.classList.toggle('has-bg', !!bg);
+    }
 
     _exitScreenPoint() {
       const m = this.$svg.getScreenCTM();
@@ -886,12 +970,23 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       this._mountPanel(this.$innerPanel);
     }
 
+    // 回傳一到三個顏色；無法辨識或超過三個時在主控台提示一次。
     _routeColors() {
-      const raw = (this.getAttribute('route-colors') || '').split(',').map(parseHex).filter(Boolean);
-      if (raw.length >= 2) return [raw[0], raw[1]];
-      if (raw.length === 1) return [raw[0], raw[0]];
-      const base = parseHex(COLORS.route);
-      return [base, base];
+      const attr = this.getAttribute('route-colors') || '';
+      const tokens = splitColors(attr);
+      const list = [], bad = [];
+      for (const t of tokens) {
+        const c = parseColor(t);
+        if (c) list.push(c); else bad.push(t);
+      }
+      if ((bad.length || list.length > 3) && this._warnedColors !== attr) {
+        this._warnedColors = attr;
+        if (bad.length) console.warn(`[maze-quiz] route-colors 無法辨識：${bad.join('、')}`);
+        if (list.length > 3) console.warn('[maze-quiz] route-colors 最多三個顏色，其餘忽略。');
+      }
+      const stops = list.slice(0, 3);
+      if (!stops.length) stops.push(parseColor(COLORS.route));
+      return stops;
     }
 
     _renderMaze() {
@@ -936,9 +1031,16 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
       const routeD = 'M' + pts.map(p => `${p[0]} ${p[1]}`).join('L');
 
       // 沿路徑長度漸層：把路徑切成多段，每段一個插值顏色；再用遮罩控制描繪進度。
-      const [c1, c2] = this._routeColors();
-      const same = c1.every((v, i) => v === c2[i]);
+      const stops = this._routeColors();
+      const same = stops.every(c => c.every((v, i) => v === stops[0][i]));
       const n = same ? 1 : BUCKETS;
+      // 顏色平均分配在路徑上：兩色時入口到出口，三色時中段經過第二色。
+      const colorAt = (t) => {
+        if (stops.length === 1) return mixHex(stops[0], stops[0], 0);
+        const x = t * (stops.length - 1);
+        const i = Math.min(stops.length - 2, Math.floor(x));
+        return mixHex(stops[i], stops[i + 1], x - i);
+      };
       const L = this._L;
       let segs = '';
       for (let k = 0; k < n; k++) {
@@ -947,7 +1049,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
         for (let i = 1; i < pts.length - 1; i++) if (cum[i] > a && cum[i] < b) sp.push(pts[i]);
         sp.push(this._pointAt(b));
         const d = 'M' + sp.map(p => `${+p[0].toFixed(2)} ${+p[1].toFixed(2)}`).join('L');
-        segs += `<path d="${d}" stroke="${mixHex(c1, c2, n === 1 ? 0 : (k + 0.5) / n)}"/>`;
+        segs += `<path d="${d}" stroke="${colorAt(n === 1 ? 0 : (k + 0.5) / n)}"/>`;
       }
 
       const maskId = `mq-mask-${this._uid}`;

@@ -14,6 +14,8 @@
   .ver{display:inline-block;font-size:.75rem;font-weight:800;color:#0C0D0C;background:#B484E8;border-radius:999px;padding:2px 10px;margin:0 0 0 8px;vertical-align:middle}
   .ver.v10{background:#86877F}
   .ver.v3{background:#FFA987}
+  .ver.v4{background:#5DBAE8}
+  .ver.v5{background:#71CD76}
   .lead-text{font-size:1.0625rem;color:#C6C7BD;margin:0 0 16px}
   .note{font-size:.9375rem;color:#86877F;margin:0 0 16px}
   .info-box{background:#3B2A20;border:1px solid #778CE1;color:#DBEDD8;border-radius:12px;padding:16px 20px;margin:16px 0 0}
@@ -54,7 +56,7 @@
 </head>
 <body>
 <div class="page">
-  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.0.0</span></h1>
+  <h1>&lt;maze-quiz&gt; 迷宮填空動畫元件 <span class="ver" style="font-size:1rem">1.1.0</span></h1>
   <p class="lead-text">每次重新整理都會生成新的唯一解迷宮，從左下入口描繪路徑到右上出口，噴出彩帶後答案飛入空格。</p>
   <div class="info-box">迷宮以遞迴回溯法生成，屬於完美迷宮：任兩格之間只有一條路，因此入口到出口的路徑必定唯一。彩帶不使用透明度，改以縮小或落出畫面的方式退場。</div>
   <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的迷宮。</div>
@@ -126,6 +128,43 @@
 
   <hr class="divider">
 
+  <!-- ===================== 修改三範例 ===================== -->
+  <h2>範例九：三色漸層，全形逗號分隔<span class="ver v4">修改三</span></h2>
+  <p class="note">設定 <code>route-colors="key，yellow，pink"</code>，入口是 key、路徑中段經過 yellow、出口是 pink。以前全形逗號會讓整串顏色失效，現在半形或全形逗號、頓號、分號、空白都能分隔。</p>
+  <maze-quiz cols="14" rows="9" cell-size="32" route-colors="key，yellow，pink" controls="maze" autoplay="false"
+             question="I have been _____ English for three years." answer="learning"></maze-quiz>
+
+  <h2>範例十：CSS 色名與 rgb() 混用的三色漸層<span class="ver v4">修改三</span></h2>
+  <p class="note">設定 <code>route-colors="rgb(93, 186, 232) orange #FF2E63"</code>。rgb() 括號內的逗號不會被拆開；CSS 色名 orange 交給瀏覽器解析。無法辨識的顏色會在主控台顯示提示。</p>
+  <maze-quiz cols="14" rows="9" cell-size="32" route-colors="rgb(93, 186, 232) orange #FF2E63" controls="maze" autoplay="false"
+             question="Neither of the answers _____ correct." answer="is"></maze-quiz>
+
+  <h2>範例十一：自訂標題與揭曉文字<span class="ver v4">修改三</span></h2>
+  <p class="note">設定 <code>label-title="Unit 5 Grammar"</code>、<code>label-reveal="Correct answer: {answer}"</code>，<code>{answer}</code> 會換成答案。</p>
+  <maze-quiz cols="10" rows="8" autoplay="false" route-colors="indigo,dreamy"
+             label-title="Unit 5 Grammar" label-reveal="Correct answer: {answer}"
+             question="By the time we arrived, the film _____ already started." answer="had"></maze-quiz>
+
+  <h2>範例十二：不顯示標題，也不顯示揭曉文字<span class="ver v4">修改三</span></h2>
+  <p class="note">設定 <code>label-title=""</code> 隱藏標題、<code>show-reveal="false"</code> 讓答案只出現在空格裡，不在下方重複顯示。</p>
+  <maze-quiz cols="10" rows="8" autoplay="false" route-colors="green,blue"
+             label-title="" show-reveal="false"
+             question="He suggested _____ a taxi to the airport." answer="taking"></maze-quiz>
+
+  <h2>範例十三：揭曉文字的文字色與背景色<span class="ver v5">修改四</span></h2>
+  <p class="note">設定 <code>reveal-color="background"</code>、<code>reveal-bg="yellow"</code>，揭曉文字以黃底深色字的色塊呈現。只有揭曉文字套用，「正在描繪路徑……」等其他狀態文字維持原樣。只設 <code>reveal-color</code> 則只改字色、不加色塊。</p>
+  <maze-quiz cols="10" rows="8" autoplay="false" route-colors="key,yellow,pink"
+             reveal-color="background" reveal-bg="yellow"
+             question="I'd rather you _____ smoke in here." answer="didn't"></maze-quiz>
+
+  <h2>範例十四：只改揭曉文字的字色<span class="ver v5">修改四</span></h2>
+  <p class="note">設定 <code>reveal-color="#FF91D7"</code>，沒有設定 <code>reveal-bg</code>，所以不加色塊。</p>
+  <maze-quiz cols="10" rows="8" autoplay="false" route-colors="violet,pink"
+             reveal-color="#FF91D7"
+             question="It's high time we _____ home." answer="went"></maze-quiz>
+
+  <hr class="divider">
+
   <h2>屬性、事件與方法</h2>
   <div class="two-col">
     <div>
@@ -141,7 +180,7 @@
           <tr><td><code>seed</code></td><td>亂數種子，可重現迷宮。</td><td>無</td></tr>
           <tr><td><code>maze-width</code><span class="ver">修改一</span></td><td>迷宮區總寬度。純數字視為 px，也接受 40%、24rem 等寫法。與 cell-size 同時設定時以此為準。設定後取消高度上限。</td><td>自動</td></tr>
           <tr><td><code>cell-size</code><span class="ver">修改一</span></td><td>每格大小（px），迷宮寬度依格數自動計算。設定後取消高度上限。</td><td>無</td></tr>
-          <tr><td><code>route-colors</code><span class="ver">修改一</span></td><td>路徑雙色漸層，以逗號分隔兩個色碼或色票名稱（例如 key,pink），沿路徑長度從入口過渡到出口。</td><td>#51DBCF 單色</td></tr>
+          <tr><td><code>route-colors</code><span class="ver">修改一</span><span class="ver v4">修改三</span></td><td>路徑漸層，一到三個顏色，沿路徑長度從入口過渡到出口（三色時中段經過第二色）。接受色碼、色票名稱（例如 key,pink）、CSS 色名、rgb()、hsl()；半形或全形逗號、頓號、分號、空白都能分隔。含透明度的寫法會忽略透明度。</td><td>#51DBCF 單色</td></tr>
           <tr><td><code>controls</code><span class="ver">修改一</span></td><td>按鈕位置：panel 跟著題目面板、maze 放在迷宮下方、none 不顯示。</td><td>panel</td></tr>
           <tr><td><code>hotkey</code><span class="ver">修改一</span></td><td>設為 false 時不回應快捷鍵。</td><td>回應</td></tr>
           <tr><td><code>label-play</code><span class="ver v3">修改二</span></td><td>開始按鈕文字。</td><td>開始解謎</td></tr>
@@ -151,6 +190,11 @@
           <tr><td><code>confetti</code><span class="ver v3">修改二</span></td><td>設為 false 時跳過噴彩帶動畫，答案仍會跳出並飛入空格。</td><td>噴彩帶</td></tr>
           <tr><td><code>hide-until-play</code><span class="ver v3">修改二</span></td><td>只寫屬性名稱或設為 true 時，按下開始以前以遮罩隱藏整個迷宮；按下後從入口展開。</td><td>不隱藏</td></tr>
           <tr><td><code>label-cover</code><span class="ver v3">修改二</span></td><td>隱藏時遮罩上的提示文字。</td><td>按下開始，迷宮就會出現</td></tr>
+          <tr><td><code>label-title</code><span class="ver v4">修改三</span></td><td>題目面板上方的標題。設為空字串（label-title=""）時不顯示標題。</td><td>填空題</td></tr>
+          <tr><td><code>label-reveal</code><span class="ver v4">修改三</span></td><td>答案填入後的狀態文字，{answer} 會換成答案。</td><td>答案揭曉：{answer}</td></tr>
+          <tr><td><code>show-reveal</code><span class="ver v4">修改三</span></td><td>設為 false 時，答案填入後不顯示狀態文字。</td><td>顯示</td></tr>
+          <tr><td><code>reveal-color</code><span class="ver v5">修改四</span></td><td>揭曉文字的文字色，接受色碼、色票名稱或 CSS 色名。</td><td>#C6C7BD</td></tr>
+          <tr><td><code>reveal-bg</code><span class="ver v5">修改四</span></td><td>揭曉文字的背景色；設定後揭曉文字以圓角色塊呈現（內距 6px 16px）。</td><td>無背景</td></tr>
         </tbody>
       </table>
     </div>
@@ -190,6 +234,15 @@
 <span class="t">&lt;maze-quiz</span> <span class="a">label-play</span>=<span class="s">"Start!"</span> <span class="a">play-size</span>=<span class="s">"lg"</span> <span class="a">confetti</span>=<span class="s">"false"</span> <span class="a">hide-until-play</span>
            <span class="a">question</span>=<span class="s">"She is used to _____ up early."</span> <span class="a">answer</span>=<span class="s">"getting"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
 
+<span class="c">&lt;!-- 三色漸層、自訂標題與揭曉文字 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">route-colors</span>=<span class="s">"key,yellow,pink"</span> <span class="a">label-title</span>=<span class="s">"Unit 5 Grammar"</span> <span class="a">label-reveal</span>=<span class="s">"Correct answer: {answer}"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
+<span class="c">&lt;!-- 不顯示標題與揭曉文字 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">label-title</span>=<span class="s">""</span> <span class="a">show-reveal</span>=<span class="s">"false"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
+<span class="c">&lt;!-- 揭曉文字的文字色與背景色 --&gt;</span>
+<span class="t">&lt;maze-quiz</span> <span class="a">reveal-color</span>=<span class="s">"background"</span> <span class="a">reveal-bg</span>=<span class="s">"yellow"</span><span class="t">&gt;&lt;/maze-quiz&gt;</span>
+
 <span class="c">&lt;!-- 題庫 --&gt;</span>
 <span class="t">&lt;maze-quiz</span> <span class="a">cols</span>=<span class="s">"18"</span> <span class="a">rows</span>=<span class="s">"11"</span><span class="t">&gt;</span>
   <span class="t">&lt;script</span> <span class="a">type</span>=<span class="s">"application/json"</span><span class="t">&gt;</span>
@@ -205,7 +258,7 @@ document.addEventListener(<span class="s">'answer-revealed'</span>, e =&gt; cons
 
   <!-- ===================== 修改紀錄與程式碼對照 ===================== -->
   <h2>修改紀錄與程式碼對照</h2>
-  <p class="note">開發過程經過兩次修改，全部收錄在正式版本 1.0.0。每次修改都相容先前的寫法，不需改動既有頁面。</p>
+  <p class="note">修改一與修改二收錄在 1.0.0，修改三與修改四收錄在 1.1.0。每次修改都相容先前的寫法，不需改動既有頁面（唯一的例外是題目面板不再顯示迷宮尺寸與路徑格數）。</p>
 
   <h3 style="color:#B484E8">修改一</h3>
 
@@ -323,6 +376,87 @@ this.$svg.animate([
   { clipPath: 'circle(0% at 入口)' },
   { clipPath: 'circle(150% at 入口)' }
 ], { duration: 650 });</span></pre></div>
+  </div>
+
+  <h3 style="color:#5DBAE8;margin-top:48px">修改三</h3>
+
+  <h3>9. route-colors 解析修正，支援三個顏色</h3>
+  <p class="cmp-desc">原本只用半形逗號拆字串，再逐一比對 3 或 6 位色碼。全形逗號、空白分隔、CSS 色名、8 位色碼都會被丟掉，只剩一色或退回預設；rgb() 更會被逗號拆碎，其中的 219 之類數字還會被誤認為 3 位色碼。新版先統一分隔符號、保留括號內容，色碼以外的寫法交給瀏覽器解析，並把顏色平均分配在路徑上。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改二</div><pre class="code"><span class="del">const raw = attr.split(',').map(parseHex).filter(Boolean);
+if (raw.length &gt;= 2) return [raw[0], raw[1]];
+if (raw.length === 1) return [raw[0], raw[0]];</span>
+
+stroke = <span class="del">mixHex(c1, c2, t)</span>;</pre></div>
+    <div><div class="cmp-head new">修改三</div><pre class="code"><span class="add">// "key，yellow pink"、"rgb(93, 186, 232) orange" 都可以
+const tokens = splitColors(attr);   // ，、；; 空白皆可分隔，括號內不拆
+const stops = tokens.map(parseColor).filter(Boolean).slice(0, 3);
+// parseColor：色票名稱 → 色碼 → 交給 canvas 解析 CSS 色名、rgb()、hsl()
+
+const colorAt = (t) =&gt; {
+  const x = t * (stops.length - 1);
+  const i = Math.min(stops.length - 2, Math.floor(x));
+  return mixHex(stops[i], stops[i + 1], x - i);
+};</span>
+stroke = <span class="add">colorAt(t)</span>;</pre></div>
+  </div>
+
+  <h3>10. 移除題目面板的迷宮尺寸文字</h3>
+  <p class="cmp-desc">面板不再顯示「迷宮 10 × 12，唯一路徑共 47 格」。事件的 detail 仍保留 cols、rows、steps，右下角通知照常可用。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改二</div><pre class="code">&lt;div class="mq-status"&gt;&lt;/div&gt;
+<span class="del">&lt;div class="mq-meta"&gt;&lt;/div&gt;</span>
+
+<span class="del">this._setMeta(`迷宮 ${cols} × ${rows}，唯一路徑共 ${this._steps} 格`);</span></pre></div>
+    <div><div class="cmp-head new">修改三</div><pre class="code">&lt;div class="mq-status"&gt;&lt;/div&gt;</pre></div>
+  </div>
+
+  <h3>11. 自訂標題 label-title</h3>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改二</div><pre class="code"><span class="del">&lt;div class="mq-label"&gt;填空題&lt;/div&gt;</span></pre></div>
+    <div><div class="cmp-head new">修改三</div><pre class="code">&lt;maze-quiz <span class="add">label-title="Unit 5 Grammar"</span>&gt;
+&lt;maze-quiz <span class="add">label-title=""</span>&gt;  <span class="c">不顯示標題</span>
+
+<span class="add">const v = this.getAttribute('label-title');
+const text = v === null ? '填空題' : v.trim();
+this.$title.classList.toggle('is-empty', text === '');</span></pre></div>
+  </div>
+
+  <h3>12. 揭曉文字 label-reveal 與 show-reveal</h3>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改二</div><pre class="code"><span class="del">this._setStatus(`答案揭曉：${this._a}`);</span></pre></div>
+    <div><div class="cmp-head new">修改三</div><pre class="code">&lt;maze-quiz <span class="add">label-reveal="Correct answer: {answer}"</span>&gt;
+&lt;maze-quiz <span class="add">show-reveal="false"</span>&gt;
+
+<span class="add">_revealText() {
+  if (show-reveal === 'false') return '';
+  return this._label('label-reveal', '答案揭曉：{answer}')
+    .replace(/\{answer\}/g, this._a);
+}</span>
+this._setStatus(<span class="add">this._revealText()</span>);</pre></div>
+  </div>
+
+  <h3 style="color:#71CD76;margin-top:48px">修改四</h3>
+
+  <h3>13. 揭曉文字的文字色 reveal-color 與背景色 reveal-bg</h3>
+  <p class="cmp-desc">狀態文字會記錄目前是不是揭曉文字，只有揭曉時套用顏色；重播或換迷宮時自動恢復預設樣式。顏色解析與 route-colors 共用，同樣接受色票名稱與 CSS 色名。</p>
+  <div class="cmp">
+    <div><div class="cmp-head old">修改三</div><pre class="code"><span class="c">/* 揭曉文字固定樣式 */</span>
+.mq-status{color:#C6C7BD}
+
+this._setStatus(this._revealText());</pre></div>
+    <div><div class="cmp-head new">修改四</div><pre class="code">&lt;maze-quiz <span class="add">reveal-color="background" reveal-bg="yellow"</span>&gt;
+
+<span class="add">.mq-status.has-bg{align-self:flex-start;padding:6px 16px;border-radius:8px}</span>
+
+this._setStatus(this._revealText(), <span class="add">true</span>);
+
+<span class="add">_paintStatus() {
+  const on = this._statusIsReveal &amp;&amp; this._statusText !== '';
+  el.style.color = on ? reveal-color : '';
+  el.style.backgroundColor = on ? reveal-bg : '';
+  el.classList.toggle('has-bg', !!bg);
+}</span></pre></div>
   </div>
 
   <!-- ===================== 範例六的面板 ===================== -->
