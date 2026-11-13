@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-stream 新增氣泡樣式與外框粗細（11-13-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  section{margin:0 0 48px 0;}
+  .sec-title{display:flex;align-items:baseline;gap:12px;margin:0 0 14px 0;}
+  .sec-title h2{font-size:1.25rem;font-weight:700;color:#B484E8;margin:0;}
+  .sec-title p{margin:0 0 0 auto;font-size:0.85rem;color:#86877F;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:0;white-space:pre-wrap;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;margin:0 0 28px 0;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;font-weight:700;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#E3D322;white-space:nowrap;}
+  .diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .diff h4{font-size:0.95rem;margin:0 0 8px 0;}
+  .diff h4.old{color:#EF6661;}.diff h4.new{color:#71CD76;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;ui-stream&gt;</code> 內容流 v0.4：新增氣泡樣式與外框粗細</h1>
+  <p class="sub">新增 double（雙線框）、notch（切角框）、callout（引線框）三種氣泡樣式，以及 border-width（整個元件外框粗細）、bubble-border-width（氣泡邊框粗細）。完整用法請參考 ui-stream-demo-11-11-26.html。</p>
+
+  <!-- ══════════ 範例 1 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 1：三種新樣式，左右各一</h2><p>stream-role 的 style 屬性指定樣式；靠右的氣泡會自動鏡像。</p></div>
+    <div class="two">
+      <ui-stream id="ex1" autoplay delay="350" height="760" border-width="3">
+        <stream-role name="d1" color="blue" side="left" style="double" label="double 靠左"></stream-role>
+        <stream-role name="d2" color="key" side="right" style="double" label="double 靠右"></stream-role>
+        <stream-role name="n1" color="quiet" side="left" style="notch" label="notch 靠左"></stream-role>
+        <stream-role name="n2" color="playful" side="right" style="notch" label="notch 靠右"></stream-role>
+        <stream-role name="c1" color="quiet" side="left" style="callout" label="callout 靠左"></stream-role>
+        <stream-role name="c2" color="yellow" side="right" style="callout" label="callout 靠右"></stream-role>
+        <stream-item from="d1">Describe a time you helped someone.</stream-item>
+        <stream-item from="d2">雙線框適合用來標示題目或重點句。</stream-item>
+        <stream-item from="n1">I helped my neighbour carry boxes when she moved house last summer.</stream-item>
+        <stream-item from="n2">切角框像一張便條，適合放範例答案。</stream-item>
+        <stream-item from="c1">It was exhausting, but I felt genuinely useful.</stream-item>
+        <stream-item from="c2">引線框適合放旁白或補充說明。</stream-item>
+      </ui-stream>
+      <pre>&lt;ui-stream autoplay delay="350" height="760" border-width="3"&gt;
+  &lt;stream-role name="d1" color="blue"    side="left"  style="double"  label="double 靠左"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="d2" color="key"     side="right" style="double"  label="double 靠右"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="n1" color="quiet"   side="left"  style="notch"   label="notch 靠左"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="n2" color="playful" side="right" style="notch"   label="notch 靠右"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="c1" color="quiet"   side="left"  style="callout" label="callout 靠左"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="c2" color="yellow"  side="right" style="callout" label="callout 靠右"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="d1"&gt;Describe a time you helped someone.&lt;/stream-item&gt;
+  &lt;stream-item from="d2"&gt;雙線框適合用來標示題目或重點句。&lt;/stream-item&gt;
+  &lt;stream-item from="n1"&gt;I helped my neighbour carry boxes…&lt;/stream-item&gt;
+  &lt;stream-item from="n2"&gt;切角框像一張便條，適合放範例答案。&lt;/stream-item&gt;
+  &lt;stream-item from="c1"&gt;It was exhausting, but I felt genuinely useful.&lt;/stream-item&gt;
+  &lt;stream-item from="c2"&gt;引線框適合放旁白或補充說明。&lt;/stream-item&gt;
+&lt;/ui-stream&gt;</pre>
+    </div>
+  </section>
+
+  <!-- ══════════ 範例 2 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 2：調整粗細與切角大小</h2><p>bubble-border-width 統一氣泡邊框粗細；notch 的切角大小沿用 bubble-radius；頭像在下時，callout 引線改為往下指。</p></div>
+    <div class="two">
+      <ui-stream id="ex2" autoplay delay="350" height="460" border-width="1" bubble-border-width="2" bubble-radius="24" avatar-position="bottom">
+        <stream-role name="n" color="green" side="left" style="notch" label="notch，切角 24px，邊框 2px"></stream-role>
+        <stream-role name="c" color="pink" side="right" style="callout" label="callout，邊框 2px"></stream-role>
+        <stream-role name="d" color="violet" side="left" style="double" label="double，邊框 2px（雙線至少需要 3px 才看得出兩條）"></stream-role>
+        <stream-item from="n">A cut corner makes the bubble look like a sticky note.</stream-item>
+        <stream-item from="c">The leader line points back to the speaker.</stream-item>
+        <stream-item from="d">Thin double border.</stream-item>
+      </ui-stream>
+      <pre>&lt;ui-stream autoplay delay="350" height="460"
+           border-width="1" bubble-border-width="2" bubble-radius="24" avatar-position="bottom"&gt;
+  &lt;stream-role name="n" color="green"  side="left"  style="notch"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="c" color="pink"   side="right" style="callout"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="d" color="violet" side="left"  style="double"&gt;&lt;/stream-role&gt;
+  …
+&lt;/ui-stream&gt;</pre>
+    </div>
+  </section>
+
+  <!-- ══════════ 屬性 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>新增的屬性與樣式</h2></div>
+    <table class="attr">
+      <tr><th>屬性／值</th><th>預設值</th><th>說明</th></tr>
+      <tr><td>border-width</td><td>1</td><td>整個元件外框粗細（px）。bordered="false" 時仍為無外框。</td></tr>
+      <tr><td>bubble-border-width</td><td>0</td><td>所有氣泡的邊框粗細（px）。0 表示依各樣式的預設值：filled、outline、dashed 為 1，double 為 4，notch 為 1.5，callout 為 3。</td></tr>
+      <tr><td>style="double"</td><td></td><td>雙線框。雙線需要 3px 以上才看得出兩條線。</td></tr>
+      <tr><td>style="notch"</td><td></td><td>切角框：邊框為角色色，底色是角色色和背景色調和出的實色。靠左切右上角，靠右切左上角，切角大小沿用 bubble-radius（最小 6px）。</td></tr>
+      <tr><td>style="callout"</td><td></td><td>引線框：粗框外側有一條分離的直線，直線上拉出折線引線指向頭像。頭像在上（預設）時引線往上，avatar-position="bottom" 時往下。氣泡會往內縮 78px 讓出引線空間。</td></tr>
+    </table>
+    <p style="color:#86877F;font-size:0.9rem">全域設定同樣適用：<code>window.UiStreamConfig = { borderWidth: 2, bubbleBorderWidth: 0 }</code>。JSON 的 roles 也可以寫 <code>"style": "notch"</code>。</p>
+  </section>
+
+  <!-- ══════════ 版本對照 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>版本對照：v0.3 → v0.4</h2></div>
+    <div class="diff">
+      <div>
+        <h4 class="old">v0.3</h4>
+<pre>/* 預設值 */
+bordered: true, avatar: true, …
+
+/* 外框與氣泡 */
+.us-wrap{border:1px solid var(--us-border);…}
+.us-bubble{border:1px solid var(--us-c);…}
+
+/* 樣式：filled | outline | dashed */</pre>
+      </div>
+      <div>
+        <h4 class="new">v0.4</h4>
+<pre>/* 預設值 */
+bordered: true, borderWidth: 1, bubbleBorderWidth: 0, avatar: true, …
+
+/* 外框與氣泡 */
+.us-wrap{border:var(--us-wbw,1px) solid var(--us-border);…}
+.us-bubble{border:var(--us-bbw,1px) solid var(--us-c);…}
+
+/* 樣式：filled | outline | dashed | double | notch | callout */
+.us-double .us-bubble{border-style:double;border-width:var(--us-bbw,4px);}
+.us-notch .us-bubble{clip-path:polygon(…);background:var(--us-c);}
+.us-notch .us-bubble::before{inset:var(--nb);background:color-mix(…);}
+.us-callout .us-bubble{border-width:var(--cb);margin-left:78px;}
+.us-callout .us-bubble::before{/* 分離的直線 */}
+.us-callout .us-bubble::after{/* 折線引線，skewX */}</pre>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="ui-stream.js"></script>
+</body>
+</html>

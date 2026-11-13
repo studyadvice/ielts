@@ -12,14 +12,14 @@
     /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, typeAll: false, step: false,
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
     /* 版面 */ height: 0, gap: 14, gapSame: -1, gapSystem: -1, padding: 16, bubbleWidth: 78, bubbleRadius: 12, bubblePadding: '10px 14px', lineHeight: 1.6,
-               fontSize: '1rem', metaSize: '0.75rem', bordered: true, avatar: true, avatarSize: 36, avatarPosition: 'top',
+               fontSize: '1rem', metaSize: '0.75rem', bordered: true, borderWidth: 1, bubbleBorderWidth: 0, avatar: true, avatarSize: 36, avatarPosition: 'top',
     /* 色彩 */ accent: 'key', borderColor: 'bg-alternative', textColor: 'vanilla', background: 'base', markColor: '',
                teacherColor: 'key', studentColor: 'violet', systemColor: 'gray', pauseColor: 'yellow',
     /* 動畫與暫停 */ animation: 'slide', cursor: true, typingIndicator: false, pauseIcon: 'hand-index-thumb', pauseText: '點一下繼續', pauseStyle: 'button'
   };
   const CFG = Object.assign({}, DEFAULTS, window.UiStreamConfig || {});
 
-  /* ── 內建角色 ── side = 氣泡靠哪邊；style = filled | outline | dashed */
+  /* ── 內建角色 ── side = 氣泡靠哪邊；style = filled | outline | dashed | double | notch | callout */
   const BUILTIN_ROLES = {
     teacher: { color: 'teacherColor', icon: 'mortarboard-fill', side: 'right', style: 'filled' },
     student: { color: 'studentColor', icon: 'person-fill', side: 'left', style: 'outline' },
@@ -30,7 +30,7 @@
 ui-stream{display:block;color:${PALETTE.shell};font-size:var(--us-fs);}
 ui-stream:not([data-ready]){visibility:hidden;}
 ui-stream .us-title{font-size:1.2rem;font-weight:700;color:${PALETTE.violet};margin:0 0 12px 0;}
-ui-stream .us-wrap{position:relative;border:1px solid var(--us-border);border-radius:10px;background:var(--us-bg);display:flex;flex-direction:column;overflow:hidden;}
+ui-stream .us-wrap{position:relative;border:var(--us-wbw,1px) solid var(--us-border);border-radius:10px;background:var(--us-bg);display:flex;flex-direction:column;overflow:hidden;}
 ui-stream .us-wrap.us-noborder{border:0;border-radius:0;}
 ui-stream .us-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--us-border);}
 ui-stream .us-wrap.us-cbottom .us-bar{order:9;border-bottom:0;border-top:1px solid var(--us-border);}
@@ -59,10 +59,35 @@ ui-stream .us-meta{font-size:var(--us-ms);color:${PALETTE.gray};margin:0 0 4px 0
 ui-stream .us-right .us-meta{justify-content:flex-end;}
 ui-stream .us-meta b{color:var(--us-c);font-weight:700;}
 ui-stream .us-badge{font-size:0.7rem;font-weight:700;border-radius:999px;padding:0 8px;background:var(--us-badge,var(--us-c));color:${PALETTE.base};}
-ui-stream .us-bubble{border:1px solid var(--us-c);border-radius:var(--us-br);padding:var(--us-bp);line-height:var(--us-lh);color:var(--us-rt,var(--us-text));background:var(--us-bg);}
+ui-stream .us-bubble{border:var(--us-bbw,1px) solid var(--us-c);border-radius:var(--us-br);padding:var(--us-bp);line-height:var(--us-lh);color:var(--us-rt,var(--us-text));background:var(--us-bg);}
 ui-stream .us-bubble > :last-child{margin-bottom:0;}
 ui-stream .us-filled .us-bubble{background:var(--us-c);color:var(--us-rt,${PALETTE.base});}
 ui-stream .us-dashed .us-bubble{border-style:dashed;color:var(--us-rt,${PALETTE.shell});font-size:0.9rem;text-align:center;}
+/* double：雙線框 */
+ui-stream .us-double .us-bubble{border-style:double;border-width:var(--us-bbw,4px);}
+/* notch：切角框。氣泡靠左切右上角、靠右切左上角；切角大小沿用 bubble-radius。外層填邊框色，內層用 ::before 填底色 */
+ui-stream .us-notch .us-bubble{position:relative;isolation:isolate;border:0;border-radius:0;background:var(--us-c);
+  --cut:max(var(--us-br),6px);--nb:var(--us-bbw,1.5px);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%);}
+ui-stream .us-notch .us-bubble::before{content:'';position:absolute;inset:var(--nb);z-index:-1;
+  background:color-mix(in srgb,var(--us-c) 26%,var(--us-bg));
+  clip-path:polygon(0 0,calc(100% - var(--cut) + var(--nb) * 0.586) 0,100% calc(var(--cut) - var(--nb) * 0.586),100% 100%,0 100%);}
+ui-stream .us-right.us-notch .us-bubble{clip-path:polygon(var(--cut) 0,100% 0,100% 100%,0 100%,0 var(--cut));}
+ui-stream .us-right.us-notch .us-bubble::before{clip-path:polygon(calc(var(--cut) - var(--nb) * 0.586) 0,100% 0,100% 100%,0 100%,0 calc(var(--cut) - var(--nb) * 0.586));}
+/* callout：粗框，外側另有一條分離的直線，直線上再拉出一條折線引線 */
+ui-stream .us-callout .us-bubble{position:relative;border-width:var(--cb);border-radius:0;margin:0 0 0 78px;--cb:var(--us-bbw,3px);}
+ui-stream .us-callout .us-bubble::before,ui-stream .us-callout .us-bubble::after{content:'';position:absolute;}
+ui-stream .us-callout .us-bubble::before{top:calc(-1 * var(--cb));bottom:calc(-1 * var(--cb));left:calc(-2 * var(--cb) - 12px);width:var(--cb);background:var(--us-c);}
+/* 引線：水平段從直線拉出，斜段指向頭像。頭像在上（預設）時往左上，avatar-position="bottom" 時往左下；靠右時鏡像 */
+ui-stream .us-callout .us-bubble::after{top:-6px;left:calc(-2 * var(--cb) - 44px);width:calc(32px + var(--cb));height:36px;box-sizing:border-box;
+  border-bottom:var(--cb) solid var(--us-c);border-left:var(--cb) solid var(--us-c);transform-origin:bottom left;transform:skewX(40deg);}
+ui-stream .us-right.us-callout .us-bubble{margin:0 78px 0 0;}
+ui-stream .us-right.us-callout .us-bubble::before{left:auto;right:calc(-2 * var(--cb) - 12px);}
+ui-stream .us-right.us-callout .us-bubble::after{left:auto;right:calc(-2 * var(--cb) - 44px);border-left:0;border-right:var(--cb) solid var(--us-c);
+  transform-origin:bottom right;transform:skewX(-40deg);}
+ui-stream[avatar-position="bottom"] .us-callout .us-bubble::after{top:auto;bottom:-6px;border-bottom:0;border-top:var(--cb) solid var(--us-c);
+  transform-origin:top left;transform:skewX(-40deg);}
+ui-stream[avatar-position="bottom"] .us-right.us-callout .us-bubble::after{transform-origin:top right;transform:skewX(40deg);}
 ui-stream[mark-color] .us-bubble mark{background:var(--us-mark);color:${PALETTE.base};}
 ui-stream .us-hl .us-bubble{animation:us-hl 0.7s ease 3;}
 @keyframes us-hl{0%,100%{box-shadow:0 0 0 0 var(--us-accent);}50%{box-shadow:0 0 0 4px var(--us-accent);}}
@@ -167,6 +192,8 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       sv('--us-pad', o.padding + 'px'); sv('--us-bw', o.bubbleWidth + '%'); sv('--us-br', o.bubbleRadius + 'px'); sv('--us-bp', o.bubblePadding); sv('--us-lh', o.lineHeight); sv('--us-av', o.avatarSize + 'px');
       sv('--us-accent', color(o.accent)); sv('--us-border', color(o.borderColor)); sv('--us-text', color(o.textColor)); sv('--us-pc', color(o.pauseColor)); sv('--us-bg', color(o.background));
       if (o.markColor) sv('--us-mark', color(o.markColor));
+      sv('--us-wbw', Math.max(0, o.borderWidth) + 'px');
+      if (o.bubbleBorderWidth > 0) sv('--us-bbw', o.bubbleBorderWidth + 'px');
       if (this._title) this.appendChild(el('div', 'us-title', this._title));
       const wrap = el('div', 'us-wrap' + (o.bordered ? '' : ' us-noborder') + (o.controlsPosition === 'bottom' ? ' us-cbottom' : ''));
       this._wrap = wrap;
