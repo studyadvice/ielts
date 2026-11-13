@@ -5,6 +5,7 @@
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
 | `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
+| `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
 | `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案。 | [`ui-stream-demo-11-13-26.html`](ui-stream-demo-11-13-26.html)、[`ui-stream-demo-11-11-26.html`](ui-stream-demo-11-11-26.html) |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
@@ -556,3 +557,37 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+---
+
+## play-maker.js
+
+`<play-maker>` 是製作 `<ui-play>` 與 `<ui-fillin>` 程式碼的工具頁元件，不需要記任何標籤或符號。直接打開 [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) 就能使用。
+
+### 操作流程
+
+1. 貼上句子，一行一句，按「放進編輯區」。文法修正也可以用表格輸入：原句、錯的字、改成、印章。
+2. 用滑鼠選取同一行裡的文字，下方會出現工具列。
+3. 中間的步驟清單可以上下移動、設定「等按鍵」「同時」「接續」、換顏色、刪除；點一下步驟會閃示對應的文字。
+4. 右邊即時預覽錄影版與練習版，按「複製 ui-play」或「複製 ui-fillin」取得程式碼。
+
+內容自動存在瀏覽器（localStorage），關掉網頁再打開還在。
+
+### 工具列
+
+| 按鈕 | 錄影版 ui-play | 練習版 ui-fillin |
+| --- | --- | --- |
+| `c-key`、其他色、清除色彩 | 包成 `<c-key>` 等色名標籤，不是步驟 | 保留色彩 |
+| 底線、圈起來、螢光筆、方框、刪除線、括號 | `mark-fx` | 不影響 |
+| 改寫 | `swap-fx`，可選刪改、替換、重打 | 勾選「練習版挖空」時變成空格，改寫後的字是答案，原字是干擾選項 |
+| 印章、註解 | `stamp-fx`、`note-fx` | 不影響 |
+| 挖空 | 不影響 | 選取的字是答案，另外輸入干擾選項；選項依字母排序 |
+| 每行右側的眼睛 | 這一行先隱藏，`show-fx` 播到才出現 | 不影響 |
+
+### 屬性
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `storage-key` | `default` | 草稿存放的名稱，用來區分不同專案。 |
+
+頁面上方的設定列可選外框、標題列文字、推進方式（`next-by`）、字級、id 前綴與練習版題型（選擇題或輸入題）。預覽需要同頁載入 `ui-play.js` 與 `ui-fillin.js`。

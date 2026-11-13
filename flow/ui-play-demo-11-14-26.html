@@ -448,6 +448,30 @@ FRAME_DEF = { ..., notebook: { radius: '8px' },
     </div>
   </section>
 
+  <!-- 11-14-26 修改對照 4 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：ui-play 內建色名標籤</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：單獨使用 ui-play 時，&lt;c-key&gt; 不會變色</h3>
+<pre class="diff">&lt;script src="ui-play.js"&gt;&lt;/script&gt;
+
+&lt;p&gt;She has lived here for &lt;c-key&gt;five years&lt;/c-key&gt;.&lt;/p&gt;
+（要另外載入 ui-fillin、ui-table 等元件才有色彩）</pre>
+        </div>
+        <div>
+          <h3>修改後：檔尾加入所有元件共用的色名標籤</h3>
+<pre class="diff">&lt;script src="ui-play.js"&gt;&lt;/script&gt;
+
+&lt;p&gt;She has lived here for &lt;c-key&gt;five years&lt;/c-key&gt;.&lt;/p&gt;
+<span class="add">（ui-play.js 自己就會注入 &lt;style id="ui-color-tags"&gt;，
+  已有其他元件注入時不會重複）</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="demo single">
     <div>
       <h2>屬性對照</h2>

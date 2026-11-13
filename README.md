@@ -76,7 +76,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`diff/`](diff/README.md) | `ui-layer-diff.js` | `<ui-layer-diff>` | 從籠統到具體的逐層改寫，自動標出新增與取代的部分。 |
 | [`dino/`](dino/README.md) | `dino-deck.js` | `<dino-deck>` `<dino-card>` | 恐龍噴火字卡動畫，例句從火焰中飛出。 |
 | [`drag/`](drag/README.md) | `ui-drag-ans.js` | `<ui-drag-ans>` | 拖曳或點選小卡的填空題。 |
-| [`flow/`](flow/README.md) | `ui-play.js`、`ui-stream.js`、`ui-orbit.js` | `<ui-play>` `<ui-stream>` `<ui-orbit>` | 教學錄影用的模擬畫面播放器（外框、標記、印章等效果）、聊天室回放式的內容流、核心概念與環繞想法的軌道圖。 |
+| [`flow/`](flow/README.md) | `ui-play.js`、`play-maker.js`、`ui-stream.js`、`ui-orbit.js` | `<ui-play>` `<play-maker>` `<ui-stream>` `<ui-orbit>` | 教學錄影用的模擬畫面播放器（外框、標記、印章等效果）與它的劇本製作器、聊天室回放式的內容流、核心概念與環繞想法的軌道圖。 |
 | [`guide/`](guide/README.md) | `ui-guide.js` | `<ui-guide>` | 框住頁面元素，加上號碼、說明卡與自動折線的指引框。 |
 | [`ian/`](ian/README.md) | `ui-icon-ani.js` | `<ui-icon-anim>` | 把多個 Bootstrap Icons 組成播放動畫。 |
 | [`info/`](info/README.md) | `info-region.js` | `<info-region>` | 逐步顯示的說明、步驟與測驗區塊。 |
