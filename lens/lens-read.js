@@ -1,17 +1,3 @@
-/*!
- * <lens-read> 點擊放大鏡 v0.2.0（11-12-26，粗製版）
- * v0.2.0：標註不再限定中文與說明，改為 above（字上方）、below（字下方）、extra-info（鏡片下方的說明框），
- *         三者都支援 HTML，也可用 above-template、below-template、extra-template 讀取 <template id>。
- *         舊的 zh、note、zh-color、note-color 仍可使用。
- * v0.3.0：新增 pin。開鏡後放大鏡固定在原位，點別處、拖曳、點鏡面、Esc 都不會移動或關閉，只有 × 能關閉。
- * 主文保持乾淨；點一下，放大鏡出現在點擊處，鏡內放大並顯示文法標註與中文。
- * 為觸控筆與螢幕錄影設計：點擊開鏡，拖曳鏡面移動，點一下鏡面（不拖曳）或按 Esc 關閉。
- * 不使用 shadow DOM，CSS 由本檔自動注入。
- *
- *  <lens-read radius="100" zoom="1.4">
- *    <p>The number of visitors <lens-word above="大幅增加" below="<b>V-ed</b> ＋ adv." extra-template="t1">rose sharply</lens-word> in 2010.</p>
- *  </lens-read>
- */
 (function () {
   'use strict';
   if (customElements.get('lens-read')) return;

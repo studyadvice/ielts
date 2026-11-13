@@ -1,20 +1,3 @@
-/*!
- * <ui-detail-ladder> 細節階梯元件 v1.3
- * v1.3（11-12-26）：新增自動播放。加上 autoplay 屬性即開啟，每階預設停 8 秒，autoplay="12" 可改秒數，
- *       <ladder-step dwell="15"> 可單獨改某一階。autoplay-start 決定何時開始（預設 click 按播放鍵、view 捲進畫面、
- *       load 載入），autoplay-end 決定播完後（stop 停在最後一階、loop 回到第一階）。
- *       點階梯、按鈕或用鍵盤切換時自動暫停；按鈕列多一顆播放／暫停鍵；Ctrl+Shift+空白鍵 切換播放。
- *       元件離開畫面、切到別的分頁、收合時暫時停止計時。內容下方有倒數線（show-timer）。
- *       方法 play()、pause()，屬性 isPlaying，事件 ladder-play、ladder-pause、ladder-end。
- * v1.2：修正顏色屬性填品牌色名稱時失效的問題。所有顏色屬性（含 <step-title> 的 icon-color）
- *       可直接填品牌色名稱，例如 title-color="key"、bg="base"，名稱不分大小寫，
- *       也仍可填 #hex 或 rgb()。
- * v1.2：新增 theme 屬性，例如 theme="violet"，與 <ui-insight> 相同。影響強調色的個別屬性
- *       預設都跟著 theme，有明確指定的屬性才會覆蓋。優先順序：個別屬性 > theme > 內建預設。
- *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、green、
- *       blue、indigo、violet、gray、key、calm、quiet、playful、urgent、energetic、dreamy），
- *       名稱不分大小寫，不存在時退回 default。也可在執行中修改 theme，元件會立即重繪。
- */
 (() => {
   if (customElements.get('ui-detail-ladder')) return;
 

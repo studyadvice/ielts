@@ -1,11 +1,3 @@
-/*!
- * ui-steps.js  v1.0
- * 流程與時間軸元件：<ui-steps> 內放 <step-item>，可橫向或直向排列，步驟之間有連接線與箭頭。
- * 點擊帶 source 的步驟，在內容區顯示對應內容；內容中帶 detail 的元素，在下方細節區顯示內容。
- * 遵守 ui 元件共同約定（見 ui-conventions.html）。屬性只在載入時讀取一次，內容一律複製。
- * 依賴：Bootstrap Icons（使用 icon 屬性時）。
- * MIT License
- */
 (() => {
   'use strict';
   if (customElements.get('ui-steps')) return;

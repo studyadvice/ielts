@@ -1,11 +1,3 @@
-/*!
- * ui-scroll-scene.js v1.0.0
- * 捲動敘事元件 <ui-scroll-scene>
- * 一欄固定舞台，一欄捲動步驟；捲到哪一步，舞台就切換到對應狀態。
- * 舞台可切換圖層、聚光、放大、平移，也能設定舞台內任何元件的屬性。
- * 不使用 Shadow DOM，圖示使用 Bootstrap Icons 類別，圖示字型由專案自行載入。
- * MIT License
- */
 (() => {
   'use strict';
   if (window.customElements.get('ui-scroll-scene')) return;

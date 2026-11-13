@@ -1,25 +1,3 @@
-/*!
- * <ui-insight> 亮點字詞解說元件 v1.4
- * 用途：左側為一句一句的卡片，右側顯示所選句子中亮點字詞的解說，雙向對照。
- * 不使用 shadow DOM，CSS 由本檔自動注入。需要 Bootstrap Icons（bi-*）。
- * v1.1：所有顏色屬性（含 hl-hot-bg、hl-hot-color、tag-color）可直接填品牌色名稱，
- *       例如 hl-hot-bg="blue"、hl-hot-color="base"，名稱不分大小寫，也仍可填 #hex 或 rgb()。
- * v1.2：新增 theme 屬性，例如 theme="violet"。影響外觀色彩的個別屬性預設都跟著 theme，
- *       有明確指定的屬性才會覆蓋 theme 的顏色。優先順序：個別屬性 > theme > 內建預設。
- *       可用主題：default 與 17 個品牌色名稱（shell、vanilla、yellow、pink、red、green、
- *       blue、indigo、violet、gray、key、calm、quiet、playful、urgent、energetic、dreamy）。名稱不存在時退回 default。
- * v1.3：<ins-line> 新增 extra-info 屬性，填 <template> 的 id，例如 extra-info="tpl-1"。
- *       選到該句時，template 的 HTML 內容會顯示在右側面板的最下方，位於亮點解說之後。
- *       找不到 id 時不顯示；id 指向的若不是 <template>，則改用該元素的 innerHTML。
- *       外觀屬性：extra-bg、extra-color、extra-border-color、extra-font-size、extra-padding、
- *       extra-radius、extra-top（與上方解說的距離）。extra-border-color 會跟著 theme。
- * v1.4：新增 extra-info-style 屬性，選擇附加區塊的樣式，線條顏色都用 extra-border-color：
- *       outline（預設，1px 實線外框）、dashed（1px 虛線外框，無底色）、
- *       divider（只有上方分隔線，無外框無底色）、label（1px 外框，左上角嵌入標籤）。
- *       label 的文字用 extra-info-label 設定，預設為「補充」。
- *       兩個屬性可寫在 <ui-insight> 套用全部句子，也可寫在 <ins-line> 單獨覆蓋。
- *       取消 v1.3 的左側粗色條。
- */
 (() => {
   if (customElements.get('ui-insight')) return;
 

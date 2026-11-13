@@ -1,24 +1,3 @@
-/*!
- * ui-check　閱讀檢核點按鈕
- * 用法：<ui-check>懂了嗎？</ui-check>
- *       <ui-check key="part2-tense" color="yellow" icon="bi-exclamation-triangle" size="sm">這裡的時態有把握嗎？</ui-check>
- *       <ui-check variant="gradient" color="blue" color2="violet" shape="pill">看懂了</ui-check>
- *
- * 屬性全部可省：
- *   key      紀錄用的識別字。由伺服器決定並寫進屬性，手動寫在內容裡也可以（限 a-z0-9_-，不得用 auto- 開頭）。
- *   color    品牌色名，預設 blue。寫錯就退回預設色，不會讓按鈕消失。
- *   color2   第二色，只在 gradient 與 gradient-outline 使用，預設 violet。
- *   variant  outline（預設）／solid／soft／ghost／link／gradient／gradient-outline。
- *   angle    漸層方向，例如 90deg、135deg，預設 135deg。
- *   shape    rounded（預設）／pill／square。
- *   size     xs（預設）／sm／md／lg。
- *   icon     Bootstrap Icons 的 class 名，例如 bi-question-circle。省略就不顯示圖示。
- *   state    伺服器加的，state="done" 代表這位學員已經點過，直接顯示已確認。
- *
- * 只接受 17 個品牌色名或色碼，舊色名（sky、safe、lavender 等）已移除。
- * 不用 shadow DOM，樣式與程式都在這一個檔案裡。
- * 點擊會 POST 到祖先元素的 data-cp-url；找不到設定時只在畫面上切換狀態（給 demo 檔用）。
- */
 (function () {
   'use strict';
 

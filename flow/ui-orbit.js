@@ -1,25 +1,3 @@
-/*!
- * ui-orbit.js v2.0.0（11-11-26）
- * <ui-orbit> 軌道：題目在中心，想法繞著轉；點一個想法，它脫離軌道停進右側插槽並展開細節，再點就回去。
- *
- * v2.0.0：小圓圈只放圖示，文字改成水平標籤放在軌道外側。右半邊的標籤靠左對齊，左半邊靠右對齊，
- *         上下方置中，隨著旋轉平滑移動，不會倒立。標籤最多顯示 label-lines 行，超過以 ... 截斷。
- *
- *  <ui-orbit radius="150" item-size="56" period="40" accent="pink" label-width="170" slot-title="{label}">
- *    <orbit-core icon="chat-quote-fill" label="Describe a river"></orbit-core>
- *    <orbit-item icon="geo-alt" label="在哪裡：給一個具體地名" detail="o-where" color="key"></orbit-item>
- *  </ui-orbit>
- *
- *  ui-orbit 屬性：size（px，軌道區最小寬度）、radius（px，軌道半徑）、item-size（px）、period（秒，轉一圈）、
- *                 accent、ring-color、slot-title（可用 {label}）、placeholder、pause-on-hover、direction = cw | ccw、
- *                 label-width（px，標籤最大寬度，預設 170）、label-lines（標籤最多行數，預設 2）、
- *                 label-size（標籤字級，預設 0.95rem）、label-gap（px，圓圈與標籤的距離，預設 8）、
- *                 core-size（px，中心圓直徑，預設 item-size 的 2.3 倍）、
- *                 ring-gap（px，相鄰兩圈的距離，預設 item-size + 24 + 一個標籤高度，避免內圈標籤壓到外圈）
- *  orbit-core 屬性：icon、label、color
- *  orbit-item 屬性：icon、label、detail（內容 id）、color、ring（第幾圈，預設 1；每圈半徑加 ring-gap）
- *  事件：ui-orbit:dock { label }、ui-orbit:release { label }
- */
 (() => {
   'use strict';
   if (customElements.get('ui-orbit')) return;

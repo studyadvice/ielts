@@ -1,14 +1,3 @@
-/*!
- * <dino-deck> 恐龍噴火字卡元件 v1.1.0（11-12-26）
- * v1.1.0：恐龍預設去背，身體填色自動跟隨顯示區底色；dino-bg 改為選用，需要底框時再設定。
- * 點擊左側字卡，卡片飛入文字區變成描邊恐龍，恐龍噴火後例句從火焰處飛出，最後恐龍退場。
- * 不使用 shadow DOM，CSS 由本檔自動注入，不需要其他函式庫（有 Bootstrap 時錯誤提示可關閉）。
- *
- * 標籤：
- *   <dino-deck>   外層容器，管理版面、配色與動畫流程。
- *   <dino-card>   字卡，內文即卡面文字（支援 HTML），過長自動截斷並顯示「...」。
- *   <dino-stage>  顯示區，可省略，省略時自動產生。
- */
 (function () {
   'use strict';
   if (window.customElements && customElements.get('dino-deck')) return;

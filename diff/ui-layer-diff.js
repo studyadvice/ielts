@@ -1,20 +1,3 @@
-/*!
- * <ui-layer-diff> 逐層改寫比對元件 v1.2.0
- * v1.2.0（11-09-26）
- *   - 新增 note-hide-initial：載入時先不顯示說明（右側說明欄與句子下方的 note），
- *     第一次切換層之後才顯示，之後回到起始層也會照常顯示。
- *   - 新增 note-placeholder：說明隱藏期間，右側說明欄顯示的文字，預設空白。
- *   - note-hide-initial 期間，進度條（progress）也保持全空，第一次切換層之後才填色。
- * v1.1.0（11-09-26）
- *   - mode 新增 comparison：左側為比對方框，右側說明欄隨層切換，顯示該層的 note。
- *     mode 可寫多個值，例如 mode="comparison auto"。
- *   - comparison 模式下 width 改為左側方框寬度（預設 50%），元件本身佔滿容器。
- *   - <ui-layer> 新增 note-tpl：填 <template> 的 id，右側顯示其 HTML，優先於 note。
- *   - 說明欄外觀屬性：note-font-size、note-color、note-bg、note-border、note-padding、
- *     note-gap、note-align、note-title、note-title-size、note-title-color。
- *   - 修正：theme 值前後的空白會自動去除；無效的主題名稱會在主控台提示，再退回 dark。
- *   - 修正：theme 寫 key、calm、quiet、playful、urgent、shell 時未套用，退回 dark。
- */
 (function () {
   'use strict';
 

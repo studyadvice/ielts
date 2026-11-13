@@ -1,10 +1,3 @@
-/*!
- * ui-screen.js v1.0.2
- * 分隔線對照元件 <ui-screen>
- * 左右或上下拖曳分隔線，對照兩組以語意標籤定義的內容。
- * 把手圖示使用 Bootstrap Icons 類別名稱，圖示字型由專案自行載入。
- * MIT License
- */
 (() => {
   'use strict';
   if (window.customElements.get('ui-screen')) return;

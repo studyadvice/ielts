@@ -1,23 +1,3 @@
-/*!
- * sticky-head.js
- * 語意標籤元件：<sticky-head> 章節吸頂標題列
- *
- * v1.1.0 修正捲動閃爍：
- *   1. 外框高度鎖定，縮放只發生在內層 .sh-bar，文件總高度不再隨動畫變動
- *   2. 捲動方向改用累積位移加門檻與冷卻，瀏覽器 scroll anchiring 的補償不再被誤判
- *   3. overflow-anchor:none，blur 改為選用且圖層常駐，進度條不再逐格做 transition
- *
- * 用法（必須是 <section> 的直接子元素，吸頂範圍才會被該 section 限制住）：
- *
- *   <section id="lesson-1">
- *     <sticky-head top="0px" accent="blue" label="Lesson 1" top-btn="回本節">
- *       <h2>主幹保證＋附加資訊</h2>
- *     </sticky-head>
- *     ... 內容 ...
- *   </section>
- *
- * 無 Shadow DOM、無外部 CSS 檔、無框架相依。
- */
 (function () {
   'use strict';
 

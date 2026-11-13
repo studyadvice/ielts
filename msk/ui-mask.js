@@ -1,17 +1,3 @@
-/*!
- * <ui-mask> 行內文字遮罩元件 v1.2.0（11-12-26）
- * v1.2.0：新增子元件 <mask-cover>，用 SVG 或圖片當成區塊遮罩，指定寬度、等比例縮放；揭曉動畫可選 fade、lift、shrink。
- * v1.1.0：修正 label 在短內容時被擠成直排、在表格或卡片內被裁掉、與半透明原文重疊的問題；
- *         新增 label-mode="show"，讓行內遮罩也能直接顯示提示文字。
- * 用途：包住一段文字產生遮罩，點擊後揭曉原文。可放在一般段落、<ui-table> 的格子、<ui-cards> 的卡片與面板裡。
- * 不使用 shadow DOM，CSS 由本檔自動注入，不需要其他函式庫。
- *
- * 設計原則（為了在 ui-table、ui-cards 裡正常運作）：
- *   - 不修改子元素：遮罩全部用 CSS 畫出，元件被 innerHTML 複製或 cloneNode 後不會重複疊加結構。
- *   - 狀態寫在屬性上：揭曉後加上 revealed 屬性，複製時跟著走。
- *   - 每次連上頁面都重新綁定事件：被宿主元件重建的元素也能點擊。
- *   - 未揭曉時攔下點擊，不讓它觸發宿主格子或卡片的點擊功能；揭曉後點擊照常往上傳遞。
- */
 (function () {
   'use strict';
   if (window.customElements && customElements.get('ui-mask')) return;

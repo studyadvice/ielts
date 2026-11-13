@@ -1,33 +1,3 @@
-/* =========================================================
- * dot-go.js
- * 跳轉圓點與簡報式轉場（由 ink-pen.js 拆出的獨立元件）
- * 零依賴，單檔即可運作；和 ink-pen.js 一起使用時自動配合繪圖層
- *
- * 自訂標籤：
- *   <dot-go>  跳轉圓點，可跳到同頁標籤或其他網頁，
- *             可加 transition 播放簡報式轉場（View Transitions API，見「轉場」段落）
- *
- * 與 ink-pen.js 的配合（沒載入 ink-pen.js 時這些功能自動略過）：
- *   圓點的 z-index 高於繪圖層，開著觸控筆或雷射筆也點得到
- *   繪圖層鎖定捲動時，同頁跳轉仍可捲動
- *   clear-ink 屬性會在跳轉前清除繪圖層筆跡
- *   轉場時工具列與 NG 遮罩固定在原位
- *   兩支檔案的載入順序不拘
- *
- * 跨頁轉場時，出發頁與目的頁都要在 <head> 裡載入 dot-go.js。
- *
- * 對外介面：window.DotGo
- *   .dots()               取得頁面上所有 <dot-go>
- *   .dotStyles            dot-style 可用值
- *   .palette              配色表
- *   .transitions          轉場種類清單
- *   .transitionSupport    瀏覽器支援狀況 { sameDocument, crossDocument }
- *   .transition(name, fn, { ms, edge, direction, scope })
- *                         自訂換畫面時套用轉場，fn 負責實際換畫面
- * 同時載入 ink-pen.js 時，以上介面也會掛到 window.InkPen，舊頁面的寫法照常可用。
- *
- * 本元件不在畫面上顯示任何提示訊息，設定錯誤只寫入 console。
- * ========================================================= */
 (function () {
   'use strict';
   if (typeof window === 'undefined' || !window.customElements || customElements.get('dot-go')) return;

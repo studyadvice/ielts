@@ -1,11 +1,3 @@
-/*!
- * 標籤
- *   <ui-stream>        容器，播放、版面、角色色彩都寫在這裡。
- *   <stream-role>      自訂角色（可省略）。內建 teacher、student、system 三種。
- *   <stream-item>      一則訊息。
- *
- * 屬性分類請看 ui-stream-demo-11-11-26.html 的「屬性總覽」，程式內的預設值在 DEFAULTS。
- */
 (() => {
   'use strict';
   if (customElements.get('ui-stream')) return;

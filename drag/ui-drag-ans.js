@@ -1,18 +1,3 @@
-/*!
- * <ui-drag-ans> 拖曳填空元件 v1.1.0（11-12-26）
- * 題目中的空格用 {答案} 標記，元件自動產生對應的小卡。把小卡拖到正確的空格（或點小卡再點空格），
- * 空格就換成格式化的答案，用掉的小卡消失；放錯會彈回原位。比對區分大小寫。
- * 不使用 shadow DOM，CSS 由本檔自動注入，不需要其他函式庫。
- *
- *  <ui-drag-ans theme="key" bank="bottom">
- *    <p>The bus shelter right outside my house is {equipped with} a real-time display.</p>
- *    <p>The bus stop <drop-slot answer="in view of"><b>in view of</b></drop-slot> my house has a modern shelter.</p>
- *    <drag-card>popular with</drag-card>
- *  </ui-drag-ans>
- *
- * 可與 ui-cards 協作：原始題目保存在元件內的 <template class="uda-src">，元件被搬移或被複製到卡片、面板時，
- * 都會從原始題目重新建立成可作答的狀態。
- */
 (function () {
   'use strict';
   if (window.customElements && customElements.get('ui-drag-ans')) return;
