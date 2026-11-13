@@ -2,13 +2,14 @@
 
 `<maze-quiz>` 是迷宮填空動畫元件。每次載入都會隨機生成一座只有一條路的迷宮，從左下入口描繪路徑到右上出口，抵達後在出口噴出彩帶，答案從出口跳出並飛進題目的空格。題目區可以用 `<maze-quiz-panel>` 拆到同一網頁的任何位置。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.0.0
+- 版本：1.2.0
 - 建立日期：11-12-26
+- 更新日期：11-13-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `maze-quiz.js` | `<maze-quiz>`、`<maze-quiz-panel>` | 迷宮填空動畫與外部題目面板。 |
-| `maze-quiz-demo-11-12-26.html` | | 互動範例八則，附開發過程的程式碼對照。 |
+| `maze-quiz-demo-11-13-26.html` | | 互動範例十八則，附修改一到修改六的程式碼對照。範例十七、十八引用 repo 根目錄的 `bp-styles.css`。 |
 
 ## 目錄
 
@@ -16,9 +17,11 @@
 - [運作方式](#運作方式)
 - [屬性](#屬性)
 - [外部題目面板](#外部題目面板)
+- [面板額外類別 extra-class](#面板額外類別-extra-class)
 - [題庫](#題庫)
 - [快捷鍵](#快捷鍵)
 - [事件與方法](#事件與方法)
+- [版本紀錄](#版本紀錄)
 - [授權](#授權)
 
 ## 快速開始
@@ -52,7 +55,7 @@
 | `seed` | 無 | 亂數種子，固定迷宮樣式。 |
 | `maze-width` | 自動 | 迷宮區總寬度；純數字視為 px，也接受 `40%`、`24rem` 等寫法。與 `cell-size` 同時設定時以此為準。 |
 | `cell-size` | 無 | 每格大小（px），迷宮寬度依格數自動計算。 |
-| `route-colors` | `key` 單色 | 路徑雙色漸層，例如 `key,pink`，沿路徑長度從入口過渡到出口。 |
+| `route-colors` | `key` 單色 | 路徑漸層，一到三個顏色，例如 `key,yellow,pink`，沿路徑長度從入口過渡到出口（三色時中段經過第二色）。接受色碼、色票名稱、CSS 色名、`rgb()`、`hsl()`；半形或全形逗號、頓號、分號、空白都能分隔。含透明度的寫法會忽略透明度，無法辨識的顏色會在主控台提示。 |
 | `controls` | `panel` | 按鈕位置：`panel` 跟著題目面板、`maze` 放在迷宮下方、`none` 不顯示。 |
 | `label-play` | `開始解謎` | 開始按鈕文字。 |
 | `label-replay` | `重播` | 答案揭曉後，開始按鈕改顯示的文字。 |
@@ -62,6 +65,22 @@
 | `hide-until-play` | 不隱藏 | 只寫屬性名稱或設為 `true` 時，按下開始以前用遮罩隱藏整個迷宮，版面大小保留；按下後從入口展開。 |
 | `label-cover` | `按下開始，迷宮就會出現` | 隱藏時遮罩上的提示文字。 |
 | `hotkey` | 回應 | `false` 時不回應快捷鍵。 |
+| `label-title` | `填空題` | 題目面板上方的標題；設為空字串（`label-title=""`）時不顯示。 |
+| `label-reveal` | `答案揭曉：{answer}` | 答案填入後的狀態文字，`{answer}` 會換成答案。 |
+| `show-reveal` | 顯示 | `false` 時，答案填入後不顯示狀態文字。 |
+| `reveal-color` | `#C6C7BD` | 揭曉文字的文字色。 |
+| `reveal-bg` | 無背景 | 揭曉文字的背景色；設定後以圓角色塊呈現（內距 6px 16px）。 |
+| `entry-icon` | 綠色圓點 | 入口改用 Bootstrap Icons，填圖示名稱，例如 `geo-alt-fill`（也接受 `bi-geo-alt-fill`）。 |
+| `exit-icon` | 粉紅圓點 | 出口改用 Bootstrap Icons，例如 `flag-fill`，抵達時一樣會脈動。 |
+| `chip-shape` | `pill` | 出口答案標籤的形狀：`pill` 膠囊、`rounded` 圓角、`square` 直角，或純數字（圓角 px，隨迷宮大小等比縮放）。 |
+| `chip-bg` | `#E3D322` | 答案標籤底色。 |
+| `chip-color` | `#0C0D0C` | 答案標籤文字色。 |
+
+`reveal-color`、`reveal-bg`、`chip-bg`、`chip-color` 接受色碼、色票名稱或 CSS 色名。元件只輸出 `<i class="bi bi-名稱">`，不載入圖示檔，使用 `entry-icon`、`exit-icon` 的網頁需自行引用 bootstrap-icons 的 CSS：
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+```
 
 未設定 `maze-width` 與 `cell-size` 時，迷宮與內建題目區按 3 比 2 分配寬度，迷宮高度不超過視窗的 72%；設定任一個後取消高度上限。
 
@@ -78,6 +97,26 @@
 ```
 
 `for` 填迷宮的 `id`。有對應面板時，迷宮不顯示內建題目區；移除面板後自動恢復內建版面。
+
+## 面板額外類別 extra-class
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/studyadvice/ielts@main/bp-styles.css">
+
+<maze-quiz-panel for="m1" extra-class="p-3 bp-lnh-5"></maze-quiz-panel>
+```
+
+`extra-class` 的類別以空白分隔，加在面板內層的棕色題目框 `.mq-panel` 上，不是外殼。Bootstrap 與 `bp-styles.css` 的類別都能用。
+
+- 不需要 `!important`：題目框的內距、字級、行距、字重、文字色、底色、圓角與間距，預設樣式的權重都只有一個 class，元件的樣式表又插在 `<head>` 最前面，所以頁面上同權重的類別會勝出。
+- 題目框的字級就是題目字級（預設 2.25rem）。`fs-*` 設定的是題目字級，`bp-lnh-*` 這類 em 單位的行距也以題目字級計算，例如 `bp-lnh-5`（2.5em）在 36px 的題目上是 90px。
+- 標題與揭曉文字以 em 等比縮放，最小分別是 0.75rem 與 1rem；面板裡的按鈕不受影響，大小由 `play-size` 控制。
+- Bootstrap 的 `p-*` 帶 `!important`，會蓋過 `bp-ind-*` 的左內距，兩者不要同時使用。
+- 可以用 JS 改寫屬性，元件會移除上一次加入的類別再套用新的：
+
+```js
+document.querySelector('maze-quiz-panel[for="m1"]').setAttribute('extra-class', 'fs-large text-center');
+```
 
 ## 題庫
 
@@ -109,6 +148,14 @@
 ```js
 document.addEventListener('answer-revealed', e => console.log(e.detail.answer));
 ```
+
+## 版本紀錄
+
+| 版本 | 內容 |
+| --- | --- |
+| 1.2.0 | `<maze-quiz-panel>` 新增 `extra-class`；題目框的預設樣式降低權重，字級改以題目框為基準。 |
+| 1.1.0 | `route-colors` 支援三色與多種分隔符號；新增 `label-title`、`label-reveal`、`show-reveal`、`reveal-color`、`reveal-bg`、`entry-icon`、`exit-icon`、`chip-shape`、`chip-bg`、`chip-color`；題目面板不再顯示迷宮尺寸文字。 |
+| 1.0.0 | 初版：迷宮生成與動畫、外部題目面板、`maze-width`、`cell-size`、`controls`、快捷鍵、按鈕文字與尺寸、`confetti`、`hide-until-play`。 |
 
 ## 授權
 
