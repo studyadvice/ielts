@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-play 示範（11-13-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif;font-size:1rem;}
+  .wrap{max-width:1680px;margin:0 auto;padding:32px 40px 80px;}
+  h1{font-size:1.75rem;color:#DBEDD8;margin:0 0 8px;}
+  h2{font-size:1.25rem;color:#51DBCF;margin:0 0 12px;}
+  h3{font-size:1rem;color:#DBEDD8;margin:24px 0 8px;}
+  .lead-note{color:#86877F;font-size:.95rem;margin:0 0 24px;}
+  kbd{background:#3B2A20;color:#DBEDD8;border-radius:4px;padding:2px 8px;}
+  .demo{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;margin:0 0 48px;padding:24px;border:1px solid #3B2A20;border-radius:12px;}
+  .demo.single{grid-template-columns:minmax(0,1fr);}
+  .demo p.desc{color:#A3C4BC;font-size:.95rem;margin:0 0 12px;}
+  pre.code{background:#151615;color:#C6C7BD;border:1px solid #3B2A20;border-radius:8px;padding:16px;font-size:.8125rem;line-height:1.55;
+    max-height:560px;overflow:auto;margin:0;white-space:pre;}
+  .end-box{margin-top:12px;padding:12px 16px;border:1px solid #71CD76;border-radius:8px;color:#DBEDD8;}
+  table.ref{width:100%;border-collapse:collapse;font-size:.875rem;margin:0 0 16px;}
+  table.ref th,table.ref td{border:1px solid #3B2A20;padding:6px 10px;vertical-align:top;}
+  table.ref th{background:#3B2A20;color:#DBEDD8;font-weight:600;}
+  table.ref code{color:#E3D322;}
+  #toast-area{position:fixed;right:24px;bottom:24px;z-index:50;width:360px;}
+  .alert-play{background:#3B2A20;color:#DBEDD8;border:1px solid #71CD76;}
+  .stamp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:40px;text-align:center;}
+  .stamp-grid span{display:block;height:140px;color:#86877F;font-size:1rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>&lt;ui-play&gt; 教學錄影模擬畫面</h1>
+  <p class="lead-note">點一下示範框選定它，再按 <kbd>空白鍵</kbd> 或 <kbd>→</kbd> 播放下一步。頁面上有多個示範時，鍵盤只控制最後點選的那一個。要重錄請重新整理頁面。</p>
+
+  <!-- 1 -->
+  <section class="demo">
+    <div>
+      <h2>1. Windows 外框：寫作句子升級</h2>
+      <p class="desc">step-mode 預設 mixed：自動播放，遇到 pause-fx 停下等按鍵。播完會顯示 end-target 指定的區塊。</p>
+      <div class="live">
+<ui-play frame="win" frame-title="Task 2 修改示範" frame-icon="bi-file-earmark-text" min-height="320" font-size="1.5rem" end-target="end1" end-effect="slide-up">
+  <stage-item>
+    <p id="s1" style="margin:0 0 56px">Nowadays, technology is very good for society.</p>
+    <p id="s2">Nowadays, technology has become indispensable to modern society.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#s1" text="very good" kind="underline" color="red"></mark-fx>
+    <stamp-fx target="#s1" text="very good" offset-x="70" offset-y="48" start="with" delay="300">大錯特錯</stamp-fx>
+    <pause-fx></pause-fx>
+    <note-fx target="#s1" text="very good" position="bottom" name="n1">太籠統，考官看不出你的詞彙量</note-fx>
+    <pause-fx></pause-fx>
+    <remove-fx name="n1"></remove-fx>
+    <show-fx target="#s2" effect="slide-up"></show-fx>
+    <mark-fx target="#s2" text="indispensable" kind="highlight"></mark-fx>
+    <stamp-fx target="#s2" text="indispensable" color="green" rotate="7" offset-x="60" offset-y="52" start="with" delay="400">增分利器</stamp-fx>
+  </script-item>
+</ui-play>
+<div id="end1" class="end-box" hidden><i class="bi bi-lightbulb"></i> 重點：用一個精準的形容詞取代 very + 籠統形容詞。</div>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 2 -->
+  <section class="demo">
+    <div>
+      <h2>2. Mac 外框：閱讀定位示範</h2>
+      <p class="desc">step-mode="manual"：每一步都等按鍵。示範子字串 text 與 nth、圈選、方框、註解。</p>
+      <div class="live">
+<ui-play frame="mac" frame-title="Reading Passage 1" step-mode="manual" font-size="1.25rem" controls="always" min-height="340">
+  <stage-item>
+    <p id="q" style="color:#E3D322">Q1. Coffee consumption in Europe <b>decreased</b> after 2010.</p>
+    <p id="p">Coffee drinking spread rapidly across Europe in the twentieth century. However, after 2010, consumption in most European countries <span id="ans">began to decline</span>, while demand in Asia continued to grow.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#q" text="decreased" kind="box" color="key"></mark-fx>
+    <mark-fx target="#q" text="2010" kind="circle" color="pink"></mark-fx>
+    <mark-fx target="#p" text="2010" kind="circle" color="pink"></mark-fx>
+    <mark-fx target="#ans" kind="highlight" color="key"></mark-fx>
+    <note-fx target="#ans" position="bottom">同義替換：decreased = began to decline</note-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 3 -->
+  <section class="demo">
+    <div>
+      <h2>3. 稿紙外框：文法修正</h2>
+      <p class="desc">swap-fx 三種模式：strike、replace、retype，以及 bracket、strike 標記。</p>
+      <div class="live">
+<ui-play frame="paper" step-mode="manual" font-size="1.375rem" text-color="#0C0D0C">
+  <stage-item>
+    <p id="g1">She <span id="v1">have</span> lived here since five years.</p>
+    <p id="g2">The informations are <span id="v2">very useful</span>.</p>
+    <p id="g3">I am <span id="v3">interesting</span> in history.</p>
+  </stage-item>
+  <script-item>
+    <swap-fx target="#v1" to="has"></swap-fx>
+    <mark-fx target="#g1" text="since" kind="strike" color="red" start="with"></mark-fx>
+    <mark-fx target="#g1" text="five years" kind="bracket" color="indigo"></mark-fx>
+    <swap-fx target="#g2" text="informations are" to="information is" mode="replace"></swap-fx>
+    <swap-fx target="#v3" to="interested" mode="retype"></swap-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 4 -->
+  <section class="demo">
+    <div>
+      <h2>4. 瀏覽器外框：逐步揭露</h2>
+      <p class="desc">show-fx 的各種 effect，以及直書、圓形印章。</p>
+      <div class="live">
+<ui-play frame="browser" frame-url="ielts-notes.example/task1-verbs" step-mode="manual" font-size="1.25rem">
+  <stage-item>
+    <p id="h4">描述上升趨勢的動詞：</p>
+    <ul style="margin:0;padding-left:28px">
+      <li id="li1">rise / increase</li>
+      <li id="li2">climb / grow</li>
+      <li id="li3">soar / surge</li>
+    </ul>
+  </stage-item>
+  <script-item>
+    <show-fx target="#h4" effect="fade"></show-fx>
+    <show-fx target="#li1" effect="slide-left"></show-fx>
+    <show-fx target="#li2" effect="pop"></show-fx>
+    <show-fx target="#li3" effect="wipe"></show-fx>
+    <stamp-fx target="#li3" text="soar / surge" anchor="right" offset-x="70" shape="circle" direction="vertical" color="violet" size="1.1rem" letter-spacing="2" start="with" delay="500">大幅</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 5 -->
+  <section class="demo">
+    <div>
+      <h2>5. Windows 98 外框：印章墨跡比較</h2>
+      <p class="desc">autoplay="visible" 且 step-mode="auto"：進入畫面自動播完。每個印章用不同的 ink、edge、bleed、pressure、shape、inner-border。</p>
+      <div class="live">
+<ui-play frame="win-classic" frame-title="stamps.exe" autoplay="visible" step-mode="auto" step-delay="350" min-height="360">
+  <stage-item>
+    <div class="stamp-grid">
+      <span id="a1">ink 0</span><span id="a2">ink 0.5</span><span id="a3">ink 0.9</span>
+      <span id="a4">edge 1</span><span id="a5">bleed 1</span><span id="a6">pressure left</span>
+    </div>
+  </stage-item>
+  <script-item>
+    <stamp-fx target="#a1" offset-y="60" ink="0" edge="0" bleed="0" shake="0">乾淨扁平</stamp-fx>
+    <stamp-fx target="#a2" offset-y="60" ink="0.5" shape="rect" shake="0">增分利器</stamp-fx>
+    <stamp-fx target="#a3" offset-y="60" ink="0.9" color="urgent" inner-border="double" shake="0">大錯特錯</stamp-fx>
+    <stamp-fx target="#a4" offset-y="60" edge="1" ink="0.3" color="blue" shape="ellipse" shake="0">常見陷阱</stamp-fx>
+    <stamp-fx target="#a5" offset-y="60" bleed="1" ink="0.3" color="green" inner-border="none" shake="0">考官最愛</stamp-fx>
+    <stamp-fx target="#a6" offset-y="60" pressure="left" ink="0.4" color="playful" rotate="random" rotate-range="15" shake="4">中式英文</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 6 -->
+  <section class="demo">
+    <div>
+      <h2>6. 手機外框：口說對話</h2>
+      <p class="desc">舞台可以放任何 HTML，這裡用簡單的對話泡泡。phone 外框預設寬 390px。</p>
+      <div class="live">
+<ui-play frame="phone" step-mode="manual" font-size="1rem" min-height="520" padding="16">
+  <stage-item>
+    <div id="m1" style="background:#3B2A20;border-radius:12px;padding:10px 14px;margin:0 60px 12px 0">Do you prefer reading books or watching films?</div>
+    <div id="m2" style="background:#51DBCF;color:#0C0D0C;border-radius:12px;padding:10px 14px;margin:0 0 12px 60px">I like books because they are good.</div>
+    <div id="m3" style="background:#51DBCF;color:#0C0D0C;border-radius:12px;padding:10px 14px;margin:0 0 12px 60px">I'd say books, mainly because they let me picture the story in my own way.</div>
+  </stage-item>
+  <script-item>
+    <show-fx target="#m1" effect="slide-up"></show-fx>
+    <show-fx target="#m2" effect="slide-up"></show-fx>
+    <stamp-fx target="#m2" anchor="bottom-left" offset-x="20" size="1rem" shake="3">太簡短</stamp-fx>
+    <show-fx target="#m3" effect="slide-up"></show-fx>
+    <stamp-fx target="#m3" anchor="bottom-right" offset-x="-40" size="1rem" color="green" rotate="6">增分利器</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 7 -->
+  <section class="demo">
+    <div>
+      <h2>7. 無外框 16:9：註解停留與移除</h2>
+      <p class="desc">frame="none" 搭配 aspect="16/9" 適合整個畫面直接錄影。註解 stay 數毫秒後自動消失，remove-fx 可一次移除多個。</p>
+      <div class="live">
+<ui-play frame="none" aspect="16/9" content-align="center" content-valign="middle" font-size="2rem" step-mode="manual" bg-color="bg-alternative">
+  <stage-item>
+    <p id="big">Although it was raining, we went out.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#big" text="Although" kind="circle" color="yellow" name="c1"></mark-fx>
+    <note-fx target="#big" text="Although" position="top" stay="2500">連接詞，引導讓步子句</note-fx>
+    <mark-fx target="#big" text="we went out" kind="underline" color="key" name="c2"></mark-fx>
+    <note-fx target="#big" text="we went out" position="bottom" name="c3">主要子句</note-fx>
+    <remove-fx name="c1,c2,c3"></remove-fx>
+    <swap-fx target="#big" text="Although it was raining," to="Despite the rain," mode="replace"></swap-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 8 -->
+  <section class="demo">
+    <div>
+      <h2>8. 印章：Bootstrap 圖示與多行</h2>
+      <p class="desc">新增 icon、icon-position、icon-size、icon-gap。標籤內容可以留空做成純圖示印章；文字用 | 分行，直書時每行成為一欄。</p>
+      <div class="live">
+<ui-play frame="plain" step-mode="auto" autoplay="visible" step-delay="350" min-height="440">
+  <stage-item>
+    <div class="stamp-grid">
+      <span id="b1">圖示在左</span><span id="b2">純圖示圓章</span><span id="b3">圖示在上</span>
+      <span id="b4">兩行橫書</span><span id="b5">四字方印</span><span id="b6">直書加圖示</span>
+    </div>
+  </stage-item>
+  <script-item>
+    <stamp-fx target="#b1" offset-y="60" icon="bi-hand-thumbs-up" color="green" shake="0">增分利器</stamp-fx>
+    <stamp-fx target="#b2" offset-y="60" icon="bi-x-lg" shape="circle" size="2rem" icon-size="1.4" padding="10" shake="0"></stamp-fx>
+    <stamp-fx target="#b3" offset-y="60" icon="bi-exclamation-triangle" icon-position="top" color="yellow" shake="0">常見陷阱</stamp-fx>
+    <stamp-fx target="#b4" offset-y="60" icon="bi-star" icon-position="right" color="pink" shake="0">考官|最愛</stamp-fx>
+    <stamp-fx target="#b5" offset-y="60" shape="rect" color="red" letter-spacing="2" size="1.6rem" padding="6" rotate="-4" shake="0">中式|英文</stamp-fx>
+    <stamp-fx target="#b6" offset-y="60" direction="vertical" icon="bi-check2-circle" color="key" shake="0">答對|加分</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 屬性對照 -->
+  <section class="demo single">
+    <div>
+      <h2>屬性對照</h2>
+      <h3>&lt;ui-play&gt; 本體</h3>
+      <table class="ref">
+        <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
+        <tr><td><code>width</code> <code>height</code> <code>min-height</code></td><td>尺寸；只寫數字視為 px</td><td><code>100%</code>、自動、<code>240px</code></td></tr>
+        <tr><td><code>aspect</code></td><td>固定比例，例如 16/9，設了就忽略 height</td><td>無</td></tr>
+        <tr><td><code>padding</code></td><td>內容區內距</td><td><code>32px</code></td></tr>
+        <tr><td><code>content-align</code> <code>content-valign</code></td><td>left、center、right／top、middle、bottom</td><td><code>left</code>、<code>top</code></td></tr>
+        <tr><td><code>frame</code></td><td>none、plain、mac、win、win-classic、browser、phone、paper</td><td><code>plain</code></td></tr>
+        <tr><td><code>frame-title</code> <code>frame-icon</code> <code>frame-url</code></td><td>標題列文字、Bootstrap Icons 名稱、瀏覽器網址列；phone 外框的 frame-title 顯示在時間位置</td><td>無</td></tr>
+        <tr><td><code>border-width</code> <code>border-style</code> <code>border-color</code> <code>radius</code></td><td>外框粗細、樣式、顏色、圓角</td><td><code>1px</code>、<code>solid</code>、<code>bg-alternative</code>、<code>10px</code></td></tr>
+        <tr><td><code>bg-color</code> <code>bar-color</code> <code>bar-text-color</code></td><td>內容區背景、標題列背景、標題列文字</td><td><code>background</code>、<code>bg-alternative</code>、<code>shell</code></td></tr>
+        <tr><td><code>font-family</code> <code>font-size</code> <code>line-height</code> <code>text-color</code></td><td>內容文字</td><td>系統字體、<code>1.25rem</code>、<code>1.7</code>、<code>shell</code></td></tr>
+        <tr><td><code>accent-color</code></td><td>註解外框與按鈕的主色</td><td><code>key</code></td></tr>
+        <tr><td><code>autoplay</code></td><td>true、visible、false</td><td><code>false</code></td></tr>
+        <tr><td><code>step-mode</code></td><td>manual、auto（忽略所有停頓點）、mixed</td><td><code>mixed</code></td></tr>
+        <tr><td><code>step-delay</code> <code>rate</code></td><td>after 步驟之間的間隔（ms）、播放倍率</td><td><code>600</code>、<code>1</code></td></tr>
+        <tr><td><code>keyboard</code> <code>key-next</code></td><td>是否啟用鍵盤、下一步按鍵（逗號分隔）</td><td><code>true</code>、<code>Space,ArrowRight</code></td></tr>
+        <tr><td><code>controls</code> <code>controls-position</code></td><td>none、hover、always／bottom、top、outside</td><td><code>none</code>、<code>bottom</code></td></tr>
+        <tr><td><code>sound</code> <code>volume</code></td><td>全域音效開關、音量 0 到 1</td><td><code>on</code>、<code>0.6</code></td></tr>
+        <tr><td><code>end-target</code> <code>end-effect</code> <code>end-speed</code> <code>end-delay</code></td><td>播完後顯示的元素 id、效果、時間、延遲</td><td>無、<code>fade</code>、<code>400</code>（fade 650、pop 550）、<code>0</code></td></tr>
+      </table>
+      <h3>所有 -fx 共用</h3>
+      <table class="ref">
+        <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
+        <tr><td><code>start</code></td><td>click（等按鍵）、with（與上一個同時）、after（上一個結束後）</td><td>manual 為 click，其他為 after</td></tr>
+        <tr><td><code>delay</code></td><td>開始前等待（ms）</td><td><code>0</code></td></tr>
+        <tr><td><code>name</code></td><td>供 remove-fx 移除（mark、note、stamp）</td><td>無</td></tr>
+        <tr><td><code>target</code> <code>text</code> <code>nth</code></td><td>目標選擇器、目標內的子字串、第幾個</td><td>必填、無、<code>1</code></td></tr>
+      </table>
+      <h3>各效果</h3>
+      <table class="ref">
+        <tr><th>標籤</th><th>屬性</th></tr>
+        <tr><td><code>show-fx</code> <code>hide-fx</code></td><td><code>effect</code>（fade、slide-up、slide-down、slide-left、slide-right、zoom、pop、wipe）、<code>speed</code> 400（fade 650、pop 550）、<code>distance</code> 24px、<code>collapse</code>（隱藏時不保留空間）</td></tr>
+        <tr><td><code>mark-fx</code></td><td><code>kind</code>（highlight、underline、circle、box、strike、bracket）、<code>color</code> yellow、<code>thickness</code> 3、<code>rough</code> 0.5、<code>seed</code>、<code>padding</code> 4、<code>speed</code> 600、<code>text-color</code>（highlight 時的文字色，預設 background）</td></tr>
+        <tr><td><code>note-fx</code></td><td>內容寫在標籤內；<code>position</code> auto、<code>offset-x</code> <code>offset-y</code>、<code>color</code> vanilla、<code>bg-color</code> bg-alternative、<code>border-color</code> accent、<code>font-size</code> 1rem、<code>max-width</code> 320px、<code>pointer</code> true、<code>speed</code> 300、<code>stay</code> forever、<code>fade-out</code> 300</td></tr>
+        <tr><td><code>stamp-fx</code></td><td>印章文字寫在標籤內，用 | 分行，可留空做純圖示印章；圖示：<code>icon</code>（Bootstrap Icons 名稱）、<code>icon-position</code>（橫書預設 left、直書預設 top，另有 right、bottom）、<code>icon-size</code> 1.1（相對文字倍數）、<code>icon-gap</code> 6px；位置：<code>anchor</code> <code>offset-x</code> <code>offset-y</code>；外觀：<code>color</code> red、<code>size</code> 1.4rem、<code>font-family</code>、<code>letter-spacing</code> 6px、<code>direction</code>、<code>shape</code> round、<code>padding</code>、<code>border-width</code> 3、<code>inner-border</code> single、<code>rotate</code> -8、<code>rotate-range</code> 12；墨跡：<code>ink</code> 0.5、<code>edge</code> 0.4、<code>bleed</code> 0.2、<code>pressure</code> random、<code>seed</code>；動作：<code>speed</code> 380、<code>drop-scale</code> 2.6、<code>bounce</code> 0.3、<code>shake</code> 2、<code>stay</code> forever、<code>fade-out</code> 400、<code>sound</code> on</td></tr>
+        <tr><td><code>swap-fx</code></td><td><code>to</code>（必填）、<code>mode</code>（strike、replace、retype）、<code>del-color</code> red、<code>ins-color</code> green、<code>speed</code>（strike／replace 為 500，retype 為每字 60）</td></tr>
+        <tr><td><code>wait-fx</code></td><td><code>ms</code> 800</td></tr>
+        <tr><td><code>pause-fx</code></td><td>無屬性，下一個效果改為等按鍵</td></tr>
+        <tr><td><code>remove-fx</code></td><td><code>name</code>（逗號分隔多個）、<code>speed</code> 300</td></tr>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div id="toast-area"></div>
+
+<script>
+  // 在元件升級前擷取原始碼顯示在右側
+  document.querySelectorAll('.demo').forEach(function (sec) {
+    var live = sec.querySelector('.live'), pre = sec.querySelector('pre.code');
+    if (!live || !pre) return;
+    var lines = live.innerHTML.replace(/^\n+|\s+$/g, '').split('\n');
+    pre.textContent = lines.join('\n');
+  });
+</script>
+<script src="ui-play.js"></script>
+<script>
+  document.addEventListener('play-end', function (e) {
+    var area = document.getElementById('toast-area');
+    var title = e.target.closest('.demo').querySelector('h2').textContent;
+    var div = document.createElement('div');
+    div.className = 'alert alert-play alert-dismissible fade show';
+    div.innerHTML = '<i class="bi bi-check2-circle"></i> <span></span><button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>';
+    div.querySelector('span').textContent = title + '：播放完畢';
+    area.appendChild(div);
+    setTimeout(function () { div.remove(); }, 4000);
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
