@@ -65,6 +65,9 @@
 | `low-style` | `dim` | 低分留言：`dim` 變灰、`fold` 摺疊（點一下展開）、`keep` 不變。 |
 | `count-format` | `short` | `short` 顯示 1.3K，`full` 顯示 1,280。 |
 | `width`、`min-height`、`font-size` | `640px`、`80px`、`1rem` | 最大寬度、留言區最小高度、字級；純數字視為 px。 |
+| `theme` | 無 | 統一外框與分隔線的顏色，可寫色票名稱或色碼；個別屬性會覆蓋它。 |
+| `border-color`、`border-width` | `gray`、`2px` | 外框顏色與粗細；純數字視為 px。 |
+| `divider-color` | 同外框色 | 貼文卡片、控制列與按鈕之間的分隔線顏色。 |
 | `bg-color`、`bubble-color`、`text-color` | `#0C0D0C`、`bg-alternative`、`vanilla` | 底色、留言泡泡色、文字色。 |
 | `heart-color`、`best-color`、`examiner-color` | `urgent`、`yellow`、`key` | 愛心、最佳回答、考官的顏色。 |
 | `controls` | 顯示 | 控制列：播放／暫停、重播、0.5×、1×、2×；`false` 隱藏。 |

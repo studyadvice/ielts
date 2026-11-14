@@ -46,8 +46,8 @@
 ui-post{display:block;max-width:var(--upo-width,640px);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;}
 ui-post > post-item{display:none;}
 ui-post .upo,ui-post .upo *{box-sizing:border-box;}
-ui-post .upo{background:var(--upo-bg,#0C0D0C);border:1px solid #3B2A20;border-radius:14px;overflow:hidden;font-size:var(--upo-font-size,1rem);color:var(--upo-text,#DBEDD8);}
-ui-post .upo-card{padding:20px 20px 14px 20px;border-bottom:1px solid #3B2A20;}
+ui-post .upo{background:var(--upo-bg,#0C0D0C);border:var(--upo-bw,2px) solid var(--upo-bc,#86877F);border-radius:14px;overflow:hidden;font-size:var(--upo-font-size,1rem);color:var(--upo-text,#DBEDD8);}
+ui-post .upo-card{padding:20px 20px 14px 20px;border-bottom:1px solid var(--upo-div,var(--upo-bc,#86877F));}
 ui-post .upo-head{display:flex;gap:12px;align-items:center;margin:0 0 12px 0;}
 ui-post .upo-av{flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;color:#0C0D0C;overflow:hidden;}
 ui-post .upo-av img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -92,12 +92,12 @@ ui-post .upo-dots{display:inline-flex;gap:4px;margin:0 0 0 2px;}
 ui-post .upo-dots span{display:block;width:6px;height:6px;border-radius:50%;background:#86877F;animation:upo-dot 1s ease-in-out infinite;}
 ui-post .upo-dots span:nth-child(2){animation-delay:.15s;}
 ui-post .upo-dots span:nth-child(3){animation-delay:.3s;}
-ui-post .upo-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid #3B2A20;background:#141614;}
+ui-post .upo-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--upo-div,var(--upo-bc,#86877F));background:#141614;}
 ui-post .upo-btn{font-family:inherit;font-size:.8125rem;line-height:1.4;background:#0C0D0C;color:#C6C7BD;border:1px solid #86877F;border-radius:6px;padding:4px 10px;cursor:pointer;}
 ui-post .upo-btn:hover{border-color:#FF91D7;color:#FF91D7;}
 ui-post .upo-btn.is-on,ui-post .upo-btn.is-on:hover{background:#FF91D7;border-color:#FF91D7;color:#0C0D0C;}
 ui-post .upo-btn:disabled,ui-post .upo-btn:disabled:hover{background:#0C0D0C;border-color:#3B2A20;color:#86877F;cursor:not-allowed;}
-ui-post .upo-sep{width:1px;height:20px;background:#3B2A20;margin:0 4px;}
+ui-post .upo-sep{width:1px;height:20px;background:var(--upo-div,var(--upo-bc,#86877F));margin:0 4px;}
 ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
 .ui-post-heart{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;width:22px;height:22px;margin:-11px 0 0 -11px;}
 .ui-post-heart svg{display:block;width:100%;height:100%;fill:currentColor;}
@@ -175,6 +175,10 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       css('--upo-best', color(this.getAttribute('best-color')));
       css('--upo-examiner', color(this.getAttribute('examiner-color')));
       css('--upo-share', color(this.getAttribute('share-color')));
+      const theme = color(this.getAttribute('theme'));
+      css('--upo-bc', color(this.getAttribute('border-color')) || theme);
+      css('--upo-div', color(this.getAttribute('divider-color')) || theme);
+      css('--upo-bw', len(this.getAttribute('border-width')));
 
       const box = document.createElement('div');
       box.className = 'upo';
