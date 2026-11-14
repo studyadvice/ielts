@@ -200,7 +200,7 @@ ui-play .upl-ins{display:inline-block;}
 
   /* ---------------- 外框預設值 ---------------- */
   const BASE = {
-    width: '100%', minH: '240px', pad: '32px', bw: '1px', bs: 'solid', bc: '#3B2A20', radius: '10px',
+    width: '100%', minH: '240px', pad: '32px', bw: '2px', bs: 'solid', bc: '#86877F', radius: '10px',
     bg: '#0C0D0C', bar: '#3B2A20', barText: '#C6C7BD', fs: '1.25rem', lh: '1.7', text: '#C6C7BD', accent: '#51DBCF'
   };
   const FRAME_DEF = {
@@ -406,6 +406,7 @@ ui-play .upl-ins{display:inline-block;}
       this._subs = new WeakMap();
       this._keyWaiter = null;
       this._pendingKey = false;
+      this._gated = false;
       this._rate = 1;
     }
 
@@ -501,6 +502,7 @@ ui-play .upl-ins{display:inline-block;}
         this._btn.className = 'upl-btn';
         this._btn.addEventListener('click', () => {
           if (!this._started) this.play();
+          else if (this._gated) this._press();
           else if (this._paused) this.play();
           else this.pause();
         });
@@ -763,6 +765,7 @@ ui-play .upl-ins{display:inline-block;}
       this._btn.disabled = false;
       if (!this._started) this._btn.textContent = '▶ 播放';
       else if (this._paused) this._btn.textContent = '▶ 繼續';
+      else if (this._gated) this._btn.textContent = '▶ 播放';
       else this._btn.textContent = '❚❚ 暫停';
     }
 
@@ -803,7 +806,11 @@ ui-play .upl-ins{display:inline-block;}
 
     _waitKey() {
       if (this._pendingKey) { this._pendingKey = false; return Promise.resolve(); }
-      return new Promise((res) => { this._keyWaiter = res; });
+      return new Promise((res) => {
+        this._keyWaiter = () => { this._gated = false; this._syncControls(); res(); };
+        this._gated = true;
+        this._syncControls();
+      });
     }
 
     _sleep(ms) {

@@ -420,6 +420,84 @@ _onKey(e) {
     </div>
   </section>
 
+  <!-- 11-14-26 修改對照 4 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：pause-fx 等待時按鈕顯示「播放」</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：等待按鍵時按鈕仍顯示「暫停」</h3>
+<pre class="diff">_waitKey() {
+  return new Promise((res) =&gt; { this._keyWaiter = res; });
+}
+
+_syncControls: 播放中 → '❚❚ 暫停'（pause-fx 等待時也是）</pre>
+        </div>
+        <div>
+          <h3>修改後：等待按鍵時顯示「▶ 播放」，點一下即送出下一步</h3>
+<pre class="diff">_waitKey() {
+  return new Promise((res) =&gt; {
+    this._keyWaiter = () =&gt; { this._gated = false; this._syncControls(); res(); };
+    <span class="add">this._gated = true;
+    this._syncControls();</span>
+  });
+}
+
+_syncControls:
+  else if (this._paused) '▶ 繼續'
+  <span class="add">else if (this._gated) '▶ 播放'</span>
+  else '❚❚ 暫停'
+
+按鈕點擊：<span class="add">else if (this._gated) this._press();</span></pre>
+        </div>
+      </div>
+      <p class="desc">示範：播到 pause-fx 時按鈕顯示「▶ 播放」，點按鈕或按空白鍵都會繼續下一步。</p>
+      <div class="live">
+<ui-play frame="notebook" controls="always" controls-position="outside" font-size="1.1rem" padding="18px" min-height="260px" step-mode="mixed">
+  <stage-item>
+    <p id="g1">Enjoying me time takes up most of my weekend mornings.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#g1" text="Enjoying me time" kind="underline" color="key" name="g_u1"></mark-fx>
+    <pause-fx></pause-fx>
+    <mark-fx target="#g1" text="takes up" kind="box" color="energetic" name="g_b1"></mark-fx>
+    <pause-fx></pause-fx>
+    <remove-fx name="g_u1,g_b1"></remove-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 11-14-26 修改對照 5 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：外框預設邊框加粗並改為灰色</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：邊框 1px、bg-alternative（#3B2A20），與頁面底色幾乎同色</h3>
+<pre class="diff">BASE = { bw: '1px', bs: 'solid', bc: '#3B2A20', ... }</pre>
+        </div>
+        <div>
+          <h3>修改後：邊框 2px、gray（#86877F），外框清楚可見</h3>
+<pre class="diff">BASE = { bw: <span class="add">'2px'</span>, bs: 'solid', bc: <span class="add">'#86877F'</span>, ... }
+
+<span class="add">// 若要沿用舊的深色外框：border-color="bg-alternative"</span></pre>
+        </div>
+      </div>
+      <p class="desc">示範：未指定 border-color 的 notebook 外框，預設即為新的灰色邊框。</p>
+      <div class="live">
+<ui-play frame="notebook" font-size="1.1rem" padding="18px" min-height="200px" step-mode="manual">
+  <stage-item>
+    <p id="fr1">Frame borders should be clearly visible.</p>
+  </stage-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
   <!-- 11-14-26 修改對照 3 -->
   <section class="demo single">
     <div>
