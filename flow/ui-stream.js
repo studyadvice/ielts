@@ -64,7 +64,7 @@ ui-stream .us-badge{font-size:0.7rem;font-weight:700;border-radius:999px;padding
 ui-stream .us-bubble{border:var(--us-bbw,1px) solid var(--us-c);border-radius:var(--us-br);padding:var(--us-bp);line-height:var(--us-lh);color:var(--us-rt,var(--us-text));background:var(--us-bg);}
 ui-stream .us-bubble > :last-child{margin-bottom:0;}
 ui-stream .us-filled .us-bubble{background:var(--us-c);color:var(--us-rt,${PALETTE.base});}
-ui-stream .us-dashed .us-bubble{border-style:dashed;color:var(--us-rt,${PALETTE.shell});font-size:0.9rem;text-align:center;}
+ui-stream .us-dashed .us-bubble{border-style:dashed;color:var(--us-rt,${PALETTE.shell});font-size:inherit;text-align:center;}
 /* double：雙線框 */
 ui-stream .us-double .us-bubble{border-style:double;border-width:var(--us-bbw,4px);}
 /* notch：切角框。氣泡靠左切右上角、靠右切左上角；切角大小沿用 bubble-radius。外層填邊框色，內層用 ::before 填底色 */

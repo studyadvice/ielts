@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-stream dashed 氣泡套用 font-size（11-14-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  section{margin:0 0 48px 0;}
+  .sec-title{font-size:1.2rem;font-weight:700;color:#E3D322;margin:0 0 12px 0;}
+  .demo{border:1px solid #3B2A20;border-radius:10px;padding:20px 24px;margin:0 0 16px 0;}
+  pre{background:#3B2A20;color:#DBEDD8;border-radius:8px;padding:14px 18px;font-size:0.85rem;line-height:1.6;white-space:pre-wrap;margin:0;}
+  .note{color:#A3C4BC;font-size:0.95rem;margin:0 0 12px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ui-stream：<code>font-size</code> 套用到 dashed 氣泡</h1>
+  <p class="sub">修正前，<code>style="dashed"</code> 的氣泡會寫死 0.9rem，忽略元件的 <code>font-size</code>。修正後，氣泡繼承元件字級。</p>
+
+  <section>
+    <h2 class="sec-title">範例一：font-size="0.9rem"</h2>
+    <p class="note">candidate（dashed）與 examiner（filled）字級一致，皆為 0.9rem。</p>
+    <div class="demo">
+      <ui-stream autoplay title="應用示範：a number of" title-color="blue" counter="false" animation="pop" height="360" speed="18"
+                 avatar-size="56" bubble-width="108" bubble-radius="6" gap="18" text-align="left" avatar-repeat="first"
+                 accent="blue" system-color="shell" pause-color="calm" border-color="vanilla" font-size="0.9rem"
+                 labels="開始,停止">
+        <stream-role name="examiner" label="考官" color="blue" icon="person-badge-fill" side="left" style="filled"></stream-role>
+        <stream-role name="candidate" label="高分考生" color="vanilla" side="right" style="dashed"></stream-role>
+        <stream-item from="examiner" typed>Do you think public spaces in your city are well maintained?</stream-item>
+        <stream-item from="candidate" name="高分考生" typed><mark>Generally speaking, yes.</mark> <mark>A number of</mark> parks have been renovated in the past few years.<br>整體來說是的。過去幾年有許多公園完成翻新。</stream-item>
+      </ui-stream>
+    </div>
+    <pre><code>&lt;ui-stream autoplay title="應用示範：a number of" font-size="0.9rem" ...&gt;
+  &lt;stream-role name="examiner" label="考官" side="left" style="filled"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="candidate" label="高分考生" side="right" style="dashed"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="examiner" typed&gt;Do you think public spaces in your city are well maintained?&lt;/stream-item&gt;
+  &lt;stream-item from="candidate" name="高分考生" typed&gt;&lt;mark&gt;A number of&lt;/mark&gt; parks have been renovated.&lt;br&gt;整體來說是的。&lt;/stream-item&gt;
+&lt;/ui-stream&gt;</code></pre>
+  </section>
+
+  <section>
+    <h2 class="sec-title">範例二：font-size="1.4rem"</h2>
+    <p class="note">修正後 candidate（dashed）跟著變大；修正前會停在 0.9rem。</p>
+    <div class="demo">
+      <ui-stream autoplay title="應用示範：a number of（字級 1.4rem）" title-color="blue" counter="false" animation="pop" height="420" speed="18"
+                 avatar-size="56" bubble-width="108" bubble-radius="6" gap="18" text-align="left" avatar-repeat="first"
+                 accent="blue" system-color="shell" pause-color="calm" border-color="vanilla" font-size="1.4rem"
+                 labels="開始,停止">
+        <stream-role name="examiner" label="考官" color="blue" icon="person-badge-fill" side="left" style="filled"></stream-role>
+        <stream-role name="candidate" label="高分考生" color="vanilla" side="right" style="dashed"></stream-role>
+        <stream-item from="examiner" typed>Do you think public spaces in your city are well maintained?</stream-item>
+        <stream-item from="candidate" name="高分考生" typed><mark>Generally speaking, yes.</mark> <mark>A number of</mark> parks have been renovated in the past few years.<br>整體來說是的。過去幾年有許多公園完成翻新。</stream-item>
+      </ui-stream>
+    </div>
+    <pre><code>&lt;ui-stream autoplay title="應用示範：a number of（字級 1.4rem）" font-size="1.4rem" ...&gt;
+  ...同範例一的角色與訊息...
+&lt;/ui-stream&gt;</code></pre>
+  </section>
+
+  <section>
+    <h2 class="sec-title">修改內容</h2>
+    <p class="note">flow/ui-stream.js 中 <code>.us-dashed .us-bubble</code> 的 <code>font-size</code> 由 <code>0.9rem</code> 改為 <code>inherit</code>。</p>
+    <pre><code>/* 修改前 */
+ui-stream .us-dashed .us-bubble{border-style:dashed;color:var(--us-rt,...);font-size:0.9rem;text-align:center;}
+
+/* 修改後 */
+ui-stream .us-dashed .us-bubble{border-style:dashed;color:var(--us-rt,...);font-size:inherit;text-align:center;}</code></pre>
+  </section>
+</div>
+
+<script src="ui-stream.js"></script>
+</body>
+</html>
