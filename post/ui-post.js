@@ -82,6 +82,9 @@ ui-post .upo-item.is-best .upo-bubble{border-color:var(--upo-best,#E3D322);}
 ui-post .upo-item.is-examiner .upo-bubble{border-color:var(--upo-examiner,#51DBCF);}
 ui-post .upo-item.is-dim .upo-text,ui-post .upo-item.is-dim .upo-name{color:#86877F;}
 ui-post .upo-item.is-dim .upo-av{filter:grayscale(1);}
+ui-post .upo-item.is-reply{position:relative;margin-left:52px;}
+ui-post .upo-item.is-reply::before{content:"";position:absolute;left:-26px;top:-14px;width:2px;height:32px;background:var(--upo-div,#86877F);}
+ui-post .upo-item.is-reply::after{content:"";position:absolute;left:-26px;top:18px;width:22px;height:2px;background:var(--upo-div,#86877F);}
 ui-post .upo-fold{display:inline-block;font:inherit;font-size:.85rem;font-style:italic;color:#86877F;background:none;border:1px dashed #86877F;border-radius:10px;padding:8px 12px;cursor:pointer;animation:upo-in .35s ease-out;}
 ui-post .upo-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 0;}
 ui-post .upo-tag{font-size:.75rem;font-weight:700;border-radius:999px;padding:2px 10px;color:#0C0D0C;background:#86877F;animation:upo-pop .45s ease-out both;}
@@ -402,6 +405,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 
     _idle() {
       this._list.replaceChildren();
+      this._replyMap = new Map();   // 最佳回答 → 其回覆清單
       this._typing.hidden = true;
       this._ccount.textContent = '0';
       this._setState(bool(this.getAttribute('autoplay'), true) ? '' : '按 ▶ 播放開始');
@@ -462,6 +466,13 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       try {
         await this._wait(A('start-delay', 600, 0, 60000), run);
         const items = this._items.map((src, i) => this._model(src, i));
+        // 回覆：對象為它前面最近的一則最佳回答
+        items.forEach((m) => {
+          if (!m.reply) return;
+          for (let j = m.index - 1; j >= 0; j--) {
+            if (items[j].best) { m.replyParent = items[j]; break; }
+          }
+        });
         const early = items.filter((m) => !m.after);
         const late = items.filter((m) => m.after);
         let shown = 0;
@@ -481,6 +492,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
           await this._appear(m, run, A);
           this._ccount.textContent = String(++shown);
           this._showTags(m);
+          this._reveal(m.el);
         }
         this._ended = true;
         this._sync();
@@ -504,6 +516,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       }
       return {
         src, index, likes, best, examiner, after, low,
+        reply: src.hasAttribute('reply') && bool(src.getAttribute('reply'), true), replyParent: null,
         start: Math.round(num(src.getAttribute('start-likes'), defStart, 0, 1e9)),
         shares: src.hasAttribute('shares') ? Math.round(num(src.getAttribute('shares'), 0, 0, 1e9)) : null,
         startShares: Math.round(num(src.getAttribute('start-shares'), 0, 0, 1e9)),
@@ -528,6 +541,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
         dots.innerHTML = '<span></span><span></span><span></span>';
         this._typing.appendChild(dots);
         this._typing.hidden = false;
+        this._reveal(this._typing);
         await this._wait(typingMs, run);
         this._typing.hidden = true;
       }
@@ -542,7 +556,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       const name = document.createElement('div');
       name.className = 'upo-name';
       name.textContent = author;
-      if (m.examiner) name.appendChild(this._pill(this.getAttribute('examiner-label') || '考官', 'is-examiner'));
+      if (m.examiner) name.appendChild(this._pill(src.getAttribute('role-label') || this.getAttribute('examiner-label') || '考官', 'is-examiner'));
       const text = document.createElement('div');
       text.className = 'upo-text';
       Array.from(src.childNodes).forEach((n) => text.appendChild(n.cloneNode(true)));
@@ -569,7 +583,18 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       }
       main.append(bubble, foot);
       el.appendChild(main);
-      this._list.appendChild(el);
+      const parentEl = m.replyParent && m.replyParent.el;
+      if (parentEl) {
+        // 回覆接在對象與其既有回覆之後，並加上 is-reply 縮排
+        const replies = this._replyMap.get(parentEl) || [];
+        const tail = replies.length ? replies[replies.length - 1] : parentEl;
+        this._list.insertBefore(el, tail.nextSibling);
+        this._replyMap.set(parentEl, replies.concat([el]));
+        el.classList.add('is-reply');
+      } else {
+        this._list.appendChild(el);
+      }
+      this._reveal(el);
       m.el = el;
       m.main = main;
       m.name = name;
@@ -629,7 +654,10 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       if (best.length && bool(this.getAttribute('sort'), true)) {
         const els = Array.from(this._list.children);
         const before = new Map(els.map((el) => [el, el.getBoundingClientRect().top]));
-        const order = best.map((m) => m.el).concat(els.filter((el) => !best.some((m) => m.el === el)));
+        // 回覆跟著對象一起移動
+        const blockOf = (el) => [el].concat(this._replyMap.get(el) || []);
+        const order = best.flatMap((m) => blockOf(m.el))
+          .concat(els.filter((el) => !el.classList.contains('is-reply') && !best.some((m) => m.el === el)).flatMap(blockOf));
         order.forEach((el) => this._list.appendChild(el));
         order.forEach((el) => {
           const dy = before.get(el) - el.getBoundingClientRect().top;
@@ -655,6 +683,14 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       // 講評標籤
       items.forEach((m) => this._showTags(m));
       if (items.some((m) => m.tags.length)) await this._wait(500, run);
+    }
+
+    /* 內容超出螢幕時，依 auto-scroll 決定是否捲動到新出現的內容（預設不捲動） */
+    _reveal(el) {
+      if (!el || !bool(this.getAttribute('auto-scroll'), false)) return;
+      const r = el.getBoundingClientRect();
+      if (r.top >= 0 && r.bottom <= window.innerHeight) return;
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
     _showTags(m) {

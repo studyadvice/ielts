@@ -96,6 +96,45 @@
     </div>
   </section>
 
+  <section>
+    <h2>範例五：自訂角色文字與自動捲動</h2>
+    <p class="note">role-label 設定單則留言的角色徽章，同一討論串可以同時出現「考官」與「家教」。auto-scroll="true" 時，內容超出螢幕會自動捲動；可把視窗縮小來測試。</p>
+    <div class="cmp">
+      <div class="live">
+        <ui-post author="Nelson IELTS" badge="家教" time="1h" auto-scroll="true" examiner-label="考官">
+          How often do you exercise?
+          <post-item author="Amy" likes="3" low>I exercise almost every day.</post-item>
+          <post-item author="Ben" likes="1280" best>I go <c-key>jogging</c-key> every day.</post-item>
+          <post-item author="Nelson IELTS" examiner role-label="家教">Name the sport instead of repeating "exercise".</post-item>
+          <post-item author="Examiner" examiner>Try to add a reason for your answer.</post-item>
+        </ui-post>
+      </div>
+      <pre>&lt;ui-post author="Nelson IELTS" badge="家教" time="1h"
+         auto-scroll="true" examiner-label="考官"&gt;
+  ...
+  &lt;post-item author="Nelson IELTS" examiner role-label="家教"&gt;...&lt;/post-item&gt;
+  &lt;post-item author="Examiner" examiner&gt;...&lt;/post-item&gt;
+&lt;/ui-post&gt;</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>範例六：點評顯示為回覆</h2>
+    <p class="note">reply 讓點評縮排並接在高分示範下方，跟著高分示範一起置頂。不加 reply 時，點評就是一般留言。</p>
+    <div class="cmp">
+      <div class="live">
+        <ui-post author="Nelson IELTS" badge="家教" time="1h" examiner-label="考官">
+          How often do you exercise?
+          <post-item author="Amy" likes="3" low>I exercise almost every day.</post-item>
+          <post-item author="Kevin" likes="1200" best>I go <c-key>jogging</c-key> every day, <c-yellow>rain or shine</c-yellow>.</post-item>
+          <post-item author="Nelson IELTS" examiner role-label="家教" reply>前半段展現高級語法，後半段回歸自然口語。</post-item>
+        </ui-post>
+      </div>
+      <pre>&lt;post-item author="Kevin" likes="1200" best&gt;...&lt;/post-item&gt;
+&lt;post-item author="Nelson IELTS" examiner role-label="家教" reply&gt;...&lt;/post-item&gt;</pre>
+    </div>
+  </section>
+
   <template id="profile-nelson">
     <div style="display:flex;gap:12px;align-items:center;margin:0px 0px 12px 0px;">
       <span style="width:48px;height:48px;border-radius:50%;background:#5DBAE8;color:#0C0D0C;display:inline-flex;align-items:center;justify-content:center;font-weight:800;">N</span>
