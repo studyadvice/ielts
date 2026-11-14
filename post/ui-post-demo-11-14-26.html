@@ -75,6 +75,38 @@
   ...</pre>
     </div>
   </section>
+  <section>
+    <h2>範例四：點擊板主頭像，跳出小視窗</h2>
+    <p class="note">設定 profile-target 後，點作者頭像會在旁邊跳出視窗，顯示 template 內的 HTML。再點一次、按 Esc、點視窗外或按 ✕ 都會關閉。</p>
+    <div class="cmp">
+      <div class="live">
+        <ui-post profile-target="profile-nelson" profile-width="340px" author="Nelson IELTS" time="1h" badge="板主">
+          How often do you exercise?
+          <post-item author="Ben" likes="1280" best>I go <c-key>jogging</c-key> every day.</post-item>
+        </ui-post>
+      </div>
+      <pre>&lt;ui-post profile-target="profile-nelson" profile-width="340px"
+         author="Nelson IELTS" time="1h" badge="板主"&gt;
+  ...
+&lt;/ui-post&gt;
+
+&lt;template id="profile-nelson"&gt;
+  ...板主介紹 HTML...
+&lt;/template&gt;</pre>
+    </div>
+  </section>
+
+  <template id="profile-nelson">
+    <div style="display:flex;gap:12px;align-items:center;margin:0px 0px 12px 0px;">
+      <span style="width:48px;height:48px;border-radius:50%;background:#5DBAE8;color:#0C0D0C;display:inline-flex;align-items:center;justify-content:center;font-weight:800;">N</span>
+      <div>
+        <b style="color:#DBEDD8;">Nelson IELTS</b>
+        <div style="color:#86877F;font-size:0.9rem;">18 年雅思輔考資歷</div>
+      </div>
+    </div>
+    <p style="margin:0px 0px 8px 0px;">專長：口說語塊組合、Part 2 結構訓練。</p>
+    <p style="margin:0px;color:#A3C4BC;">如需一對一練習，歡迎在課程頁面留言。</p>
+  </template>
 </div>
 
 <script src="ui-post.js"></script>

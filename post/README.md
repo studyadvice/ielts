@@ -68,6 +68,8 @@
 | `theme` | 無 | 統一外框與分隔線的顏色，可寫色票名稱或色碼；個別屬性會覆蓋它。 |
 | `border-color`、`border-width` | `gray`、`2px` | 外框顏色與粗細；純數字視為 px。 |
 | `divider-color` | 同外框色 | 貼文卡片、控制列與按鈕之間的分隔線顏色。 |
+| `profile-target` | 無 | 板主（貼文作者）頭像的點擊目標，填頁面上 `<template>` 或隱藏元素的 id（可寫可不寫 `#`）。有設定時，頭像會變成可點擊，點了在頭像旁跳出小視窗顯示該內容。 |
+| `profile-width` | `320px` | 板主小視窗的寬度；純數字視為 px。 |
 | `bg-color`、`bubble-color`、`text-color` | `#0C0D0C`、`bg-alternative`、`vanilla` | 底色、留言泡泡色、文字色。 |
 | `heart-color`、`best-color`、`examiner-color` | `urgent`、`yellow`、`key` | 愛心、最佳回答、考官的顏色。 |
 | `controls` | 顯示 | 控制列：播放／暫停、重播、0.5×、1×、2×；`false` 隱藏。 |

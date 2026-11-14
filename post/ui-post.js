@@ -101,6 +101,13 @@ ui-post .upo-sep{width:1px;height:20px;background:var(--upo-div,var(--upo-bc,#86
 ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
 .ui-post-heart{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;width:22px;height:22px;margin:-11px 0 0 -11px;}
 .ui-post-heart svg{display:block;width:100%;height:100%;fill:currentColor;}
+ui-post .upo-av.is-profile{cursor:pointer;}
+ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
+.ui-post-pop{position:fixed;z-index:10000;box-sizing:border-box;background:#0C0D0C;color:#DBEDD8;border:2px solid #86877F;border-radius:14px;transform:scale(.6);transition:transform .25s ease-out;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:1rem;line-height:1.6;}
+.ui-post-pop.is-open{transform:scale(1);}
+.ui-post-pop-close{position:absolute;top:8px;right:8px;background:#0C0D0C;border:1px solid #86877F;color:#C6C7BD;border-radius:6px;padding:2px 8px;font-size:0.9rem;cursor:pointer;}
+.ui-post-pop-close:hover{border-color:#FF91D7;color:#FF91D7;}
+.ui-post-pop-body{padding:20px 20px 16px 20px;}
 @keyframes upo-in{from{transform:translateY(14px) scale(.97)}to{transform:none}}
 @keyframes upo-pop{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
 @keyframes upo-beat{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
@@ -115,6 +122,25 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
     document.head.appendChild(s);
   }
 
+  // 同一時間只開一個板主視窗
+  let openPop = null;
+  function onDocClick(e) {
+    if (!openPop || openPop.el.contains(e.target)) return;
+    closeProfile();
+  }
+  function onKey(e) { if (e.key === 'Escape') closeProfile(); }
+  function closeProfile() {
+    if (!openPop) return;
+    const el = openPop.el;
+    openPop = null;
+    document.removeEventListener('click', onDocClick);
+    document.removeEventListener('keydown', onKey);
+    window.removeEventListener('scroll', closeProfile, true);
+    window.removeEventListener('resize', closeProfile);
+    el.classList.remove('is-open');
+    setTimeout(() => el.remove(), 260);
+  }
+
   class UiPost extends HTMLElement {
     connectedCallback() {
       if (this._built) return;
@@ -127,6 +153,7 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
     }
 
     disconnectedCallback() {
+      if (openPop && openPop.owner === this) closeProfile();
       if (this._io) { this._io.disconnect(); this._io = null; }
     }
 
@@ -189,7 +216,12 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
       const head = document.createElement('div');
       head.className = 'upo-head';
       const author = this.getAttribute('author') || 'IELTS Examiner';
-      head.appendChild(this._avatar(this.getAttribute('avatar'), this.getAttribute('avatar-color'), author));
+      const headAv = this._avatar(this.getAttribute('avatar'), this.getAttribute('avatar-color'), author);
+      if (this.getAttribute('profile-target')) {
+        headAv.classList.add('is-profile');
+        headAv.addEventListener('click', (e) => { e.stopPropagation(); this._openProfile(headAv); });
+      }
+      head.appendChild(headAv);
       const meta = document.createElement('div');
       const name = document.createElement('div');
       name.className = 'upo-name';
@@ -279,6 +311,61 @@ ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
         ne[0].data = ne[0].data.replace(/^ /, '');
         ne[ne.length - 1].data = ne[ne.length - 1].data.replace(/ $/, '');
       }
+    }
+
+    _openProfile(anchor) {
+      if (openPop && openPop.anchor === anchor) { closeProfile(); return; }
+      const id = (this.getAttribute('profile-target') || '').trim().replace(/^#/, '');
+      const src = id ? document.getElementById(id) : null;
+      if (!src) return;
+      closeProfile();
+
+      let content;
+      if (src.tagName === 'TEMPLATE') {
+        content = src.content.cloneNode(true);
+      } else {
+        content = src.cloneNode(true);
+        content.removeAttribute('hidden');
+        content.style.display = '';
+      }
+
+      const pop = document.createElement('div');
+      pop.className = 'ui-post-pop';
+      pop.style.width = len(this.getAttribute('profile-width')) || '320px';
+      pop.style.borderColor = getComputedStyle(this).getPropertyValue('--upo-bc').trim() || '#86877F';
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'ui-post-pop-close';
+      close.textContent = '✕';
+      close.addEventListener('click', (e) => { e.stopPropagation(); closeProfile(); });
+
+      const body = document.createElement('div');
+      body.className = 'ui-post-pop-body';
+      body.appendChild(content);
+      pop.append(close, body);
+      document.body.appendChild(pop);
+
+      // 放在頭像右側；右側放不下就放左側；上下不超出視窗
+      const r = anchor.getBoundingClientRect();
+      const pw = pop.offsetWidth, ph = pop.offsetHeight;
+      let left = r.right + 12, origin = 'left top';
+      if (left + pw > window.innerWidth - 8) { left = r.left - pw - 12; origin = 'right top'; }
+      left = Math.max(8, left);
+      const top = Math.min(Math.max(8, r.top), window.innerHeight - ph - 8);
+      pop.style.left = left + 'px';
+      pop.style.top = top + 'px';
+      pop.style.transformOrigin = origin;
+
+      openPop = { el: pop, anchor, owner: this };
+      requestAnimationFrame(() => pop.classList.add('is-open'));
+      setTimeout(() => {
+        if (!openPop || openPop.el !== pop) return;
+        document.addEventListener('click', onDocClick);
+        document.addEventListener('keydown', onKey);
+        window.addEventListener('scroll', closeProfile, true);
+        window.addEventListener('resize', closeProfile);
+      }, 0);
     }
 
     _avatar(src, bg, author) {
