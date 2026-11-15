@@ -187,9 +187,11 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
         else body.appendChild(n.cloneNode(true));
       });
       this._bodyFrag = body;
+      this._live = (this.getAttribute('mode') || '').trim().toLowerCase() === 'live';
       this._buildDom();
       this._idle();
-      this._setupStart();
+      if (this._live) this._liveInit();
+      else this._setupStart();
     }
 
     _buildDom() {
@@ -268,7 +270,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       this._list = list;
       this._typing = typing;
 
-      if (bool(this.getAttribute('controls'), true)) {
+      if (bool(this.getAttribute('controls'), true) && !this._live) {
         const bar = document.createElement('div');
         bar.className = 'upo-controls';
         const btn = (text, tip) => {
@@ -430,7 +432,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 
     /* ---------- 公開方法 ---------- */
     play() {
-      if (!this._built) return;
+      if (!this._built || this._live) return;
       if (!this._started || this._ended) { this._go(); return; }
       if (this._paused) {
         this._paused = false;
@@ -443,14 +445,124 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
     }
 
     pause() {
-      if (!this._built || !this._started || this._ended) return;
+      if (!this._built || this._live || !this._started || this._ended) return;
       this._paused = true;
       this._box.querySelectorAll('.upo-item.is-surging').forEach((el) => el.classList.replace('is-surging', 'was-surging'));
       this._sync();
     }
 
     restart() {
-      if (this._built) this._go();
+      if (this._built && !this._live) this._go();
+    }
+
+    /* 加一則留言。mode="live" 時立刻排入播放：正在輸入、出現、愛心跳動、最佳回答判定；
+       其他模式只加進清單，下次重播才出現。item 的鍵名同 post-item 屬性（駝峰或連字號皆可），
+       內容用 html 或 text。回傳目前留言總數。 */
+    add(item) {
+      if (!this._built) { (this._pendingAdd = this._pendingAdd || []).push(item); return 0; }
+      const src = this._toItem(item || {});
+      if (!this._live) { this._items.push(src); return this._items.length; }
+      this._liveTotal++;
+      this._liveChain = this._liveChain.then(() => this._liveOne(src, false)).catch((err) => { if (err !== CANCEL) console.error(err); });
+      return this._liveTotal;
+    }
+    get live() { return !!this._live; }
+    get total() { return this._live ? this._liveTotal : (this._items ? this._items.length : 0); }
+
+    _toItem(item) {
+      const el = document.createElement('post-item');
+      Object.keys(item).forEach((k) => {
+        if (k === 'html' || k === 'text') return;
+        let v = item[k];
+        if (v === null || v === undefined || v === false) return;
+        if (Array.isArray(v)) v = v.join(',');
+        el.setAttribute(k.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase()), v === true ? '' : String(v));
+      });
+      if (item.html != null) el.innerHTML = item.html;
+      else if (item.text != null) el.textContent = item.text;
+      return el;
+    }
+
+    /* ---------- live 模式 ---------- */
+    _liveInit() {
+      this._started = true;
+      this._shown = 0;
+      this._liveModels = [];
+      this._liveTotal = this._items.length;
+      this._liveChain = Promise.resolve();
+      this._setState('');
+      // 預先寫好的留言直接顯示，不播動畫
+      this._items.forEach((src) => this._liveOne(src, true));
+      (this._pendingAdd || []).forEach((it) => this.add(it));
+      this._pendingAdd = null;
+    }
+
+    _liveOne(src, instant) {
+      const m = this._model(src, this._liveModels.length);
+      if (m.reply) {
+        for (let j = this._liveModels.length - 1; j >= 0; j--) {
+          if (this._liveModels[j].best) { m.replyParent = this._liveModels[j]; break; }
+        }
+      }
+      this._liveModels.push(m);
+      if (instant) {
+        this._makeItem(m);
+        m.cur = m.likes; m.count.textContent = this._fmt(m.likes);
+        if (m.shareEl) { m.curShares = m.shares; m.shareEl.textContent = this._fmt(m.shares); }
+        this._ccount.textContent = String(++this._shown);
+        this._liveJudge(m, true, this._run);
+        return Promise.resolve();
+      }
+      return this._liveAnimate(m);
+    }
+
+    async _liveAnimate(m) {
+      const run = this._run;
+      const A = (n, d, mn, mx) => num(this.getAttribute(n), d, mn, mx);
+      await this._appear(m, run, A, true);
+      this._ccount.textContent = String(++this._shown);
+      if (!m.after) {
+        const full = A('surge', 3500, 300, 60000);
+        const dur = m.best ? full : Math.min(full, A('live-surge', 1200, 300, 60000));
+        await this._surge([m], run, dur);
+      }
+      await this._liveJudge(m, false, run);
+      this.dispatchEvent(new CustomEvent('post-add-end', { bubbles: true, detail: { index: m.index, author: m.author, best: m.best } }));
+    }
+
+    async _liveJudge(m, instant, run) {
+      if (m.after) { this._showTags(m); this._reveal(m.el); return; }
+      if (m.best) {
+        const burst = (this.getAttribute('burst') || 'big').toLowerCase();
+        m.el.classList.add('is-best');
+        m.heart.classList.add('is-on');
+        m.name.appendChild(this._pill(this.getAttribute('best-label') || '最佳回答', 'is-best'));
+        if (!instant) {
+          if (burst === 'big') for (let i = 0; i < 26; i++) this._heart(m.heart, 1.3);
+          else if (burst === 'small') for (let i = 0; i < 6; i++) this._heart(m.heart, 0.6);
+          await this._wait(500, run);
+        }
+        if (bool(this.getAttribute('sort'), true) && !m.replyParent) {
+          // 所有最佳回答依出現順序置頂，回覆跟著對象移動
+          const pinned = this._liveModels.filter((x) => x.best && x.el && !x.replyParent).map((x) => x.el);
+          const els = Array.from(this._list.children);
+          const before = instant ? null : new Map(els.map((el) => [el, el.getBoundingClientRect().top]));
+          const blockOf = (el) => [el].concat(this._replyMap.get(el) || []);
+          const order = pinned.flatMap(blockOf)
+            .concat(els.filter((el) => !el.classList.contains('is-reply') && !pinned.includes(el)).flatMap(blockOf));
+          order.forEach((el) => this._list.appendChild(el));
+          if (before) {
+            order.forEach((el) => {
+              const dy = before.get(el) - el.getBoundingClientRect().top;
+              if (dy && el.animate) el.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 650 / this.rate, easing: 'cubic-bezier(.3,.7,.3,1)' });
+            });
+            await this._wait(700, run);
+          }
+        }
+      }
+      this._applyLow(m);
+      this._showTags(m);
+      this._reveal(m.el);
     }
 
     /* ---------- 播放流程 ---------- */
@@ -526,10 +638,10 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       };
     }
 
-    async _appear(m, run, A) {
+    async _appear(m, run, A, live) {
       const src = m.src;
       const author = src.getAttribute('author') || (m.examiner ? 'IELTS Examiner' : 'User');
-      await this._wait(num(src.getAttribute('delay'), A('item-delay', 700, 0, 60000), 0, 60000), run);
+      await this._wait(num(src.getAttribute('delay'), live ? 0 : A('item-delay', 700, 0, 60000), 0, 60000), run);
       const typingMs = num(src.getAttribute('typing'), A('typing', 1100, 0, 60000), 0, 60000);
       if (typingMs > 0) {
         this._typing.replaceChildren(
@@ -545,7 +657,13 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
         await this._wait(typingMs, run);
         this._typing.hidden = true;
       }
+      this._makeItem(m);
+    }
 
+    _makeItem(m) {
+      const src = m.src;
+      const author = src.getAttribute('author') || (m.examiner ? 'IELTS Examiner' : 'User');
+      m.author = author;
       const el = document.createElement('div');
       el.className = 'upo-item' + (m.examiner ? ' is-examiner' : '');
       el.appendChild(this._avatar(src.getAttribute('avatar'), src.getAttribute('avatar-color'), author));
@@ -667,22 +785,24 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       }
 
       // 低分留言
-      items.forEach((m) => {
-        if (!m.low || m.low === 'keep') return;
-        if (m.low === 'dim') { m.el.classList.add('is-dim'); return; }
-        const fold = document.createElement('button');
-        fold.type = 'button';
-        fold.className = 'upo-fold';
-        fold.textContent = this.getAttribute('fold-label') || '這則留言因評價過低已被摺疊，點一下展開';
-        m.main.style.display = 'none';
-        m.el.classList.add('is-dim');
-        m.el.appendChild(fold);
-        fold.addEventListener('click', () => { fold.remove(); m.main.style.display = ''; });
-      });
+      items.forEach((m) => this._applyLow(m));
 
       // 講評標籤
       items.forEach((m) => this._showTags(m));
       if (items.some((m) => m.tags.length)) await this._wait(500, run);
+    }
+
+    _applyLow(m) {
+      if (!m.low || m.low === 'keep') return;
+      if (m.low === 'dim') { m.el.classList.add('is-dim'); return; }
+      const fold = document.createElement('button');
+      fold.type = 'button';
+      fold.className = 'upo-fold';
+      fold.textContent = this.getAttribute('fold-label') || '這則留言因評價過低已被摺疊，點一下展開';
+      m.main.style.display = 'none';
+      m.el.classList.add('is-dim');
+      m.el.appendChild(fold);
+      fold.addEventListener('click', () => { fold.remove(); m.main.style.display = ''; });
     }
 
     /* 內容超出螢幕時，依 auto-scroll 決定是否捲動到新出現的內容（預設不捲動） */

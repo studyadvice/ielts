@@ -85,9 +85,9 @@ p-card.uc-ghost{position:fixed;z-index:9999;pointer-events:none;margin:0;transfo
 p-card.uc-ghost .uc-card{outline:2px solid var(--uc-drop);outline-offset:1px;box-shadow:inset var(--pc-bar) 0 0 0 var(--pc-c),0 10px 24px #000;cursor:grabbing;}
 p-card.uc-sent .uc-card{animation:uc-sent .5s ease;}
 @keyframes uc-sent{0%{transform:scale(1);}40%{transform:scale(0.96);}100%{transform:scale(1);}}
-/* 拖曳中，目標 ui-stream 的提示框線 */
-ui-stream[data-uc-ready] .us-wrap{outline:2px dashed var(--uc-drop);outline-offset:3px;}
-ui-stream[data-uc-over] .us-wrap{outline:3px solid var(--uc-drop);outline-offset:3px;}
+/* 拖曳中，目標 ui-stream、ui-post 的提示框線 */
+ui-stream[data-uc-ready] .us-wrap,ui-post[data-uc-ready] .upo{outline:2px dashed var(--uc-drop);outline-offset:3px;}
+ui-stream[data-uc-over] .us-wrap,ui-post[data-uc-over] .upo{outline:3px solid var(--uc-drop);outline-offset:3px;}
 `;
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
 
@@ -147,14 +147,17 @@ ui-stream[data-uc-over] .us-wrap{outline:3px solid var(--uc-drop);outline-offset
         const g = n => m.getAttribute(n);
         return { html: m.innerHTML.trim(), typed: m.hasAttribute('typed') ? g('typed') !== 'false' : null, time: g('time'), badge: g('badge'), badgeColor: g('badge-color'),
           speed: g('speed'), delay: g('delay'), gap: g('gap'), highlight: m.hasAttribute('highlight'), color: g('color'), side: g('side'), dataStyle: g('data-style'),
-          textAlign: g('text-align'), pause: g('pause'), reveal: g('reveal'), revealTarget: g('reveal-target') };
+          textAlign: g('text-align'), pause: g('pause'), reveal: g('reveal'), revealTarget: g('reveal-target'),
+          attrs: Object.fromEntries([...m.attributes].map(x => [x.name, x.value])) };
       });
       return {
         node, own, msgs, sent: 0, index: i, name,
         role: slug(a('role') || name || 'contact-' + (i + 1)),
         ext: a('ext') || '', status: a('status') || '', statusColor: a('status-color') || '',
         image: a('image') || '', icon: a('icon') || '', initials: a('initials') || '',
-        color: color(a('color') || AUTO_COLORS[i % AUTO_COLORS.length]), textColor: a('text-color') || '', textAlign: a('text-align') || ''
+        color: color(a('color') || AUTO_COLORS[i % AUTO_COLORS.length]), textColor: a('text-color') || '', textAlign: a('text-align') || '',
+        /* 送到 ui-post 時，p-card 上這幾個屬性會套到他的每一則留言 */
+        postAttrs: Object.fromEntries(['examiner', 'role-label', 'liked'].filter(k => node.hasAttribute(k)).map(k => [k, a(k)]))
       };
     }
 
@@ -243,11 +246,12 @@ ui-stream[data-uc-over] .us-wrap{outline:3px solid var(--uc-drop);outline-offset
       p.append(ol);
     }
 
-    /* ── 找目標 ui-stream：for 可寫多個 id（空白分隔）；沒寫時，頁面上只有一個 ui-stream 就用它 ── */
+    /* ── 找目標 ui-stream 或 ui-post：for 可寫多個 id（空白分隔）；沒寫時，頁面上只有一個目標就用它 ── */
     _targets() {
+      const ok = n => n && (n.tagName === 'UI-STREAM' || n.tagName === 'UI-POST');
       const ids = String(this._opt.for || '').split(/\s+/).filter(Boolean);
-      if (ids.length) return ids.map(id => document.getElementById(id)).filter(n => n && n.tagName === 'UI-STREAM');
-      const all = document.querySelectorAll('ui-stream'); return all.length === 1 ? [all[0]] : [];
+      if (ids.length) return ids.map(id => document.getElementById(id)).filter(ok);
+      const all = document.querySelectorAll('ui-stream, ui-post'); return all.length === 1 ? [all[0]] : [];
     }
     _error(msg) { this._errBox.textContent = '[ui-contacts] ' + msg; this._errBox.hidden = false; clearTimeout(this._errT); this._errT = setTimeout(() => { this._errBox.hidden = true; }, 5000); }
 
@@ -272,7 +276,7 @@ ui-stream[data-uc-over] .us-wrap{outline:3px solid var(--uc-drop);outline-offset
         }
         st.ghost.style.left = (ev.clientX - st.dx) + 'px'; st.ghost.style.top = (ev.clientY - st.dy) + 'px';
         const hit = document.elementFromPoint(ev.clientX, ev.clientY);
-        const s = hit && hit.closest('ui-stream');
+        const s = hit && hit.closest('ui-stream, ui-post');
         const over = s && st.targets.includes(s) ? s : null;
         if (over !== st.over) { if (st.over) st.over.removeAttribute('data-uc-over'); if (over) over.setAttribute('data-uc-over', ''); st.over = over; }
       };
@@ -282,7 +286,7 @@ ui-stream[data-uc-over] .us-wrap{outline:3px solid var(--uc-drop);outline-offset
         st.ghost.remove(); c.node.classList.remove('uc-dragging');
         (st.targets || []).forEach(t => { t.removeAttribute('data-uc-ready'); t.removeAttribute('data-uc-over'); });
         if (ev.type === 'pointerup' && st.over) this._send(c, st.over);
-        else if (ev.type === 'pointerup' && !(st.targets || []).length) this._error(this._opt.for ? `找不到 for="${this._opt.for}" 指定的 ui-stream` : '請用 for 屬性指定 ui-stream 的 id');
+        else if (ev.type === 'pointerup' && !(st.targets || []).length) this._error(this._opt.for ? `找不到 for="${this._opt.for}" 指定的 ui-stream 或 ui-post` : '請用 for 屬性指定 ui-stream 或 ui-post 的 id');
       };
       card.addEventListener('pointermove', move); card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
     }
@@ -290,15 +294,27 @@ ui-stream[data-uc-over] .us-wrap{outline:3px solid var(--uc-drop);outline-offset
     _send(c, target) {
       if (c.sent >= c.msgs.length) return false;
       const t = target || this._targets()[0];
-      if (!t) { this._error(this._opt.for ? `找不到 for="${this._opt.for}" 指定的 ui-stream` : '請用 for 屬性指定 ui-stream 的 id'); return false; }
-      if (typeof t.add !== 'function' || typeof t.addRole !== 'function') { this._error('ui-stream.js 尚未載入，或版本太舊（需要 addRole）'); return false; }
+      if (!t) { this._error(this._opt.for ? `找不到 for="${this._opt.for}" 指定的 ui-stream 或 ui-post` : '請用 for 屬性指定 ui-stream 或 ui-post 的 id'); return false; }
       const L = c.look, m = c.msgs[c.sent], idx = c.sent;
+      if (t.tagName === 'UI-POST') {
+        if (typeof t.add !== 'function') { this._error('ui-post.js 尚未載入，或版本太舊（需要 add）'); return false; }
+        /* p-msg 的屬性原樣變成 post-item 屬性（likes、best、low、tags、reply、examiner…），stream 專用的屬性 ui-post 會忽略 */
+        const post = Object.assign({}, c.postAttrs, m.attrs, {
+          author: c.name, avatar: c.image || c.initials || initialsOf(c.name), 'avatar-color': c.color, html: m.html });
+        t.add(post);
+        return this._afterSend(c, idx, t);
+      }
+      if (typeof t.add !== 'function' || typeof t.addRole !== 'function') { this._error('ui-stream.js 尚未載入，或版本太舊（需要 addRole）'); return false; }
       t.addRole(c.role, { label: c.name, color: c.color, image: c.image, icon: c.icon, initials: c.image || c.icon ? '' : (c.initials || initialsOf(c.name)),
         side: L.side, dataStyle: L.dataStyle, textColor: c.textColor, textAlign: c.textAlign });
       const item = { from: c.role, name: c.name, html: m.html, typed: m.typed != null ? m.typed : !!L.typeAll };
       ['time', 'badge', 'badgeColor', 'speed', 'delay', 'gap', 'color', 'side', 'dataStyle', 'textAlign', 'pause', 'reveal', 'revealTarget'].forEach(k => { if (m[k] != null && m[k] !== '') item[k] = m[k]; });
       if (m.highlight) item.highlight = true;
       t.add(item);
+      return this._afterSend(c, idx, t);
+    }
+
+    _afterSend(c, idx, t) {
       c.sent++;
       this._refresh(c);
       c.node.classList.remove('uc-sent'); void c.node.offsetWidth; c.node.classList.add('uc-sent');

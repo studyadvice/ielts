@@ -7,7 +7,7 @@
 | `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
 | `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
 | `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息。 | [`ui-stream-demo-11-15-26.html`](ui-stream-demo-11-15-26.html)（合併版） |
-| `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息。需要 ui-stream.js。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html) |
+| `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息，或拖到 ui-post 變成一則留言。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html)（範例 5：拖到 ui-post） |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
 三個元件同時使用的範例：[`flow-trio-demo-11-11-26.html`](flow-trio-demo-11-11-26.html)。
@@ -483,9 +483,9 @@ s.index; s.total;
 
 ## ui-contacts.js
 
-`<ui-contacts>` 是通訊錄。每個 `<p-card>` 是一個人物，訊息預先寫在裡面的 `<p-msg>`（可寫 HTML）。把人物卡片拖到 `<ui-stream>`，就會送出他的下一則訊息；也可以點卡片右下角的電話圖示送出。訊息依順序送出，用完後卡片變灰、不能再拖。拖放用 pointer events，滑鼠與觸控都能用。
+`<ui-contacts>` 是通訊錄。每個 `<p-card>` 是一個人物，訊息預先寫在裡面的 `<p-msg>`（可寫 HTML）。把人物卡片拖到 `<ui-stream>`，就會送出他的下一則訊息；拖到 `<ui-post mode="live">` 則變成一則留言；也可以點卡片右下角的電話圖示送出。訊息依順序送出，用完後卡片變灰、不能再拖。拖放用 pointer events，滑鼠與觸控都能用。
 
-ui-contacts 需要先載入 `ui-stream.js`（v0.5 以上）；ui-stream 本身不依賴 ui-contacts。
+目標需要先載入 `ui-stream.js`（v0.5 以上）或 [`ui-post.js`](../post/README.md)（v1.1 以上），兩者可以混用；它們都不依賴 ui-contacts。
 
 ### 快速開始
 
@@ -512,7 +512,7 @@ ui-contacts 需要先載入 `ui-stream.js`（v0.5 以上）；ui-stream 本身�
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `for` | 無 | 目標 ui-stream 的 id，可空白分隔多個：拖到哪一個就送到哪一個，點電話圖示送到第一個。不寫時，頁面上只有一個 ui-stream 就自動用它。 |
+| `for` | 無 | 目標 ui-stream 或 ui-post 的 id，可空白分隔多個：拖到哪一個就送到哪一個，點電話圖示送到第一個。不寫時，頁面上只有一個目標就自動用它。 |
 | `type-all` | 關 | 所有訊息都逐字打出。`p-msg` 寫 `typed="false"` 可單則關掉。 |
 | `side` | `left` | 人物在對話中靠哪一邊。 |
 | `data-style` | `outline` | 人物在對話中的氣泡樣式，值同 `stream-role`。 |
@@ -585,10 +585,16 @@ ui-contacts 需要先載入 `ui-stream.js`（v0.5 以上）；ui-stream 本身�
 | `image`、`initials`、`icon` | 名字縮寫 | 頭像。都不寫時取名字前兩個字的字首，例如 Dolly The Horse 為 DT。對話中的頭像同步。 |
 | `color` | 自動輪替 | 人物主色：對話中的氣泡與頭像色，也用於剩餘數、色條、`tint` 樣式。 |
 | `text-color`、`text-align` | 無 | 對話中氣泡的文字色與對齊。 |
+| `examiner`、`role-label`、`liked` | 無 | 送到 ui-post 時套到這個人的每一則留言：考官樣式、角色徽章文字、愛心預設實心。 |
 
 ### `<p-msg>`：訊息
 
-內容可寫 HTML，包含 `<mark>` 與 `<c-key>` 等色名標籤。屬性同 `stream-item`：`typed`、`time`、`badge`、`badge-color`、`speed`、`delay`、`gap`、`highlight`、`color`、`side`、`data-style`、`text-align`、`pause`、`reveal`、`reveal-target`。
+內容可寫 HTML，包含 `<mark>` 與 `<c-key>` 等色名標籤。
+
+- 送到 ui-stream 時，屬性同 `stream-item`：`typed`、`time`、`badge`、`badge-color`、`speed`、`delay`、`gap`、`highlight`、`color`、`side`、`data-style`、`text-align`、`pause`、`reveal`、`reveal-target`。
+- 送到 ui-post 時，屬性同 `post-item`：`likes`、`start-likes`、`best`、`low`、`tags`、`reply`、`examiner`、`role-label`、`after`、`liked`、`shares`、`start-shares`、`time`、`delay`、`typing`。作者、頭像、頭像色自動取自 `p-card`。
+
+同一則訊息兩種屬性可以一起寫，送到哪邊就用哪邊的，另一邊會忽略。
 
 ### 事件與方法
 

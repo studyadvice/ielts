@@ -35,12 +35,13 @@
   .btns .btn{font-size:0.85rem;}
   .log{margin:12px 0 0 0;font-size:0.9rem;}
   .hint{color:#A3C4BC;font-size:0.95rem;margin:0 0 16px 0;}
+  .us-title-like{font-size:1rem;font-weight:700;color:#B484E8;margin:0 0 12px 0;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1><code>&lt;ui-contacts&gt;</code> 通訊錄 v0.1</h1>
-  <p class="sub">預先寫好人物與訊息，把人物卡片拖到 <code>&lt;ui-stream mode="live"&gt;</code> 就會送出他的下一則訊息；也可以點卡片右下角的電話圖示送出。單一 ui-contacts.js，CSS 內建，不用 Shadow DOM。需要先載入 ui-stream.js（v0.5 以上）。ui-stream 的完整範例見 <a href="ui-stream-demo-11-15-26.html" style="color:#51DBCF">ui-stream-demo-11-15-26.html</a>。</p>
+  <h1><code>&lt;ui-contacts&gt;</code> 通訊錄 v0.2</h1>
+  <p class="sub">預先寫好人物與訊息，把人物卡片拖到 <code>&lt;ui-stream mode="live"&gt;</code> 就會送出他的下一則訊息；也可以點卡片右下角的電話圖示送出。單一 ui-contacts.js，CSS 內建，不用 Shadow DOM。目標可以是 ui-stream.js（v0.5 以上）或 ui-post.js（v1.1 以上，範例 5）。ui-stream 的完整範例見 <a href="ui-stream-demo-11-15-26.html" style="color:#51DBCF">ui-stream-demo-11-15-26.html</a>。</p>
 
   <!-- ══════════ 範例 1 ══════════ -->
   <section>
@@ -241,13 +242,72 @@ c.addEventListener('ui-contacts:empty', e =&gt; e.detail);  // { name, role, car
 window.UiContactsConfig = { cardTheme: 'cocoa', showStatus: true, avatarShape: 'rounded' };</pre>
   </section>
 
+  <!-- ══════════ 範例 5 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 5：同一副通訊錄，換一個舞台</h2><p>for 同時指定 ui-stream 和 ui-post。拖到聊天室是一則訊息，拖到貼文是一則留言：愛心跳動、最佳回答置頂、低分變灰、講評標籤都照 ui-post 的規則。</p></div>
+    <p class="hint">同一張卡片，拖到中間是聊天，拖到右邊是社群留言。試試先拖 Amy、Chloe，再拖 Ben（最佳回答），然後拖 Dan（回覆 Ben），最後拖考官。</p>
+    <div class="stage" style="grid-template-columns:minmax(0,0.9fr) minmax(0,1fr) minmax(0,1fr);gap:24px;">
+      <div>
+        <ui-contacts id="c5" for="s5 p5" columns="1" card-theme="bar" show-status status-dot="text" drop-color="pink">
+          <p-card name="IELTS Examiner" initials="EX" status="考官" status-color="key" color="key" examiner side="right" data-style="filled">
+            <p-msg>Name the sport instead of repeating <mark>exercise</mark>. Ben's answer does exactly that.</p-msg>
+          </p-card>
+          <p-card name="Amy" status="Band 5" status-color="red" color="pink" image="https://i.pravatar.cc/120?img=45">
+            <p-msg likes="3" low tags="照抄題目:red">I exercise almost every day.</p-msg>
+          </p-card>
+          <p-card name="Chloe" status="Band 6" status-color="yellow" color="playful" image="https://i.pravatar.cc/120?img=26">
+            <p-msg likes="46" tags="有細節:yellow">I go to the gym three times a week after work.</p-msg>
+          </p-card>
+          <p-card name="Ben" status="Band 8" status-color="green" color="green" image="https://i.pravatar.cc/120?img=33">
+            <p-msg likes="1280" best tags="具體運動:green,慣用語:yellow">I go <c-key>jogging</c-key> along the river every morning, <c-yellow>rain or shine</c-yellow>.</p-msg>
+          </p-card>
+          <p-card name="Dan" status="同學" status-color="blue" color="blue">
+            <p-msg reply likes="12">Stealing <c-yellow>rain or shine</c-yellow> for my next test!</p-msg>
+          </p-card>
+        </ui-contacts>
+      </div>
+      <div class="sticky">
+        <ui-stream id="s5" mode="live" height="560" title="舞台 A：聊天室" title-size="1rem" animation="pop" avatar-size="36" bubble-width="88" font-size="0.95rem"></ui-stream>
+      </div>
+      <div class="sticky">
+        <div class="us-title-like">舞台 B：社群貼文</div>
+        <ui-post id="p5" mode="live" width="100%" author="IELTS Examiner" badge="Part 1" time="2h" likes="86" typing="900" min-height="200" theme="bg-alternative">How often do you exercise?</ui-post>
+      </div>
+    </div>
+    <div class="alert alert-dark log" id="log5">事件會顯示在這裡。</div>
+    <pre>&lt;ui-contacts for="s5 p5" columns="1" card-theme="bar" show-status status-dot="text"&gt;
+  &lt;p-card name="IELTS Examiner" initials="EX" color="key" examiner side="right" data-style="filled"&gt;   ← examiner 套到他的每則留言
+    &lt;p-msg&gt;Name the sport instead of repeating &lt;mark&gt;exercise&lt;/mark&gt;.&lt;/p-msg&gt;
+  &lt;/p-card&gt;
+  &lt;p-card name="Amy" color="pink"&gt;
+    &lt;p-msg likes="3" low tags="照抄題目:red"&gt;I exercise almost every day.&lt;/p-msg&gt;
+  &lt;/p-card&gt;
+  &lt;p-card name="Ben" color="green"&gt;
+    &lt;p-msg likes="1280" best tags="具體運動:green,慣用語:yellow"&gt;I go &lt;c-key&gt;jogging&lt;/c-key&gt;…&lt;/p-msg&gt;
+  &lt;/p-card&gt;
+  &lt;p-card name="Dan" color="blue"&gt;
+    &lt;p-msg reply likes="12"&gt;Stealing rain or shine for my next test!&lt;/p-msg&gt;   ← 回覆前面最近的最佳回答
+  &lt;/p-card&gt;
+&lt;/ui-contacts&gt;
+
+&lt;ui-stream id="s5" mode="live" height="560"&gt;&lt;/ui-stream&gt;
+&lt;ui-post id="p5" mode="live" author="IELTS Examiner" badge="Part 1"&gt;How often do you exercise?&lt;/ui-post&gt;
+
+&lt;script src="ui-stream.js"&gt;&lt;/script&gt;
+&lt;script src="../post/ui-post.js"&gt;&lt;/script&gt;
+&lt;script src="ui-contacts.js"&gt;&lt;/script&gt;
+
+p-msg 的 likes、best、low、tags、reply 只對 ui-post 有效；typed、side、data-style 只對 ui-stream 有效。
+同一則訊息兩邊都能送，各取所需，另一邊會忽略。</pre>
+  </section>
+
   <!-- ══════════ 屬性總覽 ══════════ -->
   <section>
     <div class="sec-title"><h2>屬性總覽</h2><p>數字單位：px；字級：rem 或 CSS 長度；顏色：品牌色名稱或色碼。布林屬性寫 <code>false</code> 可關掉預設開啟的功能。標「可覆寫」的屬性也能寫在 p-card 上。</p></div>
 
     <h3 class="cat c-key">一、連結與訊息（ui-contacts）</h3>
     <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
-      <tr><td>for</td><td>ui-stream 的 id，可空白分隔多個</td><td>無</td><td>拖放目標。不寫時，頁面上只有一個 ui-stream 就自動用它。點電話圖示送到第一個。</td></tr>
+      <tr><td>for</td><td>ui-stream 或 ui-post 的 id，可空白分隔多個</td><td>無</td><td>拖放目標，兩種元件可以混用。不寫時，頁面上只有一個目標就自動用它。點電話圖示送到第一個。</td></tr>
       <tr><td>type-all</td><td>布林</td><td>關</td><td>所有訊息都逐字打出（可覆寫）。p-msg 寫 <code>typed="false"</code> 可單則關掉。</td></tr>
       <tr><td>side</td><td>left、right、center</td><td>left</td><td>人物在對話中靠哪一邊（可覆寫）。</td></tr>
       <tr><td>data-style</td><td>filled、outline、dashed、double、notch、callout</td><td>outline</td><td>人物在對話中的氣泡樣式（可覆寫）。</td></tr>
@@ -301,8 +361,10 @@ window.UiContactsConfig = { cardTheme: 'cocoa', showStatus: true, avatarShape: '
       <tr><td>p-card image、initials、icon</td><td>網址、文字、Bootstrap Icons 名稱</td><td>名字縮寫</td><td>頭像。都不寫時取名字前兩個字的字首，例如 Dolly The Horse 為 DT。對話中的頭像同步。</td></tr>
       <tr><td>p-card color</td><td>顏色</td><td>自動輪替</td><td>人物主色：對話中的氣泡、頭像色，也用於剩餘數、色條、tint 樣式。</td></tr>
       <tr><td>p-card text-color、text-align</td><td>顏色、對齊</td><td>無</td><td>對話中氣泡的文字色與對齊。</td></tr>
+      <tr><td>p-card examiner、role-label、liked</td><td>布林、文字、布林</td><td>無</td><td>送到 ui-post 時套到這個人的每一則留言：考官樣式、角色徽章文字、愛心預設實心。</td></tr>
       <tr><td>p-msg 內容</td><td>HTML</td><td></td><td>訊息內容，可用 mark、c-key 等色名標籤。</td></tr>
-      <tr><td>p-msg 屬性</td><td colspan="3">typed、time、badge、badge-color、speed、delay、gap、highlight、color、side、data-style、text-align、pause、reveal、reveal-target，意思同 stream-item。</td></tr>
+      <tr><td>p-msg 屬性（ui-stream）</td><td colspan="3">typed、time、badge、badge-color、speed、delay、gap、highlight、color、side、data-style、text-align、pause、reveal、reveal-target，意思同 stream-item。</td></tr>
+      <tr><td>p-msg 屬性（ui-post）</td><td colspan="3">likes、start-likes、best、low、tags、reply、examiner、role-label、after、liked、shares、start-shares、time、delay、typing，意思同 post-item。作者、頭像、頭像色自動取自 p-card。</td></tr>
     </table>
 
     <h3 class="cat">六、方法、事件與全域設定</h3>
@@ -316,6 +378,7 @@ window.UiContactsConfig = { cardTheme: 'cocoa', showStatus: true, avatarShape: '
 </div>
 
 <script src="ui-stream.js"></script>
+<script src="../post/ui-post.js"></script>
 <script src="ui-contacts.js"></script>
 <script>
   const log1 = document.getElementById('log1');
@@ -326,6 +389,9 @@ window.UiContactsConfig = { cardTheme: 'cocoa', showStatus: true, avatarShape: '
   const c4 = document.getElementById('c4'), log4 = document.getElementById('log4');
   c4.addEventListener('ui-contacts:send', e => { const d = Object.assign({}, e.detail); delete d.card; d.target = '#' + d.target.id; log4.textContent = 'ui-contacts:send → ' + JSON.stringify(d); });
   c4.addEventListener('ui-contacts:empty', e => { log4.textContent += '；ui-contacts:empty → ' + e.detail.name; });
+  const log5 = document.getElementById('log5');
+  document.getElementById('c5').addEventListener('ui-contacts:send', e => { const d = e.detail; log5.textContent = `ui-contacts:send → ${d.name} 送到 #${d.target.id}（${d.target.tagName.toLowerCase()}）`; });
+  document.getElementById('p5').addEventListener('post-add-end', e => { log5.textContent += `；post-add-end → ${JSON.stringify(e.detail)}`; });
 </script>
 </body>
 </html>

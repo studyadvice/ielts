@@ -2,13 +2,14 @@
 
 `<ui-post>` 是社群貼文留言動畫元件。貼文先出現，留言一則一則冒出（前面有「正在輸入」動畫），接著愛心數開始跳動：最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.0.0
-- 建立日期：11-13-26
+- 版本：1.1.0
+- 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
 | `ui-post-demo-11-13-26.html` | | 互動範例三則與屬性速查。 |
+| `ui-post-demo-11-15-26.html` | | `mode="live"` 與 `add()` 範例、v1.0 到 v1.1 對照。 |
 
 ## 目錄
 
@@ -16,6 +17,7 @@
 - [播放流程](#播放流程)
 - [ui-post 屬性](#ui-post-屬性)
 - [post-item 屬性](#post-item-屬性)
+- [live 模式](#live-模式)
 - [事件與方法](#事件與方法)
 - [授權](#授權)
 
@@ -96,6 +98,29 @@
 
 行內可用 `<b>`、`<i>`、`<c-key>` 等色名標籤。
 
+## live 模式
+
+`mode="live"` 時不照劇本播放，改由外部一則一則送進留言，可以搭配 [`ui-contacts`](../flow/README.md#ui-contactsjs) 把人物卡片直接拖進貼文。
+
+- 不顯示控制列，`autoplay`、`play()`、`pause()`、`restart()` 失效。
+- 預先寫好的 `post-item` 一載入就是最終狀態：愛心數、最佳回答置頂、低分處理與講評標籤，不播動畫。
+- `add(item)` 送進的留言依序排隊播放：正在輸入、出現、愛心跳動，接著判定。`best` 爆愛心、蓋徽章，所有最佳回答依出現順序置頂；`low` 變灰或摺疊；`tags` 出現；`examiner` 與 `after` 不跳動愛心。
+- `reply` 接在前面最近一則最佳回答之下。
+
+```js
+const p = document.querySelector('ui-post[mode="live"]');
+p.add({ author: 'Ben', likes: 1280, best: true, tags: ['具體運動:green', '慣用語:yellow'],
+        html: 'I go <c-key>jogging</c-key> every day, <c-yellow>rain or shine</c-yellow>.' });
+p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Name the sport.' });
+```
+
+`item` 的鍵名同 `post-item` 屬性，駝峰或連字號都可以；`true` 代表只寫屬性名，陣列會用逗點接起來，內容用 `html` 或 `text`。非 live 模式呼叫 `add()` 只會加進清單，下次重播才出現。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `mode` | 無 | `live`：接收模式。 |
+| `live-surge` | `1200` | live 模式中一般留言的愛心跳動時間（毫秒）；`best` 仍用 `surge`。 |
+
 ## 事件與方法
 
 | 名稱 | 說明 |
@@ -103,6 +128,9 @@
 | `post-item-show` | 每則留言出現時觸發，`detail = { index, author, after }`。 |
 | `post-surge-end` | 愛心爆發、置頂與標籤完成時觸發。 |
 | `post-end` | 全部播完時觸發。 |
+| `post-add-end` | live 模式中，`add()` 送進的一則留言播完時觸發，`detail = { index, author, best }`。 |
+| `add(item)` | 加一則留言，回傳留言總數。 |
+| `live`、`total` | 唯讀：是否為 live 模式、留言總數。 |
 | `play()`、`pause()`、`restart()` | 播放或繼續、暫停、從頭播放。 |
 | `rate` | 播放倍率，可讀寫，例如 `el.rate = 2`。 |
 

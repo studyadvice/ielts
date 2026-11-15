@@ -76,7 +76,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`diff/`](diff/README.md) | `ui-layer-diff.js` | `<ui-layer-diff>` | 從籠統到具體的逐層改寫，自動標出新增與取代的部分。 |
 | [`dino/`](dino/README.md) | `dino-deck.js` | `<dino-deck>` `<dino-card>` | 恐龍噴火字卡動畫，例句從火焰中飛出。 |
 | [`drag/`](drag/README.md) | `ui-drag-ans.js` | `<ui-drag-ans>` | 拖曳或點選小卡的填空題。 |
-| [`flow/`](flow/README.md) | `ui-play.js`、`play-maker.js`、`ui-stream.js`、`ui-orbit.js` | `<ui-play>` `<play-maker>` `<ui-stream>` `<ui-orbit>` | 教學錄影用的模擬畫面播放器（外框、標記、印章等效果）與它的劇本製作器、聊天室回放式的內容流、核心概念與環繞想法的軌道圖。 |
+| [`flow/`](flow/README.md) | `ui-play.js`、`play-maker.js`、`ui-stream.js`、`ui-contacts.js`、`ui-orbit.js` | `<ui-play>` `<play-maker>` `<ui-stream>` `<ui-contacts>` `<ui-orbit>` | 教學錄影用的模擬畫面播放器（外框、標記、印章等效果）與它的劇本製作器、聊天室回放式的內容流、拖放人物產生訊息的通訊錄、核心概念與環繞想法的軌道圖。 |
 | [`guide/`](guide/README.md) | `ui-guide.js` | `<ui-guide>` | 框住頁面元素，加上號碼、說明卡與自動折線的指引框。 |
 | [`ian/`](ian/README.md) | `ui-icon-ani.js` | `<ui-icon-anim>` | 把多個 Bootstrap Icons 組成播放動畫。 |
 | [`info/`](info/README.md) | `info-region.js` | `<info-region>` | 逐步顯示的說明、步驟與測驗區塊。 |
@@ -91,7 +91,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`note/`](note/README.md) | `bp-popnote.js` | （JavaScript 工具） | 頁面提示工具包。 |
 | [`pen/`](pen/README.md) | `ink-pen.js`、`dot-go.js` | `<ui-ink-layer>` `<dot-go>` | 螢幕錄影用的畫筆層與跳轉圓點。 |
 | [`pg/`](pg/README.md) | `ui-progrid.js` | `<ui-progrid>` | 可直接編輯的屬性面板。 |
-| [`post/`](post/README.md) | `ui-post.js` | `<ui-post>` | 社群貼文與留言動畫。 |
+| [`post/`](post/README.md) | `ui-post.js` | `<ui-post>` | 社群貼文與留言動畫；`mode="live"` 可接收 ui-contacts 拖進來的留言。 |
 | [`r2/`](r2/README.md) | `ui-reading2.js` | `<layer-switch>` `<ui-spotlight>` `<collocation-map>` | 閱讀輔助元件組。 |
 | [`sb/`](sb/README.md) | `sentence-build.js` | `<sentence-build>` | 語塊組句練習。 |
 | [`scn/`](scn/README.md) | `ui-screen.js`、`ui-scroll-scene.js` | `<ui-screen>` `<ui-scroll-scene>` | 對照與敘事的視覺互動元件。 |
