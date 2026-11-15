@@ -1,12 +1,13 @@
-# flow 流程與播放元件：ui-play、ui-stream、ui-orbit
+# flow 流程與播放元件：ui-play、ui-stream、ui-contacts、ui-orbit
 
-三個以語意標籤撰寫的播放型元件，適合教學頁面與螢幕錄影。每個元件都是單一 `.js` 檔，載入後自動注入樣式，不使用 Shadow DOM。圖示使用 Bootstrap Icons，請在頁面上自行載入圖示字型。顏色屬性都可以直接寫色票名稱（例如 `key`、`bg-alternative`），也可以寫任何 CSS 顏色。
+以語意標籤撰寫的播放型元件，適合教學頁面與螢幕錄影。每個元件都是單一 `.js` 檔，載入後自動注入樣式，不使用 Shadow DOM。圖示使用 Bootstrap Icons，請在頁面上自行載入圖示字型。顏色屬性都可以直接寫色票名稱（例如 `key`、`bg-alternative`），也可以寫任何 CSS 顏色。
 
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
 | `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
 | `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
-| `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案。 | [`ui-stream-demo-11-13-26.html`](ui-stream-demo-11-13-26.html)、[`ui-stream-demo-11-11-26.html`](ui-stream-demo-11-11-26.html) |
+| `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息。 | [`ui-stream-demo-11-15-26.html`](ui-stream-demo-11-15-26.html)（合併版） |
+| `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息。需要 ui-stream.js。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html) |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
 三個元件同時使用的範例：[`flow-trio-demo-11-11-26.html`](flow-trio-demo-11-11-26.html)。
@@ -15,6 +16,7 @@
 
 - [ui-play.js](#ui-playjs)
 - [ui-stream.js](#ui-streamjs)
+- [ui-contacts.js](#ui-contactsjs)
 - [ui-orbit.js](#ui-orbitjs)
 - [授權](#授權)
 
@@ -335,8 +337,10 @@
 | `start` | `0` | 載入時直接顯示到第幾則。 |
 | `loop` | 關 | 播完清空重來。 |
 | `type-all` | 關 | 每一則都逐字打出。 |
-| `auto-scroll` | 開 | 新內容出現時自動捲到底。 |
+| `auto-scroll` | 開 | 新內容出現時自動捲到底。有 `height` 時捲動內容流；沒有 `height` 時捲動整個頁面，讓最後一行留在視窗內（元件不在畫面上時不捲）。 |
+| `scroll-space` | `48` | 捲到底時最後一行下方保留的空白（px），方便螢幕錄影時不出界。 |
 | `step` | 關 | 逐則模式：每則播完就停，按「下一則」才繼續。 |
+| `mode` | 無 | `live`：接收模式。不顯示控制列，`loop`、`autoplay`、`start` 失效；預先寫好的 `stream-item` 一載入就直接顯示，之後用 `add()` 或 ui-contacts 送進來的訊息逐則播出。 |
 
 ### `<ui-stream>` 屬性：控制列
 
@@ -404,12 +408,13 @@
 | `color` | `shell` | 頭像、名稱、氣泡色。 |
 | `icon` | `person-fill` | 頭像圖示。 |
 | `image` | 無 | 頭像圖片。 |
+| `initials` | 無 | 以縮寫文字當頭像，例如 `AR`。頭像優先順序：`image`、`initials`、`icon`。 |
 | `side` | `left` | `left`、`right`、`center`（不顯示頭像）。 |
-| `style` | `outline` | 氣泡樣式，見下表。 |
+| `data-style` | `outline` | 氣泡樣式，見下表。v0.5 起不再讀取 `style` 屬性。 |
 | `text-color` | 自動 | 氣泡文字色。 |
 | `text-align` | 無 | 這個角色的訊息對齊。 |
 
-| `style` | 樣式 |
+| `data-style` | 樣式 |
 | --- | --- |
 | `filled` | 實心。 |
 | `outline` | 外框。 |
@@ -426,7 +431,8 @@
 | `name` | 角色 `label` | 顯示名稱。 |
 | `time` | 無 | 名稱旁的時間文字。 |
 | `badge`、`badge-color` | 無、角色色 | 名稱列的小角標。 |
-| `icon`、`image`、`color` | 角色設定 | 只覆寫這一則。 |
+| `icon`、`image`、`initials`、`color` | 角色設定 | 只覆寫這一則。 |
+| `side`、`data-style` | 角色設定 | 只覆寫這一則靠哪一邊與氣泡樣式。 |
 | `source` | 無 | 內容改從該 id 的 template 或元素複製。 |
 | `typed` | 關 | 逐字打出。 |
 | `speed`、`delay`、`gap` | 沿用容器 | 只覆寫這一則。 |
@@ -443,7 +449,7 @@
 | `src` | 從網址讀取 JSON。 |
 | `data-id` | 從 `window[data-id]` 讀取 JSON。 |
 
-JSON 為陣列，或 `{ roles, items }`。item 的 `text` 為純文字、`html` 為 HTML，其他欄位同屬性的駝峰寫法，例如 `revealTarget`、`textAlign`。全頁預設值可寫在 `window.UiStreamConfig`，鍵名同樣為駝峰式。
+JSON 為陣列，或 `{ roles, items }`。item 的 `text` 為純文字、`html` 為 HTML，其他欄位同屬性的駝峰寫法，例如 `revealTarget`、`textAlign`、`dataStyle`（roles 的氣泡樣式也寫 `dataStyle`）。全頁預設值可寫在 `window.UiStreamConfig`，鍵名同樣為駝峰式。
 
 ### 事件與方法
 
@@ -465,9 +471,142 @@ s.replay();        // 從頭重播
 s.finish();        // 立刻顯示全部
 s.goto(3);         // 直接顯示到第 3 則
 s.add({ from: 'teacher', text: '新訊息' });
+s.add({ from: 'teacher', text: '只有這則靠左', side: 'left', dataStyle: 'notch' });
+s.addRole('ar', { label: 'AI Receptionist', color: 'gray', initials: 'AR', side: 'left', dataStyle: 'outline' });
+s.hasRole('ar');   // true
+s.live;            // 是否為 mode="live"
 s.export('text');  // 匯出文字；'html' 匯出 HTML
 s.index; s.total;
 ```
+
+---
+
+## ui-contacts.js
+
+`<ui-contacts>` 是通訊錄。每個 `<p-card>` 是一個人物，訊息預先寫在裡面的 `<p-msg>`（可寫 HTML）。把人物卡片拖到 `<ui-stream>`，就會送出他的下一則訊息；也可以點卡片右下角的電話圖示送出。訊息依順序送出，用完後卡片變灰、不能再拖。拖放用 pointer events，滑鼠與觸控都能用。
+
+ui-contacts 需要先載入 `ui-stream.js`（v0.5 以上）；ui-stream 本身不依賴 ui-contacts。
+
+### 快速開始
+
+```html
+<script src="ui-stream.js"></script>
+<script src="ui-contacts.js"></script>
+
+<ui-contacts for="chat1" show-status>
+  <p-card name="Alf Bowman" ext="120" status="Available" color="blue" image="alf.jpg">
+    <p-msg>Hi, I have a reservation under the name Bowman.</p-msg>
+    <p-msg typed>Is there a lift? I have <mark>quite a lot of luggage</mark>.</p-msg>
+  </p-card>
+  <p-card name="Dolly The Horse" ext="129" status="Not registered" color="yellow" side="right" data-style="filled">
+    <p-msg>（一匹馬走進了大廳。）</p-msg>
+  </p-card>
+</ui-contacts>
+
+<ui-stream id="chat1" mode="live" height="600"></ui-stream>
+```
+
+第一次送出某人的訊息時，ui-contacts 會呼叫 ui-stream 的 `addRole()`，把名字、顏色、頭像、`side`、`data-style` 註冊成角色。
+
+### `<ui-contacts>` 屬性：連結與訊息
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `for` | 無 | 目標 ui-stream 的 id，可空白分隔多個：拖到哪一個就送到哪一個，點電話圖示送到第一個。不寫時，頁面上只有一個 ui-stream 就自動用它。 |
+| `type-all` | 關 | 所有訊息都逐字打出。`p-msg` 寫 `typed="false"` 可單則關掉。 |
+| `side` | `left` | 人物在對話中靠哪一邊。 |
+| `data-style` | `outline` | 人物在對話中的氣泡樣式，值同 `stream-role`。 |
+
+### `<ui-contacts>` 屬性：標題與版面
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `title`、`title-size`、`title-weight`、`title-color` | 無、`1.2rem`、`700`、`violet` | 標題。 |
+| `columns` | `2` | 欄數。 |
+| `gap` | `12` | 卡片間距（px）。 |
+| `card-padding` | `12px 14px` | 卡片內距。 |
+| `card-radius` | `10` | 卡片圓角（px）。 |
+| `card-min-height` | 自動 | 卡片最小高度（px）。 |
+| `avatar-size` | `44` | 頭像大小（px）。 |
+| `avatar-shape` | `circle` | `circle`、`rounded`、`square`。 |
+| `name-size`、`name-weight` | `1rem`、`600` | 名字字級與粗細。 |
+| `meta-size` | `0.85rem` | 狀態文字字級。 |
+
+### `<ui-contacts>` 屬性：樣式與色彩
+
+下列屬性都可以寫在 `p-card` 上個別覆寫。優先順序：`p-card` 個別屬性、`p-card` 的 `card-theme`、`ui-contacts` 個別屬性、`ui-contacts` 的 `card-theme`。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `card-theme` | `night` | 預設樣式組合，一次設定下面各項，見下表。 |
+| `card-bg` | 依 theme | 卡片底色。 |
+| `card-border-color`、`card-border-width`、`card-border-style` | 依 theme | 卡片框線色、粗細（px，`0` 為無框）、樣式（`solid`、`dashed`、`double`）。 |
+| `card-bar` | 依 theme | 左側色條寬度（px），顏色用卡片的 `color`。 |
+| `name-color`、`meta-color`、`icon-color` | 依 theme | 名字、狀態文字與分機、⋯ 與電話圖示的顏色。 |
+| `avatar-bg`、`avatar-text-color` | 依 theme | 縮寫或圖示頭像的底色與文字色。 |
+| `hover-color` | 依 theme | 滑鼠移上卡片的外框色。 |
+| `drop-color` | `key` | 拖曳時目標 ui-stream 的提示框線色（只能寫在 `ui-contacts`）。 |
+
+| `card-theme` | 樣式 |
+| --- | --- |
+| `night` | 深底、bg-alternative 細框、灰色頭像。 |
+| `cocoa` | bg-alternative 底、無框、playful 頭像。 |
+| `paper` | vanilla 淺色卡片、深色文字。 |
+| `key` | key 色框線、名字與頭像。 |
+| `neon` | energetic 螢光綠框線、名字與頭像。 |
+| `indigo` | 2px 靛藍框、quiet 文字。 |
+| `dreamy` | dreamy 虛線框、pink 名字。 |
+| `double` | shell 雙線框。 |
+| `tint` | 框線、名字、圖示、頭像都用每張卡片自己的 `color`。 |
+| `bar` | bg-alternative 底，左側 5px 色條與頭像用卡片的 `color`。 |
+
+### `<ui-contacts>` 屬性：顯示開關
+
+都可以寫在 `p-card` 上個別覆寫。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `show-status` | 關 | 顯示狀態點與狀態文字。 |
+| `status-dot` | `avatar` | 狀態點放在頭像右下角（`avatar`）或狀態文字前面（`text`）。 |
+| `show-ext` | 開 | 名字後面顯示分機號碼。 |
+| `show-menu` | 開 | ⋯ 選單，點開預覽這個人的訊息與送出進度。 |
+| `show-call` | 開 | 電話圖示，點了送出下一則。 |
+| `show-count` | 開 | 剩餘訊息數。 |
+
+### `<p-card>`：人物
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `name` | 必填 | 人物名字，也是對話中顯示的名稱。 |
+| `role` | 由 `name` 產生 | 在 ui-stream 註冊的角色代號。 |
+| `ext` | 無 | 分機號碼。 |
+| `status` | 無 | 狀態文字，純裝飾。 |
+| `status-color` | 自動 | 狀態點顏色。不寫時依文字判斷：Available 綠、Meeting／Busy 紫、Away 黃、DND 紅、其他灰。 |
+| `image`、`initials`、`icon` | 名字縮寫 | 頭像。都不寫時取名字前兩個字的字首，例如 Dolly The Horse 為 DT。對話中的頭像同步。 |
+| `color` | 自動輪替 | 人物主色：對話中的氣泡與頭像色，也用於剩餘數、色條、`tint` 樣式。 |
+| `text-color`、`text-align` | 無 | 對話中氣泡的文字色與對齊。 |
+
+### `<p-msg>`：訊息
+
+內容可寫 HTML，包含 `<mark>` 與 `<c-key>` 等色名標籤。屬性同 `stream-item`：`typed`、`time`、`badge`、`badge-color`、`speed`、`delay`、`gap`、`highlight`、`color`、`side`、`data-style`、`text-align`、`pause`、`reveal`、`reveal-target`。
+
+### 事件與方法
+
+| 事件 | `detail` | 觸發時機 |
+| --- | --- | --- |
+| `ui-contacts:send` | `{ name, role, index, remaining, card, target }` | 每送出一則。 |
+| `ui-contacts:empty` | `{ name, role, card }` | 某人的訊息用完時。 |
+
+```js
+const c = document.querySelector('ui-contacts');
+c.send('Alf Bowman');  // 依名字、role、索引或 p-card 元素送出下一則，回傳 true / false
+c.send(0, 'chat2');    // 第二個參數可指定 ui-stream 的 id
+c.remaining('Alf Bowman');
+c.reset();             // 全部卡片恢復；c.reset('Alf Bowman') 只恢復一張。內容流不會清除
+c.cards;               // [{ name, role, total, sent }, …]
+```
+
+全頁預設值可寫在 `window.UiContactsConfig`，鍵名同屬性的駝峰寫法，例如 `{ cardTheme: 'cocoa', showStatus: true }`。所有樣式組合可在 `window.UiContacts.themes` 查看。
 
 ---
 

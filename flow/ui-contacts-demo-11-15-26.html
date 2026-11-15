@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-contacts 通訊錄：拖放人物到 ui-stream 產生訊息（11-15-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 32px 0;}
+  section{margin:0 0 56px 0;}
+  .sec-title{display:flex;align-items:baseline;gap:12px;margin:0 0 14px 0;}
+  .sec-title h2{font-size:1.25rem;font-weight:700;color:#B484E8;margin:0;flex:0 0 auto;}
+  .sec-title p{margin:0 0 0 auto;font-size:0.85rem;color:#86877F;}
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start;}
+  .stage .sticky{position:sticky;top:16px;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:16px 0 0 0;white-space:pre-wrap;}
+  mark{background:#E3D322;color:#0C0D0C;padding:0 4px;border-radius:3px;}
+  .theme-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;}
+  .theme-grid .lbl{font-family:ui-monospace,Menlo,Consolas,monospace;color:#51DBCF;font-size:0.85rem;margin:0 0 6px 0;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;margin:0 0 28px 0;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;font-weight:700;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#86877F;}
+  table.attr td:nth-child(3){color:#E3D322;white-space:nowrap;}
+  h3.cat{font-size:1.05rem;font-weight:700;margin:24px 0 8px 0;padding:0 0 0 12px;border-left:4px solid #FF91D7;color:#FF91D7;}
+  h3.cat.c-key{border-color:#51DBCF;color:#51DBCF;}h3.cat.c-yellow{border-color:#E3D322;color:#E3D322;}h3.cat.c-green{border-color:#71CD76;color:#71CD76;}h3.cat.c-blue{border-color:#5DBAE8;color:#5DBAE8;}h3.cat.c-playful{border-color:#FFA987;color:#FFA987;}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px 0;}
+  .btns .btn{font-size:0.85rem;}
+  .log{margin:12px 0 0 0;font-size:0.9rem;}
+  .hint{color:#A3C4BC;font-size:0.95rem;margin:0 0 16px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;ui-contacts&gt;</code> 通訊錄 v0.1</h1>
+  <p class="sub">預先寫好人物與訊息，把人物卡片拖到 <code>&lt;ui-stream mode="live"&gt;</code> 就會送出他的下一則訊息；也可以點卡片右下角的電話圖示送出。單一 ui-contacts.js，CSS 內建，不用 Shadow DOM。需要先載入 ui-stream.js（v0.5 以上）。ui-stream 的完整範例見 <a href="ui-stream-demo-11-15-26.html" style="color:#51DBCF">ui-stream-demo-11-15-26.html</a>。</p>
+
+  <!-- ══════════ 範例 1 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 1：通訊錄拖放到內容流</h2><p>照截圖的雙欄版面。卡片右下角數字是剩餘訊息數，用完後變灰、不能再拖。點 ⋯ 可以預覽這個人的訊息。</p></div>
+    <p class="hint">把左邊的人物拖到右邊的對話框，或點電話圖示。</p>
+    <div class="stage">
+      <div>
+        <ui-contacts id="c1" for="s1" show-status title="Front desk team" title-color="vanilla">
+          <p-card name="AI Receptionist" ext="TDB 135" initials="AR" status="Available" color="gray">
+            <p-msg typed>Good evening, welcome to the Riverside Hotel. How may I help you?</p-msg>
+            <p-msg typed>Certainly. Could I have your <mark>surname</mark>, please?</p-msg>
+            <p-msg>Your room is on the third floor. Breakfast is served <c-key>from 7 to 10</c-key>.</p-msg>
+          </p-card>
+          <p-card name="Alf Bowman" ext="120" status="Available" color="blue" image="https://i.pravatar.cc/120?img=12">
+            <p-msg>Hi, I have a reservation under the name Bowman.</p-msg>
+            <p-msg typed>Is there a lift? I have <mark>quite a lot of luggage</mark>.</p-msg>
+          </p-card>
+          <p-card name="Anthony Freeman" ext="020" status="Available" color="green" image="https://i.pravatar.cc/120?img=59">
+            <p-msg>Excuse me, is there anywhere nearby to <mark>grab a bite</mark>?</p-msg>
+          </p-card>
+          <p-card name="Ashley Parks" ext="025" status="Available" color="pink" image="https://i.pravatar.cc/120?img=47" side="right" data-style="filled">
+            <p-msg typed>I'd like to <mark>extend my stay</mark> by two nights, if possible.</p-msg>
+            <p-msg>Thanks, that's <c-pink>really kind of you</c-pink>.</p-msg>
+          </p-card>
+          <p-card name="Brody Hampton" ext="038" status="Available" color="playful" image="https://i.pravatar.cc/120?img=68">
+            <p-msg badge="投訴" badge-color="urgent">The air conditioning in my room <mark>isn't working properly</mark>.</p-msg>
+          </p-card>
+          <p-card name="Chandler Muller" ext="031" status="Webmeeting" color="violet" image="https://i.pravatar.cc/120?img=15">
+            <p-msg>Sorry, I'm in a meeting. Could you send it to my email?</p-msg>
+          </p-card>
+          <p-card name="Dolly The Horse" ext="129" status="Available" color="yellow">
+            <p-msg side="center" data-style="dashed">（一匹馬走進了大廳。）</p-msg>
+          </p-card>
+          <p-card name="Ethan Carter" ext="123" status="Not registered" color="calm" image="https://i.pravatar.cc/120?img=11">
+            <p-msg>Hello? Is anyone at the front desk?</p-msg>
+          </p-card>
+          <p-card name="Gregory Winters" ext="103" status="Not registered" color="quiet">
+            <p-msg typed>I'm afraid I've <mark>locked myself out</mark> of my room.</p-msg>
+          </p-card>
+          <p-card name="Harley Johnson" ext="037" status="Available" color="dreamy" image="https://i.pravatar.cc/120?img=44" side="right" data-style="notch">
+            <p-msg>Could you <mark>recommend</mark> a good museum within walking distance?</p-msg>
+          </p-card>
+          <p-card name="James Walker" ext="035" status="Available" color="key" image="https://i.pravatar.cc/120?img=53">
+            <p-msg>What time is <mark>check-out</mark>?</p-msg>
+          </p-card>
+          <p-card name="Jane Leon" ext="131" status="Available" color="indigo">
+            <p-msg>Could I get a <mark>late check-out</mark>, around two?</p-msg>
+          </p-card>
+        </ui-contacts>
+      </div>
+      <div class="sticky">
+        <ui-stream id="s1" mode="live" height="620" title="Hotel reception" title-color="key" animation="pop" avatar-size="40" avatar-repeat="first">
+          <stream-item from="system">把人物拖到這裡開始對話。</stream-item>
+        </ui-stream>
+        <div class="alert alert-dark log" id="log1">事件會顯示在這裡。</div>
+      </div>
+    </div>
+    <pre>&lt;ui-contacts for="s1" show-status title="Front desk team"&gt;
+  &lt;p-card name="AI Receptionist" ext="TDB 135" initials="AR" status="Available" color="gray"&gt;
+    &lt;p-msg typed&gt;Good evening, welcome to the Riverside Hotel. How may I help you?&lt;/p-msg&gt;
+    &lt;p-msg typed&gt;Certainly. Could I have your &lt;mark&gt;surname&lt;/mark&gt;, please?&lt;/p-msg&gt;
+  &lt;/p-card&gt;
+  &lt;p-card name="Alf Bowman" ext="120" status="Available" color="blue" image="alf.jpg"&gt;
+    &lt;p-msg&gt;Hi, I have a reservation under the name Bowman.&lt;/p-msg&gt;
+  &lt;/p-card&gt;
+  &lt;p-card name="Ashley Parks" ... side="right" data-style="filled"&gt;…&lt;/p-card&gt;   ← 在對話中靠右、實心
+  &lt;p-card name="Dolly The Horse" ext="129" status="Available" color="yellow"&gt;     ← 沒有圖片，自動縮寫 DT
+    &lt;p-msg side="center" data-style="dashed"&gt;（一匹馬走進了大廳。）&lt;/p-msg&gt;      ← 單則覆寫
+  &lt;/p-card&gt;
+  &lt;p-card name="Ethan Carter" status="Not registered"&gt;…&lt;/p-card&gt;               ← 狀態色自動判斷
+&lt;/ui-contacts&gt;
+
+&lt;ui-stream id="s1" mode="live" height="620"&gt;
+  &lt;stream-item from="system"&gt;把人物拖到這裡開始對話。&lt;/stream-item&gt;
+&lt;/ui-stream&gt;</pre>
+  </section>
+
+  <!-- ══════════ 範例 2 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 2：card-theme 預設樣式組合</h2><p>一個屬性套好底色、框線、文字、頭像與 hover 色。tint、bar 兩組會用每張卡片自己的 color。</p></div>
+    <div class="stage">
+      <div class="theme-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+        <div><div class="lbl">night（預設）</div>
+          <ui-contacts for="s2" columns="1" card-theme="night" show-status><p-card name="Alf Bowman" ext="120" status="Available" color="blue"><p-msg>night：深底、細框。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">cocoa</div>
+          <ui-contacts for="s2" columns="1" card-theme="cocoa" show-status><p-card name="Brody Hampton" ext="038" status="Available" color="playful"><p-msg>cocoa：bg-alternative 底、無框。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">paper</div>
+          <ui-contacts for="s2" columns="1" card-theme="paper" show-status><p-card name="Jane Leon" ext="131" status="Webmeeting" color="indigo"><p-msg>paper：淺色卡片。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">key</div>
+          <ui-contacts for="s2" columns="1" card-theme="key" show-status><p-card name="James Walker" ext="035" status="Available" color="key"><p-msg>key：key 色框線與名字。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">neon</div>
+          <ui-contacts for="s2" columns="1" card-theme="neon" show-status><p-card name="Ethan Carter" ext="123" status="Not registered" color="energetic"><p-msg>neon：energetic 螢光綠。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">indigo</div>
+          <ui-contacts for="s2" columns="1" card-theme="indigo" show-status><p-card name="Gregory Winters" ext="103" status="Available" color="indigo"><p-msg>indigo：2px 靛藍框。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">dreamy</div>
+          <ui-contacts for="s2" columns="1" card-theme="dreamy" show-status><p-card name="Harley Johnson" ext="037" status="Available" color="pink"><p-msg>dreamy：粉色虛線框。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">double</div>
+          <ui-contacts for="s2" columns="1" card-theme="double" show-status><p-card name="Chandler Muller" ext="031" status="Webmeeting" color="violet"><p-msg>double：雙線框。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">tint（用卡片 color）</div>
+          <ui-contacts for="s2" columns="1" card-theme="tint" show-status><p-card name="Ashley Parks" ext="025" status="Available" color="pink"><p-msg>tint：框線、名字、頭像都用卡片 color。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+        <div><div class="lbl">bar（用卡片 color）</div>
+          <ui-contacts for="s2" columns="1" card-theme="bar" show-status><p-card name="Anthony Freeman" ext="020" status="Available" color="green"><p-msg>bar：左側色條。</p-msg><p-msg>Second message.</p-msg></p-card></ui-contacts></div>
+      </div>
+      <div class="sticky">
+        <ui-stream id="s2" mode="live" height="560" title="拖進來看氣泡顏色" title-size="1rem" animation="pop"></ui-stream>
+      </div>
+    </div>
+    <pre>&lt;ui-contacts card-theme="neon"&gt;…&lt;/ui-contacts&gt;            ← 整組套用
+&lt;p-card card-theme="paper" …&gt;…&lt;/p-card&gt;                  ← 單張覆寫
+&lt;p-card card-theme="bar" color="green" …&gt;…&lt;/p-card&gt;      ← tint、bar 會用卡片的 color
+
+可用值：night、cocoa、paper、key、neon、indigo、dreamy、double、tint、bar
+優先順序：p-card 個別屬性 → p-card 的 card-theme → ui-contacts 個別屬性 → ui-contacts 的 card-theme</pre>
+  </section>
+
+  <!-- ══════════ 範例 3 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 3：外觀屬性細調</h2><p>三欄、圓角方形頭像、狀態點放在文字前、隱藏 ⋯、個別卡片覆寫顏色；一組通訊錄同時連到兩個 ui-stream。</p></div>
+    <div class="stage">
+      <div>
+        <ui-contacts for="s3a s3b" columns="3" gap="16" card-theme="cocoa" card-radius="4" card-padding="16px 18px" card-min-height="84"
+                     avatar-size="52" avatar-shape="rounded" name-size="1.05rem" name-weight="700" meta-size="0.8rem"
+                     show-status status-dot="text" show-menu="false" drop-color="yellow" type-all>
+          <p-card name="Examiner" initials="EX" status="Part 1" status-color="key" color="key" side="left" data-style="filled">
+            <p-msg>Let's talk about your hometown. Where is it?</p-msg>
+            <p-msg>What do you like most about living there?</p-msg>
+            <p-msg>Has it changed much since you were a child?</p-msg>
+          </p-card>
+          <p-card name="Band 5" initials="5" status="Candidate" status-color="red" color="red" side="right" card-border-color="red" card-border-width="1">
+            <p-msg>My hometown is Tainan. It is very good.</p-msg>
+            <p-msg>I like the food. The food is very good.</p-msg>
+            <p-msg>Yes, it change a lot.</p-msg>
+          </p-card>
+          <p-card name="Band 8" initials="8" status="Candidate" status-color="green" color="green" side="right" data-style="notch" card-theme="tint">
+            <p-msg>I'm from Tainan, a <mark>laid-back</mark> city in the south of Taiwan.</p-msg>
+            <p-msg>Without a doubt, the street food. It's <mark>second to none</mark>.</p-msg>
+            <p-msg>It has <mark>changed beyond recognition</mark>, especially the old town.</p-msg>
+          </p-card>
+        </ui-contacts>
+      </div>
+      <div class="two" style="gap:16px;">
+        <ui-stream id="s3a" mode="live" height="420" title="教室 A" title-size="1rem" bubble-width="90" font-size="0.9rem"></ui-stream>
+        <ui-stream id="s3b" mode="live" height="420" title="教室 B" title-size="1rem" bubble-width="90" font-size="0.9rem" animation="fade"></ui-stream>
+      </div>
+    </div>
+    <pre>&lt;ui-contacts for="s3a s3b" columns="3" gap="16" card-theme="cocoa" card-radius="4"
+             card-padding="16px 18px" card-min-height="84"
+             avatar-size="52" avatar-shape="rounded" name-size="1.05rem" name-weight="700" meta-size="0.8rem"
+             show-status status-dot="text" show-menu="false" drop-color="yellow" type-all&gt;
+  &lt;p-card name="Examiner" initials="EX" status="Part 1" status-color="key" color="key" data-style="filled"&gt;…&lt;/p-card&gt;
+  &lt;p-card name="Band 5" initials="5" color="red" side="right" card-border-color="red" card-border-width="1"&gt;…&lt;/p-card&gt;
+  &lt;p-card name="Band 8" initials="8" color="green" side="right" data-style="notch" card-theme="tint"&gt;…&lt;/p-card&gt;
+&lt;/ui-contacts&gt;
+
+for 寫多個 id（空白分隔）：拖到哪一個就送到哪一個；點電話圖示送到第一個。</pre>
+  </section>
+
+  <!-- ══════════ 範例 4 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 4：方法與事件</h2><p>用程式送出、查剩餘數、重置；監聽 ui-contacts:send 與 ui-contacts:empty。</p></div>
+    <div class="stage">
+      <div>
+        <div class="btns">
+          <button class="btn btn-outline-info" onclick="c4.send('Amy')">send('Amy')</button>
+          <button class="btn btn-outline-info" onclick="c4.send(1)">send(1)</button>
+          <button class="btn btn-outline-info" onclick="log4.textContent = 'remaining(\'Amy\') = ' + c4.remaining('Amy')">remaining('Amy')</button>
+          <button class="btn btn-outline-info" onclick="log4.textContent = JSON.stringify(c4.cards)">cards</button>
+          <button class="btn btn-outline-info" onclick="c4.reset(); log4.textContent = 'reset()：卡片剩餘數恢復，內容流不清除'">reset()</button>
+        </div>
+        <ui-contacts id="c4" for="s4" columns="2" show-ext="false" show-count>
+          <p-card name="Amy" image="https://i.pravatar.cc/120?img=32" color="violet">
+            <p-msg>I think the river is very beautiful.</p-msg>
+            <p-msg>The river <mark>winds through</mark> the valley.</p-msg>
+          </p-card>
+          <p-card name="老師" icon="mortarboard-fill" color="key" side="right" data-style="filled">
+            <p-msg typed>beautiful 太籠統了，試著描述你看見什麼。</p-msg>
+            <p-msg typed pause="想一想再按" reveal="ans-c4">很好。還能再升級嗎？</p-msg>
+          </p-card>
+        </ui-contacts>
+        <template id="ans-c4"><p><b>參考答案：</b>The river <c-key>meanders</c-key> through the valley, <c-key>lined with willow trees</c-key>.</p></template>
+        <div class="alert alert-dark log" id="log4">事件會顯示在這裡。</div>
+      </div>
+      <ui-stream id="s4" mode="live" height="420" title="方法與事件" title-size="1rem"></ui-stream>
+    </div>
+    <pre>const c = document.getElementById('c4');
+c.send('Amy');      // 依名字、role 或索引送出下一則，回傳 true / false
+c.send(1, 's4');    // 第二個參數可指定 ui-stream 的 id
+c.remaining('Amy'); // 剩餘訊息數
+c.cards;            // [{ name, role, total, sent }, …]
+c.reset();          // 全部卡片恢復；c.reset('Amy') 只恢復一張
+
+c.addEventListener('ui-contacts:send',  e =&gt; e.detail);  // { name, role, index, remaining, card, target }
+c.addEventListener('ui-contacts:empty', e =&gt; e.detail);  // { name, role, card }
+
+&lt;p-msg typed pause="想一想再按" reveal="ans-c4"&gt;…&lt;/p-msg&gt;   ← p-msg 支援 stream-item 的屬性
+
+// 全域預設（載入 ui-contacts.js 之前）
+window.UiContactsConfig = { cardTheme: 'cocoa', showStatus: true, avatarShape: 'rounded' };</pre>
+  </section>
+
+  <!-- ══════════ 屬性總覽 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>屬性總覽</h2><p>數字單位：px；字級：rem 或 CSS 長度；顏色：品牌色名稱或色碼。布林屬性寫 <code>false</code> 可關掉預設開啟的功能。標「可覆寫」的屬性也能寫在 p-card 上。</p></div>
+
+    <h3 class="cat c-key">一、連結與訊息（ui-contacts）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>for</td><td>ui-stream 的 id，可空白分隔多個</td><td>無</td><td>拖放目標。不寫時，頁面上只有一個 ui-stream 就自動用它。點電話圖示送到第一個。</td></tr>
+      <tr><td>type-all</td><td>布林</td><td>關</td><td>所有訊息都逐字打出（可覆寫）。p-msg 寫 <code>typed="false"</code> 可單則關掉。</td></tr>
+      <tr><td>side</td><td>left、right、center</td><td>left</td><td>人物在對話中靠哪一邊（可覆寫）。</td></tr>
+      <tr><td>data-style</td><td>filled、outline、dashed、double、notch、callout</td><td>outline</td><td>人物在對話中的氣泡樣式（可覆寫）。</td></tr>
+    </table>
+
+    <h3 class="cat c-yellow">二、標題與版面（ui-contacts）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>title、title-size、title-weight、title-color</td><td>文字、rem、數字、顏色</td><td>無、1.2rem、700、violet</td><td>標題，與 ui-stream 一致。</td></tr>
+      <tr><td>columns</td><td>整數</td><td>2</td><td>欄數。</td></tr>
+      <tr><td>gap</td><td>px</td><td>12</td><td>卡片間距。</td></tr>
+      <tr><td>card-padding</td><td>CSS padding 值</td><td>12px 14px</td><td>卡片內距。</td></tr>
+      <tr><td>card-radius</td><td>px</td><td>10</td><td>卡片圓角。</td></tr>
+      <tr><td>card-min-height</td><td>px</td><td>自動</td><td>卡片最小高度。</td></tr>
+      <tr><td>avatar-size</td><td>px</td><td>44</td><td>頭像大小。</td></tr>
+      <tr><td>avatar-shape</td><td>circle、rounded、square</td><td>circle</td><td>頭像形狀。</td></tr>
+      <tr><td>name-size、name-weight</td><td>rem、數字</td><td>1rem、600</td><td>名字字級與粗細。</td></tr>
+      <tr><td>meta-size</td><td>rem</td><td>0.85rem</td><td>狀態文字字級。</td></tr>
+    </table>
+
+    <h3 class="cat c-green">三、樣式與色彩（ui-contacts，皆可覆寫）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>card-theme</td><td>night、cocoa、paper、key、neon、indigo、dreamy、double、tint、bar</td><td>night</td><td>預設樣式組合，一次設定下面各項。</td></tr>
+      <tr><td>card-bg</td><td>顏色</td><td>依 theme</td><td>卡片底色。</td></tr>
+      <tr><td>card-border-color</td><td>顏色</td><td>依 theme</td><td>卡片框線色。</td></tr>
+      <tr><td>card-border-width</td><td>px</td><td>依 theme</td><td>卡片框線粗細，0 為無框。</td></tr>
+      <tr><td>card-border-style</td><td>solid、dashed、double</td><td>依 theme</td><td>卡片框線樣式。</td></tr>
+      <tr><td>card-bar</td><td>px</td><td>依 theme</td><td>左側色條寬度，顏色用卡片 color。</td></tr>
+      <tr><td>name-color、meta-color、icon-color</td><td>顏色</td><td>依 theme</td><td>名字、狀態文字與分機、⋯ 與電話圖示的顏色。</td></tr>
+      <tr><td>avatar-bg、avatar-text-color</td><td>顏色</td><td>依 theme</td><td>縮寫或圖示頭像的底色與文字色。</td></tr>
+      <tr><td>hover-color</td><td>顏色</td><td>依 theme</td><td>滑鼠移上卡片的外框色。</td></tr>
+      <tr><td>drop-color</td><td>顏色</td><td>key</td><td>拖曳時目標 ui-stream 的提示框線色（只寫在 ui-contacts）。</td></tr>
+    </table>
+
+    <h3 class="cat c-blue">四、顯示開關（ui-contacts，皆可覆寫）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>show-status</td><td>布林</td><td>關</td><td>顯示狀態點與狀態文字。</td></tr>
+      <tr><td>status-dot</td><td>avatar、text</td><td>avatar</td><td>狀態點放在頭像右下角，或狀態文字前面。</td></tr>
+      <tr><td>show-ext</td><td>布林</td><td>開</td><td>名字後面顯示分機號碼。</td></tr>
+      <tr><td>show-menu</td><td>布林</td><td>開</td><td>⋯ 選單，點開預覽這個人的訊息。</td></tr>
+      <tr><td>show-call</td><td>布林</td><td>開</td><td>電話圖示，點了送出下一則。</td></tr>
+      <tr><td>show-count</td><td>布林</td><td>開</td><td>剩餘訊息數。</td></tr>
+    </table>
+
+    <h3 class="cat c-playful">五、人物（p-card）與訊息（p-msg）</h3>
+    <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+      <tr><td>p-card name</td><td>文字</td><td>必填</td><td>人物名字，也是對話中顯示的名稱。</td></tr>
+      <tr><td>p-card role</td><td>文字</td><td>由 name 產生</td><td>在 ui-stream 註冊的角色代號。兩組通訊錄有同名人物又要分開設定時才需要寫。</td></tr>
+      <tr><td>p-card ext</td><td>文字</td><td>無</td><td>分機號碼。</td></tr>
+      <tr><td>p-card status</td><td>文字</td><td>無</td><td>狀態文字，純裝飾。</td></tr>
+      <tr><td>p-card status-color</td><td>顏色</td><td>自動</td><td>狀態點顏色。不寫時依文字判斷：Available 綠、Meeting／Busy 紫、Away 黃、DND 紅、其他灰。</td></tr>
+      <tr><td>p-card image、initials、icon</td><td>網址、文字、Bootstrap Icons 名稱</td><td>名字縮寫</td><td>頭像。都不寫時取名字前兩個字的字首，例如 Dolly The Horse 為 DT。對話中的頭像同步。</td></tr>
+      <tr><td>p-card color</td><td>顏色</td><td>自動輪替</td><td>人物主色：對話中的氣泡、頭像色，也用於剩餘數、色條、tint 樣式。</td></tr>
+      <tr><td>p-card text-color、text-align</td><td>顏色、對齊</td><td>無</td><td>對話中氣泡的文字色與對齊。</td></tr>
+      <tr><td>p-msg 內容</td><td>HTML</td><td></td><td>訊息內容，可用 mark、c-key 等色名標籤。</td></tr>
+      <tr><td>p-msg 屬性</td><td colspan="3">typed、time、badge、badge-color、speed、delay、gap、highlight、color、side、data-style、text-align、pause、reveal、reveal-target，意思同 stream-item。</td></tr>
+    </table>
+
+    <h3 class="cat">六、方法、事件與全域設定</h3>
+    <table class="attr"><tr><th>項目</th><th colspan="3">說明</th></tr>
+      <tr><td>方法</td><td colspan="3">send(who, targetId?)、remaining(who)、reset(who?)；who 可以是名字、role、索引或 p-card 元素。唯讀屬性 cards。</td></tr>
+      <tr><td>事件</td><td colspan="3">ui-contacts:send <code>{ name, role, index, remaining, card, target }</code>、ui-contacts:empty <code>{ name, role, card }</code>，都會冒泡。</td></tr>
+      <tr><td>UiContactsConfig</td><td colspan="3">載入前設定 window.UiContactsConfig，欄位同屬性的駝峰寫法。載入後可讀 window.UiContacts.themes 查看所有樣式組合。</td></tr>
+      <tr><td>操作</td><td colspan="3">拖放用 pointer events，滑鼠與觸控都能用。卡片上不能捲動頁面（觸控時請在卡片外滑動）。訊息用完的卡片改為灰階虛線框，不能再拖。</td></tr>
+    </table>
+  </section>
+</div>
+
+<script src="ui-stream.js"></script>
+<script src="ui-contacts.js"></script>
+<script>
+  const log1 = document.getElementById('log1');
+  document.getElementById('c1').addEventListener('ui-contacts:send', e => {
+    const d = e.detail; log1.textContent = `ui-contacts:send → ${d.name} 第 ${d.index + 1} 則，剩 ${d.remaining} 則，送到 #${d.target.id}`;
+  });
+  document.getElementById('c1').addEventListener('ui-contacts:empty', e => { log1.textContent += `；ui-contacts:empty → ${e.detail.name} 的訊息用完了`; });
+  const c4 = document.getElementById('c4'), log4 = document.getElementById('log4');
+  c4.addEventListener('ui-contacts:send', e => { const d = Object.assign({}, e.detail); delete d.card; d.target = '#' + d.target.id; log4.textContent = 'ui-contacts:send → ' + JSON.stringify(d); });
+  c4.addEventListener('ui-contacts:empty', e => { log4.textContent += '；ui-contacts:empty → ' + e.detail.name; });
+</script>
+</body>
+</html>

@@ -9,7 +9,8 @@
   const fs = v => /^\d*\.?\d+$/.test(String(v)) ? v + 'rem' : v;
 
   const DEFAULTS = {
-    /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, typeAll: false, step: false,
+    /* 模式 */ mode: '',
+    /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, scrollSpace: 48, typeAll: false, step: false,
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
     /* 版面 */ height: 0, gap: 14, gapSame: -1, gapSystem: -1, padding: 16, bubbleWidth: 78, bubbleRadius: 12, bubblePadding: '10px 14px', lineHeight: 1.6,
                fontSize: '1rem', metaSize: '0.75rem', bordered: true, borderWidth: 1, bubbleBorderWidth: 0, textAlign: '', avatar: true, avatarSize: 36, avatarPosition: 'top', avatarRepeat: 'all',
@@ -20,11 +21,11 @@
   };
   const CFG = Object.assign({}, DEFAULTS, window.UiStreamConfig || {});
 
-  /* ── 內建角色 ── side = 氣泡靠哪邊；style = filled | outline | dashed | double | notch | callout */
+  /* ── 內建角色 ── side = 氣泡靠哪邊；dataStyle = filled | outline | dashed | double | notch | callout */
   const BUILTIN_ROLES = {
-    teacher: { color: 'teacherColor', icon: 'mortarboard-fill', side: 'right', style: 'filled' },
-    student: { color: 'studentColor', icon: 'person-fill', side: 'left', style: 'outline' },
-    system:  { color: 'systemColor', icon: '', side: 'center', style: 'dashed' }
+    teacher: { color: 'teacherColor', icon: 'mortarboard-fill', side: 'right', dataStyle: 'filled' },
+    student: { color: 'studentColor', icon: 'person-fill', side: 'left', dataStyle: 'outline' },
+    system:  { color: 'systemColor', icon: '', side: 'center', dataStyle: 'dashed' }
   };
 
   const CSS = `
@@ -44,6 +45,8 @@ ui-stream .us-prog i{display:block;height:100%;width:0;background:var(--us-accen
 ui-stream .us-feed{flex:1 1 auto;overflow:auto;padding:var(--us-pad);display:flex;flex-direction:column;scroll-behavior:smooth;}
 ui-stream .us-feed > *{margin:var(--us-mt,0) 0 0 0;}
 ui-stream .us-feed > :first-child{margin-top:0;}
+/* 固定高度時，內容流底部留白（scroll-space），捲到底時最後一行下方仍有空間 */
+ui-stream .us-wrap.us-fixed .us-feed::after{content:'';display:block;flex:0 0 var(--us-ss);min-height:var(--us-ss);}
 ui-stream .us-msg{display:flex;gap:10px;max-width:var(--us-bw);opacity:0;transition:opacity .35s,transform .35s;}
 ui-stream[avatar-position="bottom"] .us-msg{align-items:flex-end;}
 ui-stream[animation="slide"] .us-msg.us-left{transform:translateX(-24px);}
@@ -55,6 +58,7 @@ ui-stream .us-msg.us-center{align-self:center;max-width:90%;}
 ui-stream .us-feed .us-msg.on{opacity:1;transform:none;}
 ui-stream .us-avatar{flex:0 0 var(--us-av);width:var(--us-av);height:var(--us-av);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:calc(var(--us-av) * 0.5);color:${PALETTE.base};background:var(--us-c);overflow:hidden;}
 ui-stream .us-avatar img{width:100%;height:100%;object-fit:cover;}
+ui-stream .us-avatar .us-ini{font-size:calc(var(--us-av) * 0.38);font-weight:700;line-height:1;letter-spacing:0;}
 ui-stream .us-avatar.us-av-blank{visibility:hidden;}
 ui-stream .us-body{min-width:0;}
 ui-stream .us-meta{font-size:var(--us-ms);color:${PALETTE.gray};margin:0 0 4px 0;display:flex;gap:8px;align-items:baseline;}
@@ -142,13 +146,15 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
         const v = this.getAttribute(attr);
         this._opt[k] = typeof DEFAULTS[k] === 'boolean' ? v !== 'false' : typeof DEFAULTS[k] === 'number' ? num(v, CFG[k]) : v;
       });
+      if (String(this._opt.mode).toLowerCase() === 'live') { this._live = true; Object.assign(this._opt, { controls: false, loop: false, autoplay: false, start: 0 }); }
       ['animation', 'avatar-position'].forEach(a => { const k = a.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); if (!this.hasAttribute(a)) this.setAttribute(a, this._opt[k]); });
       if (this._opt.markColor && !this.hasAttribute('mark-color')) this.setAttribute('mark-color', this._opt.markColor);
       if (!this._opt.markColor) this.removeAttribute('mark-color');
 
       this._roles = {};
       Object.entries(BUILTIN_ROLES).forEach(([n, r]) => { this._roles[n] = Object.assign({}, r, { color: color(this._opt[r.color]) }); });
-      this.querySelectorAll(':scope > stream-role').forEach(r => this._addRole(r.getAttribute('name'), { color: r.getAttribute('color'), icon: r.getAttribute('icon'), side: r.getAttribute('side'), style: r.getAttribute('style'), label: r.getAttribute('label'), image: r.getAttribute('image'), textColor: r.getAttribute('text-color'), textAlign: r.getAttribute('text-align') }));
+      this.querySelectorAll(':scope > stream-role').forEach(r => this._addRole(r.getAttribute('name'), { color: r.getAttribute('color'), icon: r.getAttribute('icon'), side: r.getAttribute('side'), dataStyle: r.getAttribute('data-style'), label: r.getAttribute('label'), image: r.getAttribute('image'), initials: r.getAttribute('initials'), textColor: r.getAttribute('text-color'), textAlign: r.getAttribute('text-align') }));
+      (this._pendingRoles || []).forEach(([n, r]) => this._addRole(n, r)); this._pendingRoles = null;
 
       this._title = this.getAttribute('title'); this.removeAttribute('title');
       this._rate = 1;
@@ -160,11 +166,14 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
 
     _addRole(name, r) {
       if (!name) return;
-      const base = this._roles[name] || { icon: 'person-fill', side: 'left', style: 'outline' };
-      this._roles[name] = { color: r.color ? color(r.color) : (base.color || PALETTE.shell), icon: r.icon != null ? r.icon : base.icon, side: r.side || base.side, style: r.style || base.style, label: r.label || base.label, image: r.image || base.image, textColor: r.textColor ? color(r.textColor) : base.textColor, textAlign: r.textAlign || base.textAlign };
+      r = r || {}; name = String(name).toLowerCase();
+      const base = this._roles[name] || { icon: 'person-fill', side: 'left', dataStyle: 'outline' };
+      this._roles[name] = { color: r.color ? color(r.color) : (base.color || PALETTE.shell), icon: r.icon != null ? r.icon : base.icon, side: r.side || base.side, dataStyle: r.dataStyle || base.dataStyle, label: r.label || base.label, image: r.image || base.image, initials: r.initials || base.initials, textColor: r.textColor ? color(r.textColor) : base.textColor, textAlign: r.textAlign || base.textAlign };
     }
     _normItem(d) {
-      return Object.assign({ from: 'student', name: '', time: '', typed: false, html: '' }, d, { from: (d.from || 'student').toLowerCase(), html: d.html != null ? d.html : (d.text || '') });
+      const n = Object.assign({ from: 'student', name: '', time: '', typed: false, html: '' }, d, { from: (d.from || 'student').toLowerCase(), html: d.html != null ? d.html : (d.text || '') });
+      if (n.typed === 'false') n.typed = false;
+      return n;
     }
     _fromMarkup() {
       this._src = [...this.querySelectorAll(':scope > stream-item')].map(it => {
@@ -172,7 +181,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
         const html = srcEl ? (srcEl.content ? [...srcEl.content.childNodes].map(n => n.outerHTML || n.textContent).join('') : srcEl.innerHTML) : it.innerHTML;
         return this._normItem({
           from: it.getAttribute('from'), name: it.getAttribute('name'), time: it.getAttribute('time'),
-          icon: it.getAttribute('icon'), image: it.getAttribute('image'), badge: it.getAttribute('badge'), badgeColor: it.getAttribute('badge-color'), color: it.getAttribute('color'),
+          icon: it.getAttribute('icon'), image: it.getAttribute('image'), initials: it.getAttribute('initials'), side: it.getAttribute('side'), dataStyle: it.getAttribute('data-style'), badge: it.getAttribute('badge'), badgeColor: it.getAttribute('badge-color'), color: it.getAttribute('color'),
           typed: it.hasAttribute('typed'), speed: it.getAttribute('speed'), delay: it.getAttribute('delay'), gap: it.getAttribute('gap'), highlight: it.hasAttribute('highlight'),
           pause: it.getAttribute('pause'), reveal: it.getAttribute('reveal'), revealTarget: it.getAttribute('reveal-target'), textAlign: it.getAttribute('text-align'),
           html: srcId && !srcEl ? `<span class="us-err">找不到 #${srcId}</span>` : html
@@ -200,7 +209,9 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       if (this._title) this.appendChild(el('div', 'us-title', this._title));
       const wrap = el('div', 'us-wrap' + (o.bordered ? '' : ' us-noborder') + (o.controlsPosition === 'bottom' ? ' us-cbottom' : ''));
       this._wrap = wrap;
-      if (o.height) wrap.style.height = o.height + 'px';
+      if (o.height) { wrap.style.height = o.height + 'px'; wrap.classList.add('us-fixed'); }
+      sv('--us-ss', Math.max(0, o.scrollSpace) + 'px');
+      if (this._live) wrap.classList.add('us-live');
       if (o.controls) {
         const bar = el('div', 'us-bar'); const L = String(o.labels).split(',');
         const mk = (ic, t, fn) => { const b = el('button'); b.innerHTML = `<i class="bi bi-${ic}"></i> ${t || ''}`.trim(); b.onclick = fn; return b; };
@@ -221,6 +232,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       this.setAttribute('data-ready', '');
       this._i = 0; this._playing = false; this._typing = null; this._prev = null;
       this._update();
+      if (this._live) { while (this._i < this._src.length) this._show(true, true); this._update(); return; }
       if (o.start > 0) this.goto(o.start);
       if (o.autoplay) this.play();
     }
@@ -239,6 +251,10 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       if (format === 'html') return msgs.map(m => m.outerHTML).join('\n');
       return msgs.map(m => { const nm = m.querySelector('.us-meta b'), t = m.querySelector('.us-meta span:not(.us-badge)'); const head = [nm && nm.textContent, t && t.textContent].filter(Boolean).join(' '); return (head ? head + '：' : '') + m.querySelector('.us-bubble').textContent.trim(); }).join('\n');
     }
+    /* 從外部註冊或更新角色；opts 鍵名同 stream-role 屬性的駝峰式，例如 dataStyle、textColor */
+    addRole(name, opts) { if (!this._roles) { (this._pendingRoles = this._pendingRoles || []).push([name, opts || {}]); return; } this._addRole(name, opts || {}); }
+    hasRole(name) { return !!(this._roles && this._roles[String(name).toLowerCase()]); }
+    get live() { return !!this._live; }
     get index() { return this._i; }
     get total() { return this._src.length; }
 
@@ -248,7 +264,17 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       if (this._btnPlay) { const L = this._labels; this._btnPlay.innerHTML = this._playing ? `<i class="bi bi-pause-fill"></i> ${L[1] || ''}` : `<i class="bi bi-play-fill"></i> ${L[0] || ''}`; this._btnPlay.classList.toggle('on', this._playing); }
     }
     _clearPause() { this._feed.querySelectorAll('.us-pause').forEach(p => p.remove()); this._wrap.querySelectorAll('.us-overlay').forEach(p => p.remove()); }
-    _scroll() { if (this._opt.autoScroll) this._feed.scrollTop = this._feed.scrollHeight; }
+    _scroll() {
+      if (!this._opt.autoScroll) return;
+      if (this._opt.height) { this._feed.scrollTop = this._feed.scrollHeight; return; }
+      /* 沒設 height：元件往下長，改捲動整個頁面，讓最後一行加上 scroll-space 留在視窗內。
+         只有元件目前在畫面上時才捲，避免同頁多個元件搶著捲動 */
+      const r = this._wrap.getBoundingClientRect(), vh = window.innerHeight;
+      if (r.bottom <= 0 || r.top >= vh) return;
+      /* 用絕對位置計算目標，連續呼叫時不會因平滑捲動尚未結束而累加過頭 */
+      const target = Math.round(window.scrollY + r.bottom + Math.max(0, this._opt.scrollSpace) - vh);
+      if (target > window.scrollY + 1) window.scrollTo({ top: target, behavior: 'smooth' });
+    }
     _ms(v) { return v / this._rate; }
     _gapFor(d, role) {
       const o = this._opt;
@@ -267,9 +293,10 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
         return;
       }
       const d = this._src[this._i], idx = this._i++;
-      const role = this._roles[d.from] || this._roles.student;
+      const role0 = this._roles[d.from] || this._roles.student;
+      const role = Object.assign({}, role0, { side: d.side || role0.side, dataStyle: d.dataStyle || role0.dataStyle });
       const c = d.color ? color(d.color) : role.color;
-      const msg = el('div', `us-msg us-${role.side} us-${role.style}`); msg.style.setProperty('--us-c', c);
+      const msg = el('div', `us-msg us-${role.side} us-${role.dataStyle}`); msg.style.setProperty('--us-c', c);
       msg.style.setProperty('--us-mt', this._gapFor(d, role) + 'px');
       if (role.textColor) msg.style.setProperty('--us-rt', role.textColor);
       if (d.badgeColor) msg.style.setProperty('--us-badge', color(d.badgeColor));
@@ -279,7 +306,9 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       this._prev = { from: d.from, side: role.side };
       if (role.side !== 'center' && this._opt.avatar) {
         const av = el('div', 'us-avatar'); const img = d.image || role.image;
+        const ini = d.initials || role.initials;
         if (img) { const im = el('img'); im.src = img; im.alt = d.name || ''; av.append(im); }
+        else if (ini) av.append(el('span', 'us-ini', ini));
         else av.innerHTML = `<i class="bi bi-${d.icon || role.icon || 'person-fill'}"></i>`;
         if (same && rep === 'first') av.classList.add('us-av-blank');
         if (same && rep === 'last' && this._prevMsg) { const pa = this._prevMsg.querySelector('.us-avatar'); if (pa) pa.classList.add('us-av-blank'); }
