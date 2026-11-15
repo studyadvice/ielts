@@ -24,7 +24,7 @@
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7', red: '#EF6661',
     green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8', gray: '#86877F',
     key: '#51DBCF', calm: '#A3C4BC', quiet: '#8EA4DE', playful: '#FFA987', urgent: '#FF2E63',
-    energetic: '#B6FF00', dreamy: '#DE8EC9'
+    energetic: '#B6FF00', dreamy: '#C394CD', salmon: '#FFC88A'
   };
   const color = (v) => { if (!v) return ''; const t = String(v).trim(); return PALETTE[t.toLowerCase()] || t; };
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
@@ -34,9 +34,9 @@
   /* 主題：cycle 為固定色循環，ramp 為依項目數重新計算的漸層 */
   const BASE_UI = { bg: '#0C0D0C', line: '#3B2A20', heading: '#DBEDD8', sub: '#86877F', text: '#C6C7BD', more: '#86877F' };
   const THEMES = {
-    arc: Object.assign({ cycle: ['#51DBCF', '#5DBAE8', '#8EA4DE', '#778CE1', '#B484E8', '#DE8EC9', '#FF91D7', '#FFA987'] }, BASE_UI),
+    arc: Object.assign({ cycle: ['#51DBCF', '#5DBAE8', '#8EA4DE', '#778CE1', '#B484E8', '#C394CD', '#FF91D7', '#FFA987'] }, BASE_UI),
     cool: Object.assign({ cycle: ['#B6FF00', '#71CD76', '#51DBCF', '#A3C4BC', '#5DBAE8', '#8EA4DE', '#778CE1', '#B484E8'] }, BASE_UI),
-    warm: Object.assign({ cycle: ['#E3D322', '#FFA987', '#EF6661', '#FF2E63', '#FF91D7', '#DE8EC9', '#B484E8', '#778CE1'] }, BASE_UI),
+    warm: Object.assign({ cycle: ['#E3D322', '#FFA987', '#EF6661', '#FF2E63', '#FF91D7', '#C394CD', '#B484E8', '#778CE1'] }, BASE_UI),
     ember: { ramp: ['#FFD27A', '#DD7350', '#5A2C40'], bg: '#121014', line: '#2A2228', heading: '#F5EFE4', sub: '#8C8478', text: '#EDE6DA', more: '#8C8478' },
     ocean: { ramp: ['#A8F0E6', '#3FA7C9', '#1F4E79'], bg: '#0A1116', line: '#1C2A33', heading: '#E4F4F7', sub: '#7C939C', text: '#CFE3E8', more: '#7C939C' },
     forest: { ramp: ['#D8F28A', '#6DBE6A', '#2D5E3E'], bg: '#0D120E', line: '#1F2A21', heading: '#E9F2E1', sub: '#87947F', text: '#D3DFCB', more: '#87947F' },
@@ -357,7 +357,7 @@ ui-timeline.tlx-click{cursor:pointer;}
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#C394CD', salmon:'#FFC88A' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

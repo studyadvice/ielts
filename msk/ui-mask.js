@@ -10,7 +10,8 @@
     calm: '#A3C4BC', quiet: '#8EA4DE', playful: '#FFA987',
     urgent: '#FF2E63',
     energetic: '#B6FF00',
-    dreamy: '#DE8EC9',
+    dreamy: '#C394CD',
+    salmon: '#FFC88A',
     'bg-alternative': '#3B2A20'
   };
 

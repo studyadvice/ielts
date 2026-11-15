@@ -21,7 +21,8 @@
     playful: '#FFA987',
     urgent: '#FF2E63',
     energetic: '#B6FF00',
-    dreamy: '#DE8EC9',
+    dreamy: '#C394CD',
+    salmon: '#FFC88A',
     'bg-alternative': '#3B2A20',
   };
 
@@ -887,7 +888,7 @@
     playful   : { bg: '#221B17', titleColor: PALETTE['playful'], borderColor: PALETTE['playful'] },
     urgent    : { bg: '#221014', titleColor: PALETTE['urgent'], borderColor: PALETTE['urgent'] },
     energetic : { bg: '#1A2108', titleColor: PALETTE['energetic'], borderColor: PALETTE['energetic'] },
-    dreamy    : { bg: '#21171E', titleColor: PALETTE['dreamy'], borderColor: PALETTE['dreamy'] },
+    dreamy    : { bg: '#1E1B1F', titleColor: PALETTE['dreamy'], borderColor: PALETTE['dreamy'] },
     /* 金色電流：fx 為動畫種類，fxCore 是電流亮點色，fxDim 是電流環的暗部色 */
     gold      : { bg: '#1A1200', titleColor: '#EFD9A2', borderColor: PALETTE.gold,
                   fx: 'electric', fxCore: PALETTE.vanilla, fxDim: '#6B4F12' },
@@ -1919,7 +1920,7 @@
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
-  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#DE8EC9' };
+  var COLORS = { shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#C394CD', salmon:'#FFC88A' };
   var css = [];
   Object.keys(COLORS).forEach(function (k) { css.push('c-' + k + '{color:' + COLORS[k] + '}'); });
   var s = document.createElement('style'); s.id = 'ui-color-tags'; s.textContent = css.join('\n');

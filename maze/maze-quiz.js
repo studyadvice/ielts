@@ -83,12 +83,12 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
     wall: '#C6C7BD', route: '#51DBCF', head: '#B6FF00', entry: '#71CD76', exit: '#FF91D7'
   };
   const CONFETTI_COLORS = ['#E3D322', '#FF91D7', '#EF6661', '#71CD76', '#5DBAE8', '#778CE1',
-    '#B484E8', '#51DBCF', '#FFA987', '#B6FF00', '#DE8EC9', '#FF2E63'];
+    '#B484E8', '#51DBCF', '#FFA987', '#B6FF00', '#C394CD', '#FF2E63'];
   const PALETTE = {
     'background': '#0C0D0C', 'bg-alternative': '#3B2A20', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
     'yellow': '#E3D322', 'pink': '#FF91D7', 'red': '#EF6661', 'green': '#71CD76', 'blue': '#5DBAE8',
     'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F', 'key': '#51DBCF', 'calm': '#A3C4BC',
-    'quiet': '#8EA4DE', 'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#DE8EC9'
+    'quiet': '#8EA4DE', 'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#C394CD', 'salmon': '#FFC88A'
   };
   const BTN_SIZES = { sm: 0.875, md: 1, lg: 1.25, xl: 1.5 };
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));

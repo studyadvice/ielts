@@ -1,6 +1,6 @@
-/* ── 品牌色票（19 色）
+/* ── 品牌色票（20 色）
    底色 2 色：base（別名 background）、bg-alternative
-   品牌色 17 色：shell vanilla yellow pink red green blue indigo violet gray key calm quiet playful urgent energetic dreamy
+   品牌色 18 色：shell vanilla yellow pink red green blue indigo violet gray key calm quiet playful urgent energetic dreamy salmon
    輔助色（不屬於品牌色票，只用於元件內部深色底與滑過狀態）：fill、fill-hover ── */
 :root {
   --bp-base:       #0C0D0C;
@@ -15,7 +15,8 @@
   --bp-pink:        #FF91D7;
   --bp-red:         #EF6661;
   --bp-energetic:      #B6FF00;
-  --bp-dreamy:      #DE8EC9;
+  --bp-dreamy:      #C394CD;
+  --bp-salmon:     #FFC88A;
   --bp-green:       #71CD76;
   --bp-blue:        #5DBAE8;
   --bp-indigo:      #778CE1;
@@ -41,6 +42,7 @@
 .bp-text-red      { color: var(--bp-red); }
 .bp-text-energetic   { color: var(--bp-energetic); }
 .bp-text-dreamy   { color: var(--bp-dreamy); }
+.bp-text-salmon  { color: var(--bp-salmon); }
 .bp-text-green    { color: var(--bp-green); }
 .bp-text-blue     { color: var(--bp-blue); }
 .bp-text-indigo   { color: var(--bp-indigo); }
@@ -65,6 +67,7 @@
 .bp-bg-red      { background-color: var(--bp-red); }
 .bp-bg-energetic   { background-color: var(--bp-energetic); }
 .bp-bg-dreamy   { background-color: var(--bp-dreamy); }
+.bp-bg-salmon  { background-color: var(--bp-salmon); }
 .bp-bg-green    { background-color: var(--bp-green); }
 .bp-bg-blue     { background-color: var(--bp-blue); }
 .bp-bg-indigo   { background-color: var(--bp-indigo); }
@@ -89,6 +92,7 @@
 .bp-border-red      { border: 1px solid var(--bp-red); }
 .bp-border-energetic   { border: 1px solid var(--bp-energetic); }
 .bp-border-dreamy   { border: 1px solid var(--bp-dreamy); }
+.bp-border-salmon  { border: 1px solid var(--bp-salmon); }
 .bp-border-green    { border: 1px solid var(--bp-green); }
 .bp-border-blue     { border: 1px solid var(--bp-blue); }
 .bp-border-indigo   { border: 1px solid var(--bp-indigo); }
@@ -258,6 +262,7 @@ blockquote::before {
 .bp-hatch-red      { --hatch-color: var(--bp-red); }
 .bp-hatch-energetic   { --hatch-color: var(--bp-energetic); }
 .bp-hatch-dreamy   { --hatch-color: var(--bp-dreamy); }
+.bp-hatch-salmon  { --hatch-color: var(--bp-salmon); }
 .bp-hatch-green    { --hatch-color: var(--bp-green); }
 .bp-hatch-blue     { --hatch-color: var(--bp-blue); }
 .bp-hatch-indigo   { --hatch-color: var(--bp-indigo); }
@@ -363,11 +368,11 @@ blockquote::before {
   --bs-btn-focus-shadow-rgb: 182, 255, 0;
 }
 .btn-dreamy {
-  --bs-btn-color: #0C0D0C; --bs-btn-bg: #DE8EC9; --bs-btn-border-color: #DE8EC9;
-  --bs-btn-hover-color: #0C0D0C; --bs-btn-hover-bg: #E39FD1; --bs-btn-hover-border-color: #E39FD1;
-  --bs-btn-active-color: #0C0D0C; --bs-btn-active-bg: #BD79AB; --bs-btn-active-border-color: #BD79AB;
-  --bs-btn-disabled-color: #0C0D0C; --bs-btn-disabled-bg: #DE8EC9; --bs-btn-disabled-border-color: #DE8EC9;
-  --bs-btn-focus-shadow-rgb: 222, 142, 201;
+  --bs-btn-color: #0C0D0C; --bs-btn-bg: #C394CD; --bs-btn-border-color: #C394CD;
+  --bs-btn-hover-color: #0C0D0C; --bs-btn-hover-bg: #CCA4D4; --bs-btn-hover-border-color: #CCA4D4;
+  --bs-btn-active-color: #0C0D0C; --bs-btn-active-bg: #A67EAE; --bs-btn-active-border-color: #A67EAE;
+  --bs-btn-disabled-color: #0C0D0C; --bs-btn-disabled-bg: #C394CD; --bs-btn-disabled-border-color: #C394CD;
+  --bs-btn-focus-shadow-rgb: 195, 148, 205;
 }
 .btn-energetic-outline {
   --bs-btn-color: #B6FF00; --bs-btn-bg: transparent; --bs-btn-border-color: #B6FF00;
@@ -377,11 +382,25 @@ blockquote::before {
   --bs-btn-focus-shadow-rgb: 182, 255, 0;
 }
 .btn-dreamy-outline {
-  --bs-btn-color: #DE8EC9; --bs-btn-bg: transparent; --bs-btn-border-color: #DE8EC9;
-  --bs-btn-hover-color: #0C0D0C; --bs-btn-hover-bg: #DE8EC9; --bs-btn-hover-border-color: #DE8EC9;
-  --bs-btn-active-color: #0C0D0C; --bs-btn-active-bg: #BD79AB; --bs-btn-active-border-color: #BD79AB;
-  --bs-btn-disabled-color: #DE8EC9; --bs-btn-disabled-bg: transparent; --bs-btn-disabled-border-color: #DE8EC9;
-  --bs-btn-focus-shadow-rgb: 222, 142, 201;
+  --bs-btn-color: #C394CD; --bs-btn-bg: transparent; --bs-btn-border-color: #C394CD;
+  --bs-btn-hover-color: #0C0D0C; --bs-btn-hover-bg: #C394CD; --bs-btn-hover-border-color: #C394CD;
+  --bs-btn-active-color: #0C0D0C; --bs-btn-active-bg: #A67EAE; --bs-btn-active-border-color: #A67EAE;
+  --bs-btn-disabled-color: #C394CD; --bs-btn-disabled-bg: transparent; --bs-btn-disabled-border-color: #C394CD;
+  --bs-btn-focus-shadow-rgb: 195, 148, 205;
+}
+.btn-salmon {
+  --bs-btn-color: #0C0D0C; --bs-btn-bg: #FFC88A; --bs-btn-border-color: #FFC88A;
+  --bs-btn-hover-color: #0C0D0C; --bs-btn-hover-bg: #FFD09C; --bs-btn-hover-border-color: #FFD09C;
+  --bs-btn-active-color: #0C0D0C; --bs-btn-active-bg: #D9AA75; --bs-btn-active-border-color: #D9AA75;
+  --bs-btn-disabled-color: #0C0D0C; --bs-btn-disabled-bg: #FFC88A; --bs-btn-disabled-border-color: #FFC88A;
+  --bs-btn-focus-shadow-rgb: 255, 200, 138;
+}
+.btn-salmon-outline {
+  --bs-btn-color: #FFC88A; --bs-btn-bg: transparent; --bs-btn-border-color: #FFC88A;
+  --bs-btn-hover-color: #0C0D0C; --bs-btn-hover-bg: #FFC88A; --bs-btn-hover-border-color: #FFC88A;
+  --bs-btn-active-color: #0C0D0C; --bs-btn-active-bg: #D9AA75; --bs-btn-active-border-color: #D9AA75;
+  --bs-btn-disabled-color: #FFC88A; --bs-btn-disabled-bg: transparent; --bs-btn-disabled-border-color: #FFC88A;
+  --bs-btn-focus-shadow-rgb: 255, 200, 138;
 }
 .btn-green {
   --bs-btn-color: #0C0D0C; --bs-btn-bg: #71CD76; --bs-btn-border-color: #71CD76;
