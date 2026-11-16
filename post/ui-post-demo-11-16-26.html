@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-post：stamp-fx、note-fx 特效（11-16-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 20px 0;}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px 0;}
+  .toc a{border:1px solid #3B2A20;border-radius:999px;padding:4px 14px;color:#DBEDD8;text-decoration:none;font-size:0.9rem;}
+  .toc a:hover{border-color:#51DBCF;color:#51DBCF;}
+  h2.part{font-size:1.45rem;font-weight:800;color:#E3D322;margin:56px 0 24px 0;padding:0 0 10px 0;border-bottom:2px solid #3B2A20;}
+  section{margin:0 0 56px 0;}
+  .sec-title{display:flex;align-items:baseline;gap:12px;margin:0 0 14px 0;}
+  .sec-title h2{font-size:1.25rem;font-weight:700;color:#B484E8;margin:0;flex:0 0 auto;}
+  .sec-title p{margin:0 0 0 auto;font-size:0.85rem;color:#86877F;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:0;white-space:pre-wrap;}
+  pre code{color:inherit;font-size:inherit;}
+  .cap{font-size:0.8rem;color:#86877F;margin:0 0 6px 0;}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px 0;}
+  .btns .btn{font-size:0.85rem;}
+  .log{margin:12px 0 0 0;font-size:0.9rem;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;margin:0 0 28px 0;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;font-weight:700;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#E3D322;white-space:nowrap;}
+  h3.cat{font-size:1.05rem;font-weight:700;margin:24px 0 8px 0;padding:0 0 0 12px;border-left:4px solid #FF91D7;color:#FF91D7;}
+  h3.cat.c-key{border-color:#51DBCF;color:#51DBCF;}
+  .diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .diff h4{font-size:0.95rem;margin:0 0 8px 0;}
+  .diff h4.old{color:#EF6661;}.diff h4.new{color:#71CD76;}
+  .stage-w{max-width:720px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;ui-post&gt;</code>：stamp-fx 蓋章與 note-fx 評語</h1>
+  <p class="sub">在 post-item 裡寫 <code>&lt;stamp-fx&gt;</code>、<code>&lt;note-fx&gt;</code>，留言出現後依序執行。寫法與 ui-play 相同，程式碼內建在 ui-post.js，不需要載入 ui-play.js。前一版範例見 <a href="ui-post-demo-11-15-26.html" style="color:#51DBCF">ui-post-demo-11-15-26.html</a>。</p>
+  <nav class="toc"><a href="#ex">範例 1 到 5</a><a href="#attrs">屬性總覽</a><a href="#diff">版本對照</a></nav>
+
+  <h2 class="part" id="ex">範例</h2>
+  <section>
+    <div class="sec-title"><h2>範例 1：每則留言出現後蓋章、加評語</h2><p>最佳回答置頂時，章和評語會跟著留言一起移動。試著按暫停或切換 0.5×、2×。</p></div>
+    <div class="two">
+      <div class="stage-w">
+<ui-post id="p1" author="IELTS Coach" avatar="IC" time="2h" likes="86" width="680" item-delay="500">
+  Some people think social media makes us lonely. Do you agree?
+  <post-item author="Emma" likes="12" time="1h">I think social media <b>make</b> people lonely because they stop talking face to face.
+    <note-fx text="make">主詞是單數，動詞要用 makes</note-fx>
+    <stamp-fx start="after" color="red" anchor="right" offset-x="-40" size="1.1rem">文法</stamp-fx>
+  </post-item>
+  <post-item author="Leo" likes="64" best time="40m">It can isolate people who replace real conversations with endless scrolling.
+    <stamp-fx color="green" icon="check2-circle" rotate="random" anchor="right" offset-x="-60">Band 7</stamp-fx>
+  </post-item>
+  <post-item author="Ken" likes="3" low="dim" time="20m">Yes. Social media is bad.
+    <stamp-fx color="gray" shape="rect" size="1rem">太短</stamp-fx>
+  </post-item>
+  <post-item examiner author="Examiner" time="剛剛">Leo 的答案用了具體的行為描述，所以拿到最高分。
+    <note-fx border-color="key">具體描述比形容詞更有說服力</note-fx>
+  </post-item>
+</ui-post>
+      </div>
+      <div>
+        <pre><code>&lt;ui-post id="p1" author="IELTS Coach" avatar="IC" time="2h" likes="86" width="680" item-delay="500"&gt;
+  Some people think social media makes us lonely. Do you agree?
+  &lt;post-item author="Emma" likes="12" time="1h"&gt;I think social media &lt;b&gt;make&lt;/b&gt; people lonely because they stop talking face to face.
+    &lt;note-fx text="make"&gt;主詞是單數，動詞要用 makes&lt;/note-fx&gt;
+    &lt;stamp-fx start="after" color="red" anchor="right" offset-x="-40" size="1.1rem"&gt;文法&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+  &lt;post-item author="Leo" likes="64" best time="40m"&gt;It can isolate people who replace real conversations with endless scrolling.
+    &lt;stamp-fx color="green" icon="check2-circle" rotate="random" anchor="right" offset-x="-60"&gt;Band 7&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+  &lt;post-item author="Ken" likes="3" low="dim" time="20m"&gt;Yes. Social media is bad.
+    &lt;stamp-fx color="gray" shape="rect" size="1rem"&gt;太短&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+  &lt;post-item examiner author="Examiner" time="剛剛"&gt;Leo 的答案用了具體的行為描述，所以拿到最高分。
+    &lt;note-fx border-color="key"&gt;具體描述比形容詞更有說服力&lt;/note-fx&gt;
+  &lt;/post-item&gt;
+&lt;/ui-post&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title"><h2>範例 2：text 對準、暫時評語、直書章</h2><p>評語 stay 三秒後淡出；回覆留言的章蓋在右側。</p></div>
+    <div class="two">
+      <div class="stage-w">
+<ui-post id="p2" author="Speaking Club" avatar="SC" width="680" rate="1" typing="600" item-delay="300">
+  Part 1：Do you like reading?
+  <post-item author="Mia" likes="20">Yes, I very like reading novels in my free time.
+    <note-fx text="very like" position="top" color="urgent" border-color="urgent" stay="3000">very 不能修飾動詞，改成 really like</note-fx>
+  </post-item>
+  <post-item author="Mia" likes="35" reply>Yes, I really like reading novels, especially mysteries.
+    <stamp-fx direction="vertical" shape="rect" color="key" size="1rem" anchor="right" offset-x="-30">改得好</stamp-fx>
+  </post-item>
+</ui-post>
+      </div>
+      <div>
+        <pre><code>&lt;ui-post id="p2" author="Speaking Club" avatar="SC" width="680" rate="1" typing="600" item-delay="300"&gt;
+  Part 1：Do you like reading?
+  &lt;post-item author="Mia" likes="20"&gt;Yes, I very like reading novels in my free time.
+    &lt;note-fx text="very like" position="top" color="urgent" border-color="urgent" stay="3000"&gt;very 不能修飾動詞，改成 really like&lt;/note-fx&gt;
+  &lt;/post-item&gt;
+  &lt;post-item author="Mia" likes="35" reply&gt;Yes, I really like reading novels, especially mysteries.
+    &lt;stamp-fx direction="vertical" shape="rect" color="key" size="1rem" anchor="right" offset-x="-30"&gt;改得好&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+&lt;/ui-post&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title"><h2>範例 3：live 模式，用 add() 送出含特效的留言</h2><p>ui-contacts 送到 ui-post 的 p-msg 裡寫特效標籤也一樣有效。</p></div>
+    <div class="two">
+      <div class="stage-w">
+<div class="btns">
+  <button class="btn btn-outline-info" id="p3-a">送出學生留言</button>
+  <button class="btn btn-outline-success" id="p3-b">送出考官講評（含蓋章）</button>
+</div>
+<ui-post id="p3" mode="live" author="IELTS Coach" avatar="IC" width="680">
+  Describe a place you like to visit.
+</ui-post>
+      </div>
+      <div>
+        <pre><code>&lt;ui-post id="p3" mode="live" author="IELTS Coach" avatar="IC" width="680"&gt;
+  Describe a place you like to visit.
+&lt;/ui-post&gt;
+
+&lt;script&gt;
+  const p3 = document.getElementById('p3');
+  p3.add({ author: 'Amy', likes: 8,
+           html: 'I like to visit the beach because it is very nice.&lt;note-fx text="very nice"&gt;太籠統，描述你看到什麼&lt;/note-fx&gt;' });
+  p3.add({ examiner: true, author: 'Examiner',
+           html: '試試 the sand is soft and the waves are calm.&lt;stamp-fx color="green" icon="check2"&gt;示範&lt;/stamp-fx&gt;' });
+&lt;/script&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title"><h2>範例 4：compact 緊湊版面</h2><p>頭像縮小，名字與時間排在同一行，內文與互動列間距縮小。第一個搭配 min-height="40"，留言區沒有內容時也不會留一大塊空白。</p></div>
+    <div class="two">
+      <div class="stage-w">
+<ui-post id="p4" compact mode="live" author="IELTS Coach" avatar="IC" time="1h" width="680" min-height="40">
+  Describe a place you like to visit.
+</ui-post>
+<div style="height:16px"></div>
+<ui-post id="p4b" compact author="Speaking Club" avatar="SC" badge="Part 2" time="3h" likes="128" width="680" typing="400" item-delay="300">
+  Describe a time you helped someone.
+  <post-item author="Amy" likes="9">I helped my neighbour carry boxes when she moved house.
+    <stamp-fx color="green" icon="check2" anchor="right" offset-x="-40" size="1.1rem">清楚</stamp-fx>
+  </post-item>
+</ui-post>
+      </div>
+      <div>
+        <pre><code>&lt;ui-post id="p4" compact mode="live" author="IELTS Coach" avatar="IC" time="1h" width="680" min-height="40"&gt;
+  Describe a place you like to visit.
+&lt;/ui-post&gt;
+&lt;div style="height:16px"&gt;&lt;/div&gt;
+&lt;ui-post id="p4b" compact author="Speaking Club" avatar="SC" badge="Part 2" time="3h" likes="128" width="680" typing="400" item-delay="300"&gt;
+  Describe a time you helped someone.
+  &lt;post-item author="Amy" likes="9"&gt;I helped my neighbour carry boxes when she moved house.
+    &lt;stamp-fx color="green" icon="check2" anchor="right" offset-x="-40" size="1.1rem"&gt;清楚&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+&lt;/ui-post&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title"><h2>範例 5：grip 握把，點擊隱藏該則留言</h2><p>錄影時把離題或示範完的留言收起來。章與評語在留言裡，會一起消失。考官這則設了 grip="false"，沒有握把。</p></div>
+    <div class="two">
+      <div class="stage-w">
+<ui-post id="p5" grip author="IELTS Coach" avatar="IC" time="2h" likes="42" width="680" item-delay="400" typing="400">
+  What is the best way to improve speaking fluency?
+  <post-item author="Emma" likes="15">Watch English movies with subtitles every day.
+    <note-fx text="every day">好習慣，但要加上「跟讀」才會練到口說</note-fx>
+  </post-item>
+  <post-item author="Ken" likes="2">Memorise model answers.
+    <stamp-fx color="red" anchor="right" offset-x="-30" size="1.1rem">不建議</stamp-fx>
+  </post-item>
+  <post-item author="Leo" likes="30" best>Record yourself answering one question a day, then listen back.
+    <stamp-fx color="green" icon="check2" anchor="right" offset-x="-50">Band 7</stamp-fx>
+  </post-item>
+  <post-item examiner author="Examiner" grip="false">Leo 的方法最有效，因為能聽到自己的停頓。</post-item>
+</ui-post>
+<div class="alert alert-dark log" id="p5-log">點留言右側的握把，該則留言（含章與評語）會收起來。按重播會全部回來。</div>
+      </div>
+      <div>
+        <pre><code>&lt;ui-post grip author="IELTS Coach" avatar="IC"&gt;
+  What is the best way to improve speaking fluency?
+  &lt;post-item author="Emma" likes="15"&gt;Watch English movies…
+    &lt;note-fx text="every day"&gt;好習慣，但要加上「跟讀」…&lt;/note-fx&gt;
+  &lt;/post-item&gt;
+  &lt;post-item author="Ken" likes="2"&gt;Memorise model answers.
+    &lt;stamp-fx color="red"&gt;不建議&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+  &lt;post-item author="Leo" likes="30" best&gt;Record yourself…
+    &lt;stamp-fx color="green" icon="check2"&gt;Band 7&lt;/stamp-fx&gt;
+  &lt;/post-item&gt;
+  &lt;!-- grip="false"：這則不顯示握把 --&gt;
+  &lt;post-item examiner author="Examiner" grip="false"&gt;Leo 的方法最有效…&lt;/post-item&gt;
+&lt;/ui-post&gt;
+
+&lt;script&gt;
+  document.querySelector('ui-post').addEventListener('post-item-hide', (e) =&gt; {
+    console.log(e.detail);   // { index: 1, author: 'Ken' }
+  });
+&lt;/script&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <h2 class="part" id="attrs">屬性總覽</h2>
+  <section>
+
+  <h3 class="cat">共用屬性（stamp-fx、note-fx）</h3>
+  <table class="attr">
+    <tr><th>屬性</th><th>預設</th><th>說明</th></tr>
+    <tr><td>target</td><td>這則內容</td><td>CSS 選擇器。先在這則訊息裡找，找不到再找整頁。省略時作用在這則訊息的文字內容。</td></tr>
+    <tr><td>text</td><td>無</td><td>只對準目標裡的某段文字，例如 <code>text="make"</code>。</td></tr>
+    <tr><td>nth</td><td>1</td><td>同一段文字出現多次時，指定第幾次。</td></tr>
+    <tr><td>start</td><td>after</td><td><code>after</code> 等前一個特效結束才開始；<code>with</code> 與前一個特效同時開始。</td></tr>
+    <tr><td>delay</td><td>0</td><td>開始前等待的毫秒數，受倍速與暫停影響。</td></tr>
+    <tr><td>speed</td><td>380 ／ 300</td><td>動畫時間（毫秒）。stamp-fx 預設 380，note-fx 預設 300。</td></tr>
+    <tr><td>stay</td><td>forever</td><td>停留多久後淡出移除（毫秒）。</td></tr>
+    <tr><td>fade-out</td><td>400 ／ 300</td><td>淡出時間（毫秒）。</td></tr>
+    <tr><td>offset-x、offset-y</td><td>0</td><td>位置微調（px）。</td></tr>
+  </table>
+
+  <h3 class="cat">stamp-fx 蓋章（標籤內文就是章上的字，用 | 分行）</h3>
+  <table class="attr">
+    <tr><th>屬性</th><th>預設</th><th>說明</th></tr>
+    <tr><td>color</td><td>red</td><td>章的顏色，可用色名或色碼。</td></tr>
+    <tr><td>icon</td><td>無</td><td>Bootstrap Icons 名稱，<code>check2</code> 或 <code>bi-check2</code> 都可以。</td></tr>
+    <tr><td>icon-position、icon-size、icon-gap</td><td>left、1.1、6px</td><td>圖示位置（left、right、top、bottom）、相對字級的大小、與文字的間距。</td></tr>
+    <tr><td>size</td><td>1.4rem</td><td>字級。</td></tr>
+    <tr><td>shape</td><td>round</td><td>rect、round、circle、ellipse。</td></tr>
+    <tr><td>border-width</td><td>3</td><td>外框粗細（px）。</td></tr>
+    <tr><td>inner-border</td><td>single</td><td>內框：single、double、none。</td></tr>
+    <tr><td>direction</td><td>horizontal</td><td>vertical 為直書。</td></tr>
+    <tr><td>letter-spacing、padding、font-family</td><td>6px、自動、繼承</td><td>字距、內距、字型。</td></tr>
+    <tr><td>rotate、rotate-range</td><td>-8、12</td><td>旋轉角度；<code>rotate="random"</code> 時在正負 rotate-range 之間隨機。</td></tr>
+    <tr><td>anchor</td><td>center</td><td>對準目標的哪個位置，可組合 top、bottom、left、right，例如 <code>top-right</code>。</td></tr>
+    <tr><td>ink、edge、bleed</td><td>0.5、0.4、0.2</td><td>墨色缺漏程度、邊緣磨損、暈染，0 到 1。</td></tr>
+    <tr><td>pressure</td><td>random</td><td>壓力偏向：left、right、top、bottom、even、random。</td></tr>
+    <tr><td>seed</td><td>依文字</td><td>墨跡亂數種子，同樣的 seed 每次長得一樣。</td></tr>
+    <tr><td>drop-scale、bounce</td><td>2.6、0.3</td><td>落下前的放大倍數、落地回彈程度。</td></tr>
+    <tr><td>shake</td><td>2</td><td>落地時氣泡震動幅度（px），0 為不震動。</td></tr>
+  </table>
+
+  <h3 class="cat">note-fx 評語（標籤內文就是評語，可含 HTML）</h3>
+  <table class="attr">
+    <tr><th>屬性</th><th>預設</th><th>說明</th></tr>
+    <tr><td>position</td><td>auto</td><td>top、bottom、left、right；auto 上方放得下就放上方，否則放下方。</td></tr>
+    <tr><td>color、bg-color、border-color</td><td>vanilla、bg-alternative、examiner-color</td><td>文字、底色、框線顏色。</td></tr>
+    <tr><td>font-size、max-width</td><td>1rem、320px</td><td>字級、最大寬度。</td></tr>
+    <tr><td>pointer</td><td>true</td><td>false 時不顯示小三角。</td></tr>
+  </table>
+
+    <h3 class="cat c-key">ui-post 版面</h3>
+    <table class="attr">
+      <tr><th>屬性</th><th>預設</th><th>說明</th></tr>
+      <tr><td>compact</td><td>無</td><td>新增。發文作者區塊緊湊排版：頭像 42px 改 30px，名字與時間同一行，內距、內文字級、互動列間距都縮小。<code>compact="false"</code> 等於沒寫。留言區不受影響。</td></tr>
+      <tr><td>min-height</td><td>80</td><td>原有屬性。留言區最小高度，live 模式還沒有留言時可以調小。</td></tr>
+      <tr><td>grip</td><td>無</td><td>新增。每則留言右側顯示握把，點一下收合並隱藏該則留言（含章與評語）。寫在 post-item 上可個別開啟，<code>grip="false"</code> 個別關閉。重播後隱藏的留言會再出現；留言數不變。</td></tr>
+      <tr><td>grip-label</td><td>隱藏這則留言</td><td>新增。滑鼠移到握把上的提示文字。</td></tr>
+      <tr><td>grip-color、grip-hover-color</td><td>gray、pink</td><td>新增。握把顏色、滑鼠移上去的顏色。</td></tr>
+      <tr><td>post-item-hide 事件</td><td></td><td>新增。留言被隱藏時觸發，detail 為 <code>{ index, author }</code>，會冒泡。</td></tr>
+    </table>
+    <h3 class="cat c-key">與播放控制的關係</h3>
+    <table class="attr">
+      <tr><th>操作</th><th>結果</th><th>說明</th></tr>
+      <tr><td>暫停</td><td>特效停住</td><td>按繼續後從停下的地方接著做完，再出現下一則留言。</td></tr>
+      <tr><td>0.5×、1×、2×、rate</td><td>特效跟著倍速</td><td>動畫、delay、stay 都依倍速縮放。</td></tr>
+      <tr><td>重播、restart()</td><td>全部清除</td><td>特效從頭再跑。</td></tr>
+      <tr><td>mode="live" 預先寫好的留言</td><td>直接畫出</td><td>不播動畫。</td></tr>
+      <tr><td>low="fold"</td><td>一起摺疊</td><td>留言被摺疊時，上面的章和評語一起隱藏。</td></tr>
+    </table>
+  </section>
+
+  <h2 class="part" id="diff">版本對照</h2>
+  <section>
+    <div class="diff">
+      <div><h4 class="old">修改前：只能用 tags 在最後顯示講評標籤</h4><pre><code>&lt;post-item author="Emma" likes="12" tags="主詞動詞一致:red"&gt;
+  I think social media make people lonely.
+&lt;/post-item&gt;</code></pre></div>
+      <div><h4 class="new">修改後：留言出現後立刻加評語、蓋章</h4><pre><code>&lt;post-item author="Emma" likes="12"&gt;
+  I think social media make people lonely.
+  &lt;note-fx text="make"&gt;主詞是單數，動詞要用 makes&lt;/note-fx&gt;
+  &lt;stamp-fx start="after" color="red"&gt;文法&lt;/stamp-fx&gt;
+&lt;/post-item&gt;</code></pre></div>
+    </div>
+    <div class="diff" style="margin-top:20px">
+      <div><h4 class="old">修改前：發文作者區塊固定版面</h4><pre><code>&lt;ui-post mode="live" author="IELTS Coach" avatar="IC"&gt;
+  Describe a place you like to visit.
+&lt;/ui-post&gt;</code></pre></div>
+      <div><h4 class="new">修改後：加上 compact 緊湊排版</h4><pre><code>&lt;ui-post compact mode="live" author="IELTS Coach" avatar="IC"&gt;
+  Describe a place you like to visit.
+&lt;/ui-post&gt;</code></pre></div>
+    </div>
+    <div class="diff" style="margin-top:20px">
+      <div><h4 class="old">修改前：留言出現後無法隱藏</h4><pre><code>&lt;ui-post author="IELTS Coach"&gt;
+  …
+  &lt;post-item author="Ken"&gt;Memorise model answers.&lt;/post-item&gt;
+&lt;/ui-post&gt;</code></pre></div>
+      <div><h4 class="new">修改後：加上 grip，點握把隱藏該則留言</h4><pre><code>&lt;ui-post grip author="IELTS Coach"&gt;
+  …
+  &lt;post-item author="Ken"&gt;Memorise model answers.&lt;/post-item&gt;
+  &lt;post-item examiner author="Examiner" grip="false"&gt;…&lt;/post-item&gt;
+&lt;/ui-post&gt;</code></pre></div>
+    </div>
+    <table class="attr" style="margin-top:20px">
+      <tr><th>項目</th><th>修改前</th><th>修改後</th></tr>
+      <tr><td>stamp-fx、note-fx</td><td>不支援，標籤裡的字會混進留言</td><td>寫在 post-item 裡，留言出現後依序執行</td></tr>
+      <tr><td>add(item) 的 html</td><td>原樣顯示</td><td>自動拆出特效標籤再顯示</td></tr>
+      <tr><td>compact</td><td>無</td><td>新增。發文作者區塊緊湊排版</td></tr>
+      <tr><td>grip</td><td>無</td><td>新增。留言右側握把，點擊隱藏該則留言（含特效）</td></tr>
+      <tr><td>其他屬性、方法、事件</td><td colspan="2">都沒有改動</td></tr>
+    </table>
+  </section>
+</div>
+<script src="ui-post.js"></script>
+<script>
+  const p3 = document.getElementById('p3');
+  document.getElementById('p3-a').onclick = () => p3.add({ author: 'Amy', likes: 8, html: 'I like to visit the beach because it is very nice.<note-fx text="very nice">太籠統，描述你看到什麼</note-fx>' });
+  const p5log = document.getElementById('p5-log');
+  document.getElementById('p5').addEventListener('post-item-hide', (e) => { p5log.textContent = `post-item-hide → ${JSON.stringify(e.detail)}`; });
+  document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author: 'Examiner', html: '試試 the sand is soft and the waves are calm.<stamp-fx color="green" icon="check2">示範</stamp-fx>' });
+</script>
+</body>
+</html>

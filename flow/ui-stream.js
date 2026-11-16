@@ -44,6 +44,7 @@ ui-stream .us-prog{height:3px;background:var(--us-border);}
 ui-stream .us-prog i{display:block;height:100%;width:0;background:var(--us-accent);transition:width .3s;}
 ui-stream .us-feed{flex:1 1 auto;overflow:auto;padding:var(--us-pad);display:flex;flex-direction:column;scroll-behavior:smooth;}
 ui-stream .us-feed > *{margin:var(--us-mt,0) 0 0 0;}
+ui-stream .us-feed.us-hasfx{overflow-x:hidden;}
 ui-stream .us-feed > :first-child{margin-top:0;}
 /* 固定高度時，內容流底部留白（scroll-space），捲到底時最後一行下方仍有空間 */
 ui-stream .us-wrap.us-fixed .us-feed::after{content:'';display:block;flex:0 0 var(--us-ss);min-height:var(--us-ss);}
@@ -117,6 +118,399 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
 `;
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
 
+  /* ── 特效：stamp-fx（蓋章）、note-fx（評語）。寫在訊息裡面，訊息出現後依序執行。
+     暫停、倍速、重播都會影響特效；start="with" 與前一個特效同時開始，delay 延後開始（毫秒）。
+     target 省略時作用在這則訊息的內容，搭配 text（與 nth）可指定其中一段文字 ── */
+  const UsFx = (() => {
+    const CANCEL = { cancelled: true, fx: true };
+    const TAGS = 'stamp-fx, note-fx';
+    const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+    const len = (v) => { if (v == null || v === '') return null; const s = String(v).trim(); return /^-?\d+(\.\d+)?$/.test(s) ? s + 'px' : s; };
+    const col = (v, d) => color(v) || d;
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+    const CSS = `
+ui-stream stamp-fx,ui-stream note-fx{display:none;}
+ui-stream .us-fxl{position:relative;}
+ui-stream .us-fxnote{position:absolute;z-index:2;width:max-content;box-sizing:border-box;padding:8px 12px;border:1px solid;border-radius:8px;line-height:1.5;text-align:left;font-weight:400;
+  font-family:system-ui,"Microsoft JhengHei",sans-serif;}
+ui-stream .us-fxtip{position:absolute;width:10px;height:10px;box-sizing:border-box;border:0 solid;transform:rotate(45deg);}
+ui-stream .us-fxstamp{position:absolute;left:0;top:0;z-index:2;box-sizing:border-box;padding:3px;border-style:solid;white-space:nowrap;line-height:1.2;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;font-weight:700;pointer-events:none;}
+ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:100%;}
+`;
+    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+
+    /* 把 html 裡的特效標籤取出來，回傳乾淨的內容與特效清單 */
+    function extract(html) {
+      if (!html || !/<(stamp|note)-fx\b/i.test(html)) return { html, fx: [] };
+      const t = document.createElement('template'); t.innerHTML = html;
+      const fx = [...t.content.querySelectorAll(TAGS)].map((n) => { const s = n.outerHTML; n.remove(); return s; });
+      return { html: t.innerHTML.trim(), fx };
+    }
+
+    /* ── 一次特效播放：可暫停、繼續、快轉完成、取消 ── */
+    class Run {
+      constructor(o) {
+        this.rate = o.rate || (() => 1);
+        this.cancelToken = o.cancel || CANCEL;
+        this.skipping = !!o.instant;
+        this.instant = !!o.instant;
+        this.detached = !!o.detached;
+        this.hold = !!o.hold && !o.instant;
+        this.dead = false;
+        this.waits = new Set();
+        this.anims = new Set();
+      }
+      sleep(ms) {
+        if (this.dead) return Promise.reject(this.cancelToken);
+        return new Promise((res, rej) => {
+          const w = { res, rej, left: Math.max(0, ms || 0) / this.rate(), t: null, at: 0 };
+          w.done = () => { this.waits.delete(w); clearTimeout(w.t); res(); };
+          this.waits.add(w);
+          if (this.skipping) { w.done(); return; }
+          if (!this.hold) this._arm(w);
+        });
+      }
+      _arm(w) { w.at = performance.now(); w.t = setTimeout(w.done, w.left); }
+      anim(el, kf, ms, opts) {
+        if (this.dead) return Promise.reject(this.cancelToken);
+        const own = kf.some((k) => k.easing);
+        const a = el.animate(kf, Object.assign({ duration: this.skipping ? 1 : Math.max(1, ms / this.rate()), fill: 'both', easing: own ? 'linear' : 'ease-out' }, opts || {}));
+        this.anims.add(a);
+        if (this.skipping) { try { a.finish(); } catch (e) { /* 略過 */ } } else if (this.hold) a.pause();
+        return a.finished.then(() => {}, () => {}).then(() => { this.anims.delete(a); if (this.dead) throw this.cancelToken; });
+      }
+      pause() {
+        if (this.hold || this.skipping || this.dead) return;
+        this.hold = true;
+        this.waits.forEach((w) => { if (w.t != null) { clearTimeout(w.t); w.t = null; w.left = Math.max(0, w.left - (performance.now() - w.at)); } });
+        this.anims.forEach((a) => { try { a.pause(); } catch (e) { /* 略過 */ } });
+      }
+      resume() {
+        if (!this.hold || this.dead) return;
+        this.hold = false;
+        this.waits.forEach((w) => this._arm(w));
+        this.anims.forEach((a) => { try { a.play(); } catch (e) { /* 略過 */ } });
+      }
+      skip() {
+        if (this.dead) return;
+        this.skipping = true; this.hold = false;
+        [...this.waits].forEach((w) => w.done());
+        this.anims.forEach((a) => { try { a.finish(); } catch (e) { /* 略過 */ } });
+      }
+      cancel() {
+        if (this.dead) return;
+        this.dead = true;
+        [...this.waits].forEach((w) => { clearTimeout(w.t); this.waits.delete(w); w.rej(this.cancelToken); });
+        this.anims.forEach((a) => { try { a.cancel(); } catch (e) { /* 略過 */ } });
+      }
+    }
+
+    /* ── 亂數、墨跡遮罩（同 ui-play） ── */
+    function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+    function makeRng(seed) {
+      let a = seed >>> 0;
+      return function () { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    }
+    function seedOf(v, fallback) { if (v != null && v !== '') return /^\d+$/.test(v) ? parseInt(v, 10) : hashStr(String(v)); return hashStr(fallback); }
+    function valueNoise(w, h, cell, rnd) {
+      const gw = Math.ceil(w / cell) + 2, gh = Math.ceil(h / cell) + 2;
+      const g = new Float32Array(gw * gh);
+      for (let i = 0; i < g.length; i++) g[i] = rnd();
+      const out = new Float32Array(w * h);
+      const sm = (t) => t * t * (3 - 2 * t);
+      for (let y = 0; y < h; y++) {
+        const gy = y / cell, y0 = Math.floor(gy), fy = sm(gy - y0);
+        for (let x = 0; x < w; x++) {
+          const gx = x / cell, x0 = Math.floor(gx), fx = sm(gx - x0);
+          const a = g[y0 * gw + x0], b = g[y0 * gw + x0 + 1], c = g[(y0 + 1) * gw + x0], d = g[(y0 + 1) * gw + x0 + 1];
+          out[y * w + x] = (a + (b - a) * fx) + ((c + (d - c) * fx) - (a + (b - a) * fx)) * fy;
+        }
+      }
+      return out;
+    }
+    function inkMask(w, h, opt) {
+      const S = 2;
+      const W = Math.max(2, Math.round(w * S)), H = Math.max(2, Math.round(h * S));
+      const rnd = makeRng(opt.seed);
+      const blot = valueNoise(W, H, 22 * S, rnd), mid = valueNoise(W, H, 7 * S, rnd);
+      const grain = valueNoise(W, H, 1.6 * S, rnd), chip = valueNoise(W, H, 5 * S, rnd);
+      let side = opt.pressure;
+      if (side === 'random') side = ['left', 'right', 'top', 'bottom', 'even'][Math.floor(rnd() * 5)];
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d'); const img = ctx.createImageData(W, H);
+      const round = opt.shape === 'circle' || opt.shape === 'ellipse';
+      const edgeZone = (4 + opt.edge * 10) * S;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const i = y * W + x;
+          let d;
+          if (round) { const nx = (x - W / 2) / (W / 2), ny = (y - H / 2) / (H / 2); d = (1 - Math.sqrt(nx * nx + ny * ny)) * Math.min(W, H) / 2; }
+          else d = Math.min(x, W - x, y, H - y);
+          const ed = Math.max(0, 1 - d / edgeZone);
+          let pr = 0;
+          if (side === 'left') pr = 1 - x / W; else if (side === 'right') pr = x / W; else if (side === 'top') pr = 1 - y / H; else if (side === 'bottom') pr = y / H;
+          const score = blot[i] * 0.45 + mid[i] * 0.3 + grain[i] * 0.25;
+          let th = opt.ink * 0.34 + pr * pr * 0.3 * (opt.ink + 0.3);
+          th += ed * ed * opt.edge * (0.35 + chip[i] * 0.6);
+          img.data[i * 4 + 3] = score >= th ? 255 : 0;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      return cv.toDataURL('image/png');
+    }
+    /* ── 目標與定位 ── */
+    const subs = new WeakMap();
+    function sub(root, text, nth) {
+      let cache = subs.get(root); if (!cache) { cache = new Map(); subs.set(root, cache); }
+      const key = text + '\u0000' + nth;
+      if (cache.has(key) && cache.get(key).isConnected) return cache.get(key);
+      const nodes = []; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let full = '';
+      while (w.nextNode()) { nodes.push({ node: w.currentNode, start: full.length }); full += w.currentNode.data; }
+      let idx = -1, from = 0;
+      for (let i = 0; i < nth; i++) { idx = full.indexOf(text, from); if (idx === -1) return null; from = idx + text.length; }
+      const end = idx + text.length;
+      const locate = (pos, isEnd) => {
+        for (let i = 0; i < nodes.length; i++) { const n = nodes[i], L = n.node.data.length; if (pos < n.start + L || (isEnd && pos === n.start + L)) return { node: n.node, off: pos - n.start }; }
+        const last = nodes[nodes.length - 1]; return { node: last.node, off: last.node.data.length };
+      };
+      const a = locate(idx, false), b = locate(end, true);
+      const range = document.createRange(); range.setStart(a.node, a.off); range.setEnd(b.node, b.off);
+      const span = document.createElement('span'); span.className = 'us-fxsub';
+      span.appendChild(range.extractContents()); range.insertNode(span);
+      cache.set(key, span);
+      return span;
+    }
+    function targets(el, ctx) {
+      const sel = el.getAttribute('target');
+      let list = [];
+      if (!sel) list = [ctx.scope];
+      else {
+        try {
+          list = [...ctx.scope.querySelectorAll(sel)];
+          if (!list.length) list = [...ctx.layer.querySelectorAll(sel)];
+          if (!list.length) list = [...document.querySelectorAll(sel)];
+        } catch (e) { return []; }
+      }
+      const text = el.getAttribute('text');
+      if (text != null && text !== '') { const nth = parseInt(el.getAttribute('nth'), 10) || 1; return list.map((n) => sub(n, text, nth)).filter(Boolean); }
+      return list;
+    }
+    /* 對齊基準：區塊元素以文字實際範圍為準；座標相對於 layer */
+    function rel(el, layer) {
+      const c = layer.getBoundingClientRect();
+      if (getComputedStyle(el).display !== 'inline') {
+        const rg = document.createRange(); rg.selectNodeContents(el);
+        const rs = [...rg.getClientRects()].filter((r) => r.width > 0.5 && r.height > 0.5);
+        if (rs.length) {
+          const x1 = Math.min(...rs.map((r) => r.left)), y1 = Math.min(...rs.map((r) => r.top));
+          const x2 = Math.max(...rs.map((r) => r.right)), y2 = Math.max(...rs.map((r) => r.bottom));
+          return { x: x1 - c.left, y: y1 - c.top, w: x2 - x1, h: y2 - y1 };
+        }
+      }
+      const r = el.getBoundingClientRect();
+      return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
+    }
+    function keep(ctx, place) { ctx.live.push(place); return () => { const i = ctx.live.indexOf(place); if (i >= 0) ctx.live.splice(i, 1); }; }
+    function stayFor(run, el, node, drop, def) {
+      const stay = el.getAttribute('stay') || 'forever';
+      if (stay === 'forever') return;
+      run.sleep(num(stay, 2000)).then(() => {
+        if (!node.isConnected) return;
+        const a = node.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.max(1, num(el.getAttribute('fade-out'), def) / run.rate()), fill: 'forwards' });
+        a.finished.then(() => { node.remove(); drop(); }, () => {});
+      }, () => {});
+    }
+
+    /* note-fx */
+    async function note(run, el, ctx) {
+      const t = targets(el, ctx)[0];
+      if (!t) return;
+      const layer = ctx.layer;
+      const pos = (el.getAttribute('position') || 'auto').toLowerCase();
+      const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
+      const fg = col(el.getAttribute('color'), '#DBEDD8'), bg = col(el.getAttribute('bg-color'), '#3B2A20');
+      const bc = col(el.getAttribute('border-color'), ctx.accent || '#51DBCF');
+      const nt = document.createElement('div');
+      nt.className = 'us-fxnote';
+      nt.innerHTML = el.innerHTML;
+      Object.assign(nt.style, { color: fg, background: bg, borderColor: bc, fontSize: len(el.getAttribute('font-size')) || '1rem', maxWidth: len(el.getAttribute('max-width')) || '320px', visibility: 'hidden' });
+      const tip = document.createElement('div');
+      tip.className = 'us-fxtip';
+      tip.style.background = bg; tip.style.borderColor = bc;
+      if (el.getAttribute('pointer') !== 'false') nt.appendChild(tip);
+      layer.appendChild(nt);
+      let side = pos;
+      const place = () => {
+        if (!nt.isConnected || !t.isConnected) return;
+        const r = rel(t, layer), b = ctx.bounds();
+        const w = nt.offsetWidth, h = nt.offsetHeight, gap = 12;
+        if (pos === 'auto') side = r.y - h - gap >= b.y ? 'top' : 'bottom';
+        let x, y;
+        if (side === 'top' || side === 'bottom') {
+          x = Math.max(b.x + 4, Math.min(b.x + b.w - w - 4, r.x + r.w / 2 - w / 2));
+          y = side === 'top' ? r.y - h - gap : r.y + r.h + gap;
+        } else {
+          y = r.y + r.h / 2 - h / 2;
+          x = side === 'left' ? r.x - w - gap : r.x + r.w + gap;
+        }
+        x += ox; y += oy;
+        nt.style.left = x + 'px'; nt.style.top = y + 'px';
+        const ts = tip.style;
+        ts.borderWidth = '0'; ts.left = ts.top = ts.right = ts.bottom = '';
+        if (side === 'top' || side === 'bottom') {
+          ts.left = Math.max(10, Math.min(w - 20, r.x + r.w / 2 - x - 5)) + 'px';
+          if (side === 'top') { ts.bottom = '-6px'; ts.borderRightWidth = ts.borderBottomWidth = '1px'; }
+          else { ts.top = '-6px'; ts.borderLeftWidth = ts.borderTopWidth = '1px'; }
+        } else {
+          ts.top = (h / 2 - 5) + 'px';
+          if (side === 'left') { ts.right = '-6px'; ts.borderRightWidth = ts.borderTopWidth = '1px'; }
+          else { ts.left = '-6px'; ts.borderLeftWidth = ts.borderBottomWidth = '1px'; }
+        }
+      };
+      place();
+      nt.style.visibility = '';
+      const drop = keep(ctx, place);
+      const dy = side === 'bottom' ? '-6px' : '6px';
+      await run.anim(nt, [{ opacity: 0, transform: `translateY(${dy})` }, { opacity: 1, transform: 'none' }], num(el.getAttribute('speed'), 300));
+      stayFor(run, el, nt, drop, 300);
+    }
+
+    /* stamp-fx */
+    async function stamp(run, el, ctx) {
+      const label = el.textContent.trim();
+      const icon = (el.getAttribute('icon') || '').trim();
+      const t = targets(el, ctx)[0];
+      if (!t || (!label && !icon)) return;
+      const layer = ctx.layer;
+      const c = col(el.getAttribute('color'), '#EF6661');
+      const size = len(el.getAttribute('size')) || '1.4rem';
+      const bw = num(el.getAttribute('border-width'), 3);
+      const shape = (el.getAttribute('shape') || 'round').toLowerCase();
+      const inner = (el.getAttribute('inner-border') || 'single').toLowerCase();
+      const vertical = (el.getAttribute('direction') || 'horizontal').toLowerCase() === 'vertical';
+      const ls = len(el.getAttribute('letter-spacing')) || '6px';
+      const ink = clamp(num(el.getAttribute('ink'), 0.5), 0, 1);
+      const edge = clamp(num(el.getAttribute('edge'), 0.4), 0, 1);
+      const bleed = clamp(num(el.getAttribute('bleed'), 0.2), 0, 1);
+      const pressure = (el.getAttribute('pressure') || 'random').toLowerCase();
+      const seed = seedOf(el.getAttribute('seed'), label + '|' + icon);
+      const rnd = makeRng(seed);
+      const rotAttr = el.getAttribute('rotate');
+      const rot = rotAttr === 'random' ? (rnd() * 2 - 1) * num(el.getAttribute('rotate-range'), 12) : num(rotAttr, -8);
+      const anchor = (el.getAttribute('anchor') || 'center').toLowerCase();
+      const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
+      const speed = num(el.getAttribute('speed'), 380);
+      const drop0 = num(el.getAttribute('drop-scale'), 2.6);
+      const bounce = clamp(num(el.getAttribute('bounce'), 0.3), 0, 1);
+      const shake = num(el.getAttribute('shake'), 2);
+      const radius = { rect: '2px', round: '10px', circle: '50%', ellipse: '50%' }[shape] || '10px';
+
+      const s = document.createElement('div');
+      s.className = 'us-fxstamp';
+      Object.assign(s.style, { color: c, borderColor: c, borderWidth: (bw + bleed * 1.2) + 'px', borderRadius: radius, fontSize: size });
+      if (el.getAttribute('font-family')) s.style.fontFamily = el.getAttribute('font-family');
+      const inn = document.createElement('div');
+      inn.className = 'us-fxstamp-in';
+      inn.style.borderRadius = radius;
+      inn.style.padding = (el.getAttribute('padding') || (vertical ? '16px 6px' : '6px 16px')).split(/\s+/).map(len).join(' ');
+      if (inner === 'single') inn.style.border = Math.max(1, bw * 0.5) + 'px solid ' + c;
+      else if (inner === 'double') inn.style.border = Math.max(4, bw + 1) + 'px double ' + c;
+      if (bleed > 0) { const b = (bleed * 0.9).toFixed(2); inn.style.textShadow = `${b}px 0 0 ${c},-${b}px 0 0 ${c},0 ${b}px 0 ${c},0 -${b}px 0 ${c}`; }
+      const iconPos = (el.getAttribute('icon-position') || (vertical ? 'top' : 'left')).toLowerCase();
+      inn.style.flexDirection = { left: 'row', right: 'row-reverse', top: 'column', bottom: 'column-reverse' }[iconPos] || 'row';
+      inn.style.gap = len(el.getAttribute('icon-gap')) || '6px';
+      if (icon) {
+        const i = document.createElement('i');
+        i.className = 'bi ' + (/^bi-/.test(icon) ? icon : 'bi-' + icon);
+        Object.assign(i.style, { fontSize: num(el.getAttribute('icon-size'), 1.1) + 'em', lineHeight: '1', display: 'block' });
+        inn.appendChild(i);
+      }
+      /* 文字用 | 分行；直書時每行成為一欄 */
+      if (label) {
+        const tx = document.createElement('div');
+        Object.assign(tx.style, { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' });
+        if (vertical) tx.style.writingMode = 'vertical-rl';
+        label.split('|').map((x) => x.trim()).filter(Boolean).forEach((line) => {
+          const ln = document.createElement('span');
+          ln.textContent = line; ln.style.letterSpacing = ls; ln.style.whiteSpace = 'nowrap';
+          if (vertical) ln.style.marginBottom = '-' + ls; else ln.style.marginRight = '-' + ls;
+          tx.appendChild(ln);
+        });
+        inn.appendChild(tx);
+      }
+      s.appendChild(inn);
+      s.style.visibility = 'hidden';
+      layer.appendChild(s);
+      /* 等字型載入完成再量尺寸，墨跡遮罩才會吻合 */
+      if (document.fonts) {
+        try {
+          const cs = getComputedStyle(s);
+          const loads = [document.fonts.load(`700 ${cs.fontSize} ${cs.fontFamily}`, label || 'A')];
+          if (icon) loads.push(document.fonts.load(`${cs.fontSize} bootstrap-icons`));
+          await Promise.race([Promise.all(loads), new Promise((r) => setTimeout(r, 1500))]);
+        } catch (e) { /* 略過 */ }
+      }
+      if (run.dead) { s.remove(); throw run.cancelToken; }
+      if (shape === 'circle') { const m = Math.max(s.offsetWidth, s.offsetHeight); s.style.width = s.style.height = m + 'px'; }
+      const url = inkMask(s.offsetWidth, s.offsetHeight, { seed, ink, edge, pressure, shape });
+      s.style.webkitMaskImage = `url(${url})`; s.style.maskImage = `url(${url})`;
+      const place = () => {
+        if (!s.isConnected || !t.isConnected) return;
+        const r = rel(t, layer);
+        let ax = r.x + r.w / 2, ay = r.y + r.h / 2;
+        if (anchor.indexOf('left') !== -1) ax = r.x;
+        if (anchor.indexOf('right') !== -1) ax = r.x + r.w;
+        if (anchor.indexOf('top') !== -1) ay = r.y;
+        if (anchor.indexOf('bottom') !== -1) ay = r.y + r.h;
+        s.style.left = (ax + ox) + 'px'; s.style.top = (ay + oy) + 'px';
+      };
+      place();
+      const T = (k) => `translate(-50%,-50%) rotate(${rot}deg) scale(${k})`;
+      s.style.transform = T(1);
+      s.style.visibility = '';
+      const drop = keep(ctx, place);
+      const impact = 0.72;
+      const landing = run.anim(s, [
+        { opacity: 0, transform: T(drop0), easing: 'cubic-bezier(.55,0,.9,.4)' },
+        { opacity: 1, transform: T(1 - 0.12 * bounce), offset: impact, easing: 'ease-out' },
+        { opacity: 1, transform: T(1) }
+      ], speed, { easing: 'linear' });
+      if (!run.skipping) {
+        run.sleep(speed * impact).then(() => {
+          if (run.skipping) return;
+          if (shake > 0 && ctx.shake) {
+            const k = shake;
+            run.anim(ctx.shake, [{ transform: 'none' }, { transform: `translate(${k}px,${k * 0.5}px)` }, { transform: `translate(-${k}px,-${k * 0.5}px)` },
+              { transform: `translate(${k * 0.5}px,-${k * 0.5}px)` }, { transform: 'none' }], 180, { fill: 'none', easing: 'linear' }).catch(() => {});
+          }
+        }, () => {});
+      }
+      await landing;
+      stayFor(run, el, s, drop, 400);
+    }
+
+    /* 依序執行；start="with" 與前一個同時開始 */
+    async function play(run, specs, ctx) {
+      const els = specs.map((x) => { const t = document.createElement('template'); t.innerHTML = x; return t.content.firstElementChild; }).filter(Boolean);
+      const groups = [];
+      els.forEach((el) => {
+        const s = (el.getAttribute('start') || 'after').toLowerCase();
+        if (s === 'with' && groups.length) groups[groups.length - 1].push(el); else groups.push([el]);
+      });
+      for (const g of groups) {
+        await Promise.all(g.map(async (el) => {
+          await run.sleep(num(el.getAttribute('delay'), 0));
+          if (el.tagName === 'STAMP-FX') await stamp(run, el, ctx); else await note(run, el, ctx);
+          if (ctx.onStep) ctx.onStep();
+        }));
+      }
+    }
+
+    return { CANCEL, TAGS, extract, Run, play, relayout: (list) => list.slice().forEach((f) => f()) };
+  })();
+
   /* 把內容裡每個字包成 span，逐字顯示時 HTML 標籤（mark、c-key 等）會跟著出現 */
   function wrapChars(root) {
     const spans = [];
@@ -173,6 +567,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
     _normItem(d) {
       const n = Object.assign({ from: 'student', name: '', time: '', typed: false, html: '' }, d, { from: (d.from || 'student').toLowerCase(), html: d.html != null ? d.html : (d.text || '') });
       if (n.typed === 'false') n.typed = false;
+      if (!n.fx) { const x = UsFx.extract(n.html); n.html = x.html; n.fx = x.fx; }
       return n;
     }
     _fromMarkup() {
@@ -229,6 +624,8 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       }
       if (o.progress) { this._prog = el('div', 'us-prog'); this._prog.append(el('i')); wrap.append(this._prog); }
       this._feed = el('div', 'us-feed'); wrap.append(this._feed); this.appendChild(wrap);
+      this._fxRuns = new Set(); this._fxLive = []; this._fxNextReq = false;
+      if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => UsFx.relayout(this._fxLive)); this._fxRO.observe(this._feed); }
       this.setAttribute('data-ready', '');
       this._i = 0; this._playing = false; this._typing = null; this._prev = null;
       this._update();
@@ -238,13 +635,20 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
     }
 
     /* ── 公開方法 ── */
-    play() { if (this._playing || this._i >= this._src.length) return; this._playing = true; this._update(); this._show(false); }
-    pause() { this._playing = false; clearTimeout(this._t); if (this._typing) this._typing.finish(); this._update(); }
+    play() {
+      /* 特效播放中：只繼續特效，播完後照常往下 */
+      if (this._fxBusy()) { if (!this._playing) { this._playing = true; this._update(); } this._fxRuns.forEach(r => r.resume()); return; }
+      if (this._playing || this._i >= this._src.length) return; this._playing = true; this._update(); this._show(false); }
+    pause() { this._playing = false; clearTimeout(this._t); if (this._typing) this._typing.finish(); if (this._fxRuns) this._fxRuns.forEach(r => r.pause()); this._update(); }
     toggle() { this._playing ? this.pause() : this.play(); }
-    next() { this.pause(); this._clearPause(); this._show(true); }
-    replay() { this.pause(); this._clearPause(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._update(); this.play(); }
-    finish() { this.pause(); this._clearPause(); while (this._i < this._src.length) this._show(true, true); }
-    goto(i) { this.pause(); this._clearPause(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; const n = Math.max(0, Math.min(i, this._src.length)); while (this._i < n) this._show(true, true); this._update(); }
+    next() {
+      /* 特效播放中：先把特效快轉完成，再顯示下一則 */
+      if (this._fxBusy()) { this.pause(); this._fxNextReq = true; this._fxRuns.forEach(r => { if (!r.detached) r.skip(); }); return; }
+      this.pause(); this._clearPause(); this._show(true);
+    }
+    replay() { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._update(); this.play(); }
+    finish() { this.pause(); this._clearPause(); this._fxRuns.forEach(r => { r.detached = true; r.skip(); }); while (this._i < this._src.length) this._show(true, true); }
+    goto(i) { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; const n = Math.max(0, Math.min(i, this._src.length)); while (this._i < n) this._show(true, true); this._update(); }
     add(item) { const atEnd = this._i >= this._src.length; this._src.push(this._normItem(item || {})); this._update(); if (atEnd && !this._feed.querySelector('.us-pause') && !this._wrap.querySelector('.us-overlay')) this.play(); return this._src.length; }
     export(format) {
       const msgs = [...this._feed.querySelectorAll('.us-msg')];
@@ -262,6 +666,23 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       if (this._count) this._count.textContent = `${this._i} / ${this._src.length}`;
       if (this._prog) this._prog.firstChild.style.width = (this._src.length ? this._i / this._src.length * 100 : 0) + '%';
       if (this._btnPlay) { const L = this._labels; this._btnPlay.innerHTML = this._playing ? `<i class="bi bi-pause-fill"></i> ${L[1] || ''}` : `<i class="bi bi-play-fill"></i> ${L[0] || ''}`; this._btnPlay.classList.toggle('on', this._playing); }
+    }
+    _fxBusy() { return !!this._fxRuns && [...this._fxRuns].some(r => !r.detached); }
+    _fxReset() { this._fxRuns.forEach(r => r.cancel()); this._fxRuns.clear(); this._fxLive.length = 0; this._fxNextReq = false; }
+    _runFx(d, msg, bub, instant) {
+      msg.classList.add('us-fxl'); this._feed.classList.add('us-hasfx');
+      const run = new UsFx.Run({ rate: () => this._rate, instant, detached: instant });
+      this._fxRuns.add(run);
+      const feed = this._feed;
+      const ctx = {
+        layer: msg, scope: bub, shake: bub, live: this._fxLive, accent: color(this._opt.accent),
+        onStep: () => { if (!run.instant) this._scroll(); },
+        /* 評語的可用範圍：整個訊息區（含捲動內容），座標相對於這則訊息 */
+        bounds: () => { const f = feed.getBoundingClientRect(), m = msg.getBoundingClientRect(); return { x: f.left - m.left, y: f.top - m.top - feed.scrollTop, w: feed.clientWidth, h: feed.scrollHeight }; }
+      };
+      /* 等訊息進場動畫結束再量位置 */
+      const p = (instant ? Promise.resolve() : run.sleep(380)).then(() => UsFx.play(run, d.fx, ctx));
+      return p.then(() => { this._fxRuns.delete(run); return run; }, e => { this._fxRuns.delete(run); if (e !== UsFx.CANCEL) console.error(e); throw UsFx.CANCEL; });
     }
     _clearPause() { this._feed.querySelectorAll('.us-pause').forEach(p => p.remove()); this._wrap.querySelectorAll('.us-overlay').forEach(p => p.remove()); }
     _scroll() {
@@ -289,7 +710,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       if (this._i >= this._src.length) {
         this._playing = false; this._update();
         this.dispatchEvent(new CustomEvent('ui-stream:done', { bubbles: true, detail: { total: this._src.length } }));
-        if (this._opt.loop && !silent) { this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._t = setTimeout(() => this.play(), this._ms(this._opt.delay)); }
+        if (this._opt.loop && !silent) { this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._t = setTimeout(() => this.play(), this._ms(this._opt.delay)); }
         return;
       }
       const d = this._src[this._i], idx = this._i++;
@@ -323,7 +744,7 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       const bub = el('div', 'us-bubble'); body.append(bub); msg.append(body);
       const ta = d.textAlign || role.textAlign || this._opt.textAlign; if (ta) bub.style.textAlign = ta;
       this._feed.append(msg);
-      if (silent) { bub.innerHTML = d.html; msg.classList.add('on'); this._update(); return; }
+      if (silent) { bub.innerHTML = d.html; msg.classList.add('on'); if (d.fx && d.fx.length) this._runFx(d, msg, bub, true).catch(() => {}); this._update(); return; }
       requestAnimationFrame(() => { msg.classList.add('on'); this._scroll(); });
       this._update();
       this.dispatchEvent(new CustomEvent('ui-stream:item', { bubbles: true, detail: { index: idx, item: msg, role: d.from } }));
@@ -331,6 +752,18 @@ ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       const after = () => {
         this._typing = null;
         if (d.highlight) msg.classList.add('us-hl');
+        if (d.fx && d.fx.length) {
+          this._runFx(d, msg, bub, false).then(run => {
+            if (run.detached) return;
+            const wantNext = this._fxNextReq; this._fxNextReq = false;
+            rest();
+            if (wantNext && d.pause == null) this._show(true);
+          }, () => {});
+          return;
+        }
+        rest();
+      };
+      const rest = () => {
         if (d.pause != null) {
           this._playing = false; this._update();
           const p = el('button', 'us-pause'); p.innerHTML = `<i class="bi bi-${this._opt.pauseIcon}"></i>${d.pause || this._opt.pauseText}`;

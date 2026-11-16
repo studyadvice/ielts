@@ -14,6 +14,7 @@
   const STYLE_ID = 'ui-post-style';
   const SVG_HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.5-9.2C1.1 7.9 3.2 4.3 6.8 4.3c2.1 0 3.5 1.1 4.2 2.3.7-1.2 2.1-2.3 4.2-2.3 3.6 0 5.7 3.6 4.3 7C17.6 15.9 12 20.5 12 20.5z"/></svg>';
   const SVG_COMMENT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v11H9l-5 4z"/></svg>';
+  const SVG_GRIP = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="5.5" r="1.7"/><circle cx="15" cy="5.5" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18.5" r="1.7"/><circle cx="15" cy="18.5" r="1.7"/></svg>';
   const SVG_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 5l7 6.5-7 6.5v-3.8C8.4 14.2 5.3 15.9 3.5 19.5c.6-5.6 3.8-9.6 10-10.6z"/></svg>';
 
   const color = (v) => {
@@ -53,6 +54,16 @@ ui-post .upo-av{flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:i
 ui-post .upo-av img{width:100%;height:100%;object-fit:cover;display:block;}
 ui-post .upo-name{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 ui-post .upo-time{font-size:.8rem;color:#86877F;}
+/* compact：發文作者區塊緊湊排版，頭像縮小、名字與時間同一行、內文與互動列縮小間距 */
+ui-post[compact]:not([compact="false"]) .upo-card{padding:12px 16px 10px 16px;}
+ui-post[compact]:not([compact="false"]) .upo-head{gap:10px;margin:0 0 8px 0;}
+ui-post[compact]:not([compact="false"]) .upo-head .upo-av{width:30px;height:30px;font-size:.8rem;}
+ui-post[compact]:not([compact="false"]) .upo-meta{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0;}
+ui-post[compact]:not([compact="false"]) .upo-name{font-size:.9rem;}
+ui-post[compact]:not([compact="false"]) .upo-time{font-size:.75rem;}
+ui-post[compact]:not([compact="false"]) .upo-body{font-size:1.05em;line-height:1.45;margin:0 0 8px 0;}
+ui-post[compact]:not([compact="false"]) .upo-actions{gap:16px;font-size:.8rem;}
+ui-post[compact]:not([compact="false"]) .upo-actions svg{width:16px;height:16px;}
 ui-post .upo-body{font-size:1.25em;line-height:1.5;font-weight:600;margin:0 0 14px 0;word-break:break-word;}
 ui-post .upo-actions{display:flex;gap:24px;font-size:.875rem;color:#C6C7BD;}
 ui-post .upo-act{display:inline-flex;align-items:center;gap:6px;}
@@ -85,6 +96,12 @@ ui-post .upo-item.is-dim .upo-av{filter:grayscale(1);}
 ui-post .upo-item.is-reply{position:relative;margin-left:52px;}
 ui-post .upo-item.is-reply::before{content:"";position:absolute;left:-26px;top:-14px;width:2px;height:32px;background:var(--upo-div,#86877F);}
 ui-post .upo-item.is-reply::after{content:"";position:absolute;left:-26px;top:18px;width:22px;height:2px;background:var(--upo-div,#86877F);}
+/* grip：每則留言右側的握把，點一下隱藏這則留言（含特效） */
+ui-post .upo-grip{flex:0 0 auto;align-self:center;background:none;border:0;border-radius:6px;padding:4px 2px;margin:0 0 0 4px;color:var(--upo-grip,#86877F);cursor:pointer;line-height:0;}
+ui-post .upo-grip svg{width:18px;height:18px;fill:currentColor;}
+ui-post .upo-grip:hover{color:var(--upo-grip-hover,#FF91D7);}
+ui-post .upo-item.is-hiding{overflow:hidden;pointer-events:none;}
+ui-post .upo-item.is-hidden{display:none;}
 ui-post .upo-fold{display:inline-block;font:inherit;font-size:.85rem;font-style:italic;color:#86877F;background:none;border:1px dashed #86877F;border-radius:10px;padding:8px 12px;cursor:pointer;animation:upo-in .35s ease-out;}
 ui-post .upo-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 0;}
 ui-post .upo-tag{font-size:.75rem;font-weight:700;border-radius:999px;padding:2px 10px;color:#0C0D0C;background:#86877F;animation:upo-pop .45s ease-out both;}
@@ -116,6 +133,399 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 @keyframes upo-beat{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
 @keyframes upo-dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 `;
+
+  /* ── 特效：stamp-fx（蓋章）、note-fx（評語）。寫在訊息裡面，訊息出現後依序執行。
+     暫停、倍速、重播都會影響特效；start="with" 與前一個特效同時開始，delay 延後開始（毫秒）。
+     target 省略時作用在這則訊息的內容，搭配 text（與 nth）可指定其中一段文字 ── */
+  const UpoFx = (() => {
+    const CANCEL = { cancelled: true, fx: true };
+    const TAGS = 'stamp-fx, note-fx';
+    const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+    const len = (v) => { if (v == null || v === '') return null; const s = String(v).trim(); return /^-?\d+(\.\d+)?$/.test(s) ? s + 'px' : s; };
+    const col = (v, d) => color(v) || d;
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+    const CSS = `
+ui-post stamp-fx,ui-post note-fx{display:none;}
+ui-post .upo-fxl{position:relative;}
+ui-post .upo-fxnote{position:absolute;z-index:2;width:max-content;box-sizing:border-box;padding:8px 12px;border:1px solid;border-radius:8px;line-height:1.5;text-align:left;font-weight:400;
+  font-family:system-ui,"Microsoft JhengHei",sans-serif;}
+ui-post .upo-fxtip{position:absolute;width:10px;height:10px;box-sizing:border-box;border:0 solid;transform:rotate(45deg);}
+ui-post .upo-fxstamp{position:absolute;left:0;top:0;z-index:2;box-sizing:border-box;padding:3px;border-style:solid;white-space:nowrap;line-height:1.2;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;font-weight:700;pointer-events:none;}
+ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:100%;}
+`;
+    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+
+    /* 把 html 裡的特效標籤取出來，回傳乾淨的內容與特效清單 */
+    function extract(html) {
+      if (!html || !/<(stamp|note)-fx\b/i.test(html)) return { html, fx: [] };
+      const t = document.createElement('template'); t.innerHTML = html;
+      const fx = [...t.content.querySelectorAll(TAGS)].map((n) => { const s = n.outerHTML; n.remove(); return s; });
+      return { html: t.innerHTML.trim(), fx };
+    }
+
+    /* ── 一次特效播放：可暫停、繼續、快轉完成、取消 ── */
+    class Run {
+      constructor(o) {
+        this.rate = o.rate || (() => 1);
+        this.cancelToken = o.cancel || CANCEL;
+        this.skipping = !!o.instant;
+        this.instant = !!o.instant;
+        this.detached = !!o.detached;
+        this.hold = !!o.hold && !o.instant;
+        this.dead = false;
+        this.waits = new Set();
+        this.anims = new Set();
+      }
+      sleep(ms) {
+        if (this.dead) return Promise.reject(this.cancelToken);
+        return new Promise((res, rej) => {
+          const w = { res, rej, left: Math.max(0, ms || 0) / this.rate(), t: null, at: 0 };
+          w.done = () => { this.waits.delete(w); clearTimeout(w.t); res(); };
+          this.waits.add(w);
+          if (this.skipping) { w.done(); return; }
+          if (!this.hold) this._arm(w);
+        });
+      }
+      _arm(w) { w.at = performance.now(); w.t = setTimeout(w.done, w.left); }
+      anim(el, kf, ms, opts) {
+        if (this.dead) return Promise.reject(this.cancelToken);
+        const own = kf.some((k) => k.easing);
+        const a = el.animate(kf, Object.assign({ duration: this.skipping ? 1 : Math.max(1, ms / this.rate()), fill: 'both', easing: own ? 'linear' : 'ease-out' }, opts || {}));
+        this.anims.add(a);
+        if (this.skipping) { try { a.finish(); } catch (e) { /* 略過 */ } } else if (this.hold) a.pause();
+        return a.finished.then(() => {}, () => {}).then(() => { this.anims.delete(a); if (this.dead) throw this.cancelToken; });
+      }
+      pause() {
+        if (this.hold || this.skipping || this.dead) return;
+        this.hold = true;
+        this.waits.forEach((w) => { if (w.t != null) { clearTimeout(w.t); w.t = null; w.left = Math.max(0, w.left - (performance.now() - w.at)); } });
+        this.anims.forEach((a) => { try { a.pause(); } catch (e) { /* 略過 */ } });
+      }
+      resume() {
+        if (!this.hold || this.dead) return;
+        this.hold = false;
+        this.waits.forEach((w) => this._arm(w));
+        this.anims.forEach((a) => { try { a.play(); } catch (e) { /* 略過 */ } });
+      }
+      skip() {
+        if (this.dead) return;
+        this.skipping = true; this.hold = false;
+        [...this.waits].forEach((w) => w.done());
+        this.anims.forEach((a) => { try { a.finish(); } catch (e) { /* 略過 */ } });
+      }
+      cancel() {
+        if (this.dead) return;
+        this.dead = true;
+        [...this.waits].forEach((w) => { clearTimeout(w.t); this.waits.delete(w); w.rej(this.cancelToken); });
+        this.anims.forEach((a) => { try { a.cancel(); } catch (e) { /* 略過 */ } });
+      }
+    }
+
+    /* ── 亂數、墨跡遮罩（同 ui-play） ── */
+    function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+    function makeRng(seed) {
+      let a = seed >>> 0;
+      return function () { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    }
+    function seedOf(v, fallback) { if (v != null && v !== '') return /^\d+$/.test(v) ? parseInt(v, 10) : hashStr(String(v)); return hashStr(fallback); }
+    function valueNoise(w, h, cell, rnd) {
+      const gw = Math.ceil(w / cell) + 2, gh = Math.ceil(h / cell) + 2;
+      const g = new Float32Array(gw * gh);
+      for (let i = 0; i < g.length; i++) g[i] = rnd();
+      const out = new Float32Array(w * h);
+      const sm = (t) => t * t * (3 - 2 * t);
+      for (let y = 0; y < h; y++) {
+        const gy = y / cell, y0 = Math.floor(gy), fy = sm(gy - y0);
+        for (let x = 0; x < w; x++) {
+          const gx = x / cell, x0 = Math.floor(gx), fx = sm(gx - x0);
+          const a = g[y0 * gw + x0], b = g[y0 * gw + x0 + 1], c = g[(y0 + 1) * gw + x0], d = g[(y0 + 1) * gw + x0 + 1];
+          out[y * w + x] = (a + (b - a) * fx) + ((c + (d - c) * fx) - (a + (b - a) * fx)) * fy;
+        }
+      }
+      return out;
+    }
+    function inkMask(w, h, opt) {
+      const S = 2;
+      const W = Math.max(2, Math.round(w * S)), H = Math.max(2, Math.round(h * S));
+      const rnd = makeRng(opt.seed);
+      const blot = valueNoise(W, H, 22 * S, rnd), mid = valueNoise(W, H, 7 * S, rnd);
+      const grain = valueNoise(W, H, 1.6 * S, rnd), chip = valueNoise(W, H, 5 * S, rnd);
+      let side = opt.pressure;
+      if (side === 'random') side = ['left', 'right', 'top', 'bottom', 'even'][Math.floor(rnd() * 5)];
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d'); const img = ctx.createImageData(W, H);
+      const round = opt.shape === 'circle' || opt.shape === 'ellipse';
+      const edgeZone = (4 + opt.edge * 10) * S;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const i = y * W + x;
+          let d;
+          if (round) { const nx = (x - W / 2) / (W / 2), ny = (y - H / 2) / (H / 2); d = (1 - Math.sqrt(nx * nx + ny * ny)) * Math.min(W, H) / 2; }
+          else d = Math.min(x, W - x, y, H - y);
+          const ed = Math.max(0, 1 - d / edgeZone);
+          let pr = 0;
+          if (side === 'left') pr = 1 - x / W; else if (side === 'right') pr = x / W; else if (side === 'top') pr = 1 - y / H; else if (side === 'bottom') pr = y / H;
+          const score = blot[i] * 0.45 + mid[i] * 0.3 + grain[i] * 0.25;
+          let th = opt.ink * 0.34 + pr * pr * 0.3 * (opt.ink + 0.3);
+          th += ed * ed * opt.edge * (0.35 + chip[i] * 0.6);
+          img.data[i * 4 + 3] = score >= th ? 255 : 0;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      return cv.toDataURL('image/png');
+    }
+    /* ── 目標與定位 ── */
+    const subs = new WeakMap();
+    function sub(root, text, nth) {
+      let cache = subs.get(root); if (!cache) { cache = new Map(); subs.set(root, cache); }
+      const key = text + '\u0000' + nth;
+      if (cache.has(key) && cache.get(key).isConnected) return cache.get(key);
+      const nodes = []; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let full = '';
+      while (w.nextNode()) { nodes.push({ node: w.currentNode, start: full.length }); full += w.currentNode.data; }
+      let idx = -1, from = 0;
+      for (let i = 0; i < nth; i++) { idx = full.indexOf(text, from); if (idx === -1) return null; from = idx + text.length; }
+      const end = idx + text.length;
+      const locate = (pos, isEnd) => {
+        for (let i = 0; i < nodes.length; i++) { const n = nodes[i], L = n.node.data.length; if (pos < n.start + L || (isEnd && pos === n.start + L)) return { node: n.node, off: pos - n.start }; }
+        const last = nodes[nodes.length - 1]; return { node: last.node, off: last.node.data.length };
+      };
+      const a = locate(idx, false), b = locate(end, true);
+      const range = document.createRange(); range.setStart(a.node, a.off); range.setEnd(b.node, b.off);
+      const span = document.createElement('span'); span.className = 'upo-fxsub';
+      span.appendChild(range.extractContents()); range.insertNode(span);
+      cache.set(key, span);
+      return span;
+    }
+    function targets(el, ctx) {
+      const sel = el.getAttribute('target');
+      let list = [];
+      if (!sel) list = [ctx.scope];
+      else {
+        try {
+          list = [...ctx.scope.querySelectorAll(sel)];
+          if (!list.length) list = [...ctx.layer.querySelectorAll(sel)];
+          if (!list.length) list = [...document.querySelectorAll(sel)];
+        } catch (e) { return []; }
+      }
+      const text = el.getAttribute('text');
+      if (text != null && text !== '') { const nth = parseInt(el.getAttribute('nth'), 10) || 1; return list.map((n) => sub(n, text, nth)).filter(Boolean); }
+      return list;
+    }
+    /* 對齊基準：區塊元素以文字實際範圍為準；座標相對於 layer */
+    function rel(el, layer) {
+      const c = layer.getBoundingClientRect();
+      if (getComputedStyle(el).display !== 'inline') {
+        const rg = document.createRange(); rg.selectNodeContents(el);
+        const rs = [...rg.getClientRects()].filter((r) => r.width > 0.5 && r.height > 0.5);
+        if (rs.length) {
+          const x1 = Math.min(...rs.map((r) => r.left)), y1 = Math.min(...rs.map((r) => r.top));
+          const x2 = Math.max(...rs.map((r) => r.right)), y2 = Math.max(...rs.map((r) => r.bottom));
+          return { x: x1 - c.left, y: y1 - c.top, w: x2 - x1, h: y2 - y1 };
+        }
+      }
+      const r = el.getBoundingClientRect();
+      return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
+    }
+    function keep(ctx, place) { ctx.live.push(place); return () => { const i = ctx.live.indexOf(place); if (i >= 0) ctx.live.splice(i, 1); }; }
+    function stayFor(run, el, node, drop, def) {
+      const stay = el.getAttribute('stay') || 'forever';
+      if (stay === 'forever') return;
+      run.sleep(num(stay, 2000)).then(() => {
+        if (!node.isConnected) return;
+        const a = node.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.max(1, num(el.getAttribute('fade-out'), def) / run.rate()), fill: 'forwards' });
+        a.finished.then(() => { node.remove(); drop(); }, () => {});
+      }, () => {});
+    }
+
+    /* note-fx */
+    async function note(run, el, ctx) {
+      const t = targets(el, ctx)[0];
+      if (!t) return;
+      const layer = ctx.layer;
+      const pos = (el.getAttribute('position') || 'auto').toLowerCase();
+      const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
+      const fg = col(el.getAttribute('color'), '#DBEDD8'), bg = col(el.getAttribute('bg-color'), '#3B2A20');
+      const bc = col(el.getAttribute('border-color'), ctx.accent || '#51DBCF');
+      const nt = document.createElement('div');
+      nt.className = 'upo-fxnote';
+      nt.innerHTML = el.innerHTML;
+      Object.assign(nt.style, { color: fg, background: bg, borderColor: bc, fontSize: len(el.getAttribute('font-size')) || '1rem', maxWidth: len(el.getAttribute('max-width')) || '320px', visibility: 'hidden' });
+      const tip = document.createElement('div');
+      tip.className = 'upo-fxtip';
+      tip.style.background = bg; tip.style.borderColor = bc;
+      if (el.getAttribute('pointer') !== 'false') nt.appendChild(tip);
+      layer.appendChild(nt);
+      let side = pos;
+      const place = () => {
+        if (!nt.isConnected || !t.isConnected) return;
+        const r = rel(t, layer), b = ctx.bounds();
+        const w = nt.offsetWidth, h = nt.offsetHeight, gap = 12;
+        if (pos === 'auto') side = r.y - h - gap >= b.y ? 'top' : 'bottom';
+        let x, y;
+        if (side === 'top' || side === 'bottom') {
+          x = Math.max(b.x + 4, Math.min(b.x + b.w - w - 4, r.x + r.w / 2 - w / 2));
+          y = side === 'top' ? r.y - h - gap : r.y + r.h + gap;
+        } else {
+          y = r.y + r.h / 2 - h / 2;
+          x = side === 'left' ? r.x - w - gap : r.x + r.w + gap;
+        }
+        x += ox; y += oy;
+        nt.style.left = x + 'px'; nt.style.top = y + 'px';
+        const ts = tip.style;
+        ts.borderWidth = '0'; ts.left = ts.top = ts.right = ts.bottom = '';
+        if (side === 'top' || side === 'bottom') {
+          ts.left = Math.max(10, Math.min(w - 20, r.x + r.w / 2 - x - 5)) + 'px';
+          if (side === 'top') { ts.bottom = '-6px'; ts.borderRightWidth = ts.borderBottomWidth = '1px'; }
+          else { ts.top = '-6px'; ts.borderLeftWidth = ts.borderTopWidth = '1px'; }
+        } else {
+          ts.top = (h / 2 - 5) + 'px';
+          if (side === 'left') { ts.right = '-6px'; ts.borderRightWidth = ts.borderTopWidth = '1px'; }
+          else { ts.left = '-6px'; ts.borderLeftWidth = ts.borderBottomWidth = '1px'; }
+        }
+      };
+      place();
+      nt.style.visibility = '';
+      const drop = keep(ctx, place);
+      const dy = side === 'bottom' ? '-6px' : '6px';
+      await run.anim(nt, [{ opacity: 0, transform: `translateY(${dy})` }, { opacity: 1, transform: 'none' }], num(el.getAttribute('speed'), 300));
+      stayFor(run, el, nt, drop, 300);
+    }
+
+    /* stamp-fx */
+    async function stamp(run, el, ctx) {
+      const label = el.textContent.trim();
+      const icon = (el.getAttribute('icon') || '').trim();
+      const t = targets(el, ctx)[0];
+      if (!t || (!label && !icon)) return;
+      const layer = ctx.layer;
+      const c = col(el.getAttribute('color'), '#EF6661');
+      const size = len(el.getAttribute('size')) || '1.4rem';
+      const bw = num(el.getAttribute('border-width'), 3);
+      const shape = (el.getAttribute('shape') || 'round').toLowerCase();
+      const inner = (el.getAttribute('inner-border') || 'single').toLowerCase();
+      const vertical = (el.getAttribute('direction') || 'horizontal').toLowerCase() === 'vertical';
+      const ls = len(el.getAttribute('letter-spacing')) || '6px';
+      const ink = clamp(num(el.getAttribute('ink'), 0.5), 0, 1);
+      const edge = clamp(num(el.getAttribute('edge'), 0.4), 0, 1);
+      const bleed = clamp(num(el.getAttribute('bleed'), 0.2), 0, 1);
+      const pressure = (el.getAttribute('pressure') || 'random').toLowerCase();
+      const seed = seedOf(el.getAttribute('seed'), label + '|' + icon);
+      const rnd = makeRng(seed);
+      const rotAttr = el.getAttribute('rotate');
+      const rot = rotAttr === 'random' ? (rnd() * 2 - 1) * num(el.getAttribute('rotate-range'), 12) : num(rotAttr, -8);
+      const anchor = (el.getAttribute('anchor') || 'center').toLowerCase();
+      const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
+      const speed = num(el.getAttribute('speed'), 380);
+      const drop0 = num(el.getAttribute('drop-scale'), 2.6);
+      const bounce = clamp(num(el.getAttribute('bounce'), 0.3), 0, 1);
+      const shake = num(el.getAttribute('shake'), 2);
+      const radius = { rect: '2px', round: '10px', circle: '50%', ellipse: '50%' }[shape] || '10px';
+
+      const s = document.createElement('div');
+      s.className = 'upo-fxstamp';
+      Object.assign(s.style, { color: c, borderColor: c, borderWidth: (bw + bleed * 1.2) + 'px', borderRadius: radius, fontSize: size });
+      if (el.getAttribute('font-family')) s.style.fontFamily = el.getAttribute('font-family');
+      const inn = document.createElement('div');
+      inn.className = 'upo-fxstamp-in';
+      inn.style.borderRadius = radius;
+      inn.style.padding = (el.getAttribute('padding') || (vertical ? '16px 6px' : '6px 16px')).split(/\s+/).map(len).join(' ');
+      if (inner === 'single') inn.style.border = Math.max(1, bw * 0.5) + 'px solid ' + c;
+      else if (inner === 'double') inn.style.border = Math.max(4, bw + 1) + 'px double ' + c;
+      if (bleed > 0) { const b = (bleed * 0.9).toFixed(2); inn.style.textShadow = `${b}px 0 0 ${c},-${b}px 0 0 ${c},0 ${b}px 0 ${c},0 -${b}px 0 ${c}`; }
+      const iconPos = (el.getAttribute('icon-position') || (vertical ? 'top' : 'left')).toLowerCase();
+      inn.style.flexDirection = { left: 'row', right: 'row-reverse', top: 'column', bottom: 'column-reverse' }[iconPos] || 'row';
+      inn.style.gap = len(el.getAttribute('icon-gap')) || '6px';
+      if (icon) {
+        const i = document.createElement('i');
+        i.className = 'bi ' + (/^bi-/.test(icon) ? icon : 'bi-' + icon);
+        Object.assign(i.style, { fontSize: num(el.getAttribute('icon-size'), 1.1) + 'em', lineHeight: '1', display: 'block' });
+        inn.appendChild(i);
+      }
+      /* 文字用 | 分行；直書時每行成為一欄 */
+      if (label) {
+        const tx = document.createElement('div');
+        Object.assign(tx.style, { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' });
+        if (vertical) tx.style.writingMode = 'vertical-rl';
+        label.split('|').map((x) => x.trim()).filter(Boolean).forEach((line) => {
+          const ln = document.createElement('span');
+          ln.textContent = line; ln.style.letterSpacing = ls; ln.style.whiteSpace = 'nowrap';
+          if (vertical) ln.style.marginBottom = '-' + ls; else ln.style.marginRight = '-' + ls;
+          tx.appendChild(ln);
+        });
+        inn.appendChild(tx);
+      }
+      s.appendChild(inn);
+      s.style.visibility = 'hidden';
+      layer.appendChild(s);
+      /* 等字型載入完成再量尺寸，墨跡遮罩才會吻合 */
+      if (document.fonts) {
+        try {
+          const cs = getComputedStyle(s);
+          const loads = [document.fonts.load(`700 ${cs.fontSize} ${cs.fontFamily}`, label || 'A')];
+          if (icon) loads.push(document.fonts.load(`${cs.fontSize} bootstrap-icons`));
+          await Promise.race([Promise.all(loads), new Promise((r) => setTimeout(r, 1500))]);
+        } catch (e) { /* 略過 */ }
+      }
+      if (run.dead) { s.remove(); throw run.cancelToken; }
+      if (shape === 'circle') { const m = Math.max(s.offsetWidth, s.offsetHeight); s.style.width = s.style.height = m + 'px'; }
+      const url = inkMask(s.offsetWidth, s.offsetHeight, { seed, ink, edge, pressure, shape });
+      s.style.webkitMaskImage = `url(${url})`; s.style.maskImage = `url(${url})`;
+      const place = () => {
+        if (!s.isConnected || !t.isConnected) return;
+        const r = rel(t, layer);
+        let ax = r.x + r.w / 2, ay = r.y + r.h / 2;
+        if (anchor.indexOf('left') !== -1) ax = r.x;
+        if (anchor.indexOf('right') !== -1) ax = r.x + r.w;
+        if (anchor.indexOf('top') !== -1) ay = r.y;
+        if (anchor.indexOf('bottom') !== -1) ay = r.y + r.h;
+        s.style.left = (ax + ox) + 'px'; s.style.top = (ay + oy) + 'px';
+      };
+      place();
+      const T = (k) => `translate(-50%,-50%) rotate(${rot}deg) scale(${k})`;
+      s.style.transform = T(1);
+      s.style.visibility = '';
+      const drop = keep(ctx, place);
+      const impact = 0.72;
+      const landing = run.anim(s, [
+        { opacity: 0, transform: T(drop0), easing: 'cubic-bezier(.55,0,.9,.4)' },
+        { opacity: 1, transform: T(1 - 0.12 * bounce), offset: impact, easing: 'ease-out' },
+        { opacity: 1, transform: T(1) }
+      ], speed, { easing: 'linear' });
+      if (!run.skipping) {
+        run.sleep(speed * impact).then(() => {
+          if (run.skipping) return;
+          if (shake > 0 && ctx.shake) {
+            const k = shake;
+            run.anim(ctx.shake, [{ transform: 'none' }, { transform: `translate(${k}px,${k * 0.5}px)` }, { transform: `translate(-${k}px,-${k * 0.5}px)` },
+              { transform: `translate(${k * 0.5}px,-${k * 0.5}px)` }, { transform: 'none' }], 180, { fill: 'none', easing: 'linear' }).catch(() => {});
+          }
+        }, () => {});
+      }
+      await landing;
+      stayFor(run, el, s, drop, 400);
+    }
+
+    /* 依序執行；start="with" 與前一個同時開始 */
+    async function play(run, specs, ctx) {
+      const els = specs.map((x) => { const t = document.createElement('template'); t.innerHTML = x; return t.content.firstElementChild; }).filter(Boolean);
+      const groups = [];
+      els.forEach((el) => {
+        const s = (el.getAttribute('start') || 'after').toLowerCase();
+        if (s === 'with' && groups.length) groups[groups.length - 1].push(el); else groups.push([el]);
+      });
+      for (const g of groups) {
+        await Promise.all(g.map(async (el) => {
+          await run.sleep(num(el.getAttribute('delay'), 0));
+          if (el.tagName === 'STAMP-FX') await stamp(run, el, ctx); else await note(run, el, ctx);
+          if (ctx.onStep) ctx.onStep();
+        }));
+      }
+    }
+
+    return { CANCEL, TAGS, extract, Run, play, relayout: (list) => list.slice().forEach((f) => f()) };
+  })();
 
   function injectStyle() {
     if (document.getElementById(STYLE_ID)) return;
@@ -176,6 +586,8 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       this._run = 0;
       this._paused = false;
       this._resumeQ = [];
+      this._fxRuns = new Set();
+      this._fxLive = [];
       this._started = false;
       this._ended = false;
 
@@ -207,6 +619,8 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       css('--upo-best', color(this.getAttribute('best-color')));
       css('--upo-examiner', color(this.getAttribute('examiner-color')));
       css('--upo-share', color(this.getAttribute('share-color')));
+      css('--upo-grip', color(this.getAttribute('grip-color')));
+      css('--upo-grip-hover', color(this.getAttribute('grip-hover-color')));
       const theme = color(this.getAttribute('theme'));
       css('--upo-bc', color(this.getAttribute('border-color')) || theme);
       css('--upo-div', color(this.getAttribute('divider-color')) || theme);
@@ -228,6 +642,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       }
       head.appendChild(headAv);
       const meta = document.createElement('div');
+      meta.className = 'upo-meta';
       const name = document.createElement('div');
       name.className = 'upo-name';
       name.textContent = author;
@@ -267,6 +682,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 
       box.append(card, list, typing);
       this._box = box;
+      if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => UpoFx.relayout(this._fxLive)); this._fxRO.observe(box); }
       this._list = list;
       this._typing = typing;
 
@@ -440,6 +856,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
         const q = this._resumeQ;
         this._resumeQ = [];
         q.forEach((f) => f());
+        this._fxRuns.forEach((r) => r.resume());
         this._sync();
       }
     }
@@ -448,6 +865,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       if (!this._built || this._live || !this._started || this._ended) return;
       this._paused = true;
       this._box.querySelectorAll('.upo-item.is-surging').forEach((el) => el.classList.replace('is-surging', 'was-surging'));
+      this._fxRuns.forEach((r) => r.pause());
       this._sync();
     }
 
@@ -507,6 +925,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       this._liveModels.push(m);
       if (instant) {
         this._makeItem(m);
+        if (m.fx.length) this._runFx(m, this._run, true).catch(() => {});
         m.cur = m.likes; m.count.textContent = this._fmt(m.likes);
         if (m.shareEl) { m.curShares = m.shares; m.shareEl.textContent = this._fmt(m.shares); }
         this._ccount.textContent = String(++this._shown);
@@ -568,6 +987,9 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
     /* ---------- 播放流程 ---------- */
     async _go() {
       const run = ++this._run;
+      this._fxRuns.forEach((r) => r.cancel());
+      this._fxRuns.clear();
+      this._fxLive.length = 0;
       this._started = true;
       this._ended = false;
       this._paused = false;
@@ -658,6 +1080,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
         this._typing.hidden = true;
       }
       this._makeItem(m);
+      if (m.fx.length) await this._runFx(m, run, false);
     }
 
     _makeItem(m) {
@@ -678,6 +1101,8 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       const text = document.createElement('div');
       text.className = 'upo-text';
       Array.from(src.childNodes).forEach((n) => text.appendChild(n.cloneNode(true)));
+      /* 特效標籤不顯示在留言裡，另外收集起來，留言出現後執行 */
+      m.fx = Array.from(text.querySelectorAll(UpoFx.TAGS)).map((n) => { const h = n.outerHTML; n.remove(); return h; });
       this._trim(text);
       bubble.append(name, text);
       const foot = document.createElement('div');
@@ -701,6 +1126,17 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       }
       main.append(bubble, foot);
       el.appendChild(main);
+      /* grip：ui-post 寫 grip 時每則都有，post-item 可用 grip 或 grip="false" 個別覆寫 */
+      if (bool(src.getAttribute('grip'), bool(this.getAttribute('grip'), false))) {
+        const g = document.createElement('button');
+        g.type = 'button';
+        g.className = 'upo-grip';
+        g.title = this.getAttribute('grip-label') || '隱藏這則留言';
+        g.innerHTML = SVG_GRIP;
+        g.addEventListener('click', (e) => { e.stopPropagation(); this._hideItem(m); });
+        el.appendChild(g);
+        m.grip = g;
+      }
       const parentEl = m.replyParent && m.replyParent.el;
       if (parentEl) {
         // 回覆接在對象與其既有回覆之後，並加上 is-reply 縮排
@@ -717,6 +1153,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       m.main = main;
       m.name = name;
       m.bubble = bubble;
+      m.text = text;
       m.heart = heart;
       m.count = heart.querySelector('b');
       m.cur = m.after ? m.likes : m.start;
@@ -792,6 +1229,24 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       if (items.some((m) => m.tags.length)) await this._wait(500, run);
     }
 
+    /* 隱藏一則留言：高度收合後移出版面，章與評語在留言裡面，一起消失。重播後會再出現 */
+    _hideItem(m) {
+      const el = m.el;
+      if (!el || el.classList.contains('is-hidden') || el.classList.contains('is-hiding')) return;
+      const done = () => {
+        el.classList.remove('is-hiding');
+        el.classList.add('is-hidden');
+        this.dispatchEvent(new CustomEvent('post-item-hide', { bubbles: true, detail: { index: m.index, author: m.author } }));
+      };
+      if (!el.animate) { done(); return; }
+      el.classList.add('is-hiding');
+      const gap = parseFloat(getComputedStyle(this._list).rowGap) || 0;
+      el.animate([
+        { height: el.offsetHeight + 'px', marginBottom: '0px', transform: 'none' },
+        { height: '0px', marginBottom: -gap + 'px', transform: 'scale(.96)' }
+      ], { duration: 280 / this.rate, easing: 'ease-in', fill: 'forwards' }).finished.then(done, done);
+    }
+
     _applyLow(m) {
       if (!m.low || m.low === 'keep') return;
       if (m.low === 'dim') { m.el.classList.add('is-dim'); return; }
@@ -801,7 +1256,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       fold.textContent = this.getAttribute('fold-label') || '這則留言因評價過低已被摺疊，點一下展開';
       m.main.style.display = 'none';
       m.el.classList.add('is-dim');
-      m.el.appendChild(fold);
+      m.el.insertBefore(fold, m.grip || null);
       fold.addEventListener('click', () => { fold.remove(); m.main.style.display = ''; });
     }
 
@@ -857,6 +1312,23 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
       ], { duration: dur, easing: 'cubic-bezier(.2,.7,.4,1)' });
       anim.onfinish = () => h.remove();
       setTimeout(() => h.remove(), dur + 500);
+    }
+
+    /* ---------- 特效：stamp-fx、note-fx ---------- */
+    _runFx(m, runId, instant) {
+      m.main.classList.add('upo-fxl');
+      const r = new UpoFx.Run({ rate: () => this.rate, instant, detached: instant, hold: this._paused, cancel: CANCEL });
+      this._fxRuns.add(r);
+      const ctx = {
+        layer: m.main, scope: m.text, shake: m.bubble, live: this._fxLive,
+        accent: color(this.getAttribute('examiner-color')) || '#51DBCF',
+        onStep: () => { if (!instant) this._reveal(m.el); },
+        /* 評語的可用範圍：整個 ui-post 外框，座標相對於這則留言 */
+        bounds: () => { const b = this._box.getBoundingClientRect(), l = m.main.getBoundingClientRect(); return { x: b.left - l.left, y: b.top - l.top, w: b.width, h: b.height }; }
+      };
+      /* 等留言進場動畫結束再量位置 */
+      const p = (instant ? Promise.resolve() : r.sleep(380)).then(() => UpoFx.play(r, m.fx, ctx));
+      return p.then(() => { this._fxRuns.delete(r); }, (e) => { this._fxRuns.delete(r); if (runId !== this._run || e === CANCEL) throw CANCEL; throw e; });
     }
 
     /* ---------- 計時：受倍率、暫停、重播影響 ---------- */
