@@ -287,6 +287,60 @@ ${variantCSS}
     (document.head || document.documentElement).appendChild(s);
   })();
 
+
+  /* ══ 蓋章 stamp：只用在一般卡片的正面（翻面卡片、翻面牌組不適用）。
+     點擊卡片或呼叫 stamp() 時，章落在卡片正中央；墨跡效果同 ui-play 的 stamp-fx，沒有聲音 ══ */
+  const STAMP_CSS = `
+ui-cards .uic-stamp{position:absolute;left:50%;top:50%;z-index:4;box-sizing:border-box;padding:3px;border-style:solid;white-space:nowrap;line-height:1.2;font-weight:700;
+  pointer-events:none;-webkit-mask-size:100% 100%;mask-size:100% 100%;}
+ui-cards .uic-stamp-in{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:100%;}
+`;
+  const stampStyle = el('style'); stampStyle.textContent = STAMP_CSS; (document.head || document.documentElement).appendChild(stampStyle);
+
+  const stampRng = seed => {
+    let a = seed >>> 0;
+    return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  };
+  const stampHash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const stampNoise = (w, h, cell, rnd) => {
+    const gw = Math.ceil(w / cell) + 2, g = new Float32Array(gw * (Math.ceil(h / cell) + 2));
+    for (let i = 0; i < g.length; i++) g[i] = rnd();
+    const out = new Float32Array(w * h), sm = t => t * t * (3 - 2 * t);
+    for (let y = 0; y < h; y++) {
+      const gy = y / cell, y0 = Math.floor(gy), fy = sm(gy - y0);
+      for (let x = 0; x < w; x++) {
+        const gx = x / cell, x0 = Math.floor(gx), fx = sm(gx - x0);
+        const a = g[y0 * gw + x0], b = g[y0 * gw + x0 + 1], c = g[(y0 + 1) * gw + x0], d = g[(y0 + 1) * gw + x0 + 1];
+        out[y * w + x] = (a + (b - a) * fx) + ((c + (d - c) * fx) - (a + (b - a) * fx)) * fy;
+      }
+    }
+    return out;
+  };
+  /* 墨跡遮罩：挖空式，不使用半透明 */
+  const stampMask = (w, h, seed, round) => {
+    const S = 2, W = Math.max(2, Math.round(w * S)), H = Math.max(2, Math.round(h * S));
+    const rnd = stampRng(seed), ink = 0.5, edge = 0.4;
+    const blot = stampNoise(W, H, 22 * S, rnd), mid = stampNoise(W, H, 7 * S, rnd), grain = stampNoise(W, H, 1.6 * S, rnd), chip = stampNoise(W, H, 5 * S, rnd);
+    const side = ['left', 'right', 'top', 'bottom', 'even'][Math.floor(rnd() * 5)];
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(W, H), edgeZone = (4 + edge * 10) * S;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const i = y * W + x;
+        let d;
+        if (round) { const nx = (x - W / 2) / (W / 2), ny = (y - H / 2) / (H / 2); d = (1 - Math.sqrt(nx * nx + ny * ny)) * Math.min(W, H) / 2; }
+        else d = Math.min(x, W - x, y, H - y);
+        const ed = Math.max(0, 1 - d / edgeZone);
+        const pr = side === 'left' ? 1 - x / W : side === 'right' ? x / W : side === 'top' ? 1 - y / H : side === 'bottom' ? y / H : 0;
+        const score = blot[i] * 0.45 + mid[i] * 0.3 + grain[i] * 0.25;
+        const th = ink * 0.34 + pr * pr * 0.3 * (ink + 0.3) + ed * ed * edge * (0.35 + chip[i] * 0.6);
+        img.data[i * 4 + 3] = score >= th ? 255 : 0;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return cv.toDataURL('image/png');
+  };
+
   customElements.define('card-item', class extends HTMLElement {});
 
   class UiCards extends HTMLElement {
@@ -503,6 +557,9 @@ ${variantCSS}
         c.setAttribute('role', 'button');
         c.setAttribute('aria-pressed', 'false');
       }
+      /* 蓋章：只用在一般卡片的正面，與翻面互斥 */
+      if (ta('stamp') != null && hasBack) console.warn('[ui-cards] 翻面卡片不能蓋章，已略過 stamp：', ta('label') || ta('stamp'));
+      else if (!hasBack && (fa('stamp') || '').trim()) c.setAttribute('data-stamp', '');
       const bd = badgeEl(ta('badge'), ta('badge-icon'));
       if (bd && head) head.append(bd);
       else if (bd) parts.push(bd);
@@ -529,6 +586,12 @@ ${variantCSS}
 
     _onClick(e) {
       const wrap = this._wrap;
+      /* 蓋章卡片：點卡片本身就蓋章；點卡片裡的按鈕、連結、輸入框不蓋。detail、href 照常運作 */
+      const sc = e.target.closest('card-item[data-stamp]');
+      if (sc && wrap.contains(sc) && !sc.hasAttribute('disabled')) {
+        const inner = e.target.closest('[detail], [reveal], a[href], button, input, select, textarea, label, summary');
+        if (!inner || inner === sc) this._stamp(sc);
+      }
       /* 顯示按鈕優先處理，避免被所在卡片的 detail 攔截 */
       const r = e.target.closest('[reveal]');
       if (r && wrap.contains(r)) {
@@ -806,6 +869,98 @@ ${variantCSS}
         this._deckShow(d, c._deckIdx, true);
       }
       this._flip(c, state == null ? !c.hasAttribute('data-flipped') : state);
+    }
+
+    /* API：stamp(卡片元素或索引) 蓋章，回傳是否蓋上；unstamp(卡片元素或索引) 移除，省略時移除全部 */
+    stamp(target) {
+      const c = typeof target === 'number' ? (this._cards || [])[target] : target;
+      if (!c || !c.hasAttribute('data-stamp')) { if (c) console.warn('[ui-cards] 這張卡片不能蓋章（沒有 stamp，或是翻面卡片）'); return false; }
+      return this._stamp(c);
+    }
+
+    unstamp(target) {
+      const list = target == null ? (this._cards || []) : [typeof target === 'number' ? (this._cards || [])[target] : target];
+      list.forEach(c => { if (c && c._stampEl) { clearTimeout(c._stampT); c._stampEl.remove(); c._stampEl = null; } });
+    }
+
+    _stamp(c) {
+      if (c._stampEl) return false;
+      const fa = n => (c.hasAttribute(n) ? c.getAttribute(n) : this.getAttribute(n));
+      const label = (fa('stamp') || '').trim();
+      const iconName = (fa('stamp-icon') || '').trim();
+      if (!label && !iconName) return false;
+      const col = color(fa('stamp-color') || 'red');
+      const shape = (fa('stamp-shape') || 'round').toLowerCase();
+      const radius = { rect: '2px', round: '10px', circle: '50%', ellipse: '50%' }[shape] || '10px';
+      const idx = (this._cards || []).indexOf(c);
+      const seed = stampHash(label + '|' + iconName + '|' + idx);
+      const rotA = fa('stamp-rotate');
+      const rot = rotA === 'random' ? (stampRng(seed)() * 2 - 1) * 12 : num(rotA, -8);
+      const ox = num(fa('stamp-offset-x'), 0), oy = num(fa('stamp-offset-y'), 0);
+      const stay = Math.max(0, num(fa('stamp-stay'), 0));
+
+      const s = el('div', 'uic-stamp');
+      Object.assign(s.style, { color: col, borderColor: col, borderWidth: '3.2px', borderRadius: radius, fontSize: fs(fa('stamp-size')) || '1.4rem', visibility: 'hidden' });
+      const inn = el('div', 'uic-stamp-in');
+      Object.assign(inn.style, { borderRadius: radius, padding: '6px 16px', gap: '6px', border: '1.5px solid ' + col, textShadow: `0.18px 0 0 ${col},-0.18px 0 0 ${col}` });
+      if (iconName) {
+        const i = el('i', 'bi ' + (/^bi-/.test(iconName) ? iconName : 'bi-' + iconName));
+        Object.assign(i.style, { fontSize: '1.1em', lineHeight: '1', display: 'block' });
+        inn.append(i);
+      }
+      if (label) {
+        const tx = el('div');
+        Object.assign(tx.style, { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' });
+        label.split('|').map(x => x.trim()).filter(Boolean).forEach(line => {
+          const ln = el('span', null, line);
+          Object.assign(ln.style, { letterSpacing: '6px', marginRight: '-6px', whiteSpace: 'nowrap' });
+          tx.append(ln);
+        });
+        inn.append(tx);
+      }
+      s.append(inn);
+      c.append(s);
+      c._stampEl = s;
+      const go = () => {
+        if (c._stampEl !== s) return;
+        if (shape === 'circle') { const m = Math.max(s.offsetWidth, s.offsetHeight); s.style.width = s.style.height = m + 'px'; }
+        const url = stampMask(s.offsetWidth, s.offsetHeight, seed, shape === 'circle' || shape === 'ellipse');
+        s.style.webkitMaskImage = `url(${url})`; s.style.maskImage = `url(${url})`;
+        /* 卡片會裁切超出的部分：章（含旋轉後的外框）比卡片大時，自動縮小到卡片的 92% 以內 */
+        const rad = Math.abs(rot) * Math.PI / 180, sw = s.offsetWidth, sh = s.offsetHeight;
+        const bw = sw * Math.cos(rad) + sh * Math.sin(rad), bh = sw * Math.sin(rad) + sh * Math.cos(rad);
+        const fit = Math.min(1, (c.clientWidth * 0.92) / bw, (c.clientHeight * 0.92) / bh);
+        const T = k => `translate(calc(-50% + ${ox}px),calc(-50% + ${oy}px)) rotate(${rot}deg) scale(${k * fit})`;
+        s.style.transform = T(1);
+        s.style.visibility = '';
+        if (s.animate) {
+          s.animate([
+            { opacity: 0, transform: T(2.6), easing: 'cubic-bezier(.55,0,.9,.4)' },
+            { opacity: 1, transform: T(0.964), offset: 0.72, easing: 'ease-out' },
+            { opacity: 1, transform: T(1) }
+          ], { duration: 380, easing: 'linear' });
+          setTimeout(() => {
+            if (c._stampEl === s) c.animate([{ transform: 'none' }, { transform: 'translate(2px,1px)' }, { transform: 'translate(-2px,-1px)' }, { transform: 'translate(1px,-1px)' }, { transform: 'none' }], { duration: 180 });
+          }, 274);
+        }
+        if (stay > 0) {
+          c._stampT = setTimeout(() => {
+            if (c._stampEl !== s) return;
+            const end = () => { s.remove(); if (c._stampEl === s) c._stampEl = null; };
+            if (s.animate) s.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 400, fill: 'forwards' }).finished.then(end, end);
+            else end();
+          }, 380 + stay);
+        }
+        c.dispatchEvent(new CustomEvent('ui-cards:stamp', { bubbles: true, detail: { card: c, index: idx, text: label } }));
+      };
+      /* 等字型（含圖示字型）載入完成再量尺寸，墨跡遮罩才會吻合 */
+      if (document.fonts) {
+        const cs = getComputedStyle(s);
+        const loads = [document.fonts.load(`700 ${cs.fontSize} ${cs.fontFamily}`, label || 'A')];
+        if (iconName) loads.push(document.fonts.load(`${cs.fontSize} bootstrap-icons`));
+        Promise.race([Promise.all(loads), new Promise(r => setTimeout(r, 1500))]).then(go, go);
+      } else go();
+      return true;
     }
 
     unflipAll() {
