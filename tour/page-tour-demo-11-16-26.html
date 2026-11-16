@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>page-tour 鏡頭漫遊：範例、特效與屬性（11-16-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;min-width:1280px;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 20px 0;line-height:1.7;}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px 0;}
+  .toc a{border:1px solid #3B2A20;border-radius:999px;padding:4px 14px;color:#DBEDD8;text-decoration:none;font-size:0.9rem;}
+  .toc a:hover{border-color:#51DBCF;color:#51DBCF;}
+  h2.part{font-size:1.45rem;font-weight:800;color:#E3D322;margin:56px 0 24px 0;padding:0 0 10px 0;border-bottom:2px solid #3B2A20;}
+  .lead{color:#86877F;font-size:0.95rem;line-height:1.7;margin:-10px 0 20px 0;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:0;white-space:pre-wrap;}
+  pre code{color:inherit;font-size:inherit;}
+  code{color:#51DBCF;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;margin:0 0 28px 0;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;font-weight:700;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;line-height:1.6;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#86877F;}
+  table.attr td:nth-child(3){color:#E3D322;white-space:nowrap;}
+  h3.cat{font-size:1.05rem;font-weight:700;margin:24px 0 8px 0;padding:0 0 0 12px;border-left:4px solid #51DBCF;color:#51DBCF;}
+  h3.cat.c-pink{border-color:#FF91D7;color:#FF91D7;}h3.cat.c-yellow{border-color:#E3D322;color:#E3D322;}
+  .keys{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:0.9rem;margin:14px 0 0 0;}
+  .keys kbd{display:inline-block;min-width:24px;text-align:center;border:1px solid #86877F;border-bottom-width:3px;border-radius:5px;padding:0 6px;margin:0 6px 0 0;color:#DBEDD8;background:none;font-family:inherit;}
+
+  /* 範例教材：一般的 Bootstrap 版面，page-tour 不需要知道任何座標 */
+  .lesson{width:1180px;padding:40px;}
+  .box{background:#141514;border:1px solid #3B2A20;border-radius:20px;padding:28px;margin:0 0 24px 0;}
+  .pk{color:#86877F;font-size:1rem;margin:0 0 8px 0;letter-spacing:2px;}
+  .pt{font-size:3.4rem;font-weight:800;color:#DBEDD8;line-height:1.15;margin:0 0 14px 0;}
+  .ps{font-size:1.4rem;}
+  .chips{display:flex;gap:10px;margin:20px 0 0 0;}
+  .chips span{border:2px solid #3B2A20;border-radius:999px;padding:3px 14px;font-size:0.95rem;}
+  .sent{font-size:1.8rem;line-height:1.6;color:#DBEDD8;}
+  .ptab{width:100%;border-collapse:collapse;font-size:1.1rem;}
+  .ptab th{text-align:left;background:#3B2A20;color:#DBEDD8;padding:10px 14px;}
+  .ptab td{padding:10px 14px;border-bottom:1px solid #3B2A20;}
+  .ptab td:first-child{color:#51DBCF;}
+  .stat{display:flex;align-items:baseline;gap:14px;margin:0 0 10px 0;}
+  .stat b{font-size:3.4rem;font-weight:800;color:#E3D322;min-width:70px;font-variant-numeric:tabular-nums;}
+  .stat span{font-size:1.2rem;}
+  .q{font-size:1.35rem;color:#DBEDD8;margin:0 0 16px 0;line-height:1.5;}
+  .opt{display:block;width:100%;text-align:left;background:#0C0D0C;border:2px solid #3B2A20;color:#C6C7BD;border-radius:12px;padding:10px 14px;font-size:1.1rem;margin:0 0 10px 0;font-family:inherit;cursor:pointer;}
+  .opt.ok{border-color:#71CD76;color:#71CD76;}
+  .opt.ok::after{content:'　答對了';font-weight:800;}
+  .free{background:#1A1410;border:2px solid #FFA987;border-radius:20px;padding:28px;}
+  .chk{list-style:none;margin:0;padding:0;font-size:1.2rem;line-height:2.3;}
+  .chk li::before{content:'○ ';color:#51DBCF;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>&lt;page-tour&gt;</code> 鏡頭漫遊 v1.0</h1>
+  <p class="sub">把既有的教材頁面當成畫布：原本的 HTML 包進 <code>&lt;tour-world&gt;</code>，版面完全不用改，鏡頭要去哪裡就寫那個元素的 id。導演預先寫好運鏡與特效，按下開始自動播放，直接螢幕錄影。單一 page-tour.js，CSS 內建，不用 Shadow DOM。</p>
+  <nav class="toc"><a href="#demo">範例</a><a href="#fx">特效清單</a><a href="#attrs">屬性總覽</a><a href="route-map-demo-11-16-26.html">route-map 路線圖</a></nav>
+
+  <h2 class="part" id="demo">範例：既有頁面當畫布</h2>
+  <p class="lead">下面的教材是一般的 Bootstrap 版面（左欄三張卡片、右欄路線圖與兩張卡片），右側另外用 tour-panel 自由擺了一張「下課前」。按 <b>F</b> 全螢幕、<b>H</b> 隱藏控制列，錄影效果最好。</p>
+
+  <page-tour id="tour1" world-w="1600" countdown="3" dots start-title="Lesson 6 語塊個論">
+    <tour-world>
+      <div class="lesson">
+        <div class="row g-4">
+          <div class="col-5">
+            <div class="box" id="p-title">
+              <div class="pk">雅思口說開放課程</div>
+              <div class="pt">Lesson 6<br>語塊個論</div>
+              <div class="ps" id="t-sub">邊學邊統整，不要卯起來背</div>
+              <div class="chips"><span>不定詞片語</span><span>動名詞片語</span><span>介系詞片語</span></div>
+            </div>
+            <div class="box" id="p-sent">
+              <div class="pk">例句</div>
+              <div class="sent">It really helps me get going in the morning <span id="chunk">to have a black coffee before work</span>.</div>
+            </div>
+            <div class="box" id="p-table">
+              <div class="pk">統整表</div>
+              <table class="ptab">
+                <tr><th>語塊</th><th>詞性</th><th>功能</th></tr>
+                <tr><td>不定詞片語</td><td>形容詞</td><td>後位修飾名詞</td></tr>
+                <tr id="r-noun"><td>不定詞片語</td><td>名詞</td><td>主詞、受詞、補語</td></tr>
+                <tr><td>不定詞片語</td><td>副詞</td><td>修飾整句</td></tr>
+                <tr><td>動名詞片語</td><td>名詞</td><td>主詞、受詞、補語</td></tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-7">
+            <div class="box" id="p-map">
+              <div class="pk">語塊路線圖</div>
+              <route-map grid="30" label-zoom="1.8">
+                <route-line name="不定詞片語" color="key" path="0,4 20,4"></route-line>
+                <route-line name="動名詞片語" color="pink" path="7,0 10,3 10,6.4"></route-line>
+                <route-line name="介系詞片語" color="blue" path="0,1 3,4 3,8.4 17,8.4 17,4 20,1"></route-line>
+                <route-transfer id="st-adj" at="3,4" label="se" sub="後位修飾名詞">形容詞</route-transfer>
+                <route-transfer id="st-noun" at="10,4" label="ne" sub="主詞、受詞、補語" zoom="2.2">名詞</route-transfer>
+                <route-transfer id="st-adv" at="17,4" label="sw" sub="修飾整句">副詞</route-transfer>
+              </route-map>
+            </div>
+            <div class="row g-4">
+              <div class="col-6">
+                <div class="box" id="p-stats">
+                  <div class="pk">這一課</div>
+                  <div class="stat"><b id="c1">0</b><span>種語塊</span></div>
+                  <div class="stat"><b id="c2">0</b><span>種詞性</span></div>
+                  <div class="stat"><b id="c3">0</b><span>個例句</span></div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="box" id="p-quiz">
+                  <div class="pk">小測驗</div>
+                  <div class="q">哪一句的劃線部分是動名詞片語當主詞？</div>
+                  <button class="opt" type="button">I need <u>to grab a coffee</u>.</button>
+                  <button class="opt" type="button" id="q-b" onclick="this.classList.add('ok')"><u>Drinking black coffee</u> wakes me up.</button>
+                  <button class="opt" type="button">hot drinks <u>to go</u></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <tour-panel id="p-free" class="free" x="1230" y="40" w="330">
+        <div class="pk">下課前</div>
+        <ul class="chk">
+          <li>看懂例句</li><li>找出語塊</li><li>對照統整表</li><li>在地圖上定位</li><li id="e-hw">完成小測驗</li>
+        </ul>
+      </tour-panel>
+    </tour-world>
+
+    <tour-step to="overview" hold="2.5" caption="今天的路線：從一個句子出發"></tour-step>
+    <tour-step to="#p-title" move="1.6" hold="2.6" dim>
+      <fx-mark target="#t-sub" at="0.5"></fx-mark>
+    </tour-step>
+    <tour-step to="#p-sent" move="1.4" hold="3.6" dim drift caption="先看這個句子">
+      <fx-mark target="#chunk" color="key" at="0.4"></fx-mark>
+      <fx-arrow target="#chunk" from="right" color="pink" at="1.3">真主詞</fx-arrow>
+    </tour-step>
+    <tour-step to="#p-sent, #p-table" move="1.4" hold="2.4" caption="這個語塊對應到表格的哪一列？">
+      <fx-line from="#chunk" to="#r-noun" from-side="bottom" to-side="left" at="0.2"></fx-line>
+    </tour-step>
+    <tour-step to="#p-table" move="1.2" hold="3" dim caption="不定詞片語當名詞">
+      <fx-ring target="#r-noun" at="0.2"></fx-ring>
+    </tour-step>
+    <tour-step to="#p-table, #p-map" move="1.6" hold="2.4" caption="表格的這一列，在地圖上是一個轉乘站">
+      <fx-line from="#r-noun" to="#st-noun" from-side="right" to-side="bottom-left" at="0.2"></fx-line>
+    </tour-step>
+    <tour-step to="#st-noun" zoom="3.2" move="1.8" hold="4.2" rotate="-3" caption="不定詞線和動名詞線，都會經過「名詞」">
+      <fx-ring target="#st-noun" color="yellow" at="0.2"></fx-ring>
+      <fx-arrow target="#st-noun" from="top-left" color="yellow" at="0.9">轉乘站</fx-arrow>
+      <fx-hover target="#st-noun" at="1.8"></fx-hover>
+    </tour-step>
+    <tour-step to="#st-adv" zoom="3.2" move="2.2" hold="3.2" caption="沿著不定詞線，下一站是「副詞」">
+      <fx-cursor target="#st-adv" hover at="0.3"></fx-cursor>
+    </tour-step>
+    <tour-step to="#p-stats" move="1.8" hold="3.4" dim>
+      <fx-count target="#c1" to="3" at="0.2"></fx-count>
+      <fx-count target="#c2" to="3" at="0.7"></fx-count>
+      <fx-count target="#c3" to="4" at="1.2"></fx-count>
+      <fx-punch at="2.4"></fx-punch>
+    </tour-step>
+    <tour-step to="#p-quiz" move="1.4" hold="3.8" dim caption="練習一題">
+      <fx-cursor target="#q-b" click at="0.6"></fx-cursor>
+      <fx-confetti target="#q-b" at="2.1"></fx-confetti>
+    </tour-step>
+    <tour-step to="#p-free" move="1.6" hold="3.2" dim>
+      <fx-note target="#e-hw" at="0.6">下次上課前完成</fx-note>
+      <fx-shake target="#e-hw" at="1.4"></fx-shake>
+    </tour-step>
+    <tour-step to="overview" move="2.2" hold="4.5" caption="整堂課的路線，都留在畫面上">
+      <fx-confetti at="0.8"></fx-confetti>
+    </tour-step>
+  </page-tour>
+
+  <div class="keys">
+    <span><kbd>空白</kbd>開始、暫停</span><span><kbd>→</kbd>下一步</span><span><kbd>←</kbd>上一步</span><span><kbd>R</kbd>從頭重播</span>
+    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd>速度 0.5x、1x、1.5x、2x</span><span><kbd>H</kbd>隱藏控制列</span><span><kbd>F</kbd>全螢幕</span>
+  </div>
+
+  <h3 class="cat" style="margin-top:32px">這個範例的寫法</h3>
+<pre><code>&lt;page-tour world-w="1600" countdown="3" dots&gt;
+  &lt;tour-world&gt;
+    …原本的教材 HTML，不用改…
+    &lt;tour-panel id="p-free" x="1230" y="40" w="330"&gt;…&lt;/tour-panel&gt;   ← 需要自由擺放的才用 x、y
+  &lt;/tour-world&gt;
+
+  &lt;tour-step to="overview" hold="2.5" caption="今天的路線"&gt;&lt;/tour-step&gt;
+  &lt;tour-step to="#p-sent" move="1.4" hold="3.6" dim drift&gt;
+    &lt;fx-mark target="#chunk" color="key" at="0.4"&gt;&lt;/fx-mark&gt;
+    &lt;fx-arrow target="#chunk" from="right" color="pink" at="1.3"&gt;真主詞&lt;/fx-arrow&gt;
+  &lt;/tour-step&gt;
+  &lt;tour-step to="#st-noun" zoom="3.2" rotate="-3" hold="4.2"&gt;     ← route-map 的車站 id
+    &lt;fx-hover target="#st-noun" at="1.8"&gt;&lt;/fx-hover&gt;              ← 站名放大
+  &lt;/tour-step&gt;
+&lt;/page-tour&gt;
+
+&lt;script src="route-map.js"&gt;&lt;/script&gt;
+&lt;script src="page-tour.js"&gt;&lt;/script&gt;</code></pre>
+
+  <h2 class="part" id="fx">特效清單</h2>
+  <table class="attr"><tr><th>寫法</th><th>屬性</th><th>預設</th><th>說明</th></tr>
+    <tr><td>&lt;fx-ring&gt;</td><td>target、color</td><td>yellow</td><td>目標外圍的脈衝光圈，步驟結束時消失。</td></tr>
+    <tr><td>&lt;fx-arrow&gt;文字&lt;/fx-arrow&gt;</td><td>target、from、color、length</td><td>top-left、yellow、170</td><td>大箭頭從八個方向之一（top、bottom、left、right、top-left、top-right、bottom-left、bottom-right）指向目標並來回跳動；內文是尾端標籤。</td></tr>
+    <tr><td>&lt;fx-mark&gt;</td><td>target、color</td><td>yellow</td><td>螢光筆由左到右刷上底色，保留到結尾。</td></tr>
+    <tr><td>&lt;fx-line&gt;</td><td>from、to、from-side、to-side、color、width、duration</td><td>自動、key、4、1.2</td><td>兩個元素之間畫出帶箭頭的曲線，保留到結尾；線條粗細與箭頭大小不隨縮放改變。</td></tr>
+    <tr><td>&lt;fx-count&gt;</td><td>target、from、to、decimals、duration</td><td>0、0、0、1.2</td><td>數字滾動到指定值。</td></tr>
+    <tr><td>&lt;fx-hover&gt;</td><td>target</td><td>無</td><td>模擬滑鼠懸停：route-map 的車站會放大站名；其他元素會收到 mouseenter 並加上 tour-hover class。步驟結束時還原。</td></tr>
+    <tr><td>&lt;fx-cursor&gt;</td><td>target、click、hover、duration</td><td>0.9</td><td>模擬游標移到目標；寫 click 會真的點下去，寫 hover 會觸發懸停。</td></tr>
+    <tr><td>&lt;fx-note&gt;文字&lt;/fx-note&gt;</td><td>target、color</td><td>yellow</td><td>目標下方彈出一張歪斜的便利貼。</td></tr>
+    <tr><td>&lt;fx-shake&gt;</td><td>target</td><td>無</td><td>目標左右搖一下。</td></tr>
+    <tr><td>&lt;fx-punch&gt;</td><td>strength</td><td>0.07</td><td>鏡頭瞬間推近再彈回。</td></tr>
+    <tr><td>&lt;fx-confetti&gt;</td><td>target、count</td><td>全畫面、260</td><td>寫 target 從目標位置噴出彩帶；不寫就從上方與兩側灑滿畫面。</td></tr>
+    <tr><td>所有特效的 at</td><td>秒</td><td>0</td><td>鏡頭到達後第幾秒觸發，受暫停與速度影響。</td></tr>
+  </table>
+
+  <h2 class="part" id="attrs">屬性總覽</h2>
+  <h3 class="cat">&lt;page-tour&gt;</h3>
+  <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+    <tr><td>world-w</td><td>px</td><td>1600</td><td>畫布寬度，建議和教材頁面實際寬度一致；高度依內容決定。</td></tr>
+    <tr><td>aspect</td><td>比例</td><td>16/9</td><td>播放器比例。全螢幕時填滿螢幕。</td></tr>
+    <tr><td>countdown</td><td>秒</td><td>3</td><td>按下開始後倒數，方便按下錄影。</td></tr>
+    <tr><td>autoplay</td><td>布林</td><td>關</td><td>不顯示開始畫面，直接播放；同時寫 countdown 才會倒數。</td></tr>
+    <tr><td>start</td><td>步驟索引</td><td>0</td><td>從第幾步開始（從 0 算），前面步驟留下的效果會先補上。</td></tr>
+    <tr><td>loop</td><td>布林</td><td>關</td><td>播完自動重播。</td></tr>
+    <tr><td>clean</td><td>布林</td><td>關</td><td>一開始就隱藏控制列與進度條。</td></tr>
+    <tr><td>dots</td><td>布林</td><td>關</td><td>畫布加上點狀網格背景。</td></tr>
+    <tr><td>background、caption-color、hud-color</td><td>顏色</td><td>base、key、key</td><td>背景、字幕框、控制列的顏色。</td></tr>
+    <tr><td>keyboard</td><td>false</td><td>開</td><td>寫 false 關閉鍵盤控制。</td></tr>
+    <tr><td>start-title、start-button、start-text</td><td>文字</td><td>鏡頭漫遊、開始播放、自動說明</td><td>開始畫面的文字。</td></tr>
+  </table>
+  <h3 class="cat c-yellow">&lt;tour-world&gt;、&lt;tour-panel&gt;</h3>
+  <table class="attr"><tr><th>標籤</th><th>值</th><th>預設</th><th>說明</th></tr>
+    <tr><td>&lt;tour-world&gt;</td><td>無</td><td>無</td><td>包住原本的教材 HTML。推薦一定要寫：內容完全不會被移動，頁面上的其他元件不受影響。沒寫的話，page-tour 會自己建立並把內容搬進去。</td></tr>
+    <tr><td>&lt;tour-panel x y w h&gt;</td><td>px</td><td>無</td><td>寫了 x 的 tour-panel 會以畫布左上角為原點自由擺放；h 可以省略。沒寫 x 的 tour-panel 就是一般區塊。</td></tr>
+  </table>
+  <h3 class="cat c-pink">&lt;tour-step&gt;</h3>
+  <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+    <tr><td>to</td><td>#id、多個用逗號、overview</td><td>overview</td><td>鏡頭目標；多個目標時一起入鏡；overview 是全景。</td></tr>
+    <tr><td>zoom</td><td>倍數</td><td>自動</td><td>以全景為 1 倍。沒寫時自動縮放到目標剛好入鏡。</td></tr>
+    <tr><td>at</td><td>「x,y」</td><td>無</td><td>不指定元素，直接把鏡頭對準畫布座標（搭配 zoom，預設 2）。</td></tr>
+    <tr><td>move、hold</td><td>秒</td><td>1.4、2.5</td><td>移動時間、到達後停留時間。</td></tr>
+    <tr><td>via</td><td>#id，逗號分隔</td><td>無</td><td>依序經過這些點再到目標。</td></tr>
+    <tr><td>rotate</td><td>度</td><td>0</td><td>鏡頭傾斜；下一步沒寫就回正。</td></tr>
+    <tr><td>dim</td><td>布林</td><td>關</td><td>聚光：目標以外的區塊與之前的連線一起壓暗（用亮度濾鏡，不用透明度）。</td></tr>
+    <tr><td>drift</td><td>布林</td><td>關</td><td>停留期間鏡頭緩慢推近。</td></tr>
+    <tr><td>caption</td><td>文字</td><td>無</td><td>畫面下方的字幕條。</td></tr>
+  </table>
+  <h3 class="cat">方法與事件</h3>
+  <table class="attr"><tr><th>項目</th><th colspan="3">說明</th></tr>
+    <tr><td>方法</td><td colspan="3">play()、pause()、toggle()、next()、prev()、restart()、jump(i)；唯讀 index、total。</td></tr>
+    <tr><td>事件</td><td colspan="3">page-tour:ready、page-tour:start、page-tour:step（detail：index、total）、page-tour:done，都會冒泡。</td></tr>
+    <tr><td>跳步</td><td colspan="3">清掉特效，螢光筆與數字還原，再把前面各步會留下來的效果瞬間補上。頁面上被模擬點擊改變的內容不會還原，同一個點擊也不會重複觸發；要完全重來請重新整理頁面。</td></tr>
+  </table>
+</div>
+<script src="route-map.js"></script>
+<script src="page-tour.js"></script>
+</body>
+</html>

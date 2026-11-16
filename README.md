@@ -98,6 +98,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`sthd/`](sthd/README.md) | `sticky-head.js` | `<sticky-head>` | 章節吸頂標題列與閱讀進度。 |
 | [`tl/`](tl/README.md) | `ui-timeline.js` | `<ui-timeline>` `<tl-item>` | 圓點時間軸：九套主題、逐一出現或逐一點亮，可展開隱藏的 div 或 template。 |
 | [`tbl/`](tbl/README.md) | `ui-table.js` | `<ui-table>` | 以語意標籤撰寫、CSS Grid 排版的互動表格。 |
+| [`tour/`](tour/README.md) | `page-tour.js`、`route-map.js` | `<page-tour>` `<route-map>` | 鏡頭漫遊：既有教材頁面當畫布，依劇本自動運鏡與加特效，直接螢幕錄影；捷運路線圖呈現類別、項目與共有項目。 |
 
 ## 目錄
 
