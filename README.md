@@ -83,7 +83,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`ladder/`](ladder/README.md) | `ui-detail-ladder.js`、`ui-insight.js` | `<ui-detail-ladder>` `<ui-insight>` | 細節階梯（籠統說法逐階升級）與亮點字詞解說。 |
 | [`layout/`](layout/README.md) | `ui-drill.js`、`ui-cards.js`、`ui-steps.js` | `<ui-drill>` `<ui-cards>` `<ui-steps>` | 逐層鑽取、卡片網格、步驟列三個版面元件。 |
 | [`lens/`](lens/README.md) | `lens-read.js` | `<lens-read>` `<lens-word>` | 點擊式放大鏡標註，適合觸控筆與螢幕錄影。 |
-| [`lw/`](lw/README.md) | `link-when.js` | `<link-when>` | 元件串接：A 播完時對 B 執行動作，可讓 A 退場、B 原地替換。 |
+| [`lw/`](lw/README.md) | `link-when.js` | `<link-when>` | 元件串接：A 播完時對 B 執行動作，可讓 A 退場、B 原地替換，並可用 `detail-match` 只在特定事件內容時觸發。 |
 | [`maze/`](maze/README.md) | `maze-quiz.js` | `<maze-quiz>` | 迷宮填空動畫，走出迷宮後答案飛進空格。 |
 | [`mini/`](mini/README.md) | `mini-table.js` | `<mini-table>` | 用 `\|` 分欄的輕量表格。 |
 | [`msk/`](msk/README.md) | `ui-mask.js` | `<ui-mask>` | 行內文字遮罩，點擊揭曉。 |

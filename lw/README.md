@@ -12,6 +12,13 @@
            delay="800" exit="fade" in-place></link-when>
 ```
 
+只在特定一則訊息出現時觸發，例如 `ui-stream` 的第 4 則（`ui-stream:item` 的 `detail.index` 從 0 開始）：
+
+```html
+<link-when source="#s1" event="ui-stream:item" detail-match="index:3"
+           target="#next-btn" do="show" enter="slide-up"></link-when>
+```
+
 處理順序：A 觸發 → `delay` → A 退場（`exit`）→ `exit-gap` → B 移位（`in-place`）→ B 進場（`enter`）→ 對 B 執行 `do`。
 
 ## 屬性
@@ -20,6 +27,7 @@
 | --- | --- | --- |
 | `source` | 必填 | A 的選擇器。 |
 | `event` | `done` | `done` 依元件自動對應到完成事件（見下表）；也可寫任何事件名稱。 |
+| `detail-match` | 不設 | 事件的 `detail` 符合條件才觸發，格式為 `欄位:值`，多個條件用逗號分隔，例如 `index:3, role:system`。以字串比對，全部符合才算。 |
 | `target` | 必填 | B 的選擇器。B 可以先加 `hidden`，觸發時自動顯示。 |
 | `do` | `play` | `play`、`next`、`reset`、`show`、`hide`、`scroll`，或 B 身上任何方法名稱。 |
 | `delay` | `0` | A 觸發後等多久才開始（ms）。 |
