@@ -143,6 +143,69 @@
     .map(([k, v]) => `ui-drill .uid-btn.uid-v-${k}{background:${v};color:${LIGHT_TEXT.has(k) ? PALETTE.vanilla : PALETTE.base};}`)
     .join('\n');
 
+  /* ── 版面裝飾 decor：terminal 終端機、blueprint 藍圖、chalkboard 黑板 ──
+     只改外觀，不改行為；強調色跟著 accent（--uid-tile-on）。
+     外層三欄一律寫成 .uid-wrap > .uid-col，避免套到 template 分欄的格子（格子也叫 uid-col）。
+     .uid-tabbar + .uid-wrap 一併列出，壓過分頁版型的預設內距。 */
+  const DECOR = ['terminal', 'blueprint', 'chalkboard'];
+  const DECOR_GAP0 = new Set(['terminal', 'chalkboard']);
+  const MONO = 'Consolas,ui-monospace,Menlo,monospace';
+  const CHALK = '"Comic Sans MS","BiauKai","DFKai-SB","Kaiti TC","KaiTi",cursive';
+  const BP_GRID = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M0 0.5H120M0 24.5H120M0 48.5H120M0 72.5H120M0 96.5H120M0.5 0V120M24.5 0V120M48.5 0V120M72.5 0V120M96.5 0V120' stroke='%231E2D52' stroke-width='1'/%3E%3Cpath d='M0 0.5H120M0.5 0V120' stroke='%232A3D6B' stroke-width='1'/%3E%3C/svg%3E\")";
+  const CHALK_DUST = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cg fill='%232A4538'%3E%3Ccircle cx='12' cy='18' r='1.2'/%3E%3Ccircle cx='58' cy='9' r='0.9'/%3E%3Ccircle cx='77' cy='52' r='1.3'/%3E%3Ccircle cx='31' cy='64' r='1'/%3E%3Ccircle cx='49' cy='81' r='1.1'/%3E%3Cpath d='M6 44 q14 -4 26 1' stroke='%232A4538' stroke-width='2' fill='none'/%3E%3Cpath d='M54 30 q12 3 24 -2' stroke='%232A4538' stroke-width='2' fill='none'/%3E%3C/g%3E%3C/svg%3E\")";
+  const DECOR_CSS = `
+/* terminal：視窗標題列（decor-label，預設用 title）、紅黃綠三點、$ 提示符、閃爍游標、等寬字 */
+ui-drill[decor="terminal"] .uid-title{font-family:${MONO};color:${PALETTE.green};}
+ui-drill[decor="terminal"] .uid-title::before{content:"// ";color:${PALETTE.gray};}
+ui-drill[decor="terminal"] .uid-wrap,
+ui-drill[decor="terminal"] .uid-tabbar + .uid-wrap{position:relative;background:#0F100F;border:2px solid #3A3B3A;border-radius:10px;padding:34px 0 0 0;gap:0;}
+ui-drill[decor="terminal"] .uid-wrap::before{content:attr(data-term);position:absolute;left:0;right:0;top:0;height:32px;background:#1C1D1C;border-bottom:2px solid #3A3B3A;border-radius:8px 8px 0 0;color:${PALETTE.gray};font-family:${MONO};font-size:0.85rem;line-height:32px;text-align:center;overflow:hidden;white-space:nowrap;}
+ui-drill[decor="terminal"] .uid-wrap::after{content:"";position:absolute;left:16px;top:10px;width:12px;height:12px;border-radius:50%;background:${PALETTE.red};box-shadow:20px 0 0 0 ${PALETTE.yellow},40px 0 0 0 ${PALETTE.green};}
+ui-drill[decor="terminal"] .uid-wrap > .uid-col{padding:16px 20px;}
+ui-drill[decor="terminal"] .uid-wrap > .uid-col + .uid-col{border-left:1px solid #2A2B2A;}
+ui-drill[decor="terminal"] .uid-stack > .uid-right{border-top:1px solid #2A2B2A;}
+ui-drill[decor="terminal"] .uid-head{font-family:${MONO};color:var(--uid-tile-on);border-bottom:1px dashed #3A3B3A;}
+ui-drill[decor="terminal"] .uid-head::before{content:"$ ";color:${PALETTE.green};}
+ui-drill[decor="terminal"] .uid-head::after{content:"";display:inline-block;width:9px;height:1.05em;margin:0 0 0 6px;vertical-align:-2px;background:var(--uid-tile-on);animation:uidBlink 1s steps(1) infinite;}
+ui-drill[decor="terminal"] .uid-body{font-family:${MONO},"Microsoft JhengHei",sans-serif;font-size:0.95rem;}
+ui-drill[decor="terminal"] drill-tile .uid-box{border-radius:4px;}
+ui-drill[decor="terminal"] .uid-btn{border-radius:2px;font-family:${MONO};}
+ui-drill[decor="terminal"] .uid-arrow{background:#0F100F;}
+@keyframes uidBlink{50%{background:#0F100F;}}
+
+/* blueprint：深藍方格底、每欄虛線框、左上角 A-01 編號、直角 */
+ui-drill[decor="blueprint"] .uid-title{display:inline-block;color:${PALETTE.vanilla};letter-spacing:2px;border-bottom:3px double ${PALETTE.quiet};padding:0 0 6px 0;}
+ui-drill[decor="blueprint"] .uid-wrap,
+ui-drill[decor="blueprint"] .uid-tabbar + .uid-wrap{counter-reset:uidbp;background-color:#14203B;background-image:${BP_GRID};border:2px solid ${PALETTE.quiet};border-radius:4px;padding:16px;gap:var(--uid-gap);}
+ui-drill[decor="blueprint"] .uid-wrap > .uid-col{counter-increment:uidbp;position:relative;border:1px dashed ${PALETTE.quiet};padding:30px 16px 16px 16px;background:#14203B;}
+ui-drill[decor="blueprint"] .uid-wrap > .uid-col::before{content:"A-0" counter(uidbp);position:absolute;top:0;left:0;background:${PALETTE.quiet};color:#14203B;font-family:${MONO};font-size:0.75rem;font-weight:700;padding:2px 8px;}
+ui-drill[decor="blueprint"] .uid-head{color:${PALETTE.vanilla};letter-spacing:1px;border-bottom:1px solid ${PALETTE.quiet};}
+ui-drill[decor="blueprint"] drill-tile .uid-box,
+ui-drill[decor="blueprint"] .uid-btn{border-radius:0;}
+ui-drill[decor="blueprint"] .uid-ph{border-color:${PALETTE.quiet};color:${PALETTE.quiet};}
+ui-drill[decor="blueprint"] .uid-arrow{background:#14203B;}
+
+/* chalkboard：深綠板面、木框、粉筆槽與四支粉筆、粉筆字、虛線按鈕（按下才填滿） */
+ui-drill[decor="chalkboard"] .uid-title{display:inline-block;background:#6B4A32;color:#F4F1EA;border:3px solid #4A3222;border-radius:6px;padding:4px 18px;font-family:${CHALK};font-size:1.25rem;}
+ui-drill[decor="chalkboard"] .uid-wrap,
+ui-drill[decor="chalkboard"] .uid-tabbar + .uid-wrap{position:relative;gap:0;background-color:#233B30;background-image:${CHALK_DUST};border:14px solid #6B4A32;border-radius:8px;padding:22px 16px 44px 16px;box-shadow:inset 0 0 0 3px #1A2E25,0 0 0 3px #4A3222;}
+ui-drill[decor="chalkboard"] .uid-wrap::after{content:"";position:absolute;left:24px;right:24px;bottom:0;height:12px;background:#5A3D29;border-top:2px solid #7B5A40;border-radius:3px 3px 0 0;}
+ui-drill[decor="chalkboard"] .uid-wrap::before{content:"";position:absolute;right:220px;bottom:12px;width:30px;height:8px;border-radius:3px;background:#F4F1EA;box-shadow:42px 0 0 0 ${PALETTE.yellow},84px 0 0 0 ${PALETTE.pink},126px 0 0 0 ${PALETTE.blue};z-index:1;}
+ui-drill[decor="chalkboard"] .uid-wrap > .uid-col{padding:0 20px;}
+ui-drill[decor="chalkboard"] .uid-wrap > .uid-col + .uid-col{border-left:2px dashed #7E9A8B;}
+ui-drill[decor="chalkboard"] .uid-stack > .uid-right{border-top:2px dashed #7E9A8B;padding-top:16px;}
+ui-drill[decor="chalkboard"] .uid-head{font-family:${CHALK};font-size:1.3rem;color:#F4F1EA;border-bottom:2px dashed #F4F1EA;}
+ui-drill[decor="chalkboard"] .uid-body{color:#EDEBE4;}
+ui-drill[decor="chalkboard"] .uid-body b{color:${PALETTE.yellow};font-family:${CHALK};}
+ui-drill[decor="chalkboard"] drill-tile .uid-box{border-radius:10px;}
+ui-drill[decor="chalkboard"] .uid-label{color:#EDEBE4;}
+ui-drill[decor="chalkboard"] .uid-btn{background:#233B30 !important;color:var(--uid-tile-on) !important;border:2px dashed var(--uid-tile-on);box-shadow:none;}
+ui-drill[decor="chalkboard"] .uid-btn:hover,
+ui-drill[decor="chalkboard"] .uid-btn.uid-on{border-style:solid;background:var(--uid-tile-on) !important;color:#233B30 !important;}
+ui-drill[decor="chalkboard"] .uid-ph{border-color:#7E9A8B;color:${PALETTE.shell};}
+ui-drill[decor="chalkboard"] .uid-arrow{background:#233B30;}
+`;
+
   const CSS = `
 ui-drill{display:block;color:${PALETTE.shell};font-size:1rem;}
 ui-drill:not([data-ready]){visibility:hidden;}
@@ -274,6 +337,7 @@ ui-drill[bordered] .uid-tabs.uid-stack .uid-col{border-left:none;}
 ui-drill[bordered] .uid-tabbar + .uid-wrap{border-top:none;border-radius:0 0 8px 8px;}
 ui-drill:not([bordered]) .uid-tabbar + .uid-wrap{padding:16px 0 0 0;}
 ${variantCSS}
+${DECOR_CSS}
 `;
 
   (function injectStyle() {
@@ -366,6 +430,10 @@ ${variantCSS}
       s.setProperty('--uid-head-line', color(a('head-line-color')) || headC);
 
       const wrap = this._wrap = el('div', 'uid-wrap');
+      /* 版面裝飾：decor="terminal | blueprint | chalkboard"；terminal 標題列文字用 decor-label，預設用 title */
+      const decor = (a('decor') || '').trim().toLowerCase();
+      if (decor && !DECOR.includes(decor)) console.warn(`[ui-drill] 不支援的 decor「${decor}」，可用：${DECOR.join('、')}`);
+      if (decor === 'terminal') wrap.dataset.term = has('decor-label') ? a('decor-label') : (heading || '');
       if (has('height')) wrap.style.height = num(a('height'), 0) + 'px';
       if (has('min-height')) wrap.style.minHeight = num(a('min-height'), 0) + 'px';
 
@@ -390,7 +458,7 @@ ${variantCSS}
         const which = (a('arrows') || 'both').trim();
         s.setProperty('--uid-asize', num(a('arrow-size'), 24) + 'px');
         s.setProperty('--uid-aoff', num(a('arrow-offset'), 16) + 'px');
-        s.setProperty('--uid-agap', (has('bordered') ? 0 : num(a('gap'), 16)) + 'px');
+        s.setProperty('--uid-agap', (has('bordered') || DECOR_GAP0.has(decor) ? 0 : num(a('gap'), 16)) + 'px');
         s.setProperty('--uid-acolor', color(a('arrow-color')) || PALETTE.shell);
         s.setProperty('--uid-aon', color(a('arrow-active-color')) || color(a('accent')) || PALETTE.blue);
         [1, 2].forEach(n => {
