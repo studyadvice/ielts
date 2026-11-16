@@ -19,6 +19,23 @@
            target="#next-btn" do="show" enter="slide-up"></link-when>
 ```
 
+搭配其他元件的常見寫法：
+
+```html
+<!-- ui-blank 答對才顯示下一區塊 -->
+<link-when source="#blank1" event="blank-submit" detail-match="valid:true"
+           target="#next" do="show" enter="slide-up"></link-when>
+
+<!-- bp-popnote 便條展開時顯示下一區塊 -->
+<link-when source="#my-fold" event="bpn-fold" detail-match="open:true"
+           target="#next" do="show"></link-when>
+
+<!-- 用 call 呼叫全域函式：A 完成時展開便條 -->
+<link-when source="#s1" target="#my-fold" call="BpPopnote.fold" call-arg="true"></link-when>
+```
+
+`ui-otp` 不在 `done` 對照表內，請明確寫 `event="otp-complete"`。`ui-blank`、`ui-otp` 都有 `reset()`、`focus()` 可用 `do` 呼叫。
+
 處理順序：A 觸發 → `delay` → A 退場（`exit`）→ `exit-gap` → B 移位（`in-place`）→ B 進場（`enter`）→ 對 B 執行 `do`。
 
 ## 屬性
@@ -30,6 +47,8 @@
 | `detail-match` | 不設 | 事件的 `detail` 符合條件才觸發，格式為 `欄位:值`，多個條件用逗號分隔，例如 `index:3, role:system`。以字串比對，全部符合才算。 |
 | `target` | 必填 | B 的選擇器。B 可以先加 `hidden`，觸發時自動顯示。 |
 | `do` | `play` | `play`、`next`、`reset`、`show`、`hide`、`scroll`，或 B 身上任何方法名稱。 |
+| `call` | 不設 | 改為呼叫全域函式，例如 `BpPopnote.fold`。B 當第一個參數傳入，並取代 `do`（B 只會先顯示）。 |
+| `call-arg` | 不設 | 傳給 `call` 函式的第二個參數，`true`、`false`、數字會轉型，其餘為字串。 |
 | `delay` | `0` | A 觸發後等多久才開始（ms）。 |
 | `exit` | `none` | A 的退場：`none`、`hide`、`fade`、`collapse`、`remove`。 |
 | `exit-speed` | `400` | `fade`、`collapse` 的時間（ms）。 |

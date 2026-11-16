@@ -128,6 +128,20 @@
     }
   }
 
+  /* call="BpPopnote.fold" call-arg="true"：呼叫全域函式，B 當第一個參數，call-arg 為第二個參數 */
+  function runCall(b, path, rawArg) {
+    const fn = path.split('.').reduce((o, k) => (o == null ? o : o[k]), window);
+    if (typeof fn !== 'function') { console.warn(`[link-when] 找不到全域函式 ${path}。`); return; }
+    const t = rawArg == null ? null : String(rawArg).trim();
+    let arg;
+    if (t === 'true') arg = true;
+    else if (t === 'false') arg = false;
+    else if (t !== null && t !== '' && Number.isFinite(Number(t))) arg = Number(t);
+    else if (t !== null && t !== '') arg = t;
+    const ctx = path.indexOf('.') === -1 ? window : path.split('.').slice(0, -1).reduce((o, k) => o[k], window);
+    fn.call(ctx, b, arg);
+  }
+
   class LinkWhen extends HTMLElement {
     connectedCallback() {
       if (this._bound) return;
@@ -193,7 +207,8 @@
 
       const a = this._a;
       const b = this._find('target');
-      const action = (this.getAttribute('do') || 'play').trim();
+      const call = (this.getAttribute('call') || '').trim();
+      const action = call ? 'show' : (this.getAttribute('do') || 'play').trim();
       const exit = (this.getAttribute('exit') || 'none').trim().toLowerCase();
       const exitMs = num(this.getAttribute('exit-speed'), 400);
       const enter = (this.getAttribute('enter') || 'fade').trim().toLowerCase();
@@ -216,7 +231,8 @@
           else anchorParent.appendChild(b);
         }
         if (action !== 'hide') await showTarget(b, enter, enterMs);
-        await runAction(b, action);
+        if (call) runCall(b, call, this.getAttribute('call-arg'));
+        else await runAction(b, action);
       } else {
         console.warn(`[link-when] 找不到 target「${this.getAttribute('target')}」。`);
       }
