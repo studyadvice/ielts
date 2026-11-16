@@ -1,7 +1,7 @@
 /* =========================================================================
  * <link-when> 元件串接：A 播完（或發生某事件）時，對 B 執行動作
  *
- * <link-when source="#a" event="done" target="#b" do="play"
+ * <link-when source="#a" event="done" target="#b" do="play" detail-match="index:3"
  *            exit="fade" exit-speed="400" exit-gap="0" in-place></link-when>
  *
  * 流程：A 觸發事件 → delay → A 退場（exit）→ exit-gap → B 移到 A 的位置（in-place）
@@ -159,7 +159,18 @@
       if (b && b.hasAttribute('hidden')) b.style.display = 'none';
       this._a = a;
       this._ev = ev;
-      this._handler = () => this._fire();
+      /* detail-match="index:3, role:system"：事件的 detail 符合全部條件才觸發 */
+      const conds = (this.getAttribute('detail-match') || '').split(',').map((x) => x.trim()).filter(Boolean).map((x) => {
+        const i = x.indexOf(':');
+        return i < 0 ? null : [x.slice(0, i).trim(), x.slice(i + 1).trim()];
+      }).filter(Boolean);
+      this._handler = (e) => {
+        if (conds.length) {
+          const d = (e && e.detail) || {};
+          if (!conds.every(([k, v]) => d[k] !== undefined && String(d[k]) === v)) return;
+        }
+        this._fire();
+      };
       a.addEventListener(ev, this._handler);
       this._bound = true;
     }
