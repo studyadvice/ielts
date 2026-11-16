@@ -438,6 +438,41 @@
 <template id="photo-1"><p>2026 年員工旅遊合照。</p></template>
 ```
 
+#### 11. 版面裝飾
+
+```html
+<!-- 終端機：視窗標題列、紅黃綠三點、$ 提示符、閃爍游標、等寬字 -->
+<ui-drill decor="terminal" decor-label="lesson-3.drill" accent="key" tile-color="gray"
+          mid-title="{label}" right-title="{label}">
+  …
+</ui-drill>
+
+<!-- 藍圖：深藍方格底、每欄虛線框、左上角 A-01 編號、直角方塊與按鈕 -->
+<ui-drill decor="blueprint" accent="quiet" tile-color="vanilla" button-color="quiet"
+          mid-title="{label}" right-title="{label}">
+  …
+</ui-drill>
+
+<!-- 黑板：深綠板面、木框、粉筆槽、粉筆字；按鈕是虛線框，按下才填滿 -->
+<ui-drill decor="chalkboard" accent="yellow" tile-color="vanilla" button-color="yellow"
+          mid-title="{label}" right-title="{label}">
+  …
+</ui-drill>
+```
+
+- `decor` 只改外觀，不改行為；原有屬性全部照用，強調色跟著 `accent`。
+- 支援 `terminal`、`blueprint`、`chalkboard`；不寫或寫了不支援的名稱時維持原樣（後者會在主控台提醒）。
+- `decor-label`：terminal 標題列的文字，不寫時用 `title`。
+- 三欄、堆疊（`layout="stack"`）與頁籤（`tile-shape="tab-*"`）都可以使用；加 `arrows` 時，箭頭位置與底色會自動配合。
+- 同時寫 `decor` 與 `bordered` 時，以 `decor` 為準。
+- terminal 與 chalkboard 的欄間距固定為 0，以分隔線區隔；blueprint 的欄間距依 `gap`。
+
+| decor | 外觀 | 建議 accent | 適合 |
+| --- | --- | --- | --- |
+| `terminal` | 視窗標題列、三圓點、`$` 提示符、閃爍游標、等寬字 | `key`、`green` | 錄影教學的操作感、文法規則 |
+| `blueprint` | 方格底、虛線欄框、A-01 編號、直角 | `quiet`、`indigo` | 圖表題、文章結構拆解 |
+| `chalkboard` | 深綠板面、木框、粉筆槽、粉筆字、虛線按鈕 | `yellow`、`vanilla`、`pink` | 講解型單元、老師在黑板前 |
+
 ### 屬性參考
 
 #### `<ui-drill>`
@@ -450,6 +485,8 @@
 | `gap` | 欄間距（px） | `16` |
 | `height`／`min-height` | 高度、最小高度（px） | 自動 |
 | `bordered` | 顯示外框與分隔線 | 關 |
+| `decor` | 版面裝飾：`terminal`、`blueprint`、`chalkboard`，見[版面裝飾](#11-版面裝飾) | 無 |
+| `decor-label` | terminal 標題列文字 | `title` |
 | `accent` | 選取狀態的主色 | `blue` |
 | `tile-shape` | `rounded`、`circle`，或 `tab-*` 頁籤造型 | 方形 |
 | `tile-cols` | 方塊每列數量 | `3` |
