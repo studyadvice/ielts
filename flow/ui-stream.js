@@ -9,7 +9,8 @@
   const fs = v => /^\d*\.?\d+$/.test(String(v)) ? v + 'rem' : v;
 
   const DEFAULTS = {
-    /* 模式 */ mode: '',
+    /* 模式 */ mode: '', layout: '', splitLabels: '',
+    /* 畫面區 */ stage: '', stageWidth: 60, stageStart: '',
     /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, scrollSpace: 48, typeAll: false, step: false,
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
     /* 版面 */ height: 0, gap: 14, gapSame: -1, gapSystem: -1, padding: 16, bubbleWidth: 78, bubbleRadius: 12, bubblePadding: '10px 14px', lineHeight: 1.6,
@@ -114,6 +115,48 @@ ui-stream .us-overlay{position:absolute;inset:0;background:var(--us-bg);display:
 ui-stream .us-overlay .us-pause{font-size:1.1rem;padding:12px 28px;margin:0;}
 ui-stream .us-reveal{border:1px dashed var(--us-accent);border-radius:8px;padding:10px 14px;color:var(--us-text);align-self:stretch;}
 ui-stream .us-reveal > :last-child{margin-bottom:0;}
+/* ── layout="flat"：平鋪式。全部靠左、沒有氣泡框，連續發言合併；system 變成左邊有色條的引用區塊 ── */
+ui-stream[layout="flat"] .us-msg{max-width:100%;}
+ui-stream[layout="flat"] .us-avatar{border-radius:8px;}
+ui-stream[layout="flat"] .us-avatar.us-av-blank{height:0;}
+ui-stream[layout="flat"] .us-meta{margin:0 0 2px 0;}
+ui-stream[layout="flat"] .us-meta b{font-size:1.2em;}
+ui-stream .us-plain .us-bubble{border:0;border-radius:0;background:none;padding:0;color:var(--us-rt,var(--us-text));}
+ui-stream[layout="flat"] .us-feed > .us-fnote,ui-stream[layout="flat"] .us-feed > .us-reveal{margin-left:var(--us-ind);}
+ui-stream .us-fnote{align-self:stretch;max-width:none;}
+ui-stream .us-fnote .us-bubble{border:0;border-left:4px solid var(--us-c);border-radius:0;background:color-mix(in srgb,var(--us-c) 12%,var(--us-bg));color:var(--us-rt,var(--us-text));}
+/* ── layout="tail"：尾巴氣泡。實心大圓角、不顯示頭像，連續發言只有最後一則有尾巴；system 變成置中小字 ── */
+ui-stream .us-tbub .us-bubble{position:relative;border:0;background:var(--us-c);color:var(--us-rt,${PALETTE.base});border-radius:calc(var(--us-br) + 6px);}
+ui-stream .us-tbub .us-meta{margin:0 12px 4px 12px;}
+ui-stream .us-tbub.us-left.us-tend .us-bubble{border-bottom-left-radius:4px;}
+ui-stream .us-tbub.us-right.us-tend .us-bubble{border-bottom-right-radius:4px;}
+ui-stream .us-tbub.us-tend .us-bubble::after{content:'';position:absolute;bottom:0;width:10px;height:12px;background:var(--us-c);}
+ui-stream .us-tbub.us-left.us-tend .us-bubble::after{left:-7px;clip-path:polygon(100% 0,100% 100%,0 100%);}
+ui-stream .us-tbub.us-right.us-tend .us-bubble::after{right:-7px;clip-path:polygon(0 0,100% 100%,0 100%);}
+ui-stream .us-tsys .us-bubble{border:0;background:none;padding:2px 0;color:var(--us-rt,var(--us-c));font-size:0.85em;text-align:center;}
+/* ── layout="split"：雙欄對照。left 進左欄、right 進右欄、center 橫跨兩欄；中間一條分隔線 ── */
+ui-stream .us-shead{display:grid;grid-template-columns:1fr 1fr;column-gap:20px;padding:12px var(--us-pad) 0 var(--us-pad);}
+ui-stream .us-shead div{font-size:0.85rem;font-weight:700;color:var(--us-hc);border-bottom:2px solid var(--us-hc);padding:0 0 6px 0;}
+ui-stream[layout="split"] .us-feed{background-image:linear-gradient(var(--us-border),var(--us-border));background-size:1px 100%;background-position:center top;background-repeat:no-repeat;background-attachment:local;}
+ui-stream[layout="split"] .us-msg.us-left,ui-stream[layout="split"] .us-msg.us-right{width:calc(50% - 10px);max-width:none;}
+ui-stream[layout="split"] .us-msg.us-right{flex-direction:row;}
+ui-stream[layout="split"] .us-right .us-meta{justify-content:flex-start;}
+ui-stream[layout="split"] .us-body{flex:1 1 auto;}
+ui-stream[layout="split"] .us-msg.us-center{align-self:stretch;max-width:none;}
+ui-stream[layout="split"] .us-center .us-bubble,ui-stream[layout="split"] .us-reveal{background:var(--us-bg);}
+/* ── stage：外框裡切出一塊畫面區，訊息出現時切換成該則指定的圖片或 template ── */
+ui-stream .us-main{display:flex;flex:1 1 auto;min-height:0;}
+ui-stream .us-main.us-stage-r{flex-direction:row-reverse;}
+ui-stream .us-col{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;}
+ui-stream .us-col .us-feed{min-height:0;}
+ui-stream .us-stage{flex:0 0 var(--us-stw);box-sizing:border-box;min-width:0;min-height:0;padding:var(--us-pad);border-right:1px solid var(--us-border);display:flex;overflow:auto;color:var(--us-text);}
+ui-stream .us-stage-r .us-stage{border-right:0;border-left:1px solid var(--us-border);}
+ui-stream .us-stage-in{margin:auto;max-width:100%;}
+ui-stream .us-stage-in > :last-child{margin-bottom:0;}
+ui-stream .us-stage-in.us-st-img{align-self:stretch;width:100%;margin:0;display:flex;align-items:center;justify-content:center;}
+ui-stream .us-stage-in.us-st-img img{display:block;max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;}
+ui-stream .us-st-fade{animation:us-stfade .4s ease;}
+@keyframes us-stfade{from{opacity:0;}to{opacity:1;}}
 ui-stream .us-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-radius:8px;padding:8px 12px;font-size:0.9rem;}
 `;
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
@@ -540,6 +583,11 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
         const v = this.getAttribute(attr);
         this._opt[k] = typeof DEFAULTS[k] === 'boolean' ? v !== 'false' : typeof DEFAULTS[k] === 'number' ? num(v, CFG[k]) : v;
       });
+      const lay = String(this._opt.layout || '').trim().toLowerCase();
+      this._layout = ['flat', 'tail', 'split'].includes(lay) ? lay : '';
+      if (this._layout) this.setAttribute('layout', this._layout); else this.removeAttribute('layout');
+      /* flat、tail 沒寫 avatar-repeat 時，連續發言預設合併（等同 first） */
+      this._repSet = this.hasAttribute('avatar-repeat') || !!(window.UiStreamConfig && 'avatarRepeat' in window.UiStreamConfig);
       if (String(this._opt.mode).toLowerCase() === 'live') { this._live = true; Object.assign(this._opt, { controls: false, loop: false, autoplay: false, start: 0 }); }
       ['animation', 'avatar-position'].forEach(a => { const k = a.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); if (!this.hasAttribute(a)) this.setAttribute(a, this._opt[k]); });
       if (this._opt.markColor && !this.hasAttribute('mark-color')) this.setAttribute('mark-color', this._opt.markColor);
@@ -579,6 +627,7 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
           icon: it.getAttribute('icon'), image: it.getAttribute('image'), initials: it.getAttribute('initials'), side: it.getAttribute('side'), dataStyle: it.getAttribute('data-style'), badge: it.getAttribute('badge'), badgeColor: it.getAttribute('badge-color'), color: it.getAttribute('color'),
           typed: it.hasAttribute('typed'), speed: it.getAttribute('speed'), delay: it.getAttribute('delay'), gap: it.getAttribute('gap'), highlight: it.hasAttribute('highlight'),
           pause: it.getAttribute('pause'), reveal: it.getAttribute('reveal'), revealTarget: it.getAttribute('reveal-target'), textAlign: it.getAttribute('text-align'),
+          stage: it.getAttribute('stage'),
           html: srcId && !srcEl ? `<span class="us-err">找不到 #${srcId}</span>` : html
         });
       });
@@ -600,6 +649,8 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       if (o.markColor) sv('--us-mark', color(o.markColor));
       sv('--us-tfs', fs(o.titleSize)); sv('--us-tfw', o.titleWeight); sv('--us-tc', color(o.titleColor));
       sv('--us-wbw', Math.max(0, o.borderWidth) + 'px');
+      sv('--us-ind', o.avatar ? (o.avatarSize + 10) + 'px' : '0px');
+      sv('--us-stw', Math.min(90, Math.max(10, num(o.stageWidth, 60))) + '%');
       if (o.bubbleBorderWidth > 0) sv('--us-bbw', o.bubbleBorderWidth + 'px');
       if (this._title) this.appendChild(el('div', 'us-title', this._title));
       const wrap = el('div', 'us-wrap' + (o.bordered ? '' : ' us-noborder') + (o.controlsPosition === 'bottom' ? ' us-cbottom' : ''));
@@ -623,7 +674,25 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
         wrap.append(bar);
       }
       if (o.progress) { this._prog = el('div', 'us-prog'); this._prog.append(el('i')); wrap.append(this._prog); }
-      this._feed = el('div', 'us-feed'); wrap.append(this._feed); this.appendChild(wrap);
+      /* stage="left"（或只寫 stage）／stage="right"：外框裡切出畫面區，內容流放另一邊 */
+      const ss = String(o.stage || '').trim().toLowerCase();
+      const stSide = ss === 'right' ? 'right' : (ss === 'left' || (ss === '' && this.hasAttribute('stage'))) ? 'left' : '';
+      let host = wrap; this._stage = null;
+      if (stSide) {
+        const main = el('div', 'us-main' + (stSide === 'right' ? ' us-stage-r' : '')), col = el('div', 'us-col');
+        this._stage = el('div', 'us-stage'); main.append(this._stage, col); wrap.append(main); host = col;
+      }
+      if (this._layout === 'split' && o.splitLabels) {
+        /* split-labels="Examiner:playful, Candidate:blue"：左右兩欄的標題，冒號後是顏色 */
+        const head = el('div', 'us-shead');
+        String(o.splitLabels).split(',').slice(0, 2).forEach(t => {
+          const [txt, c] = t.split(':').map(x => x.trim()); const h = el('div', null, txt || '');
+          h.style.setProperty('--us-hc', color(c) || color(o.textColor)); head.append(h);
+        });
+        host.append(head);
+      }
+      this._feed = el('div', 'us-feed'); host.append(this._feed); this.appendChild(wrap);
+      this._stageSet(o.stageStart, false);
       this._fxRuns = new Set(); this._fxLive = []; this._fxNextReq = false;
       if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => UsFx.relayout(this._fxLive)); this._fxRO.observe(this._feed); }
       this.setAttribute('data-ready', '');
@@ -646,9 +715,9 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       if (this._fxBusy()) { this.pause(); this._fxNextReq = true; this._fxRuns.forEach(r => { if (!r.detached) r.skip(); }); return; }
       this.pause(); this._clearPause(); this._show(true);
     }
-    replay() { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._update(); this.play(); }
+    replay() { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); this._update(); this.play(); }
     finish() { this.pause(); this._clearPause(); this._fxRuns.forEach(r => { r.detached = true; r.skip(); }); while (this._i < this._src.length) this._show(true, true); }
-    goto(i) { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; const n = Math.max(0, Math.min(i, this._src.length)); while (this._i < n) this._show(true, true); this._update(); }
+    goto(i) { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); const n = Math.max(0, Math.min(i, this._src.length)); while (this._i < n) this._show(true, true); this._update(); }
     add(item) { const atEnd = this._i >= this._src.length; this._src.push(this._normItem(item || {})); this._update(); if (atEnd && !this._feed.querySelector('.us-pause') && !this._wrap.querySelector('.us-overlay')) this.play(); return this._src.length; }
     export(format) {
       const msgs = [...this._feed.querySelectorAll('.us-msg')];
@@ -657,6 +726,8 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
     }
     /* 從外部註冊或更新角色；opts 鍵名同 stream-role 屬性的駝峰式，例如 dataStyle、textColor */
     addRole(name, opts) { if (!this._roles) { (this._pendingRoles = this._pendingRoles || []).push([name, opts || {}]); return; } this._addRole(name, opts || {}); }
+    /* 從外部切換畫面區：值同 stream-item 的 stage */
+    setStage(v) { this._stageSet(v, true); }
     hasRole(name) { return !!(this._roles && this._roles[String(name).toLowerCase()]); }
     get live() { return !!this._live; }
     get index() { return this._i; }
@@ -702,7 +773,8 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       if (d.gap != null && d.gap !== '') return num(d.gap, o.gap);
       const isSys = role.side === 'center', prevSys = this._prev && this._prev.side === 'center';
       if ((isSys || prevSys) && o.gapSystem >= 0) return o.gapSystem;
-      if (this._prev && this._prev.from === d.from && !isSys && o.gapSame >= 0) return o.gapSame;
+      const gs = o.gapSame >= 0 ? o.gapSame : (this._layout === 'flat' || this._layout === 'tail' ? 4 : -1);
+      if (this._prev && this._prev.from === d.from && this._prev.side === role.side && !isSys && gs >= 0) return gs;
       return o.gap;
     }
 
@@ -710,22 +782,31 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       if (this._i >= this._src.length) {
         this._playing = false; this._update();
         this.dispatchEvent(new CustomEvent('ui-stream:done', { bubbles: true, detail: { total: this._src.length } }));
-        if (this._opt.loop && !silent) { this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._t = setTimeout(() => this.play(), this._ms(this._opt.delay)); }
+        if (this._opt.loop && !silent) { this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); this._t = setTimeout(() => this.play(), this._ms(this._opt.delay)); }
         return;
       }
       const d = this._src[this._i], idx = this._i++;
       const role0 = this._roles[d.from] || this._roles.student;
-      const role = Object.assign({}, role0, { side: d.side || role0.side, dataStyle: d.dataStyle || role0.dataStyle });
+      const lay = this._layout;
+      let side = d.side || role0.side;
+      if (lay === 'flat' && side !== 'center') side = 'left';
+      const role = Object.assign({}, role0, { side, dataStyle: d.dataStyle || role0.dataStyle });
       const c = d.color ? color(d.color) : role.color;
-      const msg = el('div', `us-msg us-${role.side} us-${role.dataStyle}`); msg.style.setProperty('--us-c', c);
+      /* flat、tail 有自己的外觀，data-style 不套用 */
+      let look = 'us-' + role.dataStyle;
+      if (lay === 'flat') look = side === 'center' ? 'us-fnote' : 'us-plain';
+      else if (lay === 'tail') look = side === 'center' ? 'us-tsys' : 'us-tbub';
+      const msg = el('div', `us-msg us-${role.side} ${look}`); msg.style.setProperty('--us-c', c);
       msg.style.setProperty('--us-mt', this._gapFor(d, role) + 'px');
       if (role.textColor) msg.style.setProperty('--us-rt', role.textColor);
       if (d.badgeColor) msg.style.setProperty('--us-badge', color(d.badgeColor));
       // 同一人連續發言：avatar-repeat="first" 只在第一則顯示頭像，"last" 只在最後一則顯示（空位保留，對齊不變）
-      const same = this._prev && this._prev.from === d.from && role.side !== 'center';
-      const rep = String(this._opt.avatarRepeat || 'all').toLowerCase();
+      const same = this._prev && this._prev.from === d.from && this._prev.side === role.side && role.side !== 'center';
+      const rep = String((!this._repSet && (lay === 'flat' || lay === 'tail')) ? 'first' : (this._opt.avatarRepeat || 'all')).toLowerCase();
+      /* tail：尾巴只留在連續發言的最後一則 */
+      if (lay === 'tail' && role.side !== 'center') { if (same && this._prevMsg) this._prevMsg.classList.remove('us-tend'); msg.classList.add('us-tend'); }
       this._prev = { from: d.from, side: role.side };
-      if (role.side !== 'center' && this._opt.avatar) {
+      if (role.side !== 'center' && this._opt.avatar && lay !== 'tail') {
         const av = el('div', 'us-avatar'); const img = d.image || role.image;
         const ini = d.initials || role.initials;
         if (img) { const im = el('img'); im.src = img; im.alt = d.name || ''; av.append(im); }
@@ -744,6 +825,11 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       const bub = el('div', 'us-bubble'); body.append(bub); msg.append(body);
       const ta = d.textAlign || role.textAlign || this._opt.textAlign; if (ta) bub.style.textAlign = ta;
       this._feed.append(msg);
+      /* 訊息一出現就切換畫面區（不等逐字打完）；沒寫 stage 的訊息不動畫面區 */
+      if (this._stage && d.stage != null && d.stage !== '') {
+        this._stageSet(d.stage, !silent);
+        if (!silent) this.dispatchEvent(new CustomEvent('ui-stream:stage', { bubbles: true, detail: { index: idx, value: d.stage } }));
+      }
       if (silent) { bub.innerHTML = d.html; msg.classList.add('on'); if (d.fx && d.fx.length) this._runFx(d, msg, bub, true).catch(() => {}); this._update(); return; }
       requestAnimationFrame(() => { msg.classList.add('on'); this._scroll(); });
       this._update();
@@ -796,6 +882,18 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
         this._t = setTimeout(startTyping, this._ms(700));
       } else if (typed) startTyping();
       else { bub.innerHTML = d.html; after(); }
+    }
+    /* stage 的值：#id → 複製該 template（或元素）的內容；clear → 清空；其他 → 當成圖片網址 */
+    _stageSet(v, anim) {
+      const box = this._stage; if (!box) return;
+      v = v == null ? '' : String(v).trim();
+      box.innerHTML = '';
+      if (!v || v.toLowerCase() === 'clear') return;
+      const inn = el('div', 'us-stage-in');
+      if (v[0] === '#') inn.append(cloneSource(v.slice(1)));
+      else { inn.classList.add('us-st-img'); const im = el('img'); im.src = v; im.alt = ''; inn.append(im); }
+      if (anim) inn.classList.add('us-st-fade');
+      box.append(inn);
     }
     _reveal(d) {
       if (!d.reveal) return;

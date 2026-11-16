@@ -44,7 +44,7 @@
 <div class="wrap">
   <h1><code>&lt;ui-stream&gt;</code>：stamp-fx 蓋章與 note-fx 評語</h1>
   <p class="sub">在 stream-item 裡寫 <code>&lt;stamp-fx&gt;</code>、<code>&lt;note-fx&gt;</code>，訊息出現後依序執行。寫法與 ui-play 相同，程式碼內建在 ui-stream.js，不需要載入 ui-play.js。前一版範例見 <a href="ui-stream-demo-11-15-26.html" style="color:#51DBCF">ui-stream-demo-11-15-26.html</a>。</p>
-  <nav class="toc"><a href="#ex">範例 1 到 4</a><a href="#attrs">屬性總覽</a><a href="#diff">版本對照</a></nav>
+  <nav class="toc"><a href="#ex">範例 1 到 4</a><a href="#layout">排版 layout（範例 5 到 8）</a><a href="#stage">畫面區 stage（範例 9 到 11）</a><a href="#attrs">屬性總覽</a><a href="ui-stream-demo-11-15-26.html">完整屬性（11-15 合併版）</a><a href="#diff">版本對照</a></nav>
 
   <h2 class="part" id="ex">範例</h2>
   <section>
@@ -179,6 +179,255 @@
   </section>
 
 
+  <h2 class="part" id="layout">排版 layout（flat、tail、split）</h2>
+  <p style="font-size:0.95rem;color:#86877F;margin:-8px 0 28px 0;">layout 改的是整個內容流的排法，跟 data-style（單一氣泡外觀）是不同層次。每種排版都有得有失：flat 不分左右、tail 沒有頭像、split 的 side 改成決定左欄或右欄。</p>
+
+  <!-- ══════════ 範例 5 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 5：layout="flat" 平鋪式</h2><p>像 Slack。全部靠左、沒有氣泡框，同一人連續發言合併；system 變成左邊有色條的引用區塊，和文字對齊。</p></div>
+    <div class="two">
+      <ui-stream id="e15" layout="flat" controls autoplay delay="500" height="460">
+        <stream-role name="examiner" label="Examiner" color="playful" icon="person-badge-fill"></stream-role>
+        <stream-role name="candidate" label="Candidate" color="blue"></stream-role>
+        <stream-item from="examiner" time="10:02">Do you drink coffee?</stream-item>
+        <stream-item from="candidate" time="10:02">Yes, every day.</stream-item>
+        <stream-item from="candidate">It really helps me get going in the morning <c-key>to have a black coffee before work</c-key>.</stream-item>
+        <stream-item from="system" color="calm"><c-key>不定詞片語當名詞</c-key>：It 是虛主詞，真正的主詞是句尾的 to have a black coffee before work。</stream-item>
+        <stream-item from="examiner" time="10:03">Do you usually make it at home?</stream-item>
+        <stream-item from="candidate" time="10:03">Not really. I <c-key>need to grab one</c-key> on my way to the office.</stream-item>
+      </ui-stream>
+      <pre>&lt;ui-stream layout="flat" controls autoplay height="460"&gt;
+  &lt;stream-role name="examiner" label="Examiner" color="playful"
+               icon="person-badge-fill"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="candidate" label="Candidate" color="blue"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="examiner" time="10:02"&gt;Do you drink coffee?&lt;/stream-item&gt;
+  &lt;stream-item from="candidate" time="10:02"&gt;Yes, every day.&lt;/stream-item&gt;
+  &lt;stream-item from="candidate"&gt;It really helps me …&lt;/stream-item&gt;
+  &lt;stream-item from="system" color="calm"&gt;不定詞片語當名詞：…&lt;/stream-item&gt;
+&lt;/ui-stream&gt;
+
+flat 的規則
+  side：left、right 一律靠左；center 變成引用區塊
+  data-style：不套用
+  頭像：圓角方形；連續發言時隱藏，且不佔高度
+  avatar-repeat：沒寫時等同 first（名字只在第一則）
+  gap-same：沒寫時是 4
+  引用區塊和 reveal 會縮排到文字的位置（avatar="false" 時不縮排）</pre>
+    </div>
+  </section>
+
+  <!-- ══════════ 範例 6 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 6：layout="tail" 尾巴氣泡</h2><p>像 iMessage。實心大圓角、不顯示頭像，同一人連續發言只有最後一則有尾巴；system 變成置中小字。</p></div>
+    <div class="two">
+      <ui-stream id="e16" layout="tail" controls autoplay delay="500" height="460" bubble-width="72">
+        <stream-role name="examiner" label="Examiner" color="bg-alternative" text-color="vanilla" side="left"></stream-role>
+        <stream-role name="candidate" label="Candidate" color="blue" side="right"></stream-role>
+        <stream-item from="examiner">Do you drink coffee?</stream-item>
+        <stream-item from="candidate">Yes, every day.</stream-item>
+        <stream-item from="candidate">It really helps me get going in the morning to have a black coffee before work.</stream-item>
+        <stream-item from="system">不定詞片語當名詞：It 是虛主詞，真主詞在句尾。</stream-item>
+        <stream-item from="examiner">Do you usually make it at home?</stream-item>
+        <stream-item from="candidate" typed>Not really. I need to grab one on my way to the office.</stream-item>
+      </ui-stream>
+      <pre>&lt;ui-stream layout="tail" controls autoplay height="460" bubble-width="72"&gt;
+  &lt;stream-role name="examiner" label="Examiner" color="bg-alternative"
+               text-color="vanilla" side="left"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="candidate" label="Candidate" color="blue"
+               side="right"&gt;&lt;/stream-role&gt;
+  …
+&lt;/ui-stream&gt;
+
+tail 的規則
+  頭像：不顯示（avatar、avatar-size 不作用）
+  data-style：不套用，一律用角色顏色填滿
+  文字色：預設深色，用角色的 text-color 覆寫
+  圓角：bubble-radius + 6；尾巴那一角固定 4px
+  尾巴：只留在同一人連續發言的最後一則
+  avatar-repeat：沒寫時等同 first（名字只在第一則）
+  gap-same：沒寫時是 4</pre>
+    </div>
+  </section>
+
+  <!-- ══════════ 範例 7 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 7：layout="split" 雙欄對照</h2><p>side="left" 進左欄、side="right" 進右欄，另一欄留空；center 橫跨兩欄。split-labels 加上欄位標題。</p></div>
+    <div class="two">
+      <ui-stream id="e17" layout="split" split-labels="Band 6 原句:playful, Band 7 改寫:green" controls autoplay delay="500" height="460" avatar="false">
+        <stream-role name="b6" label="原句" color="playful" side="left"></stream-role>
+        <stream-role name="b7" label="改寫" color="green" side="right"></stream-role>
+        <stream-item from="b6">I drink black coffee every morning because it helps me.</stream-item>
+        <stream-item from="b7">It really helps me get going in the morning <c-key>to have a black coffee</c-key>.</stream-item>
+        <stream-item from="system" color="calm">改寫用了 It 虛主詞，把不定詞片語放到句尾當真主詞。</stream-item>
+        <stream-item from="b6">I buy coffee before the meeting.</stream-item>
+        <stream-item from="b7">I <c-key>need to grab a black coffee</c-key> before the meeting.</stream-item>
+      </ui-stream>
+      <pre>&lt;ui-stream layout="split"
+           split-labels="Band 6 原句:playful, Band 7 改寫:green"
+           controls autoplay height="460" avatar="false"&gt;
+  &lt;stream-role name="b6" label="原句" color="playful" side="left"&gt;&lt;/stream-role&gt;
+  &lt;stream-role name="b7" label="改寫" color="green" side="right"&gt;&lt;/stream-role&gt;
+  &lt;stream-item from="b6"&gt;I drink black coffee every morning …&lt;/stream-item&gt;
+  &lt;stream-item from="b7"&gt;It really helps me …&lt;/stream-item&gt;
+  &lt;stream-item from="system" color="calm"&gt;改寫用了 It 虛主詞 …&lt;/stream-item&gt;
+&lt;/ui-stream&gt;
+
+split 的規則
+  side：left 左欄、right 右欄、center 橫跨兩欄
+  每則訊息佔滿自己那一欄的寬度（bubble-width 不作用）
+  靠右欄的訊息，頭像和名字也在左邊，兩欄讀起來一致
+  data-style：照常套用
+  split-labels：逗號分隔兩個標題，冒號後面是顏色（可省略）
+  中間的分隔線用 border-color</pre>
+    </div>
+  </section>
+
+  <!-- ══════════ 範例 8 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 8：搭配 ui-contacts 拖放與 reveal</h2><p>三個 mode="live" 的內容流，各有一組通訊錄。把卡片拖進下方的內容流（或按電話圖示）；Candidate 的第二則會用 reveal 帶出文法解說。</p></div>
+    <template id="note18"><c-key>不定詞片語當名詞</c-key>：<code>to + 原形動詞</code>（加上受詞或修飾語）整串當一個名詞，可以當主詞、及物動詞的受詞、主詞補語或受詞補語。主詞太長時，常用 <c-yellow>It</c-yellow> 當虛主詞，把不定詞片語移到句尾。</template>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start;">
+      <div>
+        <ui-contacts for="f18" columns="2" show-menu="false">
+          <p-card name="Examiner" color="playful" icon="person-badge-fill"><p-msg>Do you drink coffee?</p-msg><p-msg>Do you usually make it at home?</p-msg></p-card>
+          <p-card name="Candidate" color="blue"><p-msg>Yes, every day.</p-msg><p-msg reveal="note18">It really helps me get going in the morning to have a black coffee before work.</p-msg><p-msg>Not really. I need to grab one on my way to the office.</p-msg></p-card>
+        </ui-contacts>
+        <div style="margin:12px 0 0 0"><ui-stream id="f18" mode="live" layout="flat" height="420" title="flat" title-size="1rem" animation="pop"></ui-stream></div>
+      </div>
+      <div>
+        <ui-contacts for="t18" columns="2" show-menu="false">
+          <p-card name="Examiner" color="bg-alternative" text-color="vanilla" icon="person-badge-fill"><p-msg>Do you drink coffee?</p-msg><p-msg>Do you usually make it at home?</p-msg></p-card>
+          <p-card name="Candidate" color="blue" side="right"><p-msg>Yes, every day.</p-msg><p-msg reveal="note18">It really helps me get going in the morning to have a black coffee before work.</p-msg><p-msg>Not really. I need to grab one on my way to the office.</p-msg></p-card>
+        </ui-contacts>
+        <div style="margin:12px 0 0 0"><ui-stream id="t18" mode="live" layout="tail" height="420" title="tail" title-size="1rem" animation="pop"></ui-stream></div>
+      </div>
+      <div>
+        <ui-contacts for="s18" columns="2" show-menu="false">
+          <p-card name="Examiner" color="playful" icon="person-badge-fill"><p-msg>Do you drink coffee?</p-msg><p-msg>Do you usually make it at home?</p-msg></p-card>
+          <p-card name="Candidate" color="blue" side="right"><p-msg>Yes, every day.</p-msg><p-msg reveal="note18">It really helps me get going in the morning to have a black coffee before work.</p-msg><p-msg>Not really. I need to grab one on my way to the office.</p-msg></p-card>
+        </ui-contacts>
+        <div style="margin:12px 0 0 0"><ui-stream id="s18" mode="live" layout="split" split-labels="Examiner:playful, Candidate:blue" height="420" title="split" title-size="1rem" animation="pop" avatar-size="32"></ui-stream></div>
+      </div>
+    </div>
+    <pre style="margin:16px 0 0 0">&lt;template id="note18"&gt;&lt;c-key&gt;不定詞片語當名詞&lt;/c-key&gt;：…&lt;/template&gt;
+
+&lt;ui-contacts for="s18" columns="2" show-menu="false"&gt;
+  &lt;p-card name="Examiner" color="playful"&gt;…&lt;/p-card&gt;
+  &lt;p-card name="Candidate" color="blue" side="right"&gt;      ← split、tail 靠 side 分邊；flat 不看 side
+    &lt;p-msg&gt;Yes, every day.&lt;/p-msg&gt;
+    &lt;p-msg reveal="note18"&gt;It really helps me …&lt;/p-msg&gt;    ← 這一則之後出現解說
+  &lt;/p-card&gt;
+&lt;/ui-contacts&gt;
+
+&lt;ui-stream id="s18" mode="live" layout="split"
+           split-labels="Examiner:playful, Candidate:blue" height="420"&gt;&lt;/ui-stream&gt;</pre>
+  </section>
+
+
+  <h2 class="part" id="stage">畫面區 stage</h2>
+  <p style="font-size:0.95rem;color:#86877F;margin:-8px 0 28px 0;">在外框裡切出一塊畫面區。訊息一出現，畫面區就淡入切換成那一則 stage 屬性指定的圖片或 template；沒寫 stage 的訊息不動畫面區。stage 和 reveal 各自獨立，同一則可以同時使用。</p>
+
+  <!-- 畫面區用的 template：範例 9 到 21 共用 -->
+  <template id="st-cover"><div style="text-align:center"><div style="font-size:1rem;color:#86877F;margin:0 0 8px 0">Lesson 6</div><div style="font-size:2.4rem;font-weight:800;color:#DBEDD8">語塊個論</div><div style="font-size:1.3rem;color:#51DBCF;margin:10px 0 0 0">不定詞片語</div></div></template>
+  <template id="st-adj"><div style="font-size:1.6rem;line-height:1.6;color:#DBEDD8">hot <u style="text-decoration-color:#51DBCF">drinks</u> <span style="color:#51DBCF">to go</span></div><div style="font-size:1.05rem;margin:14px 0 0 0;line-height:1.7"><span style="color:#E3D322">形容詞</span>：後位修飾名詞 drinks。<br>to go 在這裡就是「外帶」。</div></template>
+  <template id="st-noun-s"><div style="font-size:1.4rem;line-height:1.7;color:#DBEDD8"><span style="color:#FF91D7">It</span> really helps me get going in the morning <span style="color:#51DBCF">to have a black coffee before work</span>.</div><div style="font-size:1.05rem;margin:14px 0 0 0;line-height:1.7"><span style="color:#E3D322">名詞</span>：真主詞。It 是虛主詞，把太長的主詞移到句尾。</div></template>
+  <template id="st-noun-o"><div style="font-size:1.5rem;line-height:1.7;color:#DBEDD8">I <u style="text-decoration-color:#5DBAE8">need</u> <span style="color:#51DBCF">to grab a black coffee</span> before the meeting.</div><div style="font-size:1.05rem;margin:14px 0 0 0;line-height:1.7"><span style="color:#E3D322">名詞</span>：當及物動詞 need 的受詞。</div></template>
+  <template id="st-table"><table style="border-collapse:collapse;font-size:1rem;min-width:420px"><tr><th style="text-align:left;padding:6px 12px;background:#3B2A20;color:#DBEDD8">詞性</th><th style="text-align:left;padding:6px 12px;background:#3B2A20;color:#DBEDD8">功能</th></tr><tr><td style="padding:6px 12px;border-bottom:1px solid #3B2A20;color:#51DBCF">形容詞</td><td style="padding:6px 12px;border-bottom:1px solid #3B2A20">後位修飾名詞</td></tr><tr><td style="padding:6px 12px;border-bottom:1px solid #3B2A20;color:#51DBCF">名詞</td><td style="padding:6px 12px;border-bottom:1px solid #3B2A20">主詞、受詞、主詞補語、受詞補語</td></tr><tr><td style="padding:6px 12px;color:#51DBCF">副詞</td><td style="padding:6px 12px">修飾整句</td></tr></table></template>
+  <template id="note19"><c-key>不定詞片語當名詞</c-key>：It 是虛主詞，真主詞是句尾的 to have a black coffee before work。</template>
+
+  <!-- ══════════ 範例 9 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 9：stage="left" stage-width="60"</h2><p>stage 的值以 # 開頭是 template，其他當成圖片網址。stage-start 是開場畫面，重播時會回到它。</p></div>
+    <ui-stream id="e19" stage="left" stage-width="60" stage-start="#st-cover" controls autoplay delay="1800" height="440">
+      <stream-role name="examiner" label="Examiner" color="playful" icon="person-badge-fill" side="left"></stream-role>
+      <stream-role name="candidate" label="Candidate" color="blue" side="right" data-style="filled"></stream-role>
+      <stream-item from="examiner">Where do you usually get your coffee?</stream-item>
+      <stream-item from="candidate" stage="#st-adj">Usually from a cafe near my office, because this cafe doesn't serve hot drinks to go.</stream-item>
+      <stream-item from="candidate" stage="#st-noun-s">It really helps me get going in the morning to have a black coffee before work.</stream-item>
+      <stream-item from="examiner" stage="../msk/classroom_adult_illu.svg">Do you study after work?</stream-item>
+      <stream-item from="candidate" stage="#st-noun-o">Sometimes. But I need to grab a black coffee before the meeting first.</stream-item>
+      <stream-item from="system" stage="#st-table">本題整理：不定詞片語的三種詞性</stream-item>
+    </ui-stream>
+    <pre style="margin:16px 0 0 0">&lt;template id="st-cover"&gt;…開場畫面…&lt;/template&gt;
+&lt;template id="st-adj"&gt;…hot drinks to go 的拆解…&lt;/template&gt;
+
+&lt;ui-stream stage="left" stage-width="60" stage-start="#st-cover" controls autoplay height="440"&gt;
+  &lt;stream-item from="examiner"&gt;Where do you usually get your coffee?&lt;/stream-item&gt;              ← 沒寫 stage：畫面區不動
+  &lt;stream-item from="candidate" stage="#st-adj"&gt;… hot drinks to go.&lt;/stream-item&gt;          ← # 開頭：template
+  &lt;stream-item from="examiner" stage="../msk/classroom_adult_illu.svg"&gt;…&lt;/stream-item&gt;   ← 其他：圖片網址
+  &lt;stream-item from="system" stage="#st-table"&gt;本題整理&lt;/stream-item&gt;
+&lt;/ui-stream&gt;
+
+畫面區的規則
+  訊息一出現就切換（不等逐字打完、不等 pause），淡入 0.4 秒
+  圖片等比縮放，完整放進畫面區；template 內容置中，超出時畫面區內部捲動
+  stage="clear"：清空畫面區
+  寬度：stage-width 是佔整個外框的百分比（10 到 90），內容流用剩下的寬度
+  建議搭配 height，畫面區和內容流等高</pre>
+  </section>
+
+  <!-- ══════════ 範例 10 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 10：搭配 ui-contacts，同一則同時用 stage 與 reveal</h2><p>p-msg 寫 stage 就會傳給 ui-stream（ui-contacts 同步更新）。第二則左邊換圖，右邊同時帶出解說。</p></div>
+    <div style="display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start;">
+      <ui-contacts for="e20" columns="1" show-menu="false">
+        <p-card name="不定詞片語、名詞" card-theme="indigo">
+          <p-msg stage="#st-adj">This cafe doesn't serve hot drinks to go.</p-msg>
+          <p-msg stage="#st-noun-s" reveal="note19">It really helps me get going in the morning to have a black coffee before work.</p-msg>
+          <p-msg stage="#st-noun-o">I need to grab a black coffee before the meeting.</p-msg>
+          <p-msg stage="#st-table">I force myself to drink black coffee before work just to jump-start my day.</p-msg>
+        </p-card>
+      </ui-contacts>
+      <ui-stream id="e20" mode="live" stage="left" stage-width="60" stage-start="#st-cover" height="400" animation="pop" avatar-size="36"></ui-stream>
+    </div>
+    <pre style="margin:16px 0 0 0">&lt;ui-contacts for="e20" columns="1" show-menu="false"&gt;
+  &lt;p-card name="不定詞片語、名詞" card-theme="indigo"&gt;
+    &lt;p-msg stage="#st-adj"&gt;This cafe doesn't serve hot drinks to go.&lt;/p-msg&gt;
+    &lt;p-msg stage="#st-noun-s" reveal="note19"&gt;It really helps me …&lt;/p-msg&gt;   ← 左邊換圖，右邊帶出解說
+    &lt;p-msg stage="#st-noun-o"&gt;I need to grab a black coffee before the meeting.&lt;/p-msg&gt;
+  &lt;/p-card&gt;
+&lt;/ui-contacts&gt;
+
+&lt;ui-stream id="e20" mode="live" stage="left" stage-width="60" stage-start="#st-cover" height="400"&gt;&lt;/ui-stream&gt;</pre>
+  </section>
+
+  <!-- ══════════ 範例 11 ══════════ -->
+  <section>
+    <div class="sec-title"><h2>範例 11：stage="right"、搭配 layout，以及 setStage()</h2><p>畫面區放右邊，內容流用 flat 排版；按鈕從外部切換畫面區。</p></div>
+    <div class="two">
+      <div>
+        <div class="btns">
+          <button class="btn btn-outline-info" id="e21-a">setStage('#st-table')</button>
+          <button class="btn btn-outline-info" id="e21-b">setStage('../msk/classroom_adult_illu.svg')</button>
+          <button class="btn btn-outline-info" id="e21-c">setStage('clear')</button>
+        </div>
+        <ui-stream id="e21" stage="right" stage-width="50" layout="flat" controls step height="400">
+          <stream-role name="teacher" label="Nelson" color="key" icon="mortarboard-fill"></stream-role>
+          <stream-item from="teacher" stage="#st-cover">今天看不定詞片語。</stream-item>
+          <stream-item from="teacher" stage="#st-adj">第一種：當形容詞，放在名詞後面修飾它。</stream-item>
+          <stream-item from="teacher" stage="#st-noun-o">第二種：當名詞，例如當 need 的受詞。</stream-item>
+        </ui-stream>
+        <div class="log" id="e21-log"></div>
+      </div>
+      <pre>&lt;ui-stream id="e21" stage="right" stage-width="50" layout="flat" controls step height="400"&gt;
+  &lt;stream-item from="teacher" stage="#st-cover"&gt;今天看不定詞片語。&lt;/stream-item&gt;
+  …
+&lt;/ui-stream&gt;
+
+const s = document.getElementById('e21');
+s.setStage('#st-table');                        // template
+s.setStage('../msk/classroom_adult_illu.svg');  // 圖片
+s.setStage('clear');                            // 清空
+
+/* 訊息切換畫面區時觸發（setStage 不觸發） */
+s.addEventListener('ui-stream:stage', e =&gt; {
+  e.detail.index;   // 第幾則
+  e.detail.value;   // stage 的值
+});</pre>
+    </div>
+  </section>
+
+
   <h2 class="part" id="attrs">屬性總覽</h2>
   <section>
 
@@ -238,6 +487,25 @@
     </table>
   </section>
 
+
+  <h3 class="cat c-key">排版 layout（ui-stream）</h3>
+  <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+    <tr><td>layout</td><td>flat、tail、split</td><td>無</td><td>整個內容流的排法。flat：平鋪式，全部靠左、沒有氣泡框，system 變成引用區塊。tail：尾巴氣泡，不顯示頭像，連續發言只有最後一則有尾巴。split：雙欄對照，left 左欄、right 右欄、center 橫跨。flat、tail 不套用 data-style。</td></tr>
+    <tr><td>split-labels</td><td>「標題:顏色, 標題:顏色」</td><td>無</td><td>layout="split" 時左右兩欄的標題，冒號後的顏色可省略（省略時用 text-color）。</td></tr>
+    <tr><td>gap-same</td><td>px</td><td>同 gap</td><td>layout 為 flat、tail 時沒寫則是 4。</td></tr>
+    <tr><td>avatar-repeat</td><td>all、first、last</td><td>all</td><td>layout 為 flat、tail 時沒寫則等同 first。</td></tr>
+  </table>
+
+  <h3 class="cat c-key">畫面區 stage</h3>
+  <table class="attr"><tr><th>屬性</th><th>值</th><th>預設</th><th>說明</th></tr>
+    <tr><td>stage</td><td>left、right</td><td>無</td><td>寫在 ui-stream：在外框裡切出畫面區，內容流放另一邊。只寫 stage 等同 left。</td></tr>
+    <tr><td>stage-width</td><td>百分比數字</td><td>60</td><td>畫面區佔整個外框寬度的百分比，10 到 90。</td></tr>
+    <tr><td>stage-start</td><td>#id、圖片網址</td><td>無</td><td>畫面區的開場內容；重播、goto、loop 時回到它。</td></tr>
+    <tr><td>stage（訊息）</td><td>#id、圖片網址、clear</td><td>無</td><td>寫在 stream-item 或 p-msg：這一則一出現就切換畫面區。# 開頭是 template 或元素的內容，clear 是清空，其他當成圖片網址。</td></tr>
+    <tr><td>setStage(v)</td><td colspan="3">從外部切換畫面區，值同上。</td></tr>
+    <tr><td>ui-stream:stage</td><td colspan="3">訊息切換畫面區時觸發，detail 為 index、value；setStage 不觸發。</td></tr>
+  </table>
+
   <h2 class="part" id="diff">版本對照</h2>
   <section>
     <div class="diff">
@@ -257,9 +525,93 @@
       <tr><td>其他屬性、方法、事件</td><td colspan="2">都沒有改動</td></tr>
     </table>
   </section>
+  <!-- ══════════ 排版 layout ══════════ -->
+  <section>
+    <div class="sec-title"><h2>排版 layout</h2><p>沒有寫 layout 時，外觀與修改前完全相同。</p></div>
+    <div class="diff">
+      <div>
+        <h4 class="old">修改前</h4>
+<pre>/* 只有一種排版：頭像加氣泡，左右對話 */
+const role = Object.assign({}, role0, {
+  side: d.side || role0.side, dataStyle: d.dataStyle || role0.dataStyle });
+const msg = el('div', `us-msg us-${role.side} us-${role.dataStyle}`);
+
+/* 連續發言判斷只看 from */
+const same = this._prev &amp;&amp; this._prev.from === d.from &amp;&amp; role.side !== 'center';
+
+/* avatar-repeat 預設 all，gap-same 預設同 gap */</pre>
+      </div>
+      <div>
+        <h4 class="new">修改後</h4>
+<pre>/* 新增 layout、split-labels */
+DEFAULTS.layout = '';        // flat | tail | split
+DEFAULTS.splitLabels = '';   // "左欄標題:顏色, 右欄標題:顏色"
+
+/* flat 強制靠左；flat、tail 改用自己的外觀，不套 data-style */
+if (lay === 'flat' &amp;&amp; side !== 'center') side = 'left';
+if (lay === 'flat') look = side === 'center' ? 'us-fnote' : 'us-plain';
+else if (lay === 'tail') look = side === 'center' ? 'us-tsys' : 'us-tbub';
+
+/* 連續發言：同一個 from 且同一邊 */
+const same = … &amp;&amp; this._prev.side === role.side &amp;&amp; …;
+
+/* tail：尾巴只留在最後一則；不畫頭像 */
+if (same) this._prevMsg.classList.remove('us-tend'); msg.classList.add('us-tend');
+
+/* flat、tail：avatar-repeat 沒寫時等同 first，gap-same 沒寫時是 4 */</pre>
+      </div>
+    </div>
+  </section>
+  <!-- ══════════ 畫面區 stage ══════════ -->
+  <section>
+    <div class="sec-title"><h2>畫面區 stage</h2><p>沒寫 stage 時，外觀與修改前完全相同。ui-contacts.js 同步更新：p-msg 的 stage 會傳給 ui-stream。</p></div>
+    <div class="diff">
+      <div>
+        <h4 class="old">修改前</h4>
+<pre>/* 外框裡只有：控制列 → 進度條 → 欄位標題 → 內容流 */
+this._feed = el('div', 'us-feed'); wrap.append(this._feed);
+
+/* 想在旁邊顯示圖片，只能借用 reveal + reveal-target：
+   要等訊息打完才換、同一則不能再帶出解說、
+   圖片也得包成 template、版面要自己排 */
+&lt;p-msg reveal="pic-1" reveal-target="stage-1"&gt;
+
+/* ui-contacts 傳給 ui-stream 的欄位 */
+['time', …, 'pause', 'reveal', 'revealTarget']</pre>
+      </div>
+      <div>
+        <h4 class="new">修改後</h4>
+<pre>/* 新增 stage、stage-width（預設 60）、stage-start */
+DEFAULTS.stage = '';  DEFAULTS.stageWidth = 60;  DEFAULTS.stageStart = '';
+
+/* 有 stage 時：外框裡切成「畫面區 + 內容流」兩欄 */
+main = el('div', 'us-main');  main.append(this._stage, col);
+
+/* 訊息一出現就切換，不等逐字打完 */
+if (this._stage &amp;&amp; d.stage) this._stageSet(d.stage, !silent);
+
+/* #id → template；clear → 清空；其他 → 圖片網址 */
+_stageSet(v, anim) { … }
+
+/* 重播、goto、loop 會回到 stage-start */
+/* 新增 setStage(v)、事件 ui-stream:stage */
+
+/* ui-contacts 多傳 stage */
+['time', …, 'pause', 'reveal', 'revealTarget', 'stage']</pre>
+      </div>
+    </div>
+  </section>
 </div>
 <script src="ui-stream.js"></script>
+<script src="ui-contacts.js"></script>
 <script>
+  /* 範例 11：setStage */
+  const e21 = document.getElementById('e21'), e21log = document.getElementById('e21-log');
+  document.getElementById('e21-a').onclick = () => e21.setStage('#st-table');
+  document.getElementById('e21-b').onclick = () => e21.setStage('../msk/classroom_adult_illu.svg');
+  document.getElementById('e21-c').onclick = () => e21.setStage('clear');
+  e21.addEventListener('ui-stream:stage', e => { e21log.textContent = `ui-stream:stage → index ${e.detail.index}，value ${e.detail.value}`; });
+
   const s3 = document.getElementById('s3'), s3log = document.getElementById('s3-log');
   const s3show = (t) => { s3log.textContent = `${t}　index = ${s3.index} / ${s3.total}`; };
   document.getElementById('s3-next').onclick = () => { s3.next(); s3show('next()'); };

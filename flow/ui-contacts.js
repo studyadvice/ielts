@@ -147,7 +147,7 @@ ui-stream[data-uc-over] .us-wrap,ui-post[data-uc-over] .upo{outline:3px solid va
         const g = n => m.getAttribute(n);
         return { html: m.innerHTML.trim(), typed: m.hasAttribute('typed') ? g('typed') !== 'false' : null, time: g('time'), badge: g('badge'), badgeColor: g('badge-color'),
           speed: g('speed'), delay: g('delay'), gap: g('gap'), highlight: m.hasAttribute('highlight'), color: g('color'), side: g('side'), dataStyle: g('data-style'),
-          textAlign: g('text-align'), pause: g('pause'), reveal: g('reveal'), revealTarget: g('reveal-target'),
+          textAlign: g('text-align'), pause: g('pause'), reveal: g('reveal'), revealTarget: g('reveal-target'), stage: g('stage'),
           attrs: Object.fromEntries([...m.attributes].map(x => [x.name, x.value])) };
       });
       return {
@@ -308,7 +308,7 @@ ui-stream[data-uc-over] .us-wrap,ui-post[data-uc-over] .upo{outline:3px solid va
       t.addRole(c.role, { label: c.name, color: c.color, image: c.image, icon: c.icon, initials: c.image || c.icon ? '' : (c.initials || initialsOf(c.name)),
         side: L.side, dataStyle: L.dataStyle, textColor: c.textColor, textAlign: c.textAlign });
       const item = { from: c.role, name: c.name, html: m.html, typed: m.typed != null ? m.typed : !!L.typeAll };
-      ['time', 'badge', 'badgeColor', 'speed', 'delay', 'gap', 'color', 'side', 'dataStyle', 'textAlign', 'pause', 'reveal', 'revealTarget'].forEach(k => { if (m[k] != null && m[k] !== '') item[k] = m[k]; });
+      ['time', 'badge', 'badgeColor', 'speed', 'delay', 'gap', 'color', 'side', 'dataStyle', 'textAlign', 'pause', 'reveal', 'revealTarget', 'stage'].forEach(k => { if (m[k] != null && m[k] !== '') item[k] = m[k]; });
       if (m.highlight) item.highlight = true;
       t.add(item);
       return this._afterSend(c, idx, t);

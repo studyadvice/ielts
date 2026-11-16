@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
 | `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
-| `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息。 | [`ui-stream-demo-11-15-26.html`](ui-stream-demo-11-15-26.html)（合併版） |
+| `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息；`layout` 切換平鋪、尾巴氣泡、雙欄對照排版；`stage` 在旁邊切出畫面區，逐則切換圖片或 template。 | [`ui-stream-demo-11-16-26.html`](ui-stream-demo-11-16-26.html)（合併版） |
 | `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息，或拖到 ui-post 變成一則留言。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html)（範例 5：拖到 ui-post） |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
@@ -357,13 +357,18 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
+| `layout` | 無 | 整個內容流的排法，見下方「排版 layout」。 |
+| `stage` | 無 | `left` 或 `right`：在外框裡切出畫面區，內容流放另一邊。只寫 `stage` 等同 `left`。見下方「畫面區 stage」。 |
+| `stage-width` | `60` | 畫面區佔外框寬度的百分比，10 到 90。 |
+| `stage-start` | 無 | 畫面區的開場內容（`#id` 或圖片網址）；重播、`goto`、`loop` 時回到它。 |
+| `split-labels` | 無 | `layout="split"` 時左右兩欄的標題，寫法 `Examiner:playful, Candidate:blue`，冒號後的顏色可省略。 |
 | `title` | 無 | 元件上方標題。 |
 | `title-size` | `1.2rem` | 標題字級，只寫數字視為 rem。 |
 | `title-weight` | `700` | 標題粗細。 |
 | `title-color` | `violet` | 標題顏色。 |
 | `height` | 自動 | 固定高度（px），超出時內部捲動。 |
 | `gap` | `14` | 訊息間隔（px）。 |
-| `gap-same` | 同 `gap` | 同一角色連續發言的間隔。 |
+| `gap-same` | 同 `gap` | 同一角色連續發言的間隔。`layout` 為 `flat`、`tail` 時沒寫則是 `4`。 |
 | `gap-system` | 同 `gap` | system 訊息前後的間隔。 |
 | `padding` | `16` | 內容流內距（px）。 |
 | `bubble-width` | `78` | 氣泡最大寬度（百分比）。 |
@@ -379,7 +384,50 @@
 | `avatar` | 開 | 顯示頭像。 |
 | `avatar-size` | `36` | 頭像直徑（px）。圖片頭像會自動裁切縮放成圓形。 |
 | `avatar-position` | `top` | `top` 和名稱列對齊、`bottom` 和氣泡底對齊。 |
-| `avatar-repeat` | `all` | 同一人連續發言：`all` 每則顯示頭像；`first` 只在第一則；`last` 只在最後一則。設為 `first` 或 `last` 時，名字只在連續發言的第一則顯示。 |
+| `avatar-repeat` | `all` | 同一人連續發言：`all` 每則顯示頭像；`first` 只在第一則；`last` 只在最後一則。設為 `first` 或 `last` 時，名字只在連續發言的第一則顯示。`layout` 為 `flat`、`tail` 時沒寫則等同 `first`。 |
+
+### 排版 layout
+
+不寫 `layout` 就是原本的頭像加氣泡、左右對話。`layout` 改的是整個內容流的排法，和 `data-style`（單一氣泡外觀）是不同層次；每種排版都會讓部分屬性失效。
+
+| `layout` | 樣子 | 失效或改變的屬性 | system 訊息 |
+| --- | --- | --- | --- |
+| `flat` | 平鋪式（像 Slack）：全部靠左、沒有氣泡框，名字和時間在上方，連續發言合併，頭像為圓角方形。 | `side` 一律靠左；不套用 `data-style`。 | 左邊有色條的引用區塊，縮排到文字位置；`reveal` 也一樣縮排。 |
+| `tail` | 尾巴氣泡（像 iMessage）：角色色填滿、大圓角，同一人連續發言只有最後一則有尾巴。 | 不顯示頭像；不套用 `data-style`；圓角為 `bubble-radius` + 6。 | 置中小字，沒有外框。 |
+| `split` | 雙欄對照：`left` 進左欄、`right` 進右欄，另一欄留空，中間一條分隔線（`border-color`）。 | 訊息佔滿自己那一欄，`bubble-width` 不作用；靠右欄的頭像與名字也放左邊。 | 橫跨兩欄。 |
+
+```html
+<ui-stream layout="split" split-labels="Band 6 原句:playful, Band 7 改寫:green" avatar="false">
+  <stream-role name="b6" label="原句" color="playful" side="left"></stream-role>
+  <stream-role name="b7" label="改寫" color="green" side="right"></stream-role>
+  <stream-item from="b6">I buy coffee before the meeting.</stream-item>
+  <stream-item from="b7">I need to grab a black coffee before the meeting.</stream-item>
+  <stream-item from="system">need 後面接不定詞片語當受詞。</stream-item>
+</ui-stream>
+```
+
+搭配 ui-contacts 時，`split` 和 `tail` 用 `p-card` 的 `side` 決定放哪一邊（ui-contacts 預設 `left`）；`flat` 不看 `side`。
+
+### 畫面區 stage
+
+`stage` 在外框裡切出一塊畫面區。訊息一出現（不等逐字打完），畫面區就淡入切換成那一則 `stage` 屬性指定的內容；沒寫 `stage` 的訊息不動畫面區。`stage` 和 `reveal` 各自獨立，同一則可以左邊換圖、右邊帶出解說。
+
+| 訊息的 `stage` 值 | 畫面區顯示 |
+| --- | --- |
+| `#id` | 該 `template`（或元素）的內容，置中，超出時在畫面區內部捲動。 |
+| `clear` | 清空。 |
+| 其他 | 當成圖片網址，等比縮放完整放進畫面區。 |
+
+```html
+<template id="st-adj">hot drinks <c-key>to go</c-key>：形容詞，後位修飾名詞。</template>
+
+<ui-stream stage="left" stage-width="60" stage-start="#st-cover" height="440">
+  <stream-item from="student" stage="#st-adj">This cafe doesn't serve hot drinks to go.</stream-item>
+  <stream-item from="teacher" stage="coffee.jpg">Nice. Now look at this picture.</stream-item>
+</ui-stream>
+```
+
+ui-contacts 的 `p-msg` 也能寫 `stage`（ui-contacts.js 需同步更新）。建議搭配 `height`，畫面區和內容流等高。外部切換用 `setStage(v)`，值同上。
 
 ### `<ui-stream>` 屬性：色彩與動畫
 
@@ -410,7 +458,7 @@
 | `image` | 無 | 頭像圖片。 |
 | `initials` | 無 | 以縮寫文字當頭像，例如 `AR`。頭像優先順序：`image`、`initials`、`icon`。 |
 | `side` | `left` | `left`、`right`、`center`（不顯示頭像）。 |
-| `data-style` | `outline` | 氣泡樣式，見下表。v0.5 起不再讀取 `style` 屬性。 |
+| `data-style` | `outline` | 氣泡樣式，見下表。v0.5 起不再讀取 `style` 屬性。`layout` 為 `flat`、`tail` 時不套用。 |
 | `text-color` | 自動 | 氣泡文字色。 |
 | `text-align` | 無 | 這個角色的訊息對齊。 |
 
@@ -439,6 +487,7 @@
 | `pause` | 無 | 這一則之後停下來，值為按鈕文字，空值用 `pause-text`。 |
 | `reveal` | 無 | 這一則之後插入該 id 的內容（有 `pause` 時在按下繼續後）。 |
 | `reveal-target` | 無 | 搭配 `reveal`，改放進這個元素並顯示它。 |
+| `stage` | 無 | ui-stream 有 `stage` 時，這一則一出現就切換畫面區：`#id`、圖片網址或 `clear`。 |
 | `highlight` | 關 | 出現時氣泡閃三下。 |
 | `text-align` | 無 | 這一則的對齊。 |
 
@@ -462,6 +511,7 @@ JSON 為陣列，或 `{ roles, items }`。item 的 `text` 為純文字、`html` 
 | `ui-stream:pause` | `{ index, text }` | 停在暫停點時。 |
 | `ui-stream:resume` | `{ index }` | 按下繼續時。 |
 | `ui-stream:done` | `{ total }` | 全部播完時。 |
+| `ui-stream:stage` | `{ index, value }` | 訊息切換畫面區時（`setStage` 不觸發）。 |
 
 ```js
 const s = document.querySelector('ui-stream');
@@ -474,6 +524,7 @@ s.add({ from: 'teacher', text: '新訊息' });
 s.add({ from: 'teacher', text: '只有這則靠左', side: 'left', dataStyle: 'notch' });
 s.addRole('ar', { label: 'AI Receptionist', color: 'gray', initials: 'AR', side: 'left', dataStyle: 'outline' });
 s.hasRole('ar');   // true
+s.setStage('#st-table');   // 切換畫面區：#id、圖片網址或 'clear'
 s.live;            // 是否為 mode="live"
 s.export('text');  // 匯出文字；'html' 匯出 HTML
 s.index; s.total;
@@ -591,7 +642,7 @@ s.index; s.total;
 
 內容可寫 HTML，包含 `<mark>` 與 `<c-key>` 等色名標籤。
 
-- 送到 ui-stream 時，屬性同 `stream-item`：`typed`、`time`、`badge`、`badge-color`、`speed`、`delay`、`gap`、`highlight`、`color`、`side`、`data-style`、`text-align`、`pause`、`reveal`、`reveal-target`。
+- 送到 ui-stream 時，屬性同 `stream-item`：`typed`、`time`、`badge`、`badge-color`、`speed`、`delay`、`gap`、`highlight`、`color`、`side`、`data-style`、`text-align`、`pause`、`reveal`、`reveal-target`、`stage`。
 - 送到 ui-post 時，屬性同 `post-item`：`likes`、`start-likes`、`best`、`low`、`tags`、`reply`、`examiner`、`role-label`、`after`、`liked`、`shares`、`start-shares`、`time`、`delay`、`typing`。作者、頭像、頭像色自動取自 `p-card`。
 
 同一則訊息兩種屬性可以一起寫，送到哪邊就用哪邊的，另一邊會忽略。
