@@ -4,11 +4,12 @@
 
 - 版本：1.1.0
 - 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
+- 11-17-26：新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-17-26.html` | | 整合範例 14 則（基本播放、外框與版面、live 模式、特效與握把）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
+| `ui-post-demo-11-17-26.html` | | 整合範例 18 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
 
 ## 目錄
 
@@ -17,6 +18,7 @@
 - [ui-post 屬性](#ui-post-屬性)
 - [post-item 屬性](#post-item-屬性)
 - [live 模式](#live-模式)
+- [mark-fx 文字標記](#mark-fx-文字標記)
 - [事件與方法](#事件與方法)
 - [授權](#授權)
 
@@ -77,6 +79,8 @@
 | `controls` | 顯示 | 控制列：播放／暫停、重播、0.5×、1×、2×；`false` 隱藏。 |
 | `best-label`、`examiner-label`、`fold-label` | `最佳回答`、`考官`、摺疊說明 | 徽章與摺疊文字。 |
 | `typing-label`、`comment-label`、`like-label` | `正在輸入`、`則留言`、`讚` | 介面文字。 |
+| `drop-cap`、`drop-cap-color` | 無、同文字色 | 首字放大：留言整則是英文、開頭是字母，而且排版後有兩行以上時，第一個字母放大成兩行高；不符合條件的留言不變，寬度改變時會重新判斷。`drop-cap-color` 指定首字顏色。 |
+| `tag-icons` | `true` | 講評標籤依顏色自動加圖示：green 打勾、red 打叉、yellow 燈泡，其他顏色不加；`false` 關閉。 |
 
 ## post-item 屬性
 
@@ -92,6 +96,8 @@
 | `after` | 爆發後才出現；`after="false"` 讓考官留言提早出現。 |
 | `reply` | 顯示成前面最近一則 `best` 留言的回覆：縮排並加上連線，跟著對象一起置頂。對象必須先出現；找不到對象時照一般留言顯示。`reply="false"` 關閉。 |
 | `tags` | 講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現。 |
+| `drop-cap`、`drop-cap-color` | 只讓這一則判斷首字放大；`drop-cap="false"` 讓這一則不放大；`drop-cap-color` 指定這一則的首字顏色。 |
+| `tag-icons` | `false` 讓這一則的標籤不加圖示，覆蓋 `ui-post` 的設定；用 `add()` 時請寫字串 `'false'`。 |
 | `liked` | 愛心一開始就是實心。 |
 | `delay`、`typing` | 這一則的間隔與「正在輸入」毫秒數；`typing="0"` 不顯示輸入中。 |
 
@@ -119,6 +125,36 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 | --- | --- | --- |
 | `mode` | 無 | `live`：接收模式。 |
 | `live-surge` | `1200` | live 模式中一般留言的愛心跳動時間（毫秒）；`best` 仍用 `surge`。 |
+
+## mark-fx 文字標記
+
+`<mark-fx>` 寫在 `post-item` 裡，留言出現後在指定文字上畫標記。可以和 `stamp-fx`、`note-fx` 混用，依書寫順序執行；暫停、倍速、重播都會影響它。`stamp-fx`、`note-fx` 的屬性見範例檔的屬性速查。
+
+```html
+<post-item author="Mia" likes="6">Yes, I very like reading novels.
+  <mark-fx text="very"></mark-fx>
+  <note-fx text="very">very 不能修飾動詞，改成 really</note-fx>
+</post-item>
+
+<post-item author="Leo" likes="420" best>People who read every day say that it helps them unwind.
+  <mark-fx kind="arrow" text="them" to="People" color="yellow"></mark-fx>
+  <mark-fx kind="color" text="unwind"></mark-fx>
+</post-item>
+```
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `kind` | `strike` | `strike` 刪除線、`wavy` 波浪底線、`cross` 打叉、`arrow` 箭頭、`color` 文字變色。 |
+| `text`、`nth` | 無、`1` | 要標記的文字與第幾次出現。`text` 是比對字串，例如 `it` 也會對到 city 裡的 it，這時用 `nth` 指定。省略 `text` 時標記整則留言。 |
+| `target` | 這則內容 | CSS 選擇器，改為標記指定的元素。 |
+| `color` | `red`（`arrow`、`color` 為 `key`） | 線條顏色；`kind="color"` 時是文字要換成的顏色。 |
+| `thickness` | `3`（`wavy` 為 `2`） | 線條粗細（px）。 |
+| `rough`、`seed` | `0.5`、依文字 | 手繪感 0 到 1，0 是工整的線；亂數種子。 |
+| `padding` | `4`（`cross` 為 `2`） | 線條超出文字的範圍（px）。 |
+| `to`、`to-nth`、`to-target` | 無、`1`、無 | 只用於 `arrow`：終點文字、第幾次出現、或用選擇器指定終點。沒有終點時不畫。 |
+| `side`、`bend`、`head` | 自動、自動、`9` | 只用於 `arrow`。起點和終點同一行時，弧線走文字上方（`top`）或下方（`bottom`）；沒寫時最後一行走下方，其他行走上方。`bend` 是弧線高度，`head` 是箭頭尖端長度（px）。不同行時從靠近對方的那一側出發。 |
+| `start`、`delay`、`speed` | `after`、`0`、`600`（`color` 為 `300`） | `start="with"` 與前一個特效同時開始；開始前等待與動畫時間（毫秒）。 |
+| `stay`、`fade-out` | `forever`、`300` | 停留幾毫秒後淡出移除；`kind="color"` 則是換回原色。 |
 
 ## 事件與方法
 

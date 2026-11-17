@@ -15,6 +15,12 @@
   const SVG_HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.5-9.2C1.1 7.9 3.2 4.3 6.8 4.3c2.1 0 3.5 1.1 4.2 2.3.7-1.2 2.1-2.3 4.2-2.3 3.6 0 5.7 3.6 4.3 7C17.6 15.9 12 20.5 12 20.5z"/></svg>';
   const SVG_COMMENT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v11H9l-5 4z"/></svg>';
   const SVG_GRIP = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="5.5" r="1.7"/><circle cx="15" cy="5.5" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18.5" r="1.7"/><circle cx="15" cy="18.5" r="1.7"/></svg>';
+  /* 講評標籤的圖示：依標籤顏色自動帶入，green 打勾、red 打叉、yellow 燈泡；tag-icons="false" 關閉 */
+  const TAG_ICONS = {
+    '#71CD76': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    '#EF6661': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
+    '#E3D322': '<svg viewBox="0 0 24 24" aria-hidden="true" class="is-thin"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.2h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>'
+  };
   const SVG_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 5l7 6.5-7 6.5v-3.8C8.4 14.2 5.3 15.9 3.5 19.5c.6-5.6 3.8-9.6 10-10.6z"/></svg>';
 
   const color = (v) => {
@@ -77,6 +83,9 @@ ui-post .upo-item .upo-av{width:36px;height:36px;font-size:.9rem;}
 ui-post .upo-main{flex:1;min-width:0;}
 ui-post .upo-bubble{display:inline-block;max-width:100%;background:var(--upo-bubble,#3B2A20);border:2px solid var(--upo-bubble,#3B2A20);border-radius:14px;padding:10px 14px;}
 ui-post .upo-text{line-height:1.55;word-break:break-word;margin:4px 0 0 0;}
+/* drop-cap：首字放大，只在整則是英文而且有兩行以上時套用（由程式加上 is-dropcap） */
+ui-post .upo-text.is-dropcap{display:flow-root;}
+ui-post .upo-text.is-dropcap::first-letter{float:left;font-size:3.1em;line-height:.8;font-weight:800;margin:3px 8px 0 0;color:var(--upo-dropcap,inherit);}
 ui-post .upo-foot{display:flex;align-items:center;gap:16px;margin:6px 0 0 10px;font-size:.8rem;color:#86877F;}
 ui-post .upo-heart{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:0;color:#C6C7BD;font:inherit;font-size:.875rem;font-weight:700;cursor:default;}
 ui-post .upo-heart b{font-variant-numeric:tabular-nums;min-width:2ch;}
@@ -104,7 +113,9 @@ ui-post .upo-item.is-hiding{overflow:hidden;pointer-events:none;}
 ui-post .upo-item.is-hidden{display:none;}
 ui-post .upo-fold{display:inline-block;font:inherit;font-size:.85rem;font-style:italic;color:#86877F;background:none;border:1px dashed #86877F;border-radius:10px;padding:8px 12px;cursor:pointer;animation:upo-in .35s ease-out;}
 ui-post .upo-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 0;}
-ui-post .upo-tag{font-size:.75rem;font-weight:700;border-radius:999px;padding:2px 10px;color:#0C0D0C;background:#86877F;animation:upo-pop .45s ease-out both;}
+ui-post .upo-tag{display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700;border-radius:999px;padding:2px 10px;color:#0C0D0C;background:#86877F;animation:upo-pop .45s ease-out both;}
+ui-post .upo-tag svg{flex:0 0 auto;width:.95em;height:.95em;fill:none;stroke:currentColor;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;}
+ui-post .upo-tag svg.is-thin{stroke-width:2.2;}
 ui-post .upo-typing{display:flex;align-items:center;gap:10px;padding:4px 16px 14px 16px;color:#86877F;font-size:.85rem;}
 ui-post .upo-typing[hidden]{display:none;}
 ui-post .upo-typing .upo-av{width:28px;height:28px;font-size:.75rem;}
@@ -134,19 +145,20 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 @keyframes upo-dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 `;
 
-  /* ── 特效：stamp-fx（蓋章）、note-fx（評語）。寫在訊息裡面，訊息出現後依序執行。
+  /* ── 特效：stamp-fx（蓋章）、note-fx（評語）、mark-fx（文字標記）。寫在訊息裡面，訊息出現後依序執行。
      暫停、倍速、重播都會影響特效；start="with" 與前一個特效同時開始，delay 延後開始（毫秒）。
      target 省略時作用在這則訊息的內容，搭配 text（與 nth）可指定其中一段文字 ── */
   const UpoFx = (() => {
     const CANCEL = { cancelled: true, fx: true };
-    const TAGS = 'stamp-fx, note-fx';
+    const TAGS = 'stamp-fx, note-fx, mark-fx';
     const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
     const len = (v) => { if (v == null || v === '') return null; const s = String(v).trim(); return /^-?\d+(\.\d+)?$/.test(s) ? s + 'px' : s; };
     const col = (v, d) => color(v) || d;
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
     const CSS = `
-ui-post stamp-fx,ui-post note-fx{display:none;}
+ui-post stamp-fx,ui-post note-fx,ui-post mark-fx{display:none;}
+ui-post .upo-fxmark{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1;}
 ui-post .upo-fxl{position:relative;}
 ui-post .upo-fxnote{position:absolute;z-index:2;width:max-content;box-sizing:border-box;padding:8px 12px;border:1px solid;border-radius:8px;line-height:1.5;text-align:left;font-weight:400;
   font-family:system-ui,"Microsoft JhengHei",sans-serif;}
@@ -159,7 +171,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
 
     /* 把 html 裡的特效標籤取出來，回傳乾淨的內容與特效清單 */
     function extract(html) {
-      if (!html || !/<(stamp|note)-fx\b/i.test(html)) return { html, fx: [] };
+      if (!html || !/<(stamp|note|mark)-fx\b/i.test(html)) return { html, fx: [] };
       const t = document.createElement('template'); t.innerHTML = html;
       const fx = [...t.content.querySelectorAll(TAGS)].map((n) => { const s = n.outerHTML; n.remove(); return s; });
       return { html: t.innerHTML.trim(), fx };
@@ -507,6 +519,164 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       stayFor(run, el, s, drop, 400);
     }
 
+    /* ── mark-fx：文字標記。kind 為 strike（刪除線）、wavy（波浪底線）、cross（打叉）、arrow（箭頭）、color（文字變色） ── */
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    /* 手繪線條（同 ui-play） */
+    function roughLine(x1, y1, x2, y2, rough, rnd) {
+      const j = () => (rnd() - 0.5) * rough * 4;
+      const L = Math.hypot(x2 - x1, y2 - y1) || 1;
+      const nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+      const bow = (rnd() - 0.5) * rough * (2 + L * 0.02);
+      const mx = (x1 + x2) / 2 + nx * bow, my = (y1 + y2) / 2 + ny * bow;
+      return `M${(x1 + j()).toFixed(1)} ${(y1 + j()).toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${(x2 + j()).toFixed(1)} ${(y2 + j()).toFixed(1)}`;
+    }
+    function wavePath(x1, x2, y, amp, rough, rnd) {
+      const w = Math.max(1, x2 - x1), half = w / Math.max(2, Math.round(w / (amp * 2)));
+      let d = `M${x1.toFixed(1)} ${y.toFixed(1)}`, x = x1, up = true;
+      while (x < x2 - 0.01) {
+        const nx = Math.min(x2, x + half), j = (rnd() - 0.5) * rough * amp;
+        d += ` Q${((x + nx) / 2).toFixed(1)} ${(y + (up ? -1 : 1) * (amp * 2 + j)).toFixed(1)} ${nx.toFixed(1)} ${y.toFixed(1)}`;
+        x = nx; up = !up;
+      }
+      return d;
+    }
+    /* 目標每一行文字的範圍；座標相對於 layer */
+    function lines(el, layer) {
+      const c = layer.getBoundingClientRect();
+      let rects = [...el.getClientRects()];
+      if (getComputedStyle(el).display !== 'inline') {
+        const rg = document.createRange(); rg.selectNodeContents(el);
+        const inner = [...rg.getClientRects()].filter((r) => r.width > 0.5 && r.height > 0.5);
+        if (inner.length) {
+          const merged = [];
+          inner.forEach((r) => {
+            const m = merged.find((q) => Math.abs(q.top - r.top) < r.height * 0.5);
+            if (m) { m.left = Math.min(m.left, r.left); m.right = Math.max(m.right, r.right); m.top = Math.min(m.top, r.top); m.bottom = Math.max(m.bottom, r.bottom); }
+            else merged.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+          });
+          rects = merged.map((m) => ({ left: m.left, top: m.top, width: m.right - m.left, height: m.bottom - m.top }));
+        }
+      }
+      return rects.filter((r) => r.width > 0.5).map((r) => ({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height }));
+    }
+    async function mark(run, el, ctx) {
+      const kind = (el.getAttribute('kind') || 'strike').toLowerCase();
+      const list = targets(el, ctx);
+      if (!list.length) return;
+      const speed = num(el.getAttribute('speed'), kind === 'color' ? 300 : 600);
+
+      /* 文字變色：不畫線，目標文字直接換色；stay 到期後換回原色 */
+      if (kind === 'color') {
+        const c = col(el.getAttribute('color'), '#51DBCF');
+        const old = list.map((t) => t.style.color);
+        list.forEach((t) => { t.style.transition = run.skipping ? '' : `color ${Math.max(1, speed / run.rate())}ms`; t.style.color = c; });
+        await run.sleep(speed);
+        const stay = el.getAttribute('stay') || 'forever';
+        if (stay !== 'forever') run.sleep(num(stay, 2000)).then(() => list.forEach((t, i) => { t.style.color = old[i]; }), () => {});
+        return;
+      }
+
+      const layer = ctx.layer;
+      const c = col(el.getAttribute('color'), kind === 'arrow' ? '#51DBCF' : '#EF6661');
+      const thick = num(el.getAttribute('thickness'), kind === 'wavy' ? 2 : 3);
+      const rough = clamp(num(el.getAttribute('rough'), 0.5), 0, 1);
+      const pad = num(el.getAttribute('padding'), kind === 'cross' ? 2 : 4);
+      const seed0 = el.getAttribute('seed');
+      /* 箭頭的終點：to 是同一則留言裡的文字（to-nth 指定第幾次出現），to-target 是選擇器 */
+      let dest = null;
+      if (kind === 'arrow') {
+        const toSel = el.getAttribute('to-target'), toText = el.getAttribute('to');
+        if (toSel) { try { dest = ctx.scope.querySelector(toSel) || layer.querySelector(toSel) || document.querySelector(toSel); } catch (e) { dest = null; } }
+        if (toText != null && toText !== '') dest = sub(dest || ctx.scope, toText, parseInt(el.getAttribute('to-nth'), 10) || 1);
+        if (!dest) return;
+      }
+      const geom = () => {
+        const ds = [];
+        (kind === 'arrow' ? list.slice(0, 1) : list).forEach((t, ti) => {
+          if (!t.isConnected) return;
+          const rnd = makeRng(seedOf(seed0, kind + '|' + (el.getAttribute('text') || '') + '|' + ti));
+          const ls = lines(t, layer);
+          if (!ls.length) return;
+          if (kind === 'wavy') {
+            const amp = thick * 0.6 + 1.2;
+            ls.forEach((r) => ds.push(wavePath(r.x - pad * 0.25, r.x + r.w + pad * 0.25, r.y + r.h * 0.98 + amp * 0.5, amp, rough, rnd)));
+          } else if (kind === 'cross') {
+            ls.forEach((r) => {
+              const x1 = r.x - pad, x2 = r.x + r.w + pad, y1 = r.y + r.h * 0.1 - pad * 0.5, y2 = r.y + r.h * 0.92 + pad * 0.5;
+              ds.push(roughLine(x1, y1, x2, y2, rough, rnd), roughLine(x2, y1, x1, y2, rough, rnd));
+            });
+          } else if (kind === 'arrow') {
+            if (!dest.isConnected) return;
+            const dl = lines(dest, layer);
+            if (!dl.length) return;
+            const a = ls[0], b = dl[0];
+            const head = num(el.getAttribute('head'), 9);
+            const sx = a.x + a.w / 2, ex = b.x + b.w / 2;
+            const dist = Math.hypot(ex - sx, (b.y + b.h / 2) - (a.y + a.h / 2));
+            const bend = num(el.getAttribute('bend'), clamp(dist * 0.1, 6, 14));
+            const jx = (rnd() - 0.5) * rough * 6, jy = (rnd() - 0.5) * rough * 4;
+            let sy, ey, cx, cy, shaft;
+            if (Math.abs(a.y - b.y) < a.h * 0.5) {
+              /* 同一行：從文字上方或下方畫一道弧線。side 沒寫時，最後一行走下方（不壓到上一行），其他行走上方 */
+              let side = (el.getAttribute('side') || 'auto').toLowerCase();
+              if (side !== 'top' && side !== 'bottom') {
+                const all = lines(ctx.scope, layer);
+                const lastY = all.length ? Math.max(...all.map((r) => r.y)) : a.y;
+                side = a.y > lastY - a.h * 0.5 ? 'bottom' : 'top';
+              }
+              const below = side === 'bottom', gap = 3;
+              sy = below ? a.y + a.h + gap : a.y - gap; ey = below ? b.y + b.h + gap : b.y - gap;
+              cx = (sx + ex) / 2 + jx; cy = (below ? Math.max(sy, ey) + bend * 2 : Math.min(sy, ey) - bend * 2) + jy;
+              shaft = `M${sx.toFixed(1)} ${sy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+            } else {
+              /* 不同行：從靠近對方的那一側垂直出發，再垂直指向終點 */
+              const down = b.y > a.y, gap = 1;
+              sy = down ? a.y + a.h + gap : a.y - gap; ey = down ? b.y - gap : b.y + b.h + gap;
+              const k = Math.max(bend, Math.abs(ey - sy) * 0.5) * (down ? 1 : -1);
+              cx = ex + jx * 0.3; cy = ey - k;
+              shaft = `M${sx.toFixed(1)} ${sy.toFixed(1)} C${(sx + jx).toFixed(1)} ${(sy + k).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+            }
+            const tl = Math.hypot(ex - cx, ey - cy) || 1, ux = (ex - cx) / tl, uy = (ey - cy) / tl;
+            const wing = (ang) => { const co = Math.cos(ang), si = Math.sin(ang); return [ex - (ux * co - uy * si) * head, ey - (ux * si + uy * co) * head]; };
+            const w1 = wing(0.5), w2 = wing(-0.5);
+            ds.push(shaft);
+            ds.push(`M${w1[0].toFixed(1)} ${w1[1].toFixed(1)} L${ex.toFixed(1)} ${ey.toFixed(1)} L${w2[0].toFixed(1)} ${w2[1].toFixed(1)}`);
+          } else {
+            ls.forEach((r) => { const y = r.y + r.h * 0.55; ds.push(roughLine(r.x - pad * 0.5, y, r.x + r.w + pad * 0.5, y, rough, rnd)); });
+          }
+        });
+        return ds;
+      };
+      const svg = document.createElementNS(SVGNS, 'svg');
+      svg.setAttribute('class', 'upo-fxmark');
+      layer.appendChild(svg);
+      const paths = [];
+      /* 依目前排版重畫；換行造成線段數量改變時，補上或移除線段 */
+      const draw = () => {
+        const ds = geom();
+        while (paths.length < ds.length) {
+          const p = document.createElementNS(SVGNS, 'path');
+          p.setAttribute('fill', 'none'); p.setAttribute('stroke', c); p.setAttribute('stroke-width', thick);
+          p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+          svg.appendChild(p); paths.push(p);
+        }
+        while (paths.length > ds.length) paths.pop().remove();
+        ds.forEach((d, i) => paths[i].setAttribute('d', d));
+      };
+      draw();
+      if (!paths.length) { svg.remove(); return; }
+      const drop = keep(ctx, () => { if (svg.isConnected) draw(); });
+      const first = paths.slice();
+      const lens = first.map((p) => (p.getTotalLength ? p.getTotalLength() : 100) || 1);
+      const total = lens.reduce((x, y) => x + y, 0) || 1;
+      first.forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
+      for (let i = 0; i < first.length; i++) {
+        await run.anim(first[i], [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }], speed * lens[i] / total, { easing: 'ease-in-out' });
+        first[i].style.strokeDasharray = 'none'; first[i].style.strokeDashoffset = '0';
+      }
+      stayFor(run, el, svg, drop, 300);
+    }
+
     /* 依序執行；start="with" 與前一個同時開始 */
     async function play(run, specs, ctx) {
       const els = specs.map((x) => { const t = document.createElement('template'); t.innerHTML = x; return t.content.firstElementChild; }).filter(Boolean);
@@ -518,7 +688,9 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       for (const g of groups) {
         await Promise.all(g.map(async (el) => {
           await run.sleep(num(el.getAttribute('delay'), 0));
-          if (el.tagName === 'STAMP-FX') await stamp(run, el, ctx); else await note(run, el, ctx);
+          if (el.tagName === 'STAMP-FX') await stamp(run, el, ctx);
+          else if (el.tagName === 'MARK-FX') await mark(run, el, ctx);
+          else await note(run, el, ctx);
           if (ctx.onStep) ctx.onStep();
         }));
       }
@@ -588,6 +760,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._resumeQ = [];
       this._fxRuns = new Set();
       this._fxLive = [];
+      this._dropItems = [];
       this._started = false;
       this._ended = false;
 
@@ -682,7 +855,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
 
       box.append(card, list, typing);
       this._box = box;
-      if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => UpoFx.relayout(this._fxLive)); this._fxRO.observe(box); }
+      if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => { this._dropItems.forEach((m) => this._dropCap(m)); UpoFx.relayout(this._fxLive); }); this._fxRO.observe(box); }
       this._list = list;
       this._typing = typing;
 
@@ -990,6 +1163,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._fxRuns.forEach((r) => r.cancel());
       this._fxRuns.clear();
       this._fxLive.length = 0;
+      this._dropItems.length = 0;
       this._started = true;
       this._ended = false;
       this._paused = false;
@@ -1154,6 +1328,13 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       m.name = name;
       m.bubble = bubble;
       m.text = text;
+      /* drop-cap：ui-post 寫 drop-cap 時每則都判斷，post-item 可用 drop-cap 或 drop-cap="false" 個別覆寫 */
+      if (bool(src.getAttribute('drop-cap'), bool(this.getAttribute('drop-cap'), false))) {
+        const dc = color(src.getAttribute('drop-cap-color')) || color(this.getAttribute('drop-cap-color'));
+        if (dc) text.style.setProperty('--upo-dropcap', dc);
+        this._dropItems.push(m);
+        this._dropCap(m);
+      }
       m.heart = heart;
       m.count = heart.querySelector('b');
       m.cur = m.after ? m.likes : m.start;
@@ -1272,6 +1453,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (!m.tags.length || m.el.querySelector('.upo-tags')) return;
       const box = document.createElement('div');
       box.className = 'upo-tags';
+      const ti = m.src.getAttribute('tag-icons');
+      const icons = bool(ti !== null ? ti : this.getAttribute('tag-icons'), true);
       m.tags.forEach((t, i) => {
         const at = t.lastIndexOf(':');
         const label = at > 0 ? t.slice(0, at).trim() : t;
@@ -1280,6 +1463,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         s.className = 'upo-tag';
         s.textContent = label;
         if (c) s.style.background = c;
+        const ic = icons && c ? TAG_ICONS[c.toUpperCase()] : null;
+        if (ic) s.insertAdjacentHTML('afterbegin', ic);
         s.style.animationDelay = (i * 120) + 'ms';
         box.appendChild(s);
       });
@@ -1314,7 +1499,22 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       setTimeout(() => h.remove(), dur + 500);
     }
 
-    /* ---------- 特效：stamp-fx、note-fx ---------- */
+    /* 首字放大：整則留言是英文、開頭是字母，而且排版後有兩行以上才套用。
+       每次都先拿掉再量行數，寬度改變造成行數變化時會跟著更新 */
+    _dropCap(m) {
+      const t = m.text;
+      if (!t || !t.isConnected) return;
+      const had = t.classList.contains('is-dropcap');
+      t.classList.remove('is-dropcap');
+      const h = t.offsetHeight;
+      if (!h) { t.classList.toggle('is-dropcap', had); return; }   // 留言被隱藏或摺疊時量不到，維持原狀
+      const s = t.textContent.trim();
+      if (!/^[A-Za-z]/.test(s) || /[\u2E80-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\uFF00-\uFFEF]/.test(s)) return;
+      const lh = parseFloat(getComputedStyle(t).lineHeight);
+      if (lh > 0 && h >= lh * 1.5) t.classList.add('is-dropcap');
+    }
+
+    /* ---------- 特效：stamp-fx、note-fx、mark-fx ---------- */
     _runFx(m, runId, instant) {
       m.main.classList.add('upo-fxl');
       const r = new UpoFx.Run({ rate: () => this.rate, instant, detached: instant, hold: this._paused, cancel: CANCEL });

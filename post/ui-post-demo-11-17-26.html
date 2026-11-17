@@ -47,9 +47,9 @@ a{color:#51DBCF;}
 <body>
 <div class="page">
   <h1>&lt;ui-post&gt; 社群貼文留言動畫</h1>
-  <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。</p>
+  <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。11-17-26 新增第五段：<code>&lt;mark-fx&gt;</code> 文字標記、講評標籤圖示、<code>drop-cap</code> 首字放大。</p>
   <nav class="toc">
-    <a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
+    <a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
   </nav>
 
   <!-- ══════════ 一、基本播放 ══════════ -->
@@ -419,6 +419,121 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
     </div>
   </section>
 
+  <!-- ══════════ 五、文字標記與標籤圖示 ══════════ -->
+  <section class="part" id="mark">
+    <h2>五、文字標記、標籤圖示、首字放大</h2>
+    <p class="lead">11-17-26 新增。<code>&lt;mark-fx&gt;</code> 寫在 post-item 裡，用 <code>text</code> 指定要標記的文字，用 <code>kind</code> 選效果：<code>strike</code> 刪除線（預設）、<code>wavy</code> 波浪底線、<code>cross</code> 打叉、<code>arrow</code> 箭頭、<code>color</code> 文字變色。可以和 stamp-fx、note-fx 混用，暫停、倍速、重播的行為相同。</p>
+
+    <div class="ex">
+      <h3>範例 15：mark-fx 五種效果</h3>
+      <p class="note">由上到下：刪除線加暫時評語、波浪底線、打叉、箭頭加文字變色。箭頭用 <code>to</code> 指定終點文字；起點和終點在同一行時畫弧線，最後一行預設走文字下方、其他行走上方，可用 <code>side="top"</code> 或 <code>side="bottom"</code> 指定。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="IELTS Coach" avatar="IC" time="2h" likes="58" width="680" item-delay="500" typing="500">
+  Do you like reading?
+  <post-item author="Mia" likes="6">Yes, I very like reading novels in my free time.
+    <mark-fx text="very"></mark-fx>
+    <note-fx text="very" position="bottom" stay="3500">very 不能修飾動詞，改成 really</note-fx>
+  </post-item>
+  <post-item author="Tom" likes="4">My brother don't like reading at all.
+    <mark-fx kind="wavy" text="don't"></mark-fx>
+  </post-item>
+  <post-item author="Ivy" likes="9">I am agree that reading is relaxing.
+    <mark-fx kind="cross" text="am"></mark-fx>
+  </post-item>
+  <post-item author="Leo" likes="420" best>People who read every day say that it helps them unwind.
+    <mark-fx kind="color" text="People" color="yellow"></mark-fx>
+    <mark-fx kind="color" text="them" color="yellow" start="with"></mark-fx>
+    <mark-fx kind="arrow" text="them" to="People" color="yellow"></mark-fx>
+    <mark-fx kind="color" text="unwind"></mark-fx>
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 16：線條外觀與暫時標記</h3>
+      <p class="note"><code>color</code>、<code>thickness</code> 調整線條；<code>rough="0"</code> 畫出工整的線；<code>stay</code> 讓標記停留幾毫秒後淡出（<code>color</code> 則是換回原色）。第二則的箭頭起點和終點不在同一行，會從靠近對方的那一側出發。<code>text</code> 是比對字串，city 裡面也有 it，所以這裡用 <code>nth="2"</code> 指定第二個 it。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Writing Coach" avatar="W" avatar-color="violet" time="3h" width="680" item-delay="400" typing="400">
+  Correct the sentence.
+  <post-item author="Ken" likes="3">The informations is very useful for students.
+    <mark-fx text="informations" color="urgent" thickness="4" rough="0"></mark-fx>
+    <mark-fx kind="wavy" text="is" color="playful" thickness="3"></mark-fx>
+    <mark-fx kind="color" text="useful" color="energetic" stay="2500"></mark-fx>
+  </post-item>
+  <post-item author="Amy" likes="12">Although the city is crowded and noisy, many young people still choose to move there because it offers them better jobs.
+    <mark-fx kind="arrow" text="it" nth="2" to="the city" color="key"></mark-fx>
+    <mark-fx kind="arrow" text="them" to="young people" color="pink"></mark-fx>
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 17：講評標籤自動加圖示</h3>
+      <p class="note">標籤顏色是 green 時自動加打勾、red 加打叉、yellow 加燈泡，其他顏色不加。上面是新的預設外觀；下面寫了 <code>tag-icons="false"</code>，等於修改前的樣子。<code>tag-icons</code> 也可以寫在單一 post-item 上。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="IELTS Examiner" badge="Part 1" time="2h" width="680" item-delay="300" typing="400" surge="1800">
+  修改後：標籤依顏色自動加圖示
+  <post-item author="Amy" likes="3" low="keep" tags="照抄題目:red,沒說運動項目:red">I exercise almost every day.</post-item>
+  <post-item author="Ben" likes="860" best tags="具體運動:green,慣用語:yellow,可再加原因:blue">
+    I go jogging every day, rain or shine.
+  </post-item>
+</ui-post>
+<div style="height:16px"></div>
+<ui-post tag-icons="false" author="IELTS Examiner" badge="Part 1" time="2h" width="680"
+         item-delay="300" typing="400" surge="1800">
+  修改前：tag-icons="false"
+  <post-item author="Amy" likes="3" low="keep" tags="照抄題目:red,沒說運動項目:red">I exercise almost every day.</post-item>
+  <post-item author="Ben" likes="860" best tags="具體運動:green,慣用語:yellow,可再加原因:blue">
+    I go jogging every day, rain or shine.
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+    <div class="ex">
+      <h3>範例 18：drop-cap 首字放大</h3>
+      <p class="note"><code>drop-cap</code> 寫在 ui-post 上，每則留言自動判斷：整則是英文、開頭是字母，而且排版後有兩行以上，第一個字母才會放大成兩行高。由上到下：只有一行（不套用）、英文三行（套用）、中文兩行（不套用）、用 <code>drop-cap-color</code> 指定顏色、<code>drop-cap="false"</code> 個別關閉。寬度改變讓留言變成一行時，放大的首字會自動取消。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post drop-cap author="IELTS Examiner" badge="Part 1" time="1h" width="680" item-delay="400" typing="400" surge="1800">
+  Describe your hometown.
+  <post-item author="Gina" likes="5">My hometown is a good place.</post-item>
+  <post-item author="Hank" likes="900" best tags="具體:green">
+    It's a laid-back harbour city where you can grab fresh seafood at midnight, and the
+    old streets near the port are full of small family-run cafes.
+  </post-item>
+  <post-item author="Lin" likes="9">
+    我的家鄉是一個港口城市，半夜也買得到新鮮海鮮，港口附近的老街有很多小咖啡店，週末常常很多人去那邊散步聊天。
+  </post-item>
+  <post-item author="Mia" likes="14" drop-cap-color="key">
+    People in my hometown are friendly, and most of them have lived there for generations,
+    so everyone knows each other well.
+  </post-item>
+  <post-item author="Ken" likes="2" drop-cap="false">
+    This one has drop-cap="false", so even though it is long enough to wrap onto a second
+    line, nothing changes here at all.
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════ 屬性速查 ══════════ -->
   <section class="part" id="ref">
     <h2>屬性速查</h2>
@@ -445,7 +560,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>compact</code></td><td>無</td><td>發文作者區塊緊湊排版：頭像 42px 改 30px，名字與時間同一行，內距、內文字級、互動列間距都縮小。<code>compact="false"</code> 等於沒寫。留言區不受影響。</td></tr>
         <tr><td><code>theme</code></td><td>無</td><td>一次設定外框與分隔線的顏色，可填色票名稱。</td></tr>
         <tr><td><code>border-color</code>、<code>border-width</code>、<code>divider-color</code></td><td>gray、2px</td><td>外框顏色、外框粗細、分隔線顏色，覆蓋 <code>theme</code>。</td></tr>
-        <tr><td><code>profile-target</code>、<code>profile-width</code></td><td>無</td><td>點作者頭像跳出小視窗：填 template 的 id；視窗寬度。</td></tr>
+        <tr><td><code>profile-target</code>、<code>profile-width</code></td><td>無、320px</td><td>點作者頭像跳出小視窗：填 template 的 id；視窗寬度。</td></tr>
         <tr><td><code>auto-scroll</code></td><td>無</td><td><code>true</code> 時，內容超出螢幕會自動捲動。</td></tr>
         <tr><td><code>grip</code></td><td>無</td><td>每則留言右側顯示握把，點一下收合並隱藏該則留言（含章與評語）。寫在 post-item 上可個別開啟，<code>grip="false"</code> 個別關閉。重播後隱藏的留言會再出現；留言數不變。</td></tr>
         <tr><td><code>grip-label</code></td><td>隱藏這則留言</td><td>滑鼠移到握把上的提示文字。</td></tr>
@@ -455,6 +570,8 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>controls</code></td><td>顯示</td><td>控制列：播放／暫停、重播、0.5×、1×、2×。</td></tr>
         <tr><td><code>best-label</code>、<code>examiner-label</code>、<code>fold-label</code></td><td>最佳回答、考官、摺疊說明</td><td>徽章與摺疊文字。</td></tr>
         <tr><td><code>typing-label</code>、<code>comment-label</code>、<code>like-label</code></td><td>正在輸入、則留言、讚</td><td>介面文字。</td></tr>
+        <tr><td><code>drop-cap</code>、<code>drop-cap-color</code></td><td>無、同文字色</td><td>11-17-26 新增。首字放大：留言整則是英文、開頭是字母，而且有兩行以上時，第一個字母放大成兩行高；不符合條件的留言不變。<code>drop-cap-color</code> 指定首字顏色。</td></tr>
+        <tr><td><code>tag-icons</code></td><td>true</td><td>11-17-26 新增。講評標籤依顏色自動加圖示：green 打勾、red 打叉、yellow 燈泡，其他顏色不加。<code>false</code> 關閉。</td></tr>
       </tbody>
     </table>
 
@@ -470,9 +587,10 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>examiner</code>、<code>role-label</code></td><td>考官留言，換色並加徽章，預設在爆發後出現；<code>role-label</code> 設定這一則的角色徽章文字。</td></tr>
         <tr><td><code>reply</code></td><td>縮排並接在上一則最佳回答下方，跟著它一起置頂。</td></tr>
         <tr><td><code>after</code></td><td>爆發後才出現；<code>after="false"</code> 讓考官留言提早出現。</td></tr>
-        <tr><td><code>tags</code></td><td>講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現。</td></tr>
+        <tr><td><code>tags</code>、<code>tag-icons</code></td><td>講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現；<code>tag-icons="false"</code> 讓這一則的標籤不加圖示（用 add() 時請寫字串 <code>'false'</code>）。</td></tr>
         <tr><td><code>liked</code></td><td>愛心一開始就是實心。</td></tr>
         <tr><td><code>grip</code></td><td><code>grip="false"</code> 讓這一則不顯示握把。</td></tr>
+        <tr><td><code>drop-cap</code>、<code>drop-cap-color</code></td><td>只讓這一則判斷首字放大；<code>drop-cap="false"</code> 讓這一則不放大。<code>drop-cap-color</code> 指定這一則的首字顏色。</td></tr>
         <tr><td><code>delay</code>、<code>typing</code></td><td>這一則的間隔與「正在輸入」毫秒數，<code>typing="0"</code> 不顯示輸入中。</td></tr>
       </tbody>
     </table>
@@ -492,7 +610,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
       </tbody>
     </table>
 
-    <p class="ref-title fx">stamp-fx 與 note-fx 共用屬性</p>
+    <p class="ref-title fx">stamp-fx、note-fx、mark-fx 共用屬性</p>
     <table class="ref">
       <thead><tr><th style="width:260px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
       <tbody>
@@ -500,9 +618,23 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>text</code>、<code>nth</code></td><td>無、1</td><td>只對準目標裡的某段文字，例如 <code>text="make"</code>；同一段文字出現多次時，指定第幾次。</td></tr>
         <tr><td><code>start</code></td><td>after</td><td><code>after</code> 等前一個特效結束才開始；<code>with</code> 與前一個特效同時開始。</td></tr>
         <tr><td><code>delay</code></td><td>0</td><td>開始前等待的毫秒數，受倍速與暫停影響。</td></tr>
-        <tr><td><code>speed</code></td><td>380 ／ 300</td><td>動畫時間（毫秒）。stamp-fx 預設 380，note-fx 預設 300。</td></tr>
+        <tr><td><code>speed</code></td><td>380 ／ 300 ／ 600</td><td>動畫時間（毫秒）。stamp-fx 預設 380，note-fx 預設 300，mark-fx 預設 600（<code>kind="color"</code> 為 300）。</td></tr>
         <tr><td><code>stay</code>、<code>fade-out</code></td><td>forever、400 ／ 300</td><td>停留多久後淡出移除（毫秒）；淡出時間（毫秒）。</td></tr>
-        <tr><td><code>offset-x</code>、<code>offset-y</code></td><td>0</td><td>位置微調（px）。</td></tr>
+        <tr><td><code>offset-x</code>、<code>offset-y</code></td><td>0</td><td>位置微調（px）。mark-fx 不適用。</td></tr>
+      </tbody>
+    </table>
+
+    <p class="ref-title fx">mark-fx 文字標記（11-17-26 新增，標籤不需要內文）</p>
+    <table class="ref">
+      <thead><tr><th style="width:260px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>kind</code></td><td>strike</td><td><code>strike</code> 刪除線、<code>wavy</code> 波浪底線、<code>cross</code> 打叉、<code>arrow</code> 箭頭、<code>color</code> 文字變色。</td></tr>
+        <tr><td><code>color</code></td><td>red（arrow、color 為 key）</td><td>線條顏色；<code>kind="color"</code> 時是文字要換成的顏色。可用色名或色碼。</td></tr>
+        <tr><td><code>thickness</code></td><td>3（wavy 為 2）</td><td>線條粗細（px）。</td></tr>
+        <tr><td><code>rough</code>、<code>seed</code></td><td>0.5、依文字</td><td>手繪感 0 到 1，0 是工整的線；亂數種子，同樣的 seed 每次畫出一樣的線。</td></tr>
+        <tr><td><code>padding</code></td><td>4（cross 為 2）</td><td>線條超出文字的範圍（px）。</td></tr>
+        <tr><td><code>to</code>、<code>to-nth</code>、<code>to-target</code></td><td>無、1、無</td><td>只用於 <code>arrow</code>。<code>to</code> 是同一則留言裡的終點文字，<code>to-nth</code> 指定第幾次出現；<code>to-target</code> 改用 CSS 選擇器指定終點。沒有終點時不畫。</td></tr>
+        <tr><td><code>side</code>、<code>bend</code>、<code>head</code></td><td>自動、自動、9</td><td>只用於 <code>arrow</code>。<code>side</code>：起點和終點同一行時，弧線走文字上方（<code>top</code>）或下方（<code>bottom</code>）；沒寫時最後一行走下方，其他行走上方。<code>bend</code>：弧線高度（px）。<code>head</code>：箭頭尖端的長度（px）。</td></tr>
       </tbody>
     </table>
 
@@ -555,7 +687,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
   <!-- ══════════ 版本紀錄 ══════════ -->
   <section class="part" id="ver">
     <h2>版本紀錄</h2>
-    <p class="lead">所有項目都向下相容，沒寫新屬性的舊頁面不受影響。</p>
+    <p class="lead">除了 11-17-26 的標籤圖示會改變既有標籤的外觀以外，其他項目都向下相容，沒寫新屬性的舊頁面不受影響。</p>
     <div class="ver">
       <div><h4 class="old">修改前：只能用 tags 在最後顯示講評標籤</h4>
 <script type="text/plain" class="code-src">
@@ -574,6 +706,61 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
 </script>
       </div>
     </div>
+    <div class="ver">
+      <div><h4 class="old">修改前：只能事先用色名標籤上色，或加一則評語</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Mia" likes="6">
+  Yes, I <c-red>very</c-red> like reading novels.
+  <note-fx text="very">very 不能修飾動詞</note-fx>
+</post-item>
+</script>
+      </div>
+      <div><h4 class="new">修改後：留言出現後劃掉、畫波浪線、打叉、畫箭頭或變色</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Mia" likes="6">
+  Yes, I very like reading novels.
+  <mark-fx text="very"></mark-fx>
+  <note-fx text="very">very 不能修飾動詞</note-fx>
+</post-item>
+</script>
+      </div>
+    </div>
+    <div class="ver">
+      <div><h4 class="old">修改前：講評標籤只有顏色和文字</h4>
+<script type="text/plain" class="code-src">
+<ui-post tag-icons="false">
+  …
+  <post-item author="Ben" best tags="具體運動:green,慣用語:yellow">…</post-item>
+</ui-post>
+</script>
+      </div>
+      <div><h4 class="new">修改後：green、red、yellow 的標籤自動加圖示（預設開啟）</h4>
+<script type="text/plain" class="code-src">
+<ui-post>
+  …
+  <post-item author="Ben" best tags="具體運動:green,慣用語:yellow">…</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+    <div class="ver">
+      <div><h4 class="old">修改前：留言文字只有一種大小</h4>
+<script type="text/plain" class="code-src">
+<ui-post author="IELTS Examiner">
+  …
+  <post-item author="Hank" best>It's a laid-back harbour city where…</post-item>
+</ui-post>
+</script>
+      </div>
+      <div><h4 class="new">修改後：加上 drop-cap，兩行以上的英文留言首字放大</h4>
+<script type="text/plain" class="code-src">
+<ui-post drop-cap author="IELTS Examiner">
+  …
+  <post-item author="Hank" best>It's a laid-back harbour city where…</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
     <table class="ref">
       <thead><tr><th style="width:140px">日期</th><th style="width:240px">項目</th><th>說明</th></tr></thead>
       <tbody>
@@ -581,6 +768,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td>11-14-26</td><td>外框與角色</td><td>外框預設改為 gray 2px；新增 <code>theme</code>、<code>border-color</code>、<code>border-width</code>、<code>divider-color</code>、<code>profile-target</code>、<code>profile-width</code>、<code>auto-scroll</code>、<code>role-label</code>、<code>reply</code>。</td></tr>
         <tr><td>11-15-26</td><td>live 模式（v1.1）</td><td>新增 <code>mode="live"</code>、<code>add()</code>、<code>live-surge</code>、<code>live</code>、<code>total</code>、<code>post-add-end</code>；預先寫好的留言直接顯示最終狀態。</td></tr>
         <tr><td>11-16-26</td><td>特效、compact、grip</td><td>新增 <code>stamp-fx</code>、<code>note-fx</code>（<code>add()</code> 的 html 會自動拆出特效標籤）、<code>compact</code>、<code>grip</code>、<code>grip-label</code>、<code>grip-color</code>、<code>grip-hover-color</code>、<code>post-item-hide</code>。</td></tr>
+        <tr><td>11-17-26</td><td>文字標記、標籤圖示、首字放大</td><td>新增 <code>mark-fx</code>（<code>strike</code>、<code>wavy</code>、<code>cross</code>、<code>arrow</code>、<code>color</code>）、<code>tag-icons</code>、<code>drop-cap</code>、<code>drop-cap-color</code>。講評標籤的外觀會改變：green、red、yellow 的標籤預設多一個圖示，不想要時寫 <code>tag-icons="false"</code>。</td></tr>
       </tbody>
     </table>
   </section>

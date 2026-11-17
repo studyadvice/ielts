@@ -91,7 +91,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`note/`](note/README.md) | `bp-popnote.js` | （JavaScript 工具） | 頁面提示工具包。 |
 | [`pen/`](pen/README.md) | `ink-pen.js`、`dot-go.js` | `<ui-ink-layer>` `<dot-go>` | 螢幕錄影用的畫筆層與跳轉圓點。 |
 | [`pg/`](pg/README.md) | `ui-progrid.js` | `<ui-progrid>` | 可直接編輯的屬性面板。 |
-| [`post/`](post/README.md) | `ui-post.js` | `<ui-post>` | 社群貼文與留言動畫；`mode="live"` 可接收 ui-contacts 拖進來的留言。 |
+| [`post/`](post/README.md) | `ui-post.js` | `<ui-post>` | 社群貼文與留言動畫；`mode="live"` 可接收 ui-contacts 拖進來的留言，另有 `mark-fx` 文字標記、標籤圖示、`drop-cap` 首字放大。 |
 | [`r2/`](r2/README.md) | `ui-reading2.js` | `<layer-switch>` `<ui-spotlight>` `<collocation-map>` | 閱讀輔助元件組。 |
 | [`sb/`](sb/README.md) | `sentence-build.js` | `<sentence-build>` | 語塊組句練習。 |
 | [`scn/`](scn/README.md) | `ui-screen.js`、`ui-scroll-scene.js` | `<ui-screen>` `<ui-scroll-scene>` | 對照與敘事的視覺互動元件。 |
