@@ -39,6 +39,7 @@ ui-stream .us-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;borde
 ui-stream .us-wrap.us-cbottom .us-bar{order:9;border-bottom:0;border-top:1px solid var(--us-border);}
 ui-stream .us-bar button,ui-stream .us-bar select{background:transparent;border:1px solid var(--us-accent);color:var(--us-accent);border-radius:6px;padding:2px 10px;font-size:0.85rem;cursor:pointer;line-height:1.6;}
 ui-stream .us-bar button:hover,ui-stream .us-bar button.on{background:var(--us-accent);color:${PALETTE.base};}
+ui-stream .us-bar button:disabled,ui-stream .us-bar button:disabled:hover{background:transparent;border-color:${PALETTE.gray};color:${PALETTE.gray};cursor:not-allowed;opacity:.5;}
 ui-stream .us-bar select option{background:${PALETTE.base};color:${PALETTE.shell};}
 ui-stream .us-bar .us-count{margin-left:auto;font-size:0.8rem;color:${PALETTE.gray};font-variant-numeric:tabular-nums;}
 ui-stream .us-prog{height:3px;background:var(--us-border);}
@@ -662,7 +663,8 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
         const bar = el('div', 'us-bar'); const L = String(o.labels).split(',');
         const mk = (ic, t, fn) => { const b = el('button'); b.innerHTML = `<i class="bi bi-${ic}"></i> ${t || ''}`.trim(); b.onclick = fn; return b; };
         this._btnPlay = mk('play-fill', L[0], () => this.toggle());
-        bar.append(this._btnPlay, mk('skip-end-fill', L[2], () => this.next()), mk('arrow-counterclockwise', L[3], () => this.replay()));
+        this._btnNext = mk('skip-end-fill', L[2], () => this.next());
+        bar.append(this._btnPlay, this._btnNext, mk('arrow-counterclockwise', L[3], () => this.replay()));
         this._labels = L;
         if (o.speedControl) {
           const sel = el('select');
@@ -711,14 +713,15 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
     pause() { this._playing = false; clearTimeout(this._t); if (this._typing) this._typing.finish(); if (this._fxRuns) this._fxRuns.forEach(r => r.pause()); this._update(); }
     toggle() { this._playing ? this.pause() : this.play(); }
     next() {
+      if (this._doneSent && !this._opt.loop) return;
       /* 特效播放中：先把特效快轉完成，再顯示下一則 */
       if (this._fxBusy()) { this.pause(); this._fxNextReq = true; this._fxRuns.forEach(r => { if (!r.detached) r.skip(); }); return; }
       this.pause(); this._clearPause(); this._show(true);
     }
-    replay() { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); this._update(); this.play(); }
+    replay() { this.pause(); this._clearPause(); this._fxReset(); this._doneSent = false; this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); this._update(); this.play(); }
     finish() { this.pause(); this._clearPause(); this._fxRuns.forEach(r => { r.detached = true; r.skip(); }); while (this._i < this._src.length) this._show(true, true); }
-    goto(i) { this.pause(); this._clearPause(); this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); const n = Math.max(0, Math.min(i, this._src.length)); while (this._i < n) this._show(true, true); this._update(); }
-    add(item) { const atEnd = this._i >= this._src.length; this._src.push(this._normItem(item || {})); this._update(); if (atEnd && !this._feed.querySelector('.us-pause') && !this._wrap.querySelector('.us-overlay')) this.play(); return this._src.length; }
+    goto(i) { this.pause(); this._clearPause(); this._fxReset(); this._doneSent = false; this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); const n = Math.max(0, Math.min(i, this._src.length)); while (this._i < n) this._show(true, true); this._update(); }
+    add(item) { const atEnd = this._i >= this._src.length; this._src.push(this._normItem(item || {})); this._doneSent = false; this._update(); if (atEnd && !this._feed.querySelector('.us-pause') && !this._wrap.querySelector('.us-overlay')) this.play(); return this._src.length; }
     export(format) {
       const msgs = [...this._feed.querySelectorAll('.us-msg')];
       if (format === 'html') return msgs.map(m => m.outerHTML).join('\n');
@@ -736,6 +739,7 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
     _update() {
       if (this._count) this._count.textContent = `${this._i} / ${this._src.length}`;
       if (this._prog) this._prog.firstChild.style.width = (this._src.length ? this._i / this._src.length * 100 : 0) + '%';
+      if (this._btnNext) this._btnNext.disabled = !!this._doneSent && !this._opt.loop;
       if (this._btnPlay) { const L = this._labels; this._btnPlay.innerHTML = this._playing ? `<i class="bi bi-pause-fill"></i> ${L[1] || ''}` : `<i class="bi bi-play-fill"></i> ${L[0] || ''}`; this._btnPlay.classList.toggle('on', this._playing); }
     }
     _fxBusy() { return !!this._fxRuns && [...this._fxRuns].some(r => !r.detached); }
@@ -778,11 +782,18 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       return o.gap;
     }
 
+    /* 全部播完：只發一次 ui-stream:done，並讓「下一則」失效；replay、goto、loop、add 會重置 */
+    _end() {
+      if (this._doneSent) { this._update(); return; }
+      this._doneSent = true; this._update();
+      this.dispatchEvent(new CustomEvent('ui-stream:done', { bubbles: true, detail: { total: this._src.length } }));
+    }
+
     _show(manual, silent) {
       if (this._i >= this._src.length) {
-        this._playing = false; this._update();
-        this.dispatchEvent(new CustomEvent('ui-stream:done', { bubbles: true, detail: { total: this._src.length } }));
-        if (this._opt.loop && !silent) { this._fxReset(); this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); this._t = setTimeout(() => this.play(), this._ms(this._opt.delay)); }
+        this._playing = false;
+        this._end();
+        if (this._opt.loop && !silent) { this._fxReset(); this._doneSent = false; this._i = 0; this._prev = null; this._feed.innerHTML = ''; this._stageSet(this._opt.stageStart, false); this._t = setTimeout(() => this.play(), this._ms(this._opt.delay)); }
         return;
       }
       const d = this._src[this._i], idx = this._i++;
@@ -860,7 +871,10 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
           return;
         }
         this._reveal(d);
-        if (this._opt.step) { this._playing = false; this._update(); return; }
+        /* 最後一則完成後，若不會自動往下，就直接視為播完，不必再按一次下一則 */
+        const last = this._i >= this._src.length && !this._live;
+        if (this._opt.step) { this._playing = false; this._update(); if (last) this._end(); return; }
+        if (last && !this._playing) { this._end(); return; }
         if (this._playing) this._t = setTimeout(() => this._show(false), this._ms(num(d.delay, this._opt.delay)));
       };
       const typed = (d.typed || this._opt.typeAll) && !manual;

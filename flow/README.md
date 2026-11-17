@@ -346,7 +346,7 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `controls` | 關 | 顯示控制列：播放／暫停、下一則、重播。 |
+| `controls` | 關 | 顯示控制列：播放／暫停、下一則、重播。播完最後一則後「下一則」變灰失效（設了 `loop` 則維持可按）。 |
 | `controls-position` | `top` | `top`、`bottom`。 |
 | `counter` | 開 | 控制列右側的「目前／總數」。 |
 | `progress` | 關 | 控制列下方的進度條。 |
@@ -510,7 +510,7 @@ JSON 為陣列，或 `{ roles, items }`。item 的 `text` 為純文字、`html` 
 | `ui-stream:typed` | `{ index }` | 逐字打完時。 |
 | `ui-stream:pause` | `{ index, text }` | 停在暫停點時。 |
 | `ui-stream:resume` | `{ index }` | 按下繼續時。 |
-| `ui-stream:done` | `{ total }` | 全部播完時。 |
+| `ui-stream:done` | `{ total }` | 全部播完時，只發一次。最後一則顯示完就發出，逐則模式不必再多按一次「下一則」。重播、`goto`、`add()` 會重置。 |
 | `ui-stream:stage` | `{ index, value }` | 訊息切換畫面區時（`setStage` 不觸發）。 |
 
 ```js
