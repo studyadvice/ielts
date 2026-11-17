@@ -15,7 +15,6 @@
   const SVG_HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.5-9.2C1.1 7.9 3.2 4.3 6.8 4.3c2.1 0 3.5 1.1 4.2 2.3.7-1.2 2.1-2.3 4.2-2.3 3.6 0 5.7 3.6 4.3 7C17.6 15.9 12 20.5 12 20.5z"/></svg>';
   const SVG_COMMENT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v11H9l-5 4z"/></svg>';
   const SVG_GRIP = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="5.5" r="1.7"/><circle cx="15" cy="5.5" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18.5" r="1.7"/><circle cx="15" cy="18.5" r="1.7"/></svg>';
-  /* 講評標籤的圖示：依標籤顏色自動帶入，green 打勾、red 打叉、yellow 燈泡；tag-icons="false" 關閉 */
   const TAG_ICONS = {
     '#71CD76': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
     '#EF6661': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
@@ -60,7 +59,6 @@ ui-post .upo-av{flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:i
 ui-post .upo-av img{width:100%;height:100%;object-fit:cover;display:block;}
 ui-post .upo-name{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 ui-post .upo-time{font-size:.8rem;color:#86877F;}
-/* compact：發文作者區塊緊湊排版，頭像縮小、名字與時間同一行、內文與互動列縮小間距 */
 ui-post[compact]:not([compact="false"]) .upo-card{padding:12px 16px 10px 16px;}
 ui-post[compact]:not([compact="false"]) .upo-head{gap:10px;margin:0 0 8px 0;}
 ui-post[compact]:not([compact="false"]) .upo-head .upo-av{width:30px;height:30px;font-size:.8rem;}
@@ -83,7 +81,6 @@ ui-post .upo-item .upo-av{width:36px;height:36px;font-size:.9rem;}
 ui-post .upo-main{flex:1;min-width:0;}
 ui-post .upo-bubble{display:inline-block;max-width:100%;background:var(--upo-bubble,#3B2A20);border:2px solid var(--upo-bubble,#3B2A20);border-radius:14px;padding:10px 14px;}
 ui-post .upo-text{line-height:1.55;word-break:break-word;margin:4px 0 0 0;}
-/* drop-cap：首字放大，只在整則是英文而且有兩行以上時套用（由程式加上 is-dropcap） */
 ui-post .upo-text.is-dropcap{display:flow-root;}
 ui-post .upo-text.is-dropcap::first-letter{float:left;font-size:3.1em;line-height:.8;font-weight:800;margin:3px 8px 0 0;color:var(--upo-dropcap,inherit);}
 ui-post .upo-foot{display:flex;align-items:center;gap:16px;margin:6px 0 0 10px;font-size:.8rem;color:#86877F;}
@@ -98,7 +95,6 @@ ui-post .upo-pill{display:inline-flex;align-items:center;gap:4px;font-size:.72re
 ui-post .upo-pill.is-best{background:var(--upo-best,#E3D322);}
 ui-post .upo-pill.is-examiner{background:var(--upo-examiner,#51DBCF);}
 ui-post .upo-pill.is-badge{background:#C6C7BD;}
-/* 自訂徽章（post-item 的 badge）：有 badge-target、badge-content 或 badge-title 時是 button，交給 bp-popnote 跳出窗格 */
 ui-post .upo-pill.is-custom{background:var(--upo-badge,#C6C7BD);}
 ui-post button.upo-pill{appearance:none;border:0;margin:0;font-family:inherit;line-height:inherit;cursor:default;}
 ui-post button.upo-pill.is-ready:not(:disabled){cursor:pointer;}
@@ -108,10 +104,9 @@ ui-post .upo-item.is-best .upo-bubble{border-color:var(--upo-best,#E3D322);}
 ui-post .upo-item.is-examiner .upo-bubble{border-color:var(--upo-examiner,#51DBCF);}
 ui-post .upo-item.is-dim .upo-text,ui-post .upo-item.is-dim .upo-name{color:#86877F;}
 ui-post .upo-item.is-dim .upo-av{filter:grayscale(1);}
-ui-post .upo-item.is-reply{position:relative;margin-left:52px;}
-ui-post .upo-item.is-reply::before{content:"";position:absolute;left:-26px;top:-14px;width:2px;height:32px;background:var(--upo-div,#86877F);}
-ui-post .upo-item.is-reply::after{content:"";position:absolute;left:-26px;top:18px;width:22px;height:2px;background:var(--upo-div,#86877F);}
-/* grip：每則留言右側的握把，點一下隱藏這則留言（含特效） */
+ui-post .upo-item.is-reply{position:relative;margin-left:66px;}
+ui-post .upo-item.is-reply::before{content:"";position:absolute;left:-33px;top:-14px;width:2px;height:32px;background:var(--upo-div,#86877F);}
+ui-post .upo-item.is-reply::after{content:"";position:absolute;left:-33px;top:18px;width:22px;height:2px;background:var(--upo-div,#86877F);}
 ui-post .upo-grip{flex:0 0 auto;align-self:center;background:none;border:0;border-radius:6px;padding:4px 2px;margin:0 0 0 4px;color:var(--upo-grip,#86877F);cursor:pointer;line-height:0;}
 ui-post .upo-grip svg{width:18px;height:18px;fill:currentColor;}
 ui-post .upo-grip:hover{color:var(--upo-grip-hover,#FF91D7);}
@@ -151,9 +146,6 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 @keyframes upo-dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 `;
 
-  /* ── 特效：stamp-fx（蓋章）、note-fx（評語）、mark-fx（文字標記）。寫在訊息裡面，訊息出現後依序執行。
-     暫停、倍速、重播都會影響特效；start="with" 與前一個特效同時開始，delay 延後開始（毫秒）。
-     target 省略時作用在這則訊息的內容，搭配 text（與 nth）可指定其中一段文字 ── */
   const UpoFx = (() => {
     const CANCEL = { cancelled: true, fx: true };
     const TAGS = 'stamp-fx, note-fx, mark-fx';
@@ -175,7 +167,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
 `;
     const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
 
-    /* 把 html 裡的特效標籤取出來，回傳乾淨的內容與特效清單 */
     function extract(html) {
       if (!html || !/<(stamp|note|mark)-fx\b/i.test(html)) return { html, fx: [] };
       const t = document.createElement('template'); t.innerHTML = html;
@@ -183,7 +174,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       return { html: t.innerHTML.trim(), fx };
     }
 
-    /* ── 一次特效播放：可暫停、繼續、快轉完成、取消 ── */
     class Run {
       constructor(o) {
         this.rate = o.rate || (() => 1);
@@ -212,36 +202,35 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         const own = kf.some((k) => k.easing);
         const a = el.animate(kf, Object.assign({ duration: this.skipping ? 1 : Math.max(1, ms / this.rate()), fill: 'both', easing: own ? 'linear' : 'ease-out' }, opts || {}));
         this.anims.add(a);
-        if (this.skipping) { try { a.finish(); } catch (e) { /* 略過 */ } } else if (this.hold) a.pause();
+        if (this.skipping) { try { a.finish(); } catch (e) {} } else if (this.hold) a.pause();
         return a.finished.then(() => {}, () => {}).then(() => { this.anims.delete(a); if (this.dead) throw this.cancelToken; });
       }
       pause() {
         if (this.hold || this.skipping || this.dead) return;
         this.hold = true;
         this.waits.forEach((w) => { if (w.t != null) { clearTimeout(w.t); w.t = null; w.left = Math.max(0, w.left - (performance.now() - w.at)); } });
-        this.anims.forEach((a) => { try { a.pause(); } catch (e) { /* 略過 */ } });
+        this.anims.forEach((a) => { try { a.pause(); } catch (e) {} });
       }
       resume() {
         if (!this.hold || this.dead) return;
         this.hold = false;
         this.waits.forEach((w) => this._arm(w));
-        this.anims.forEach((a) => { try { a.play(); } catch (e) { /* 略過 */ } });
+        this.anims.forEach((a) => { try { a.play(); } catch (e) {} });
       }
       skip() {
         if (this.dead) return;
         this.skipping = true; this.hold = false;
         [...this.waits].forEach((w) => w.done());
-        this.anims.forEach((a) => { try { a.finish(); } catch (e) { /* 略過 */ } });
+        this.anims.forEach((a) => { try { a.finish(); } catch (e) {} });
       }
       cancel() {
         if (this.dead) return;
         this.dead = true;
         [...this.waits].forEach((w) => { clearTimeout(w.t); this.waits.delete(w); w.rej(this.cancelToken); });
-        this.anims.forEach((a) => { try { a.cancel(); } catch (e) { /* 略過 */ } });
+        this.anims.forEach((a) => { try { a.cancel(); } catch (e) {} });
       }
     }
 
-    /* ── 亂數、墨跡遮罩（同 ui-play） ── */
     function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
     function makeRng(seed) {
       let a = seed >>> 0;
@@ -294,7 +283,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       ctx.putImageData(img, 0, 0);
       return cv.toDataURL('image/png');
     }
-    /* ── 目標與定位 ── */
+
     const subs = new WeakMap();
     function sub(root, text, nth) {
       let cache = subs.get(root); if (!cache) { cache = new Map(); subs.set(root, cache); }
@@ -331,7 +320,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (text != null && text !== '') { const nth = parseInt(el.getAttribute('nth'), 10) || 1; return list.map((n) => sub(n, text, nth)).filter(Boolean); }
       return list;
     }
-    /* 對齊基準：區塊元素以文字實際範圍為準；座標相對於 layer */
     function rel(el, layer) {
       const c = layer.getBoundingClientRect();
       if (getComputedStyle(el).display !== 'inline') {
@@ -357,7 +345,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }, () => {});
     }
 
-    /* note-fx */
     async function note(run, el, ctx) {
       const t = targets(el, ctx)[0];
       if (!t) return;
@@ -411,7 +398,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       stayFor(run, el, nt, drop, 300);
     }
 
-    /* stamp-fx */
     async function stamp(run, el, ctx) {
       const label = el.textContent.trim();
       const icon = (el.getAttribute('icon') || '').trim();
@@ -461,7 +447,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         Object.assign(i.style, { fontSize: num(el.getAttribute('icon-size'), 1.1) + 'em', lineHeight: '1', display: 'block' });
         inn.appendChild(i);
       }
-      /* 文字用 | 分行；直書時每行成為一欄 */
       if (label) {
         const tx = document.createElement('div');
         Object.assign(tx.style, { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' });
@@ -477,14 +462,13 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       s.appendChild(inn);
       s.style.visibility = 'hidden';
       layer.appendChild(s);
-      /* 等字型載入完成再量尺寸，墨跡遮罩才會吻合 */
       if (document.fonts) {
         try {
           const cs = getComputedStyle(s);
           const loads = [document.fonts.load(`700 ${cs.fontSize} ${cs.fontFamily}`, label || 'A')];
           if (icon) loads.push(document.fonts.load(`${cs.fontSize} bootstrap-icons`));
           await Promise.race([Promise.all(loads), new Promise((r) => setTimeout(r, 1500))]);
-        } catch (e) { /* 略過 */ }
+        } catch (e) {}
       }
       if (run.dead) { s.remove(); throw run.cancelToken; }
       if (shape === 'circle') { const m = Math.max(s.offsetWidth, s.offsetHeight); s.style.width = s.style.height = m + 'px'; }
@@ -525,9 +509,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       stayFor(run, el, s, drop, 400);
     }
 
-    /* ── mark-fx：文字標記。kind 為 strike（刪除線）、wavy（波浪底線）、cross（打叉）、arrow（箭頭）、color（文字變色） ── */
     const SVGNS = 'http://www.w3.org/2000/svg';
-    /* 手繪線條（同 ui-play） */
     function roughLine(x1, y1, x2, y2, rough, rnd) {
       const j = () => (rnd() - 0.5) * rough * 4;
       const L = Math.hypot(x2 - x1, y2 - y1) || 1;
@@ -546,7 +528,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
       return d;
     }
-    /* 目標每一行文字的範圍；座標相對於 layer */
     function lines(el, layer) {
       const c = layer.getBoundingClientRect();
       let rects = [...el.getClientRects()];
@@ -571,7 +552,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (!list.length) return;
       const speed = num(el.getAttribute('speed'), kind === 'color' ? 300 : 600);
 
-      /* 文字變色：不畫線，目標文字直接換色；stay 到期後換回原色 */
       if (kind === 'color') {
         const c = col(el.getAttribute('color'), '#51DBCF');
         const old = list.map((t) => t.style.color);
@@ -588,7 +568,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const rough = clamp(num(el.getAttribute('rough'), 0.5), 0, 1);
       const pad = num(el.getAttribute('padding'), kind === 'cross' ? 2 : 4);
       const seed0 = el.getAttribute('seed');
-      /* 箭頭的終點：to 是同一則留言裡的文字（to-nth 指定第幾次出現），to-target 是選擇器 */
       let dest = null;
       if (kind === 'arrow') {
         const toSel = el.getAttribute('to-target'), toText = el.getAttribute('to');
@@ -623,7 +602,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
             const jx = (rnd() - 0.5) * rough * 6, jy = (rnd() - 0.5) * rough * 4;
             let sy, ey, cx, cy, shaft;
             if (Math.abs(a.y - b.y) < a.h * 0.5) {
-              /* 同一行：從文字上方或下方畫一道弧線。side 沒寫時，最後一行走下方（不壓到上一行），其他行走上方 */
               let side = (el.getAttribute('side') || 'auto').toLowerCase();
               if (side !== 'top' && side !== 'bottom') {
                 const all = lines(ctx.scope, layer);
@@ -635,7 +613,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
               cx = (sx + ex) / 2 + jx; cy = (below ? Math.max(sy, ey) + bend * 2 : Math.min(sy, ey) - bend * 2) + jy;
               shaft = `M${sx.toFixed(1)} ${sy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
             } else {
-              /* 不同行：從靠近對方的那一側垂直出發，再垂直指向終點 */
               const down = b.y > a.y, gap = 1;
               sy = down ? a.y + a.h + gap : a.y - gap; ey = down ? b.y - gap : b.y + b.h + gap;
               const k = Math.max(bend, Math.abs(ey - sy) * 0.5) * (down ? 1 : -1);
@@ -657,7 +634,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       svg.setAttribute('class', 'upo-fxmark');
       layer.appendChild(svg);
       const paths = [];
-      /* 依目前排版重畫；換行造成線段數量改變時，補上或移除線段 */
       const draw = () => {
         const ds = geom();
         while (paths.length < ds.length) {
@@ -683,7 +659,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       stayFor(run, el, svg, drop, 300);
     }
 
-    /* 依序執行；start="with" 與前一個同時開始 */
     async function play(run, specs, ctx) {
       const els = specs.map((x) => { const t = document.createElement('template'); t.innerHTML = x; return t.content.firstElementChild; }).filter(Boolean);
       const groups = [];
@@ -713,7 +688,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     document.head.appendChild(s);
   }
 
-  // 同一時間只開一個板主視窗
   let openPop = null;
   function onDocClick(e) {
     if (!openPop || openPop.el.contains(e.target)) return;
@@ -735,8 +709,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
   class UiPost extends HTMLElement {
     connectedCallback() {
       if (this._built) return;
-      injectStyle();   // 先隱藏 <post-item>，避免解析期間閃出原文
-      if (!this._onLoad) { this._onLoad = () => this._badges(); window.addEventListener('load', this._onLoad); }   // bp-popnote 若比較晚載入，載入後再解除徽章鎖定
+      injectStyle();
+      if (!this._onLoad) { this._onLoad = () => this._badges(); window.addEventListener('load', this._onLoad); }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => this._init(), { once: true });
       } else {
@@ -758,7 +732,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (this._built) this._sync();
     }
 
-    /* ---------- 建置 ---------- */
     _init() {
       if (this._built || !this.isConnected) return;
       this._built = true;
@@ -772,7 +745,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._started = false;
       this._ended = false;
 
-      // 解析：貼文內容（非 post-item 的子節點）與留言
       const body = document.createDocumentFragment();
       this._items = [];
       Array.from(this.childNodes).forEach((n) => {
@@ -810,7 +782,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const box = document.createElement('div');
       box.className = 'upo';
 
-      // 貼文卡片
       const card = document.createElement('div');
       card.className = 'upo-card';
       const head = document.createElement('div');
@@ -948,7 +919,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       pop.append(close, body);
       document.body.appendChild(pop);
 
-      // 放在頭像右側；右側放不下就放左側；上下不超出視窗
       const r = anchor.getBoundingClientRect();
       const pw = pop.offsetWidth, ph = pop.offsetHeight;
       let left = r.right + 12, origin = 'left top';
@@ -986,10 +956,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       return av;
     }
 
-    /* 自訂徽章。有 badge-target（template 的 #id）、badge-content 或 badge-title 時做成 button，
-       點擊後由 bp-popnote 跳出窗格（用 data-popover-* 交給它，這裡不自己做窗格）。
-       badge-popover-xxx 會原樣轉成 data-popover-xxx，例如 badge-popover-placement="bottom"。
-       badge-color 同時用在徽章底色與窗格外框（需要 bp-popnote 的 data-popover-border-color）。 */
     _customBadge(src) {
       const text = src.getAttribute('badge').trim();
       const c = color(src.getAttribute('badge-color'));
@@ -1003,7 +969,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (c) b.style.setProperty('--upo-badge', c);
       if (!hasPop) return b;
       b.type = 'button';
-      b.disabled = true;   // 播放中（含暫停）不能點，播完才解除
+      b.disabled = true;
       if (tgt) b.setAttribute('data-popover-target', /^[\w-]+$/.test(tgt) ? '#' + tgt : tgt);
       if (content !== null) b.setAttribute('data-popover-content', content);
       if (title !== null) b.setAttribute('data-popover-title', title);
@@ -1016,7 +982,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       return b;
     }
 
-    /* 播完才能點；bp-popnote 沒載入時維持不可點，只在 console 提醒一次 */
     _badges() {
       if (!this._box) return;
       const btns = this._box.querySelectorAll('button.upo-pill.is-custom');
@@ -1026,7 +991,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       btns.forEach((b) => { b.classList.toggle('is-ready', ok); b.disabled = !(ok && this._ended); });
     }
 
-    /* 重播時，若這個貼文的徽章窗格還開著，送 Esc 讓 bp-popnote 自己關閉 */
     _closeBadgePop() {
       if (this._badgeOpen && document.querySelector('.xpop-container')) {
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
@@ -1042,7 +1006,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     }
 
     _fmt(n) {
-      if (!n) return '';   // 0 不顯示數字，只留空心愛心
+      if (!n) return '';
       if ((this.getAttribute('count-format') || 'short').toLowerCase() === 'full') return n.toLocaleString('en-US');
       if (n < 1000) return String(n);
       if (n < 10000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
@@ -1052,7 +1016,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
 
     _idle() {
       this._list.replaceChildren();
-      this._replyMap = new Map();   // 最佳回答 → 其回覆清單
+      this._replyMap = new Map();
       this._typing.hidden = true;
       this._ccount.textContent = '0';
       this._setState(bool(this.getAttribute('autoplay'), true) ? '' : '按 ▶ 播放開始');
@@ -1075,7 +1039,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._io.observe(this);
     }
 
-    /* ---------- 公開方法 ---------- */
     play() {
       if (!this._built || this._live) return;
       if (!this._started || this._ended) { this._go(); return; }
@@ -1102,9 +1065,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (this._built && !this._live) this._go();
     }
 
-    /* 加一則留言。mode="live" 時立刻排入播放：正在輸入、出現、愛心跳動、最佳回答判定；
-       其他模式只加進清單，下次重播才出現。item 的鍵名同 post-item 屬性（駝峰或連字號皆可），
-       內容用 html 或 text。回傳目前留言總數。 */
     add(item) {
       if (!this._built) { (this._pendingAdd = this._pendingAdd || []).push(item); return 0; }
       const src = this._toItem(item || {});
@@ -1130,7 +1090,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       return el;
     }
 
-    /* ---------- live 模式 ---------- */
     _liveInit() {
       this._started = true;
       this._shown = 0;
@@ -1138,7 +1097,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._liveTotal = this._items.length;
       this._liveChain = Promise.resolve();
       this._setState('');
-      // 預先寫好的留言直接顯示，不播動畫
       this._items.forEach((src) => this._liveOne(src, true));
       (this._pendingAdd || []).forEach((it) => this.add(it));
       this._pendingAdd = null;
@@ -1191,7 +1149,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
           await this._wait(500, run);
         }
         if (bool(this.getAttribute('sort'), true) && !m.replyParent) {
-          // 所有最佳回答依出現順序置頂，回覆跟著對象移動
           const pinned = this._liveModels.filter((x) => x.best && x.el && !x.replyParent).map((x) => x.el);
           const els = Array.from(this._list.children);
           const before = instant ? null : new Map(els.map((el) => [el, el.getBoundingClientRect().top]));
@@ -1213,7 +1170,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._reveal(m.el);
     }
 
-    /* ---------- 播放流程 ---------- */
     async _go() {
       const run = ++this._run;
       this._fxRuns.forEach((r) => r.cancel());
@@ -1231,7 +1187,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       try {
         await this._wait(A('start-delay', 600, 0, 60000), run);
         const items = this._items.map((src, i) => this._model(src, i));
-        // 回覆：對象為它前面最近的一則最佳回答
         items.forEach((m) => {
           if (!m.reply) return;
           for (let j = m.index - 1; j >= 0; j--) {
@@ -1325,7 +1280,16 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       main.className = 'upo-main';
       const bubble = document.createElement('div');
       bubble.className = 'upo-bubble';
-      /* 單則留言的泡泡樣式：bg-color、border-color、border-width、border-style，優先於 bubble-color 與最佳回答、考官的外框色 */
+      
+      // ==========================================
+      // 【新增】支援單一訊息的寬度設定 (width / max-width)
+      // ==========================================
+      const itemWidth = len(src.getAttribute('width') || src.getAttribute('max-width'));
+      if (itemWidth) {
+        bubble.style.maxWidth = itemWidth;
+        bubble.style.width = itemWidth;
+      }
+
       {
         const bg = color(src.getAttribute('bg-color')), bc = color(src.getAttribute('border-color'));
         const bw = len(src.getAttribute('border-width')), bs = (src.getAttribute('border-style') || '').trim().toLowerCase();
@@ -1338,12 +1302,10 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       name.className = 'upo-name';
       name.textContent = author;
       if (m.examiner) name.appendChild(this._pill(src.getAttribute('role-label') || this.getAttribute('examiner-label') || '考官', 'is-examiner'));
-      /* 自訂徽章：live 模式不支援，直接忽略（連文字都不顯示） */
       if (!this._live && (src.getAttribute('badge') || '').trim()) name.appendChild(this._customBadge(src));
       const text = document.createElement('div');
       text.className = 'upo-text';
       Array.from(src.childNodes).forEach((n) => text.appendChild(n.cloneNode(true)));
-      /* 特效標籤不顯示在留言裡，另外收集起來，留言出現後執行 */
       m.fx = Array.from(text.querySelectorAll(UpoFx.TAGS)).map((n) => { const h = n.outerHTML; n.remove(); return h; });
       this._trim(text);
       bubble.append(name, text);
@@ -1368,7 +1330,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
       main.append(bubble, foot);
       el.appendChild(main);
-      /* grip：ui-post 寫 grip 時每則都有，post-item 可用 grip 或 grip="false" 個別覆寫 */
       if (bool(src.getAttribute('grip'), bool(this.getAttribute('grip'), false))) {
         const g = document.createElement('button');
         g.type = 'button';
@@ -1381,7 +1342,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
       const parentEl = m.replyParent && m.replyParent.el;
       if (parentEl) {
-        // 回覆接在對象與其既有回覆之後，並加上 is-reply 縮排
         const replies = this._replyMap.get(parentEl) || [];
         const tail = replies.length ? replies[replies.length - 1] : parentEl;
         this._list.insertBefore(el, tail.nextSibling);
@@ -1396,7 +1356,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       m.name = name;
       m.bubble = bubble;
       m.text = text;
-      /* drop-cap：ui-post 寫 drop-cap 時每則都判斷，post-item 可用 drop-cap 或 drop-cap="false" 個別覆寫 */
       if (bool(src.getAttribute('drop-cap'), bool(this.getAttribute('drop-cap'), false))) {
         const dc = color(src.getAttribute('drop-cap-color')) || color(this.getAttribute('drop-cap-color'));
         if (dc) text.style.setProperty('--upo-dropcap', dc);
@@ -1455,11 +1414,9 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       });
       await this._wait(500, run);
 
-      // 最佳回答置頂（FLIP 動畫）
       if (best.length && bool(this.getAttribute('sort'), true)) {
         const els = Array.from(this._list.children);
         const before = new Map(els.map((el) => [el, el.getBoundingClientRect().top]));
-        // 回覆跟著對象一起移動
         const blockOf = (el) => [el].concat(this._replyMap.get(el) || []);
         const order = best.flatMap((m) => blockOf(m.el))
           .concat(els.filter((el) => !el.classList.contains('is-reply') && !best.some((m) => m.el === el)).flatMap(blockOf));
@@ -1471,15 +1428,11 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         await this._wait(700, run);
       }
 
-      // 低分留言
       items.forEach((m) => this._applyLow(m));
-
-      // 講評標籤
       items.forEach((m) => this._showTags(m));
       if (items.some((m) => m.tags.length)) await this._wait(500, run);
     }
 
-    /* 隱藏一則留言：高度收合後移出版面，章與評語在留言裡面，一起消失。重播後會再出現 */
     _hideItem(m) {
       const el = m.el;
       if (!el || el.classList.contains('is-hidden') || el.classList.contains('is-hiding')) return;
@@ -1510,7 +1463,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       fold.addEventListener('click', () => { fold.remove(); m.main.style.display = ''; });
     }
 
-    /* 內容超出螢幕時，依 auto-scroll 決定是否捲動到新出現的內容（預設不捲動） */
     _reveal(el) {
       if (!el || !bool(this.getAttribute('auto-scroll'), false)) return;
       const r = el.getBoundingClientRect();
@@ -1540,7 +1492,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       m.bubble.appendChild(box);
     }
 
-    /* 從愛心按鈕噴出愛心；scale 控制飛行距離與大小，不使用透明度，以縮小消失 */
     _heart(anchor, scale) {
       const r = anchor.getBoundingClientRect();
       if (!r.width) return;
@@ -1568,22 +1519,19 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       setTimeout(() => h.remove(), dur + 500);
     }
 
-    /* 首字放大：整則留言是英文、開頭是字母，而且排版後有兩行以上才套用。
-       每次都先拿掉再量行數，寬度改變造成行數變化時會跟著更新 */
     _dropCap(m) {
       const t = m.text;
       if (!t || !t.isConnected) return;
       const had = t.classList.contains('is-dropcap');
       t.classList.remove('is-dropcap');
       const h = t.offsetHeight;
-      if (!h) { t.classList.toggle('is-dropcap', had); return; }   // 留言被隱藏或摺疊時量不到，維持原狀
+      if (!h) { t.classList.toggle('is-dropcap', had); return; }
       const s = t.textContent.trim();
       if (!/^[A-Za-z]/.test(s) || /[\u2E80-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\uFF00-\uFFEF]/.test(s)) return;
       const lh = parseFloat(getComputedStyle(t).lineHeight);
       if (lh > 0 && h >= lh * 1.5) t.classList.add('is-dropcap');
     }
 
-    /* ---------- 特效：stamp-fx、note-fx、mark-fx ---------- */
     _runFx(m, runId, instant) {
       m.main.classList.add('upo-fxl');
       const r = new UpoFx.Run({ rate: () => this.rate, instant, detached: instant, hold: this._paused, cancel: CANCEL });
@@ -1592,15 +1540,12 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         layer: m.main, scope: m.text, shake: m.bubble, live: this._fxLive,
         accent: color(this.getAttribute('examiner-color')) || '#51DBCF',
         onStep: () => { if (!instant) this._reveal(m.el); },
-        /* 評語的可用範圍：整個 ui-post 外框，座標相對於這則留言 */
         bounds: () => { const b = this._box.getBoundingClientRect(), l = m.main.getBoundingClientRect(); return { x: b.left - l.left, y: b.top - l.top, w: b.width, h: b.height }; }
       };
-      /* 等留言進場動畫結束再量位置 */
       const p = (instant ? Promise.resolve() : r.sleep(380)).then(() => UpoFx.play(r, m.fx, ctx));
       return p.then(() => { this._fxRuns.delete(r); }, (e) => { this._fxRuns.delete(r); if (runId !== this._run || e === CANCEL) throw CANCEL; throw e; });
     }
 
-    /* ---------- 計時：受倍率、暫停、重播影響 ---------- */
     _wait(ms, run) {
       return new Promise((resolve, reject) => {
         const go = () => {
@@ -1639,7 +1584,6 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
   window.UiPost = UiPost;
 })();
 
-/* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */
 (function () {
   'use strict';
   if (typeof document === 'undefined' || document.getElementById('ui-color-tags')) return;
