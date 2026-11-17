@@ -73,6 +73,10 @@
 | `theme` | 無 | 統一外框與分隔線的顏色，可寫色票名稱或色碼；個別屬性會覆蓋它。 |
 | `border-color`、`border-width` | `gray`、`2px` | 外框顏色與粗細；純數字視為 px。 |
 | `divider-color` | 同外框色 | 貼文卡片、控制列與按鈕之間的分隔線顏色。 |
+| `compact` | 無 | 發文作者區塊緊湊排版：頭像 42px 改 30px，名字與時間同一行，內距、內文字級、互動列間距都縮小；`compact="false"` 等於沒寫。留言區不受影響。搭配 `min-height="40"` 可讓 live 模式沒有留言時不留空白。 |
+| `grip` | 無 | 每則留言右側顯示握把，點一下收合並隱藏該則留言（含章與評語）；留言數不變，重播後會再出現。寫在 `post-item` 上可個別開啟，`grip="false"` 個別關閉。 |
+| `grip-label` | `隱藏這則留言` | 滑鼠移到握把上的提示文字。 |
+| `grip-color`、`grip-hover-color` | `gray`、`pink` | 握把顏色、滑鼠移上去的顏色。 |
 | `profile-target` | 無 | 板主（貼文作者）頭像的點擊目標，填頁面上 `<template>` 或隱藏元素的 id（可寫可不寫 `#`）。有設定時，頭像會變成可點擊，點了在頭像旁跳出小視窗顯示該內容。 |
 | `profile-width` | `320px` | 板主小視窗的寬度；純數字視為 px。 |
 | `bg-color`、`bubble-color`、`text-color` | `#0C0D0C`、`bg-alternative`、`vanilla` | 底色、留言泡泡色、文字色。 |
@@ -103,6 +107,7 @@
 | `drop-cap`、`drop-cap-color` | 只讓這一則判斷首字放大；`drop-cap="false"` 讓這一則不放大；`drop-cap-color` 指定這一則的首字顏色。 |
 | `tag-icons` | `false` 讓這一則的標籤不加圖示，覆蓋 `ui-post` 的設定；用 `add()` 時請寫字串 `'false'`。 |
 | `liked` | 愛心一開始就是實心。 |
+| `grip` | `grip="false"` 讓這一則不顯示握把；寫 `grip` 則讓這一則單獨顯示握把。 |
 | `delay`、`typing` | 這一則的間隔與「正在輸入」毫秒數；`typing="0"` 不顯示輸入中。 |
 
 行內可用 `<b>`、`<i>`、`<c-key>` 等色名標籤。
@@ -194,6 +199,7 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 | 名稱 | 說明 |
 | --- | --- |
 | `post-item-show` | 每則留言出現時觸發，`detail = { index, author, after }`。 |
+| `post-item-hide` | 留言被握把隱藏時觸發，`detail = { index, author }`，會冒泡。 |
 | `post-surge-end` | 愛心爆發、置頂與標籤完成時觸發。 |
 | `post-end` | 全部播完時觸發。 |
 | `post-add-end` | live 模式中，`add()` 送進的一則留言播完時觸發，`detail = { index, author, best }`。 |
