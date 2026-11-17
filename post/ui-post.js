@@ -1325,6 +1325,15 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       main.className = 'upo-main';
       const bubble = document.createElement('div');
       bubble.className = 'upo-bubble';
+      /* 單則留言的泡泡樣式：bg-color、border-color、border-width、border-style，優先於 bubble-color 與最佳回答、考官的外框色 */
+      {
+        const bg = color(src.getAttribute('bg-color')), bc = color(src.getAttribute('border-color'));
+        const bw = len(src.getAttribute('border-width')), bs = (src.getAttribute('border-style') || '').trim().toLowerCase();
+        if (bg) bubble.style.background = bg;
+        if (bc) bubble.style.borderColor = bc;
+        if (bw) bubble.style.borderWidth = bw;
+        if (/^(solid|dashed|dotted|double|groove|ridge|none)$/.test(bs)) bubble.style.borderStyle = bs;
+      }
       const name = document.createElement('div');
       name.className = 'upo-name';
       name.textContent = author;

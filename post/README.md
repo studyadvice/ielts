@@ -4,12 +4,12 @@
 
 - 版本：1.1.0
 - 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
-- 11-17-26：新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大、`post-item` 的可點擊自訂徽章（`badge`，需搭配 `bp-popnote.js`）
+- 11-17-26：`post-item` 新增 `bg-color`、`border-color`、`border-width`、`border-style`；新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大、`post-item` 的可點擊自訂徽章（`badge`，需搭配 `bp-popnote.js`）
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-17-26.html` | | 整合範例 19 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
+| `ui-post-demo-11-17-26.html` | | 整合範例 20 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
 
 ## 目錄
 
@@ -97,6 +97,7 @@
 | `after` | 爆發後才出現；`after="false"` 讓考官留言提早出現。 |
 | `reply` | 顯示成前面最近一則 `best` 留言的回覆：縮排並加上連線，跟著對象一起置頂。對象必須先出現；找不到對象時照一般留言顯示。`reply="false"` 關閉。 |
 | `tags` | 講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現。 |
+| `bg-color`、`border-color`、`border-width`、`border-style` | 這一則留言泡泡的底色、外框顏色、粗細（純數字視為 px）、樣式（`solid`、`dashed`、`dotted`、`double`、`groove`、`ridge`、`none`）。優先於 `bubble-color`，也優先於最佳回答、考官的外框色。`ui-post` 的 `theme` 只管整個貼文的外框與分隔線，不影響留言。 |
 | `badge`、`badge-color` | 在名字旁加自訂徽章（不可點）。`mode="live"` 不支援，連文字都不顯示。考官與最佳回答徽章不受影響。 |
 | `badge-target`、`badge-content`、`badge-title` | 寫了其中任一個，徽章就是可點的按鈕，詳見[可點擊的自訂徽章](#可點擊的自訂徽章)。 |
 | `drop-cap`、`drop-cap-color` | 只讓這一則判斷首字放大；`drop-cap="false"` 讓這一則不放大；`drop-cap-color` 指定這一則的首字顏色。 |

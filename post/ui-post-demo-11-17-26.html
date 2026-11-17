@@ -49,7 +49,7 @@ a{color:#51DBCF;}
   <h1>&lt;ui-post&gt; 社群貼文留言動畫</h1>
   <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。11-17-26 新增第五段：<code>&lt;mark-fx&gt;</code> 文字標記、講評標籤圖示、<code>drop-cap</code> 首字放大、可點擊的自訂徽章（搭配 bp-popnote）。</p>
   <nav class="toc">
-    <a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
+    <a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
   </nav>
 
   <!-- ══════════ 一、基本播放 ══════════ -->
@@ -421,7 +421,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
 
   <!-- ══════════ 五、文字標記與標籤圖示 ══════════ -->
   <section class="part" id="mark">
-    <h2>五、文字標記、標籤圖示、首字放大、可點徽章</h2>
+    <h2>五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式</h2>
     <p class="lead">11-17-26 新增。<code>&lt;mark-fx&gt;</code> 寫在 post-item 裡，用 <code>text</code> 指定要標記的文字，用 <code>kind</code> 選效果：<code>strike</code> 刪除線（預設）、<code>wavy</code> 波浪底線、<code>cross</code> 打叉、<code>arrow</code> 箭頭、<code>color</code> 文字變色。可以和 stamp-fx、note-fx 混用，暫停、倍速、重播的行為相同。</p>
 
     <div class="ex">
@@ -555,6 +555,27 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
 </script>
       </div>
     </div>
+    <div class="ex">
+      <h3>範例 20：單則留言的底色與外框</h3>
+      <p class="note"><code>bg-color</code>、<code>border-color</code>、<code>border-width</code>、<code>border-style</code> 寫在 post-item 上，只影響這一則，並優先於 <code>bubble-color</code> 與最佳回答、考官的外框色。外層的 <code>theme="violet"</code> 只管整個貼文的外框與分隔線，不會影響留言。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post theme="violet" author="IELTS Examiner" time="1h" width="680" item-delay="300" typing="300" surge="1500">
+  Describe a book you enjoyed.
+  <post-item author="Amy" likes="4">One plain answer, default style.</post-item>
+  <post-item author="Ben" likes="860" best bg-color="#141614" border-color="pink" border-width="4" border-style="dashed">
+    Best answer with its own background and a dashed pink border.
+  </post-item>
+  <post-item author="Cathy" likes="9" bg-color="indigo" border-color="vanilla" border-width="5" border-style="double">
+    A double vanilla border on an indigo background.
+  </post-item>
+  <post-item examiner author="Examiner" border-color="red">Examiner border switched to red.</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
   </section>
 
   <!-- ══════════ 屬性速查 ══════════ -->
@@ -613,6 +634,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>tags</code>、<code>tag-icons</code></td><td>講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現；<code>tag-icons="false"</code> 讓這一則的標籤不加圖示（用 add() 時請寫字串 <code>'false'</code>）。</td></tr>
         <tr><td><code>liked</code></td><td>愛心一開始就是實心。</td></tr>
         <tr><td><code>grip</code></td><td><code>grip="false"</code> 讓這一則不顯示握把。</td></tr>
+        <tr><td><code>bg-color</code>、<code>border-color</code>、<code>border-width</code>、<code>border-style</code></td><td>這一則留言泡泡的底色、外框顏色、粗細、樣式（<code>solid</code>、<code>dashed</code>、<code>dotted</code>、<code>double</code>、<code>groove</code>、<code>ridge</code>、<code>none</code>），11-17-26 新增。優先於 <code>bubble-color</code> 與最佳回答、考官的外框色；<code>ui-post</code> 的 <code>theme</code> 只管貼文外框，不影響留言。</td></tr>
         <tr><td><code>badge</code>、<code>badge-color</code></td><td>名字旁的自訂徽章與底色（11-17-26 新增）。<code>mode="live"</code> 不支援，整個忽略。考官與最佳回答徽章不受影響。</td></tr>
         <tr><td><code>badge-target</code>、<code>badge-content</code>、<code>badge-title</code></td><td>寫任一個，徽章就是可點的按鈕，點擊後由 bp-popnote 跳出窗格。<code>badge-target</code> 填 template 的 id；<code>badge-popover-xxx</code> 原樣轉成 <code>data-popover-xxx</code>（如 <code>badge-popover-placement</code>）。播放中與暫停都不能點，播完才解除；頁面沒載入 <code>bp-popnote.js</code> 時維持不可點。</td></tr>
         <tr><td><code>drop-cap</code>、<code>drop-cap-color</code></td><td>只讓這一則判斷首字放大；<code>drop-cap="false"</code> 讓這一則不放大。<code>drop-cap-color</code> 指定這一則的首字顏色。</td></tr>
@@ -793,7 +815,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td>11-14-26</td><td>外框與角色</td><td>外框預設改為 gray 2px；新增 <code>theme</code>、<code>border-color</code>、<code>border-width</code>、<code>divider-color</code>、<code>profile-target</code>、<code>profile-width</code>、<code>auto-scroll</code>、<code>role-label</code>、<code>reply</code>。</td></tr>
         <tr><td>11-15-26</td><td>live 模式（v1.1）</td><td>新增 <code>mode="live"</code>、<code>add()</code>、<code>live-surge</code>、<code>live</code>、<code>total</code>、<code>post-add-end</code>；預先寫好的留言直接顯示最終狀態。</td></tr>
         <tr><td>11-16-26</td><td>特效、compact、grip</td><td>新增 <code>stamp-fx</code>、<code>note-fx</code>（<code>add()</code> 的 html 會自動拆出特效標籤）、<code>compact</code>、<code>grip</code>、<code>grip-label</code>、<code>grip-color</code>、<code>grip-hover-color</code>、<code>post-item-hide</code>。</td></tr>
-        <tr><td>11-17-26</td><td>文字標記、標籤圖示、首字放大、可點徽章</td><td>新增 <code>mark-fx</code>（<code>strike</code>、<code>wavy</code>、<code>cross</code>、<code>arrow</code>、<code>color</code>）、<code>tag-icons</code>、<code>drop-cap</code>、<code>drop-cap-color</code>、<code>badge</code> 系列（可點徽章，搭配 bp-popnote）。講評標籤的外觀會改變：green、red、yellow 的標籤預設多一個圖示，不想要時寫 <code>tag-icons="false"</code>。</td></tr>
+        <tr><td>11-17-26</td><td>文字標記、標籤圖示、首字放大、可點徽章、單則樣式</td><td>新增 <code>mark-fx</code>（<code>strike</code>、<code>wavy</code>、<code>cross</code>、<code>arrow</code>、<code>color</code>）、<code>tag-icons</code>、<code>drop-cap</code>、<code>drop-cap-color</code>、<code>badge</code> 系列（可點徽章，搭配 bp-popnote）、<code>bg-color</code>／<code>border-color</code>／<code>border-width</code>／<code>border-style</code>（單則留言樣式）。講評標籤的外觀會改變：green、red、yellow 的標籤預設多一個圖示，不想要時寫 <code>tag-icons="false"</code>。</td></tr>
       </tbody>
     </table>
   </section>
