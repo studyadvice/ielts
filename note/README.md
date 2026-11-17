@@ -107,6 +107,7 @@
 | `data-popover-fontsize` | `1rem` | 內文字體大小 |
 | `data-popover-border` | `solid` | 邊框樣式，例如 `dashed` |
 | `data-popover-arrow` | 顯示 | 設為 `false` 隱藏箭頭 |
+| `data-popover-border-color` | 主題邊框色 | 一般提示窗格的外框、箭頭、標題底線改用這個顏色，可填 `PALETTE` 名稱或色碼；不影響對話框與側欄。ui-post 的可點徽章用它讓窗格顏色跟著徽章。 |
 | `data-popover-hint` | 顯示 | 設為 `false` 隱藏觸發文字的底線 |
 | `data-popover-hint-style` | 虛線底線 | `solid`（實線）、`pill`（膠囊）、`pill-full`（滿版膠囊） |
 | `data-popover-interval` | `3000` | 輪播自動切換間隔（毫秒），`0` 表示不自動切換 |

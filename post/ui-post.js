@@ -98,6 +98,12 @@ ui-post .upo-pill{display:inline-flex;align-items:center;gap:4px;font-size:.72re
 ui-post .upo-pill.is-best{background:var(--upo-best,#E3D322);}
 ui-post .upo-pill.is-examiner{background:var(--upo-examiner,#51DBCF);}
 ui-post .upo-pill.is-badge{background:#C6C7BD;}
+/* 自訂徽章（post-item 的 badge）：有 badge-target、badge-content 或 badge-title 時是 button，交給 bp-popnote 跳出窗格 */
+ui-post .upo-pill.is-custom{background:var(--upo-badge,#C6C7BD);}
+ui-post button.upo-pill{appearance:none;border:0;margin:0;font-family:inherit;line-height:inherit;cursor:default;}
+ui-post button.upo-pill.is-ready:not(:disabled){cursor:pointer;}
+ui-post button.upo-pill.is-ready:not(:disabled)::after{content:"▾";font-size:.9em;margin:0 0 0 2px;}
+ui-post button.upo-pill.is-ready:not(:disabled):hover{background:#0C0D0C;color:var(--upo-badge,#C6C7BD);box-shadow:inset 0 0 0 1px var(--upo-badge,#C6C7BD);}
 ui-post .upo-item.is-best .upo-bubble{border-color:var(--upo-best,#E3D322);}
 ui-post .upo-item.is-examiner .upo-bubble{border-color:var(--upo-examiner,#51DBCF);}
 ui-post .upo-item.is-dim .upo-text,ui-post .upo-item.is-dim .upo-name{color:#86877F;}
@@ -730,6 +736,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     connectedCallback() {
       if (this._built) return;
       injectStyle();   // 先隱藏 <post-item>，避免解析期間閃出原文
+      if (!this._onLoad) { this._onLoad = () => this._badges(); window.addEventListener('load', this._onLoad); }   // bp-popnote 若比較晚載入，載入後再解除徽章鎖定
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => this._init(), { once: true });
       } else {
@@ -738,6 +745,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     }
 
     disconnectedCallback() {
+      if (this._onLoad) { window.removeEventListener('load', this._onLoad); this._onLoad = null; }
       if (openPop && openPop.owner === this) closeProfile();
       if (this._io) { this._io.disconnect(); this._io = null; }
     }
@@ -978,6 +986,54 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       return av;
     }
 
+    /* 自訂徽章。有 badge-target（template 的 #id）、badge-content 或 badge-title 時做成 button，
+       點擊後由 bp-popnote 跳出窗格（用 data-popover-* 交給它，這裡不自己做窗格）。
+       badge-popover-xxx 會原樣轉成 data-popover-xxx，例如 badge-popover-placement="bottom"。
+       badge-color 同時用在徽章底色與窗格外框（需要 bp-popnote 的 data-popover-border-color）。 */
+    _customBadge(src) {
+      const text = src.getAttribute('badge').trim();
+      const c = color(src.getAttribute('badge-color'));
+      const tgt = (src.getAttribute('badge-target') || '').trim();
+      const content = src.getAttribute('badge-content');
+      const title = src.getAttribute('badge-title');
+      const hasPop = !!tgt || content !== null || title !== null;
+      const b = document.createElement(hasPop ? 'button' : 'span');
+      b.className = 'upo-pill is-custom';
+      b.textContent = text;
+      if (c) b.style.setProperty('--upo-badge', c);
+      if (!hasPop) return b;
+      b.type = 'button';
+      b.disabled = true;   // 播放中（含暫停）不能點，播完才解除
+      if (tgt) b.setAttribute('data-popover-target', /^[\w-]+$/.test(tgt) ? '#' + tgt : tgt);
+      if (content !== null) b.setAttribute('data-popover-content', content);
+      if (title !== null) b.setAttribute('data-popover-title', title);
+      b.setAttribute('data-popover-hint', 'false');
+      if (c) b.setAttribute('data-popover-border-color', src.getAttribute('badge-color').trim());
+      Array.from(src.attributes).forEach((a) => {
+        if (a.name.indexOf('badge-popover-') === 0) b.setAttribute('data-popover-' + a.name.slice(14), a.value);
+      });
+      b.addEventListener('click', () => { this._badgeOpen = true; });
+      return b;
+    }
+
+    /* 播完才能點；bp-popnote 沒載入時維持不可點，只在 console 提醒一次 */
+    _badges() {
+      if (!this._box) return;
+      const btns = this._box.querySelectorAll('button.upo-pill.is-custom');
+      if (!btns.length) return;
+      const ok = !!window.BpPopnote;
+      if (!ok && this._ended && !this._warnedPop) { this._warnedPop = true; console.warn('[ui-post] 徽章需要先載入 bp-popnote.js 才能點擊。'); }
+      btns.forEach((b) => { b.classList.toggle('is-ready', ok); b.disabled = !(ok && this._ended); });
+    }
+
+    /* 重播時，若這個貼文的徽章窗格還開著，送 Esc 讓 bp-popnote 自己關閉 */
+    _closeBadgePop() {
+      if (this._badgeOpen && document.querySelector('.xpop-container')) {
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      }
+      this._badgeOpen = false;
+    }
+
     _pill(text, cls) {
       const p = document.createElement('span');
       p.className = 'upo-pill ' + cls;
@@ -1164,6 +1220,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._fxRuns.clear();
       this._fxLive.length = 0;
       this._dropItems.length = 0;
+      this._closeBadgePop();
       this._started = true;
       this._ended = false;
       this._paused = false;
@@ -1272,6 +1329,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       name.className = 'upo-name';
       name.textContent = author;
       if (m.examiner) name.appendChild(this._pill(src.getAttribute('role-label') || this.getAttribute('examiner-label') || '考官', 'is-examiner'));
+      /* 自訂徽章：live 模式不支援，直接忽略（連文字都不顯示） */
+      if (!this._live && (src.getAttribute('badge') || '').trim()) name.appendChild(this._customBadge(src));
       const text = document.createElement('div');
       text.className = 'upo-text';
       Array.from(src.childNodes).forEach((n) => text.appendChild(n.cloneNode(true)));
@@ -1337,6 +1396,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
       m.heart = heart;
       m.count = heart.querySelector('b');
+      this._badges();
       m.cur = m.after ? m.likes : m.start;
       m.count.textContent = this._fmt(m.cur);
       this.dispatchEvent(new CustomEvent('post-item-show', { bubbles: true, detail: { index: m.index, author, after: m.after } }));
@@ -1554,6 +1614,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     _setState(t) { if (this._stateEl) this._stateEl.textContent = t; }
 
     _sync() {
+      this._badges();
       if (!this._btnPlay) return;
       const playing = this._started && !this._ended && !this._paused;
       this._btnPlay.textContent = playing ? '❚❚ 暫停' : '▶ 播放';

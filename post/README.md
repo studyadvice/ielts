@@ -4,12 +4,12 @@
 
 - 版本：1.1.0
 - 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
-- 11-17-26：新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大
+- 11-17-26：新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大、`post-item` 的可點擊自訂徽章（`badge`，需搭配 `bp-popnote.js`）
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-17-26.html` | | 整合範例 18 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
+| `ui-post-demo-11-17-26.html` | | 整合範例 19 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
 
 ## 目錄
 
@@ -19,6 +19,7 @@
 - [post-item 屬性](#post-item-屬性)
 - [live 模式](#live-模式)
 - [mark-fx 文字標記](#mark-fx-文字標記)
+- [可點擊的自訂徽章](#可點擊的自訂徽章)
 - [事件與方法](#事件與方法)
 - [授權](#授權)
 
@@ -96,6 +97,8 @@
 | `after` | 爆發後才出現；`after="false"` 讓考官留言提早出現。 |
 | `reply` | 顯示成前面最近一則 `best` 留言的回覆：縮排並加上連線，跟著對象一起置頂。對象必須先出現；找不到對象時照一般留言顯示。`reply="false"` 關閉。 |
 | `tags` | 講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現。 |
+| `badge`、`badge-color` | 在名字旁加自訂徽章（不可點）。`mode="live"` 不支援，連文字都不顯示。考官與最佳回答徽章不受影響。 |
+| `badge-target`、`badge-content`、`badge-title` | 寫了其中任一個，徽章就是可點的按鈕，詳見[可點擊的自訂徽章](#可點擊的自訂徽章)。 |
 | `drop-cap`、`drop-cap-color` | 只讓這一則判斷首字放大；`drop-cap="false"` 讓這一則不放大；`drop-cap-color` 指定這一則的首字顏色。 |
 | `tag-icons` | `false` 讓這一則的標籤不加圖示，覆蓋 `ui-post` 的設定；用 `add()` 時請寫字串 `'false'`。 |
 | `liked` | 愛心一開始就是實心。 |
@@ -155,6 +158,35 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 | `side`、`bend`、`head` | 自動、自動、`9` | 只用於 `arrow`。起點和終點同一行時，弧線走文字上方（`top`）或下方（`bottom`）；沒寫時最後一行走下方，其他行走上方。`bend` 是弧線高度，`head` 是箭頭尖端長度（px）。不同行時從靠近對方的那一側出發。 |
 | `start`、`delay`、`speed` | `after`、`0`、`600`（`color` 為 `300`） | `start="with"` 與前一個特效同時開始；開始前等待與動畫時間（毫秒）。 |
 | `stay`、`fade-out` | `forever`、`300` | 停留幾毫秒後淡出移除；`kind="color"` 則是換回原色。 |
+
+## 可點擊的自訂徽章
+
+`post-item` 的 `badge` 在名字旁加一個徽章。再寫 `badge-target`、`badge-content`、`badge-title` 任一個，徽章就會變成按鈕，點擊後由 [bp-popnote.js](../note/README.md) 跳出窗格。ui-post 不自己做窗格，頁面必須另外載入 `bp-popnote.js`。
+
+```html
+<script src="../note/bp-popnote.js"></script>
+<script src="ui-post.js"></script>
+
+<ui-post>
+  Describe your daily routine.
+  <post-item author="Ben" likes="1280" best badge="語塊" badge-color="pink" badge-target="tip-jog"
+             badge-popover-placement="bottom">I go jogging every day.</post-item>
+</ui-post>
+<template id="tip-jog"><b>go jogging</b>：go + 動名詞，表示從事某項活動。</template>
+```
+
+| 屬性 | 說明 |
+| --- | --- |
+| `badge`、`badge-color` | 徽章文字與底色，可用色票名稱。`badge-color` 同時是窗格的外框顏色（需要 bp-popnote 的 `data-popover-border-color`）。 |
+| `badge-target` | 窗格內容來源，填 template 的 id。純 id 會自動補上 `#`，也可以直接寫選擇器。 |
+| `badge-content`、`badge-title` | 簡短內容與標題，不用另外寫 template。 |
+| `badge-popover-xxx` | 原樣轉成 `data-popover-xxx` 交給 bp-popnote，例如 `badge-popover-placement="bottom"`、`badge-popover-theme`、`badge-popover-maxwidth`。 |
+
+- **播放中不能點，暫停也不能點。** 播完（`post-end`）才可以點，重播時再鎖上，窗格若開著會一併關閉。
+- **可點的線索：** 游標變手形、懸停時反白、徽章尾端有 ▾。鎖住時沒有這些提示。
+- **沒載入 `bp-popnote.js`：** 徽章維持不可點，console 會警告一次。載入順序不影響，頁面載入完成後會再檢查。
+- **`mode="live"` 不支援。** 徽章整個忽略，`add()` 也不需要 `badge` 系列鍵名。
+- 只寫 `badge` 沒有 target、content、title 時，是不可點的一般徽章。
 
 ## 事件與方法
 

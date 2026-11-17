@@ -1564,6 +1564,8 @@
     pop.style.borderStyle = bStyle;
     applyFx(pop, theme, fxOf(trigger, theme));
     applyHintColor(trigger, theme);
+    /* data-popover-border-color：窗格外框、箭頭、標題底線改用觸發元素指定的顏色（可用色票名稱），覆蓋主題的 borderColor */
+    if (trigger.dataset.popoverBorderColor) pop.style.setProperty('--xpop-border-color', brandOf(trigger.dataset.popoverBorderColor));
 
     if (showArrow) {
       const a = document.createElement('div');
