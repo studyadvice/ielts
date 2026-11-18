@@ -1,6 +1,6 @@
 /* route-map.js v1.1：捷運路線圖。路線＝類別、車站＝項目、轉乘站＝共有項目、分區＝階段、亮暗＝進度。
    語意標籤：<route-map> <route-zone> <route-line> <route-stop> <route-transfer> <route-here> <route-train>
-   v1.1 新增：show-grid（座標格線）、<route-train>（火車沿線跑，可跨線轉乘；圖示用 Bootstrap Icons）。
+   v1.1 新增：show-grid（座標格線）、<route-train>（火車沿線跑，可跨線轉乘；圖示用 Bootstrap Icons，icon-size 可單獨調整圖示大小）。
    單一檔案，CSS 內建，不使用 Shadow DOM。 */
 (() => {
   'use strict';
@@ -75,7 +75,7 @@ route-map .rm-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
         lines: q('route-line').map(n => ({ name: n.getAttribute('name') || '', color: color(n.getAttribute('color') || 'key'), path: pts(n.getAttribute('path')), badge: n.getAttribute('badge') !== 'false', stops: [...n.querySelectorAll(':scope > route-stop')].map(stopOf) })),
         transfers: q('route-transfer').map(stopOf),
         here: q('route-here').map(n => ({ at: pt(n.getAttribute('at')), text: n.textContent.trim() || '你在這裡' }))[0] || null,
-        trains: q('route-train').map(n => ({ id: n.id || '', from: (n.getAttribute('from') || '').trim(), to: (n.getAttribute('to') || '').trim(), icon: n.getAttribute('icon') || 'bi-train-front-fill', color: color(n.getAttribute('color') || 'yellow'), size: num(n.getAttribute('size'), 30), speed: num(n.getAttribute('speed'), 240), duration: num(n.getAttribute('duration'), 0), autoplay: n.hasAttribute('autoplay') }))
+        trains: q('route-train').map(n => ({ id: n.id || '', from: (n.getAttribute('from') || '').trim(), to: (n.getAttribute('to') || '').trim(), icon: n.getAttribute('icon') || 'bi-train-front-fill', color: color(n.getAttribute('color') || 'yellow'), size: num(n.getAttribute('size'), 30), iconSize: num(n.getAttribute('icon-size'), 0), speed: num(n.getAttribute('speed'), 240), duration: num(n.getAttribute('duration'), 0), autoplay: n.hasAttribute('autoplay') }))
       };
     }
 
@@ -294,7 +294,7 @@ route-map .rm-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       const r = T.size / 2, tg = mk('g', { class: 'rm-train' }, this._gt);
       mk('circle', { r: r + 3, fill: '#0C0D0C' }, tg); mk('circle', { r, fill: T.color }, tg);
       const fo = mk('foreignObject', { x: -r, y: -r, width: T.size, height: T.size }, tg), box = document.createElement('div'), ic = document.createElement('i');
-      box.className = 'rm-ticon'; box.style.fontSize = (T.size * 0.56 / 16).toFixed(3) + 'rem';
+      box.className = 'rm-ticon'; box.style.fontSize = (T.iconSize > 0 ? T.iconSize : T.size * 0.56 / 16).toFixed(3) + 'rem';   /* icon-size（rem）可單獨放大圖示，不寫就跟著底圓 */
       ic.className = 'bi ' + T.icon.replace(/^bi\s+/, '').replace(/^(?!bi-)/, 'bi-');
       box.append(ic); fo.append(box);
       const cc = getComputedStyle(ic, '::before').content;

@@ -148,7 +148,7 @@ t.index; t.total;
 | `<route-stop>` | `at`、`label`、`sub`、`zoom`、`id` | 寫在 route-line 裡的車站；`label` 是站名方位（n、ne、e、se、s、sw、w、nw）。 |
 | `<route-transfer>` | 同上 | 轉乘站。 |
 | `<route-here>` | `at` | 目前位置。 |
-| `<route-train>` | `from`、`to`、`icon`、`color`、`size`、`speed`、`duration`、`autoplay`、`id` | 火車。`from`、`to` 寫車站 id 或站名，自動找最短路徑，可在轉乘站換線，中途不停；`icon` 是 Bootstrap Icons 名稱（預設 `bi-train-front-fill`，頁面需引用 bootstrap-icons.css）。 |
+| `<route-train>` | `from`、`to`、`icon`、`color`、`size`、`icon-size`、`speed`、`duration`、`autoplay`、`id` | 火車。`from`、`to` 寫車站 id 或站名，自動找最短路徑，可在轉乘站換線，中途不停；`size` 是底圓直徑（px），`icon-size`（rem）可單獨調整圖示大小；`icon` 是 Bootstrap Icons 名稱（預設 `bi-train-front-fill`，頁面需引用 bootstrap-icons.css）。 |
 
 方法：`hover(id, on)` 放大或還原站名、`play(id或序號)` 播放火車（回傳 Promise）、`stop()` 中斷、`render()` 重新繪製、`stations` 有 id 的車站清單。火車播放時整張圖不能操作，`hover()` 會被忽略。事件：`route-map:render`、`route-map:hover`（detail：`id`、`on`）、`route-map:train-start`、`route-map:train-end`（detail：`id`、`from`、`to`、`lines`、`completed`）、`route-map:train-error`。車站的 `id` 會移到畫出來的車站上，page-tour 可以直接用 `#id` 指定。
 
