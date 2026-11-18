@@ -5,7 +5,7 @@
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
 | `page-tour.js` | `<page-tour>` `<tour-world>` `<tour-panel>` `<tour-step>` 與 `<fx-*>` | 鏡頭漫遊：原本的教材 HTML 包進 `<tour-world>`，鏡頭依劇本移動、縮放，並加上光圈、大箭頭、螢光筆、連線、彩帶等特效。 | [`page-tour-demo-11-16-26.html`](page-tour-demo-11-16-26.html) |
-| `route-map.js` | `<route-map>` `<route-line>` `<route-stop>` `<route-transfer>` `<route-zone>` `<route-here>` | 捷運路線圖：路線是類別、車站是項目、轉乘站是共有項目、分區是階段、亮暗是進度；站名可 hover 放大。 | [`route-map-demo-11-16-26.html`](route-map-demo-11-16-26.html) |
+| `route-map.js` | `<route-map>` `<route-line>` `<route-stop>` `<route-transfer>` `<route-zone>` `<route-here>` `<route-train>` | 捷運路線圖：路線是類別、車站是項目、轉乘站是共有項目、分區是階段、亮暗是進度；站名可 hover 放大；`show-grid` 顯示座標格線；火車可沿線跑並跨線。 | [`route-map-demo-11-18-26.html`](route-map-demo-11-18-26.html) |
 
 ## 目錄
 
@@ -137,6 +137,7 @@ t.index; t.total;
 | `line-width` | 自動 | 路線粗細。 |
 | `label-zoom` | `1` | 站名 hover 放大倍數；`1` 不放大。 |
 | `label-zoom-speed` | `180` | 放大時間（毫秒）。 |
+| `show-grid` | 關 | 畫出座標格線與數字，設計路線時使用；底色 rgb(36,36,36)、格線為 `#0C0D0C` 細縫。 |
 | `legend` | 無 | 「x,y」：圖例位置。 |
 | `legend-title`、`legend-transfer`、`legend-future`、`legend-here` | 預設文字 | 圖例文字。 |
 
@@ -147,8 +148,9 @@ t.index; t.total;
 | `<route-stop>` | `at`、`label`、`sub`、`zoom`、`id` | 寫在 route-line 裡的車站；`label` 是站名方位（n、ne、e、se、s、sw、w、nw）。 |
 | `<route-transfer>` | 同上 | 轉乘站。 |
 | `<route-here>` | `at` | 目前位置。 |
+| `<route-train>` | `from`、`to`、`icon`、`color`、`size`、`speed`、`duration`、`autoplay`、`id` | 火車。`from`、`to` 寫車站 id 或站名，自動找最短路徑，可在轉乘站換線，中途不停；`icon` 是 Bootstrap Icons 名稱（預設 `bi-train-front-fill`，頁面需引用 bootstrap-icons.css）。 |
 
-方法：`hover(id, on)` 放大或還原站名、`render()` 重新繪製、`stations` 有 id 的車站清單。事件：`route-map:render`、`route-map:hover`（detail：`id`、`on`）。車站的 `id` 會移到畫出來的車站上，page-tour 可以直接用 `#id` 指定。
+方法：`hover(id, on)` 放大或還原站名、`play(id或序號)` 播放火車（回傳 Promise）、`stop()` 中斷、`render()` 重新繪製、`stations` 有 id 的車站清單。火車播放時整張圖不能操作，`hover()` 會被忽略。事件：`route-map:render`、`route-map:hover`（detail：`id`、`on`）、`route-map:train-start`、`route-map:train-end`（detail：`id`、`from`、`to`、`lines`、`completed`）、`route-map:train-error`。車站的 `id` 會移到畫出來的車站上，page-tour 可以直接用 `#id` 指定。
 
 ---
 
