@@ -20,6 +20,7 @@
     '#EF6661': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
     '#E3D322': '<svg viewBox="0 0 24 24" aria-hidden="true" class="is-thin"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.2h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>'
   };
+  const SVG_GLOBE = '<svg class="upo-globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>';
   const SVG_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 5l7 6.5-7 6.5v-3.8C8.4 14.2 5.3 15.9 3.5 19.5c.6-5.6 3.8-9.6 10-10.6z"/></svg>';
 
   const color = (v) => {
@@ -59,15 +60,26 @@ ui-post .upo-av{flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:i
 ui-post .upo-av img{width:100%;height:100%;object-fit:cover;display:block;}
 ui-post .upo-name{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 ui-post .upo-time{font-size:.8rem;color:#86877F;}
-ui-post[compact]:not([compact="false"]) .upo-card{padding:12px 16px 10px 16px;}
-ui-post[compact]:not([compact="false"]) .upo-head{gap:10px;margin:0 0 8px 0;}
-ui-post[compact]:not([compact="false"]) .upo-head .upo-av{width:30px;height:30px;font-size:.8rem;}
-ui-post[compact]:not([compact="false"]) .upo-meta{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0;}
-ui-post[compact]:not([compact="false"]) .upo-name{font-size:.9rem;}
-ui-post[compact]:not([compact="false"]) .upo-time{font-size:.75rem;}
-ui-post[compact]:not([compact="false"]) .upo-body{font-size:1.05em;line-height:1.45;margin:0 0 8px 0;}
-ui-post[compact]:not([compact="false"]) .upo-actions{gap:16px;font-size:.8rem;}
-ui-post[compact]:not([compact="false"]) .upo-actions svg{width:16px;height:16px;}
+ui-post[compact]:not([compact="false"]) .upo-card{padding:8px 12px 6px 12px;}
+ui-post[compact]:not([compact="false"]) .upo-head{gap:8px;margin:0 0 4px 0;}
+ui-post[compact]:not([compact="false"]) .upo-head .upo-av{width:24px;height:24px;font-size:.7rem;}
+ui-post[compact]:not([compact="false"]) .upo-meta{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;min-width:0;}
+ui-post[compact]:not([compact="false"]) .upo-name{font-size:.85rem;gap:6px;}
+ui-post[compact]:not([compact="false"]) .upo-time{font-size:.7rem;}
+ui-post[compact]:not([compact="false"]) .upo-body{font-size:1em;line-height:1.35;margin:0 0 4px 0;}
+ui-post[compact]:not([compact="false"]) .upo-actions{gap:12px;font-size:.75rem;}
+ui-post[compact]:not([compact="false"]) .upo-actions svg{width:14px;height:14px;}
+ui-post .upo-head.upo-li{align-items:flex-start;gap:12px;margin:0 0 14px 0;}
+ui-post .upo-head.upo-li .upo-av{width:56px;height:56px;font-size:1.4rem;}
+ui-post .upo-head.upo-li .upo-meta{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px;}
+ui-post .upo-head.upo-li .upo-name{font-size:1rem;line-height:1.3;gap:6px;}
+ui-post .upo-headline{font-size:.85rem;line-height:1.35;color:#C6C7BD;}
+ui-post .upo-head.upo-li .upo-time{display:flex;align-items:center;gap:4px;font-size:.75rem;line-height:1.4;}
+ui-post .upo-globe{width:13px;height:13px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;}
+ui-post .upo-follow{flex:0 0 auto;margin:0 0 0 8px;font:inherit;font-size:.875rem;font-weight:700;line-height:1.3;color:var(--upo-follow,#5DBAE8);background:var(--upo-bg,#0C0D0C);border:2px solid var(--upo-follow,#5DBAE8);border-radius:999px;padding:4px 14px;cursor:pointer;white-space:nowrap;}
+ui-post .upo-follow:hover{background:var(--upo-follow,#5DBAE8);color:#0C0D0C;}
+ui-post .upo-follow.is-on{background:var(--upo-follow,#5DBAE8);color:#0C0D0C;}
+ui-post .upo-follow.is-on:hover{background:var(--upo-bg,#0C0D0C);color:var(--upo-follow,#5DBAE8);}
 ui-post .upo-body{font-size:1.25em;line-height:1.5;font-weight:600;margin:0 0 14px 0;word-break:break-word;}
 ui-post .upo-actions{display:flex;gap:24px;font-size:.875rem;color:#C6C7BD;}
 ui-post .upo-act{display:inline-flex;align-items:center;gap:6px;}
@@ -783,6 +795,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       css('--upo-examiner', color(this.getAttribute('examiner-color')));
       css('--upo-share', color(this.getAttribute('share-color')));
       css('--upo-grip', color(this.getAttribute('grip-color')));
+      css('--upo-follow', color(this.getAttribute('follow-color')));
       css('--upo-grip-hover', color(this.getAttribute('grip-hover-color')));
       const theme = color(this.getAttribute('theme'));
       css('--upo-bc', color(this.getAttribute('border-color')) || theme);
@@ -813,8 +826,21 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const time = document.createElement('div');
       time.className = 'upo-time';
       time.textContent = [this.getAttribute('time') || '1h', this.getAttribute('brand')].filter(Boolean).join(' · ');
-      meta.append(name, time);
+      const li = (this.getAttribute('head-style') || '').trim().toLowerCase() === 'linkedin' && !(this.hasAttribute('compact') && this.getAttribute('compact').trim().toLowerCase() !== 'false');
+      if (li) head.classList.add('upo-li');
+      const headline = this.getAttribute('headline');
+      if (li) {
+        if (headline && headline.trim()) {
+          const hl = document.createElement('div');
+          hl.className = 'upo-headline';
+          hl.textContent = headline.trim();
+          meta.append(name, hl);
+        } else meta.append(name);
+        time.insertAdjacentHTML('beforeend', SVG_GLOBE);
+        meta.appendChild(time);
+      } else meta.append(name, time);
       head.appendChild(meta);
+      if (li && bool(this.getAttribute('follow'), true)) head.appendChild(this._followBtn());
       const bodyEl = document.createElement('div');
       bodyEl.className = 'upo-body';
       bodyEl.appendChild(this._bodyFrag.cloneNode(true));
@@ -894,6 +920,23 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         ne[0].data = ne[0].data.replace(/^ /, '');
         ne[ne.length - 1].data = ne[ne.length - 1].data.replace(/ $/, '');
       }
+    }
+
+    _followBtn() {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'upo-follow';
+      const off = '＋ ' + (this.getAttribute('follow-label') || '追蹤');
+      const on = '✓ ' + (this.getAttribute('following-label') || '追蹤中');
+      b.textContent = off;
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const f = b.classList.toggle('is-on');
+        b.textContent = f ? on : off;
+        b.setAttribute('aria-pressed', f ? 'true' : 'false');
+        this.dispatchEvent(new CustomEvent('post-follow', { bubbles: true, detail: { author: this.getAttribute('author') || 'IELTS Examiner', following: f } }));
+      });
+      return b;
     }
 
     _openProfile(anchor) {

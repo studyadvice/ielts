@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-post 元件示範（11-17-26 整合版）</title>
+<title>ui-post 元件示範（11-18-26 整合版）</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -49,8 +49,74 @@ a{color:#51DBCF;}
   <h1>&lt;ui-post&gt; 社群貼文留言動畫</h1>
   <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。11-17-26 新增第五段：<code>&lt;mark-fx&gt;</code> 文字標記、講評標籤圖示、<code>drop-cap</code> 首字放大、可點擊的自訂徽章（搭配 bp-popnote）。</p>
   <nav class="toc">
-    <a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
+    <a href="#new">新增：LinkedIn 作者區塊與更緊湊的 compact</a><a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
   </nav>
+
+  <!-- ══════════ 新增（11-18-26） ══════════ -->
+  <section class="part" id="new">
+    <h2>新增：LinkedIn 作者區塊與更緊湊的 compact（11-18-26）</h2>
+    <p class="lead"><code>head-style="linkedin"</code> 只改貼文作者區塊，底下留言區完全不動；顏色仍沿用色票與深色底，只借用 LinkedIn 的排版。<code>compact</code> 也再縮小了一輪。</p>
+
+    <div class="ex">
+      <h3>範例 A：head-style="linkedin"</h3>
+      <p class="note">頭像 56px，姓名旁可放徽章，第二行是職稱 <code>headline</code>，第三行是時間、品牌與地球圖示，右上角是追蹤按鈕（點一下切換追蹤中，並觸發 <code>post-follow</code>）。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post head-style="linkedin" author="Dr. Emily Chen" avatar="EC" avatar-color="violet"
+         badge="Part 2" headline="IELTS Speaking Examiner · 12 年教學經驗"
+         time="3 週" brand="已編輯" likes="256" shares="31" width="680" typing="400" item-delay="300">
+  How do you introduce a topic in Part 2 without sounding memorised?
+  <post-item author="Amy" likes="9">I usually begin with a short personal story.
+    <stamp-fx color="green" icon="check2" anchor="right" offset-x="-40" size="1.1rem">自然</stamp-fx>
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 B：換按鈕顏色與文字，或隱藏按鈕，並接收事件</h3>
+      <p class="note"><code>follow-color</code>、<code>follow-label</code>、<code>following-label</code> 調整按鈕；<code>follow="false"</code> 隱藏。與 <code>profile-target</code> 並用時，點頭像仍會跳出小視窗。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<template id="li-profile"><b>Dr. Emily Chen</b><br>IELTS Speaking Examiner</template>
+<ui-post head-style="linkedin" author="Dr. Emily Chen" avatar="EC" avatar-color="key"
+         headline="IELTS Speaking Examiner" time="1 天" follow-color="pink"
+         follow-label="關注" following-label="已關注" profile-target="li-profile"
+         mode="live" min-height="40" width="680">
+  Describe a book that changed your mind.
+</ui-post>
+<div style="height:16px"></div>
+<ui-post head-style="linkedin" author="Speaking Club" avatar="SC" headline="每週一題口說練習"
+         time="2 天" follow="false" mode="live" min-height="40" width="680">
+  follow="false" 時沒有按鈕。
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 C：更緊湊的 compact（與 linkedin 並用時 compact 優先）</h3>
+      <p class="note">頭像 24px，內距、行距與互動列都再縮小；下方第二個同時寫了 <code>head-style="linkedin"</code> 與 <code>compact</code>，結果仍是緊湊版（不顯示職稱與按鈕）。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post compact mode="live" author="IELTS Coach" avatar="IC" time="1h" likes="12" width="680" min-height="40">
+  Describe a place you like to visit.
+</ui-post>
+<div style="height:16px"></div>
+<ui-post compact head-style="linkedin" headline="不會顯示" mode="live" author="Speaking Club" avatar="SC" time="3h" width="680" min-height="40">
+  compact 優先。
+</ui-post>
+</script>
+      </div>
+    </div>
+  </section>
 
   <!-- ══════════ 一、基本播放 ══════════ -->
   <section class="part" id="basic">
@@ -622,7 +688,10 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>low-style</code></td><td>dim</td><td>低分留言：<code>dim</code> 變灰、<code>fold</code> 摺疊、<code>keep</code> 不變。</td></tr>
         <tr><td><code>count-format</code></td><td>short</td><td><code>short</code> 顯示 1.3K，<code>full</code> 顯示 1,280。</td></tr>
         <tr><td><code>width</code>、<code>min-height</code>、<code>font-size</code></td><td>640px、80px、1rem</td><td>最大寬度、留言區最小高度（live 模式還沒有留言時可以調小）、字級。</td></tr>
-        <tr><td><code>compact</code></td><td>無</td><td>發文作者區塊緊湊排版：頭像 42px 改 30px，名字與時間同一行，內距、內文字級、互動列間距都縮小。<code>compact="false"</code> 等於沒寫。留言區不受影響。</td></tr>
+        <tr><td><code>compact</code></td><td>無</td><td>發文作者區塊緊湊排版：頭像 24px，名字與時間同一行，內距、行距、內文字級、互動列間距都縮到最小；<code>compact="false"</code> 等於沒寫。留言區不受影響。與 <code>head-style="linkedin"</code> 並用時 compact 優先。</td></tr>
+        <tr><td><code>head-style</code></td><td>無</td><td>發文作者區塊排版：<code>linkedin</code> 為 LinkedIn 風格（頭像 56px、姓名加職稱、時間加地球圖示、右上追蹤按鈕）；不寫為原本排版。只影響貼文本身，不影響留言區；<code>compact</code> 優先。</td></tr>
+        <tr><td><code>headline</code></td><td>無</td><td>LinkedIn 排版的職稱，顯示在姓名下方；不寫就不顯示。</td></tr>
+        <tr><td><code>follow</code>、<code>follow-label</code>、<code>following-label</code>、<code>follow-color</code></td><td>顯示、<code>追蹤</code>、<code>追蹤中</code>、<code>blue</code></td><td>LinkedIn 排版的追蹤按鈕；<code>follow="false"</code> 隱藏。點擊切換狀態並觸發 <code>post-follow</code>（<code>detail</code> 為 <code>{ author, following }</code>）。</td></tr>
         <tr><td><code>theme</code></td><td>無</td><td>一次設定外框與分隔線的顏色，可填色票名稱。</td></tr>
         <tr><td><code>border-color</code>、<code>border-width</code>、<code>divider-color</code></td><td>gray、2px</td><td>外框顏色、外框粗細、分隔線顏色，覆蓋 <code>theme</code>。</td></tr>
         <tr><td><code>profile-target</code>、<code>profile-width</code></td><td>無、320px</td><td>點作者頭像跳出小視窗：填 template 的 id；視窗寬度。</td></tr>
@@ -840,6 +909,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td>11-15-26</td><td>live 模式（v1.1）</td><td>新增 <code>mode="live"</code>、<code>add()</code>、<code>live-surge</code>、<code>live</code>、<code>total</code>、<code>post-add-end</code>；預先寫好的留言直接顯示最終狀態。</td></tr>
         <tr><td>11-16-26</td><td>特效、compact、grip</td><td>新增 <code>stamp-fx</code>、<code>note-fx</code>（<code>add()</code> 的 html 會自動拆出特效標籤）、<code>compact</code>、<code>grip</code>、<code>grip-label</code>、<code>grip-color</code>、<code>grip-hover-color</code>、<code>post-item-hide</code>。</td></tr>
         <tr><td>11-17-26</td><td>文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</td><td>新增 <code>mark-fx</code>（<code>box</code>（預設，11-18-26 新增）、<code>strike</code>、<code>wavy</code>、<code>cross</code>、<code>arrow</code>、<code>color</code>）、<code>tag-icons</code>、<code>drop-cap</code>、<code>drop-cap-color</code>、<code>badge</code> 系列（可點徽章，搭配 bp-popnote）、<code>bg-color</code>／<code>border-color</code>／<code>border-width</code>／<code>border-style</code>（單則留言樣式）、<code>width</code>／<code>max-width</code>（單則留言寬度，11-18-26）。講評標籤的外觀會改變：green、red、yellow 的標籤預設多一個圖示，不想要時寫 <code>tag-icons="false"</code>。</td></tr>
+              <tr><td>11-18-26</td><td>LinkedIn 作者區塊、更緊湊的 compact</td><td>新增 <code>head-style="linkedin"</code>、<code>headline</code>、<code>follow</code>、<code>follow-label</code>、<code>following-label</code>、<code>follow-color</code>、事件 <code>post-follow</code>；<code>compact</code> 的頭像 30px 改 24px，內距與字級再縮小（會改變既有 compact 頁面的外觀）。</td></tr>
       </tbody>
     </table>
   </section>
@@ -895,6 +965,7 @@ document.querySelectorAll('[data-demo] .demo-js').forEach(s => new Function(s.te
       if (window.bootstrap) bootstrap.Alert.getOrCreateInstance(box).close(); else box.remove();
     }, 4000);
   };
+  document.addEventListener('post-follow', (e) => notice('post-follow：' + JSON.stringify(e.detail)));
   document.addEventListener('post-end', () => notice('post-end：播放完畢'));
   document.addEventListener('post-add-end', (e) => notice('post-add-end：' + JSON.stringify(e.detail)));
   document.addEventListener('post-item-hide', (e) => notice('post-item-hide：' + JSON.stringify(e.detail)));

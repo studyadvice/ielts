@@ -5,11 +5,12 @@
 - 版本：1.1.0
 - 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
 - 11-17-26：`post-item` 新增 `bg-color`、`border-color`、`border-width`、`border-style`；新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大、`post-item` 的可點擊自訂徽章（`badge`，需搭配 `bp-popnote.js`）
+- 11-18-26：新增 `head-style="linkedin"`、`headline`、`follow` 系列屬性與 `post-follow` 事件；`compact` 再縮小一輪（頭像 30px 改 24px，內距與字級縮小，會改變既有 compact 頁面的外觀）。
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-17-26.html` | | 整合範例 21 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
+| `ui-post-demo-11-18-26.html` | | 整合範例 24 則（新增 LinkedIn 作者區塊與更緊湊的 compact、基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
 
 ## 目錄
 
@@ -73,7 +74,10 @@
 | `theme` | 無 | 統一外框與分隔線的顏色，可寫色票名稱或色碼；個別屬性會覆蓋它。 |
 | `border-color`、`border-width` | `gray`、`2px` | 外框顏色與粗細；純數字視為 px。 |
 | `divider-color` | 同外框色 | 貼文卡片、控制列與按鈕之間的分隔線顏色。 |
-| `compact` | 無 | 發文作者區塊緊湊排版：頭像 42px 改 30px，名字與時間同一行，內距、內文字級、互動列間距都縮小；`compact="false"` 等於沒寫。留言區不受影響。搭配 `min-height="40"` 可讓 live 模式沒有留言時不留空白。 |
+| `compact` | 無 | 發文作者區塊緊湊排版：頭像 24px，名字與時間同一行，內距、行距、內文字級、互動列間距都縮到最小；`compact="false"` 等於沒寫。留言區不受影響。與 `head-style="linkedin"` 並用時 compact 優先。 |
+| `head-style` | 無 | 發文作者區塊排版：`linkedin` 為 LinkedIn 風格（頭像 56px、姓名加職稱、時間加地球圖示、右上追蹤按鈕）；不寫為原本排版。只影響貼文本身，不影響留言區；仍沿用色票與深色底。 |
+| `headline` | 無 | LinkedIn 排版的職稱，顯示在姓名下方；不寫就不顯示。 |
+| `follow`、`follow-label`、`following-label`、`follow-color` | 顯示、`追蹤`、`追蹤中`、`blue` | LinkedIn 排版的追蹤按鈕；`follow="false"` 隱藏。點擊切換狀態並觸發 `post-follow`。 |
 | `grip` | 無 | 每則留言右側顯示握把，點一下收合並隱藏該則留言（含章與評語）；留言數不變，重播後會再出現。寫在 `post-item` 上可個別開啟，`grip="false"` 個別關閉。 |
 | `grip-label` | `隱藏這則留言` | 滑鼠移到握把上的提示文字。 |
 | `grip-color`、`grip-hover-color` | `gray`、`pink` | 握把顏色、滑鼠移上去的顏色。 |
@@ -203,6 +207,7 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 | --- | --- |
 | `post-item-show` | 每則留言出現時觸發，`detail = { index, author, after }`。 |
 | `post-item-hide` | 留言被握把隱藏時觸發，`detail = { index, author }`，會冒泡。 |
+| `post-follow` | LinkedIn 排版的追蹤按鈕被點擊時觸發，`detail = { author, following }`，會冒泡。 |
 | `post-surge-end` | 愛心爆發、置頂與標籤完成時觸發。 |
 | `post-end` | 全部播完時觸發。 |
 | `post-add-end` | live 模式中，`add()` 送進的一則留言播完時觸發，`detail = { index, author, best }`。 |
