@@ -114,7 +114,11 @@
     'pause-on-hover': 'false',
     'show-timer': 'true',
     'play-text': '播放',
-    'pause-text': '暫停'
+    'pause-text': '暫停',
+    'mark-fx': 'true',
+    'mark-speed': '1',
+    'mark-delay': '400',
+    'mark-animate': 'true'
   };
   const AUTOPLAY_SEC = 8;
 
@@ -143,6 +147,9 @@ ui-detail-ladder .udl-body{font-size:var(--udl-body-font-size);color:var(--udl-b
 ui-detail-ladder .udl-note{font-size:var(--udl-note-font-size);color:var(--udl-note-color);line-height:1.7;margin:10px 0 0 0}
 ui-detail-ladder .udl-in{animation:udl-fade .35s ease}
 @keyframes udl-fade{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+ui-detail-ladder mark-fx{display:none}
+ui-detail-ladder .udl-content{position:relative}
+ui-detail-ladder .udl-fxmark{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1}
 ui-detail-ladder mark{background:var(--udl-hl-bg);color:var(--udl-hl-color);border-radius:4px;padding:0 4px}
 ui-detail-ladder .udl-progress{margin:16px 0 0 0}
 ui-detail-ladder .udl-track{height:var(--udl-progress-height);background:var(--udl-progress-track);border-radius:999px;overflow:hidden}
@@ -197,6 +204,283 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
     if (target._keyMove(e.key === 'ArrowUp' ? 'up' : 'down')) e.preventDefault();
   });
 
+  /* ── mark-fx 文字標記（與 ui-post 的 mark-fx 同一套寫法，精簡移植：不含 stamp-fx、note-fx） ── */
+  const LadderFx = (() => {
+    const CANCEL = { cancelled: true, fx: true };
+    const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+    const col = (v, d) => (v == null || String(v).trim() === '') ? d : resolveColor(String(v).trim());
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+    class Run {
+      constructor(o) {
+        this.rate = o.rate || (() => 1);
+        this.skipping = !!o.instant;
+        this.skipping0 = this.skipping;
+        this.dead = false;
+        this.waits = new Set();
+        this.anims = new Set();
+      }
+      sleep(ms) {
+        if (this.dead) return Promise.reject(CANCEL);
+        return new Promise((res, rej) => {
+          const w = { res, rej, t: null };
+          w.done = () => { this.waits.delete(w); clearTimeout(w.t); res(); };
+          this.waits.add(w);
+          if (this.skipping) { w.done(); return; }
+          w.t = setTimeout(w.done, Math.max(0, ms || 0) / this.rate());
+        });
+      }
+      anim(el, kf, ms, opts) {
+        if (this.dead) return Promise.reject(CANCEL);
+        const a = el.animate(kf, Object.assign({ duration: this.skipping ? 1 : Math.max(1, ms / this.rate()), fill: 'both', easing: 'ease-out' }, opts || {}));
+        this.anims.add(a);
+        if (this.skipping) { try { a.finish(); } catch (e) {} }
+        return a.finished.then(() => {}, () => {}).then(() => { this.anims.delete(a); if (this.dead) throw CANCEL; });
+      }
+      skip() {
+        if (this.dead) return;
+        this.skipping = true;
+        [...this.waits].forEach((w) => w.done());
+        this.anims.forEach((a) => { try { a.finish(); } catch (e) {} });
+      }
+      cancel() {
+        if (this.dead) return;
+        this.dead = true;
+        [...this.waits].forEach((w) => { clearTimeout(w.t); this.waits.delete(w); w.rej(CANCEL); });
+        this.anims.forEach((a) => { try { a.cancel(); } catch (e) {} });
+      }
+    }
+
+    function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+    function makeRng(seed) {
+      let a = seed >>> 0;
+      return function () { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    }
+    function seedOf(v, fallback) { if (v != null && v !== '') return /^\d+$/.test(v) ? parseInt(v, 10) : hashStr(String(v)); return hashStr(fallback); }
+    const subs = new WeakMap();
+    function sub(root, text, nth) {
+      let cache = subs.get(root); if (!cache) { cache = new Map(); subs.set(root, cache); }
+      const key = text + '\u0000' + nth;
+      if (cache.has(key) && cache.get(key).isConnected) return cache.get(key);
+      const nodes = []; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let full = '';
+      while (w.nextNode()) { nodes.push({ node: w.currentNode, start: full.length }); full += w.currentNode.data; }
+      let idx = -1, from = 0;
+      for (let i = 0; i < nth; i++) { idx = full.indexOf(text, from); if (idx === -1) return null; from = idx + text.length; }
+      const end = idx + text.length;
+      const locate = (pos, isEnd) => {
+        for (let i = 0; i < nodes.length; i++) { const n = nodes[i], L = n.node.data.length; if (pos < n.start + L || (isEnd && pos === n.start + L)) return { node: n.node, off: pos - n.start }; }
+        const last = nodes[nodes.length - 1]; return { node: last.node, off: last.node.data.length };
+      };
+      const a = locate(idx, false), b = locate(end, true);
+      const range = document.createRange(); range.setStart(a.node, a.off); range.setEnd(b.node, b.off);
+      const span = document.createElement('span'); span.className = 'udl-fxsub';
+      span.appendChild(range.extractContents()); range.insertNode(span);
+      cache.set(key, span);
+      return span;
+    }
+    function targets(el, ctx) {
+      const sel = el.getAttribute('target');
+      let list = [];
+      if (!sel) list = [ctx.scope];
+      else {
+        try {
+          list = [...ctx.scope.querySelectorAll(sel)];
+          if (!list.length) list = [...ctx.layer.querySelectorAll(sel)];
+        } catch (e) { return []; }
+      }
+      const text = el.getAttribute('text');
+      if (text != null && text !== '') { const nth = parseInt(el.getAttribute('nth'), 10) || 1; return list.map((n) => sub(n, text, nth)).filter(Boolean); }
+      return list;
+    }
+    function keep(ctx, place) { ctx.live.push(place); return () => { const i = ctx.live.indexOf(place); if (i >= 0) ctx.live.splice(i, 1); }; }
+    function stayFor(run, el, node, drop, def) {
+      const stay = el.getAttribute('stay') || 'forever';
+      if (stay === 'forever') return;
+      run.sleep(num(stay, 2000)).then(() => {
+        if (!node.isConnected) return;
+        const a = node.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.max(1, num(el.getAttribute('fade-out'), def) / run.rate()), fill: 'forwards' });
+        a.finished.then(() => { node.remove(); drop(); }, () => {});
+      }, () => {});
+    }
+
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function roughLine(x1, y1, x2, y2, rough, rnd) {
+      const j = () => (rnd() - 0.5) * rough * 4;
+      const L = Math.hypot(x2 - x1, y2 - y1) || 1;
+      const nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+      const bow = (rnd() - 0.5) * rough * (2 + L * 0.02);
+      const mx = (x1 + x2) / 2 + nx * bow, my = (y1 + y2) / 2 + ny * bow;
+      return `M${(x1 + j()).toFixed(1)} ${(y1 + j()).toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${(x2 + j()).toFixed(1)} ${(y2 + j()).toFixed(1)}`;
+    }
+    function wavePath(x1, x2, y, amp, rough, rnd) {
+      const w = Math.max(1, x2 - x1), half = w / Math.max(2, Math.round(w / (amp * 2)));
+      let d = `M${x1.toFixed(1)} ${y.toFixed(1)}`, x = x1, up = true;
+      while (x < x2 - 0.01) {
+        const nx = Math.min(x2, x + half), j = (rnd() - 0.5) * rough * amp;
+        d += ` Q${((x + nx) / 2).toFixed(1)} ${(y + (up ? -1 : 1) * (amp * 2 + j)).toFixed(1)} ${nx.toFixed(1)} ${y.toFixed(1)}`;
+        x = nx; up = !up;
+      }
+      return d;
+    }
+    function lines(el, layer) {
+      const c = layer.getBoundingClientRect();
+      let rects = [...el.getClientRects()];
+      if (getComputedStyle(el).display !== 'inline') {
+        const rg = document.createRange(); rg.selectNodeContents(el);
+        const inner = [...rg.getClientRects()].filter((r) => r.width > 0.5 && r.height > 0.5);
+        if (inner.length) {
+          const merged = [];
+          inner.forEach((r) => {
+            const m = merged.find((q) => Math.abs(q.top - r.top) < r.height * 0.5);
+            if (m) { m.left = Math.min(m.left, r.left); m.right = Math.max(m.right, r.right); m.top = Math.min(m.top, r.top); m.bottom = Math.max(m.bottom, r.bottom); }
+            else merged.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+          });
+          rects = merged.map((m) => ({ left: m.left, top: m.top, width: m.right - m.left, height: m.bottom - m.top }));
+        }
+      }
+      return rects.filter((r) => r.width > 0.5).map((r) => ({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height }));
+    }
+    async function mark(run, el, ctx) {
+      const kind = (el.getAttribute('kind') || 'box').toLowerCase();
+      const list = targets(el, ctx);
+      if (!list.length) return;
+      const speed = num(el.getAttribute('speed'), kind === 'color' ? 300 : 600);
+
+      if (kind === 'color') {
+        const c = col(el.getAttribute('color'), '#51DBCF');
+        const old = list.map((t) => t.style.color);
+        list.forEach((t) => { t.style.transition = run.skipping ? '' : `color ${Math.max(1, speed / run.rate())}ms`; t.style.color = c; });
+        await run.sleep(speed);
+        const stay = el.getAttribute('stay') || 'forever';
+        if (stay !== 'forever') run.sleep(num(stay, 2000)).then(() => list.forEach((t, i) => { t.style.color = old[i]; }), () => {});
+        return;
+      }
+
+      const layer = ctx.layer;
+      const c = col(el.getAttribute('color'), kind === 'arrow' || kind === 'box' ? '#51DBCF' : '#EF6661');
+      const thick = num(el.getAttribute('thickness'), kind === 'wavy' || kind === 'box' ? 2 : 3);
+      const rough = clamp(num(el.getAttribute('rough'), 0.5), 0, 1);
+      const pad = num(el.getAttribute('padding'), kind === 'cross' ? 2 : 4);
+      const seed0 = el.getAttribute('seed');
+      let dest = null;
+      if (kind === 'arrow') {
+        const toSel = el.getAttribute('to-target'), toText = el.getAttribute('to');
+        if (toSel) { try { dest = ctx.scope.querySelector(toSel) || layer.querySelector(toSel) || document.querySelector(toSel); } catch (e) { dest = null; } }
+        if (toText != null && toText !== '') dest = sub(dest || ctx.scope, toText, parseInt(el.getAttribute('to-nth'), 10) || 1);
+        if (!dest) return;
+      }
+      const geom = () => {
+        const ds = [];
+        (kind === 'arrow' ? list.slice(0, 1) : list).forEach((t, ti) => {
+          if (!t.isConnected) return;
+          const rnd = makeRng(seedOf(seed0, kind + '|' + (el.getAttribute('text') || '') + '|' + ti));
+          const ls = lines(t, layer);
+          if (!ls.length) return;
+          if (kind === 'wavy') {
+            const amp = thick * 0.6 + 1.2;
+            ls.forEach((r) => ds.push(wavePath(r.x - pad * 0.25, r.x + r.w + pad * 0.25, r.y + r.h * 0.98 + amp * 0.5, amp, rough, rnd)));
+          } else if (kind === 'box') {
+            /* 把文字框起來：每一行各畫一個圓角框，rough 愈大線條愈歪；radius 控制圓角 */
+            const rad = num(el.getAttribute('radius'), 4);
+            ls.forEach((r) => {
+              const j = () => (rnd() - 0.5) * rough * 3;
+              const x1 = r.x - pad, x2 = r.x + r.w + pad, y1 = r.y + r.h * 0.06 - pad * 0.5, y2 = r.y + r.h * 0.96 + pad * 0.5;
+              const q = Math.min(rad, (x2 - x1) / 2, (y2 - y1) / 2);
+              const P = (x, y) => `${(x + j()).toFixed(1)} ${(y + j()).toFixed(1)}`;
+              ds.push(`M${P(x1 + q, y1)} L${P(x2 - q, y1)} Q${P(x2, y1)} ${P(x2, y1 + q)} L${P(x2, y2 - q)} Q${P(x2, y2)} ${P(x2 - q, y2)} L${P(x1 + q, y2)} Q${P(x1, y2)} ${P(x1, y2 - q)} L${P(x1, y1 + q)} Q${P(x1, y1)} ${P(x1 + q + 3, y1)}`);
+            });
+          } else if (kind === 'cross') {
+            ls.forEach((r) => {
+              const x1 = r.x - pad, x2 = r.x + r.w + pad, y1 = r.y + r.h * 0.1 - pad * 0.5, y2 = r.y + r.h * 0.92 + pad * 0.5;
+              ds.push(roughLine(x1, y1, x2, y2, rough, rnd), roughLine(x2, y1, x1, y2, rough, rnd));
+            });
+          } else if (kind === 'arrow') {
+            if (!dest.isConnected) return;
+            const dl = lines(dest, layer);
+            if (!dl.length) return;
+            const a = ls[0], b = dl[0];
+            const head = num(el.getAttribute('head'), 9);
+            const sx = a.x + a.w / 2, ex = b.x + b.w / 2;
+            const dist = Math.hypot(ex - sx, (b.y + b.h / 2) - (a.y + a.h / 2));
+            const bend = num(el.getAttribute('bend'), clamp(dist * 0.1, 6, 14));
+            const jx = (rnd() - 0.5) * rough * 6, jy = (rnd() - 0.5) * rough * 4;
+            let sy, ey, cx, cy, shaft;
+            if (Math.abs(a.y - b.y) < a.h * 0.5) {
+              let side = (el.getAttribute('side') || 'auto').toLowerCase();
+              if (side !== 'top' && side !== 'bottom') {
+                const all = lines(ctx.scope, layer);
+                const lastY = all.length ? Math.max(...all.map((r) => r.y)) : a.y;
+                side = a.y > lastY - a.h * 0.5 ? 'bottom' : 'top';
+              }
+              const below = side === 'bottom', gap = 3;
+              sy = below ? a.y + a.h + gap : a.y - gap; ey = below ? b.y + b.h + gap : b.y - gap;
+              cx = (sx + ex) / 2 + jx; cy = (below ? Math.max(sy, ey) + bend * 2 : Math.min(sy, ey) - bend * 2) + jy;
+              shaft = `M${sx.toFixed(1)} ${sy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+            } else {
+              const down = b.y > a.y, gap = 1;
+              sy = down ? a.y + a.h + gap : a.y - gap; ey = down ? b.y - gap : b.y + b.h + gap;
+              const k = Math.max(bend, Math.abs(ey - sy) * 0.5) * (down ? 1 : -1);
+              cx = ex + jx * 0.3; cy = ey - k;
+              shaft = `M${sx.toFixed(1)} ${sy.toFixed(1)} C${(sx + jx).toFixed(1)} ${(sy + k).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+            }
+            const tl = Math.hypot(ex - cx, ey - cy) || 1, ux = (ex - cx) / tl, uy = (ey - cy) / tl;
+            const wing = (ang) => { const co = Math.cos(ang), si = Math.sin(ang); return [ex - (ux * co - uy * si) * head, ey - (ux * si + uy * co) * head]; };
+            const w1 = wing(0.5), w2 = wing(-0.5);
+            ds.push(shaft);
+            ds.push(`M${w1[0].toFixed(1)} ${w1[1].toFixed(1)} L${ex.toFixed(1)} ${ey.toFixed(1)} L${w2[0].toFixed(1)} ${w2[1].toFixed(1)}`);
+          } else {
+            ls.forEach((r) => { const y = r.y + r.h * 0.55; ds.push(roughLine(r.x - pad * 0.5, y, r.x + r.w + pad * 0.5, y, rough, rnd)); });
+          }
+        });
+        return ds;
+      };
+      const svg = document.createElementNS(SVGNS, 'svg');
+      svg.setAttribute('class', 'udl-fxmark');
+      layer.appendChild(svg);
+      const paths = [];
+      const draw = () => {
+        const ds = geom();
+        while (paths.length < ds.length) {
+          const p = document.createElementNS(SVGNS, 'path');
+          p.setAttribute('fill', 'none'); p.setAttribute('stroke', c); p.setAttribute('stroke-width', thick);
+          p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+          svg.appendChild(p); paths.push(p);
+        }
+        while (paths.length > ds.length) paths.pop().remove();
+        ds.forEach((d, i) => paths[i].setAttribute('d', d));
+      };
+      draw();
+      if (!paths.length) { svg.remove(); return; }
+      const drop = keep(ctx, () => { if (svg.isConnected) draw(); });
+      const first = paths.slice();
+      const lens = first.map((p) => (p.getTotalLength ? p.getTotalLength() : 100) || 1);
+      const total = lens.reduce((x, y) => x + y, 0) || 1;
+      first.forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
+      for (let i = 0; i < first.length; i++) {
+        await run.anim(first[i], [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }], speed * lens[i] / total, { easing: 'ease-in-out' });
+        first[i].style.strokeDasharray = 'none'; first[i].style.strokeDashoffset = '0';
+      }
+      stayFor(run, el, svg, drop, 300);
+    }
+
+    async function play(run, specs, ctxOf) {
+      const els = specs.map((x) => { const t = document.createElement('template'); t.innerHTML = x.h; const e = t.content.firstElementChild; if (e) e._r = x.r; return e; }).filter(Boolean);
+      const groups = [];
+      els.forEach((el) => {
+        const s = (el.getAttribute('start') || 'after').toLowerCase();
+        if (s === 'with' && groups.length) groups[groups.length - 1].push(el); else groups.push([el]);
+      });
+      for (const g of groups) {
+        await Promise.all(g.map(async (el) => {
+          await run.sleep(num(el.getAttribute('delay'), 0));
+          await mark(run, el, ctxOf(el._r));
+        }));
+      }
+    }
+
+    return { CANCEL, Run, play };
+  })();
+
   class UiDetailLadder extends HTMLElement {
     static get observedAttributes() {
       return [...Object.keys(CSS_ATTRS), ...Object.keys(OPT_ATTRS), 'ini-collapse', 'autoplay'];
@@ -214,6 +498,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       this._raf = 0;
       this._autoStarted = false;
       this._auto = null;
+      this._fxRun = null; this._fxTimer = 0; this._fxLive = []; this._marksStarted = false; this._io = null;
     }
 
     connectedCallback() {
@@ -229,6 +514,8 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
     disconnectedCallback() {
       if (this._ro) this._ro.disconnect();
       this._teardownAuto();
+      this._stopMarks();
+      if (this._io) { this._io.disconnect(); this._io = null; }
       if (this._raf) { cancelAnimationFrame(this._raf); this._raf = 0; }
     }
 
@@ -277,12 +564,20 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       if (this._ready) return;
       const nodes = [...this.querySelectorAll(':scope > ladder-step')];
       this._steps = nodes.map((n, i) => {
+        const fx = [];
         const pick = (tag) => {
           const el = n.querySelector(tag);
-          return el ? el.innerHTML.trim() : '';
+          if (!el) return '';
+          const html = el.innerHTML;
+          if (!/<mark-fx\b/i.test(html)) return html.trim();
+          const tp = document.createElement('template');
+          tp.innerHTML = html;
+          [...tp.content.querySelectorAll('mark-fx')].forEach((m) => { fx.push({ r: tag.replace('step-', ''), h: m.outerHTML }); m.remove(); });
+          return tp.innerHTML.trim();
         };
         const t = n.querySelector('step-title');
         return {
+          fx,
           label: n.getAttribute('label') || '',
           pill: n.getAttribute('pill') || (i === 0 ? '起點' : `第${i}階`),
           title: pick('step-title'),
@@ -309,7 +604,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       this._ready = true;
       this._applyVars();
       this._build();
-      this._ro = new ResizeObserver(() => this._layoutLine());
+      this._ro = new ResizeObserver(() => { this._layoutLine(); this._relayoutMarks(); });
       this._ro.observe(this);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this._layoutLine());
       this._setupAuto();
@@ -428,6 +723,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       this.querySelector('.udl-title').innerHTML = this._iconHtml(s) + s.title;
       this.querySelector('.udl-body').innerHTML = s.body;
       this.querySelector('.udl-note').innerHTML = s.note;
+      this._runMarks(animate);
 
       const content = this.querySelector('.udl-content');
       if (animate) {
@@ -452,6 +748,52 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       if (nx) nx.style.visibility = this._cur < total - 1 ? 'visible' : 'hidden';
 
       this._layoutLine();
+    }
+
+    /* ── mark-fx 文字標記 ── */
+    _stopMarks() {
+      if (this._fxRun) { this._fxRun.cancel(); this._fxRun = null; }
+      if (this._fxTimer) { clearTimeout(this._fxTimer); this._fxTimer = 0; }
+      this._fxLive = [];
+      this.querySelectorAll('.udl-fxmark').forEach((n) => n.remove());
+    }
+
+    _runMarks(animate) {
+      this._stopMarks();
+      const s = (this._steps || [])[this._cur];
+      const content = this.querySelector('.udl-content');
+      if (!s || !s.fx.length || !content || !this._bool('mark-fx')) return;
+      if (this._collapsible() && !this._open) return;
+      const first = !this._marksStarted;
+      if (first) {
+        this._marksStarted = true;
+        if (!this._io && window.IntersectionObserver) {
+          const wait = () => {
+            this._io = new IntersectionObserver((es) => {
+              if (!es.some((e) => e.isIntersecting)) return;
+              this._io.disconnect(); this._io = null;
+              this._runMarks(true);
+            }, { threshold: 0.3 });
+            this._io.observe(this);
+          };
+          const r = this.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > window.innerHeight || r.width === 0) { this._marksStarted = false; wait(); return; }
+        }
+      }
+      const instant = !this._bool('mark-animate') || (animate === false && !first);
+      const speed = Math.min(4, Math.max(0.25, parseFloat(this._opt('mark-speed')) || 1));
+      const delay = Math.max(0, parseFloat(this._opt('mark-delay')) || 0);
+      const run = new LadderFx.Run({ rate: () => speed, instant });
+      this._fxRun = run;
+      const live = this._fxLive;
+      const ctxOf = (r) => ({ layer: content, scope: this.querySelector('.udl-' + r) || content, live });
+      /* 自動播放時，標記必須在該階停留時間結束前畫完，來不及就直接顯示完成 */
+      if (this._hasAutoplay() && !instant) this._fxTimer = setTimeout(() => run.skip(), Math.max(0, this._dwell() - 700));
+      run.sleep(delay).then(() => LadderFx.play(run, s.fx, ctxOf)).catch((e) => { if (e !== LadderFx.CANCEL) console.warn('[ui-detail-ladder] mark-fx 錯誤', e); });
+    }
+
+    _relayoutMarks() {
+      (this._fxLive || []).slice().forEach((f) => f());
     }
 
     _layoutLine() {
@@ -655,7 +997,7 @@ ui-detail-ladder.udl-kbd-active .udl-rung.is-cur .udl-dot{outline:2px solid var(
       if (!this._collapsible() || this._open === v) return;
       this._open = v;
       this.classList.toggle('udl-open', v);
-      if (v) requestAnimationFrame(() => this._layoutLine());
+      if (v) requestAnimationFrame(() => { this._layoutLine(); this._runMarks(true); });
       this._renderTimer();
       this.dispatchEvent(new CustomEvent('ladder-toggle', { bubbles: true, detail: { open: v } }));
     }
