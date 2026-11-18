@@ -4,7 +4,7 @@
 
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
-| `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
+| `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-18-26.html`](ui-play-demo-11-18-26.html)（合併版：新範例在上，11-13、11-14 的範例與修改對照接在下方） |
 | `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
 | `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息；`layout` 切換平鋪、尾巴氣泡、雙欄對照排版；`stage` 在旁邊切出畫面區，逐則切換圖片或 template。 | [`ui-stream-demo-11-18-26.html`](ui-stream-demo-11-18-26.html)（合併版） |
 | `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息，或拖到 ui-post 變成一則留言。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html)（範例 5：拖到 ui-post） |
@@ -76,7 +76,7 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `frame` | `plain` | `none`、`plain`、`mac`、`win`（Windows 11）、`win-classic`（Windows 98）、`browser`、`phone`、`paper`（稿紙）、`sheet`（試算表）、`notebook`（筆記本分頁）、`draw`（小畫家）。 |
+| `frame` | `plain` | `none`、`plain`、`mac`、`win`（Windows 11）、`win-classic`（Windows 98）、`browser`、`firefox`（Firefox 樣式）、`phone`、`paper`（稿紙）、`sheet`（試算表）、`notebook`（筆記本分頁）、`draw`（小畫家）。 |
 | `frame-title` | 無 | 標題列文字；`phone` 外框顯示在時間位置。 |
 | `frame-icon` | 無 | 標題列圖示，Bootstrap Icons 類別，例如 `bi-file-earmark-text`。 |
 | `frame-url` | 無 | `browser` 外框網址列文字。 |
@@ -87,6 +87,19 @@
 | `bg-color` | `background` | 內容區背景。 |
 | `bar-color` | `bg-alternative` | 標題列背景；`sheet` 為欄列標頭背景，`notebook` 為分頁列背景。 |
 | `bar-text-color` | `shell` | 標題列文字。 |
+
+**Firefox 樣式 `firefox`**
+
+上方分頁列、下方工具列（上一頁、下一頁、重新整理、網址列、擴充功能、選單）；工具列底色用 `rgb(36,36,36)`，只用實色。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `tabs` | `frame-title` | 分頁名稱，用「\|」分隔，例如 `tabs="口說題庫\|Task 2"`。 |
+| `tab-active` | `1` | 選取中的分頁（從 1 起算）。 |
+| `tab-add` | 開 | `false` 不畫新分頁的 `+`。 |
+| `frame-url` | `frame-title` | 網址列文字。 |
+| `frame-icon` | 無 | 選取中分頁的圖示。 |
+| `ff-controls` | `win` | 視窗按鈕：`win`、`mac`（左上紅黃綠圓點）、`none`。 |
 
 **稿紙 `paper`**
 
@@ -210,7 +223,10 @@
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `kind` | `highlight` | `highlight`、`underline`、`circle`、`box`、`strike`、`bracket`。 |
+| `kind` | `highlight` | `highlight`、`underline`、`circle`、`box`、`strike`、`bracket`、`wavy`（波浪底線）、`double`（雙底線）、`cross`（打叉）、`arrow`（箭頭指向文字）。 |
+| `line-style` | `solid` | 線型：`solid`、`dashed`、`dotted`；`highlight` 不適用。 |
+| `direction` | `left` | 只用於 `arrow`：箭頭從哪一側指向文字，`left`、`right`、`top`、`bottom`。 |
+| `arrow-length` | `48` | 只用於 `arrow`：箭身長度（px）。 |
 | `color` | `yellow` | 顏色。 |
 | `text-color` | `background` | `highlight` 時目標文字改成的顏色。 |
 | `thickness` | `3` | 線條粗細。 |
@@ -230,7 +246,12 @@
 | `color`、`bg-color`、`border-color` | `vanilla`、`bg-alternative`、`accent-color` | 文字、背景、外框顏色。 |
 | `font-size` | `1rem` | 字級。 |
 | `max-width` | `320px` | 最大寬度。 |
-| `pointer` | `true` | 是否顯示指向目標的小尖角。 |
+| `pointer` | `true` | 是否顯示指向目標的小尖角；`sticky`、`plain` 預設 `false`。 |
+| `variant` | `bubble` | 外觀：`bubble`、`sticky`（便利貼，黃底深字、微傾斜、無尖角）、`dashed`（虛線框）、`plain`（無外框）。 |
+| `icon`、`icon-color` | 無、外框色 | 內文前面加 Bootstrap Icons 圖示，例如 `bi-lightbulb-fill`。 |
+| `rotate` | `0`（`sticky` 為 `-2`） | 傾斜角度（deg）。 |
+| `shadow`、`shadow-color` | 關、`gray` | 實色偏移陰影，不用透明度。 |
+| `radius`、`border-width` | 預設 | 圓角與外框粗細。 |
 | `speed` | `300` | 出現動畫時間（ms）。 |
 | `stay` | `forever` | 停留多久後消失（ms）。 |
 | `fade-out` | `300` | 消失時的淡出時間（ms）。 |
@@ -285,6 +306,44 @@
 | `mode` | `strike` | `strike` 劃掉舊字、新字接在後面；`replace` 舊字淡出新字淡入；`retype` 逐字刪除再逐字打出。 |
 | `del-color`、`ins-color` | `red`、`green` | 舊字、新字顏色。 |
 | `speed` | `500`（`retype` 為每字 60） | 動畫時間（ms）。 |
+
+**`<pointer-fx>`：游標移動並點擊**
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `from` | `bottom-right` | 起點：`top-left`、`bottom-right` 等方位、「x,y」（px），或 `#元素id`。 |
+| `speed` | `800` | 移動時間（ms）。 |
+| `click` | `true` | 到了按一下，出現水波。 |
+| `color`、`size`、`icon` | `vanilla`、`1.6`（rem）、`bi-cursor-fill` | 游標顏色、大小與 Bootstrap Icons 圖示。 |
+| `offset-x`、`offset-y` | `0` | 落點微調。 |
+| `stay`、`fade-out`、`name` | `forever`、`300`、無 | 同 `note-fx`；游標預設停在目標上，用 `remove-fx` 移除。 |
+
+**`<type-fx>`：逐字打出**
+
+目標文字先隱藏，再一個字一個字打出，內部的行內標籤保留。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `speed` | `50` | 每個字的間隔（ms）。 |
+| `cursor` | `true` | `true` 打完移除游標、`keep` 保留、`false` 不顯示。 |
+
+**`<zoom-fx>`：鏡頭聚焦**
+
+整個內容區放大並移到目標位置，之後的標記、註解會自動對準。`<zoom-fx scale="1">` 還原。
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `scale` | `1.6` | 放大倍數，`1` 為還原（不需要 `target`）。 |
+| `speed` | `700` | 動畫時間（ms）。 |
+
+**`<shake-fx>`：晃動**
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `strength` | `6` | 起始幅度（px），逐漸變小。 |
+| `count` | `6` | 來回次數。 |
+| `axis` | `x` | `x`（左右）或 `y`（上下）。 |
+| `speed` | `450` | 動畫時間（ms）。 |
 
 **流程**
 

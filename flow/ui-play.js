@@ -11,6 +11,7 @@
  * </ui-play>
  *
  * 效果標籤：show-fx、hide-fx、mark-fx、note-fx、stamp-fx、swap-fx、
+ *           pointer-fx、type-fx、zoom-fx、shake-fx、
  *           wait-fx、pause-fx、remove-fx
  * 共用屬性：start（click | with | after）、delay、name、target、text、nth
  * 下一步：next-by（key | click | both），click 為點內容區前進
@@ -193,6 +194,26 @@ ui-play .upl-stamp{position:absolute;left:0;top:0;padding:3px;border-style:solid
   -webkit-mask-size:100% 100%;mask-size:100% 100%;font-weight:700;}
 ui-play .upl-stamp-in{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
 ui-play .upl-ins{display:inline-block;}
+ui-play .upl.f-firefox .upl-bar{display:block;padding:0;gap:0;border-bottom:1px solid #3B2A20;}
+ui-play .upl-ffstrip{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--upl-bar);}
+ui-play .upl-fftabs{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden;}
+ui-play .upl-fftab{display:flex;align-items:center;gap:8px;min-width:0;flex:0 1 220px;padding:6px 10px;border-radius:6px;color:#86877F;white-space:nowrap;}
+ui-play .upl-fftab.is-active{background:#3B2A20;color:#DBEDD8;}
+ui-play .upl-fftab span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+ui-play .upl-fftab .bi-x{flex:none;font-size:1rem;}
+ui-play .upl-ffnew{flex:none;padding:2px 8px;color:#C6C7BD;font-size:1.1rem;line-height:1;}
+ui-play .upl-ffctl{display:flex;flex:none;color:#C6C7BD;}
+ui-play .upl-ffctl span{display:flex;align-items:center;justify-content:center;width:36px;height:28px;}
+ui-play .upl-fftool{display:flex;align-items:center;gap:12px;padding:6px 10px;background:#242424;color:#C6C7BD;}
+ui-play .upl-ffnav,ui-play .upl-ffend{display:flex;flex:none;gap:14px;font-size:1rem;}
+ui-play .upl-ffurl{display:flex;align-items:center;flex:1;min-width:0;gap:8px;padding:5px 12px;border-radius:6px;background:#0C0D0C;color:#C6C7BD;}
+ui-play .upl-ffurl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ui-play .upl-ffurl .bi-shield-check{color:#51DBCF;}
+ui-play .upl-cursor{display:inline-block;width:2px;height:1em;margin:0 0 0 2px;background:currentColor;vertical-align:-0.12em;animation:upl-blink .8s steps(1) infinite;}
+@keyframes upl-blink{50%{opacity:0;}}
+ui-play .upl-ptr{position:absolute;left:0;top:0;line-height:1;pointer-events:none;z-index:5;filter:drop-shadow(1px 1px 0 #0C0D0C);}
+ui-play .upl-ripple{position:absolute;width:16px;height:16px;border:3px solid;border-radius:50%;pointer-events:none;z-index:4;}
+ui-play .upl-canvas{transform-origin:0 0;}
 `;
     document.head.appendChild(s);
   }
@@ -210,6 +231,7 @@ ui-play .upl-ins{display:inline-block;}
     win: { radius: '8px', bw: '2px' },
     'win-classic': { bw: '2px', bs: 'outset', bc: '#DBEDD8', radius: '0px', bar: '#778CE1', barText: '#0C0D0C' },
     browser: {},
+    firefox: { bar: '#0C0D0C', radius: '10px' },
     phone: { width: '390px', bw: '10px', radius: '36px', minH: '640px' },
     paper: { bg: '#3B2A20', text: '#DBEDD8', bc: '#86877F', radius: '4px', pad: '32px 32px 32px 64px' },
     sheet: { radius: '0px', pad: '0px', bar: '#3B2A20', barText: '#C6C7BD' },
@@ -408,6 +430,7 @@ ui-play .upl-ins{display:inline-block;}
       this._pendingKey = false;
       this._gated = false;
       this._rate = 1;
+      this._zs = 1;   /* zoom-fx 目前的縮放倍數；量位置時要除掉 */
     }
 
     connectedCallback() {
@@ -521,10 +544,10 @@ ui-play .upl-ins{display:inline-block;}
 
       // 預先隱藏 show-fx 的目標
       this._steps.forEach((el) => {
-        if (el.tagName !== 'SHOW-FX') return;
+        if (el.tagName !== 'SHOW-FX' && el.tagName !== 'TYPE-FX') return;
         this._targets(el).forEach((t) => {
           t.style.visibility = 'hidden';
-          if (el.hasAttribute('collapse')) t.style.display = 'none';
+          if (el.tagName === 'SHOW-FX' && el.hasAttribute('collapse')) t.style.display = 'none';
         });
       });
 
@@ -668,6 +691,39 @@ ui-play .upl-ins{display:inline-block;}
         url.className = 'upl-url';
         url.textContent = this.getAttribute('frame-url') || title;
         bar.append(dots(), nav, url);
+      } else if (f === 'firefox') {
+        /* Firefox 樣式：上方分頁列，下方工具列。tabs="分頁一|分頁二"、tab-active 為第幾個（從 1 起算）、
+           ff-controls 是視窗按鈕：win（預設）、mac、none；frame-url 是網址；frame-icon 是分頁圖示 */
+        const names = (this.getAttribute('tabs') || title || '新分頁').split('|').map((x) => x.trim()).filter(Boolean);
+        const act = Math.min(names.length, Math.max(1, parseInt(this.getAttribute('tab-active'), 10) || 1));
+        const ctl = (this.getAttribute('ff-controls') || 'win').toLowerCase();
+        const strip = document.createElement('div');
+        strip.className = 'upl-ffstrip';
+        if (ctl === 'mac') strip.appendChild(dots());
+        const tabs = document.createElement('div');
+        tabs.className = 'upl-fftabs';
+        names.forEach((n, i) => {
+          const tb = document.createElement('div');
+          tb.className = 'upl-fftab' + (i + 1 === act ? ' is-active' : '');
+          if (icon && i + 1 === act) { const ic = document.createElement('i'); ic.className = 'bi ' + icon; tb.appendChild(ic); }
+          const sp = document.createElement('span'); sp.textContent = n; tb.appendChild(sp);
+          const x = document.createElement('i'); x.className = 'bi bi-x'; tb.appendChild(x);
+          tabs.appendChild(tb);
+        });
+        if (this.getAttribute('tab-add') !== 'false') { const add = document.createElement('div'); add.className = 'upl-ffnew'; add.textContent = '+'; tabs.appendChild(add); }
+        strip.appendChild(tabs);
+        if (ctl === 'win') { const b = document.createElement('div'); b.className = 'upl-ffctl'; b.innerHTML = '<span>&#x2500;</span><span>&#x2610;</span><span>&#x2715;</span>'; strip.appendChild(b); }
+        const tool = document.createElement('div');
+        tool.className = 'upl-fftool';
+        const nav = document.createElement('div'); nav.className = 'upl-ffnav';
+        nav.innerHTML = '<i class="bi bi-arrow-left"></i><i class="bi bi-arrow-right"></i><i class="bi bi-arrow-clockwise"></i>';
+        const url = document.createElement('div'); url.className = 'upl-ffurl';
+        url.innerHTML = '<i class="bi bi-shield-check"></i><i class="bi bi-lock-fill"></i><span></span><i class="bi bi-star"></i>';
+        url.querySelector('span').textContent = this.getAttribute('frame-url') || title;
+        const end = document.createElement('div'); end.className = 'upl-ffend';
+        end.innerHTML = '<i class="bi bi-puzzle"></i><i class="bi bi-list"></i>';
+        tool.append(nav, url, end);
+        bar.append(strip, tool);
       } else if (f === 'notebook') {
         // 分頁：tabs="快速筆記|新的節 1|新的節 2"，tab-colors 依序對應，tab-active 為第幾個（從 1 起算）
         const names = (this.getAttribute('tabs') || title || '快速筆記').split('|').map((x) => x.trim()).filter(Boolean);
@@ -956,15 +1012,15 @@ ui-play .upl-ins{display:inline-block;}
           return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
         }
       }
-      const c = this._canvas.getBoundingClientRect();
+      const c = this._canvas.getBoundingClientRect(), z = this._zs || 1;
       const r = el.getBoundingClientRect();
-      return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
+      return { x: (r.left - c.left) / z, y: (r.top - c.top) / z, w: r.width / z, h: r.height / z };
     }
 
     // 標記以「文字實際所在」為準：區塊元素（段落、儲存格）改量內文的行框，
     // 圈選、底線才會貼著文字，而不是整個區塊的寬度
     _lines(el) {
-      const c = this._canvas.getBoundingClientRect();
+      const c = this._canvas.getBoundingClientRect(), z = this._zs || 1;
       let rects = Array.from(el.getClientRects());
       if (getComputedStyle(el).display !== 'inline') {
         const rg = document.createRange();
@@ -982,7 +1038,7 @@ ui-play .upl-ins{display:inline-block;}
         }
       }
       return rects.filter((r) => r.width > 0.5)
-        .map((r) => ({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height }));
+        .map((r) => ({ x: (r.left - c.left) / z, y: (r.top - c.top) / z, w: r.width / z, h: r.height / z }));
     }
 
     // 文字改變造成重新排版時，讓所有疊加效果重新對位
@@ -1005,6 +1061,10 @@ ui-play .upl-ins{display:inline-block;}
         case 'NOTE-FX': return this._fxNote(el);
         case 'STAMP-FX': return this._fxStamp(el);
         case 'SWAP-FX': return this._fxSwap(el);
+        case 'POINTER-FX': return this._fxPointer(el);
+        case 'TYPE-FX': return this._fxType(el);
+        case 'ZOOM-FX': return this._fxZoom(el);
+        case 'SHAKE-FX': return this._fxShake(el);
         case 'WAIT-FX': return this._sleep(num(el.getAttribute('ms'), 800));
         case 'REMOVE-FX': return this._fxRemove(el);
         default: return null;
@@ -1050,6 +1110,7 @@ ui-play .upl-ins{display:inline-block;}
       const pad = num(el.getAttribute('padding'), 4);
       const speed = num(el.getAttribute('speed'), 600);
       const name = el.getAttribute('name');
+      const lineStyle = (el.getAttribute('line-style') || 'solid').toLowerCase();
       const targets = this._targets(el);
       await Promise.all(targets.map(async (t, ti) => {
         const seed = seedOf(el.getAttribute('seed'), kind + '|' + (el.getAttribute('target') || '') + '|' + (el.getAttribute('text') || '') + '|' + ti);
@@ -1105,6 +1166,23 @@ ui-play .upl-ins{display:inline-block;}
           else if (kind === 'circle') {
             const cx = (u.x1 + u.x2) / 2, cy = (u.y1 + u.y2) / 2;
             ds.push(roughEllipse(cx, cy, (u.x2 - u.x1) / 2 + pad * 2.5, (u.y2 - u.y1) / 2 + pad * 1.5, rough, rnd));
+          } else if (kind === 'double') {
+            lines.forEach((r) => { const y = r.y + r.h * 0.9 + pad * 0.5, x1 = r.x - pad * 0.5, x2 = r.x + r.w + pad * 0.5; ds.push(roughLine(x1, y, x2, y, rough, rnd), roughLine(x1, y + thick * 2.4, x2, y + thick * 2.4, rough, rnd)); });
+          } else if (kind === 'wavy') {
+            const A = Math.max(1.5, thick * 0.8);
+            lines.forEach((r) => { const y = r.y + r.h * 0.92 + pad * 0.5, n = Math.max(2, Math.ceil((r.w + pad) / 6)); ds.push(`M${(r.x - pad * 0.5).toFixed(1)} ${y.toFixed(1)} q3 ${-A} 6 0` + ' t6 0'.repeat(n - 1)); });
+          } else if (kind === 'cross') {
+            const x1 = u.x1 - pad, y1 = u.y1 - pad * 0.5, x2 = u.x2 + pad, y2 = u.y2 + pad * 0.5;
+            ds.push(roughLine(x1, y1, x2, y2, rough, rnd), roughLine(x1, y2, x2, y1, rough, rnd));
+          } else if (kind === 'arrow') {
+            /* 箭頭從 direction 那一側指向文字：left（預設）、right、top、bottom */
+            const dir = (el.getAttribute('direction') || 'left').toLowerCase(), L = num(el.getAttribute('arrow-length'), 48), hd = Math.max(8, thick * 3.2);
+            const cx = (u.x1 + u.x2) / 2, cy = (u.y1 + u.y2) / 2, gap = pad + 6;
+            const V = { left: [1, 0], right: [-1, 0], top: [0, 1], bottom: [0, -1] }[dir] || [1, 0];
+            const ex = V[0] === 1 ? u.x1 - gap : V[0] === -1 ? u.x2 + gap : cx, ey = V[1] === 1 ? u.y1 - gap : V[1] === -1 ? u.y2 + gap : cy;
+            const sx = ex - V[0] * L, sy = ey - V[1] * L, px = -V[1], py = V[0];
+            ds.push(roughLine(sx, sy, ex, ey, rough * 0.6, rnd),
+              `M${(ex - V[0] * hd + px * hd * 0.55).toFixed(1)} ${(ey - V[1] * hd + py * hd * 0.55).toFixed(1)} L${ex.toFixed(1)} ${ey.toFixed(1)} L${(ex - V[0] * hd - px * hd * 0.55).toFixed(1)} ${(ey - V[1] * hd - py * hd * 0.55).toFixed(1)}`);
           } else if (kind === 'box') {
             const x1 = u.x1 - pad, y1 = u.y1 - pad * 0.5, x2 = u.x2 + pad, y2 = u.y2 + pad * 0.5;
             ds.push(roughLine(x1, y1, x2, y1, rough, rnd), roughLine(x2, y1, x2, y2, rough, rnd), roughLine(x2, y2, x1, y2, rough, rnd), roughLine(x1, y2, x1, y1, rough, rnd));
@@ -1142,7 +1220,8 @@ ui-play .upl-ins{display:inline-block;}
         paths.forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
         for (let i = 0; i < paths.length; i++) {
           await this._anim(paths[i], [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }], speed * lens[i] / total, { easing: 'ease-in-out' });
-          paths[i].style.strokeDasharray = 'none';
+          /* line-style：solid（預設）、dashed、dotted，畫完後換成對應的線型 */
+          paths[i].style.strokeDasharray = lineStyle === 'dashed' ? '10 7' : lineStyle === 'dotted' ? '0.1 ' + (thick * 2.6).toFixed(1) : 'none';
           paths[i].style.strokeDashoffset = '0';
         }
         return item;
@@ -1156,25 +1235,37 @@ ui-play .upl-ins{display:inline-block;}
       const name = el.getAttribute('name');
       const pos = (el.getAttribute('position') || 'auto').toLowerCase();
       const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
-      const fg = color(el.getAttribute('color')) || '#DBEDD8';
-      const bg = color(el.getAttribute('bg-color')) || '#3B2A20';
-      const bc = color(el.getAttribute('border-color')) || getComputedStyle(this).getPropertyValue('--upl-accent').trim() || '#51DBCF';
+      /* variant：bubble（預設）、sticky 便利貼、dashed 虛線框、plain 無外框 */
+      const variant = (el.getAttribute('variant') || 'bubble').toLowerCase(), sticky = variant === 'sticky';
+      const fg = color(el.getAttribute('color')) || (sticky ? '#0C0D0C' : '#DBEDD8');
+      const bg = color(el.getAttribute('bg-color')) || (sticky ? '#E3D322' : '#3B2A20');
+      const bc = color(el.getAttribute('border-color')) || (sticky ? bg : getComputedStyle(this).getPropertyValue('--upl-accent').trim() || '#51DBCF');
       const speed = num(el.getAttribute('speed'), 300);
       const stay = el.getAttribute('stay') || 'forever';
+      const iconName = (el.getAttribute('icon') || '').trim().replace(/^bi\s+/, '').replace(/^bi-/, '');
 
       const note = document.createElement('div');
       note.className = 'upl-note';
-      note.innerHTML = el.innerHTML;
+      note.innerHTML = (iconName ? `<i class="bi bi-${iconName}" style="color:${color(el.getAttribute('icon-color')) || (sticky ? fg : bc)};margin:0 6px 0 0"></i>` : '') + el.innerHTML;
       note.style.color = fg;
       note.style.background = bg;
       note.style.borderColor = bc;
+      if (variant === 'dashed') note.style.borderStyle = 'dashed';
+      if (variant === 'plain' || sticky) note.style.borderWidth = '0';
+      if (sticky) note.style.borderRadius = '2px';
+      if (el.hasAttribute('radius')) note.style.borderRadius = len(el.getAttribute('radius'));
+      if (el.hasAttribute('border-width')) note.style.borderWidth = len(el.getAttribute('border-width'));
+      const rot = el.hasAttribute('rotate') ? num(el.getAttribute('rotate'), 0) : (sticky ? -2 : 0);
+      if (rot) note.style.rotate = rot + 'deg';
+      if (el.hasAttribute('shadow') && el.getAttribute('shadow') !== 'false') note.style.boxShadow = '4px 4px 0 ' + (color(el.getAttribute('shadow-color')) || '#86877F');
       note.style.fontSize = len(el.getAttribute('font-size')) || '1rem';
       note.style.maxWidth = len(el.getAttribute('max-width')) || '320px';
       const tip = document.createElement('div');
       tip.className = 'upl-tip';
       tip.style.background = bg;
       tip.style.borderColor = bc;
-      if (el.getAttribute('pointer') !== 'false') note.appendChild(tip);
+      const wantTip = el.hasAttribute('pointer') ? el.getAttribute('pointer') !== 'false' : !(sticky || variant === 'plain');
+      if (wantTip) note.appendChild(tip);
       note.style.visibility = 'hidden';
       this._over.appendChild(note);
 
@@ -1412,6 +1503,122 @@ ui-play .upl-ins{display:inline-block;}
       t.after(document.createTextNode(' '), n);
       this._relayout();
       await this._anim(n, [{ clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0 0 0)' }], speed * 0.6, { easing: 'ease-out', fill: 'backwards' });
+    }
+
+    /* pointer-fx：滑鼠游標從 from 移到目標，到了按一下（水波） */
+    async _fxPointer(el) {
+      const t = this._targets(el)[0];
+      if (!t) return;
+      const name = el.getAttribute('name');
+      const col = color(el.getAttribute('color')) || '#DBEDD8';
+      const size = num(el.getAttribute('size'), 1.6);
+      const speed = num(el.getAttribute('speed'), 800);
+      const click = el.getAttribute('click') !== 'false';
+      const ic = (el.getAttribute('icon') || 'cursor-fill').trim().replace(/^bi\s+/, '').replace(/^bi-/, '');
+      const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
+      const stay = el.getAttribute('stay') || 'forever';
+      const cur = document.createElement('div');
+      cur.className = 'upl-ptr';
+      cur.innerHTML = `<i class="bi bi-${ic}"></i>`;
+      cur.style.color = col;
+      cur.style.fontSize = size + 'rem';
+      this._over.appendChild(cur);
+      const dest = () => { const r = this._rel(t); return [r.x + r.w / 2 + ox, r.y + r.h / 2 + oy]; };
+      const start = () => {
+        const cw = this._canvas.clientWidth, ch = this._canvas.clientHeight, f = (el.getAttribute('from') || 'bottom-right').trim().toLowerCase();
+        if (/^-?[\d.]+\s*,\s*-?[\d.]+$/.test(f)) return f.split(',').map(Number);
+        if (f[0] === '#') { const e = this.querySelector(f); if (e) { const r = this._rel(e); return [r.x + r.w / 2, r.y + r.h / 2]; } }
+        const X = /left/.test(f) ? 0 : /right/.test(f) ? cw : cw / 2, Y = /top/.test(f) ? 0 : /bottom/.test(f) ? ch : ch / 2;
+        return [X, Y];
+      };
+      const go = (xy) => `translate(${xy[0].toFixed(1)}px,${xy[1].toFixed(1)}px)`;
+      const place = () => { if (cur.isConnected && !cur._moving) cur.style.transform = go(dest()); };
+      const item = this._register({
+        name, nodes: [cur], place,
+        remove: async (ms) => { await this._anim(cur, [{ opacity: 1 }, { opacity: 0 }], ms); cur.remove(); this._unregister(item); }
+      });
+      const s = start(), d = dest();
+      cur._moving = true;
+      cur.style.transform = go(s);
+      const a = await this._anim(cur, [{ transform: go(s), easing: 'ease-in-out' }, { transform: go(d) }], speed, { fill: 'forwards' });
+      cur.style.transform = go(d); a.cancel(); cur._moving = false;
+      if (click) {
+        const rp = document.createElement('div');
+        rp.className = 'upl-ripple';
+        rp.style.borderColor = col; rp.style.left = (d[0] - 8) + 'px'; rp.style.top = (d[1] - 8) + 'px';
+        this._over.appendChild(rp);
+        await Promise.all([
+          this._anim(cur, [{ scale: 1 }, { scale: 0.78 }, { scale: 1 }], 260, { fill: 'none', easing: 'ease-in-out' }),
+          this._anim(rp, [{ transform: 'scale(0.4)', opacity: 1 }, { transform: 'scale(4)', opacity: 0 }], 520, { fill: 'forwards' })
+        ]);
+        rp.remove();
+      }
+      if (stay !== 'forever') this._sleep(num(stay, 2000)).then(() => { if (cur.isConnected) item.remove(num(el.getAttribute('fade-out'), 300)); });
+      return item;
+    }
+
+    /* type-fx：目標文字一個字一個字打出來，內部的行內標籤保留 */
+    async _fxType(el) {
+      const speed = num(el.getAttribute('speed'), 50);
+      const curMode = (el.getAttribute('cursor') || 'true').toLowerCase();
+      await Promise.all(this._targets(el).map(async (t) => {
+        const nodes = [];
+        const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT);
+        while (w.nextNode()) if (w.currentNode.data.length) nodes.push([w.currentNode, w.currentNode.data]);
+        if (t.offsetHeight) t.style.minHeight = t.offsetHeight + 'px';   /* 打字時不讓版面跳動 */
+        nodes.forEach(([n]) => { n.data = ''; });
+        t.style.visibility = '';
+        const cur = document.createElement('span');
+        cur.className = 'upl-cursor';
+        for (const [n, full] of nodes) {
+          if (curMode !== 'false') n.parentNode.insertBefore(cur, n.nextSibling);
+          if (!full.trim()) { n.data = full; continue; }
+          for (let i = 0; i < full.length; i++) {
+            n.data = full.slice(0, i + 1);
+            this._relayout();
+            if (/\S/.test(full[i])) await this._sleep(speed);
+          }
+        }
+        if (curMode !== 'keep') cur.remove();
+        t.style.minHeight = '';
+        this._relayout();
+      }));
+    }
+
+    /* zoom-fx：鏡頭放大到目標（scale 預設 1.6）；scale="1" 還原 */
+    async _fxZoom(el) {
+      const sc = Math.max(1, num(el.getAttribute('scale'), 1.6));
+      const speed = num(el.getAttribute('speed'), 700);
+      const cv = this._canvas, cw = cv.clientWidth, ch = cv.clientHeight;
+      let tx = 0, ty = 0;
+      if (sc > 1) {
+        const t = this._targets(el)[0];
+        if (!t) return;
+        const r = this._rel(t);
+        tx = Math.min(0, Math.max(cw - sc * cw, cw / 2 - sc * (r.x + r.w / 2)));
+        ty = Math.min(0, Math.max(ch - sc * ch, ch / 2 - sc * (r.y + r.h / 2)));
+      }
+      const f = (s, x, y) => `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${s})`;
+      const z0 = this._zt || { s: 1, x: 0, y: 0 };
+      const a = await this._anim(cv, [{ transform: f(z0.s, z0.x, z0.y) }, { transform: f(sc, tx, ty) }], speed, { fill: 'forwards', easing: 'ease-in-out' });
+      this._zt = { s: sc, x: tx, y: ty };
+      cv.style.transform = sc === 1 ? '' : f(sc, tx, ty);
+      a.cancel();
+      this._zs = sc;
+      this._relayout();
+    }
+
+    /* shake-fx：目標左右（或上下）晃動，幅度逐漸變小 */
+    async _fxShake(el) {
+      const amp = num(el.getAttribute('strength'), 6), speed = num(el.getAttribute('speed'), 450), n = Math.max(2, Math.round(num(el.getAttribute('count'), 6)));
+      const axis = (el.getAttribute('axis') || 'x').toLowerCase() === 'y' ? 'Y' : 'X';
+      await Promise.all(this._targets(el).map(async (t) => {
+        if (getComputedStyle(t).display === 'inline') t.style.display = 'inline-block';
+        const kf = [{ transform: 'none' }];
+        for (let i = 0; i < n; i++) kf.push({ transform: `translate${axis}(${((i % 2 ? 1 : -1) * amp * (1 - i / n)).toFixed(1)}px)` });
+        kf.push({ transform: 'none' });
+        await this._anim(t, kf, speed, { fill: 'none', easing: 'linear' });
+      }));
     }
 
     /* remove-fx */

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-play 示範（11-13-26）</title>
+<title>ui-play 示範（合併版，11-18-26）</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -26,6 +26,10 @@
   table.ref code{color:#E3D322;}
   #toast-area{position:fixed;right:24px;bottom:24px;z-index:50;width:360px;}
   .alert-play{background:#3B2A20;color:#DBEDD8;border:1px solid #71CD76;}
+  .cmp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;}
+  .cmp h3{margin-top:0;}
+  .cmp pre.diff{background:#151615;color:#C6C7BD;border:1px solid #3B2A20;border-radius:8px;padding:16px;font-size:.8125rem;line-height:1.55;overflow:auto;margin:0;white-space:pre;}
+  .cmp .add{color:#71CD76;}
   .stamp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:40px;text-align:center;}
   .stamp-grid span{display:block;height:140px;color:#86877F;font-size:1rem;}
 </style>
@@ -33,7 +37,171 @@
 <body>
 <div class="wrap">
   <h1>&lt;ui-play&gt; 教學錄影模擬畫面</h1>
-  <p class="lead-note">點一下示範框選定它，再按 <kbd>空白鍵</kbd> 或 <kbd>→</kbd> 播放下一步。頁面上有多個示範時，鍵盤只控制最後點選的那一個。要重錄請重新整理頁面。</p>
+  <p class="lead-note">點一下示範框選定它，再按 <kbd>空白鍵</kbd> 或 <kbd>→</kbd> 播放下一步。頁面上有多個示範時，鍵盤只控制最後點選的那一個。要重錄請重新整理頁面。第 11 節示範用滑鼠點擊前進。</p>
+
+  <h2 style="color:#E3D322;border-bottom:2px solid #3B2A20;padding:0 0 10px 0;margin:0 0 24px 0;">11-18-26 新增：firefox 外框、mark-fx、note-fx 新外觀與四個新效果標籤</h2>
+  <table class="ref">
+    <tr><th>標籤</th><th>新增屬性</th><th>說明</th></tr>
+    <tr><td><code>frame="firefox"</code></td><td><code>frame-url</code>、<code>frame-icon</code>、<code>tabs</code>、<code>tab-active</code>、<code>tab-add</code>、<code>ff-controls</code></td><td>Firefox 樣式外框：分頁列＋工具列。tabs 用「|」分隔多個分頁；tab-active 是第幾個（從 1 起算）；ff-controls 是 win（預設）、mac、none。</td></tr>
+    <tr><td><code>mark-fx</code></td><td><code>kind</code> 新增 wavy、double、cross、arrow；<code>line-style</code>；<code>direction</code>、<code>arrow-length</code></td><td>wavy 波浪底線、double 雙底線、cross 打叉、arrow 箭頭指向文字；line-style 是 solid（預設）、dashed、dotted；arrow 的 direction 是 left（預設）、right、top、bottom。</td></tr>
+    <tr><td><code>note-fx</code></td><td><code>variant</code>、<code>icon</code>、<code>icon-color</code>、<code>rotate</code>、<code>shadow</code>、<code>shadow-color</code>、<code>radius</code>、<code>border-width</code></td><td>variant 是 bubble（預設）、sticky 便利貼、dashed 虛線框、plain 無外框。shadow 是實色偏移陰影，不用透明度。</td></tr>
+    <tr><td><code>pointer-fx</code></td><td><code>target</code>、<code>from</code>、<code>speed</code>、<code>click</code>、<code>color</code>、<code>size</code>、<code>icon</code>、<code>offset-x</code>、<code>offset-y</code>、<code>stay</code>、<code>name</code></td><td>游標從 from（top-left、bottom-right 等，或「x,y」）移到目標，到了按一下並出現水波。</td></tr>
+    <tr><td><code>type-fx</code></td><td><code>target</code>、<code>text</code>、<code>speed</code>、<code>cursor</code></td><td>目標文字逐字打出，行內標籤保留；speed 是每字毫秒數；cursor 是 true（預設，打完移除）、keep（保留）、false。</td></tr>
+    <tr><td><code>zoom-fx</code></td><td><code>target</code>、<code>scale</code>、<code>speed</code></td><td>鏡頭放大聚焦到目標，scale 預設 1.6；寫 scale="1" 還原。之後的標記與註解會自動對準。</td></tr>
+    <tr><td><code>shake-fx</code></td><td><code>target</code>、<code>strength</code>、<code>count</code>、<code>axis</code>、<code>speed</code></td><td>目標晃動，幅度逐漸變小；axis 是 x（預設）或 y。</td></tr>
+  </table>
+
+  <!-- N0 -->
+  <section class="demo">
+    <div>
+      <h2>新 6. frame="firefox"：Firefox 樣式外框</h2>
+      <p class="desc">上方是分頁列，下方是工具列（上一頁、下一頁、重新整理、網址列、擴充功能、選單）。tabs 寫多個分頁、tab-active 指定第幾個，ff-controls 可選 win、mac、none。</p>
+      <div class="live">
+<ui-play frame="firefox" frame-url="https://www.ielts.org/for-test-takers" frame-icon="bi-globe2" tabs="IELTS 口說題庫|Writing Task 2|新分頁" tab-active="1" min-height="280" font-size="1.3rem" step-mode="auto" autoplay="visible" step-delay="500">
+  <stage-item>
+    <p id="nf1" style="margin:0 0 20px">Describe a time when you helped someone.</p>
+    <p id="nf2" style="margin:0">You should say who you helped, what you did, and how you felt.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#nf1" text="helped someone" kind="wavy" color="key"></mark-fx>
+    <pointer-fx target="#nf2" text="how you felt" from="top-right" speed="800"></pointer-fx>
+    <note-fx target="#nf2" text="how you felt" position="bottom" variant="sticky" icon="bi-emoji-smile">最後一點不要漏掉</note-fx>
+  </script-item>
+</ui-play>
+      </div>
+      <h3>macOS 視窗按鈕</h3>
+      <div class="live">
+<ui-play frame="firefox" ff-controls="mac" frame-url="https://example.com" tabs="Example" min-height="120" font-size="1.2rem">
+  <stage-item><p style="margin:0">ff-controls="mac"：左上角改成紅黃綠三個圓點。</p></stage-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- N1 -->
+  <section class="demo">
+    <div>
+      <h2>新 1. mark-fx：wavy、double、cross、arrow 與 line-style</h2>
+      <p class="desc">step-mode="auto" 自動播放。第一行波浪底線、第二行雙底線、第三行打叉，第四行箭頭，最後一行的方框改成點線。</p>
+      <div class="live">
+<ui-play frame="mac" min-height="360" font-size="1.4rem" step-mode="auto" autoplay="visible" step-delay="500">
+  <stage-item>
+    <p id="nm1" style="margin:0 0 28px">The weather is <span>very very</span> good today.</p>
+    <p id="nm2" style="margin:0 0 28px">This is the <span>most important</span> point.</p>
+    <p id="nm3" style="margin:0 0 28px">He <span>didn't went</span> to school.</p>
+    <p id="nm4" style="margin:0 0 28px;padding:0 0 0 100px"><span>topic sentence</span> states the main idea.</p>
+    <p id="nm5" style="margin:0">Dotted box: <span>collocation</span></p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#nm1" text="very very" kind="wavy" color="red"></mark-fx>
+    <mark-fx target="#nm2" text="most important" kind="double" color="key"></mark-fx>
+    <mark-fx target="#nm3" text="didn't went" kind="cross" color="urgent" rough="0.3"></mark-fx>
+    <mark-fx target="#nm4" text="topic sentence" kind="arrow" color="yellow" direction="left" thickness="4"></mark-fx>
+    <mark-fx target="#nm5" text="collocation" kind="box" color="blue" line-style="dotted"></mark-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- N2 -->
+  <section class="demo">
+    <div>
+      <h2>新 2. note-fx：variant、icon、rotate、shadow</h2>
+      <p class="desc">sticky 便利貼預設黃底深字、微微傾斜、沒有尖角；dashed 是虛線框；plain 沒有外框；shadow 是實色偏移陰影。</p>
+      <div class="live">
+<ui-play frame="win" frame-title="note-fx 外觀" min-height="440" font-size="1.3rem" step-mode="auto" autoplay="visible" step-delay="400">
+  <stage-item>
+    <p id="nn1" style="margin:96px 0 96px 0"><span>sticky</span> <span style="margin:0 0 0 300px">dashed</span> <span style="margin:0 0 0 220px">plain</span></p>
+    <p id="nn2" style="margin:0 0 40px 0"><span>icon and shadow</span></p>
+  </stage-item>
+  <script-item>
+    <note-fx target="#nn1" text="sticky" variant="sticky" position="top" icon="bi-pin-angle-fill" rotate="-4">便利貼：預設黃底深字</note-fx>
+    <note-fx target="#nn1" text="dashed" variant="dashed" position="top" border-color="playful" color="playful" bg-color="background">虛線框：用在補充提示</note-fx>
+    <note-fx target="#nn1" text="plain" variant="plain" position="top" bg-color="bg-alternative">無外框：輕量說明</note-fx>
+    <note-fx target="#nn2" text="icon and shadow" position="right" icon="bi-lightbulb-fill" icon-color="yellow" shadow shadow-color="gray" radius="14">icon 與實色陰影</note-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- N3 -->
+  <section class="demo">
+    <div>
+      <h2>新 3. pointer-fx：滑鼠游標移動並點擊</h2>
+      <p class="desc">游標從 from 移到目標，到了按一下（水波）。用來示範「點這裡」。可以接 hide-fx、show-fx 做出點擊後的畫面變化。</p>
+      <div class="live">
+<ui-play frame="browser" frame-url="https://example.com/answer" min-height="320" font-size="1.3rem" step-mode="auto" autoplay="visible" step-delay="500">
+  <stage-item>
+    <p style="margin:0 0 24px">Question: Do you like cooking?</p>
+    <p style="margin:0 0 24px"><span id="np-btn" style="display:inline-block;border:2px solid #51DBCF;color:#51DBCF;border-radius:8px;padding:4px 18px">Show sample answer</span></p>
+    <p id="np-ans" style="margin:0">Yes, I enjoy cooking because it helps me relax after work.</p>
+  </stage-item>
+  <script-item>
+    <pointer-fx target="#np-btn" from="top-left" speed="900" color="vanilla" name="p1"></pointer-fx>
+    <show-fx target="#np-ans" effect="slide-up"></show-fx>
+    <remove-fx name="p1"></remove-fx>
+    <pointer-fx target="#np-ans" text="relax" from="#np-btn" speed="700" offset-y="8"></pointer-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- N4 -->
+  <section class="demo">
+    <div>
+      <h2>新 4. type-fx：逐字打出</h2>
+      <p class="desc">目標文字先隱藏，再一個字一個字打出，行內的 &lt;b&gt;、&lt;u&gt; 等標籤保留。cursor="keep" 打完後保留游標。</p>
+      <div class="live">
+<ui-play frame="paper" min-height="300" font-size="1.4rem" step-mode="auto" autoplay="visible" step-delay="500">
+  <stage-item>
+    <p id="nt1" style="margin:0 0 24px">Nowadays, <b style="color:#51DBCF">technology</b> has become <u>indispensable</u> to modern society.</p>
+    <p id="nt2" style="margin:0">In my opinion, the benefits outweigh the drawbacks.</p>
+  </stage-item>
+  <script-item>
+    <type-fx target="#nt1" speed="45"></type-fx>
+    <type-fx target="#nt2" speed="30" cursor="keep"></type-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- N5 -->
+  <section class="demo">
+    <div>
+      <h2>新 5. zoom-fx 與 shake-fx：鏡頭聚焦與晃動</h2>
+      <p class="desc">zoom-fx 把鏡頭放大到目標，放大之後的 mark-fx 會自動對準；shake-fx 讓目標晃動；最後 scale="1" 還原。</p>
+      <div class="live">
+<ui-play frame="mac" min-height="340" font-size="1.3rem" step-mode="auto" autoplay="visible" step-delay="600">
+  <stage-item>
+    <p style="margin:0 0 20px">Many people think that <span id="nz1">working from home</span> is more productive than working in an office,</p>
+    <p style="margin:0 0 20px">but others believe that <span id="nz2">face-to-face communication</span> is essential for teamwork.</p>
+    <p style="margin:0">Both views have <span id="nz3">some merit</span>.</p>
+  </stage-item>
+  <script-item>
+    <zoom-fx target="#nz1" scale="1.8"></zoom-fx>
+    <mark-fx target="#nz1" kind="underline" color="key"></mark-fx>
+    <shake-fx target="#nz1" strength="5"></shake-fx>
+    <zoom-fx target="#nz2" scale="1.8"></zoom-fx>
+    <mark-fx target="#nz2" kind="wavy" color="playful"></mark-fx>
+    <zoom-fx scale="1"></zoom-fx>
+    <stamp-fx target="#nz3" color="green" size="1rem" anchor="bottom" offset-y="20">平衡</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <h2 style="color:#E3D322;border-bottom:2px solid #3B2A20;padding:0 0 10px 0;margin:48px 0 24px 0;">11-13-26、11-14-26 示範（已合併，範例 1 到 12 與修改對照）</h2>
 
   <!-- 1 -->
   <section class="demo">
@@ -297,6 +465,255 @@
   </section>
 
   <!-- 屬性對照 -->
+  <!-- 11 -->
+  <section class="demo">
+    <div>
+      <h2>11. 滑鼠點擊前進：next-by</h2>
+      <p class="desc">next-by="click"：開始播放與每一步都用滑鼠點內容區，鍵盤不再作用；游標在內容區會變成手指，播完後恢復。next-by="both" 則滑鼠和鍵盤都可以。點到舞台內的連結、按鈕或正在選取文字時不會前進。</p>
+      <div class="live">
+<ui-play frame="notebook" tabs="快速筆記|新的節 1|新的節 2" tab-colors="green|blue|playful" tab-active="1" step-mode="manual" next-by="click" min-height="300">
+  <stage-item>
+    <p id="ck1" style="font-size:1.5rem;color:#DBEDD8;margin:0 0 16px">Part 2 cue card 筆記</p>
+    <p id="ck2">Describe a book you enjoyed reading.</p>
+    <p id="ck3">→ what it was / when you read it / why you liked it</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#ck2" text="a book" kind="underline" color="key"></mark-fx>
+    <show-fx target="#ck3" effect="fade"></show-fx>
+    <stamp-fx target="#ck3" anchor="right" offset-x="110" icon="bi-pencil" color="yellow" size="1.1rem">先列大綱</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 12 -->
+  <section class="demo">
+    <div>
+      <h2>12. 小畫家外框：Task 1 圖表標註</h2>
+      <p class="desc">frame="draw" 模擬 Windows 小畫家的功能表列、功能區與左側筆刷大小滑桿。draw-tool 指定選取中的工具，draw-size 指定滑桿位置，draw-color 指定目前顏色。</p>
+      <div class="live">
+<ui-play frame="draw" draw-tool="brush" draw-size="8" draw-color="yellow" step-mode="manual" next-by="both" font-size="1.25rem">
+  <stage-item>
+    <p id="dr1" style="font-size:1.5rem;color:#DBEDD8;margin:0 0 16px">Internet users (millions), 2000 to 2020</p>
+    <p id="dr2">Asia rose sharply from 114 to 2,300.</p>
+    <p id="dr3">Europe grew steadily from 105 to 728.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#dr2" text="rose sharply" kind="circle" color="yellow"></mark-fx>
+    <mark-fx target="#dr3" text="grew steadily" kind="underline" color="key"></mark-fx>
+    <stamp-fx target="#dr3" anchor="right" offset-x="110" icon="bi-graph-up-arrow" color="green" size="1.1rem">趨勢詞</stamp-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 11-14-26 修改對照 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：新增 next-by</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：只能用鍵盤前進</h3>
+<pre class="diff">&lt;ui-play frame="notebook" step-mode="manual"&gt;
+  ...
+&lt;/ui-play&gt;
+
+_onKey(e) {
+  if (!this._built || this.getAttribute('keyboard') === 'false') return;
+  ...
+  this._press();
+}</pre>
+        </div>
+        <div>
+          <h3>修改後：屬性切換 key、click、both</h3>
+<pre class="diff">&lt;ui-play frame="notebook" step-mode="manual" <span class="add">next-by="click"</span>&gt;
+  ...
+&lt;/ui-play&gt;
+
+<span class="add">body.addEventListener('click', (e) =&gt; this._onClick(e));
+
+_nextBy() {
+  const v = this._attr('next-by', 'key').toLowerCase();
+  return v === 'click' || v === 'both' ? v : 'key';
+}
+
+_onClick(e) {
+  if (this._nextBy() === 'key' || e.button !== 0) return;
+  // 略過連結、按鈕、輸入框與選取文字
+  ...
+  this._press();
+}</span>
+
+_onKey(e) {
+  if (!this._built || this.getAttribute('keyboard') === 'false'
+      <span class="add">|| this._nextBy() === 'click'</span>) return;
+  ...
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11-14-26 修改對照 2 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：稿紙外框改為深色</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：淺色稿紙，在深色頁面上太刺眼</h3>
+<pre class="diff">paper: { bg: '#DBEDD8', text: '#0C0D0C', bc: '#C6C7BD', ... }
+--upl-rule 預設 '#A3C4BC'
+
+&lt;ui-play frame="paper" step-mode="manual" font-size="1.375rem" text-color="#0C0D0C"&gt;</pre>
+        </div>
+        <div>
+          <h3>修改後：深色稿紙（bg-alternative 底、vanilla 字、gray 橫線）</h3>
+<pre class="diff">paper: { bg: <span class="add">'#3B2A20'</span>, text: <span class="add">'#DBEDD8'</span>, bc: <span class="add">'#86877F'</span>, ... }
+--upl-rule 預設 <span class="add">'#86877F'</span>
+
+&lt;ui-play frame="paper" step-mode="manual" font-size="1.375rem"&gt;
+
+<span class="add">// 要恢復淺色稿紙：
+&lt;ui-play frame="paper" bg-color="vanilla" text-color="background" rule-color="calm"&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11-14-26 修改對照 4 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：pause-fx 等待時按鈕顯示「播放」</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：等待按鍵時按鈕仍顯示「暫停」</h3>
+<pre class="diff">_waitKey() {
+  return new Promise((res) =&gt; { this._keyWaiter = res; });
+}
+
+_syncControls: 播放中 → '❚❚ 暫停'（pause-fx 等待時也是）</pre>
+        </div>
+        <div>
+          <h3>修改後：等待按鍵時顯示「▶ 播放」，點一下即送出下一步</h3>
+<pre class="diff">_waitKey() {
+  return new Promise((res) =&gt; {
+    this._keyWaiter = () =&gt; { this._gated = false; this._syncControls(); res(); };
+    <span class="add">this._gated = true;
+    this._syncControls();</span>
+  });
+}
+
+_syncControls:
+  else if (this._paused) '▶ 繼續'
+  <span class="add">else if (this._gated) '▶ 播放'</span>
+  else '❚❚ 暫停'
+
+按鈕點擊：<span class="add">else if (this._gated) this._press();</span></pre>
+        </div>
+      </div>
+      <p class="desc">示範：播到 pause-fx 時按鈕顯示「▶ 播放」，點按鈕或按空白鍵都會繼續下一步。</p>
+      <div class="live">
+<ui-play frame="notebook" controls="always" controls-position="outside" font-size="1.1rem" padding="18px" min-height="260px" step-mode="mixed">
+  <stage-item>
+    <p id="g1">Enjoying me time takes up most of my weekend mornings.</p>
+  </stage-item>
+  <script-item>
+    <mark-fx target="#g1" text="Enjoying me time" kind="underline" color="key" name="g_u1"></mark-fx>
+    <pause-fx></pause-fx>
+    <mark-fx target="#g1" text="takes up" kind="box" color="energetic" name="g_b1"></mark-fx>
+    <pause-fx></pause-fx>
+    <remove-fx name="g_u1,g_b1"></remove-fx>
+  </script-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 11-14-26 修改對照 5 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：外框預設邊框加粗並改為灰色</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：邊框 1px、bg-alternative（#3B2A20），與頁面底色幾乎同色</h3>
+<pre class="diff">BASE = { bw: '1px', bs: 'solid', bc: '#3B2A20', ... }</pre>
+        </div>
+        <div>
+          <h3>修改後：邊框 2px、gray（#86877F），外框清楚可見</h3>
+<pre class="diff">BASE = { bw: <span class="add">'2px'</span>, bs: 'solid', bc: <span class="add">'#86877F'</span>, ... }
+
+<span class="add">// 若要沿用舊的深色外框：border-color="bg-alternative"</span></pre>
+        </div>
+      </div>
+      <p class="desc">示範：未指定 border-color 的 notebook 外框，預設即為新的灰色邊框。</p>
+      <div class="live">
+<ui-play frame="notebook" font-size="1.1rem" padding="18px" min-height="200px" step-mode="manual">
+  <stage-item>
+    <p id="fr1">Frame borders should be clearly visible.</p>
+  </stage-item>
+</ui-play>
+      </div>
+    </div>
+    <pre class="code"></pre>
+  </section>
+
+  <!-- 11-14-26 修改對照 3 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：新增 frame="draw"</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：沒有小畫家外框</h3>
+<pre class="diff">frame：none、plain、mac、win、win-classic、browser、
+       phone、paper、sheet、notebook
+
+FRAME_DEF = { ..., notebook: { radius: '8px' } }</pre>
+        </div>
+        <div>
+          <h3>修改後：新增 draw 與四個屬性</h3>
+<pre class="diff">frame：none、plain、mac、win、win-classic、browser、
+       phone、paper、sheet、notebook、<span class="add">draw</span>
+
+FRAME_DEF = { ..., notebook: { radius: '8px' },
+  <span class="add">draw: { radius: '8px', minH: '360px', pad: '32px 32px 32px 88px' }</span> }
+
+<span class="add">&lt;ui-play frame="draw" draw-tool="brush" draw-size="8"
+         draw-color="yellow" draw-slider="true"
+         draw-select-color="quiet"&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11-14-26 修改對照 4 -->
+  <section class="demo single">
+    <div>
+      <h2>修改對照（11-14-26）：ui-play 內建色名標籤</h2>
+      <div class="cmp">
+        <div>
+          <h3>修改前：單獨使用 ui-play 時，&lt;c-key&gt; 不會變色</h3>
+<pre class="diff">&lt;script src="ui-play.js"&gt;&lt;/script&gt;
+
+&lt;p&gt;She has lived here for &lt;c-key&gt;five years&lt;/c-key&gt;.&lt;/p&gt;
+（要另外載入 ui-fillin、ui-table 等元件才有色彩）</pre>
+        </div>
+        <div>
+          <h3>修改後：檔尾加入所有元件共用的色名標籤</h3>
+<pre class="diff">&lt;script src="ui-play.js"&gt;&lt;/script&gt;
+
+&lt;p&gt;She has lived here for &lt;c-key&gt;five years&lt;/c-key&gt;.&lt;/p&gt;
+<span class="add">（ui-play.js 自己就會注入 &lt;style id="ui-color-tags"&gt;，
+  已有其他元件注入時不會重複）</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="demo single">
     <div>
       <h2>屬性對照</h2>
@@ -307,21 +724,24 @@
         <tr><td><code>aspect</code></td><td>固定比例，例如 16/9，設了就忽略 height</td><td>無</td></tr>
         <tr><td><code>padding</code></td><td>內容區內距</td><td><code>32px</code></td></tr>
         <tr><td><code>content-align</code> <code>content-valign</code></td><td>left、center、right／top、middle、bottom</td><td><code>left</code>、<code>top</code></td></tr>
-        <tr><td><code>frame</code></td><td>none、plain、mac、win、win-classic、browser、phone、paper、sheet、notebook</td><td><code>plain</code></td></tr>
+        <tr><td><code>frame</code></td><td>none、plain、mac、win、win-classic、browser、phone、paper、sheet、notebook、draw</td><td><code>plain</code></td></tr>
         <tr><td><code>frame-title</code> <code>frame-icon</code> <code>frame-url</code></td><td>標題列文字、Bootstrap Icons 名稱、瀏覽器網址列；phone 外框的 frame-title 顯示在時間位置</td><td>無</td></tr>
         <tr><td><code>border-width</code> <code>border-style</code> <code>border-color</code> <code>radius</code></td><td>外框粗細、樣式、顏色、圓角</td><td><code>1px</code>（win、mac 為 <code>2px</code>）、<code>solid</code>、<code>bg-alternative</code>、<code>10px</code></td></tr>
         <tr><td><code>bg-color</code> <code>bar-color</code> <code>bar-text-color</code></td><td>內容區背景、標題列背景、標題列文字</td><td><code>background</code>、<code>bg-alternative</code>、<code>shell</code></td></tr>
         <tr><td><code>font-family</code> <code>font-size</code> <code>line-height</code> <code>text-color</code></td><td>內容文字</td><td>系統字體、<code>1.25rem</code>、<code>1.7</code>、<code>shell</code></td></tr>
-        <tr><td><code>rule-color</code> <code>margin-line-width</code> <code>margin-line-color</code></td><td>paper 外框：橫線顏色、左側紅線粗細與顏色</td><td><code>calm</code>、<code>3px</code>、<code>red</code></td></tr>
+        <tr><td><code>rule-color</code> <code>margin-line-width</code> <code>margin-line-color</code></td><td>paper 外框：橫線顏色、左側紅線粗細與顏色；底色預設 bg-alternative、文字預設 vanilla，想要淺色稿紙可設 bg-color="vanilla" text-color="background"</td><td><code>gray</code>、<code>3px</code>、<code>red</code></td></tr>
         <tr><td><code>cell-width</code> <code>cell-height</code> <code>grid-color</code></td><td>sheet 外框：儲存格寬高、格線顏色；未設 line-height 時，行高等於 cell-height</td><td><code>96px</code>、<code>34px</code>、<code>bg-alternative</code></td></tr>
         <tr><td><code>row-header-width</code> <code>column-header-height</code> <code>header-line-color</code> <code>corner-color</code></td><td>sheet 外框：列號寬、欄名高、標頭分隔線、左上角三角形顏色；標頭底色與文字沿用 bar-color、bar-text-color</td><td><code>48px</code>、<code>30px</code>、<code>background</code>、<code>gray</code></td></tr>
         <tr><td><code>tabs</code> <code>tab-colors</code> <code>tab-active</code> <code>tab-add</code></td><td>notebook 外框：分頁名稱與顏色（皆以 | 分隔，顏色不夠時循環使用）、目前分頁（從 1 起算）、是否顯示「+」分頁</td><td><code>快速筆記</code>、<code>green|blue|playful|violet|pink|key</code>、<code>1</code>、<code>true</code></td></tr>
         <tr><td><code>search</code> <code>search-width</code></td><td>notebook 外框：搜尋框提示文字，設為 false 則不顯示；搜尋框寬度</td><td><code>搜尋筆記本</code>、<code>280px</code></td></tr>
+        <tr><td><code>draw-tool</code> <code>draw-color</code> <code>draw-select-color</code></td><td>draw 外框：選取中的工具（select、pencil、eraser、fill、picker、text、zoom、brush）、色彩群組的目前顏色、選取框與滑桿圓鈕顏色</td><td><code>brush</code>、<code>yellow</code>、<code>quiet</code></td></tr>
+        <tr><td><code>draw-slider</code> <code>draw-size</code></td><td>draw 外框：是否顯示左側筆刷大小滑桿、滑桿位置 0 到 100（0 在最下方）；關閉滑桿時可用 padding 縮小左側留白</td><td><code>true</code>、<code>0</code></td></tr>
         <tr><td><code>cell</code>（舞台元素）</td><td>sheet 外框中，把元素定位到儲存格，例如 B3 或 A1:D1</td><td>無</td></tr>
         <tr><td><code>accent-color</code></td><td>註解外框與按鈕的主色</td><td><code>key</code></td></tr>
         <tr><td><code>autoplay</code></td><td>true、visible、false</td><td><code>false</code></td></tr>
         <tr><td><code>step-mode</code></td><td>manual、auto（忽略所有停頓點）、mixed</td><td><code>mixed</code></td></tr>
         <tr><td><code>step-delay</code> <code>rate</code></td><td>after 步驟之間的間隔（ms）、播放倍率</td><td><code>600</code>、<code>1</code></td></tr>
+        <tr><td><code>next-by</code></td><td>開始播放與下一步的方式：key（鍵盤）、click（滑鼠點內容區，鍵盤停用）、both（兩者皆可）</td><td><code>key</code></td></tr>
         <tr><td><code>keyboard</code> <code>key-next</code></td><td>是否啟用鍵盤、下一步按鍵（逗號分隔）</td><td><code>true</code>、<code>Space,ArrowRight</code></td></tr>
         <tr><td><code>controls</code> <code>controls-position</code></td><td>none、hover、always／bottom、top、outside</td><td><code>none</code>、<code>bottom</code></td></tr>
         <tr><td><code>sound</code> <code>volume</code></td><td>全域音效開關、音量 0 到 1</td><td><code>on</code>、<code>0.6</code></td></tr>
@@ -330,7 +750,7 @@
       <h3>所有 -fx 共用</h3>
       <table class="ref">
         <tr><th>屬性</th><th>說明</th><th>預設值</th></tr>
-        <tr><td><code>start</code></td><td>click（等按鍵）、with（與上一個同時）、after（上一個結束後）</td><td>manual 為 click，其他為 after</td></tr>
+        <tr><td><code>start</code></td><td>click（等按鍵或點擊）、with（與上一個同時）、after（上一個結束後）</td><td>manual 為 click，其他為 after</td></tr>
         <tr><td><code>delay</code></td><td>開始前等待（ms）</td><td><code>0</code></td></tr>
         <tr><td><code>name</code></td><td>供 remove-fx 移除（mark、note、stamp）</td><td>無</td></tr>
         <tr><td><code>target</code> <code>text</code> <code>nth</code></td><td>目標選擇器、目標內的子字串、第幾個</td><td>必填、無、<code>1</code></td></tr>
