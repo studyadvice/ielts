@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-14-26.html`](ui-play-demo-11-14-26.html)、[`11-13-26`](ui-play-demo-11-13-26.html) |
 | `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
-| `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息；`layout` 切換平鋪、尾巴氣泡、雙欄對照排版；`stage` 在旁邊切出畫面區，逐則切換圖片或 template。 | [`ui-stream-demo-11-16-26.html`](ui-stream-demo-11-16-26.html)（合併版） |
+| `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息；`layout` 切換平鋪、尾巴氣泡、雙欄對照排版；`stage` 在旁邊切出畫面區，逐則切換圖片或 template。 | [`ui-stream-demo-11-18-26.html`](ui-stream-demo-11-18-26.html)（合併版） |
 | `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息，或拖到 ui-post 變成一則留言。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html)（範例 5：拖到 ui-post） |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
@@ -360,6 +360,7 @@
 | `layout` | 無 | 整個內容流的排法，見下方「排版 layout」。 |
 | `stage` | 無 | `left` 或 `right`：在外框裡切出畫面區，內容流放另一邊。只寫 `stage` 等同 `left`。見下方「畫面區 stage」。 |
 | `stage-width` | `60` | 畫面區佔外框寬度的百分比，10 到 90。 |
+| `stage-from`、`stage-to` | 無 | 畫面區背景由上到下的雙色漸層（色票名稱或色碼，例如 `#242424`）；只寫一端時另一端用外框背景色。 |
 | `stage-start` | 無 | 畫面區的開場內容（`#id` 或圖片網址）；重播、`goto`、`loop` 時回到它。 |
 | `split-labels` | 無 | `layout="split"` 時左右兩欄的標題，寫法 `Examiner:playful, Candidate:blue`，冒號後的顏色可省略。 |
 | `title` | 無 | 元件上方標題。 |

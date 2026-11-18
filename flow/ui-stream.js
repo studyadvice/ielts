@@ -10,7 +10,7 @@
 
   const DEFAULTS = {
     /* 模式 */ mode: '', layout: '', splitLabels: '',
-    /* 畫面區 */ stage: '', stageWidth: 60, stageStart: '',
+    /* 畫面區 */ stage: '', stageWidth: 60, stageStart: '', stageFrom: '', stageTo: '',
     /* 播放 */ autoplay: false, speed: 30, delay: 600, start: 0, loop: false, autoScroll: true, scrollSpace: 48, typeAll: false, step: false,
     /* 控制列 */ controls: false, controlsPosition: 'top', counter: true, progress: false, labels: '播放,暫停,下一則,重播', speedControl: false,
     /* 版面 */ height: 0, gap: 14, gapSame: -1, gapSystem: -1, padding: 16, bubbleWidth: 78, bubbleRadius: 12, bubblePadding: '10px 14px', lineHeight: 1.6,
@@ -151,6 +151,7 @@ ui-stream .us-main.us-stage-r{flex-direction:row-reverse;}
 ui-stream .us-col{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;}
 ui-stream .us-col .us-feed{min-height:0;}
 ui-stream .us-stage{flex:0 0 var(--us-stw);box-sizing:border-box;min-width:0;min-height:0;padding:var(--us-pad);border-right:1px solid var(--us-border);display:flex;overflow:auto;color:var(--us-text);}
+ui-stream .us-stage.us-stage-g{background:linear-gradient(to bottom,var(--us-stg1),var(--us-stg2));}
 ui-stream .us-stage-r .us-stage{border-right:0;border-left:1px solid var(--us-border);}
 ui-stream .us-stage-in{margin:auto;max-width:100%;}
 ui-stream .us-stage-in > :last-child{margin-bottom:0;}
@@ -652,6 +653,8 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       sv('--us-wbw', Math.max(0, o.borderWidth) + 'px');
       sv('--us-ind', o.avatar ? (o.avatarSize + 10) + 'px' : '0px');
       sv('--us-stw', Math.min(90, Math.max(10, num(o.stageWidth, 60))) + '%');
+      /* stage-from／stage-to：舞台背景由上到下的雙色漸層；只寫一端時，另一端用外框背景色 */
+      if (o.stageFrom || o.stageTo) { sv('--us-stg1', color(o.stageFrom) || color(o.background)); sv('--us-stg2', color(o.stageTo) || color(o.background)); }
       if (o.bubbleBorderWidth > 0) sv('--us-bbw', o.bubbleBorderWidth + 'px');
       if (this._title) this.appendChild(el('div', 'us-title', this._title));
       const wrap = el('div', 'us-wrap' + (o.bordered ? '' : ' us-noborder') + (o.controlsPosition === 'bottom' ? ' us-cbottom' : ''));
@@ -682,7 +685,7 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       let host = wrap; this._stage = null;
       if (stSide) {
         const main = el('div', 'us-main' + (stSide === 'right' ? ' us-stage-r' : '')), col = el('div', 'us-col');
-        this._stage = el('div', 'us-stage'); main.append(this._stage, col); wrap.append(main); host = col;
+        this._stage = el('div', 'us-stage' + (o.stageFrom || o.stageTo ? ' us-stage-g' : '')); main.append(this._stage, col); wrap.append(main); host = col;
       }
       if (this._layout === 'split' && o.splitLabels) {
         /* split-labels="Examiner:playful, Candidate:blue"：左右兩欄的標題，冒號後是顏色 */
