@@ -106,7 +106,7 @@ ui-post .upo-item.is-dim .upo-text,ui-post .upo-item.is-dim .upo-name{color:#868
 ui-post .upo-item.is-dim .upo-av{filter:grayscale(1);}
 ui-post .upo-item.is-reply{position:relative;margin-left:66px;}
 ui-post .upo-item.is-reply::before{content:"";position:absolute;left:-33px;top:-14px;width:2px;height:32px;background:var(--upo-div,#86877F);}
-ui-post .upo-item.is-reply::after{content:"";position:absolute;left:-33px;top:18px;width:22px;height:2px;background:var(--upo-div,#86877F);}
+ui-post .upo-item.is-reply::after{content:"";position:absolute;left:-33px;top:18px;width:29px;height:2px;background:var(--upo-div,#86877F);}
 ui-post .upo-grip{flex:0 0 auto;align-self:center;background:none;border:0;border-radius:6px;padding:4px 2px;margin:0 0 0 4px;color:var(--upo-grip,#86877F);cursor:pointer;line-height:0;}
 ui-post .upo-grip svg{width:18px;height:18px;fill:currentColor;}
 ui-post .upo-grip:hover{color:var(--upo-grip-hover,#FF91D7);}
@@ -547,7 +547,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       return rects.filter((r) => r.width > 0.5).map((r) => ({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height }));
     }
     async function mark(run, el, ctx) {
-      const kind = (el.getAttribute('kind') || 'strike').toLowerCase();
+      const kind = (el.getAttribute('kind') || 'box').toLowerCase();
       const list = targets(el, ctx);
       if (!list.length) return;
       const speed = num(el.getAttribute('speed'), kind === 'color' ? 300 : 600);
@@ -563,8 +563,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
 
       const layer = ctx.layer;
-      const c = col(el.getAttribute('color'), kind === 'arrow' ? '#51DBCF' : '#EF6661');
-      const thick = num(el.getAttribute('thickness'), kind === 'wavy' ? 2 : 3);
+      const c = col(el.getAttribute('color'), kind === 'arrow' || kind === 'box' ? '#51DBCF' : '#EF6661');
+      const thick = num(el.getAttribute('thickness'), kind === 'wavy' || kind === 'box' ? 2 : 3);
       const rough = clamp(num(el.getAttribute('rough'), 0.5), 0, 1);
       const pad = num(el.getAttribute('padding'), kind === 'cross' ? 2 : 4);
       const seed0 = el.getAttribute('seed');
@@ -585,6 +585,16 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
           if (kind === 'wavy') {
             const amp = thick * 0.6 + 1.2;
             ls.forEach((r) => ds.push(wavePath(r.x - pad * 0.25, r.x + r.w + pad * 0.25, r.y + r.h * 0.98 + amp * 0.5, amp, rough, rnd)));
+          } else if (kind === 'box') {
+            /* 把文字框起來：每一行各畫一個圓角框，rough 愈大線條愈歪；radius 控制圓角 */
+            const rad = num(el.getAttribute('radius'), 4);
+            ls.forEach((r) => {
+              const j = () => (rnd() - 0.5) * rough * 3;
+              const x1 = r.x - pad, x2 = r.x + r.w + pad, y1 = r.y + r.h * 0.06 - pad * 0.5, y2 = r.y + r.h * 0.96 + pad * 0.5;
+              const q = Math.min(rad, (x2 - x1) / 2, (y2 - y1) / 2);
+              const P = (x, y) => `${(x + j()).toFixed(1)} ${(y + j()).toFixed(1)}`;
+              ds.push(`M${P(x1 + q, y1)} L${P(x2 - q, y1)} Q${P(x2, y1)} ${P(x2, y1 + q)} L${P(x2, y2 - q)} Q${P(x2, y2)} ${P(x2 - q, y2)} L${P(x1 + q, y2)} Q${P(x1, y2)} ${P(x1, y2 - q)} L${P(x1, y1 + q)} Q${P(x1, y1)} ${P(x1 + q + 3, y1)}`);
+            });
           } else if (kind === 'cross') {
             ls.forEach((r) => {
               const x1 = r.x - pad, x2 = r.x + r.w + pad, y1 = r.y + r.h * 0.1 - pad * 0.5, y2 = r.y + r.h * 0.92 + pad * 0.5;
@@ -1280,16 +1290,10 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       main.className = 'upo-main';
       const bubble = document.createElement('div');
       bubble.className = 'upo-bubble';
-      
-      // ==========================================
-      // 【新增】支援單一訊息的寬度設定 (width / max-width)
-      // ==========================================
-      const itemWidth = len(src.getAttribute('width') || src.getAttribute('max-width'));
-      if (itemWidth) {
-        bubble.style.maxWidth = itemWidth;
-        bubble.style.width = itemWidth;
-      }
-
+      /* 單則留言寬度：width 固定寬度（超過貼文會縮回去），max-width 只限制上限，短留言維持原本大小 */
+      const iw = len(src.getAttribute('width')), imw = len(src.getAttribute('max-width'));
+      if (iw) bubble.style.width = iw;
+      if (imw) bubble.style.maxWidth = imw;
       {
         const bg = color(src.getAttribute('bg-color')), bc = color(src.getAttribute('border-color'));
         const bw = len(src.getAttribute('border-width')), bs = (src.getAttribute('border-style') || '').trim().toLowerCase();

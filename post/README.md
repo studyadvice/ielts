@@ -9,7 +9,7 @@
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-17-26.html` | | 整合範例 20 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
+| `ui-post-demo-11-17-26.html` | | 整合範例 21 則（基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
 
 ## 目錄
 
@@ -101,6 +101,7 @@
 | `after` | 爆發後才出現；`after="false"` 讓考官留言提早出現。 |
 | `reply` | 顯示成前面最近一則 `best` 留言的回覆：縮排並加上連線，跟著對象一起置頂。對象必須先出現；找不到對象時照一般留言顯示。`reply="false"` 關閉。 |
 | `tags` | 講評標籤，逗點分隔，可寫「文字:色名」，在爆發後出現。 |
+| `width`、`max-width` | 這一則留言泡泡的寬度。`width` 固定寬度，超過貼文寬度會縮回去；`max-width` 只限制上限，短留言維持原本大小。純數字視為 px，也可以寫 `50%`（以留言區為基準）。 |
 | `bg-color`、`border-color`、`border-width`、`border-style` | 這一則留言泡泡的底色、外框顏色、粗細（純數字視為 px）、樣式（`solid`、`dashed`、`dotted`、`double`、`groove`、`ridge`、`none`）。優先於 `bubble-color`，也優先於最佳回答、考官的外框色。`ui-post` 的 `theme` 只管整個貼文的外框與分隔線，不影響留言。 |
 | `badge`、`badge-color` | 在名字旁加自訂徽章（不可點）。`mode="live"` 不支援，連文字都不顯示。考官與最佳回答徽章不受影響。 |
 | `badge-target`、`badge-content`、`badge-title` | 寫了其中任一個，徽章就是可點的按鈕，詳見[可點擊的自訂徽章](#可點擊的自訂徽章)。 |
@@ -141,7 +142,8 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 
 ```html
 <post-item author="Mia" likes="6">Yes, I very like reading novels.
-  <mark-fx text="very"></mark-fx>
+  <mark-fx kind="strike" text="very"></mark-fx>
+  <mark-fx text="novels"></mark-fx>
   <note-fx text="very">very 不能修飾動詞，改成 really</note-fx>
 </post-item>
 
@@ -153,13 +155,14 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `kind` | `strike` | `strike` 刪除線、`wavy` 波浪底線、`cross` 打叉、`arrow` 箭頭、`color` 文字變色。 |
+| `kind` | `box` | `box` 把文字框起來（每一行各畫一個圓角框）、`strike` 刪除線、`wavy` 波浪底線、`cross` 打叉、`arrow` 箭頭、`color` 文字變色。 |
 | `text`、`nth` | 無、`1` | 要標記的文字與第幾次出現。`text` 是比對字串，例如 `it` 也會對到 city 裡的 it，這時用 `nth` 指定。省略 `text` 時標記整則留言。 |
 | `target` | 這則內容 | CSS 選擇器，改為標記指定的元素。 |
-| `color` | `red`（`arrow`、`color` 為 `key`） | 線條顏色；`kind="color"` 時是文字要換成的顏色。 |
-| `thickness` | `3`（`wavy` 為 `2`） | 線條粗細（px）。 |
+| `color` | `key`（`strike`、`wavy`、`cross` 為 `red`） | 線條顏色；`kind="color"` 時是文字要換成的顏色。 |
+| `thickness` | `3`（`box`、`wavy` 為 `2`） | 線條粗細（px）。 |
 | `rough`、`seed` | `0.5`、依文字 | 手繪感 0 到 1，0 是工整的線；亂數種子。 |
-| `padding` | `4`（`cross` 為 `2`） | 線條超出文字的範圍（px）。 |
+| `padding` | `4`（`cross` 為 `2`） | 線條超出文字的範圍（px）；`box` 的框左右各留 `padding`，上下留一半。 |
+| `radius` | `4` | 只用於 `box`：圓角半徑（px），0 是直角。 |
 | `to`、`to-nth`、`to-target` | 無、`1`、無 | 只用於 `arrow`：終點文字、第幾次出現、或用選擇器指定終點。沒有終點時不畫。 |
 | `side`、`bend`、`head` | 自動、自動、`9` | 只用於 `arrow`。起點和終點同一行時，弧線走文字上方（`top`）或下方（`bottom`）；沒寫時最後一行走下方，其他行走上方。`bend` 是弧線高度，`head` 是箭頭尖端長度（px）。不同行時從靠近對方的那一側出發。 |
 | `start`、`delay`、`speed` | `after`、`0`、`600`（`color` 為 `300`） | `start="with"` 與前一個特效同時開始；開始前等待與動畫時間（毫秒）。 |
