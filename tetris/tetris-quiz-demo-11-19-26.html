@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tetris-quiz 元件示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../bp-styles.css">
+<style>
+  body{background:#0C0D0C;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem}
+  .page{max-width:1680px;margin:0 auto;padding:40px 48px 80px}
+  h1{font-size:2.25rem;font-weight:800;color:#DBEDD8;margin:0 0 8px}
+  h2{font-size:1.375rem;font-weight:700;color:#51DBCF;margin:56px 0 8px}
+  .ver{display:inline-block;font-size:.75rem;font-weight:800;color:#0C0D0C;background:#B484E8;border-radius:999px;padding:2px 10px;margin:0 0 0 8px;vertical-align:middle}
+  .lead-text{font-size:1.0625rem;color:#C6C7BD;margin:0 0 16px}
+  .desc{font-size:1rem;color:#C6C7BD;margin:0 0 16px}
+  .info-box{background:#3B2A20;border:1px solid #778CE1;color:#DBEDD8;border-radius:12px;padding:16px 20px;margin:16px 0 0}
+  .info-box + .info-box{margin-top:12px}
+  kbd{background:#C6C7BD;color:#0C0D0C;font-size:.875rem;font-weight:700;border-radius:6px;padding:2px 8px}
+  code{color:#FF91D7}
+  pre.code{background:#151615;border:1px solid #3B2A20;border-radius:12px;color:#DBEDD8;font-size:.8125rem;padding:20px;margin:16px 0 0;white-space:pre-wrap;word-break:break-word}
+  pre.code code{color:inherit}
+  table.attr{width:100%;border-collapse:collapse;font-size:.9375rem}
+  table.attr th,table.attr td{border-bottom:1px solid #3B2A20;padding:10px 12px;text-align:left;vertical-align:top}
+  table.attr th{color:#A3C4BC;font-weight:700;background:#151615}
+  .explain-card{display:flex;gap:24px;align-items:flex-start;background:#151615;border:2px solid #71CD76;border-radius:16px;padding:24px 28px;margin:24px 0 0}
+  .explain-card h4{font-size:1.25rem;font-weight:700;color:#71CD76;margin:0 0 8px}
+  .explain-card p{font-size:1.0625rem;color:#DBEDD8;margin:0}
+  .next-card{background:#151615;border:2px solid #FFA987;border-radius:16px;padding:24px 28px;margin:24px 0 0}
+  .next-card h4{font-size:1.25rem;font-weight:700;color:#FFA987;margin:0 0 8px}
+  .next-card p{font-size:1.0625rem;color:#DBEDD8;margin:0}
+  .log-area{position:fixed;right:24px;bottom:24px;width:380px;z-index:10000}
+  .log-area .alert{background:#3B2A20;border:2px solid #71CD76;color:#DBEDD8;font-size:.9375rem;margin:0 0 12px;padding:12px 44px 12px 16px}
+  .log-area .alert strong{color:#E3D322}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;tetris-quiz&gt; 俄羅斯方塊填空動畫元件 <span class="ver" style="font-size:1rem">1.0.0</span></h1>
+  <p class="lead-text">棋盤寬度固定 8 欄，列數用 <code>rows</code> 設定。每次重新整理都會生成新的劇本：方塊旋轉、落下、滿行消除，最後棋盤完全清空，答案飛入空格。</p>
+  <div class="info-box">劇本先把整個棋盤切成多個四格方塊，再排出由下往上的放置順序，所以最後一塊落下並消行後，棋盤必定完全清空。消行時不使用透明度，改以白色閃爍與縮小呈現。</div>
+  <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的棋盤。</div>
+
+  <h2>範例一：基本用法（預設 8 列）</h2>
+  <tetris-quiz question="I go _____ every day." answer="jogging"></tetris-quiz>
+  <pre class="code"><code>&lt;tetris-quiz question="I go _____ every day." answer="jogging"&gt;&lt;/tetris-quiz&gt;</code></pre>
+
+  <h2>範例二：題庫隨機出題，10 列，加快落下速度</h2>
+  <tetris-quiz rows="10" drop-speed="14" clear-speed="14">
+    <script type="application/json">
+      [{"q": "I go _____ every day.", "a": "jogging"},
+       {"q": "She has lived here _____ ten years.", "a": "for"},
+       {"q": "A: Why are you so tired?<br>B: I _____ up all night.", "a": "stayed"}]
+    </script>
+  </tetris-quiz>
+  <pre class="code"><code>&lt;tetris-quiz rows="10" drop-speed="14" clear-speed="14"&gt;
+  &lt;script type="application/json"&gt;
+    [{"q": "I go _____ every day.", "a": "jogging"},
+     {"q": "She has lived here _____ ten years.", "a": "for"}]
+  &lt;/script&gt;
+&lt;/tetris-quiz&gt;</code></pre>
+
+  <h2>範例三：手動開始，6 列，固定種子，開始前隱藏棋盤</h2>
+  <tetris-quiz rows="6" seed="demo-3" autoplay="false" hide-until-play label-play="開始消除方塊" play-size="lg"
+               question="I am looking forward _____ meeting you." answer="to"></tetris-quiz>
+  <pre class="code"><code>&lt;tetris-quiz rows="6" seed="demo-3" autoplay="false" hide-until-play
+             label-play="開始消除方塊" play-size="lg"
+             question="I am looking forward _____ meeting you." answer="to"&gt;&lt;/tetris-quiz&gt;</code></pre>
+
+  <h2>範例四：外部題目面板，指定棋盤寬度與方塊顏色</h2>
+  <tetris-quiz id="t4" rows="8" board-width="320" controls="board" seed="demo-4"
+               piece-colors="pink,yellow,key,green,red,blue,violet" reveal-bg="#71CD76" reveal-color="#0C0D0C"
+               question="I usually _____ my homework after dinner." answer="do"></tetris-quiz>
+  <tetris-quiz-panel for="t4" extra-class="p-3 bp-lnh-5"></tetris-quiz-panel>
+  <pre class="code"><code>&lt;tetris-quiz id="t4" board-width="320" controls="board"
+             piece-colors="pink,yellow,key,green,red,blue,violet"
+             reveal-bg="#71CD76" reveal-color="#0C0D0C"
+             question="I usually _____ my homework after dinner." answer="do"&gt;&lt;/tetris-quiz&gt;
+
+&lt;!-- 放在同一網頁任何位置 --&gt;
+&lt;tetris-quiz-panel for="t4" extra-class="p-3 bp-lnh-5"&gt;&lt;/tetris-quiz-panel&gt;</code></pre>
+
+  <h2>範例五：完全消除後顯示解說，再用 link-when 顯示下一區塊</h2>
+  <p class="desc">答案填入空格後顯示 <code>&lt;template&gt;</code> 的解說（<code>template-shown</code>），接著 <code>&lt;link-when&gt;</code> 用 <code>event="done"</code> 顯示下一區塊。有 <code>show-template</code> 時，<code>done</code> 等的是解說顯示完畢。</p>
+  <tetris-quiz id="t5" rows="8" show-template="tpl5"
+               question="If I _____ more time, I would learn to play the piano." answer="had"></tetris-quiz>
+  <template id="tpl5">
+    <div class="explain-card"><div><h4>文法重點</h4><p>If 子句用過去式，主要子句用 would + 原形動詞，表示與現在事實相反的假設。</p></div></div>
+  </template>
+  <div id="next5" class="next-card" hidden><h4>下一區塊</h4><p>棋盤完全消除、解說顯示後，這個區塊才滑入。</p></div>
+  <link-when source="#t5" event="done" target="#next5" do="show" enter="slide-up"></link-when>
+  <pre class="code"><code>&lt;tetris-quiz id="t5" show-template="tpl5"
+             question="If I _____ more time, I would learn to play the piano." answer="had"&gt;&lt;/tetris-quiz&gt;
+&lt;template id="tpl5"&gt;
+  &lt;div class="explain-card"&gt;…&lt;/div&gt;
+&lt;/template&gt;
+&lt;div id="next5" hidden&gt;…&lt;/div&gt;
+
+&lt;link-when source="#t5" event="done" target="#next5" do="show" enter="slide-up"&gt;&lt;/link-when&gt;
+
+&lt;!-- 沒有 show-template 時，done 等於 tetris-cleared，也可以明確寫出事件名稱 --&gt;
+&lt;link-when source="#t5" event="tetris-cleared" target="#next5" do="show"&gt;&lt;/link-when&gt;</code></pre>
+
+  <h2>範例六：監聽事件（右下角用 Bootstrap alert 顯示）</h2>
+  <p class="desc">每消除一次、完全消除、答案填入時，右下角都會出現提示。</p>
+  <tetris-quiz id="t6" rows="8" seed="demo-6" question="She is good _____ playing the violin." answer="at"></tetris-quiz>
+  <pre class="code"><code>document.addEventListener('lines-cleared', e =&gt; console.log(e.detail.lines, e.detail.remaining));
+document.addEventListener('tetris-cleared', e =&gt; console.log('完全消除', e.detail.answer));</code></pre>
+
+  <h2>屬性、事件與方法</h2>
+  <p class="desc">顏色可寫色票名稱（<code>key</code>、<code>pink</code> 等）、色碼或 CSS 色名。</p>
+  <table class="attr">
+    <thead><tr><th>屬性</th><th>說明</th><th>預設</th></tr></thead>
+    <tbody>
+      <tr><td><code>question</code></td><td>題目，用兩個以上的底線標示空格，可用 &lt;br&gt; 換行；題庫的 q 也適用。</td><td>I go _____ every day.</td></tr>
+      <tr><td><code>answer</code></td><td>答案。</td><td>jogging</td></tr>
+      <tr><td><code>rows</code></td><td>棋盤列數，範圍 4 到 16；寬度固定 8 欄。</td><td>8</td></tr>
+      <tr><td><code>seed</code></td><td>亂數種子，固定劇本。</td><td>無</td></tr>
+      <tr><td><code>drop-speed</code></td><td>方塊每落一列的毫秒數，範圍 6 到 200；旋轉與平移的節奏跟著調整。</td><td>24</td></tr>
+      <tr><td><code>clear-speed</code></td><td>消行時每格縮小的間隔毫秒數，範圍 6 到 120。</td><td>22</td></tr>
+      <tr><td><code>autoplay</code></td><td>設為 false 時需按開始按鈕或快捷鍵。</td><td>自動</td></tr>
+      <tr><td><code>board-width</code></td><td>棋盤區寬度；純數字視為 px，也接受 40%、24rem 等寫法。</td><td>380px</td></tr>
+      <tr><td><code>cell-size</code></td><td>每格大小（px），棋盤寬度依此計算；與 board-width 同時設定時以 board-width 為準。</td><td>無</td></tr>
+      <tr><td><code>piece-colors</code></td><td>依序指定 I、O、T、S、Z、J、L 七種方塊的顏色，用逗號分隔；不足的沿用預設色。</td><td>key、yellow、violet、green、red、blue、playful</td></tr>
+      <tr><td><code>controls</code></td><td>按鈕位置：panel 跟著題目面板、board 放在棋盤下方、none 不顯示。</td><td>panel</td></tr>
+      <tr><td><code>label-play</code>、<code>label-replay</code>、<code>label-new</code></td><td>開始、重播、換一局按鈕文字。</td><td>開始消除、重播、換一局</td></tr>
+      <tr><td><code>play-size</code></td><td>開始按鈕尺寸：sm、md、lg、xl，或純數字（rem）。</td><td>md</td></tr>
+      <tr><td><code>confetti</code></td><td>設為 false 時跳過彩帶。</td><td>開啟</td></tr>
+      <tr><td><code>hide-until-play</code>、<code>label-cover</code></td><td>按下開始以前用遮罩隱藏棋盤，以及遮罩上的提示文字。</td><td>不隱藏</td></tr>
+      <tr><td><code>hotkey</code></td><td>設為 false 時不回應快捷鍵。</td><td>回應</td></tr>
+      <tr><td><code>label-title</code>、<code>label-reveal</code>、<code>show-reveal</code></td><td>題目面板標題、揭曉文字（{answer} 換成答案）、是否顯示揭曉文字。</td><td>填空題、答案揭曉：{answer}、顯示</td></tr>
+      <tr><td><code>reveal-color</code>、<code>reveal-bg</code></td><td>揭曉文字的文字色與背景色。</td><td>#C6C7BD、無背景</td></tr>
+      <tr><td><code>chip-shape</code>、<code>chip-bg</code>、<code>chip-color</code></td><td>答案標籤的形狀、底色、文字色。</td><td>pill、#E3D322、#0C0D0C</td></tr>
+      <tr><td><code>panel-class</code></td><td>內建題目區的額外 class；外部面板改用 &lt;tetris-quiz-panel&gt; 的 extra-class。</td><td>無</td></tr>
+      <tr><td><code>show-template</code></td><td>全部播放完畢後，顯示指定 id 的 &lt;template&gt; 內容。</td><td>無</td></tr>
+    </tbody>
+  </table>
+  <table class="attr" style="margin-top:32px">
+    <thead><tr><th>事件與方法</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><code>tetris-start</code></td><td>開始播放時觸發。</td></tr>
+      <tr><td><code>piece-landed</code></td><td>每塊方塊鎖定時觸發，detail 有 index、pieces、shape。</td></tr>
+      <tr><td><code>lines-cleared</code></td><td>每次消行動畫結束時觸發，detail 有 lines（這次消幾行）、cleared（累計）、remaining（剩餘列數）。</td></tr>
+      <tr><td><code>tetris-cleared</code></td><td>棋盤完全消除時觸發，也是 link-when 的 done 事件。</td></tr>
+      <tr><td><code>answer-revealed</code></td><td>答案填入空格時觸發。</td></tr>
+      <tr><td><code>template-shown</code></td><td>show-template 的內容顯示後觸發。</td></tr>
+      <tr><td><code>event.detail</code></td><td>question、answer、cols、rows、pieces（方塊總數）。</td></tr>
+      <tr><td><code>play()</code></td><td>播放或重播目前的劇本。</td></tr>
+      <tr><td><code>regenerate(autoPlay)</code></td><td>生成新劇本，題庫模式下同時換題；autoPlay 預設 true。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="log-area" id="log-area"></div>
+
+<script src="tetris-quiz.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../lw/link-when.js"></script>
+<script>
+  /* 範例六：把事件顯示成 Bootstrap alert */
+  (function () {
+    var area = document.getElementById('log-area');
+    function note(title, text) {
+      var el = document.createElement('div');
+      el.className = 'alert alert-dismissible fade show';
+      el.innerHTML = '<strong>' + title + '</strong> ' + text + '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>';
+      area.appendChild(el);
+      while (area.children.length > 4) area.firstChild.remove();
+      setTimeout(function () { el.remove(); }, 4500);
+    }
+    var t6 = document.getElementById('t6');
+    t6.addEventListener('lines-cleared', function (e) { note('lines-cleared', '消除 ' + e.detail.lines + ' 行，累計 ' + e.detail.cleared + '，剩餘 ' + e.detail.remaining + ' 列。'); });
+    t6.addEventListener('tetris-cleared', function () { note('tetris-cleared', '棋盤完全消除！'); });
+    t6.addEventListener('answer-revealed', function (e) { note('answer-revealed', '答案：' + e.detail.answer); });
+  })();
+</script>
+</body>
+</html>

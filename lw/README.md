@@ -79,6 +79,7 @@
 | `ui-post` | `post-end` |
 | `ui-screen` | `ui-screen:end` |
 | `maze-quiz` | `maze-solved`；有 `show-template` 時為 `template-shown`（template 內容顯示後） |
+| `tetris-quiz` | `tetris-cleared`（棋盤完全消除）；有 `show-template` 時為 `template-shown`（template 內容顯示後） |
 | `ui-check` | `ui-check-done` |
 | `ui-icon-anim` | `anim-end` |
 | `ui-fillin` | `fillin-submit`（送出即觸發，不分對錯） |

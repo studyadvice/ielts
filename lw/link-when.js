@@ -26,6 +26,7 @@
     'ui-post': 'post-end',
     'ui-screen': 'ui-screen:end',
     'maze-quiz': 'maze-solved',
+    'tetris-quiz': 'tetris-cleared',
     'ui-check': 'ui-check-done',
     'ui-icon-anim': 'anim-end',
     'ui-fillin': 'fillin-submit',
@@ -43,6 +44,8 @@
     if (tag === 'ui-blank') return el.getAttribute('mode') === 'cli' ? 'cli-end' : 'blank-submit';
     /* maze-quiz 有 show-template 時，done 等 template 內容顯示後（template-shown）才算，否則是路徑抵達出口（maze-solved） */
     if (tag === 'maze-quiz') return el.hasAttribute('show-template') ? 'template-shown' : 'maze-solved';
+    /* tetris-quiz 同理：有 show-template 時等 template 內容顯示後（template-shown），否則是棋盤完全消除（tetris-cleared） */
+    if (tag === 'tetris-quiz') return el.hasAttribute('show-template') ? 'template-shown' : 'tetris-cleared';
     return DONE_EVENTS[tag] || null;
   };
 
