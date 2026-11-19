@@ -71,6 +71,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | 資料夾 | 檔案 | 主要標籤 | 用途 |
 | --- | --- | --- | --- |
 | [`bd/`](bd/README.md) | `card-badge.js` | `<card-badge>` | 多功能徽章：日期與截止日、未讀計數、過濾清單、複製文字、折疊、輪播等。 |
+| [`charts/`](charts/README.md) | `ui-charts.js` | `<ui-chart>` `<chart-row>` | 靜態圖表：直式長條、橫條、折線、圓餅（含甜甜圈），可放進儀表板格子，也能由 `ui-stream` 徽章或 `md-editor` 的 `chart` 區塊產生。 |
 | [`chk/`](chk/README.md) | `ui-check.js` | `<ui-check>` | 閱讀檢核點按鈕，可把紀錄送到後端。 |
 | [`dash/`](dash/README.md) | `ui-dashboard.js` | `<ui-dashboard>` `<dash-cell>` | 儀表板快速布局：用屬性排出欄與列，每個格子放純 HTML 或任何元件。 |
 | [`diff/`](diff/README.md) | `ui-layer-diff.js` | `<ui-layer-diff>` | 從籠統到具體的逐層改寫，自動標出新增與取代的部分。 |
@@ -1672,7 +1673,7 @@ s.setAttribute('current-part', '2');  // 跳到第二部分
 | 事件 | `detail` | 觸發時機 |
 | --- | --- | --- |
 | `fillin-change` | 選擇題 `{ no, selected }`，輸入題 `{ no, value }` | 作答內容改變時。`selected` 為所選選項文字的陣列。 |
-| `fillin-submit` | `{ results }` | 提交時。`results` 為 `{ no, correct, answered }` 的陣列。 |
+| `fillin-submit` | `{ results, score, total, allCorrect, values, value }` | 提交時。`results` 為 `{ no, correct, answered }` 的陣列；`score` 答對題數、`total` 總題數、`allCorrect` 是否全對（`link-when` 可用 `detail-match="allCorrect:true"`）；`values` 為 `{ no, value }` 的作答內容，`value` 是合併成文字。 |
 | `fillin-reset` | 無 | 按下重做時。 |
 
 三個事件都會冒泡。

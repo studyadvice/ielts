@@ -97,6 +97,7 @@ A 結束後換成 B，並用倒數圓圈蓋住 A、再翻面離開：
 
 - B 是 `ui-post`（需 `mode="live"`）或 `ui-stream`：呼叫 `add()`。作者與名稱用 `detail.name`（`md-editor` 的 `name` 屬性），`ui-post` 沒有時是「我」，`ui-stream` 預設角色是 `student`。其他有 `add()` 的元件也可以。
 - 寫了 `template`：代入記號 `{html}`（轉好的 HTML）、`{text}`、`{markdown}`（同 `{value}`）、`{name}`，除 `{html}` 外一律跳脫成純文字，所以可以放進屬性，例如 `<note-fx text="{text}">`。`ui-play` 只在建立時讀劇本，用這個方式填進容器。
+- 沒寫 `template` 時，若事件 `detail.data` 是選擇器（例如 `ui-stream` 的 `ui-stream:badge`，`data` 是訊息的 `data-chart`），就複製它指向的 `<template>`（或元素）填進 B；後者會去掉 `id` 與 `hidden`。`feed-mode` 同樣控制取代或疊加。
 - 每次送出都會處理（`once` 預設 `false`）。連續送出會排隊，依送出順序一個一個處理，B 的 `hidden` 會在第一次自動顯示。
 - 沒有事件可用時（呼叫 `el.fire()`），會直接向 A 讀取 `value`、`html`、`text`。
 

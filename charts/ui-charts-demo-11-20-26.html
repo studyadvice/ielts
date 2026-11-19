@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-chart 靜態圖表：範例與屬性總覽（11-20-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem;line-height:1.6;margin:0}
+  .wrap{max-width:1680px;margin:0 auto;padding:32px 48px 80px 48px}
+  h1{font-size:2rem;font-weight:800;color:#DBEDD8;margin:0 0 8px 0}
+  h2{font-size:1.375rem;font-weight:700;color:#51DBCF;margin:48px 0 8px 0}
+  p{margin:0 0 12px 0}
+  .lead{font-size:1.0625rem}
+  code{color:#FF91D7;font-size:0.9em}
+  .info{background:#3B2A20;border:1px solid #778CE1;border-radius:12px;padding:16px 20px;margin:16px 0 0 0}
+  .ex{border-top:1px solid #3B2A20;margin:24px 0 0 0;padding:16px 0 0 0}
+  .stage{background:#151515;border:1px dashed #3B2A20;border-radius:16px;padding:16px;min-width:0}
+  .cap{color:#A3C4BC;font-size:0.8125rem;font-weight:700;margin:16px 0 6px 0}
+  pre.code-box{background:#151615;border:1px solid #3B2A20;border-radius:12px;font-size:0.8125rem;margin:0;padding:16px;white-space:pre-wrap;word-break:break-word;overflow:auto}
+  pre.code-box code{color:#DBEDD8}
+  .slot{height:100%;color:#86877F;display:flex;align-items:center;justify-content:center;text-align:center}
+  .slot ui-chart{height:100%}
+  .fillbox{width:100%;height:100%;display:flex;flex-direction:column;gap:8px}
+  .fillbox ui-chart{flex:1 1 auto;min-height:0;height:auto}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.9375rem;margin:8px 0 0 0}
+  table.attr th,table.attr td{border-bottom:1px solid #3B2A20;padding:10px 12px;text-align:left;vertical-align:top}
+  table.attr th{color:#A3C4BC;font-weight:700;background:#151615}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>&lt;ui-chart&gt; 靜態圖表</h1>
+  <p class="lead">直式長條（<code>column</code>）、橫條（<code>bar</code>）、折線（<code>line</code>）、圓餅（<code>pie</code>、<code>donut</code>）、百分比堆疊橫條（<code>stack</code>）。純 SVG，只負責呈現資料，沒有提示、點擊與縮放。放進 <code>ui-dashboard</code> 的單一格子會自動撐滿，並依格子大小重畫。</p>
+  <div class="info">圖表也能「被叫出來」：<code>ui-stream</code> 的訊息加上 <code>badge-click</code>，點徽章時用 <code>link-when do="feed"</code> 在目標格子產生圖表；<code>md-editor</code> 裡寫標記為 <code>chart</code> 的程式碼區塊，預覽與送出都會變成圖表。</div>
+
+  <h2>範例零（11-20-26 新增）：百分比堆疊橫條，用 theme 決定主色</h2>
+  <p><code>type="stack"</code> 每列一條，各段寬度是該列的佔比，數字放在段內，系列名稱（表頭）在第一條上方。只要寫一個 <code>theme</code> 主色，其餘漸層色由元件算出，二個、三個、四個以上系列都適用。第一段是主色，後面依序變淡；主色很淺時自動改為變深，也可用 <code>ramp="dark"</code>（或 <code>light</code>）強制。<code>colors</code> 有寫時優先於 <code>theme</code>。第一條的某一段太窄放不下表頭時，自動改用下方圖例。<code>theme</code> 同樣能用在 <code>column</code>、<code>bar</code>、<code>line</code>、<code>pie</code>。</p>
+  <div class="ex">
+    <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<ui-dashboard areas="a b | c d" col-widths="1fr 1fr" row-height="300 300">
+  <dash-cell area="a" card>
+    <ui-chart type="stack" theme="#2F6F66" title="三個系列" series="Committed romantic relationship,Casual dates,Either">
+      <chart-row label="Men" values="24,27,49"></chart-row>
+      <chart-row label="Women" values="45,18,37"></chart-row>
+    </ui-chart>
+  </dash-cell>
+  <dash-cell area="b" card>
+    <ui-chart type="stack" theme="key" title="二個系列" series="Agree,Disagree">
+      <chart-row label="Under 30" values="62,38"></chart-row>
+      <chart-row label="30 to 50" values="48,52"></chart-row>
+      <chart-row label="Over 50" values="35,65"></chart-row>
+    </ui-chart>
+  </dash-cell>
+  <dash-cell area="c" card>
+    <ui-chart type="stack" theme="playful" unit="%" title="四個系列" series="Strongly agree,Agree,Neutral,Disagree">
+      <chart-row label="Reading" values="30,40,20,10"></chart-row>
+      <chart-row label="Writing" values="12,33,35,20"></chart-row>
+      <chart-row label="Speaking" values="8,22,40,30"></chart-row>
+    </ui-chart>
+  </dash-cell>
+  <dash-cell area="d" card>
+    <ui-chart type="stack" theme="violet" normalize="false" legend="bottom" title="五個系列，不換算成百分比" series="A,B,C,D,E">
+      <chart-row label="Group one" values="10,20,15,5,10"></chart-row>
+      <chart-row label="Group two" values="25,5,5,20,15"></chart-row>
+    </ui-chart>
+  </dash-cell>
+</ui-dashboard>
+</script>
+    </div>
+    <p class="cap">HTML</p>
+    <pre class="code-box"><code></code></pre>
+  </div>
+
+  <h2>範例一：點訊息上的徽章，在右邊格子產生圖表</h2>
+  <p>每則講評的徽章指向各自的圖表（<code>data-chart</code>）。點徽章後，<code>ui-stream</code> 發出 <code>ui-stream:badge</code>，<code>link-when</code> 把 <code>data-chart</code> 指向的 template 複製進目標格子；後點的取代先前的（<code>feed-mode="append"</code> 則疊加）。</p>
+  <div class="ex">
+    <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<ui-dashboard areas="chat view" col-widths="1fr 1.3fr" row-height="470">
+  <dash-cell area="chat" card heading="Task 1 講評">
+    <ui-stream id="st1" autoplay height="380" speed="15" delay="300">
+      <stream-item from="teacher" name="老師" badge="看圖 1" badge-click data-chart="#tc-col">先看總趨勢：海外遊客逐年上升，本地遊客持平。</stream-item>
+      <stream-item from="student" name="Amy">那花費分布呢？</stream-item>
+      <stream-item from="teacher" name="老師" badge="看圖 2" badge-click badge-color="playful" data-chart="#tc-pie">住宿和飲食合計超過一半。</stream-item>
+      <stream-item from="teacher" name="老師" badge="看圖 3" badge-click badge-color="violet" data-chart="#tc-line">網路使用率二十年的變化：城市始終領先。</stream-item>
+    </ui-stream>
+  </dash-cell>
+  <dash-cell area="view" card heading="圖表" scroll="none">
+    <div id="slot1" class="slot">點左邊訊息的徽章，圖表會出現在這裡</div>
+  </dash-cell>
+</ui-dashboard>
+
+<template id="tc-col">
+  <ui-chart type="column" title="Visitors (thousands)" series="Local,Overseas" show-values>
+    <chart-row label="2018" values="52,30"></chart-row>
+    <chart-row label="2019" values="50,38"></chart-row>
+    <chart-row label="2020" values="48,21"></chart-row>
+    <chart-row label="2021" values="51,44"></chart-row>
+    <chart-row label="2022" values="53,61"></chart-row>
+  </ui-chart>
+</template>
+<template id="tc-pie">
+  <ui-chart type="pie" title="Tourist spending" show-values unit="%">
+    <chart-row label="Accommodation" value="32"></chart-row>
+    <chart-row label="Food" value="26"></chart-row>
+    <chart-row label="Transport" value="14"></chart-row>
+    <chart-row label="Shopping" value="18"></chart-row>
+    <chart-row label="Other" value="10"></chart-row>
+  </ui-chart>
+</template>
+<template id="tc-line">
+  <ui-chart type="line" title="Internet users (%)" series="City,Rural" unit="%" y-max="100" y-step="20">
+    <chart-row label="2000" values="18,4"></chart-row>
+    <chart-row label="2005" values="40,12"></chart-row>
+    <chart-row label="2010" values="65,30"></chart-row>
+    <chart-row label="2015" values="82,55"></chart-row>
+    <chart-row label="2020" values="94,78"></chart-row>
+  </ui-chart>
+</template>
+
+<link-when source="#st1" event="ui-stream:badge" target="#slot1" do="feed"></link-when>
+</script>
+    </div>
+    <p class="cap">HTML</p>
+    <pre class="code-box"><code></code></pre>
+  </div>
+
+  <h2>範例二：在 md-editor 寫資料，預覽與送出都變成圖表</h2>
+  <p>輸入框裡寫一個標記為 <code>chart</code> 的程式碼區塊：設定列（<code>type</code>、<code>title</code>、<code>series</code>、<code>unit</code> 等）加上「標籤: 數值, 數值」資料列。切到 Preview 就能看到，按送出則在右邊格子產生圖表；<code>md-submit</code> 的 <code>detail.charts</code> 另外帶解析好的資料。</p>
+  <div class="ex">
+    <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<ui-dashboard areas="ed view" col-widths="1fr 1fr" row-height="620">
+  <dash-cell area="ed" card heading="輸入">
+    <md-editor id="ed2" name="Leo" rows="10" label-submit="畫出圖表" clear="false">
+Describe the chart below.
+
+```chart
+type: bar
+title: Weekly study hours
+unit: h
+Korea: 14
+Japan: 11
+Vietnam: 9
+Taiwan: 8
+```
+    </md-editor>
+  </dash-cell>
+  <dash-cell area="view" card heading="送出後" scroll="none">
+    <div id="slot2" class="slot">按「畫出圖表」，圖表會出現在這裡</div>
+  </dash-cell>
+</ui-dashboard>
+
+<template id="tpl-ed2"><div class="fillbox">{html}</div></template>
+<link-when source="#ed2" event="done" target="#slot2" do="feed" template="#tpl-ed2"></link-when>
+</script>
+    </div>
+    <p class="cap">HTML</p>
+    <pre class="code-box"><code></code></pre>
+  </div>
+
+  <h2>範例三：四種圖放進儀表板的四個格子</h2>
+  <p>每個格子只放一個 <code>&lt;ui-chart&gt;</code>，自動撐滿；改變視窗大小，圖會依格子重畫。</p>
+  <div class="ex">
+    <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<ui-dashboard areas="a b | c d" col-widths="1fr 1fr" row-height="340 340">
+  <dash-cell area="a" card>
+    <ui-chart type="column" title="Visitors (thousands)" series="Local,Overseas" legend="bottom">
+      <chart-row label="2018" values="52,30"></chart-row>
+      <chart-row label="2019" values="50,38"></chart-row>
+      <chart-row label="2020" values="48,21"></chart-row>
+      <chart-row label="2021" values="51,44"></chart-row>
+      <chart-row label="2022" values="53,61"></chart-row>
+    </ui-chart>
+  </dash-cell>
+  <dash-cell area="b" card>
+    <ui-chart type="bar" title="Average weekly study hours" unit=" h" show-values vary>
+      <chart-row label="South Korea" value="14"></chart-row>
+      <chart-row label="Japan" value="11"></chart-row>
+      <chart-row label="Vietnam" value="9"></chart-row>
+      <chart-row label="Taiwan" value="8"></chart-row>
+      <chart-row label="Philippines" value="6"></chart-row>
+    </ui-chart>
+  </dash-cell>
+  <dash-cell area="c" card>
+    <ui-chart type="line" title="Internet users (%)" series="City,Rural" unit="%" y-max="100" y-step="20" x-title="Year" y-title="Share of population">
+      <chart-row label="2000" values="18,4"></chart-row>
+      <chart-row label="2005" values="40,12"></chart-row>
+      <chart-row label="2010" values="65,30"></chart-row>
+      <chart-row label="2015" values="82,55"></chart-row>
+      <chart-row label="2020" values="94,78"></chart-row>
+    </ui-chart>
+  </dash-cell>
+  <dash-cell area="d" card>
+    <ui-chart type="donut" title="Household spending" center="2022" show-values unit="%">
+      <chart-row label="Housing" value="35"></chart-row>
+      <chart-row label="Food" value="25"></chart-row>
+      <chart-row label="Transport" value="15"></chart-row>
+      <chart-row label="Leisure" value="10"></chart-row>
+      <chart-row label="Other" value="15"></chart-row>
+    </ui-chart>
+  </dash-cell>
+</ui-dashboard>
+</script>
+    </div>
+    <p class="cap">HTML</p>
+    <pre class="code-box"><code></code></pre>
+  </div>
+
+  <h2>屬性</h2>
+  <table class="attr">
+    <thead><tr><th style="width:200px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><code>type</code></td><td><code>column</code></td><td><code>column</code> 直式長條、<code>bar</code> 橫條、<code>line</code> 折線、<code>pie</code> 圓餅、<code>donut</code> 甜甜圈、<code>stack</code> 堆疊橫條。</td></tr>
+      <tr><td><code>title</code>、<code>title-align</code></td><td>無、<code>center</code></td><td>圖表標題與對齊（<code>center</code>、<code>left</code>）。</td></tr>
+      <tr><td><code>series</code></td><td>無</td><td>系列名稱，逗號分隔；多系列的長條與折線用。圓餅只取每列的第一個數值。</td></tr>
+      <tr><td><code>unit</code>、<code>prefix</code>、<code>decimals</code></td><td>無、無、自動</td><td>數值後綴（<code>%</code>）、前綴（<code>$</code>）、小數位數。</td></tr>
+      <tr><td><code>y-min</code>、<code>y-max</code>、<code>y-step</code>、<code>ticks</code></td><td>自動、自動、自動、<code>5</code></td><td>數值軸範圍與刻度間距；<code>ticks</code> 是希望的刻度數。長條與折線預設包含 0。橫條圖的數值軸在下方，仍用這幾個屬性。</td></tr>
+      <tr><td><code>grid</code></td><td><code>true</code></td><td>是否畫格線。</td></tr>
+      <tr><td><code>show-values</code></td><td><code>false</code></td><td>在長條、折線的點上、圓餅的標籤中顯示數值。</td></tr>
+      <tr><td><code>show-percent</code>、<code>hole</code>、<code>start-angle</code>、<code>center</code>、<code>sort</code></td><td><code>true</code>、<code>0</code>（donut 為 <code>0.55</code>）、<code>0</code>、無、<code>false</code></td><td>圓餅專用：標籤顯示百分比、中空比例（0 到 0.9）、起始角度（0 在正上方，順時針）、中空處的文字、依大小排序。空間不夠放外側標籤時，自動改用圖例。</td></tr>
+      <tr><td><code>legend</code></td><td>多系列 <code>bottom</code>，否則 <code>none</code></td><td><code>top</code>、<code>bottom</code>、<code>right</code>、<code>none</code>；<code>stack</code> 預設 <code>header</code>（系列名稱在第一條上方）。</td></tr>
+      <tr><td><code>vary</code>、<code>bar-gap</code></td><td><code>false</code>、<code>0.3</code></td><td>單一系列的長條每根用不同顏色（並顯示圖例）；長條組之間的空隙比例。</td></tr>
+      <tr><td><code>markers</code>、<code>line-width</code></td><td><code>true</code>、<code>2.5</code></td><td>折線的資料點與線寬。</td></tr>
+      <tr><td><code>x-title</code>、<code>y-title</code>、<code>label-rotate</code></td><td>無、無、<code>auto</code></td><td>水平軸與垂直軸標題（橫條圖的 <code>x-title</code> 在下方的數值軸）；類別標籤太擠時自動斜放，也可寫角度。</td></tr>
+      <tr><td><code>theme</code>、<code>ramp</code></td><td>無、<code>auto</code></td><td>主色（色票名稱或任何 CSS 顏色），其餘系列色由元件以同色相漸層算出；<code>ramp</code> 可選 <code>auto</code>、<code>light</code>（往淺）、<code>dark</code>（往深）。</td></tr>
+      <tr><td><code>normalize</code></td><td><code>true</code></td><td>只用於 <code>stack</code>：每列換算成 100%；<code>false</code> 時各列寬度依總和相對最大列。</td></tr>
+      <tr><td><code>colors</code></td><td>內建依序色</td><td>系列或扇形的顏色，逗號分隔，色票名稱或色碼；預設依序為 key、playful、violet、green、yellow、pink、blue、red…。</td></tr>
+      <tr><td><code>text-color</code>、<code>title-color</code>、<code>grid-color</code>、<code>axis-color</code>、<code>bg</code></td><td><code>shell</code>、<code>vanilla</code>、<code>bg-alternative</code>、<code>gray</code>、自動</td><td>文字、標題、格線、軸線；<code>bg</code> 只用在扇形之間的分隔線，預設自動取用所在位置的背景色。</td></tr>
+      <tr><td><code>font-size</code>、<code>height</code></td><td><code>1</code>（rem）、<code>320px</code></td><td>基礎字級倍率；單獨使用時的高度（放進撐滿的格子會依格子縮放）。</td></tr>
+      <tr><td><code>label-empty</code></td><td><code>No data</code></td><td>沒有資料時顯示的文字。</td></tr>
+      <tr><td><code>src</code>、<code>data-id</code></td><td>無</td><td>資料來源：JSON 網址、<code>window</code> 上的物件名稱。格式見下。</td></tr>
+    </tbody>
+  </table>
+
+  <h2>資料來源與方法</h2>
+  <table class="attr">
+    <thead><tr><th style="width:240px">寫法</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><code>&lt;chart-row label values&gt;</code></td><td>每列一個標籤與數值；<code>values="30,45"</code> 對應多個系列（逗號或直線分隔），單一系列可寫 <code>value</code>。空白或非數字視為缺值（折線會斷開）。圓餅的每列可用 <code>color</code> 指定顏色。改動子標籤會自動重畫。</td></tr>
+      <tr><td>JSON</td><td><code>{ "type": "line", "series": ["A","B"], "rows": [{ "label": "2010", "values": [1,2] }] }</code>，或直接是 <code>rows</code> 陣列。物件裡的 <code>type</code>、<code>title</code>、<code>unit</code> 等選項只在屬性沒寫時採用。</td></tr>
+      <tr><td><code>el.setData(obj)</code>、<code>el.getData()</code></td><td>用程式設定或讀取資料（格式同 JSON）。設定後不再讀子標籤。</td></tr>
+      <tr><td><code>el.render()</code></td><td>手動重畫。</td></tr>
+      <tr><td><code>ui-chart:render</code> 事件</td><td>每次畫完觸發（會冒泡），<code>detail = { type, width, height }</code>。</td></tr>
+    </tbody>
+  </table>
+
+  <h2>相關更新</h2>
+  <table class="attr">
+    <thead><tr><th style="width:240px">元件</th><th>內容</th></tr></thead>
+    <tbody>
+      <tr><td><code>ui-stream</code></td><td><code>stream-item</code> 新增 <code>badge-click</code>（徽章可點）與 <code>data-chart</code>（指向 template 或元素的選擇器）；點徽章發出 <code>ui-stream:badge</code>，<code>detail = { index, badge, item, role, data }</code>。JSON 用 <code>badgeClick</code>、<code>dataChart</code>。</td></tr>
+      <tr><td><code>link-when</code></td><td><code>do="feed"</code> 在沒寫 <code>template</code> 時，若事件 <code>detail.data</code> 是選擇器，就複製它指向的 template（或元素）填進目標；<code>feed-mode</code> 控制取代或疊加。</td></tr>
+      <tr><td><code>md-editor</code></td><td>標記為 <code>chart</code> 的程式碼區塊轉成 <code>&lt;ui-chart&gt;</code>；<code>md-submit</code> 的 <code>detail.charts</code> 帶解析好的資料。設定列可用的鍵：<code>type</code>、<code>title</code>、<code>series</code>、<code>unit</code>、<code>prefix</code>、<code>decimals</code>、<code>legend</code>、<code>y-min</code>、<code>y-max</code>、<code>y-step</code>、<code>grid</code>、<code>show-values</code>、<code>show-percent</code>、<code>x-title</code>、<code>y-title</code>、<code>hole</code>、<code>start-angle</code>、<code>center</code>、<code>height</code>、<code>vary</code>、<code>markers</code>、<code>sort</code>、<code>theme</code>、<code>ramp</code>、<code>normalize</code>、<code>bar-gap</code>。</td></tr>
+      <tr><td><code>ui-fillin</code></td><td><code>fillin-submit</code> 的 <code>detail</code> 新增 <code>score</code>、<code>total</code>、<code>allCorrect</code>、<code>values</code>、<code>value</code>。可用 <code>detail-match="allCorrect:true"</code> 只在全對時串接，<code>do="feed"</code> 也能送出作答內容。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="ui-charts.js"></script>
+<script src="../dash/ui-dashboard.js"></script>
+<script src="../flow/ui-stream.js"></script>
+<script src="../editor/md-editor.js"></script>
+<script src="../lw/link-when.js"></script>
+<script>
+  document.querySelectorAll('.ex').forEach((ex) => {
+    const src = ex.querySelector('script.demo-src');
+    if (!src) return;
+    const text = src.textContent.replace(/^\n+|\s+$/g, '');
+    ex.querySelector('pre.code-box code').textContent = text;
+    ex.querySelector('.stage').insertAdjacentHTML('beforeend', text);
+  });
+</script>
+</body>
+</html>

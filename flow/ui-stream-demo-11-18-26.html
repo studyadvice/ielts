@@ -48,7 +48,59 @@
 <div class="wrap">
   <h1><code>&lt;ui-stream&gt;</code> 內容流（合併版 11-18-26）</h1>
   <p class="sub">在 stream-item 裡寫 <code>&lt;stamp-fx&gt;</code>、<code>&lt;note-fx&gt;</code>，訊息出現後依序執行。寫法與 ui-play 相同，程式碼內建在 ui-stream.js，不需要載入 ui-play.js。本頁合併了 11-15、11-16、11-18 三份範例：最上面是最新的舞台漸層，往下依序是 11-16 的特效、排版與畫面區，最後是 11-15 的基礎範例（v0.3 到 v0.5）。</p>
-  <nav class="toc"><a href="#grad">新：舞台漸層</a><a href="#ex">範例 1 到 4</a><a href="#layout">排版 layout（範例 5 到 8）</a><a href="#stage">畫面區 stage（範例 9 到 11）</a><a href="#attrs">屬性總覽</a><a href="#base">基礎範例 v0.3 到 v0.5（11-15）</a><a href="#attrs-v05">完整屬性（v0.5）</a><a href="#diff">版本對照</a></nav>
+  <nav class="toc"><a href="#badge">新：可點 badge</a><a href="#grad">新：舞台漸層</a><a href="#ex">範例 1 到 4</a><a href="#layout">排版 layout（範例 5 到 8）</a><a href="#stage">畫面區 stage（範例 9 到 11）</a><a href="#attrs">屬性總覽</a><a href="#base">基礎範例 v0.3 到 v0.5（11-15）</a><a href="#attrs-v05">完整屬性（v0.5）</a><a href="#diff">版本對照</a></nav>
+
+  <h2 class="part" id="badge">11-20-26 新增：可點擊的 badge（badge-click、data-chart）</h2>
+  <section>
+    <div class="sec-title"><h2>新範例 D：點徽章，在旁邊產生圖表</h2><p><code>stream-item</code> 加 <code>badge-click</code>，徽章變成可點；點下去發出 <code>ui-stream:badge</code>，<code>detail.data</code> 是 <code>data-chart</code> 的值。搭配 <code>link-when do="feed"</code>，就會把它指向的 template 複製進目標容器（需要載入 <code>ui-charts.js</code> 與 <code>link-when.js</code>）。</p></div>
+    <style>.bc-fill > ui-chart{width:100%;height:100%}</style>
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;align-items:start">
+  <ui-stream id="bc-st" autoplay height="320" speed="15" delay="300">
+    <stream-item from="teacher" name="老師" badge="看圖 1" badge-click data-chart="#bc-tpl-a">先看海外遊客的變化。</stream-item>
+    <stream-item from="teacher" name="老師" badge="看圖 2" badge-click badge-color="playful" data-chart="#bc-tpl-b">再看花費分布。</stream-item>
+  </ui-stream>
+  <div id="bc-slot" class="bc-fill" style="height:340px;background:#242424;border:1px solid #3B2A20;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;color:#86877F">點左邊的徽章，圖表會出現在這裡</div>
+</div>
+<template id="bc-tpl-a">
+  <ui-chart type="column" title="Visitors (thousands)" series="Local,Overseas" show-values>
+    <chart-row label="2020" values="48,21"></chart-row>
+    <chart-row label="2021" values="51,44"></chart-row>
+    <chart-row label="2022" values="53,61"></chart-row>
+  </ui-chart>
+</template>
+<template id="bc-tpl-b">
+  <ui-chart type="pie" title="Tourist spending" unit="%" show-values>
+    <chart-row label="Accommodation" value="32"></chart-row>
+    <chart-row label="Food" value="26"></chart-row>
+    <chart-row label="Transport" value="14"></chart-row>
+    <chart-row label="Other" value="28"></chart-row>
+  </ui-chart>
+</template>
+<link-when source="#bc-st" event="ui-stream:badge" target="#bc-slot" do="feed"></link-when>
+    <pre style="margin:16px 0 0 0"><code>&lt;div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;align-items:start"&gt;
+  &lt;ui-stream id="bc-st" autoplay height="320" speed="15" delay="300"&gt;
+    &lt;stream-item from="teacher" name="老師" badge="看圖 1" badge-click data-chart="#bc-tpl-a"&gt;先看海外遊客的變化。&lt;/stream-item&gt;
+    &lt;stream-item from="teacher" name="老師" badge="看圖 2" badge-click badge-color="playful" data-chart="#bc-tpl-b"&gt;再看花費分布。&lt;/stream-item&gt;
+  &lt;/ui-stream&gt;
+  &lt;div id="bc-slot" style="height:340px;background:#242424;border:1px solid #3B2A20;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;color:#86877F"&gt;點左邊的徽章，圖表會出現在這裡&lt;/div&gt;
+&lt;/div&gt;
+&lt;template id="bc-tpl-a"&gt;
+  &lt;ui-chart type="column" title="Visitors (thousands)" series="Local,Overseas" show-values&gt;
+    &lt;chart-row label="2020" values="48,21"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="2021" values="51,44"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="2022" values="53,61"&gt;&lt;/chart-row&gt;
+  &lt;/ui-chart&gt;
+&lt;/template&gt;
+&lt;template id="bc-tpl-b"&gt;
+  &lt;ui-chart type="pie" title="Tourist spending" unit="%" show-values&gt;
+    &lt;chart-row label="Accommodation" value="32"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="Food" value="26"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="Transport" value="14"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="Other" value="28"&gt;&lt;/chart-row&gt;
+  &lt;/ui-chart&gt;
+&lt;/template&gt;
+&lt;link-when source="#bc-st" event="ui-stream:badge" target="#bc-slot" do="feed"&gt;&lt;/link-when&gt;</code></pre>
+  </section>
 
   <h2 class="part" id="grad">11-18-26 新增：舞台背景漸層 stage-from、stage-to</h2>
   <template id="g-cover"><div style="text-align:center"><div style="font-size:1rem;color:#86877F;margin:0 0 8px 0">Lesson 6</div><div style="font-size:2.2rem;font-weight:800;color:#DBEDD8">語塊個論</div><div style="font-size:1.2rem;color:#51DBCF;margin:10px 0 0 0">舞台背景：由上到下的雙色漸層</div></div></template>
@@ -1331,6 +1383,8 @@ window.streamData = {
 </script>
 <script src="ui-stream.js"></script>
 <script src="ui-contacts.js"></script>
+<script src="../charts/ui-charts.js"></script>
+<script src="../lw/link-when.js"></script>
 <script>
   /* 範例 11：setStage */
   const e21 = document.getElementById('e21'), e21log = document.getElementById('e21-log');

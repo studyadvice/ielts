@@ -856,7 +856,13 @@ ui-fillin .uf-alert.is-bad{background:var(--uf-bad);border-color:var(--uf-bad);c
       if (this._submitBtn) this._submitBtn.disabled = true;
       this._writeResults(results);
       this._alert(this._lab('label-submitted'), 'info');
-      this.dispatchEvent(new CustomEvent('fillin-submit', { bubbles: true, detail: { results } }));
+      /* score、total、allCorrect 讓 link-when 能用 detail-match="allCorrect:true" 只在全對時串接；value 是作答內容，可給 do="feed" */
+      const values = this._qs.map((q) => ({ no: q.no, value: q.mode === 'text' ? String(q.value || '') : (q.sel || []).map((x) => q.options[x].text).join(' / ') }));
+      const score = results.filter((r) => r.correct).length;
+      this.dispatchEvent(new CustomEvent('fillin-submit', {
+        bubbles: true,
+        detail: { results, score, total: results.length, allCorrect: score === results.length, values, value: values.map((v) => v.no + '. ' + v.value).join('\n') }
+      }));
     }
 
     reset() {

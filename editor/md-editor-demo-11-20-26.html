@@ -35,6 +35,31 @@
   <p class="lead">GitHub 留言框的樣式：Write 與 Preview 分頁，工具列有標題、粗體、斜體、引用、程式碼、連結、三種清單、提及、參照、斜線與復原。送出的內容可以用 <code>&lt;link-when do="feed"&gt;</code> 直接送進 <code>ui-post</code>、<code>ui-stream</code>，或代入 template 填進 <code>ui-play</code>，不需要寫 JavaScript。</p>
   <div class="info">預覽由元件自己轉換，使用者輸入的 HTML 標籤一律跳脫，不會被執行。支援標題、粗斜體、刪除線、行內程式碼與程式碼區塊、引用、巢狀清單、核取清單、連結與圖片（只接受 http、https、mailto、相對路徑）、分隔線，以及 <code>@名稱</code>、<code>#編號</code> 的標色。不支援表格。</div>
 
+  <h2>範例四（11-20-26 新增）：chart 程式碼區塊，預覽與送出都變成圖表</h2>
+  <p>標記為 <code>chart</code> 的程式碼區塊：設定列（<code>type</code>、<code>title</code>、<code>series</code>、<code>unit</code> 等）加上「標籤: 數值, 數值」資料列。切到 Preview 就是 <code>&lt;ui-chart&gt;</code>（需載入 <code>ui-charts.js</code>）；<code>md-submit</code> 的 <code>detail.charts</code> 帶解析好的資料。把圖表放進儀表板格子、由點徽章產生的完整範例見 <a href="../charts/ui-charts-demo-11-20-26.html">ui-chart 範例頁</a>。</p>
+  <div class="ex">
+    <div class="grid2">
+      <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<md-editor id="ed4" name="Leo" rows="11" clear="false" label-submit="送出">
+Describe the chart below.
+
+```chart
+type: column
+title: Visitors (thousands)
+series: Local, Overseas
+2020: 48, 21
+2021: 51, 44
+2022: 53, 61
+```
+</md-editor>
+<pre class="log" id="log4">（按送出，看 detail.charts）</pre>
+</script>
+      </div>
+      <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+    </div>
+  </div>
+
   <h2>範例一：一個輸入框，同時送進 ui-post、ui-stream、ui-play</h2>
   <p>在上面輸入並按 Comment（或 Ctrl + Enter）。三條 <code>link-when</code> 監聽同一個輸入框：前兩個呼叫 <code>add()</code>，第三個把輸入代入 template，填進一開始隱藏的容器，裡面的 <code>ui-play</code> 自動播放。</p>
   <div class="ex">
@@ -189,12 +214,14 @@ I think **online learning** is _better_ because:
   <table class="attr">
     <thead><tr><th style="width:140px">日期</th><th>內容</th></tr></thead>
     <tbody>
+      <tr><td>11-20-26（二）</td><td><code>md-editor.js</code> 1.1.0：標記為 <code>chart</code> 的程式碼區塊轉成 <code>&lt;ui-chart&gt;</code>，<code>md-submit</code> 的 <code>detail</code> 新增 <code>charts</code>。</td></tr>
       <tr><td>11-20-26</td><td><code>md-editor.js</code> 1.0.0 建立。<code>link-when.js</code> 新增 <code>do="feed"</code>、<code>item</code>、<code>feed-as</code>、<code>template</code>、<code>feed-mode</code>，<code>event="done"</code> 對照新增 <code>md-editor</code>。</td></tr>
     </tbody>
   </table>
 </div>
 
 <script src="md-editor.js"></script>
+<script src="../charts/ui-charts.js"></script>
 <script src="../lw/link-when.js"></script>
 <script src="../post/ui-post.js"></script>
 <script src="../flow/ui-stream.js"></script>
@@ -210,6 +237,8 @@ I think **online learning** is _better_ because:
     code.textContent = text;
     stage.insertAdjacentHTML('beforeend', text);
   });
+  const ed4 = document.getElementById('ed4');
+  if (ed4) ed4.addEventListener('md-submit', (e) => { document.getElementById('log4').textContent = 'charts: ' + JSON.stringify(e.detail.charts); });
   const ed2 = document.getElementById('ed2');
   if (ed2) {
     ed2.addEventListener('md-submit', (e) => {

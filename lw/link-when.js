@@ -8,6 +8,7 @@
  *       → B 顯示（enter）→ 對 B 執行 do
  * do="feed"：把 A 事件 detail 裡的輸入內容（md-editor 的 md-submit、ui-blank 的 blank-submit 等）
  *   送進 B：B 是 ui-post(live) 或 ui-stream 就呼叫 add()；寫了 template="#id" 就把內容代入該 template，填進 B 容器。
+ *   事件 detail.data 是選擇器時（ui-stream 的 badge 點擊），複製它指向的 template 或元素填進 B。
  * 本身不顯示任何畫面。不支援 ui-table 與 info-region。
  * ========================================================================= */
 (function () {
@@ -241,12 +242,17 @@
   function feed(b, lw, detail) {
     const p = feedParts(detail);
     const sel = (lw.getAttribute('template') || '').trim();
-    if (sel) {
+    /* 沒寫 template 時，事件 detail.data 若是選擇器（例如 ui-stream 的 data-chart），就複製它指向的 template 或元素 */
+    const dsel = !sel && detail && typeof detail.data === 'string' ? detail.data.trim() : '';
+    if (sel || dsel) {
       let t = null;
-      try { t = document.querySelector(sel); } catch (e) { /* 選擇器錯誤 */ }
-      if (!t || t.localName !== 'template') { console.warn(`[link-when] template「${sel}」不是 <template>。`); return; }
+      try { t = document.querySelector(sel || dsel); } catch (e) { /* 選擇器錯誤 */ }
+      if (!t || (sel && t.localName !== 'template')) { console.warn(`[link-when] ${sel ? 'template' : 'data'}「${sel || dsel}」找不到${sel ? '，或不是 <template>' : ''}。`); return; }
+      let raw;
+      if (t.localName === 'template') raw = t.innerHTML;
+      else { const c = t.cloneNode(true); c.removeAttribute('id'); c.removeAttribute('hidden'); raw = c.outerHTML; }
       // {html} 是轉好的 HTML，其餘一律跳脫成純文字，所以可以放在屬性裡（例如 text="{text}"）
-      const src = t.innerHTML.replace(/\{(html|text|markdown|value|name)\}/g, (m, k) =>
+      const src = raw.replace(/\{(html|text|markdown|value|name)\}/g, (m, k) =>
         k === 'html' ? p.html : esc(k === 'text' ? p.text : k === 'name' ? p.name : p.markdown));
       const holder = document.createElement('template');
       holder.innerHTML = src;

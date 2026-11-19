@@ -68,6 +68,8 @@ ui-stream .us-meta{font-size:var(--us-ms);color:${PALETTE.gray};margin:0 0 4px 0
 ui-stream .us-right .us-meta{justify-content:flex-end;}
 ui-stream .us-meta b{color:var(--us-c);font-weight:700;}
 ui-stream .us-badge{font-size:0.7rem;font-weight:700;border-radius:999px;padding:0 8px;background:var(--us-badge,var(--us-c));color:${PALETTE.base};}
+ui-stream .us-badge-click{cursor:pointer;user-select:none;}
+ui-stream .us-badge-click:hover{box-shadow:0 0 0 2px var(--us-badge,var(--us-c));}
 ui-stream .us-bubble{border:var(--us-bbw,1px) solid var(--us-c);border-radius:var(--us-br);padding:var(--us-bp);line-height:var(--us-lh);color:var(--us-rt,var(--us-text));background:var(--us-bg);}
 ui-stream .us-bubble > :last-child{margin-bottom:0;}
 ui-stream .us-filled .us-bubble{background:var(--us-c);color:var(--us-rt,${PALETTE.base});}
@@ -629,7 +631,7 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
           icon: it.getAttribute('icon'), image: it.getAttribute('image'), initials: it.getAttribute('initials'), side: it.getAttribute('side'), dataStyle: it.getAttribute('data-style'), badge: it.getAttribute('badge'), badgeColor: it.getAttribute('badge-color'), color: it.getAttribute('color'),
           typed: it.hasAttribute('typed'), speed: it.getAttribute('speed'), delay: it.getAttribute('delay'), gap: it.getAttribute('gap'), highlight: it.hasAttribute('highlight'),
           pause: it.getAttribute('pause'), reveal: it.getAttribute('reveal'), revealTarget: it.getAttribute('reveal-target'), textAlign: it.getAttribute('text-align'),
-          stage: it.getAttribute('stage'),
+          stage: it.getAttribute('stage'), badgeClick: it.hasAttribute('badge-click'), dataChart: it.getAttribute('data-chart'),
           html: srcId && !srcEl ? `<span class="us-err">找不到 #${srcId}</span>` : html
         });
       });
@@ -697,6 +699,13 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
         host.append(head);
       }
       this._feed = el('div', 'us-feed'); host.append(this._feed); this.appendChild(wrap);
+      /* 點擊可點的 badge（badge-click）：發出 ui-stream:badge，data 是該則的 data-chart，可搭配 link-when do="feed" */
+      this._feed.addEventListener('click', (e) => {
+        const b = e.target.closest && e.target.closest('.us-badge-click');
+        if (!b) return;
+        const i = +b.dataset.usIdx, d = this._src[i] || {};
+        this.dispatchEvent(new CustomEvent('ui-stream:badge', { bubbles: true, detail: { index: i, badge: b.textContent, item: b.closest('.us-msg'), role: d.from, data: d.dataChart || '' } }));
+      });
       this._stageSet(o.stageStart, false);
       this._fxRuns = new Set(); this._fxLive = []; this._fxNextReq = false;
       if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => UsFx.relayout(this._fxLive)); this._fxRO.observe(this._feed); }
@@ -835,7 +844,7 @@ ui-stream .us-fxstamp-in{display:flex;align-items:center;justify-content:center;
       const nm = d.name || role.label || '';
       // avatar-repeat 不是 all 時，連續發言只在這一串的第一則顯示名字（時間、徽章照常）
       const showName = nm && !(same && rep !== 'all');
-      if (showName || d.time || d.badge) { const m = el('div', 'us-meta'); if (showName) m.append(el('b', null, nm)); if (d.time) m.append(el('span', null, d.time)); if (d.badge) m.append(el('span', 'us-badge', d.badge)); body.append(m); }
+      if (showName || d.time || d.badge) { const m = el('div', 'us-meta'); if (showName) m.append(el('b', null, nm)); if (d.time) m.append(el('span', null, d.time)); if (d.badge) { const bg = el('span', 'us-badge', d.badge); if (d.badgeClick && d.badgeClick !== 'false') { bg.classList.add('us-badge-click'); bg.setAttribute('role', 'button'); bg.dataset.usIdx = String(idx); } m.append(bg); } body.append(m); }
       const bub = el('div', 'us-bubble'); body.append(bub); msg.append(body);
       const ta = d.textAlign || role.textAlign || this._opt.textAlign; if (ta) bub.style.textAlign = ta;
       this._feed.append(msg);

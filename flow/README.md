@@ -539,6 +539,8 @@ ui-contacts 的 `p-msg` 也能寫 `stage`（ui-contacts.js 需同步更新）。
 | `name` | 角色 `label` | 顯示名稱。 |
 | `time` | 無 | 名稱旁的時間文字。 |
 | `badge`、`badge-color` | 無、角色色 | 名稱列的小角標。 |
+| `badge-click` | 關 | 角標可點擊（游標與懸停框線）；點下去發出 `ui-stream:badge`。JSON 寫 `badgeClick`。 |
+| `data-chart` | 無 | 點角標時帶出的選擇器（通常指向 template 或圖表元素），放在 `ui-stream:badge` 的 `detail.data`。搭配 `link-when do="feed"` 在別處產生圖表，見 [`charts/`](../charts/README.md)。JSON 寫 `dataChart`。 |
 | `icon`、`image`、`initials`、`color` | 角色設定 | 只覆寫這一則。 |
 | `side`、`data-style` | 角色設定 | 只覆寫這一則靠哪一邊與氣泡樣式。 |
 | `source` | 無 | 內容改從該 id 的 template 或元素複製。 |
@@ -572,6 +574,7 @@ JSON 為陣列，或 `{ roles, items }`。item 的 `text` 為純文字、`html` 
 | `ui-stream:resume` | `{ index }` | 按下繼續時。 |
 | `ui-stream:done` | `{ total }` | 全部播完時，只發一次。最後一則顯示完就發出，逐則模式不必再多按一次「下一則」。重播、`goto`、`add()` 會重置。 |
 | `ui-stream:stage` | `{ index, value }` | 訊息切換畫面區時（`setStage` 不觸發）。 |
+| `ui-stream:badge` | `{ index, badge, item, role, data }` | 點擊 `badge-click` 的角標時；`data` 是該則的 `data-chart`，沒寫是空字串。 |
 
 ```js
 const s = document.querySelector('ui-stream');

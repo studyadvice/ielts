@@ -7,6 +7,7 @@
  * - 送出（按鈕或 Ctrl/Cmd + Enter）發出 md-submit，detail 為 { markdown, value, html, text, name }。
  * - 搭配 <link-when do="feed"> 可把送出的內容送進 ui-post、ui-stream，或填進 ui-play 的 template。
  * - 預覽的 HTML 由本檔自己轉換，原始輸入一律先跳脫，不會把使用者輸入的標籤執行出來。
+ * - 標記為 chart 的程式碼區塊會轉成 <ui-chart>（需載入 ui-charts.js）；解析好的資料放在 detail.charts。
  * ========================================================================= */
 (function () {
   'use strict';
@@ -58,9 +59,32 @@
     return restore(emph(esc(s)));
   }
 
+  /* ```chart 區塊：key: value 設定列加上「標籤: 數值, 數值」資料列，轉成 <ui-chart>。
+     設定列只認下面這些鍵，其餘都當資料列。 */
+  const CHART_KEYS = ['type', 'title', 'series', 'unit', 'prefix', 'decimals', 'legend', 'y-min', 'y-max', 'y-step', 'grid', 'show-values',
+    'show-percent', 'x-title', 'y-title', 'hole', 'start-angle', 'center', 'height', 'vary', 'markers', 'sort', 'theme', 'ramp', 'normalize', 'bar-gap'];
+  function parseChart(lines) {
+    const opts = {};
+    const rows = [];
+    lines.forEach((ln) => {
+      const m = ln.match(/^\s*([^:：]+?)\s*[:：]\s*(.*?)\s*$/);
+      if (!m) return;
+      const k = m[1].toLowerCase();
+      if (CHART_KEYS.indexOf(k) !== -1) { opts[k] = m[2]; return; }
+      rows.push({ label: m[1], values: m[2].split(/[,，]/).map((x) => { const n = parseFloat(x.replace(/%/g, '')); return Number.isFinite(n) ? n : null; }) });
+    });
+    if (!rows.length) return null;
+    return { opts, rows };
+  }
+  function chartHtml(c) {
+    const attrs = Object.keys(c.opts).map((k) => ' ' + k + '="' + esc(c.opts[k]) + '"').join('');
+    const rows = c.rows.map((r) => '<chart-row label="' + esc(r.label) + '" values="' + r.values.map((v) => (v == null ? '' : v)).join(',') + '"></chart-row>').join('');
+    return '<ui-chart' + attrs + '>' + rows + '</ui-chart>';
+  }
+
   const isBlockStart = (l) => FENCE.test(l) || HEAD.test(l) || HR.test(l) || QUOTE.test(l) || LI.test(l);
 
-  function listHtml(buf) {
+  function listHtml(buf, charts) {
     const indentOf = (l) => l.match(/^(\s*)/)[1].length;
     const base = indentOf(buf[0]);
     const ordered = /^\s*\d/.test(buf[0]);
@@ -76,7 +100,7 @@
       const head = t
         ? '<input type="checkbox" disabled' + (t[1] === ' ' ? '' : ' checked') + '> ' + inline(t[2])
         : inline(it.first);
-      const kids = it.kids.length ? blocksHtml(it.kids) : '';
+      const kids = it.kids.length ? blocksHtml(it.kids, charts) : '';
       return '<li' + (t ? ' class="mde-task"' : '') + '>' + head + kids + '</li>';
     }).join('');
     return ordered
@@ -84,7 +108,7 @@
       : '<ul>' + li + '</ul>';
   }
 
-  function blocksHtml(lines) {
+  function blocksHtml(lines, charts) {
     const out = [];
     let i = 0;
     while (i < lines.length) {
@@ -98,6 +122,14 @@
         i++;
         while (i < lines.length && !close.test(lines[i])) buf.push(lines[i++]);
         i++;
+        if (m[2].toLowerCase() === 'chart') {
+          const c = parseChart(buf);
+          if (c) {
+            out.push(chartHtml(c));
+            if (charts) charts.push(Object.assign({}, c.opts, { rows: c.rows.map((r) => ({ label: r.label, values: r.values.slice() })) }));
+            continue;
+          }
+        }
         out.push('<pre><code' + (m[2] ? ' class="lang-' + esc(m[2]) + '"' : '') + '>' + esc(buf.join('\n')) + '</code></pre>');
         continue;
       }
@@ -107,13 +139,13 @@
       if (QUOTE.test(ln)) {
         const buf = [];
         while (i < lines.length && QUOTE.test(lines[i])) buf.push(lines[i++].replace(/^\s{0,3}>\s?/, ''));
-        out.push('<blockquote>' + blocksHtml(buf) + '</blockquote>');
+        out.push('<blockquote>' + blocksHtml(buf, charts) + '</blockquote>');
         continue;
       }
       if (LI.test(ln)) {
         const buf = [];
         while (i < lines.length && (LI.test(lines[i]) || /^\s+\S/.test(lines[i]))) buf.push(lines[i++]);
-        out.push(listHtml(buf));
+        out.push(listHtml(buf, charts));
         continue;
       }
       const buf = [ln];
@@ -124,7 +156,7 @@
     return out.join('');
   }
 
-  const render = (md) => blocksHtml(String(md == null ? '' : md).replace(/\r\n?/g, '\n').split('\n'));
+  const render = (md, charts) => blocksHtml(String(md == null ? '' : md).replace(/\r\n?/g, '\n').split('\n'), charts);
 
   function toText(html) {
     const t = html.replace(/<\/(p|li|h[1-6]|blockquote|pre)>|<br\s*\/?>/gi, '\n');
@@ -182,6 +214,7 @@ md-editor .mde-prev li.mde-task{list-style:none;margin-left:-20px;}
 md-editor .mde-prev li.mde-task input{accent-color:var(--mde-accent);margin:0 6px 0 0;vertical-align:-1px;}
 md-editor .mde-prev hr{border:0;border-top:1px solid var(--mde-border);margin:16px 0;}
 md-editor .mde-prev img{max-width:100%;}
+md-editor .mde-prev ui-chart{margin:0 0 12px 0;}
 md-editor .mde-prev .mde-mention{color:var(--mde-accent);font-weight:600;}
 md-editor .mde-prev .mde-ref{color:var(--mde-link);}
 md-editor .mde-foot{align-items:center;display:flex;gap:12px;justify-content:flex-end;padding:0 16px 16px 16px;}
@@ -633,10 +666,11 @@ md-editor[disabled] .mde-ta{color:var(--mde-muted);}
         this._ta.focus();
         return false;
       }
-      const html = render(md);
+      const charts = [];
+      const html = render(md, charts);
       this.dispatchEvent(new CustomEvent('md-submit', {
         bubbles: true,
-        detail: { markdown: md, value: md, html, text: toText(html), name: this.getAttribute('name') || '' }
+        detail: { markdown: md, value: md, html, text: toText(html), name: this.getAttribute('name') || '', charts }
       }));
       if (this._clear) this.clear();
       return true;
@@ -644,5 +678,5 @@ md-editor[disabled] .mde-ta{color:var(--mde-muted);}
   }
 
   customElements.define('md-editor', MdEditor);
-  window.MdEditor = { render, toText, version: '1.0.0' };
+  window.MdEditor = { render, toText, version: '1.1.0' };
 })();

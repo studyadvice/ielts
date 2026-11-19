@@ -2,14 +2,14 @@
 
 `<md-editor>` 是 GitHub 留言框樣式的 Markdown 輸入框：Write 與 Preview 分頁，工具列有標題、粗體、斜體、引用、程式碼、連結、項目清單、編號清單、核取清單、提及、參照、斜線與復原。送出的內容可以搭配 [`link-when`](../lw/README.md) 的 `do="feed"`，直接送進 `ui-post`、`ui-stream`，或代入 template 填進 `ui-play`，不需要寫 JavaScript。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.0.0
+- 版本：1.1.0
 - 建立日期：11-20-26
-- 更新日期：11-20-26
+- 更新日期：11-20-26（1.1.0：新增 `chart` 程式碼區塊與 `detail.charts`）
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `md-editor.js` | `<md-editor>` | Markdown 輸入框。 |
-| `md-editor-demo-11-20-26.html` | | 互動範例三則（同時送進三個元件、事件內容、`item` 與 `feed-as`）、屬性與事件總表。 |
+| `md-editor-demo-11-20-26.html` | | 互動範例四則（`chart` 區塊、同時送進三個元件、事件內容、`item` 與 `feed-as`）、屬性與事件總表。 |
 
 ## 目錄
 
@@ -95,7 +95,7 @@
 
 | 名稱 | 說明 |
 | --- | --- |
-| `md-submit` | 送出時觸發。`detail = { markdown, value, html, text, name }`：`value` 與 `markdown` 相同；`html` 是轉好的 HTML；`text` 是去掉格式的純文字。 |
+| `md-submit` | 送出時觸發。`detail = { markdown, value, html, text, name, charts }`：`value` 與 `markdown` 相同；`html` 是轉好的 HTML；`text` 是去掉格式的純文字；`charts` 是 `chart` 區塊解析出的資料陣列。 |
 | `md-change` | 內容改變時觸發，`detail = { markdown, value }`。 |
 | `md-tab` | 切換分頁時觸發，`detail = { tab }`。 |
 | `el.value`、`el.html`、`el.text` | 讀取目前內容（`value` 可寫入）。 |
@@ -107,6 +107,18 @@
 ## 支援的 Markdown
 
 標題（`#` 到 `######`）、粗體、斜體、刪除線、行內程式碼、程式碼區塊（三個反引號，可標語言）、引用、巢狀的項目與編號清單、核取清單（`- [ ]`、`- [x]`）、連結、圖片、分隔線、自動連結，以及 `@名稱`、`#編號` 的標色。換行會直接變成換行。不支援表格。
+
+**圖表區塊。** 標記為 `chart` 的程式碼區塊會轉成 `<ui-chart>`（需另外載入 [`ui-charts.js`](../charts/README.md)）。設定列用 `鍵: 值`，其餘每行是「標籤: 數值, 數值」的資料列；沒有任何資料列時，原樣當一般程式碼區塊。設定列可用的鍵：`type`、`title`、`series`、`unit`、`prefix`、`decimals`、`legend`、`y-min`、`y-max`、`y-step`、`grid`、`show-values`、`show-percent`、`x-title`、`y-title`、`hole`、`start-angle`、`center`、`height`、`vary`、`markers`、`sort`、`theme`、`ramp`、`normalize`、`bar-gap`。
+
+````
+```chart
+type: column
+title: Visitors (thousands)
+series: Local, Overseas
+2020: 48, 21
+2021: 51, 44
+```
+````
 
 安全：原始輸入先全部跳脫，使用者輸入的 HTML 標籤只會顯示成文字；連結與圖片只接受 `http`、`https`、`mailto`、`#`、相對路徑，`javascript:` 等網址不會變成連結。
 

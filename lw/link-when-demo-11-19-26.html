@@ -32,6 +32,58 @@
   <h1><code>&lt;link-when&gt;</code> 元件串接</h1>
   <p class="sub">A 播完時對 B 執行動作，中間可以讓 A 淡出、收合或刪除，並讓 B 移到 A 的位置。本身不顯示任何畫面，不需要寫 JavaScript。不支援 ui-table 與 info-region。</p>
 
+  <!-- 範例 9（11-20-26 新增） -->
+  <section>
+    <h2>範例 9（11-20-26 新增）：點 ui-stream 訊息上的徽章，在目標容器產生圖表（do="feed" 搭配 detail.data）</h2>
+    <p class="desc">事件 <code>ui-stream:badge</code> 的 <code>detail.data</code> 是該則訊息 <code>data-chart</code> 的選擇器。<code>do="feed"</code> 沒寫 <code>template</code> 時，會複製它指向的 template（或元素）填進目標；後點的取代先前的，<code>feed-mode="append"</code> 則疊加。</p>
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;align-items:start">
+  <ui-stream id="lw9-st" autoplay height="320" speed="15" delay="300">
+    <stream-item from="teacher" name="老師" badge="看圖 1" badge-click data-chart="#lw9-tpl-a">先看海外遊客的變化。</stream-item>
+    <stream-item from="teacher" name="老師" badge="看圖 2" badge-click badge-color="playful" data-chart="#lw9-tpl-b">再看花費分布。</stream-item>
+  </ui-stream>
+  <div id="lw9-slot" style="height:340px;background:#242424;border:1px solid #3B2A20;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;color:#86877F">點左邊的徽章，圖表會出現在這裡</div>
+</div>
+<template id="lw9-tpl-a">
+  <ui-chart type="column" title="Visitors (thousands)" series="Local,Overseas" show-values>
+    <chart-row label="2020" values="48,21"></chart-row>
+    <chart-row label="2021" values="51,44"></chart-row>
+    <chart-row label="2022" values="53,61"></chart-row>
+  </ui-chart>
+</template>
+<template id="lw9-tpl-b">
+  <ui-chart type="pie" title="Tourist spending" unit="%" show-values>
+    <chart-row label="Accommodation" value="32"></chart-row>
+    <chart-row label="Food" value="26"></chart-row>
+    <chart-row label="Transport" value="14"></chart-row>
+    <chart-row label="Other" value="28"></chart-row>
+  </ui-chart>
+</template>
+<link-when source="#lw9-st" event="ui-stream:badge" target="#lw9-slot" do="feed"></link-when>
+<pre>&lt;div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;align-items:start"&gt;
+  &lt;ui-stream id="lw9-st" autoplay height="320" speed="15" delay="300"&gt;
+    &lt;stream-item from="teacher" name="老師" badge="看圖 1" badge-click data-chart="#lw9-tpl-a"&gt;先看海外遊客的變化。&lt;/stream-item&gt;
+    &lt;stream-item from="teacher" name="老師" badge="看圖 2" badge-click badge-color="playful" data-chart="#lw9-tpl-b"&gt;再看花費分布。&lt;/stream-item&gt;
+  &lt;/ui-stream&gt;
+  &lt;div id="lw9-slot" style="height:340px;background:#242424;border:1px solid #3B2A20;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;color:#86877F"&gt;點左邊的徽章，圖表會出現在這裡&lt;/div&gt;
+&lt;/div&gt;
+&lt;template id="lw9-tpl-a"&gt;
+  &lt;ui-chart type="column" title="Visitors (thousands)" series="Local,Overseas" show-values&gt;
+    &lt;chart-row label="2020" values="48,21"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="2021" values="51,44"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="2022" values="53,61"&gt;&lt;/chart-row&gt;
+  &lt;/ui-chart&gt;
+&lt;/template&gt;
+&lt;template id="lw9-tpl-b"&gt;
+  &lt;ui-chart type="pie" title="Tourist spending" unit="%" show-values&gt;
+    &lt;chart-row label="Accommodation" value="32"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="Food" value="26"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="Transport" value="14"&gt;&lt;/chart-row&gt;
+    &lt;chart-row label="Other" value="28"&gt;&lt;/chart-row&gt;
+  &lt;/ui-chart&gt;
+&lt;/template&gt;
+&lt;link-when source="#lw9-st" event="ui-stream:badge" target="#lw9-slot" do="feed"&gt;&lt;/link-when&gt;</pre>
+  </section>
+
   <!-- 範例 8（11-20-26 新增） -->
   <section>
     <h2>範例 8（11-20-26 新增）：md-editor 輸入內容送進 ui-stream 與 ui-post（do="feed"）</h2>
@@ -327,6 +379,7 @@
 <script src="../maze/maze-quiz.js"></script>
 <script src="../post/ui-post.js"></script>
 <script src="../editor/md-editor.js"></script>
+<script src="../charts/ui-charts.js"></script>
 <script src="link-when.js"></script>
 <script>
   /* 每次串接完成，在右下角以 Bootstrap alert 顯示 */
