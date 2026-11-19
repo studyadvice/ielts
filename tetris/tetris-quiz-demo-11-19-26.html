@@ -36,16 +36,31 @@
 </head>
 <body>
 <div class="page">
-  <h1>&lt;tetris-quiz&gt; 俄羅斯方塊填空動畫元件 <span class="ver" style="font-size:1rem">1.0.0</span></h1>
+  <h1>&lt;tetris-quiz&gt; 俄羅斯方塊填空動畫元件 <span class="ver" style="font-size:1rem">1.1.0</span></h1>
   <p class="lead-text">棋盤寬度固定 8 欄，列數用 <code>rows</code> 設定。每次重新整理都會生成新的劇本：方塊旋轉、落下、滿行消除，最後棋盤完全清空，答案飛入空格。</p>
   <div class="info-box">劇本先把整個棋盤切成多個四格方塊，再排出由下往上的放置順序，所以最後一塊落下並消行後，棋盤必定完全清空。消行時不使用透明度，改以白色閃爍與縮小呈現。</div>
   <div class="info-box">快捷鍵：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>數字鍵盤 5</kbd>，啟動目前畫面中露出最多的棋盤。</div>
 
-  <h2>範例一：基本用法（預設 8 列）</h2>
+  <h2>範例一：分數與目標分數（新增）</h2>
+  <p class="desc">每次消行都會在消除處冒出得到的分數，棋盤下方顯示累計分數。一次消 n 行得 <code>line-score</code> × n × (n + 1) / 2 分，預設 100、300、600、1000……。上面的棋盤沒有 <code>target-score</code>，完全消除就完成；下面的棋盤設了 <code>target-score</code>，累計分數達標就完成，一輪不夠就自動接下一輪，達標時棋盤上若還有方塊會一併掃除。</p>
+  <p class="desc">沒有目標分數：</p>
+  <tetris-quiz id="t0a" rows="6" board-width="300" drop-speed="14" clear-speed="12" seed="score-a"
+               question="I look forward _____ hearing from you." answer="to"></tetris-quiz>
+  <p class="desc" style="margin-top:24px">目標 1200 分，每行 100 分：</p>
+  <tetris-quiz id="t0b" rows="6" board-width="300" drop-speed="14" clear-speed="12" target-score="1200" line-score="100"
+               question="She has been working here _____ 2019." answer="since"></tetris-quiz>
+  <pre class="code"><code>&lt;tetris-quiz rows="6" question="…" answer="to"&gt;&lt;/tetris-quiz&gt;
+
+&lt;tetris-quiz rows="6" target-score="1200" line-score="100"
+             question="She has been working here _____ 2019." answer="since"&gt;&lt;/tetris-quiz&gt;
+
+&lt;!-- 不顯示分數列：show-score="false"；改文字：label-score="Score" label-target="Goal" --&gt;</code></pre>
+
+  <h2>範例二：基本用法（預設 8 列）</h2>
   <tetris-quiz question="I go _____ every day." answer="jogging"></tetris-quiz>
   <pre class="code"><code>&lt;tetris-quiz question="I go _____ every day." answer="jogging"&gt;&lt;/tetris-quiz&gt;</code></pre>
 
-  <h2>範例二：題庫隨機出題，10 列，加快落下速度</h2>
+  <h2>範例三：題庫隨機出題，10 列，加快落下速度</h2>
   <tetris-quiz rows="10" drop-speed="14" clear-speed="14">
     <script type="application/json">
       [{"q": "I go _____ every day.", "a": "jogging"},
@@ -60,14 +75,14 @@
   &lt;/script&gt;
 &lt;/tetris-quiz&gt;</code></pre>
 
-  <h2>範例三：手動開始，6 列，固定種子，開始前隱藏棋盤</h2>
+  <h2>範例四：手動開始，6 列，固定種子，開始前隱藏棋盤</h2>
   <tetris-quiz rows="6" seed="demo-3" autoplay="false" hide-until-play label-play="開始消除方塊" play-size="lg"
                question="I am looking forward _____ meeting you." answer="to"></tetris-quiz>
   <pre class="code"><code>&lt;tetris-quiz rows="6" seed="demo-3" autoplay="false" hide-until-play
              label-play="開始消除方塊" play-size="lg"
              question="I am looking forward _____ meeting you." answer="to"&gt;&lt;/tetris-quiz&gt;</code></pre>
 
-  <h2>範例四：外部題目面板，指定棋盤寬度與方塊顏色</h2>
+  <h2>範例五：外部題目面板，指定棋盤寬度與方塊顏色</h2>
   <tetris-quiz id="t4" rows="8" board-width="320" controls="board" seed="demo-4"
                piece-colors="pink,yellow,key,green,red,blue,violet" reveal-bg="#71CD76" reveal-color="#0C0D0C"
                question="I usually _____ my homework after dinner." answer="do"></tetris-quiz>
@@ -80,7 +95,7 @@
 &lt;!-- 放在同一網頁任何位置 --&gt;
 &lt;tetris-quiz-panel for="t4" extra-class="p-3 bp-lnh-5"&gt;&lt;/tetris-quiz-panel&gt;</code></pre>
 
-  <h2>範例五：完全消除後顯示解說，再用 link-when 顯示下一區塊</h2>
+  <h2>範例六：完全消除後顯示解說，再用 link-when 顯示下一區塊</h2>
   <p class="desc">答案填入空格後顯示 <code>&lt;template&gt;</code> 的解說（<code>template-shown</code>），接著 <code>&lt;link-when&gt;</code> 用 <code>event="done"</code> 顯示下一區塊。有 <code>show-template</code> 時，<code>done</code> 等的是解說顯示完畢。</p>
   <tetris-quiz id="t5" rows="8" show-template="tpl5"
                question="If I _____ more time, I would learn to play the piano." answer="had"></tetris-quiz>
@@ -101,7 +116,7 @@
 &lt;!-- 沒有 show-template 時，done 等於 tetris-cleared，也可以明確寫出事件名稱 --&gt;
 &lt;link-when source="#t5" event="tetris-cleared" target="#next5" do="show"&gt;&lt;/link-when&gt;</code></pre>
 
-  <h2>範例六：監聽事件（右下角用 Bootstrap alert 顯示）</h2>
+  <h2>範例七：監聽事件（右下角用 Bootstrap alert 顯示）</h2>
   <p class="desc">每消除一次、完全消除、答案填入時，右下角都會出現提示。</p>
   <tetris-quiz id="t6" rows="8" seed="demo-6" question="She is good _____ playing the violin." answer="at"></tetris-quiz>
   <pre class="code"><code>document.addEventListener('lines-cleared', e =&gt; console.log(e.detail.lines, e.detail.remaining));
@@ -118,6 +133,9 @@ document.addEventListener('tetris-cleared', e =&gt; console.log('完全消除', 
       <tr><td><code>seed</code></td><td>亂數種子，固定劇本。</td><td>無</td></tr>
       <tr><td><code>drop-speed</code></td><td>方塊每落一列的毫秒數，範圍 6 到 200；旋轉與平移的節奏跟著調整。</td><td>24</td></tr>
       <tr><td><code>clear-speed</code></td><td>消行時每格縮小的間隔毫秒數，範圍 6 到 120。</td><td>22</td></tr>
+      <tr><td><code>target-score</code></td><td>設定後，累計分數達標就完成（觸發 tetris-cleared，detail.reason 為 score）；一輪不夠自動接下一輪。不設定則完全消除即完成。</td><td>無</td></tr>
+      <tr><td><code>line-score</code></td><td>每行的基本分，一次消 n 行得 line-score × n × (n + 1) / 2 分。</td><td>100</td></tr>
+      <tr><td><code>show-score</code>、<code>label-score</code>、<code>label-target</code></td><td>設為 false 時不顯示分數列；分數與目標的標籤文字。</td><td>顯示、分數、目標</td></tr>
       <tr><td><code>autoplay</code></td><td>設為 false 時需按開始按鈕或快捷鍵。</td><td>自動</td></tr>
       <tr><td><code>board-width</code></td><td>棋盤區寬度；純數字視為 px，也接受 40%、24rem 等寫法。</td><td>380px</td></tr>
       <tr><td><code>cell-size</code></td><td>每格大小（px），棋盤寬度依此計算；與 board-width 同時設定時以 board-width 為準。</td><td>無</td></tr>
@@ -140,8 +158,8 @@ document.addEventListener('tetris-cleared', e =&gt; console.log('完全消除', 
     <tbody>
       <tr><td><code>tetris-start</code></td><td>開始播放時觸發。</td></tr>
       <tr><td><code>piece-landed</code></td><td>每塊方塊鎖定時觸發，detail 有 index、pieces、shape。</td></tr>
-      <tr><td><code>lines-cleared</code></td><td>每次消行動畫結束時觸發，detail 有 lines（這次消幾行）、cleared（累計）、remaining（剩餘列數）。</td></tr>
-      <tr><td><code>tetris-cleared</code></td><td>棋盤完全消除時觸發，也是 link-when 的 done 事件。</td></tr>
+      <tr><td><code>lines-cleared</code></td><td>每次消行動畫結束時觸發，detail 有 lines（這次消幾行）、cleared（本輪累計）、remaining（本輪剩餘列數）、score（這次得分）、total（累計分數）、target、round（第幾輪）。</td></tr>
+      <tr><td><code>tetris-cleared</code></td><td>完成時觸發：沒有 target-score 是棋盤完全消除，有 target-score 是達標；detail 另有 score、target、rounds、reason（perfect 或 score）。也是 link-when 的 done 事件。</td></tr>
       <tr><td><code>answer-revealed</code></td><td>答案填入空格時觸發。</td></tr>
       <tr><td><code>template-shown</code></td><td>show-template 的內容顯示後觸發。</td></tr>
       <tr><td><code>event.detail</code></td><td>question、answer、cols、rows、pieces（方塊總數）。</td></tr>
@@ -168,6 +186,9 @@ document.addEventListener('tetris-cleared', e =&gt; console.log('完全消除', 
       while (area.children.length > 4) area.firstChild.remove();
       setTimeout(function () { el.remove(); }, 4500);
     }
+    var t0 = document.getElementById('t0b');
+    t0.addEventListener('lines-cleared', function (e) { note('lines-cleared', '+' + e.detail.score + '，累計 ' + e.detail.total + ' / ' + e.detail.target + '（第 ' + e.detail.round + ' 輪）'); });
+    t0.addEventListener('tetris-cleared', function (e) { note('tetris-cleared', '完成，原因：' + e.detail.reason + '，共 ' + e.detail.rounds + ' 輪'); });
     var t6 = document.getElementById('t6');
     t6.addEventListener('lines-cleared', function (e) { note('lines-cleared', '消除 ' + e.detail.lines + ' 行，累計 ' + e.detail.cleared + '，剩餘 ' + e.detail.remaining + ' 列。'); });
     t6.addEventListener('tetris-cleared', function () { note('tetris-cleared', '棋盤完全消除！'); });

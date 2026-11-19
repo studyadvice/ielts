@@ -2,20 +2,21 @@
 
 `<tetris-quiz>` 是俄羅斯方塊填空動畫元件。每次載入都會生成一份保證能完全消除的劇本：方塊在出生區旋轉、平移，落下鎖定，滿行時閃白並逐格縮小，上方的列整體下移，最後一塊落下後棋盤完全清空，答案從棋盤中央跳出，飛進題目的空格。棋盤寬度固定 8 欄，列數用 `rows` 設定。題目區可以用 `<tetris-quiz-panel>` 拆到同一網頁的任何位置。元件不使用 Shadow DOM，CSS 由 JS 自動注入，不需要其他函式庫。
 
-- 版本：1.0.0
+- 版本：1.1.0
 - 建立日期：11-19-26
 - 更新日期：11-19-26
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `tetris-quiz.js` | `<tetris-quiz>`、`<tetris-quiz-panel>` | 方塊消除動畫與外部題目面板。 |
-| `tetris-quiz-demo-11-19-26.html` | | 互動範例六則。範例四引用 repo 根目錄的 `bp-styles.css`，範例五引用 `lw/link-when.js`。 |
+| `tetris-quiz-demo-11-19-26.html` | | 互動範例七則，新的在上面。範例五引用 repo 根目錄的 `bp-styles.css`，範例六引用 `lw/link-when.js`。 |
 
 ## 目錄
 
 - [快速開始](#快速開始)
 - [運作方式](#運作方式)
 - [屬性](#屬性)
+- [分數與目標分數](#分數與目標分數)
 - [外部題目面板](#外部題目面板)
 - [題目區額外類別 extra-class、panel-class](#題目區額外類別-extra-classpanel-class)
 - [播放完畢後顯示 template](#播放完畢後顯示-template)
@@ -38,7 +39,7 @@
 
 - 劇本先把 8 欄 × `rows` 列的整個棋盤隨機切成多個四格方塊（I、O、T、S、Z、J、L），再排出放置順序：任何方塊正上方的方塊都比它晚放，所以每塊都能從上方垂直落下，沿途不會被擋住。切出互相卡住的形狀時會自動重切。
 - 每塊方塊先在棋盤上方的出生區旋轉、平移到目標姿勢，再越落越快。落地後有滿行就消除：白色閃兩次，由左到右逐格縮小，上方的列整體下移。同時補滿多行時會一次消多行。
-- 因為整份劇本事先模擬過，最後一塊落下並消行後，棋盤必定完全清空。方塊總數是 `rows` 的兩倍。
+- 因為整份劇本事先模擬過，最後一塊落下並消行後，棋盤必定完全清空。一輪的方塊總數是 `rows` 的兩倍。
 - 題目用兩個以上的底線標示空格，例如 `I go _____ every day.`。沒有底線時，空格接在句尾。
 - 題目可用 `<br>` 換行（也接受 `<br/>`、`<BR>`）；其他標籤一律當作文字顯示，不會執行。題庫的 `q` 也適用。
 - 預設在元件幾乎完全進入畫面時自動播放，確保看得到整個棋盤。
@@ -58,6 +59,11 @@
 | `seed` | 無 | 亂數種子，固定劇本。 |
 | `drop-speed` | `24` | 方塊每落一列的毫秒數，範圍 6 到 200；旋轉與平移的節奏跟著調整。 |
 | `clear-speed` | `22` | 消行時每格縮小的間隔毫秒數，範圍 6 到 120。 |
+| `target-score` | 無 | 目標分數。設定後累計分數達標就完成（見下方「分數與目標分數」）；不設定則完全消除即完成。 |
+| `line-score` | `100` | 每行的基本分，一次消 n 行得 `line-score` × n × (n + 1) / 2 分。 |
+| `show-score` | 顯示 | `false` 時不顯示棋盤下方的分數列。 |
+| `label-score` | `分數` | 分數列的標籤文字。 |
+| `label-target` | `目標` | 目標分數的標籤文字。 |
 | `autoplay` | 自動 | `false` 時需按開始按鈕或快捷鍵。 |
 | `board-width` | `380px` | 棋盤區總寬度；純數字視為 px，也接受 `40%`、`24rem` 等寫法。 |
 | `cell-size` | 無 | 每格大小（px），棋盤寬度依此計算；與 `board-width` 同時設定時以 `board-width` 為準。 |
@@ -83,6 +89,19 @@
 | `show-template` | 無 | 全部播放完畢後，顯示指定 id 的 `<template>` 內容。 |
 
 `question`、`answer`、`rows` 改變時會重建劇本；`piece-colors` 改變時重畫棋盤；其他屬性改變時立即套用。
+
+## 分數與目標分數
+
+- 每次消行時，消除處會冒出「+分數」，棋盤下方的分數列同步累加。一次消 n 行得 `line-score` × n × (n + 1) / 2 分，預設是 100、300、600、1000……。
+- 沒有 `target-score` 時，分數只是顯示，棋盤完全消除就完成。
+- 設了 `target-score` 時，累計分數在某次消行達標的那一刻就完成：不再落下新方塊，棋盤上剩下的方塊一併掃除，接著答案飛入空格。一輪（清空一次棋盤）的分數不夠時，自動換一份新劇本接著玩，最多 40 輪。
+- 分數列在有目標時會顯示「目標」與進度條。達標時的總分可能略高於目標（最後一次消行的分數整筆計入）。
+- 用 `rows` 與 `line-score` 控制一輪能得多少分：列數越多、`line-score` 越高，達到同樣目標需要的輪數越少。
+
+```html
+<tetris-quiz rows="6" target-score="1200" line-score="100"
+             question="She has been working here _____ 2019." answer="since"></tetris-quiz>
+```
 
 ## 外部題目面板
 
@@ -157,12 +176,12 @@
 | 名稱 | 說明 |
 | --- | --- |
 | `tetris-start` | 開始播放時觸發。 |
-| `piece-landed` | 每塊方塊鎖定時觸發，`detail` 另有 `index`、`pieces`、`shape`。 |
-| `lines-cleared` | 每次消行動畫結束時觸發，`detail` 另有 `lines`（這次消幾行）、`cleared`（累計）、`remaining`（剩餘列數）。 |
-| `tetris-cleared` | 棋盤完全消除時觸發，也是 link-when 的 `done` 事件。 |
+| `piece-landed` | 每塊方塊鎖定時觸發，`detail` 另有 `index`、`pieces`、`shape`、`round`。 |
+| `lines-cleared` | 每次消行動畫結束時觸發，`detail` 另有 `lines`（這次消幾行）、`cleared`（本輪累計）、`remaining`（本輪剩餘列數）、`score`（這次得分）、`total`（累計分數）、`target`、`round`（第幾輪）。 |
+| `tetris-cleared` | 完成時觸發：沒有 `target-score` 是棋盤完全消除，有 `target-score` 是累計分數達標。`detail` 另有 `score`、`target`、`rounds`、`reason`（`perfect` 或 `score`）。也是 link-when 的 `done` 事件。 |
 | `answer-revealed` | 答案填入空格時觸發。 |
 | `template-shown` | `show-template` 的內容顯示後觸發。 |
-| `event.detail` | `question`、`answer`、`cols`（固定 8）、`rows`、`pieces`（方塊總數）。 |
+| `event.detail` | `question`、`answer`、`cols`（固定 8）、`rows`、`pieces`（劇本的方塊總數，多輪時為全部輪數的總和）。 |
 | `play()` | 播放或重播目前的劇本。 |
 | `regenerate(autoPlay)` | 生成新劇本，題庫模式下同時換題；`autoPlay` 預設 `true`。 |
 
@@ -174,6 +193,7 @@ document.addEventListener('tetris-cleared', e => console.log(e.detail.answer));
 
 | 版本 | 內容 |
 | --- | --- |
+| 1.1.0 | 新增分數：消行時冒出得分、分數列與進度條；`target-score`、`line-score`、`show-score`、`label-score`、`label-target`；`lines-cleared` 與 `tetris-cleared` 的 `detail` 增加分數欄位。 |
 | 1.0.0 | 初版：保證完全消除的劇本生成、方塊旋轉與落下動畫、滿行消除、外部題目面板、`piece-colors`、`show-template`、`link-when` 串接。 |
 
 ## 授權

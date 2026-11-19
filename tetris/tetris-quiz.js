@@ -35,6 +35,13 @@ tetris-quiz .tq-cover-mark{font-size:4rem;font-weight:800;line-height:1;color:#3
 tetris-quiz .tq-cover-text{font-size:1rem;color:#86877F}
 tetris-quiz .tq-board.is-concealed .tq-cover{display:flex}
 tetris-quiz .tq-board.is-concealed .tq-svg{visibility:hidden}
+tetris-quiz .tq-hud{width:100%;display:flex;flex-direction:column;gap:8px}
+tetris-quiz .tq-hud-row{display:flex;align-items:baseline;gap:12px}
+tetris-quiz .tq-hud-label{font-size:.875rem;font-weight:700;letter-spacing:.08em;color:#A3C4BC}
+tetris-quiz .tq-hud-score{font-size:1.75rem;font-weight:800;line-height:1.2;color:#E3D322;font-variant-numeric:tabular-nums}
+tetris-quiz .tq-hud-target{margin-left:auto;font-size:.875rem;color:#86877F}
+tetris-quiz .tq-hud-bar{height:8px;border-radius:999px;background:#3B2A20;overflow:hidden}
+tetris-quiz .tq-hud-fill{height:100%;width:0;border-radius:999px;background:#51DBCF;transition:width .3s}
 tetris-quiz .tq-wrap > .tq-panel{flex:1 1 0;min-width:0}
 ${H} .tq-panel{display:flex;flex-direction:column;justify-content:center}
 ${L} .tq-panel{gap:24px;background:#3B2A20;border-radius:12px;padding:32px;font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
@@ -281,8 +288,8 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
     return out.length === n ? out : null;
   }
 
-  // 生成並模擬整份劇本：每塊的起始姿勢、旋轉與平移動作、落點、落地後要消除的列。
-  function buildScript(rows, rand) {
+  // 生成並模擬一輪劇本：每塊的起始姿勢、旋轉與平移動作、落點、落地後要消除的列。
+  function buildRound(rows, rand) {
     let tiled = null, order = null;
     for (let t = 0; t < 400 && !order; t++) {
       tiled = tilePieces(rows, rand);
@@ -334,10 +341,36 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
         while (keep.length < rows) keep.unshift(new Array(COLS).fill(false));
         occ = keep;
       }
-      steps.push({ shape: p.shape, to, start, actions, x: p.x, y, clear: full });
+      const left = occ.reduce((n, row) => n + row.filter(Boolean).length, 0);
+      steps.push({ shape: p.shape, to, start, actions, x: p.x, y, clear: full, left });
     }
     const perfect = occ.every(row => row.every(v => !v));
     return { steps, perfect, rows };
+  }
+
+  // 一次消 n 行的得分：base × n × (n + 1) / 2，即 100、300、600、1000……
+  const lineScore = (n, base) => base * n * (n + 1) / 2;
+
+  // 完整劇本：沒有目標分數時是一輪（完全消除即完成）；有目標分數時一輪接一輪，
+  // 累計分數在某次消行達標的那一刻就結束，棋盤上若還有方塊，結尾時一併掃除。
+  function buildScript(rows, rand, opts) {
+    const base = opts && opts.base > 0 ? opts.base : 100;
+    const target = opts && opts.target > 0 ? opts.target : 0;
+    const MAX_ROUNDS = 40;
+    const steps = [];
+    let total = 0, round = 0, reached = false, sweep = false;
+    do {
+      const r = buildRound(rows, rand);
+      round++;
+      for (let i = 0; i < r.steps.length; i++) {
+        const st = r.steps[i];
+        const gain = st.clear.length ? lineScore(st.clear.length, base) : 0;
+        total += gain;
+        steps.push(Object.assign(st, { score: gain, total, round, newRound: round > 1 && i === 0 }));
+        if (target && total >= target && gain) { reached = true; sweep = st.left > 0; break; }
+      }
+    } while (target && !reached && round < MAX_ROUNDS);
+    return { steps, rows, total, target, base, rounds: round, reached: reached || !target, sweep };
   }
   /* <<< engine */
   /* ---------- 彩帶（全頁共用一個 canvas，不使用透明度，以縮小或落出畫面方式退場） ---------- */
@@ -477,7 +510,8 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
     static get observedAttributes() {
       return ['question', 'answer', 'rows', 'board-width', 'cell-size', 'piece-colors', 'controls',
         'label-play', 'label-replay', 'label-new', 'label-cover', 'play-size', 'hide-until-play',
-        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'panel-class', 'show-template'];
+        'label-title', 'label-reveal', 'show-reveal', 'reveal-color', 'reveal-bg', 'panel-class', 'show-template',
+        'target-score', 'line-score', 'show-score', 'label-score', 'label-target'];
     }
 
     constructor() {
@@ -577,6 +611,11 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
         case 'reveal-bg':
           this._paintStatus();
           break;
+        case 'show-score':
+        case 'label-score':
+        case 'label-target':
+          this._applyHud();
+          break;
         case 'piece-colors':
           this._cancel();
           this._renderBoard();
@@ -618,11 +657,17 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
         ? mulberry32(hashString(seedAttr) + this._gen)
         : Math.random;
       this._gen++;
-      this._script = buildScript(rows, rand);
+      this._script = buildScript(rows, rand, {
+        target: this._int('target-score', 0, 0, 1e9),
+        base: this._int('line-score', 100, 1, 1e6)
+      });
       this._steps = this._script.steps.length;
+      this._target = this._script.target;
 
       this._applySize();
       this._renderBoard();
+      this._setScore(0, false);
+      this._applyHud();
       this._revealed = false;
       this._hideTemplate();
       this._renderQuestion();
@@ -775,26 +820,108 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
       const act = clamp(speed * 3, 50, 260);
       const shrink = this._int('clear-speed', 22, 6, 120);
       let cleared = 0;
-      this._emit('tetris-start', { pieces: sc.steps.length });
+      this._emit('tetris-start', { pieces: sc.steps.length, target: sc.target });
       try {
         for (let i = 0; i < sc.steps.length; i++) {
           const st = sc.steps[i];
+          if (st.newRound) {
+            cleared = 0;
+            this._setStatus(`第 ${st.round} 輪`);
+            await this._sleep(run, act * 4);
+          }
           await this._dropPiece(run, st, speed, act);
-          this._emit('piece-landed', { index: i + 1, pieces: sc.steps.length, shape: SHAPE_KEYS[st.shape] });
+          this._emit('piece-landed', { index: i + 1, pieces: sc.steps.length, shape: SHAPE_KEYS[st.shape], round: st.round });
           if (st.clear.length) {
             this._setStatus(`消除 ${st.clear.length} 行！`);
-            await this._clearRows(run, st.clear, act, shrink);
+            await this._clearRows(run, st.clear, act, shrink, () => {
+              this._popScore(st.clear, st.score);
+              this._setScore(st.total, true);
+            });
             cleared += st.clear.length;
-            this._emit('lines-cleared', { lines: st.clear.length, cleared, remaining: this._rows - cleared });
+            this._emit('lines-cleared', {
+              lines: st.clear.length, cleared, remaining: this._rows - cleared,
+              score: st.score, total: st.total, target: sc.target, round: st.round
+            });
             this._setStatus('方塊落下中……');
           }
         }
+        if (sc.sweep) await this._sweepBoard(run, shrink);
         await this._sleep(run, 120);
       } catch (e) {
         if (e === CANCEL) return;
         throw e;
       }
       this._arrive(run);
+    }
+
+    // 達到目標分數時，棋盤上剩下的方塊一併掃除。
+    async _sweepBoard(run, shrink) {
+      this._setStatus('達到目標分數，清場！');
+      const list = [];
+      this._grid.forEach((row, r) => row.forEach((el, x) => {
+        if (!el) return;
+        list.push(el.animate(
+          [{ transform: 'scale(1)' }, { transform: 'scale(0)' }],
+          { duration: 220, delay: (this._rows - 1 - r) * shrink * 2 + x * shrink, easing: 'ease-in', fill: 'forwards' }));
+      }));
+      await this._anims(run, list);
+      this._clearBoard();
+    }
+
+    /* ----- 分數 ----- */
+    _fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+
+    _applyHud() {
+      if (!this.$hud) return;
+      const show = (this.getAttribute('show-score') || '').toLowerCase() !== 'false';
+      this.$hud.style.display = show ? '' : 'none';
+      this.$hudLabel.textContent = this._label('label-score', '分數');
+      const t = this._target || 0;
+      this.$hudTarget.textContent = t ? `${this._label('label-target', '目標')} ${this._fmt(t)}` : '';
+      this.$hudBar.style.display = t ? '' : 'none';
+      this._paintScore(this._score || 0);
+    }
+
+    _paintScore(v) {
+      this.$hudScore.textContent = this._fmt(v);
+      const t = this._target || 0;
+      this.$hudFill.style.width = t ? `${clamp(v / t, 0, 1) * 100}%` : '0%';
+    }
+
+    _setScore(v, animate) {
+      cancelAnimationFrame(this._sraf);
+      const from = this._score || 0;
+      this._score = v;
+      if (!this.$hud) return;
+      if (!animate || from === v) { this._paintScore(v); return; }
+      const t0 = performance.now(), dur = 420;
+      const tick = (now) => {
+        const p = clamp((now - t0) / dur, 0, 1);
+        this._paintScore(from + (v - from) * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) this._sraf = requestAnimationFrame(tick);
+      };
+      this._sraf = requestAnimationFrame(tick);
+    }
+
+    // 消行處冒出「+分數」：往上飄並縮小消失（不使用透明度）。
+    _popScore(rowsList, gain) {
+      if (!gain || !this._vb) return;
+      const avg = rowsList.reduce((a, b) => a + b, 0) / rowsList.length;
+      const el = document.createElement('div');
+      el.textContent = `+${this._fmt(gain)}`;
+      el.style.cssText = `position:absolute;left:50%;top:${(py(avg + 0.5) / this._vb.h * 100).toFixed(2)}%;` +
+        `font-size:${(1.75 * this._k).toFixed(2)}rem;font-weight:800;line-height:1;color:#B6FF00;` +
+        'pointer-events:none;white-space:nowrap;z-index:2;transform:translate(-50%,-50%) scale(.5)';
+      this.$board.appendChild(el);
+      const run = this._runId;
+      const anim = el.animate([
+        { transform: 'translate(-50%,-50%) scale(.5)', offset: 0 },
+        { transform: 'translate(-50%,-90%) scale(1.15)', offset: 0.35 },
+        { transform: 'translate(-50%,-150%) scale(1)', offset: 0.75 },
+        { transform: 'translate(-50%,-190%) scale(0)', offset: 1 }
+      ], { duration: 950, easing: 'ease-out', fill: 'forwards' });
+      anim.finished.then(() => el.remove(), () => el.remove());
+      if (run !== this._runId) el.remove();
     }
 
     _mkRect(color) {
@@ -851,7 +978,7 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
       await this._sleep(run, act * 0.7);
     }
 
-    async _clearRows(run, rowsList, act, shrink) {
+    async _clearRows(run, rowsList, act, shrink, onShrink) {
       const set = new Set(rowsList);
       const rectsOf = (r) => this._grid[r].filter(Boolean);
       // 閃白兩次（不用透明度，改成色塊在白色與原色之間切換）
@@ -861,6 +988,7 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
         rowsList.forEach(r => rectsOf(r).forEach(el => el.setAttribute('fill', el.dataset.fill)));
         await this._sleep(run, act * 0.9);
       }
+      if (onShrink) onShrink();
       // 由左到右逐格縮小
       const shrinking = [];
       rowsList.forEach(r => this._grid[r].forEach((el, x) => {
@@ -895,8 +1023,10 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
     }
 
     _arrive(run) {
-      this._setStatus('完全消除！');
-      this._emit('tetris-cleared');
+      const sc = this._script;
+      const byScore = !!sc.target;
+      this._setStatus(byScore ? '達到目標分數！' : '完全消除！');
+      this._emit('tetris-cleared', { score: sc.total, target: sc.target, rounds: sc.rounds, reason: byScore ? 'score' : 'perfect' });
       const p = this._centerScreenPoint();
       const k = this._k;
       this.$walls.animate(
@@ -1018,6 +1148,7 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
         this.$blank.textContent = '';
         this.$blank.classList.remove('is-filled');
       }
+      this._setScore(0, false);
       this._clearBoard();
     }
 
@@ -1032,6 +1163,7 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
     _cancel() {
       this._runId++;
       cancelAnimationFrame(this._raf);
+      cancelAnimationFrame(this._sraf);
       this._timers.forEach(clearTimeout);
       this._timers = [];
       if (this._chip) { this._chip.remove(); this._chip = null; }
@@ -1212,6 +1344,10 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
       <svg class="tq-svg" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="tq-cover"><div class="tq-cover-mark">?</div><div class="tq-cover-text"></div></div>
     </div>
+    <div class="tq-hud">
+      <div class="tq-hud-row"><span class="tq-hud-label"></span><span class="tq-hud-score">0</span><span class="tq-hud-target"></span></div>
+      <div class="tq-hud-bar"><div class="tq-hud-fill"></div></div>
+    </div>
   </div>
   <div class="tq-panel"></div>
 </div>`;
@@ -1220,6 +1356,12 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
       this.$svg = this.querySelector('.tq-svg');
       this.$board = this.querySelector('.tq-board');
       this.$coverText = this.querySelector('.tq-cover-text');
+      this.$hud = this.querySelector('.tq-hud');
+      this.$hudLabel = this.querySelector('.tq-hud-label');
+      this.$hudScore = this.querySelector('.tq-hud-score');
+      this.$hudTarget = this.querySelector('.tq-hud-target');
+      this.$hudBar = this.querySelector('.tq-hud-bar');
+      this.$hudFill = this.querySelector('.tq-hud-fill');
       this.$innerPanel = this.querySelector('.tq-wrap > .tq-panel');
       this._applyPanelClass();
       this.$actions = document.createElement('div');
