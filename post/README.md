@@ -6,12 +6,12 @@
 - 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
 - 11-17-26：`post-item` 新增 `bg-color`、`border-color`、`border-width`、`border-style`；新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大、`post-item` 的可點擊自訂徽章（`badge`，需搭配 `bp-popnote.js`）
 - 11-18-26：新增 `head-style="linkedin"`、`headline`、`follow` 系列屬性與 `post-follow` 事件；`compact` 再縮小一輪（頭像 30px 改 24px，內距與字級縮小，會改變既有 compact 頁面的外觀）。
-- 11-19-26：`post-item` 新增 `electric` 金色電流框特殊訊息（含 `electric-color`、`electric-hot-color`、`electric-speed`）與 `pause`（停住等按「繼續」）；新增 `<remove-fx>` 移除先前的效果；`ui-post` 新增 `btn-color`（控制列按鈕反色）與 `continue-label`；新增 `post-pause`、`post-continue` 事件。
+- 11-19-26：`remove-fx` 與 ui-play 統一，支援 `name`（效果標籤加 `name`，依名稱移除）與 `speed`；`post-item` 新增 `electric` 金色電流框特殊訊息（含 `electric-color`、`electric-hot-color`、`electric-speed`）與 `pause`（停住等按「繼續」）；新增 `<remove-fx>` 移除先前的效果；`ui-post` 新增 `btn-color`（控制列按鈕反色）與 `continue-label`；新增 `post-pause`、`post-continue` 事件。
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-19-26.html` | | 整合範例 32 則（新增 `remove-fx`、`pause`、`btn-color`、`electric` 金色電流框，另含 LinkedIn 作者區塊與更緊湊的 compact、基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-18-26 的整合範例。 |
+| `ui-post-demo-11-19-26.html` | | 整合範例 33 則（新增 `remove-fx`、`pause`、`btn-color`、`electric` 金色電流框，另含 LinkedIn 作者區塊與更緊湊的 compact、基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-18-26 的整合範例。 |
 
 ## 目錄
 
@@ -220,7 +220,7 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 
 ## remove-fx 移除先前的效果
 
-`<remove-fx>` 寫在 `post-item` 裡，放在要移除的效果後面，把先前的 `stamp-fx`、`note-fx`、`mark-fx` 淡出移除。標籤不需要內文。
+`<remove-fx>` 寫在 `post-item` 裡，放在要移除的效果後面，把先前的 `stamp-fx`、`note-fx`、`mark-fx` 淡出移除。標籤不需要內文。寫法與 [ui-play](../flow/README.md#ui-playjs) 的 `remove-fx` 一致：效果標籤加 `name`，用 `name` 移除；另外 `ui-post` 還能用位置（`target`、`text`、`nth`）指定。
 
 ```html
 <post-item author="Nelson">
@@ -231,13 +231,21 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
   <remove-fx effect="stamp" delay="1200" fade-out="500"></remove-fx>
   <remove-fx text="at" effect="mark" delay="600"></remove-fx>
 </post-item>
+
+<!-- 與 ui-play 相同的依名稱寫法 -->
+<post-item author="Nelson">
+  I reached at the hotel on time.
+  <mark-fx kind="strike" text="at" name="m1"></mark-fx>
+  <remove-fx name="m1" delay="1500" speed="500"></remove-fx>
+</post-item>
 ```
 
 | 屬性 | 預設 | 說明 |
 | --- | --- | --- |
-| `target`、`text`、`nth` | 這則內容、無、`1` | 指到先前效果作用的位置，寫法同其他效果標籤；沒寫 `target` 就是這則留言文字。可以跨留言：`target` 指到頁面上唯一的元素（例如 id）即可。 |
+| `name` | 無 | 依效果標籤上的 `name` 移除，逗號分隔多個，與 `ui-play` 一致。寫了就只依名稱比對，不看 `target`、`text`；同名的效果一起移除，可以跨留言。 |
+| `target`、`text`、`nth` | 這則內容、無、`1` | 沒寫 `name` 時，指到先前效果作用的位置，寫法同其他效果標籤；沒寫 `target` 就是這則留言文字。可以跨留言：`target` 指到頁面上唯一的元素（例如 id）即可。 |
 | `effect` | 全部 | `stamp`、`note`、`mark`，只移除該類。 |
-| `fade-out` | `300` | 淡出毫秒數；`kind="color"` 的 `mark-fx` 被移除時，文字還原原色。 |
+| `speed`、`fade-out` | `300` | 淡出毫秒數；`speed` 與 `ui-play` 相同，兩個都寫時 `speed` 優先；`kind="color"` 的 `mark-fx` 被移除時，文字還原原色。 |
 | `start`、`delay` | `after`、`0` | 用法同其他效果標籤。 |
 
 按重播會清空效果的登記，從頭再跑。

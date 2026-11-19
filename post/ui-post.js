@@ -367,7 +367,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     /* 記錄每個已出現的效果，讓 <remove-fx> 事後找得到並移除 */
     function reg(ctx, el, kind, tg, node, drop, undo) {
       if (!ctx.reg) return;
-      ctx.reg.push({ kind, sel: (el.getAttribute('target') || '').trim(), text: el.getAttribute('text') || '', nth: String(parseInt(el.getAttribute('nth'), 10) || 1), targets: tg, node, drop, undo });
+      ctx.reg.push({ kind, name: (el.getAttribute('name') || '').trim(), sel: (el.getAttribute('target') || '').trim(), text: el.getAttribute('text') || '', nth: String(parseInt(el.getAttribute('nth'), 10) || 1), targets: tg, node, drop, undo });
     }
     function keep(ctx, place) { ctx.live.push(place); return () => { const i = ctx.live.indexOf(place); if (i >= 0) ctx.live.splice(i, 1); }; }
     function stayFor(run, el, node, drop, def) {
@@ -708,17 +708,18 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       stayFor(run, el, svg, drop, 300);
     }
 
-    /* <remove-fx target="..." text="..." nth="..." effect="stamp|note|mark" fade-out="300">：移除先前指定的效果 */
+    /* <remove-fx name="a,b">（與 ui-play 相同：移除指定名稱的效果）或 <remove-fx target="..." text="..." nth="..." effect="stamp|note|mark">；淡出時間用 speed（同 ui-play）或 fade-out，預設 300 */
     async function removeFx(run, el, ctx) {
       const list = ctx.reg || [];
       const sel = (el.getAttribute('target') || '').trim();
       const text = el.getAttribute('text') || '';
       const nth = String(parseInt(el.getAttribute('nth'), 10) || 1);
       const only = (el.getAttribute('effect') || '').trim().toLowerCase();
-      const cur = targets(el, ctx);
-      const hit = list.filter((e) => (!only || e.kind === only) && (e.targets.some((t) => cur.includes(t)) || (sel && e.sel === sel && e.text === text && e.nth === nth)));
+      const names = (el.getAttribute('name') || '').split(',').map((x) => x.trim()).filter(Boolean);
+      const cur = names.length ? [] : targets(el, ctx);
+      const hit = list.filter((e) => (!only || e.kind === only) && (names.length ? (e.name && names.indexOf(e.name) !== -1) : (e.targets.some((t) => cur.includes(t)) || (sel && e.sel === sel && e.text === text && e.nth === nth))));
       if (!hit.length) return;
-      const ms = num(el.getAttribute('fade-out'), 300);
+      const ms = num(el.getAttribute('speed') !== null ? el.getAttribute('speed') : el.getAttribute('fade-out'), 300);
       await Promise.all(hit.map(async (e) => {
         const i = list.indexOf(e); if (i >= 0) list.splice(i, 1);
         if (e.undo) e.undo();

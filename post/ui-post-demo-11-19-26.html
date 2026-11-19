@@ -49,10 +49,37 @@ a{color:#51DBCF;}
   <h1>&lt;ui-post&gt; 社群貼文留言動畫</h1>
   <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。11-17-26 新增第五段：<code>&lt;mark-fx&gt;</code> 文字標記、講評標籤圖示、<code>drop-cap</code> 首字放大、可點擊的自訂徽章（搭配 bp-popnote）。　11-19-26 新增：<code>post-item</code> 的 <code>electric</code> 金色電流框與 <code>pause</code>、<code>&lt;remove-fx&gt;</code>、<code>ui-post</code> 的 <code>btn-color</code>。</p>
   <nav class="toc">
-    <a href="#remove-fx">新增：remove-fx</a><a href="#pause">新增：pause</a><a href="#btn-color">新增：btn-color</a><a href="#electric">新增：electric 金色電流框</a><a href="#new">新增：LinkedIn 作者區塊與更緊湊的 compact</a><a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
+    <a href="#remove-name">新增：remove-fx 的 name</a><a href="#remove-fx">新增：remove-fx</a><a href="#pause">新增：pause</a><a href="#btn-color">新增：btn-color</a><a href="#electric">新增：electric 金色電流框</a><a href="#new">新增：LinkedIn 作者區塊與更緊湊的 compact</a><a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
   </nav>
 
   <!-- ══════════ 新增（11-19-26） ══════════ -->
+  <section class="part" id="remove-name">
+    <h2>新增（11-19-26 追加）：remove-fx 支援 name 與 speed，與 ui-play 一致</h2>
+    <p class="lead">效果標籤（<code>stamp-fx</code>、<code>note-fx</code>、<code>mark-fx</code>）可以加 <code>name</code>，<code>&lt;remove-fx name="a,b"&gt;</code> 依名稱移除（逗號分隔多個），寫法與 <code>ui-play</code> 相同；淡出時間也可以用 <code>speed</code>（同 <code>ui-play</code>，預設 300），原本的 <code>fade-out</code> 仍可用。寫了 <code>name</code> 就只依名稱比對，不看 <code>target</code>、<code>text</code>；沒寫 <code>name</code> 時維持原本依位置移除。名稱可以跨留言，同名的效果會一起被移除。</p>
+
+    <div class="ex">
+      <h3>範例 19-9：依名稱移除</h3>
+      <p class="note">三個效果分別取名 <code>m1</code>、<code>m2</code>、<code>st</code>；先移除 <code>st</code>，再一次移除 <code>m1,m2</code>，兩個刪除線一起淡出。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Nancy" compact time="2h" width="880" font-size="0.9rem" start-delay="300" typing="300">
+  我以為我說得很順，結果錯很大
+  <post-item author="Nelson" typing="300">
+    I reached at the hotel on time and entered into the lobby to meet my friend.
+    <mark-fx kind="strike" text="at" name="m1"></mark-fx>
+    <mark-fx kind="strike" text="into" name="m2"></mark-fx>
+    <stamp-fx color="salmon" icon="check2" anchor="right" offset-x="40" size="1.1rem" name="st">受中文影響</stamp-fx>
+    <remove-fx name="st" delay="1200" speed="500"></remove-fx>
+    <remove-fx name="m1,m2" delay="600"></remove-fx>
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+  </section>
+
   <section class="part" id="remove-fx">
     <h2>新增（11-19-26）：&lt;remove-fx&gt; 移除先前的效果</h2>
     <p class="lead">寫在 <code>post-item</code> 裡，放在要移除的效果後面。用 <code>target</code>、<code>text</code>、<code>nth</code> 指到先前效果作用的位置；沒寫 <code>target</code> 就是這則留言文字本身。<code>effect</code> 可填 <code>stamp</code>、<code>note</code>、<code>mark</code> 只移除該類；<code>fade-out</code> 是淡出毫秒數（預設 300）；<code>delay</code>、<code>start="with"</code> 與其他效果標籤用法相同。移除也可以跨留言：<code>target</code> 指到頁面上唯一的元素（例如 id）即可。</p>
@@ -954,6 +981,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
     <table class="ref">
       <thead><tr><th style="width:260px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
       <tbody>
+        <tr><td><code>name</code></td><td>無</td><td>11-19-26 新增。效果名稱，供 <code>remove-fx</code> 依名稱移除（與 <code>ui-play</code> 一致）。</td></tr>
         <tr><td><code>target</code></td><td>這則內容</td><td>CSS 選擇器。先在這則訊息裡找，找不到再找整頁。省略時作用在這則訊息的文字內容。</td></tr>
         <tr><td><code>text</code>、<code>nth</code></td><td>無、1</td><td>只對準目標裡的某段文字，例如 <code>text="make"</code>；同一段文字出現多次時，指定第幾次。</td></tr>
         <tr><td><code>start</code></td><td>after</td><td><code>after</code> 等前一個特效結束才開始；<code>with</code> 與前一個特效同時開始。</td></tr>
@@ -1017,8 +1045,9 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
       <thead><tr><th style="width:260px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
       <tbody>
         <tr><td><code>target</code>、<code>text</code>、<code>nth</code></td><td>這則內容、無、1</td><td>指到先前效果作用的位置，寫法同 stamp-fx、note-fx、mark-fx。要放在被移除的效果後面。可以跨留言：<code>target</code> 指到頁面上唯一的元素（例如 id）即可。</td></tr>
+        <tr><td><code>name</code></td><td>無</td><td>與 <code>ui-play</code> 一致：依效果標籤上的 <code>name</code> 移除，逗號分隔多個；寫了就只依名稱比對，不看 <code>target</code>、<code>text</code>。</td></tr>
         <tr><td><code>effect</code></td><td>全部</td><td><code>stamp</code>、<code>note</code>、<code>mark</code>，只移除該類。</td></tr>
-        <tr><td><code>fade-out</code></td><td>300</td><td>淡出毫秒數。<code>kind="color"</code> 的 mark-fx 被移除時，文字還原原色。</td></tr>
+        <tr><td><code>speed</code>、<code>fade-out</code></td><td>300</td><td>淡出毫秒數；<code>speed</code> 與 <code>ui-play</code> 相同，兩個都寫時 <code>speed</code> 優先。<code>kind="color"</code> 的 mark-fx 被移除時，文字還原原色。</td></tr>
         <tr><td><code>start</code>、<code>delay</code></td><td>after、0</td><td>用法同其他效果標籤。</td></tr>
       </tbody>
     </table>
