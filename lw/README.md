@@ -4,6 +4,14 @@
 
 互動範例：[`link-when-demo-11-19-26.html`](link-when-demo-11-19-26.html)。
 
+A 結束後換成 B，並用倒數圓圈蓋住 A、再翻面離開：
+
+```html
+<link-when source="#post1" event="done" target="#next" do="show"
+           countdown="3" countdown-color="pink" countdown-size="130"
+           swap="flip" swap-speed="900"></link-when>
+```
+
 ```html
 <ui-stream id="s1" autoplay>…</ui-stream>
 <ui-play id="p1" hidden step-mode="auto">…</ui-play>
@@ -36,7 +44,7 @@
 
 `ui-otp` 不在 `done` 對照表內，請明確寫 `event="otp-complete"`。`maze-quiz` 想在答案填入、`<template>` 內容顯示後才串接，寫了 `show-template` 就可以用 `event="done"`，也可以明確寫 `event="template-shown"`（`template-shown` 發自 `maze-quiz` 本身，不是 template）。`route-map` 的 `done` 指火車跑完（`completed:true`），地圖上有多列火車時任何一列跑完都會觸發，要指定哪一列請加 `detail-match="id:火車的id"`；`do="play"` 只會播第一列火車，要播指定的火車改用 `call`（`call="playTrain" call-arg="t2"`，函式收到 B 與 `call-arg`）。`ui-blank`、`ui-otp` 都有 `reset()`、`focus()` 可用 `do` 呼叫。
 
-處理順序：A 觸發 → `delay` → A 退場（`exit`）→ `exit-gap` → B 移位（`in-place`）→ B 進場（`enter`）→ 對 B 執行 `do`。
+處理順序：A 觸發 → `delay` → `countdown` → A 退場（`exit`）→ `exit-gap` → B 移位（`in-place`）→ B 進場（`enter`）→ 對 B 執行 `do`。
 
 ## 屬性
 
@@ -56,6 +64,16 @@
 | `in-place` | 不設 | B 移到 A 原本的位置，A 被刪除也可以。 |
 | `enter` | `fade` | B 原本隱藏時的進場效果：`fade`、`slide-up`、`slide-down`、`zoom`、`pop`、`none`。 |
 | `enter-speed` | `500` | 進場時間（ms）。 |
+| `swap` | 不設 | `zoom` 或 `flip`：A 縮小或翻走並刪除，B 在原位登場；A 的高度同步過渡到 B 的高度，版面不會跳動。設定後忽略 `exit`、`exit-gap`、`enter`，B 一律回到 A 的位置（`in-place="false"` 可關閉）。 |
+| `swap-speed` | `800` | swap 整段時間（ms），A 退場與 B 登場各占一半。 |
+| `countdown` | 不設 | 倒數起始值，例如 `3` 會顯示 3、2、1。覆蓋層蓋住整個 A（A 捲動或改變大小都跟得上），數完才退場或 swap；可搭配任何 `exit`。 |
+| `countdown-interval` | `1000` | 每個數字停留的時間（ms）。 |
+| `countdown-size` | `120` | 圓圈直徑（px），最大不超過 A 較短邊減 16。 |
+| `countdown-width` | `6` | 圓圈外框粗細（px）。 |
+| `countdown-color` | `key` | 圓圈外框與數字的顏色，色票名稱或色碼。 |
+| `countdown-bg` | `background` | 圓圈內的底色。 |
+| `countdown-cover` | `background` | 蓋住 A 的覆蓋層底色。 |
+| `countdown-font-size` | 圓圈的一半 | 數字字級（rem），預設依圓圈大小自動計算。 |
 | `once` | `true` | 只觸發一次；`false` 則每次都觸發。 |
 
 ## `event="done"` 對照
@@ -91,6 +109,7 @@
 | 名稱 | 說明 |
 | --- | --- |
 | `link-when:start`、`link-when:done` | 串接開始與結束，`detail` 為 `{ source, target }`，會冒泡。 |
+| `link-when:countdown` | 倒數每顯示一個數字就觸發，`detail` 為 `{ value, source }`，會冒泡。 |
 | `el.fire()` | 手動觸發，與事件發生時相同。 |
 | `window.LinkWhen.doneEvents`、`window.LinkWhen.doneDetail` | 上表的對照資料；`doneDetail` 是 `event="done"` 自動附加的 `detail` 條件（目前只有 `route-map`）。 |
 

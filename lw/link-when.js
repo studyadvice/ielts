@@ -68,6 +68,11 @@
       case 'slide-up': return [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }];
       case 'slide-down': return [{ opacity: 0, transform: 'translateY(-24px)' }, { opacity: 1, transform: 'none' }];
       case 'zoom': return [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }];
+      case 'swap-zoom': return [{ transform: 'scale(0)' }, { transform: 'scale(1)' }];
+      case 'swap-flip': return [
+        { transform: 'perspective(900px) rotateY(-90deg)' },
+        { transform: 'perspective(900px) rotateY(0deg)' }
+      ];
       case 'pop': return [
         { opacity: 0, transform: 'scale(.3)', easing: 'cubic-bezier(.2,.8,.3,1)' },
         { opacity: 1, transform: 'scale(1.12)', offset: 0.55 },
@@ -87,28 +92,119 @@
     return a.finished.catch(() => {});
   }
 
+  /* ---------- 倒數覆蓋層 ---------- */
+  const PALETTE = {
+    background: '#0C0D0C', 'bg-alternative': '#3B2A20', shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322',
+    pink: '#FF91D7', red: '#EF6661', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8',
+    gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC', quiet: '#8EA4DE', playful: '#FFA987', urgent: '#FF2E63',
+    energetic: '#B6FF00', dreamy: '#C394CD', salmon: '#FFC88A'
+  };
+  const color = (v, d) => {
+    const t = (v || '').trim();
+    if (!t) return d;
+    return PALETTE[t.toLowerCase()] || t;
+  };
+
+  /* 覆蓋層：固定在 A 的範圍上（每格更新位置，A 捲動或縮放都跟得上），中央是圓圈包著的數字 */
+  async function countdown(host, a, n, o) {
+    const el = document.createElement('div');
+    el.className = 'lw-countdown';
+    el.style.cssText = `position:absolute;z-index:9000;display:flex;align-items:center;justify-content:center;pointer-events:none;background:${o.cover}`;
+    const ring = document.createElement('div');
+    ring.style.cssText = `box-sizing:border-box;display:flex;align-items:center;justify-content:center;border-radius:50%;` +
+      `border:${o.width}px solid ${o.color};background:${o.bg};color:${o.color};font-weight:800;line-height:1;` +
+      `font-family:"Segoe UI","Noto Sans TC",system-ui,sans-serif;font-variant-numeric:tabular-nums`;
+    el.appendChild(ring);
+    document.body.appendChild(el);
+    let raf = 0, frozen = false;
+    const place = () => {
+      const r = a.getBoundingClientRect();
+      el.style.left = (r.left + window.scrollX) + 'px';
+      el.style.top = (r.top + window.scrollY) + 'px';
+      el.style.width = r.width + 'px';
+      el.style.height = r.height + 'px';
+      const size = Math.max(40, Math.min(o.size, Math.min(r.width, r.height) - 16));
+      ring.style.width = ring.style.height = size + 'px';
+      ring.style.fontSize = (o.fontSize || (size * 0.5) / 16) + 'rem';
+    };
+    const loop = () => { if (frozen || !el.isConnected) return; place(); raf = requestAnimationFrame(loop); };
+    loop();
+    const cd = {
+      el,
+      freeze() { frozen = true; cancelAnimationFrame(raf); },
+      remove() { cd.freeze(); el.remove(); }
+    };
+    host._cover = cd;
+    for (let i = n; i >= 1; i--) {
+      ring.textContent = String(i);
+      ring.animate([{ transform: 'scale(1.35)' }, { transform: 'scale(1)' }],
+        { duration: Math.min(350, o.interval), easing: 'cubic-bezier(.2,.8,.3,1)' });
+      host.dispatchEvent(new CustomEvent('link-when:countdown', { bubbles: true, detail: { value: i, source: a } }));
+      await wait(o.interval);
+    }
+    return cd;
+  }
+
   /* ---------- A 退場 ---------- */
-  async function exitSource(a, mode, ms) {
-    if (mode === 'none' || !a.isConnected) return;
+  async function exitSource(a, mode, ms, cover) {
+    if (mode === 'none' || !a.isConnected) { if (cover) cover.remove(); return; }
     if (mode === 'fade') {
-      await animate(a, [{ opacity: 1 }, { opacity: 0 }], ms, { fill: 'forwards' });
+      if (cover) cover.freeze();
+      const kf = [{ opacity: 1 }, { opacity: 0 }];
+      await Promise.all([animate(a, kf, ms, { fill: 'forwards' }), cover ? animate(cover.el, kf, ms, { fill: 'forwards' }) : null]);
       a.hidden = true;
       a.style.display = 'none';
       a.getAnimations().forEach((x) => x.cancel());
+      if (cover) cover.remove();
       return;
     }
     if (mode === 'collapse') {
+      if (cover) cover.freeze();
       const h = a.offsetHeight;
       a.style.overflow = 'hidden';
-      await animate(a, [{ height: h + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], ms, { fill: 'forwards' });
+      const kf = [{ height: h + 'px', opacity: 1 }, { height: '0px', opacity: 0 }];
+      if (cover) cover.el.style.overflow = 'hidden';
+      await Promise.all([animate(a, kf, ms, { fill: 'forwards' }), cover ? animate(cover.el, kf, ms, { fill: 'forwards' }) : null]);
       a.hidden = true;
       a.style.display = 'none';
       a.style.overflow = '';
       a.getAnimations().forEach((x) => x.cancel());
+      if (cover) cover.remove();
       return;
     }
+    if (cover) cover.remove();
     if (mode === 'hide') { a.hidden = true; a.style.display = 'none'; return; }
     if (mode === 'remove') a.remove();
+  }
+
+  /* ---------- swap：A 縮小或翻走並刪除，B 在原位登場 ---------- */
+  // 量 B 顯示時的高度（B 先藏著，暫時放到畫面外量完再還原）。
+  function measureHeight(b, width) {
+    const saved = b.getAttribute('style');
+    const wasHidden = b.hidden;
+    b.hidden = false;
+    b.style.cssText = (saved ? saved + ';' : '') + `display:block;position:absolute;visibility:hidden;left:-99999px;top:0;width:${width}px`;
+    const h = b.getBoundingClientRect().height;
+    if (saved === null) b.removeAttribute('style'); else b.setAttribute('style', saved);
+    b.hidden = wasHidden;
+    return h;
+  }
+
+  // A（和倒數覆蓋層）同時縮小或翻走，高度也一路變成 B 的高度，結束後 A 被刪除、B 接手，版面不會跳動。
+  async function swapOut(a, b, cover, effect, ms) {
+    if (getComputedStyle(a).display === 'inline') a.style.display = 'block';
+    const r = a.getBoundingClientRect();
+    const hB = b ? measureHeight(b, r.width) : r.height;
+    a.style.boxSizing = 'border-box';
+    a.style.overflow = 'hidden';
+    if (cover) { cover.freeze(); cover.el.style.boxSizing = 'border-box'; cover.el.style.overflow = 'hidden'; }
+    const kf = effect === 'flip'
+      ? [{ transform: 'perspective(900px) rotateY(0deg)', height: r.height + 'px' }, { transform: 'perspective(900px) rotateY(90deg)', height: hB + 'px' }]
+      : [{ transform: 'scale(1)', height: r.height + 'px' }, { transform: 'scale(0)', height: hB + 'px' }];
+    const opts = { duration: ms, easing: 'ease-in', fill: 'forwards' };
+    const list = [a.animate(kf, opts)];
+    if (cover) list.push(cover.el.animate(kf, opts));
+    await Promise.all(list.map((x) => x.finished.catch(() => {})));
   }
 
   /* ---------- B 顯示 ---------- */
@@ -159,7 +255,10 @@
         : setTimeout(go, 0);
     }
 
-    disconnectedCallback() { this._unbind(); }
+    disconnectedCallback() {
+      this._unbind();
+      if (this._cover) { this._cover.remove(); this._cover = null; }
+    }
 
     _find(attr) {
       const sel = (this.getAttribute(attr) || '').trim();
@@ -223,7 +322,18 @@
       const exitMs = num(this.getAttribute('exit-speed'), 400);
       const enter = (this.getAttribute('enter') || 'fade').trim().toLowerCase();
       const enterMs = num(this.getAttribute('enter-speed'), 500);
-      const inPlace = this.hasAttribute('in-place') && this.getAttribute('in-place') !== 'false';
+      const swapRaw = this.getAttribute('swap');
+      let swap = swapRaw === null ? '' : (swapRaw.trim().toLowerCase() || 'zoom');
+      if (swap && swap !== 'zoom' && swap !== 'flip') {
+        console.warn(`[link-when] swap="${swapRaw}" 只支援 zoom、flip，已改用 zoom。`);
+        swap = 'zoom';
+      }
+      const swapMs = num(this.getAttribute('swap-speed'), 800);
+      /* swap 一律讓 B 回到 A 原本的位置；in-place="false" 可關閉 */
+      const inPlace = swap
+        ? this.getAttribute('in-place') !== 'false'
+        : this.hasAttribute('in-place') && this.getAttribute('in-place') !== 'false';
+      const cdN = parseInt(this.getAttribute('countdown'), 10);
 
       /* 記住 A 的位置，A 被刪除後 B 仍能放回原處 */
       const anchorParent = a && a.parentNode;
@@ -231,16 +341,46 @@
 
       this.dispatchEvent(new CustomEvent('link-when:start', { bubbles: true, detail: { source: a, target: b } }));
       await wait(num(this.getAttribute('delay'), 0));
-      if (a) await exitSource(a, exit, exitMs);
-      await wait(num(this.getAttribute('exit-gap'), 0));
 
-      if (b) {
+      /* 倒數：圓圈數字蓋住整個 A，數完才退場 */
+      let cover = null;
+      if (a && a.isConnected && cdN > 0) {
+        cover = await countdown(this, a, cdN, {
+          interval: num(this.getAttribute('countdown-interval'), 1000),
+          size: num(this.getAttribute('countdown-size'), 120),
+          width: num(this.getAttribute('countdown-width'), 6),
+          color: color(this.getAttribute('countdown-color'), PALETTE.key),
+          bg: color(this.getAttribute('countdown-bg'), PALETTE.background),
+          cover: color(this.getAttribute('countdown-cover'), PALETTE.background),
+          fontSize: num(this.getAttribute('countdown-font-size'), 0)
+        });
+      }
+
+      const place = () => {
         if (inPlace && anchorParent) {
           if (a && a.isConnected && a.parentNode === anchorParent) anchorParent.insertBefore(b, a);
           else if (anchorNext && anchorNext.parentNode === anchorParent) anchorParent.insertBefore(b, anchorNext);
           else anchorParent.appendChild(b);
         }
-        if (action !== 'hide') await showTarget(b, enter, enterMs);
+      };
+
+      if (swap && a && a.isConnected) {
+        await swapOut(a, b, cover, swap, swapMs / 2);
+        /* 同一格內換手：B 先就位，再刪除 A 與覆蓋層，最後 B 登場 */
+        if (b) place();
+        a.remove();
+        if (cover) cover.remove();
+        this._cover = null;
+        if (b && action !== 'hide') await showTarget(b, 'swap-' + swap, swapMs / 2);
+      } else {
+        if (a) await exitSource(a, exit, exitMs, cover);
+        this._cover = null;
+        await wait(num(this.getAttribute('exit-gap'), 0));
+      }
+
+      if (b) {
+        if (!swap) place();
+        if (!swap && action !== 'hide') await showTarget(b, enter, enterMs);
         if (call) runCall(b, call, this.getAttribute('call-arg'));
         else await runAction(b, action);
       } else {

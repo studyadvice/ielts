@@ -32,6 +32,56 @@
   <h1><code>&lt;link-when&gt;</code> 元件串接</h1>
   <p class="sub">A 播完時對 B 執行動作，中間可以讓 A 淡出、收合或刪除，並讓 B 移到 A 的位置。本身不顯示任何畫面，不需要寫 JavaScript。不支援 ui-table 與 info-region。</p>
 
+  <!-- 範例 7（11-20-26 新增） -->
+  <section>
+    <h2>範例 7（11-20-26 新增）：對話播完，A 縮小消失，B 在原位放大登場（swap="zoom"）</h2>
+    <p class="desc"><code>swap</code> 只有 <code>zoom</code> 和 <code>flip</code> 兩種。A 縮小（或翻走）的同時，高度也一路變成 B 的高度，結束後 A 被刪除、B 在原位接手，下方內容不會跳動。<code>swap-speed</code> 是整段（A 退場加 B 登場）的毫秒數，預設 800。</p>
+    <div class="two">
+      <div id="box7">
+        <ui-stream id="st7" autoplay speed="20" delay="300">
+          <stream-item from="student" name="Amy">I am looking forward to see you.</stream-item>
+          <stream-item from="teacher" name="老師">forward to 後面要接動名詞：<mark>seeing</mark>。</stream-item>
+        </ui-stream>
+        <div id="b7" class="done-box" hidden style="margin:0;"><i class="bi bi-check2-circle"></i> 這個區塊比對話短很多，高度會平順過渡。</div>
+        <link-when source="#st7" event="done" target="#b7" do="show" swap="zoom" swap-speed="900" delay="800"></link-when>
+      </div>
+<pre>&lt;ui-stream id="st7" autoplay&gt;…&lt;/ui-stream&gt;
+&lt;div id="b7" hidden&gt;…&lt;/div&gt;
+
+&lt;link-when source="#st7" event="done" target="#b7" do="show"
+           swap="zoom" swap-speed="900" delay="800"&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
+
+  <!-- 範例 6（11-20-26 新增） -->
+  <section>
+    <h2>範例 6（11-20-26 新增）：ui-post 結束，圓圈倒數 3、2、1 蓋住整個 A，再翻面換成 B（countdown + swap="flip"）</h2>
+    <p class="desc"><code>countdown</code> 的數字是起始值。覆蓋層會蓋住整個 A（A 捲動或改變大小都跟得上），中央是圓圈包著的數字；數完才開始 swap。覆蓋層本身也跟著 A 一起翻走。圓圈大小、粗細、顏色、數字顏色與覆蓋層底色都可以設定，顏色可寫色票名稱或色碼。</p>
+    <div class="two">
+      <div id="box6">
+        <ui-post id="post6" author="Nancy" compact time="2h" width="560" font-size="0.9rem" start-delay="300" typing="120">
+          我以為我說得很順，結果錯很大
+          <post-item author="Nelson" typing="120">I reached at the hotel on time.</post-item>
+        </ui-post>
+        <div id="b6" class="done-box" hidden style="margin:0;"><i class="bi bi-arrow-right-circle"></i> 倒數結束，下一題開始！</div>
+        <link-when source="#post6" event="done" target="#b6" do="show"
+                   countdown="3" countdown-size="130" countdown-width="8" countdown-color="pink"
+                   countdown-bg="background" countdown-cover="bg-alternative" countdown-interval="900"
+                   swap="flip" swap-speed="900" delay="600"></link-when>
+      </div>
+<pre>&lt;ui-post id="post6" …&gt;…&lt;/ui-post&gt;
+&lt;div id="b6" hidden&gt;…&lt;/div&gt;
+
+&lt;link-when source="#post6" event="done" target="#b6" do="show"
+           countdown="3" countdown-size="130" countdown-width="8"
+           countdown-color="pink" countdown-bg="background"
+           countdown-cover="bg-alternative" countdown-interval="900"
+           swap="flip" swap-speed="900" delay="600"&gt;&lt;/link-when&gt;
+
+&lt;!-- 倒數也可以搭配其他退場：exit="fade"、"collapse"、"remove" --&gt;</pre>
+    </div>
+  </section>
+
   <!-- 範例 5（11-19-26 新增） -->
   <section>
     <h2>範例 5（11-19-26 新增）：maze-quiz 的 template 顯示後，接著顯示下一區塊</h2>
@@ -192,9 +242,19 @@
       <tr><td>in-place</td><td>不設</td><td>B 移到 A 原本的位置（A 被刪除也可以）。</td></tr>
       <tr><td>enter</td><td>fade</td><td>B 原本隱藏時的進場效果：fade、slide-up、slide-down、zoom、pop、none。</td></tr>
       <tr><td>enter-speed</td><td>500</td><td>進場時間（ms）。</td></tr>
+      <tr><td>swap</td><td>不設</td><td>A 縮小（zoom）或翻走（flip）並刪除，B 在原位登場；A 的高度同步過渡到 B 的高度，版面不跳動。設定後忽略 exit、exit-gap、enter，B 一律回到 A 的位置（in-place="false" 可關閉）。</td></tr>
+      <tr><td>swap-speed</td><td>800</td><td>swap 整段時間（ms），A 退場與 B 登場各占一半。</td></tr>
+      <tr><td>countdown</td><td>不設</td><td>倒數起始值，例如 3 會顯示 3、2、1。覆蓋層蓋住整個 A，數完才退場或 swap。</td></tr>
+      <tr><td>countdown-interval</td><td>1000</td><td>每個數字停留的時間（ms）。</td></tr>
+      <tr><td>countdown-size</td><td>120</td><td>圓圈直徑（px），最大不超過 A 較短邊減 16。</td></tr>
+      <tr><td>countdown-width</td><td>6</td><td>圓圈外框粗細（px）。</td></tr>
+      <tr><td>countdown-color</td><td>key</td><td>圓圈外框與數字的顏色，色票名稱或色碼。</td></tr>
+      <tr><td>countdown-bg</td><td>background</td><td>圓圈內的底色。</td></tr>
+      <tr><td>countdown-cover</td><td>background</td><td>蓋住 A 的覆蓋層底色。</td></tr>
+      <tr><td>countdown-font-size</td><td>圓圈的一半</td><td>數字字級（rem），預設依圓圈大小自動計算。</td></tr>
       <tr><td>once</td><td>true</td><td>只觸發一次；false 則每次 A 發出事件都觸發。</td></tr>
     </table>
-    <p class="desc" style="margin-top:12px">順序：A 觸發 → delay → A 退場 → exit-gap → B 移位（in-place）→ B 進場 → 對 B 執行 do。過程中在 link-when 上發出 link-when:start 與 link-when:done 事件；也可以用 JavaScript 呼叫 el.fire() 手動觸發。</p>
+    <p class="desc" style="margin-top:12px">順序：A 觸發 → delay → countdown → A 退場 → exit-gap → B 移位（in-place）→ B 進場 → 對 B 執行 do。過程中在 link-when 上發出 link-when:start 與 link-when:done 事件；也可以用 JavaScript 呼叫 el.fire() 手動觸發。</p>
 
     <h2 style="margin-top:28px">event="done" 對照</h2>
     <table class="attr">
@@ -235,6 +295,7 @@
 <script src="../bp-stepper.js"></script>
 <script src="../tour/route-map.js"></script>
 <script src="../maze/maze-quiz.js"></script>
+<script src="../post/ui-post.js"></script>
 <script src="link-when.js"></script>
 <script>
   /* 每次串接完成，在右下角以 Bootstrap alert 顯示 */
