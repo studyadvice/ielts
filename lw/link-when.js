@@ -33,11 +33,16 @@
     'sentence-build': 'sb:complete',
     'ui-steps': 'steps:end',
     'chunk-demo': 'chunk-end',
-    'ui-timeline': 'timeline-end'
+    'ui-timeline': 'timeline-end',
+    'route-map': 'route-map:train-end'
   };
+  /* event="done" 的附加條件：route-map 的 train-end 在火車被 stop() 中斷時也會發出，所以只有 completed 為 true（跑完）才算 done */
+  const DONE_DETAIL = { 'route-map': { completed: 'true' } };
   const doneEventOf = (el) => {
     const tag = el.localName;
     if (tag === 'ui-blank') return el.getAttribute('mode') === 'cli' ? 'cli-end' : 'blank-submit';
+    /* maze-quiz 有 show-template 時，done 等 template 內容顯示後（template-shown）才算，否則是路徑抵達出口（maze-solved） */
+    if (tag === 'maze-quiz') return el.hasAttribute('show-template') ? 'template-shown' : 'maze-solved';
     return DONE_EVENTS[tag] || null;
   };
 
@@ -164,7 +169,8 @@
       const a = this._find('source');
       if (!a) { console.warn(`[link-when] 找不到 source「${this.getAttribute('source')}」。`); return; }
       let ev = (this.getAttribute('event') || 'done').trim();
-      if (ev === 'done') {
+      const viaDone = ev === 'done';
+      if (viaDone) {
         ev = doneEventOf(a);
         if (!ev) { console.warn(`[link-when] ${a.localName} 沒有對應的完成事件，請在 event 寫出事件名稱。`); return; }
       }
@@ -178,6 +184,7 @@
         const i = x.indexOf(':');
         return i < 0 ? null : [x.slice(0, i).trim(), x.slice(i + 1).trim()];
       }).filter(Boolean);
+      if (viaDone && DONE_DETAIL[a.localName]) Object.keys(DONE_DETAIL[a.localName]).forEach((k) => conds.push([k, DONE_DETAIL[a.localName][k]]));
       this._handler = (e) => {
         if (conds.length) {
           const d = (e && e.detail) || {};
@@ -244,5 +251,5 @@
   }
 
   customElements.define('link-when', LinkWhen);
-  window.LinkWhen = { doneEvents: DONE_EVENTS };
+  window.LinkWhen = { doneEvents: DONE_EVENTS, doneDetail: DONE_DETAIL };
 })();

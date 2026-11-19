@@ -2,7 +2,7 @@
 
 `<link-when>` 把兩個元件串起來：A 播完（或發出指定事件）時，對 B 執行動作，例如開始播放、前進一步、顯示出來。中間可以讓 A 淡出、收合或刪除，並把 B 移到 A 的位置，錄影時畫面焦點不會跳走。元素本身不顯示任何畫面，不需要寫 JavaScript。不支援 `ui-table` 與 `info-region`。
 
-互動範例：[`link-when-demo-11-13-26.html`](link-when-demo-11-13-26.html)。
+互動範例：[`link-when-demo-11-19-26.html`](link-when-demo-11-19-26.html)。
 
 ```html
 <ui-stream id="s1" autoplay>…</ui-stream>
@@ -34,7 +34,7 @@
 <link-when source="#s1" target="#my-fold" call="BpPopnote.fold" call-arg="true"></link-when>
 ```
 
-`ui-otp` 不在 `done` 對照表內，請明確寫 `event="otp-complete"`。`ui-blank`、`ui-otp` 都有 `reset()`、`focus()` 可用 `do` 呼叫。
+`ui-otp` 不在 `done` 對照表內，請明確寫 `event="otp-complete"`。`maze-quiz` 想在答案填入、`<template>` 內容顯示後才串接，寫了 `show-template` 就可以用 `event="done"`，也可以明確寫 `event="template-shown"`（`template-shown` 發自 `maze-quiz` 本身，不是 template）。`route-map` 的 `done` 指火車跑完（`completed:true`），地圖上有多列火車時任何一列跑完都會觸發，要指定哪一列請加 `detail-match="id:火車的id"`；`do="play"` 只會播第一列火車，要播指定的火車改用 `call`（`call="playTrain" call-arg="t2"`，函式收到 B 與 `call-arg`）。`ui-blank`、`ui-otp` 都有 `reset()`、`focus()` 可用 `do` 呼叫。
 
 處理順序：A 觸發 → `delay` → A 退場（`exit`）→ `exit-gap` → B 移位（`in-place`）→ B 進場（`enter`）→ 對 B 執行 `do`。
 
@@ -78,11 +78,12 @@
 | `ui-drag-ans` | `drag-ans:complete` |
 | `ui-post` | `post-end` |
 | `ui-screen` | `ui-screen:end` |
-| `maze-quiz` | `maze-solved` |
+| `maze-quiz` | `maze-solved`；有 `show-template` 時為 `template-shown`（template 內容顯示後） |
 | `ui-check` | `ui-check-done` |
 | `ui-icon-anim` | `anim-end` |
 | `ui-fillin` | `fillin-submit`（送出即觸發，不分對錯） |
 | `ui-mask` | `mask-reveal` |
+| `route-map` | `route-map:train-end`（只有火車跑完、`completed` 為 `true` 才觸發；被 `stop()` 中斷不算） |
 
 ## 事件與方法
 
@@ -90,7 +91,7 @@
 | --- | --- |
 | `link-when:start`、`link-when:done` | 串接開始與結束，`detail` 為 `{ source, target }`，會冒泡。 |
 | `el.fire()` | 手動觸發，與事件發生時相同。 |
-| `window.LinkWhen.doneEvents` | 上表的對照資料。 |
+| `window.LinkWhen.doneEvents`、`window.LinkWhen.doneDetail` | 上表的對照資料；`doneDetail` 是 `event="done"` 自動附加的 `detail` 條件（目前只有 `route-map`）。 |
 
 ## 載入
 

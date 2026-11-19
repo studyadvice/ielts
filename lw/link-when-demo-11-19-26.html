@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>link-when 元件串接示範（11-13-26）</title>
+<title>link-when 元件串接示範（11-19-26）</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -31,6 +31,64 @@
 <div class="wrap">
   <h1><code>&lt;link-when&gt;</code> 元件串接</h1>
   <p class="sub">A 播完時對 B 執行動作，中間可以讓 A 淡出、收合或刪除，並讓 B 移到 A 的位置。本身不顯示任何畫面，不需要寫 JavaScript。不支援 ui-table 與 info-region。</p>
+
+  <!-- 範例 5（11-19-26 新增） -->
+  <section>
+    <h2>範例 5（11-19-26 新增）：maze-quiz 的 template 顯示後，接著顯示下一區塊</h2>
+    <p class="desc">迷宮走完、答案填入空格、<code>show-template</code> 的解說出現（<code>template-shown</code>）後，才顯示下一個提示。maze-quiz 有 <code>show-template</code> 時，<code>event="done"</code> 就是 <code>template-shown</code>；沒寫 <code>show-template</code> 時仍是 <code>maze-solved</code>。</p>
+    <div class="two">
+      <div>
+        <maze-quiz id="mz5" cols="14" rows="7" show-template="tpl5" question="If I _____ more time, I would learn to play the piano." answer="had"></maze-quiz>
+        <template id="tpl5"><div class="done-box" style="margin:12px 0 0 0;">If 子句用過去式，主要子句用 would + 原形動詞。</div></template>
+        <div id="end5" class="done-box" hidden><i class="bi bi-arrow-right-circle"></i> 解說看完了，下一題。</div>
+        <link-when source="#mz5" event="done" target="#end5" do="show" enter="slide-up" delay="600"></link-when>
+      </div>
+<pre>&lt;maze-quiz id="mz5" show-template="tpl5" question="…" answer="had"&gt;&lt;/maze-quiz&gt;
+&lt;template id="tpl5"&gt;…解說…&lt;/template&gt;
+&lt;div id="end5" hidden&gt;下一題&lt;/div&gt;
+
+&lt;!-- 有 show-template：done 等於 template-shown --&gt;
+&lt;link-when source="#mz5" event="done" target="#end5"
+           do="show" enter="slide-up" delay="600"&gt;&lt;/link-when&gt;
+
+&lt;!-- 也可以明確寫事件名稱 --&gt;
+&lt;link-when source="#mz5" event="template-shown" target="#end5" do="show"&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
+
+  <!-- 範例 4（11-19-26 新增） -->
+  <section>
+    <h2>範例 4（11-19-26 新增）：route-map 火車跑完，顯示下一區塊</h2>
+    <p class="desc">按鈕的 click 事件（<code>event="click"</code>）讓火車發車（<code>do="play"</code>），火車跑完（<code>event="done"</code>，即 <code>route-map:train-end</code> 且 <code>completed</code> 為 true）才顯示結論。火車被 <code>stop()</code> 中斷不會觸發。</p>
+    <div class="two">
+      <div>
+        <button id="go4" type="button" class="btn btn-outline-warning btn-sm mb-2"><i class="bi bi-play-fill"></i> 發車</button>
+        <route-map id="rm4" grid="32" cols="12" rows="4" label-zoom="1.4">
+          <route-line name="聽力線" color="blue" path="1,2 10,2">
+            <route-stop id="d4-a" at="1,2" label="n">聽力入門</route-stop>
+            <route-stop id="d4-b" at="10,2" label="n">地圖題</route-stop>
+          </route-line>
+          <route-train id="t4" from="d4-a" to="d4-b" icon="bi-train-front-fill" color="yellow" duration="3000"></route-train>
+        </route-map>
+        <div id="end4" class="done-box" hidden><i class="bi bi-flag"></i> 到站了，接著練地圖題。</div>
+        <link-when source="#go4" event="click" target="#rm4" do="play"></link-when>
+        <link-when source="#rm4" event="done" target="#end4" do="show" enter="slide-up"></link-when>
+      </div>
+<pre>&lt;button id="go4"&gt;發車&lt;/button&gt;
+&lt;route-map id="rm4" …&gt;
+  …
+  &lt;route-train id="t4" from="d4-a" to="d4-b" duration="3000"&gt;&lt;/route-train&gt;
+&lt;/route-map&gt;
+&lt;div id="end4" hidden&gt;到站了&lt;/div&gt;
+
+&lt;link-when source="#go4" event="click" target="#rm4" do="play"&gt;&lt;/link-when&gt;
+&lt;link-when source="#rm4" event="done" target="#end4"
+           do="show" enter="slide-up"&gt;&lt;/link-when&gt;
+
+&lt;!-- 多列火車時指定哪一列 --&gt;
+&lt;link-when source="#rm4" event="done" detail-match="id:t4" …&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
 
   <!-- 範例 1 -->
   <section>
@@ -156,11 +214,12 @@
       <tr><td>ui-drag-ans</td><td>drag-ans:complete</td><td></td></tr>
       <tr><td>ui-post</td><td>post-end</td><td></td></tr>
       <tr><td>ui-screen</td><td>ui-screen:end</td><td></td></tr>
-      <tr><td>maze-quiz</td><td>maze-solved</td><td></td></tr>
+      <tr><td>maze-quiz</td><td>maze-solved／template-shown</td><td>有 show-template 時為 template-shown（11-19-26 新增）。</td></tr>
       <tr><td>ui-check</td><td>ui-check-done</td><td></td></tr>
       <tr><td>ui-icon-anim</td><td>anim-end</td><td></td></tr>
       <tr><td>ui-fillin</td><td>fillin-submit</td><td>送出即觸發，不分對錯。</td></tr>
       <tr><td>ui-mask</td><td>mask-reveal</td><td></td></tr>
+      <tr><td>route-map</td><td>route-map:train-end</td><td>11-19-26 新增。只有火車跑完（completed 為 true）才觸發，被 stop() 中斷不算。</td></tr>
     </table>
   </section>
 </div>
@@ -173,6 +232,8 @@
 <script src="../layout/ui-steps.js"></script>
 <script src="../chunk-demo.js"></script>
 <script src="../bp-stepper.js"></script>
+<script src="../tour/route-map.js"></script>
+<script src="../maze/maze-quiz.js"></script>
 <script src="link-when.js"></script>
 <script>
   /* 每次串接完成，在右下角以 Bootstrap alert 顯示 */
