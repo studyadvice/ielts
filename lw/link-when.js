@@ -6,6 +6,8 @@
  *
  * 流程：A 觸發事件 → delay → A 退場（exit）→ exit-gap → B 移到 A 的位置（in-place）
  *       → B 顯示（enter）→ 對 B 執行 do
+ * do="feed"：把 A 事件 detail 裡的輸入內容（md-editor 的 md-submit、ui-blank 的 blank-submit 等）
+ *   送進 B：B 是 ui-post(live) 或 ui-stream 就呼叫 add()；寫了 template="#id" 就把內容代入該 template，填進 B 容器。
  * 本身不顯示任何畫面。不支援 ui-table 與 info-region。
  * ========================================================================= */
 (function () {
@@ -27,6 +29,7 @@
     'ui-screen': 'ui-screen:end',
     'maze-quiz': 'maze-solved',
     'tetris-quiz': 'tetris-cleared',
+    'md-editor': 'md-submit',
     'ui-check': 'ui-check-done',
     'ui-icon-anim': 'anim-end',
     'ui-fillin': 'fillin-submit',
@@ -216,14 +219,69 @@
     if (effect !== 'none') await animate(b, frames(effect), ms);
   }
 
+  /* ---------- feed：把輸入內容送進 B ---------- */
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+  // 事件 detail 轉成統一的四個欄位。md-editor 給 markdown/html/text/name；ui-blank、ui-otp 只有 value，html 由純文字跳脫產生。
+  function feedParts(d) {
+    d = d || {};
+    const markdown = String(d.markdown != null ? d.markdown : d.value != null ? d.value : d.text != null ? d.text : '');
+    const text = String(d.text != null ? d.text : markdown);
+    const html = d.html != null ? String(d.html) : esc(text).replace(/\n/g, '<br>');
+    return { markdown, text, html, name: d.name != null ? String(d.name) : '' };
+  }
+
+  // 手動 fire() 沒有事件時，直接向 A 取目前的內容
+  function sourceDetail(a) {
+    if (!a) return {};
+    const value = a.value != null ? a.value : '';
+    return { value, markdown: value, html: a.html, text: a.text, name: a.getAttribute ? a.getAttribute('name') || '' : '' };
+  }
+
+  function feed(b, lw, detail) {
+    const p = feedParts(detail);
+    const sel = (lw.getAttribute('template') || '').trim();
+    if (sel) {
+      let t = null;
+      try { t = document.querySelector(sel); } catch (e) { /* 選擇器錯誤 */ }
+      if (!t || t.localName !== 'template') { console.warn(`[link-when] template「${sel}」不是 <template>。`); return; }
+      // {html} 是轉好的 HTML，其餘一律跳脫成純文字，所以可以放在屬性裡（例如 text="{text}"）
+      const src = t.innerHTML.replace(/\{(html|text|markdown|value|name)\}/g, (m, k) =>
+        k === 'html' ? p.html : esc(k === 'text' ? p.text : k === 'name' ? p.name : p.markdown));
+      const holder = document.createElement('template');
+      holder.innerHTML = src;
+      if ((lw.getAttribute('feed-mode') || 'replace').trim().toLowerCase() !== 'append') b.replaceChildren();
+      b.appendChild(holder.content);
+      return;
+    }
+    if (typeof b.add !== 'function') {
+      console.warn(`[link-when] ${b.localName}${b.id ? '#' + b.id : ''} 沒有 add() 方法，要填進容器請加 template="#id"。`);
+      return;
+    }
+    if (b.localName === 'ui-post' && b.live === false) {
+      console.warn('[link-when] ui-post 需要 mode="live" 才能即時加入留言。');
+    }
+    let extra = {};
+    const raw = lw.getAttribute('item');
+    if (raw) { try { extra = JSON.parse(raw); } catch (e) { console.warn('[link-when] item 不是合法的 JSON，已忽略。'); } }
+    const as = (lw.getAttribute('feed-as') || 'html').trim().toLowerCase();
+    const body = as === 'text' ? { text: p.text } : as === 'markdown' ? { text: p.markdown } : { html: p.html };
+    let item;
+    if (b.localName === 'ui-post') item = Object.assign({ author: p.name || '我' }, body, extra);
+    else if (b.localName === 'ui-stream') item = Object.assign({ from: 'student' }, p.name ? { name: p.name } : {}, body, extra);
+    else item = Object.assign({}, body, extra);
+    b.add(item);
+  }
+
   /* ---------- 對 B 執行動作 ---------- */
-  async function runAction(b, action) {
+  async function runAction(b, action, ctx) {
     if (!action || action === 'show') return;
     if (action === 'hide') { b.hidden = true; b.style.display = 'none'; return; }
     if (action === 'scroll') { b.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     if (b.localName.indexOf('-') !== -1 && !customElements.get(b.localName)) {
       await Promise.race([customElements.whenDefined(b.localName), wait(3000)]);
     }
+    if (action === 'feed') { feed(b, ctx.lw, ctx.detail); return; }
     const fn = b[action];
     if (typeof fn === 'function') {
       fn.call(b);
@@ -292,7 +350,7 @@
           const d = (e && e.detail) || {};
           if (!conds.every(([k, v]) => d[k] !== undefined && String(d[k]) === v)) return;
         }
-        this._fire();
+        this._fire(e);
       };
       a.addEventListener(ev, this._handler);
       this._bound = true;
@@ -307,17 +365,26 @@
     /* 手動觸發，與事件發生時相同 */
     fire() { return this._fire(); }
 
-    async _fire() {
-      if (this._running) return;
-      const once = (this.getAttribute('once') || 'true').trim().toLowerCase() !== 'false';
+    _fire(ev) {
+      const call = (this.getAttribute('call') || '').trim();
+      const action = call ? 'show' : (this.getAttribute('do') || 'play').trim();
+      if (action !== 'feed') return this._go(ev, call, action);
+      /* feed 每次送出都要處理（once 預設 false）；連續送出時排隊，依送出順序一個一個填，後送出的不會被先送出的蓋掉 */
+      this._chain = (this._chain || Promise.resolve()).catch(() => {}).then(() => this._go(ev, call, action));
+      return this._chain;
+    }
+
+    async _go(ev, call, action) {
+      const isFeed = action === 'feed';
+      if (this._running && !isFeed) return;
+      const once = (this.getAttribute('once') || (isFeed ? 'false' : 'true')).trim().toLowerCase() !== 'false';
       if (once && this._fired) return;
       this._fired = true;
-      this._running = true;
+      if (!isFeed) this._running = true;
 
       const a = this._a;
       const b = this._find('target');
-      const call = (this.getAttribute('call') || '').trim();
-      const action = call ? 'show' : (this.getAttribute('do') || 'play').trim();
+      const detail = isFeed ? ((ev && ev.detail && typeof ev.detail === 'object') ? ev.detail : sourceDetail(a)) : null;
       const exit = (this.getAttribute('exit') || 'none').trim().toLowerCase();
       const exitMs = num(this.getAttribute('exit-speed'), 400);
       const enter = (this.getAttribute('enter') || 'fade').trim().toLowerCase();
@@ -382,12 +449,12 @@
         if (!swap) place();
         if (!swap && action !== 'hide') await showTarget(b, enter, enterMs);
         if (call) runCall(b, call, this.getAttribute('call-arg'));
-        else await runAction(b, action);
+        else await runAction(b, action, { lw: this, detail });
       } else {
         console.warn(`[link-when] 找不到 target「${this.getAttribute('target')}」。`);
       }
 
-      this._running = false;
+      if (!isFeed) this._running = false;
       this.dispatchEvent(new CustomEvent('link-when:done', { bubbles: true, detail: { source: a, target: b } }));
       if (!once) this._fired = false;
     }

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>md-editor Markdown 輸入框：範例與屬性總覽（11-20-26）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem;line-height:1.6;margin:0}
+  .wrap{max-width:1680px;margin:0 auto;padding:32px 48px 80px 48px}
+  h1{font-size:2rem;font-weight:800;color:#DBEDD8;margin:0 0 8px 0}
+  h2{font-size:1.375rem;font-weight:700;color:#51DBCF;margin:48px 0 8px 0}
+  h3{font-size:1.125rem;font-weight:700;color:#DBEDD8;margin:24px 0 8px 0}
+  p{margin:0 0 12px 0}
+  .lead{font-size:1.0625rem;color:#C6C7BD}
+  code{color:#FF91D7;font-size:0.9em}
+  .info{background:#3B2A20;border:1px solid #778CE1;border-radius:12px;padding:16px 20px;margin:16px 0 0 0}
+  .ex{border-top:1px solid #3B2A20;margin:32px 0 0 0;padding:8px 0 0 0}
+  .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:start;margin:16px 0 0 0}
+  .stage{background:rgb(36,36,36);border:1px dashed #3B2A20;border-radius:16px;padding:16px;min-width:0}
+  .cap{color:#A3C4BC;font-size:0.8125rem;font-weight:700;margin:0 0 6px 0}
+  pre.code-box{background:#151615;border:1px solid #3B2A20;border-radius:12px;font-size:0.8125rem;margin:0;padding:16px;white-space:pre-wrap;word-break:break-word;overflow:auto}
+  pre.code-box code{color:#DBEDD8}
+  pre.log{background:#0C0D0C;border:1px solid #3B2A20;border-radius:8px;color:#A3C4BC;font-size:0.8125rem;margin:12px 0 0 0;min-height:96px;padding:12px;white-space:pre-wrap;word-break:break-word}
+  .col-title{color:#E3D322;font-size:0.875rem;font-weight:700;margin:0 0 8px 0}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.9375rem;margin:8px 0 0 0}
+  table.attr th,table.attr td{border-bottom:1px solid #3B2A20;padding:10px 12px;text-align:left;vertical-align:top}
+  table.attr th{color:#A3C4BC;font-weight:700;background:#151615}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>&lt;md-editor&gt; Markdown 輸入框</h1>
+  <p class="lead">GitHub 留言框的樣式：Write 與 Preview 分頁，工具列有標題、粗體、斜體、引用、程式碼、連結、三種清單、提及、參照、斜線與復原。送出的內容可以用 <code>&lt;link-when do="feed"&gt;</code> 直接送進 <code>ui-post</code>、<code>ui-stream</code>，或代入 template 填進 <code>ui-play</code>，不需要寫 JavaScript。</p>
+  <div class="info">預覽由元件自己轉換，使用者輸入的 HTML 標籤一律跳脫，不會被執行。支援標題、粗斜體、刪除線、行內程式碼與程式碼區塊、引用、巢狀清單、核取清單、連結與圖片（只接受 http、https、mailto、相對路徑）、分隔線，以及 <code>@名稱</code>、<code>#編號</code> 的標色。不支援表格。</div>
+
+  <h2>範例一：一個輸入框，同時送進 ui-post、ui-stream、ui-play</h2>
+  <p>在上面輸入並按 Comment（或 Ctrl + Enter）。三條 <code>link-when</code> 監聽同一個輸入框：前兩個呼叫 <code>add()</code>，第三個把輸入代入 template，填進一開始隱藏的容器，裡面的 <code>ui-play</code> 自動播放。</p>
+  <div class="ex">
+    <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<md-editor id="ed1" name="Amy" rows="6" label-submit="Comment"></md-editor>
+
+<div class="grid3">
+  <div>
+    <p class="col-title">ui-post（mode="live"）</p>
+    <ui-post id="po1" mode="live" compact author="IELTS Examiner" time="1h" min-height="60">
+      How often do you exercise?
+    </ui-post>
+  </div>
+  <div>
+    <p class="col-title">ui-stream（mode="live"）</p>
+    <ui-stream id="st1" mode="live" height="340"></ui-stream>
+  </div>
+  <div>
+    <p class="col-title">ui-play（由 template 產生）</p>
+    <div id="pl1" hidden></div>
+  </div>
+</div>
+
+<template id="tpl1">
+  <ui-play frame="win" frame-title="{name} 的回答" min-height="150" font-size="1.1rem"
+           step-mode="auto" autoplay="true" step-delay="500">
+    <stage-item><div id="ans1">{html}</div></stage-item>
+    <script-item>
+      <mark-fx target="#ans1" kind="underline" color="red"></mark-fx>
+      <note-fx target="#ans1" position="bottom">收到 {name} 的回答</note-fx>
+    </script-item>
+  </ui-play>
+</template>
+
+<link-when source="#ed1" event="done" target="#po1" do="feed"></link-when>
+<link-when source="#ed1" event="done" target="#st1" do="feed"></link-when>
+<link-when source="#ed1" event="done" target="#pl1" do="feed" template="#tpl1" enter="fade"></link-when>
+</script>
+    </div>
+    <div style="height:16px"></div>
+    <p class="cap">HTML</p>
+    <pre class="code-box"><code></code></pre>
+  </div>
+
+  <h2>範例二：單獨使用，看送出的事件內容</h2>
+  <p>預設的工具列、<code>rows</code> 決定高度、<code>clear="false"</code> 送出後保留內容。下方是 <code>md-submit</code> 的 <code>detail</code>。</p>
+  <div class="ex">
+    <div class="grid2">
+      <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<md-editor id="ed2" name="Leo" rows="8" clear="false" label-submit="送出"
+           placeholder="Use Markdown to format your comment">
+# Part 2 草稿
+
+I think **online learning** is _better_ because:
+
+- it saves time
+- it is cheaper
+  - no commuting
+- [x] 開頭
+- [ ] 例子
+
+> Use `to + verb` after _need_.
+
+@Amy 請看 #12，也可以看 https://example.com
+</md-editor>
+<pre class="log" id="log2">（尚未送出）</pre>
+</script>
+      </div>
+      <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+    </div>
+  </div>
+
+  <h2>範例三：用 item 與 feed-as 控制進 ui-post 的方式</h2>
+  <p>同一個輸入框，<code>item</code> 的 JSON 補上 <code>likes</code>、<code>tags</code> 等 <code>post-item</code> 屬性；<code>feed-as="text"</code> 把輸入當純文字（不套用 Markdown）。選哪一種看你要不要讓學生用格式。</p>
+  <div class="ex">
+    <div class="grid2">
+      <div class="stage" data-demo>
+<script type="text/plain" class="demo-src">
+<md-editor id="ed3" name="Ben" rows="4" tools="bold,italic,code,|,undo,redo" label-submit="留言"></md-editor>
+<div style="height:16px"></div>
+<ui-post id="po3" mode="live" compact author="IELTS Examiner" time="2h" min-height="60">
+  Describe a book that changed your mind.
+</ui-post>
+
+<link-when source="#ed3" event="done" target="#po3" do="feed"
+           item='{"likes":12,"tags":"具體例子:green"}'></link-when>
+</script>
+      </div>
+      <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+    </div>
+  </div>
+
+  <h2>md-editor 屬性</h2>
+  <table class="attr">
+    <thead><tr><th style="width:200px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>無</td><td>送出時放進 <code>detail.name</code>，<code>feed</code> 用它當作者名稱。</td></tr>
+      <tr><td><code>value</code></td><td>無</td><td>初始內容；沒寫時使用標籤內的文字。</td></tr>
+      <tr><td><code>placeholder</code></td><td><code>Use Markdown to format your comment</code></td><td>輸入框提示文字。</td></tr>
+      <tr><td><code>rows</code></td><td><code>7</code></td><td>輸入區與預覽區的最小高度（行數）。輸入區右下角可拖曳調整。</td></tr>
+      <tr><td><code>tools</code></td><td><code>heading,bold,italic,quote,code,link,|,ul,ol,task,|,mention,ref,slash,undo</code></td><td>工具列順序，<code>|</code> 是分隔線；另有 <code>redo</code> 可加入。寫錯名稱會在主控台警告並略過。</td></tr>
+      <tr><td><code>tips</code></td><td><code>true</code></td><td><code>false</code> 時工具按鈕不顯示提示文字。</td></tr>
+      <tr><td><code>submit</code></td><td><code>true</code></td><td><code>false</code> 隱藏送出按鈕；Ctrl / Cmd + Enter 仍可送出。</td></tr>
+      <tr><td><code>label-write</code>、<code>label-preview</code></td><td><code>Write</code>、<code>Preview</code></td><td>分頁文字。</td></tr>
+      <tr><td><code>label-submit</code>、<code>label-empty</code></td><td><code>Comment</code>、<code>Nothing to preview</code></td><td>送出按鈕文字、預覽空白時的提示。</td></tr>
+      <tr><td><code>hint</code></td><td><code>Ctrl + Enter</code></td><td>按鈕左邊的小字；寫成空字串可隱藏。</td></tr>
+      <tr><td><code>required</code></td><td><code>true</code></td><td>內容空白時送出按鈕不可按，Ctrl + Enter 會讓輸入框外框變紅。</td></tr>
+      <tr><td><code>clear</code></td><td><code>true</code></td><td>送出後清空；清空可用復原找回。</td></tr>
+      <tr><td><code>tab</code></td><td><code>write</code></td><td>初始分頁，<code>write</code> 或 <code>preview</code>。</td></tr>
+      <tr><td><code>disabled</code></td><td>無</td><td>停用輸入與全部按鈕。</td></tr>
+      <tr><td><code>autofocus</code>、<code>spellcheck</code></td><td>無、<code>true</code></td><td>載入後聚焦；拼字檢查。</td></tr>
+      <tr><td><code>width</code>、<code>font-size</code></td><td>填滿、<code>1rem</code></td><td>最大寬度（純數字視為 px）；字級（純數字視為 rem）。</td></tr>
+      <tr><td><code>accent</code>、<code>bg</code>、<code>panel</code>、<code>border-color</code></td><td><code>key</code>、<code>background</code>、<code>rgb(36,36,36)</code>、<code>bg-alternative</code></td><td>聚焦與提及的顏色、輸入區底色、外層底色、框線顏色。</td></tr>
+      <tr><td><code>text-color</code>、<code>active-color</code>、<code>muted-color</code>、<code>tool-color</code></td><td><code>shell</code>、<code>vanilla</code>、<code>gray</code>、<code>gray</code></td><td>一般文字、使用中分頁與標題、提示文字、工具圖示。</td></tr>
+      <tr><td><code>link-color</code>、<code>code-color</code>、<code>error-color</code>、<code>submit-color</code></td><td><code>blue</code>、<code>pink</code>、<code>red</code>、<code>green</code></td><td>預覽中的連結、行內程式碼、錯誤外框、送出按鈕。</td></tr>
+    </tbody>
+  </table>
+
+  <h2>事件與方法</h2>
+  <table class="attr">
+    <thead><tr><th style="width:240px">名稱</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><code>md-submit</code></td><td>送出時觸發（會冒泡）。<code>detail = { markdown, value, html, text, name }</code>，<code>value</code> 與 <code>markdown</code> 相同；<code>html</code> 是轉好的 HTML；<code>text</code> 是去掉格式的純文字。<code>link-when</code> 的 <code>event="done"</code> 就是這個事件。</td></tr>
+      <tr><td><code>md-change</code></td><td>內容改變時觸發，<code>detail = { markdown, value }</code>。</td></tr>
+      <tr><td><code>md-tab</code></td><td>切換分頁時觸發，<code>detail = { tab }</code>。</td></tr>
+      <tr><td><code>el.value</code>、<code>el.html</code>、<code>el.text</code></td><td>讀取目前內容（<code>value</code> 可寫入）。</td></tr>
+      <tr><td><code>el.submit()</code>、<code>el.clear()</code>、<code>el.focus()</code></td><td>送出、清空、聚焦。</td></tr>
+      <tr><td><code>el.setTab('preview')</code>、<code>el.tab</code></td><td>切換或讀取分頁。</td></tr>
+      <tr><td><code>el.insert(text)</code>、<code>el.undo()</code>、<code>el.redo()</code></td><td>在游標處插入文字、復原、重做。</td></tr>
+      <tr><td><code>MdEditor.render(markdown)</code></td><td>全域函式，把 Markdown 轉成安全的 HTML。</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:12px">快捷鍵：Ctrl / Cmd + B 粗體、I 斜體、K 連結、Z 復原、Y（或 Shift + Z）重做、Enter 送出。在清單項目按 Enter 會接續下一項，空項目再按一次就結束清單。</p>
+
+  <h2>link-when 的 do="feed"</h2>
+  <table class="attr">
+    <thead><tr><th style="width:200px">屬性</th><th style="width:140px">預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><code>do="feed"</code></td><td></td><td>把事件 <code>detail</code> 的輸入內容送進 B。<code>once</code> 預設改為 <code>false</code>，每次送出都處理；連續送出不會互相擋住。</td></tr>
+      <tr><td>B 是 <code>ui-post</code>、<code>ui-stream</code></td><td></td><td>呼叫 <code>add()</code>。<code>ui-post</code> 需要 <code>mode="live"</code>，作者用 <code>detail.name</code>（沒有就是「我」）；<code>ui-stream</code> 預設角色 <code>student</code>。</td></tr>
+      <tr><td><code>item</code></td><td>不設</td><td>JSON，補充或覆蓋 <code>add()</code> 的欄位，例如 <code>{"likes":12}</code>、<code>{"from":"teacher"}</code>。</td></tr>
+      <tr><td><code>feed-as</code></td><td><code>html</code></td><td><code>html</code> 用轉好的 HTML、<code>text</code> 用純文字、<code>markdown</code> 用原始 Markdown 文字。</td></tr>
+      <tr><td><code>template</code></td><td>不設</td><td>改為把輸入代入該 <code>&lt;template&gt;</code>，填進 B 容器。代入記號：<code>{html}</code>（轉好的 HTML）、<code>{text}</code>、<code>{markdown}</code>（同 <code>{value}</code>）、<code>{name}</code>，除 <code>{html}</code> 外一律跳脫，可以放在屬性裡。用來填 <code>ui-play</code>，因為它只在建立時讀劇本。</td></tr>
+      <tr><td><code>feed-mode</code></td><td><code>replace</code></td><td><code>replace</code> 先清空 B 再填入；<code>append</code> 接在後面。</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:12px">不只 <code>md-editor</code>：<code>detail</code> 只要有 <code>value</code>（例如 <code>ui-blank</code> 的 <code>blank-submit</code>、<code>ui-otp</code> 的 <code>otp-complete</code>），也能用 <code>feed</code> 送進這些元件，內容會當作純文字跳脫。</p>
+
+  <h2>版本紀錄</h2>
+  <table class="attr">
+    <thead><tr><th style="width:140px">日期</th><th>內容</th></tr></thead>
+    <tbody>
+      <tr><td>11-20-26</td><td><code>md-editor.js</code> 1.0.0 建立。<code>link-when.js</code> 新增 <code>do="feed"</code>、<code>item</code>、<code>feed-as</code>、<code>template</code>、<code>feed-mode</code>，<code>event="done"</code> 對照新增 <code>md-editor</code>。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="md-editor.js"></script>
+<script src="../lw/link-when.js"></script>
+<script src="../post/ui-post.js"></script>
+<script src="../flow/ui-stream.js"></script>
+<script src="../flow/ui-play.js"></script>
+<script>
+  /* 把每個範例的原始碼放進畫面與程式碼框；範例二另外接上事件紀錄 */
+  document.querySelectorAll('.ex').forEach((ex) => {
+    const src = ex.querySelector('script.demo-src');
+    if (!src) return;
+    const stage = ex.querySelector('.stage');
+    const code = ex.querySelector('pre.code-box code');
+    const text = src.textContent.replace(/^\n+|\s+$/g, '');
+    code.textContent = text;
+    stage.insertAdjacentHTML('beforeend', text);
+  });
+  const ed2 = document.getElementById('ed2');
+  if (ed2) {
+    ed2.addEventListener('md-submit', (e) => {
+      const d = e.detail;
+      document.getElementById('log2').textContent =
+        'name: ' + JSON.stringify(d.name) + '\n' +
+        'markdown: ' + JSON.stringify(d.markdown) + '\n' +
+        'html: ' + d.html + '\n' +
+        'text: ' + JSON.stringify(d.text);
+    });
+  }
+</script>
+</body>
+</html>

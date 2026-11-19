@@ -32,6 +32,36 @@
   <h1><code>&lt;link-when&gt;</code> 元件串接</h1>
   <p class="sub">A 播完時對 B 執行動作，中間可以讓 A 淡出、收合或刪除，並讓 B 移到 A 的位置。本身不顯示任何畫面，不需要寫 JavaScript。不支援 ui-table 與 info-region。</p>
 
+  <!-- 範例 8（11-20-26 新增） -->
+  <section>
+    <h2>範例 8（11-20-26 新增）：md-editor 輸入內容送進 ui-stream 與 ui-post（do="feed"）</h2>
+    <p class="desc"><code>do="feed"</code> 把事件 <code>detail</code> 裡的輸入內容送進 B：B 是 <code>mode="live"</code> 的 <code>ui-post</code> 或 <code>ui-stream</code> 就呼叫 <code>add()</code>；寫了 <code>template="#id"</code> 就把輸入代入 template，填進 B 容器（<code>ui-play</code> 用這個方式）。每次送出都會處理，連續送出依序排隊。完整範例與屬性見 <a href="../editor/md-editor-demo-11-20-26.html">md-editor 範例頁</a>。</p>
+    <div class="two">
+      <div>
+        <md-editor id="ed8" name="Amy" rows="4" label-submit="送出"></md-editor>
+        <div style="height:16px"></div>
+        <ui-stream id="st8" mode="live" height="260"></ui-stream>
+        <div style="height:16px"></div>
+        <ui-post id="po8" mode="live" compact author="IELTS Examiner" time="1h" min-height="60">How often do you exercise?</ui-post>
+        <link-when source="#ed8" event="done" target="#st8" do="feed"></link-when>
+        <link-when source="#ed8" event="done" target="#po8" do="feed" item='{"likes":3}'></link-when>
+      </div>
+<pre>&lt;md-editor id="ed8" name="Amy"&gt;&lt;/md-editor&gt;
+&lt;ui-stream id="st8" mode="live" height="260"&gt;&lt;/ui-stream&gt;
+&lt;ui-post id="po8" mode="live"&gt;…&lt;/ui-post&gt;
+
+&lt;!-- md-editor 的 done 就是 md-submit --&gt;
+&lt;link-when source="#ed8" event="done" target="#st8" do="feed"&gt;&lt;/link-when&gt;
+&lt;!-- item 的 JSON 補充 add() 的欄位 --&gt;
+&lt;link-when source="#ed8" event="done" target="#po8" do="feed"
+           item='{"likes":3}'&gt;&lt;/link-when&gt;
+
+&lt;!-- 填進 ui-play：輸入代入 template，填進隱藏的容器 --&gt;
+&lt;link-when source="#ed8" event="done" target="#stage" do="feed"
+           template="#tpl-play"&gt;&lt;/link-when&gt;</pre>
+    </div>
+  </section>
+
   <!-- 範例 7（11-20-26 新增） -->
   <section>
     <h2>範例 7（11-20-26 新增）：對話播完，A 縮小消失，B 在原位放大登場（swap="zoom"）</h2>
@@ -296,6 +326,7 @@
 <script src="../tour/route-map.js"></script>
 <script src="../maze/maze-quiz.js"></script>
 <script src="../post/ui-post.js"></script>
+<script src="../editor/md-editor.js"></script>
 <script src="link-when.js"></script>
 <script>
   /* 每次串接完成，在右下角以 Bootstrap alert 顯示 */

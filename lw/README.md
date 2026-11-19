@@ -2,7 +2,7 @@
 
 `<link-when>` 把兩個元件串起來：A 播完（或發出指定事件）時，對 B 執行動作，例如開始播放、前進一步、顯示出來。中間可以讓 A 淡出、收合或刪除，並把 B 移到 A 的位置，錄影時畫面焦點不會跳走。元素本身不顯示任何畫面，不需要寫 JavaScript。不支援 `ui-table` 與 `info-region`。
 
-互動範例：[`link-when-demo-11-19-26.html`](link-when-demo-11-19-26.html)。
+互動範例：[`link-when-demo-11-19-26.html`](link-when-demo-11-19-26.html)。把輸入內容送進其他元件（`do="feed"`）的完整範例見 [`../editor/md-editor-demo-11-20-26.html`](../editor/md-editor-demo-11-20-26.html)。
 
 A 結束後換成 B，並用倒數圓圈蓋住 A、再翻面離開：
 
@@ -54,7 +54,7 @@ A 結束後換成 B，並用倒數圓圈蓋住 A、再翻面離開：
 | `event` | `done` | `done` 依元件自動對應到完成事件（見下表）；也可寫任何事件名稱。 |
 | `detail-match` | 不設 | 事件的 `detail` 符合條件才觸發，格式為 `欄位:值`，多個條件用逗號分隔，例如 `index:3, role:system`。以字串比對，全部符合才算。 |
 | `target` | 必填 | B 的選擇器。B 可以先加 `hidden`，觸發時自動顯示。 |
-| `do` | `play` | `play`、`next`、`reset`、`show`、`hide`、`scroll`，或 B 身上任何方法名稱。 |
+| `do` | `play` | `play`、`next`、`reset`、`show`、`hide`、`scroll`、`feed`（見下方「把輸入送進元件」），或 B 身上任何方法名稱。 |
 | `call` | 不設 | 改為呼叫全域函式，例如 `BpPopnote.fold`。B 當第一個參數傳入，並取代 `do`（B 只會先顯示）。 |
 | `call-arg` | 不設 | 傳給 `call` 函式的第二個參數，`true`、`false`、數字會轉型，其餘為字串。 |
 | `delay` | `0` | A 觸發後等多久才開始（ms）。 |
@@ -74,7 +74,31 @@ A 結束後換成 B，並用倒數圓圈蓋住 A、再翻面離開：
 | `countdown-bg` | `background` | 圓圈內的底色。 |
 | `countdown-cover` | `background` | 蓋住 A 的覆蓋層底色。 |
 | `countdown-font-size` | 圓圈的一半 | 數字字級（rem），預設依圓圈大小自動計算。 |
-| `once` | `true` | 只觸發一次；`false` 則每次都觸發。 |
+| `once` | `true`（`do="feed"` 為 `false`） | 只觸發一次；`false` 則每次都觸發。 |
+| `item` | 不設 | 只用於 `do="feed"`：JSON，補充或覆蓋 `add()` 的欄位，例如 `{"likes":12}`、`{"from":"teacher"}`。 |
+| `feed-as` | `html` | 只用於 `do="feed"`：`html` 用轉好的 HTML、`text` 用純文字、`markdown` 用原始 Markdown 文字。 |
+| `template` | 不設 | 只用於 `do="feed"`：把輸入代入該 `<template>`，填進 B 容器。 |
+| `feed-mode` | `replace` | 搭配 `template`：`replace` 先清空 B 再填入，`append` 接在後面。 |
+
+## 把輸入送進元件（do="feed"）
+
+`do="feed"` 把事件 `detail` 裡的輸入內容送進 B，適合 `md-editor` 的 `md-submit`，也適用任何 `detail` 有 `value` 的事件（例如 `ui-blank` 的 `blank-submit`、`ui-otp` 的 `otp-complete`，內容會當作純文字跳脫）。
+
+```html
+<md-editor id="ed" name="Amy"></md-editor>
+<ui-post id="po" mode="live">…</ui-post>
+<ui-stream id="st" mode="live"></ui-stream>
+<div id="stage" hidden></div>
+
+<link-when source="#ed" event="done" target="#po" do="feed"></link-when>
+<link-when source="#ed" event="done" target="#st" do="feed" item='{"from":"teacher"}'></link-when>
+<link-when source="#ed" event="done" target="#stage" do="feed" template="#tpl"></link-when>
+```
+
+- B 是 `ui-post`（需 `mode="live"`）或 `ui-stream`：呼叫 `add()`。作者與名稱用 `detail.name`（`md-editor` 的 `name` 屬性），`ui-post` 沒有時是「我」，`ui-stream` 預設角色是 `student`。其他有 `add()` 的元件也可以。
+- 寫了 `template`：代入記號 `{html}`（轉好的 HTML）、`{text}`、`{markdown}`（同 `{value}`）、`{name}`，除 `{html}` 外一律跳脫成純文字，所以可以放進屬性，例如 `<note-fx text="{text}">`。`ui-play` 只在建立時讀劇本，用這個方式填進容器。
+- 每次送出都會處理（`once` 預設 `false`）。連續送出會排隊，依送出順序一個一個處理，B 的 `hidden` 會在第一次自動顯示。
+- 沒有事件可用時（呼叫 `el.fire()`），會直接向 A 讀取 `value`、`html`、`text`。
 
 ## `event="done"` 對照
 
@@ -101,6 +125,7 @@ A 結束後換成 B，並用倒數圓圈蓋住 A、再翻面離開：
 | `ui-check` | `ui-check-done` |
 | `ui-icon-anim` | `anim-end` |
 | `ui-fillin` | `fillin-submit`（送出即觸發，不分對錯） |
+| `md-editor` | `md-submit`（送出時，`detail` 有 `markdown`、`html`、`text`、`name`） |
 | `ui-mask` | `mask-reveal` |
 | `route-map` | `route-map:train-end`（只有火車跑完、`completed` 為 `true` 才觸發；被 `stop()` 中斷不算） |
 

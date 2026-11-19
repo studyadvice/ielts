@@ -76,6 +76,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`diff/`](diff/README.md) | `ui-layer-diff.js` | `<ui-layer-diff>` | 從籠統到具體的逐層改寫，自動標出新增與取代的部分。 |
 | [`dino/`](dino/README.md) | `dino-deck.js` | `<dino-deck>` `<dino-card>` | 恐龍噴火字卡動畫，例句從火焰中飛出。 |
 | [`drag/`](drag/README.md) | `ui-drag-ans.js` | `<ui-drag-ans>` | 拖曳或點選小卡的填空題。 |
+| [`editor/`](editor/README.md) | `md-editor.js` | `<md-editor>` | GitHub 留言框樣式的 Markdown 輸入框（Write／Preview、工具列、復原），搭配 `link-when` 的 `do="feed"` 把輸入送進 `ui-post`、`ui-stream`、`ui-play`。 |
 | [`flow/`](flow/README.md) | `ui-play.js`、`play-maker.js`、`ui-stream.js`、`ui-contacts.js`、`ui-orbit.js` | `<ui-play>` `<play-maker>` `<ui-stream>` `<ui-contacts>` `<ui-orbit>` | 教學錄影用的模擬畫面播放器（外框、標記、印章等效果）與它的劇本製作器、聊天室回放式的內容流、拖放人物產生訊息的通訊錄、核心概念與環繞想法的軌道圖。 |
 | [`guide/`](guide/README.md) | `ui-guide.js` | `<ui-guide>` | 框住頁面元素，加上號碼、說明卡與自動折線的指引框。 |
 | [`ian/`](ian/README.md) | `ui-icon-ani.js` | `<ui-icon-anim>` | 把多個 Bootstrap Icons 組成播放動畫。 |
