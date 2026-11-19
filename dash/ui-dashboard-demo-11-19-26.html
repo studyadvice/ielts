@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-dashboard 元件示範</title>
+<style>
+  body{background:#0C0D0C;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1rem;margin:0}
+  .page{max-width:1680px;margin:0 auto;padding:40px 48px 80px}
+  h1{font-size:2.25rem;font-weight:800;margin:0 0 8px}
+  h2{font-size:1.375rem;font-weight:700;color:#51DBCF;margin:56px 0 8px}
+  .lead-text{font-size:1.0625rem;color:#C6C7BD;margin:0 0 16px}
+  .desc{font-size:1rem;color:#C6C7BD;margin:0 0 16px}
+  .info-box{background:#3B2A20;border:1px solid #778CE1;border-radius:12px;padding:16px 20px;margin:16px 0 0}
+  code{color:#FF91D7}
+  pre.code{background:#151615;border:1px solid #3B2A20;border-radius:12px;font-size:.8125rem;padding:20px;margin:16px 0 0;white-space:pre-wrap;word-break:break-word}
+  pre.code code{color:inherit}
+  .stage{background:#151515;border:1px dashed #3B2A20;border-radius:16px;padding:16px}
+  .num{font-size:2rem;font-weight:800;color:#E3D322;line-height:1.2}
+  .sub{font-size:.875rem;color:#C6C7BD}
+  .tag{display:inline-block;font-size:.75rem;font-weight:800;color:#0C0D0C;background:#71CD76;border-radius:999px;padding:2px 10px}
+  .btn-demo{font-size:1rem;font-weight:700;padding:10px 22px;border-radius:999px;border:2px solid #51DBCF;background:#0C0D0C;color:#51DBCF;cursor:pointer}
+  table.attr{width:100%;border-collapse:collapse;font-size:.9375rem}
+  table.attr th,table.attr td{border-bottom:1px solid #3B2A20;padding:10px 12px;text-align:left;vertical-align:top}
+  table.attr th{color:#A3C4BC;font-weight:700;background:#151615}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>&lt;ui-dashboard&gt; 儀表板快速布局</h1>
+  <p class="lead-text">用屬性排出欄與列，每個 <code>&lt;dash-cell&gt;</code> 放純 HTML 或任何自製元件。只負責版面（CSS Grid），列高固定，整頁往下捲。</p>
+  <div class="info-box">格子預設透明；加上 <code>card</code> 才有卡片外框與 rgb(36, 36, 36) 底色。格子內只有一個容器型子元素（div、table、自製元件等）時，該元素自動撐滿格子；內容超出時格子內捲動（<code>scroll="none"</code> 則裁切）。</div>
+
+  <h2>範例一：ui-stream 放進儀表板（新增）</h2>
+  <p class="desc">兩個 <code>&lt;ui-stream&gt;</code> 各放一個格子：左邊是預設的頭像加氣泡，右邊是 <code>layout="split"</code> 雙欄對照。<code>ui-stream</code> 自己用 <code>height</code> 決定高度，格子的列高只要略大於它。</p>
+  <div class="stage">
+    <ui-dashboard areas="chat split | note note" col-widths="1fr 1fr" row-height="440 90">
+      <dash-cell area="chat" card heading="批改過程重播">
+        <ui-stream title="Speaking Part 2" controls progress autoplay height="330">
+          <stream-item from="student" name="Amy">I think the river is very beautiful.</stream-item>
+          <stream-item from="teacher" name="老師" typed pause="先想想：老師會先改哪個字？" reveal="ans-1">beautiful 太籠統了。</stream-item>
+          <stream-item from="system">字彙資源 6.0 → 6.5</stream-item>
+        </ui-stream>
+      </dash-cell>
+      <dash-cell area="split" card heading="雙欄對照">
+        <ui-stream layout="split" split-labels="Band 6 原句:playful, Band 7 改寫:green" avatar="false" autoplay controls height="330">
+          <stream-role name="b6" label="原句" color="playful" side="left"></stream-role>
+          <stream-role name="b7" label="改寫" color="green" side="right"></stream-role>
+          <stream-item from="b6">I buy coffee before the meeting.</stream-item>
+          <stream-item from="b7">I need to grab a black coffee before the meeting.</stream-item>
+          <stream-item from="system">need 後面接不定詞片語當受詞。</stream-item>
+        </ui-stream>
+      </dash-cell>
+      <dash-cell area="note" card>格子內只有一個自製元件時，它會自動撐滿格子；多個格子各自運行自己的元件，互不干擾。</dash-cell>
+    </ui-dashboard>
+  </div>
+  <template id="ans-1">The river <mark>winds through</mark> the valley.</template>
+  <pre class="code"><code>&lt;ui-dashboard areas="chat split | note note" col-widths="1fr 1fr" row-height="440 90"&gt;
+  &lt;dash-cell area="chat" card heading="批改過程重播"&gt;
+    &lt;ui-stream title="Speaking Part 2" controls progress autoplay height="330"&gt;
+      &lt;stream-item from="student" name="Amy"&gt;I think the river is very beautiful.&lt;/stream-item&gt;
+      &lt;stream-item from="teacher" name="老師" typed pause="先想想：老師會先改哪個字？" reveal="ans-1"&gt;beautiful 太籠統了。&lt;/stream-item&gt;
+    &lt;/ui-stream&gt;
+  &lt;/dash-cell&gt;
+  &lt;dash-cell area="split" card heading="雙欄對照"&gt;
+    &lt;ui-stream layout="split" split-labels="Band 6 原句:playful, Band 7 改寫:green" avatar="false" autoplay controls height="330"&gt;
+      &lt;stream-role name="b6" label="原句" color="playful" side="left"&gt;&lt;/stream-role&gt;
+      &lt;stream-role name="b7" label="改寫" color="green" side="right"&gt;&lt;/stream-role&gt;
+      &lt;stream-item from="b6"&gt;…&lt;/stream-item&gt;
+      &lt;stream-item from="b7"&gt;…&lt;/stream-item&gt;
+    &lt;/ui-stream&gt;
+  &lt;/dash-cell&gt;
+&lt;/ui-dashboard&gt;</code></pre>
+
+  <h2>範例二：ui-cards 放進儀表板（新增）</h2>
+  <p class="desc">12 欄欄列式：<code>&lt;ui-cards&gt;</code> 占 8 欄 3 列，右邊兩個小格子顯示統計。點卡片，細節顯示在 <code>ui-cards</code> 自己的內容區。</p>
+  <div class="stage">
+    <ui-dashboard cols="12" row-height="150" gap="16">
+      <dash-cell span="8x3" card heading="Part 2 題型">
+        <ui-cards cols="3" panel="below" panel-title="{label}" placeholder="請點選卡片。">
+          <card-item label="Describe a place" note="地點" detail="d-place"></card-item>
+          <card-item label="Describe a person" note="人物" detail="d-person"></card-item>
+          <card-item label="Describe an event" note="事件" detail="d-event"></card-item>
+        </ui-cards>
+      </dash-cell>
+      <dash-cell span="4" card><div class="num">3</div><div class="sub">本週練習題型</div></dash-cell>
+      <dash-cell span="4x2" card heading="提醒">點左邊的卡片，細節會顯示在卡片下方的內容區；格子內容太高時，格子內會出現捲軸。</dash-cell>
+    </ui-dashboard>
+  </div>
+  <template id="d-place">用過去式說明何時去、和誰去，再補一句感受。</template>
+  <template id="d-person">先交代關係，再講一件具體的事，最後說明為什麼難忘。</template>
+  <template id="d-event">依時間順序敘述，用 first、then、after that 串接。</template>
+  <pre class="code"><code>&lt;ui-dashboard cols="12" row-height="150" gap="16"&gt;
+  &lt;dash-cell span="8x3" card heading="Part 2 題型"&gt;
+    &lt;ui-cards cols="3" panel="below" panel-title="{label}"&gt;
+      &lt;card-item label="Describe a place" note="地點" detail="d-place"&gt;&lt;/card-item&gt;
+      &lt;card-item label="Describe a person" note="人物" detail="d-person"&gt;&lt;/card-item&gt;
+    &lt;/ui-cards&gt;
+  &lt;/dash-cell&gt;
+  &lt;dash-cell span="4" card&gt;…&lt;/dash-cell&gt;
+&lt;/ui-dashboard&gt;
+&lt;template id="d-place"&gt;…&lt;/template&gt;</code></pre>
+
+  <h2>範例三：版面字串式（最快）</h2>
+  <p class="desc">像畫草圖：<code>|</code> 分列，同名相鄰的格子合併成一個區域，<code>.</code> 是空格。<code>col-widths</code> 指定欄寬，<code>row-height</code> 給多個值時依序對應每一列。</p>
+  <div class="stage">
+    <ui-dashboard areas="head head head | nav main side | nav main side | foot foot foot"
+                  col-widths="200 1fr 280" row-height="80 140 140 80">
+      <dash-cell area="head" card><div class="num">128</div><div class="sub">本週完成題數</div></dash-cell>
+      <dash-cell area="nav" card heading="選單"><div>聽力<br>閱讀<br>寫作<br>口說</div></dash-cell>
+      <dash-cell area="main" card heading="主要內容">這裡是最大的區域，可以放表格、時間軸或任何元件。</dash-cell>
+      <dash-cell area="side" card heading="側欄"><span class="tag">新</span> 側欄小工具</dash-cell>
+      <dash-cell area="foot" card>頁尾提示</dash-cell>
+    </ui-dashboard>
+  </div>
+  <pre class="code"><code>&lt;ui-dashboard areas="head head head | nav main side | nav main side | foot foot foot"
+              col-widths="200 1fr 280" row-height="80 140 140 80"&gt;
+  &lt;dash-cell area="head" card&gt;…&lt;/dash-cell&gt;
+  &lt;dash-cell area="nav" card heading="選單"&gt;…&lt;/dash-cell&gt;
+  &lt;dash-cell area="main" card heading="主要內容"&gt;…&lt;/dash-cell&gt;
+&lt;/ui-dashboard&gt;</code></pre>
+
+  <h2>範例四：欄列式（12 欄，依序自動排入）</h2>
+  <p class="desc"><code>span="欄x列"</code> 指定大小；<code>col="2-4"</code> 表示第 2 到第 4 欄（含）；<code>col</code>、<code>row</code> 也可只寫起點。</p>
+  <div class="stage">
+    <ui-dashboard cols="12" row-height="100" gap="12">
+      <dash-cell span="3" card><div class="num">86%</div><div class="sub">正確率</div></dash-cell>
+      <dash-cell span="3" card><div class="num">24</div><div class="sub">連續天數</div></dash-cell>
+      <dash-cell span="3" card><div class="num">5.5</div><div class="sub">目前預估</div></dash-cell>
+      <dash-cell span="3" card><div class="num">7.0</div><div class="sub">目標</div></dash-cell>
+      <dash-cell span="8x3" card heading="近 30 天">大區域：span="8x3"</dash-cell>
+      <dash-cell span="4x2" card heading="待辦">span="4x2"</dash-cell>
+      <dash-cell span="4" card heading="提醒">span="4"（接在後面）</dash-cell>
+      <dash-cell col="3-10" card pad="8 24">col="3-10"，從第 3 欄排到第 10 欄，自訂內距 8px 24px</dash-cell>
+    </ui-dashboard>
+  </div>
+  <pre class="code"><code>&lt;ui-dashboard cols="12" row-height="100" gap="12"&gt;
+  &lt;dash-cell span="3" card&gt;…&lt;/dash-cell&gt;
+  &lt;dash-cell span="8x3" card heading="近 30 天"&gt;…&lt;/dash-cell&gt;
+  &lt;dash-cell span="4x2" card heading="待辦"&gt;…&lt;/dash-cell&gt;
+  &lt;dash-cell col="3-10" card pad="8 24"&gt;…&lt;/dash-cell&gt;
+&lt;/ui-dashboard&gt;</code></pre>
+
+  <h2>範例五：格子內放元件，搭配 link-when 顯示格子</h2>
+  <p class="desc">棋盤、題目面板各放一個格子（<code>&lt;tetris-quiz-panel for&gt;</code>）。右下兩個格子一開始用 <code>hidden</code> 隱藏，棋盤完全消除、解說顯示後，link-when 把它們顯示出來。左邊有 <code>reserve</code> 的預留空位，右邊沒有 <code>reserve</code> 的則是顯示前不占位置（這裡因為有 areas，其他格子不會移動）。</p>
+  <div class="stage">
+    <ui-dashboard areas="game panel panel | game tip1 tip2" col-widths="400 1fr 1fr" row-height="280 340">
+      <dash-cell area="game" card heading="填空遊戲">
+        <tetris-quiz id="t1" rows="6" board-width="300" drop-speed="14" clear-speed="12"
+                     question="She is good _____ playing the violin." answer="at"></tetris-quiz>
+      </dash-cell>
+      <dash-cell area="panel"><tetris-quiz-panel for="t1"></tetris-quiz-panel></dash-cell>
+      <dash-cell area="tip1" id="tip1" card heading="文法重點（預留空位）" hidden reserve>be good at + 名詞或動名詞。</dash-cell>
+      <dash-cell area="tip2" id="tip2" card heading="文法重點（不預留）" hidden>形容詞後面的介系詞要整組記，例如 good at、interested in。</dash-cell>
+    </ui-dashboard>
+  </div>
+  <link-when source="#t1" event="done" target="#tip1" do="show" enter="slide-up"></link-when>
+  <link-when source="#t1" event="done" target="#tip2" do="show" enter="slide-up" delay="400"></link-when>
+  <pre class="code"><code>&lt;ui-dashboard areas="game panel panel | game tip1 tip2" col-widths="400 1fr 1fr" row-height="280 340"&gt;
+  &lt;dash-cell area="game" card heading="填空遊戲"&gt;
+    &lt;tetris-quiz id="t1" rows="6" board-width="300" …&gt;&lt;/tetris-quiz&gt;
+  &lt;/dash-cell&gt;
+  &lt;dash-cell area="panel"&gt;&lt;tetris-quiz-panel for="t1"&gt;&lt;/tetris-quiz-panel&gt;&lt;/dash-cell&gt;
+  &lt;dash-cell area="tip1" id="tip1" card hidden reserve&gt;…&lt;/dash-cell&gt;
+  &lt;dash-cell area="tip2" id="tip2" card hidden&gt;…&lt;/dash-cell&gt;
+&lt;/ui-dashboard&gt;
+
+&lt;link-when source="#t1" event="done" target="#tip1" do="show"&gt;&lt;/link-when&gt;</code></pre>
+
+  <h2>範例六：窄螢幕堆疊 stack-below</h2>
+  <p class="desc">視窗寬度小於 <code>stack-below</code> 的值（px）時，所有格子改成單欄由上而下，每格最低高度為 <code>row-height</code> 的第一個值。請縮小視窗試試，這個範例在 1100px 以下堆疊。</p>
+  <div class="stage">
+    <ui-dashboard areas="a a b | c d b" row-height="120" stack-below="1100">
+      <dash-cell area="a" card heading="A">寬格</dash-cell>
+      <dash-cell area="b" card heading="B">高格</dash-cell>
+      <dash-cell area="c" card heading="C">小格</dash-cell>
+      <dash-cell area="d" card heading="D">小格</dash-cell>
+    </ui-dashboard>
+  </div>
+  <pre class="code"><code>&lt;ui-dashboard areas="a a b | c d b" row-height="120" stack-below="1100"&gt;…&lt;/ui-dashboard&gt;</code></pre>
+
+  <h2>屬性</h2>
+  <table class="attr">
+    <thead><tr><th>元素</th><th>屬性</th><th>預設</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="6">ui-dashboard</td><td><code>areas</code></td><td>無</td><td>版面字串，列用 | 或換行分隔，格內以空白分隔區域名稱，「.」代表空格。欄數與列數由此決定。</td></tr>
+      <tr><td><code>cols</code></td><td>12</td><td>欄數（欄列式）。有 areas 時忽略。</td></tr>
+      <tr><td><code>col-widths</code></td><td>各欄等寬</td><td>欄寬清單，如 <code>200 1fr 280</code>；純數字視為 px，也可寫 fr、rem、minmax(…)。</td></tr>
+      <tr><td><code>row-height</code></td><td>120</td><td>固定列高；多個值依序對應每一列，不足的沿用最後一個。想讓內容撐高可寫 <code>minmax(120px,auto)</code>（括號內不要有空白）。</td></tr>
+      <tr><td><code>gap</code></td><td>16</td><td>格子間距，純數字視為 px。</td></tr>
+      <tr><td><code>stack-below</code></td><td>不堆疊</td><td>視窗寬度（px）小於此值時改為單欄堆疊。</td></tr>
+      <tr><td rowspan="9">dash-cell</td><td><code>area</code></td><td>無</td><td>對應 areas 裡的區域名稱。</td></tr>
+      <tr><td><code>col</code>、<code>row</code></td><td>自動排入</td><td><code>3</code> 表示起點，<code>2-4</code> 表示第 2 到第 4 個（含）。</td></tr>
+      <tr><td><code>span</code></td><td>1x1</td><td><code>3</code>（占 3 欄）或 <code>3x2</code>（3 欄 2 列）。</td></tr>
+      <tr><td><code>card</code></td><td>無</td><td>卡片外框與 rgb(36, 36, 36) 底色，內距 16px。</td></tr>
+      <tr><td><code>heading</code></td><td>無</td><td>格子上方的小標題。</td></tr>
+      <tr><td><code>pad</code></td><td>card 為 16</td><td>內距，如 <code>8 24</code>（上下 8px，左右 24px）；純數字視為 px。</td></tr>
+      <tr><td><code>scroll</code></td><td>內容超出時捲動</td><td>設為 <code>none</code> 時裁切超出的內容。</td></tr>
+      <tr><td><code>hidden</code></td><td>無</td><td>隱藏格子，可由 link-when 顯示；隱藏後版面是否重排取決於 areas 或自動排入。</td></tr>
+      <tr><td><code>reserve</code></td><td>無</td><td>搭配 hidden，隱藏時保留空位。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="ui-dashboard.js"></script>
+<script src="../tetris/tetris-quiz.js"></script>
+<script src="../lw/link-when.js"></script>
+<script src="../flow/ui-stream.js"></script>
+<script src="../layout/ui-cards.js"></script>
+</body>
+</html>

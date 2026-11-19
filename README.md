@@ -72,6 +72,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | --- | --- | --- | --- |
 | [`bd/`](bd/README.md) | `card-badge.js` | `<card-badge>` | 多功能徽章：日期與截止日、未讀計數、過濾清單、複製文字、折疊、輪播等。 |
 | [`chk/`](chk/README.md) | `ui-check.js` | `<ui-check>` | 閱讀檢核點按鈕，可把紀錄送到後端。 |
+| [`dash/`](dash/README.md) | `ui-dashboard.js` | `<ui-dashboard>` `<dash-cell>` | 儀表板快速布局：用屬性排出欄與列，每個格子放純 HTML 或任何元件。 |
 | [`diff/`](diff/README.md) | `ui-layer-diff.js` | `<ui-layer-diff>` | 從籠統到具體的逐層改寫，自動標出新增與取代的部分。 |
 | [`dino/`](dino/README.md) | `dino-deck.js` | `<dino-deck>` `<dino-card>` | 恐龍噴火字卡動畫，例句從火焰中飛出。 |
 | [`drag/`](drag/README.md) | `ui-drag-ans.js` | `<ui-drag-ans>` | 拖曳或點選小卡的填空題。 |
