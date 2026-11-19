@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mini-table 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
+    --gray: #86877F; --line: #2A2B29;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid var(--line); border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.82rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 620px; overflow: auto; }
+  .themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .themes .tname { color: var(--vanilla); font-weight: 700; margin: 0 0 8px 0; }
+  .themes .tname code { color: var(--yellow); }
+  .tool { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px 0; }
+  .alert-zone { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 340px; }
+  .alert-zone .alert { background: #1B1C1B; color: var(--vanilla); border: 1px solid var(--blue); font-size: 0.9rem; }
+  .stage { border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .btn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .code-box code { font-size: 0.82rem; white-space: pre; font-family: ui-monospace, monospace; }
+  pre.code-box { white-space: pre; }
+  .ref { width: 100%; border-collapse: collapse; }
+  .ref th, .ref td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  .ref code { color: var(--yellow); }
+  .slot { min-height: 120px; border: 1px dashed var(--gray); border-radius: 8px; padding: 12px; color: var(--gray); }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .version { color: var(--blue); font-size: 1.1rem; margin: 32px 0 12px 0; }
+</style>
+</head>
+<body>
+<div class="alert-zone" id="alert-zone"></div>
+<div class="page">
+  <h1>mini-table：一行一列的輕量表格</h1>
+  <p class="lead-note">本檔合併 11-06-26 與 11-10-26 兩份範例，越新的放越上面。<br>
+  <b>11-20-26</b>：新增可點擊徽章 <code>&lt;mt-badge&gt;</code>，點擊後用 <code>ui-charts.js</code> 在目標區域產生圖表，見範例 11-20-A 到 D。<br>
+  <b>11-10-26</b>：新增儲存格 API，搭配 ui-plus.js 的 <code>&lt;ui-btn&gt;</code> 用 Excel 座標揭曉指定儲存格。<br>
+  <b>11-06-26</b>：基本用法與預排外觀、<code>head-style</code>、<code>row-style</code>、<code>first-col</code>、強調列。</p>
+
+  <h2 class="version">11-20-26：可點擊徽章與圖表</h2>
+  <section class="demo" data-demo>
+    <h2>範例 11-20-A：徽章指向事先寫好的圖表（chart）</h2>
+    <p class="desc">在儲存格裡寫 <code>&lt;mt-badge chart="#template"&gt;</code>，表格加 <code>chart-target</code> 指定目標區域。點徽章就把 template 裡的 <code>&lt;ui-chart&gt;</code> 複製進去；後點的取代先前的，再點同一顆徽章會收起，並恢復目標原本的文字。徽章用 <code>color</code> 換顏色。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="stage"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code code-box"><code></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table chart-target="#bga-slot" pre-theme="ledger" color="indigo" align="l, r, r, c"
+            head="Name | Fluency | Lexical | 圖表">
+  Amy | 7 | 6.5 | <mt-badge chart="#bga-amy">Amy 的圖</mt-badge>
+  Ben | 5.5 | 5 | <mt-badge chart="#bga-ben" color="playful">Ben 的圖</mt-badge>
+  Cleo | 6.5 | 7 | <mt-badge chart="bga-cleo" color="violet">Cleo 的圖</mt-badge>
+</mini-table>
+
+<div id="bga-slot" class="slot">點表格裡的徽章，圖表會出現在這裡</div>
+
+<template id="bga-amy">
+  <ui-chart type="donut" theme="key" title="Amy" center="7 / 6.5" show-values height="300px">
+    <chart-row label="Fluency" value="7"></chart-row>
+    <chart-row label="Lexical" value="6.5"></chart-row>
+  </ui-chart>
+</template>
+<template id="bga-ben">
+  <ui-chart type="bar" theme="playful" title="Ben" y-max="9" show-values height="300px">
+    <chart-row label="Fluency" value="5.5"></chart-row>
+    <chart-row label="Lexical" value="5"></chart-row>
+  </ui-chart>
+</template>
+<template id="bga-cleo">
+  <ui-chart type="column" theme="violet" title="Cleo" y-max="9" show-values height="300px">
+    <chart-row label="Fluency" value="6.5"></chart-row>
+    <chart-row label="Lexical" value="7"></chart-row>
+  </ui-chart>
+</template>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例 11-20-B：由表格的數字自動組圖（chart-from）</h2>
+    <p class="desc">不必另外寫圖表。<code>chart-from="row"</code> 把該列的數字畫成一張圖，欄名當標籤、第一個文字格當標題；<code>chart-from="col"</code> 加 <code>chart-col="B"</code> 畫整欄；<code>chart-from="table"</code> 畫整張表的數字欄，每欄是一個系列。表頭格裡也能放徽章。徽章上的 <code>chart-type</code>、<code>chart-title</code>、<code>chart-theme</code>、<code>chart-y-max</code> 等 <code>chart-*</code> 屬性，去掉 <code>chart-</code> 後原樣交給 <code>&lt;ui-chart&gt;</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="stage"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code code-box"><code></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table chart-target="#bgb-slot" pre-theme="score" color="key" head-source="bgb-head" source="bgb-rows"></mini-table>
+
+<div id="bgb-slot" class="slot">點徽章：列、欄、整張表都能畫</div>
+
+<template id="bgb-head">
+  Name | Fluency <mt-badge chart-from="col" chart-col="B" chart-type="bar" chart-theme="green" chart-y-max="9" chart-show-values color="green">欄</mt-badge> | Lexical | Grammar | <mt-badge chart-from="table" chart-type="column" chart-theme="blue" chart-y-max="9" chart-title="全班比較" color="blue">整張表</mt-badge>
+</template>
+<template id="bgb-rows">
+  Amy  | 7   | 6.5 | 7   | <mt-badge chart-from="row" chart-type="bar" chart-theme="key" chart-y-max="9" chart-show-values>這一列</mt-badge>
+  Ben  | 5.5 | 5   | 6   | <mt-badge chart-from="row" chart-type="bar" chart-theme="playful" chart-y-max="9" chart-show-values color="playful">這一列</mt-badge>
+  Cleo | 6.5 | 7   | 6.5 | <mt-badge chart-from="row" chart-type="line" chart-theme="violet" chart-y-max="9" chart-show-values color="violet">這一列</mt-badge>
+</template>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例 11-20-C：疊加、個別目標區域</h2>
+    <p class="desc">表格加 <code>chart-mode="append"</code>，圖表一張一張往下疊，再點同一顆徽章只收掉那一張。徽章自己寫 <code>target</code> 就能改送到別的區域，蓋過表格的 <code>chart-target</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="stage"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code code-box"><code></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table chart-target="#bgc-slot" chart-mode="append" pre-theme="tiles" color="gray"
+            head="Skill | Week 1 | Week 2 | Week 3 | 圖表">
+  Fluency  | 5.5 | 6   | 6.5 | <mt-badge chart-from="row" chart-type="line" chart-y-min="4" chart-y-max="8" chart-theme="key" chart-height="240px">疊加</mt-badge>
+  Lexical  | 5   | 5.5 | 6.5 | <mt-badge chart-from="row" chart-type="line" chart-y-min="4" chart-y-max="8" chart-theme="playful" chart-height="240px" color="playful">疊加</mt-badge>
+  Grammar  | 6   | 6   | 7   | <mt-badge chart-from="row" chart-type="line" chart-y-min="4" chart-y-max="8" chart-theme="violet" chart-height="240px" color="violet" target="#bgc-side">送去右邊</mt-badge>
+</mini-table>
+
+<div class="two">
+  <div id="bgc-slot" class="slot">疊加區</div>
+  <div id="bgc-side" class="slot">個別目標區</div>
+</div>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例 11-20-D：不寫 chart-target，交給 link-when</h2>
+    <p class="desc">沒有 <code>chart-target</code> 時 mini-table 不會自己放圖，只發出會冒泡的 <code>mini-table:badge</code>，<code>detail</code> 帶 <code>{ ref, row, col, badge, cell, data, html, target, active }</code>。用 <code>link-when</code> 接起來，要動畫或排隊時可以用。<code>chart="…"</code> 的徽章直接用 <code>do="feed"</code>，<code>data</code> 就是選擇器；<code>chart-from</code> 的徽章 <code>html</code> 帶組好的圖，要加 <code>template</code>，內容寫 <code>{html}</code>。下面這張是後者，點擊後事件資訊會顯示在 Bootstrap 提示。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="stage"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code code-box"><code></code></pre></div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table id="bgd-tbl" pre-theme="frame" color="blue" head="Name | Fluency | Lexical | Grammar | 圖表">
+  Amy | 7   | 6.5 | 7   | <mt-badge chart-from="row" chart-type="donut" chart-theme="blue" color="blue">畫圖</mt-badge>
+  Ben | 5.5 | 5   | 6   | <mt-badge chart-from="row" chart-type="donut" chart-theme="green" color="green">畫圖</mt-badge>
+</mini-table>
+
+<div id="bgd-slot" class="slot">link-when 會把圖送到這裡</div>
+
+<link-when source="#bgd-tbl" event="mini-table:badge" target="#bgd-slot" do="feed" template="#bgd-html"></link-when>
+<template id="bgd-html">{html}</template>
+    </script>
+  </section>
+
+  <h2 class="version">11-10-26：儲存格揭曉</h2>
+  <section class="demo" data-demo>
+    <h2>範例一：座標怎麼數</h2>
+    <p class="desc">三欄三列的表：第 1 列是表頭，所以 B2 是第一筆資料的第二欄。按下按鈕，九格同時換成自己的座標；內容用 <code>|</code> 分隔，一格一段，依 A1、B1、C1、A2…的順序對應。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="stage"></div></div>
+      <div>
+        <p class="pair-label">程式碼</p>
+        <pre class="code code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table id="coord-tbl" head="Place | Answer | Note" pre-theme="grid" color="indigo">
+  Taipei | ？ | ？
+  Kaohsiung | ？ | ？
+</mini-table>
+<div class="btn-row">
+  <ui-btn theme="indigo" icon="bi-grid-3x3" mini-table-id="coord-tbl" target-cell="A1:C3"
+          target-cell-content="A1|B1|C1|A2|B2|C2|A3|B3|C3" label-open="恢復原表">顯示每一格的座標</ui-btn>
+</div>
+    </script>
+  </section>
+
+  <section class="demo" data-demo>
+    <h2>範例二：單格揭曉答案</h2>
+    <p class="desc">最常用的寫法。<code>target-cell-content</code> 可以寫 HTML；長一點的內容放進 template，用 <code>target-cell-source</code> 讀取。再按一次恢復成問號。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="stage"></div></div>
+      <div>
+        <p class="pair-label">程式碼</p>
+        <pre class="code code-box"><code></code></pre>
+      </div>
+    </div>
+    <script type="text/plain" class="demo-src">
+<mini-table id="mytbl" head="Clue | Answer | Chunk" pre-theme="frame" color="green">
+  A place for coffee | ？ | ？
+  A place for books | ？ | ？
+</mini-table>
+<div class="btn-row">
+  <ui-btn theme="green" mini-table-id="mytbl" target-cell="B2"
+          target-cell-content="<b>Cafe</b>" label-open="收回">顯示答案</ui-btn>
+  <ui-btn theme="yellow" mini-table-id="mytbl" target-cell="C2"
+          target-cell-source="chunk-c2" label-open="收回">顯示語塊</ui-btn>
+  <ui-btn theme="blue" mini-table-id="mytbl" target-cell="B3 C3"
+          target-cell-content="<b>Library</b> | a quiet corner to <c-blue>lose myself in</c-blue>"
+          stagger="400" label-open="收回">第 3 列一起揭曉</ui-btn>
+</div>
+<template id="chunk-c2">
+  grab a <c-yellow>quick flat white</c-yellow>
+</template>
+    </script>
+  </section>
+
+  <section class="demo">
+    <h2>範例三：JavaScript API</h2>
+    <p class="desc">不透過 ui-btn 也可以直接操作。寫入的內容會被記住，呼叫 <code>render()</code> 重畫後仍然保留；<code>resetCell()</code> 恢復原始內容。</p>
+    <div class="pair">
+      <div>
+        <div class="stage">
+          <mini-table id="api-tbl" head="Skill | Band" pre-theme="ledger">
+            Fluency | 6
+            Lexical resource | 6
+          </mini-table>
+          <div class="btn-row">
+            <button type="button" class="btn btn-sm btn-outline-info" data-act="set">setCell('B3', '7.5')</button>
+            <button type="button" class="btn btn-sm btn-outline-info" data-act="reset">resetCell('B3')</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" data-act="theme">換外觀後 render()</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-act="size">size()</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" data-act="bad">cellAt('D9')</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="pair-label">JavaScript</p>
+        <pre class="code code-box"><code>const t = document.getElementById('api-tbl');
+t.cellAt('B2');               // 取得儲存格元素（th 或 td）
+t.resolveCells('A2:B3');      // ['A2', 'B2', 'A3', 'B3']
+t.setCell('B3', '7.5');       // 寫入並記住，render() 後仍保留
+t.resetCell('B3');            // 恢復原始內容
+t.size();                     // { cols: 2, rows: 3 }，表頭算一列
+MiniTable.parseRef('$AA$12'); // { col: 27, row: 12 }
+MiniTable.refName(27, 12);    // 'AA12'</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>座標規則與相關屬性</h2>
+    <table class="ref">
+      <thead><tr><th style="width:220px">項目</th><th style="width:260px">範例</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>座標</td><td><code>B2</code>、<code>AA12</code></td><td>欄用字母、列用數字，都從 1 起算，大小寫皆可。有表頭時表頭是第 1 列；沒有表頭時第一筆資料就是第 1 列。</td></tr>
+        <tr><td>多格與範圍</td><td><code>B2 C3</code>、<code>C2:C4</code></td><td>逗號或空白分隔，範圍依列的順序展開（A1、B1…A2、B2…）。</td></tr>
+        <tr><td>絕對參照</td><td><code>$B$2</code></td><td>從 Excel 複製過來的 <code>$</code> 會略過。</td></tr>
+        <tr><td>超出範圍</td><td><code>D9</code></td><td>主控台警告並說明表格的欄數與列數，那一格略過。</td></tr>
+        <tr><td><code>mini-table-id</code></td><td><code>mini-table-id="mytbl"</code></td><td>寫在 ui-btn 上，指定表格。也接受 <code>min-table-id</code>。</td></tr>
+        <tr><td><code>target-cell</code></td><td><code>target-cell="B2"</code></td><td>寫在 ui-btn 上，指定儲存格。</td></tr>
+        <tr><td><code>target-cell-content</code></td><td><code>target-cell-content="&lt;b&gt;Cafe&lt;/b&gt;"</code></td><td>寫在 ui-btn 上，要顯示的內容。多格用 <code>|</code> 分隔。</td></tr>
+        <tr><td><code>target-cell-source</code></td><td><code>target-cell-source="ans"</code></td><td>寫在 ui-btn 上，從 template 讀內容，優先於 <code>target-cell-content</code>。</td></tr>
+      </tbody>
+    </table>
+    <p class="desc" style="margin:16px 0 0 0">ui-btn 的 <code>label-open</code>、<code>stagger</code>、<code>anim-duration</code>、<code>animation="none"</code>、<code>open</code>、<code>group</code> 都能和儲存格一起用。兩支檔案的載入順序不拘。</p>
+  </section>
+
+  <h2 class="version">11-06-26：基本用法與預排外觀</h2>
+  <section class="demo">
+    <h2>範例 1：資料卡片</h2>
+    <p class="desc">卡片用 <code>media-position="inline"</code> 讓圖示和標題同一行，<code>meta</code> 放右側來源，角標排在同一列。表格用預設的 <code>clean</code> 外觀。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：表頭與內容放在 template</h2>
+    <p class="desc"><code>head-source</code> 讀表頭，<code>source</code> 讀內容。同一份資料可以給好幾張表用。外觀是 <code>score</code>：第一欄強調，數字放大。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：所有預排外觀</h2>
+    <p class="desc">同一份內容，換 <code>pre-theme</code> 就換樣子。每張表都用 <code>source="tpl-band"</code> 讀同一個 template。</p>
+    <div class="live" data-tpl="ex3"></div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 4：用 JavaScript 換外觀</h2>
+    <p class="desc">改 <code>pre-theme</code> 屬性後呼叫 <code>render()</code>。</p>
+    <div class="tool" id="theme-btns"></div>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex4"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex4"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 5：新增的 tiles、frame、side，以及改善後的 grid</h2>
+    <p class="desc"><code>tiles</code> 每列是一塊圓角色塊；<code>frame</code> 有強調色圓角外框；<code>side</code> 第一欄是實心色帶，適合「項目｜說明」對照；<code>grid</code> 的框線預設用 shell 調暗，可以用 <code>color</code> 換成其他色。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex5"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex5"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 6：head-style="filled" 搭配不同外觀</h2>
+    <p class="desc">同一個屬性加在 <code>compact</code>、<code>clean</code>、<code>tiles</code>、<code>grid</code> 上，表頭都變成強調色實心色帶；<code>bg-alternative</code> 自動配白字。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex6"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex6"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 7：列分隔、第一欄與強調列</h2>
+    <p class="desc">左上：<code>clean</code> 改成交錯底色、第一欄強調色，第二列用 <code>!</code> 標成強調列並以 <code>mark-color="urgent"</code> 上色。右上：<code>compact</code> 加實心表頭、第一欄實心色帶、列與列無線。下排：<code>frame</code> 改虛線、<code>grid</code> 第一欄粗體。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex7"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex7"></pre></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex7">
+<div class="themes" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+  <mini-table pre-theme="clean" row-style="striped" first-col="accent" color="key" mark-color="urgent" head="Name | Fluency | Lexical">
+    Amy | 7 | 6.5
+    ! Ben | 5.5 | 5
+    Cleo | 6.5 | 7
+  </mini-table>
+  <mini-table pre-theme="compact" head-style="filled" first-col="filled" row-style="none" color="indigo" head="步驟 | 做法">
+    開場 | 第一句不照搬題目
+    ! 展開 | 用具體細節撐起答案
+    收尾 | 一句話回到感受
+  </mini-table>
+  <mini-table pre-theme="frame" row-style="dashed" color="calm" head="語塊 | 中文">
+    a stone's throw from | 離……很近
+    rain or shine | 風雨無阻
+    \! important | 開頭是驚嘆號的內容
+  </mini-table>
+  <mini-table pre-theme="grid" first-col="bold" head="Band | 描述">
+    7 | 流暢少停頓
+    ! 6 | 能說長但會卡
+  </mini-table>
+</div>
+</template>
+
+<template id="ex6">
+<div class="themes" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+  <mini-table pre-theme="compact" head-style="filled" color="indigo" head="語塊 | 次數">
+    a stone's throw from | 12
+    rain or shine | 7
+    conveniently located | 5
+  </mini-table>
+  <mini-table pre-theme="clean" head-style="filled" color="bg-alternative" head="Account | Region | Seats">
+    Northwind | EMEA | 1,200
+    Globex | EMEA | 860
+  </mini-table>
+  <mini-table pre-theme="tiles" head-style="filled" color="calm" head="作業 | 截止 | 狀態" align="l, c, r">
+    Part 2 錄音 | 11/08 | <c-urgent>未交</c-urgent>
+    語塊造句 | 11/10 | <c-green>已交</c-green>
+  </mini-table>
+  <mini-table pre-theme="grid" head-style="filled" color="playful" head="Band | 描述">
+    7 | 流暢少停頓
+    6 | 能說長但會卡
+  </mini-table>
+</div>
+</template>
+
+<template id="ex5">
+<ui-cards cols="2">
+  <card-item icon="grid-3x3" label="grid" meta="color=&quot;blue&quot;" media-position="inline">
+    <mini-table pre-theme="grid" color="blue" head="Band | Fluency | Lexical">
+      7 | 流暢少停頓 | 偶用少見字
+      6 | 能說長但會卡 | 字彙夠用
+    </mini-table>
+  </card-item>
+  <card-item icon="layers" label="tiles" meta="每列一塊" media-position="inline">
+    <mini-table pre-theme="tiles" head="作業 | 截止 | 狀態" align="l, c, r">
+      Part 2 錄音 | 11/08 | <c-urgent>未交</c-urgent>
+      語塊造句 | 11/10 | <c-green>已交</c-green>
+    </mini-table>
+  </card-item>
+  <card-item icon="bounding-box" label="frame" meta="強調色外框" media-position="inline">
+    <mini-table pre-theme="frame" head="語塊 | 中文">
+      a stone's throw from | 離……很近
+      rain or shine | 風雨無阻
+    </mini-table>
+  </card-item>
+  <card-item icon="layout-sidebar" label="side" meta="項目對照" media-position="inline">
+    <mini-table pre-theme="side" col-widths="1:3">
+      開場 | 第一句不照搬題目，直接給畫面
+      展開 | 用具體的人事時地物撐起答案
+      收尾 | 一句話回到自己的感受
+    </mini-table>
+  </card-item>
+</ui-cards>
+</template>
+
+<template id="ex1">
+<ui-cards cols="3">
+  <card-item icon="snow" label="Top accounts" meta="Snowflake" media-position="inline">
+    <mini-table head="Account | Region | Seats" align="l, l, r">
+      Northwind | EMEA | 1,200
+      Globex    | EMEA | 860
+    </mini-table>
+  </card-item>
+  <card-item icon="mic" label="本週口說練習" meta="Part 1" media-position="inline" badge="新">
+    <mini-table head="題目 | 次數 | 平均" align="l, c, r">
+      Hometown | 4 | 6.5
+      Work or study | 3 | 6
+    </mini-table>
+  </card-item>
+  <card-item icon="bookmark-star" label="高頻語塊" meta="Lesson 2" media-position="inline">
+    <mini-table pre-theme="compact" head="語塊 | 用過">
+      <c-key>conveniently located</c-key> | 5
+      <c-key>a tiny apartment</c-key> | 3
+      <c-key>rain or shine</c-key> | 2
+    </mini-table>
+  </card-item>
+</ui-cards>
+</template>
+
+<template id="ex2">
+<ui-cards cols="2">
+  <card-item icon="graph-up" label="模考分數" meta="11 月" media-position="inline">
+    <mini-table pre-theme="score" head-source="mock-head" source="mock-rows"></mini-table>
+  </card-item>
+  <card-item icon="table" label="同一份資料，換外觀" meta="ledger" media-position="inline">
+    <mini-table pre-theme="ledger" head-source="mock-head" source="mock-rows"></mini-table>
+  </card-item>
+</ui-cards>
+
+<template id="mock-head">Name | Fluency | Lexical</template>
+<template id="mock-rows">
+  Amy | 7 | 6.5
+  Ben | 6 | 6
+  Cleo | 6.5 | 7
+</template>
+</template>
+
+<template id="ex3">
+<div class="themes">
+  <div><p class="tname"><code>clean</code></p><mini-table pre-theme="clean" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>ledger</code></p><mini-table pre-theme="ledger" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>grid</code></p><mini-table pre-theme="grid" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>banner</code></p><mini-table pre-theme="banner" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>compact</code></p><mini-table pre-theme="compact" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>bare</code></p><mini-table pre-theme="bare" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>score</code></p><mini-table pre-theme="score" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>tiles</code></p><mini-table pre-theme="tiles" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>frame</code></p><mini-table pre-theme="frame" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>side</code></p><mini-table pre-theme="side" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+  <div><p class="tname"><code>banner</code> + <code>color="playful"</code></p><mini-table pre-theme="banner" color="playful" head="Part | 時間 | 題數" source="tpl-band"></mini-table></div>
+</div>
+
+<template id="tpl-band">
+  Part 1 | 4–5 分鐘 | 9
+  Part 2 | 3–4 分鐘 | 1
+  Part 3 | 4–5 分鐘 | 5
+</template>
+</template>
+
+<template id="ex4">
+<mini-table id="mt-live" pre-theme="clean" head="Skill | Weight | Target" align="l, c, r" col-widths="2:1:1">
+  Fluency and Coherence | 25% | 7
+  Lexical Resource | 25% | 7
+  Grammatical Range | 25% | 6.5
+  Pronunciation | 25% | 7
+</mini-table>
+</template>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+  document.querySelectorAll('.live[data-tpl]').forEach(box => {
+    const tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    const pre = document.querySelector('pre[data-code="' + box.dataset.tpl + '"]');
+    if (pre) pre.textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+})();
+
+/* 範例三：結果用 Bootstrap alert 顯示 */
+function note(msg) {
+  const zone = document.getElementById('alert-zone');
+  const box = document.createElement('div');
+  box.className = 'alert alert-dismissible fade show';
+  box.innerHTML = '<span></span><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+  box.firstChild.textContent = msg;
+  box.querySelector('.btn-close').addEventListener('click', () => box.remove());
+  zone.appendChild(box);
+  setTimeout(() => box.remove(), 3500);
+}
+document.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => {
+  const t = document.getElementById('api-tbl');
+  const act = b.dataset.act;
+  if (act === 'set') { t.setCell('B3', '<b>7.5</b>'); note('B3 已寫入 7.5'); }
+  if (act === 'reset') { t.resetCell('B3'); note('B3 已恢復原始內容'); }
+  if (act === 'theme') {
+    t.setAttribute('pre-theme', t.getAttribute('pre-theme') === 'ledger' ? 'tiles' : 'ledger');
+    t.render();
+    note('已換成 ' + t.getAttribute('pre-theme') + ' 並重畫，B3 的寫入內容仍在');
+  }
+  if (act === 'size') { const s = t.size(); note('size()：' + s.cols + ' 欄 ' + s.rows + ' 列（表頭算一列）'); }
+  if (act === 'bad') { note('cellAt(\'D9\') 回傳 ' + t.cellAt('D9') + '，主控台有警告'); }
+}));
+
+/* 範例 11-20-D：把事件內容用 Bootstrap alert 顯示 */
+document.addEventListener('mini-table:badge', e => {
+  if (!e.target.closest('#bgd-tbl')) return;
+  const d = e.detail;
+  note('mini-table:badge → ' + d.ref + '（第 ' + d.row + ' 列第 ' + d.col + ' 欄）「' + d.badge + '」，' + (d.target ? '已放進目標' : '沒有 chart-target'));
+});
+</script>
+<script src="../charts/ui-charts.js?v=11-20-26"></script>
+<script src="../layout/ui-cards.js"></script>
+<script src="../lw/link-when.js"></script>
+<script src="mini-table.js?v=11-20-26"></script>
+<script src="../ui-plus.js?v=11-10-26c"></script>
+<script>
+  (function () {
+    var box = document.getElementById('theme-btns');
+    MiniTable.themes.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn btn-sm btn-outline-light'; b.textContent = t;
+      b.addEventListener('click', function () {
+        var m = document.getElementById('mt-live');
+        m.setAttribute('pre-theme', t); m.render();
+        var a = document.createElement('div');
+        a.className = 'alert alert-info'; a.setAttribute('role', 'alert'); a.textContent = '外觀已換成 ' + t;
+        document.getElementById('alert-zone').appendChild(a);
+        setTimeout(function () { a.remove(); }, 1800);
+      });
+      box.appendChild(b);
+    });
+  })();
+</script>
+</body>
+</html>

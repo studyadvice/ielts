@@ -36,6 +36,21 @@
  * 列首寫 ! 代表強調這一列；內容本身要以 ! 開頭時寫成 \!。
  * 不使用 Shadow DOM；屬性只在載入時讀取一次，之後要重畫呼叫 el.render()。
  *
+ * 可點擊徽章 <mt-badge>（寫在儲存格裡），點擊後用 ui-charts.js 的 <ui-chart> 在目標區域畫圖
+ *   <mini-table chart-target="#slot" head="Name | Fluency | Lexical | 圖表">
+ *     Amy | 7 | 6.5 | <mt-badge chart="#tpl-amy">看圖</mt-badge>
+ *     Ben | 6 | 6   | <mt-badge chart-from="row" chart-type="bar">看分數</mt-badge>
+ *   </mini-table>
+ *   表格屬性  chart-target 目標區域選擇器（或 id）；chart-mode replace（預設，後點取代先前）或 append（疊加）
+ *   徽章屬性  color 徽章顏色（預設 key）；target 只給這顆徽章用的目標，蓋過 chart-target
+ *             chart  指向 template 或元素的選擇器（或 id），點擊時複製進目標
+ *             chart-from  row、col、table：由表格的數字自動組出 <ui-chart>
+ *             chart-col   chart-from="col" 時指定欄，例如 B
+ *             chart-type、chart-title、chart-unit、chart-theme 等 chart-* 屬性，去掉 chart- 後原樣給 <ui-chart>
+ *   再點同一顆徽章會收起圖表，並恢復目標原本的內容。
+ *   每次點擊都發出會冒泡的 mini-table:badge，detail = { ref, row, col, badge, cell, data, html, target, active }；
+ *   沒寫 chart-target 時不會自己放圖，可交給 <link-when event="mini-table:badge" do="feed">。
+ *
  * 儲存格 API（座標與 Excel 相同，有表頭時表頭是第 1 列）
  *   el.cellAt('B2')            取得儲存格元素
  *   el.resolveCells('B2 C2:C4') 展開成 ['B2','C2','C3','C4']
@@ -170,6 +185,11 @@ mini-table[data-theme="side"] tr{border-bottom:1px solid var(--mt-line);}
 mini-table[data-theme="side"] tbody tr:last-child{border-bottom:0;}
 mini-table[data-theme="side"] td:first-child{background:var(--mt-c);color:var(--mt-on);font-weight:700;}
 mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid ${BG};}
+
+/* mt-badge：可點擊徽章，放在儲存格裡 */
+mini-table mt-badge{display:inline-block;font-size:0.75rem;font-weight:700;line-height:1.5;border-radius:999px;padding:0 10px;background:var(--mb-c,${PALETTE.key});color:var(--mb-on,${BG});cursor:pointer;user-select:none;white-space:nowrap;}
+mini-table mt-badge:hover{box-shadow:0 0 0 2px var(--mb-c,${PALETTE.key});}
+mini-table mt-badge[data-on]{box-shadow:0 0 0 2px ${BG},0 0 0 4px var(--mb-c,${PALETTE.key});}
 `;
     (document.head || document.documentElement).appendChild(s);
   }
@@ -210,6 +230,25 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
     return s + row;
   }
 
+  const esc = t => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  /* 儲存格文字轉數字；不是數字回傳 null。千分位、百分比、貨幣符號可以，k、M、萬 這類單位會被忽略 */
+  const numOf = t => {
+    const x = String(t == null ? '' : t).trim();
+    if (!/^[-+]?[$€£¥NT]*\s?[\d,.]+\s?(%|k|K|M|萬|億)?$/.test(x) || !/\d/.test(x)) return null;
+    const n = parseFloat(x.replace(/[^\d.\-]/g, ''));
+    return Number.isFinite(n) ? n : null;
+  };
+  /* 儲存格文字，不含徽章 */
+  const plain = td => { const c = td.cloneNode(true); c.querySelectorAll('mt-badge').forEach(b => b.remove()); return (c.textContent || '').trim(); };
+  /* 選擇器或單純的 id */
+  const pick = v => {
+    v = String(v || '').trim();
+    if (!v) return null;
+    try { return document.querySelector(/^[A-Za-z][\w-]*$/.test(v) ? '#' + v : v); } catch (e) { return null; }
+  };
+  const CHART_RESERVED = ['chart-from', 'chart-col', 'chart-mode', 'chart-target'];
+  let badgeSeq = 0;
+
   function parseAlign(v) {
     if (!v) return [];
     return v.split(/[,\s]+/).filter(Boolean).map(a => {
@@ -228,6 +267,7 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
         this._raw = this.innerHTML;   /* 第一次接上時保存原始文字；之後被搬移也不會重複解析 */
         injectStyle();
         this.render();
+        this.addEventListener('click', e => this._badgeClick(e));
       }
     }
 
@@ -325,6 +365,128 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
           if (td) td.innerHTML = this._ovr[ref];
         });
       }
+      this._decorate(this);
+    }
+
+    /* 徽章顏色：color 屬性，預設 key */
+    _decorate(root) {
+      root.querySelectorAll('mt-badge').forEach(b => {
+        const c = b.getAttribute('color') || 'key';
+        b.style.setProperty('--mb-c', color(c));
+        b.style.setProperty('--mb-on', onColor(c));
+      });
+    }
+
+    /* 由表格數字組出 <ui-chart>；沒有可畫的數字回傳 null */
+    _chartHtml(b, cell) {
+      const from = (b.getAttribute('chart-from') || '').trim().toLowerCase();
+      const t = this.querySelector('table');
+      if (!t) return null;
+      const heads = t.tHead ? Array.from(t.tHead.rows[0].cells).map(c => plain(c)) : null;
+      const colName = i => (heads && heads[i]) || refName(i + 1, 1).replace(/\d+$/, '');
+      const body = Array.from(t.tBodies[0] ? t.tBodies[0].rows : []);
+      let title = '', series = '', rows = [];
+      if (from === 'row') {
+        Array.from(cell.parentNode.cells).forEach((c, i) => {
+          if (c.querySelector('mt-badge')) return;
+          const txt = plain(c), v = numOf(txt);
+          if (v == null) { if (!title && txt) title = txt; } else rows.push({ label: colName(i), values: [v] });
+        });
+      } else if (from === 'col') {
+        const p = parseRef(((b.getAttribute('chart-col') || '').trim() || '') + '1');
+        if (!p) { console.warn('[mini-table] chart-from="col" 需要 chart-col，例如 chart-col="B"。'); return null; }
+        const ci = p.col - 1;
+        title = heads ? heads[ci] || '' : '';
+        body.forEach(tr => {
+          const v = tr.cells[ci] ? numOf(plain(tr.cells[ci])) : null;
+          if (v != null) rows.push({ label: plain(tr.cells[0]), values: [v] });
+        });
+      } else if (from === 'table') {
+        const cols = [];
+        const n = body[0] ? body[0].cells.length : 0;
+        for (let i = 1; i < n; i++) {
+          const cells = body.map(tr => tr.cells[i]).filter(c => c && plain(c) !== '');
+          if (cells.length && cells.every(c => !c.querySelector('mt-badge') && numOf(plain(c)) != null)) cols.push(i);
+        }
+        series = cols.map(i => colName(i).replace(/,/g, ' ')).join(',');
+        body.forEach(tr => {
+          const vals = cols.map(i => numOf(plain(tr.cells[i])));
+          if (vals.some(v => v != null)) rows.push({ label: plain(tr.cells[0]), values: vals });
+        });
+      } else {
+        console.warn('[mini-table] chart-from="' + from + '" 不存在，可用：row、col、table。');
+        return null;
+      }
+      if (!rows.length) { console.warn('[mini-table] 找不到可以畫圖的數字，請確認儲存格內容是數字。'); return null; }
+      const attrs = { type: 'column' };
+      if (title) attrs.title = title;
+      if (series) attrs.series = series;
+      Array.from(b.attributes).forEach(a => {
+        if (a.name.indexOf('chart-') === 0 && CHART_RESERVED.indexOf(a.name) < 0) attrs[a.name.slice(6)] = a.value;
+      });
+      const at = Object.keys(attrs).map(k => attrs[k] === '' ? k : k + '="' + esc(attrs[k]) + '"').join(' ');
+      return '<ui-chart ' + at + '>' + rows.map(r => '<chart-row label="' + esc(r.label) + '" values="' + r.values.map(v => v == null ? '' : v).join(',') + '"></chart-row>').join('') + '</ui-chart>';
+    }
+
+    /* 點徽章：取得圖表內容，放進目標區域（有寫 chart-target 或 target），並發出 mini-table:badge */
+    _badgeClick(e) {
+      const b = e.target.closest && e.target.closest('mt-badge');
+      if (!b || !this.contains(b)) return;
+      const cell = b.closest('th,td');
+      const tr = cell && cell.parentNode;
+      const t = this.querySelector('table');
+      const row = tr ? Array.from(t.rows).indexOf(tr) + 1 : 0;
+      const col = cell ? cell.cellIndex + 1 : 0;
+
+      let html = '', data = '';
+      const sel = (b.getAttribute('chart') || '').trim();
+      if (sel) {
+        const src = pick(sel);
+        if (!src) console.warn('[mini-table] chart「' + sel + '」找不到對應的 template 或元素。');
+        else if (src.localName === 'template') html = src.innerHTML;
+        else { const c = src.cloneNode(true); c.removeAttribute('id'); c.removeAttribute('hidden'); html = c.outerHTML; }
+        data = sel;
+      } else if (b.hasAttribute('chart-from')) {
+        html = this._chartHtml(b, cell) || '';
+      }
+
+      /* 目標區域 */
+      const tsel = (b.getAttribute('target') || this.getAttribute('chart-target') || '').trim();
+      let target = null, active = false;
+      if (tsel) {
+        target = pick(tsel);
+        if (!target) console.warn('[mini-table] 目標區域「' + tsel + '」找不到。');
+      }
+      if (target && html) {
+        if (!b._mtId) b._mtId = 'mtb' + (++badgeSeq);
+        const mine = Array.from(target.children).find(c => c.dataset && c.dataset.mtFrom === b._mtId);
+        const own = () => target.querySelector(':scope > [data-mt-from]');
+        if (mine) {
+          /* 再點同一顆：收起，沒有圖了就恢復原本內容 */
+          mine.remove();
+          b.removeAttribute('data-on');
+          if (!own()) target.innerHTML = target._mtPh || '';
+        } else {
+          if (!own()) { target._mtPh = target.innerHTML; target.replaceChildren(); }
+          else if ((this.getAttribute('chart-mode') || 'replace').trim().toLowerCase() !== 'append') {
+            target.querySelectorAll(':scope > [data-mt-from]').forEach(x => x.remove());
+            document.querySelectorAll('mt-badge[data-on]').forEach(x => { if (x._mtTarget === target) x.removeAttribute('data-on'); });
+          }
+          if (target.hidden) target.hidden = false;
+          if (target.style.display === 'none') target.style.display = '';
+          const w = document.createElement('div');
+          w.dataset.mtFrom = b._mtId;
+          w.innerHTML = html;
+          target.appendChild(w);
+          b._mtTarget = target;
+          b.setAttribute('data-on', '');
+          active = true;
+        }
+      }
+      this.dispatchEvent(new CustomEvent('mini-table:badge', {
+        bubbles: true,
+        detail: { ref: refName(col, row), row, col, badge: (b.textContent || '').trim(), cell, data, html, target, active }
+      }));
     }
 
     /* ── 儲存格 API：座標與 Excel 相同，有表頭時表頭是第 1 列 ── */
@@ -378,6 +540,7 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
       const key = refName(parseRef(ref).col, parseRef(ref).row);
       (this._ovr || (this._ovr = {}))[key] = html;
       td.innerHTML = html;
+      this._decorate(td);
       return td;
     }
 
@@ -388,6 +551,7 @@ mini-table[data-theme="side"] tbody tr + tr td:first-child{border-top:1px solid 
       const key = refName(parseRef(ref).col, parseRef(ref).row);
       if (this._ovr) delete this._ovr[key];
       td.innerHTML = this._orig && key in this._orig ? this._orig[key] : '';
+      this._decorate(td);
       return td;
     }
   }

@@ -1,10 +1,11 @@
 # mini-table
 
-`<mini-table>` 是輕量表格：一行一列，用 `|` 分欄，專心輸入內容就能排出整齊的表。適合放進 `ui-cards` 的卡片當資料卡片，也可以單獨使用。本身只做列與欄；搭配 `ui-plus.js` 的 `<ui-btn>`，可以用 Excel 座標揭曉指定儲存格。需要遮罩、輪播等完整互動請用 `tbl/ui-table.js`。元件不使用 Shadow DOM。
+`<mini-table>` 是輕量表格：一行一列，用 `|` 分欄，專心輸入內容就能排出整齊的表。適合放進 `ui-cards` 的卡片當資料卡片，也可以單獨使用。本身只做列與欄；搭配 `ui-plus.js` 的 `<ui-btn>`，可以用 Excel 座標揭曉指定儲存格。在儲存格裡放 `<mt-badge>` 可點擊徽章，點下去就能用 `charts/ui-charts.js` 在目標區域畫圖。需要遮罩、輪播等完整互動請用 `tbl/ui-table.js`。元件不使用 Shadow DOM。
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
-| `mini-table.js` | `<mini-table>` | 用 `\|` 分欄的輕量表格，內建十種預排外觀。 |
+| `mini-table.js` | `<mini-table>`、`<mt-badge>` | 用 `\|` 分欄的輕量表格，內建十種預排外觀，儲存格可放可點擊徽章產生圖表。 |
+| `mini-table-demo-11-20-26.html` | | 合併範例（越新越上面）：徽章與圖表四則、儲存格揭曉、基本用法與預排外觀。 |
 
 ## 目錄
 
@@ -14,6 +15,7 @@
 - [屬性解說](#屬性解說)
 - [範例](#範例)
 - [揭曉儲存格（搭配 ui-btn）](#揭曉儲存格搭配-ui-btn)
+- [可點擊徽章與圖表](#可點擊徽章與圖表)
 - [JavaScript API](#javascript-api)
 - [授權](#授權)
 
@@ -42,6 +44,8 @@
 | `mark-color` | 色名或色碼 | 同 `color` | 強調列（列首寫 `!`）的顏色。 |
 | `color` | 色名或色碼 | 依外觀 | 強調色，用 18 色的色名。 |
 | `font-size` | CSS 長度 | `1rem` | 字級。 |
+| `chart-target` | 選擇器或 id | 無 | 徽章產生的圖表要放的目標區域。沒寫就不會自己放圖，只發出事件。 |
+| `chart-mode` | `replace`、`append` | `replace` | 後點的徽章取代先前的圖，或疊加在後面。 |
 
 ## 預排外觀 pre-theme
 
@@ -154,6 +158,70 @@
 - 不存在的格子會在主控台警告，並說明表格的欄數與列數。
 
 ui-btn 各屬性的完整說明見根目錄 README 的 ui-plus.js 章節。
+
+## 可點擊徽章與圖表
+
+在儲存格裡寫 `<mt-badge>`，點擊後在目標區域顯示 `<ui-chart>`。需要另外載入 `charts/ui-charts.js`，載入順序不拘；不需要 `link-when.js`。徽章樣式沿用 `ui-stream` 的圓角膠囊，點下去的那一顆會加一圈外框。
+
+```html
+<mini-table chart-target="#slot" head="Name | Fluency | Lexical | 圖表" align="l, r, r, c">
+  Amy | 7 | 6.5 | <mt-badge chart="#tpl-amy">Amy 的圖</mt-badge>
+  Ben | 5.5 | 5 | <mt-badge chart-from="row" chart-type="bar" chart-y-max="9">這一列</mt-badge>
+</mini-table>
+<div id="slot">點徽章，圖表會出現在這裡</div>
+
+<template id="tpl-amy">
+  <ui-chart type="donut" title="Amy" show-values>
+    <chart-row label="Fluency" value="7"></chart-row>
+    <chart-row label="Lexical" value="6.5"></chart-row>
+  </ui-chart>
+</template>
+```
+
+**徽章屬性**
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `chart` | 選擇器或 id | 無 | 指向 `<template>` 或元素，點擊時複製進目標區域。優先於 `chart-from`。 |
+| `chart-from` | `row`、`col`、`table` | 無 | 由表格的數字自動組出圖表。`row` 畫徽章所在的列，欄名當標籤，該列第一個文字格當標題；`col` 畫 `chart-col` 指定的整欄，第一欄文字當標籤；`table` 畫整張表所有數字欄，每欄一個系列。 |
+| `chart-col` | 欄字母 | 無 | `chart-from="col"` 時指定欄，例如 `B`。 |
+| `chart-*` | 同 `<ui-chart>` 屬性 | `chart-type` 預設 `column` | 其餘 `chart-` 開頭的屬性去掉 `chart-` 後原樣給 `<ui-chart>`，例如 `chart-type`、`chart-title`、`chart-unit`、`chart-theme`、`chart-y-max`、`chart-show-values`、`chart-height`。只對 `chart-from` 有效。 |
+| `target` | 選擇器或 id | 同表格的 `chart-target` | 只給這顆徽章用的目標區域。 |
+| `color` | 色名或色碼 | `key` | 徽章顏色。 |
+
+**行為**
+
+- **取代或疊加：** 預設後點的取代先前的圖；表格加 `chart-mode="append"` 則一張一張疊加。
+- **再點同一顆徽章：** 收起它產生的那張圖；目標區域沒有圖時，恢復原本的內容（例如「點徽章看圖表」）。
+- **目標被隱藏：** 目標有 `hidden` 或 `display:none` 時會先顯示。
+- **數字判斷：** 與表格的數字欄相同，可有千分位、小數點、百分比與貨幣符號；`k`、`M`、`萬` 這類單位會被忽略，需要時用 `chart-unit` 另外標示。沒有數字的格子略過，一個數字都找不到時在主控台警告。
+- **徽章與數字欄：** 徽章所在的欄不是數字欄，不會自動靠右，也不會被 `chart-from="table"` 納入；建議徽章獨立一欄。表頭格也能放徽章，常用來放 `col` 和 `table` 的徽章。
+- **重畫：** `render()` 重畫後徽章的選中外框會消失，目標區域的圖不受影響。
+
+**事件：不寫 chart-target，交給 link-when**
+
+每次點擊都發出會冒泡的 `mini-table:badge`：
+
+```js
+e.detail = { ref, row, col, badge, cell, data, html, target, active }
+// ref：徽章所在儲存格座標，例如 'D2'；row、col 從 1 起算，表頭算第 1 列
+// data：徽章 chart 屬性的選擇器，沒有就是 ''
+// html：要顯示的圖表內容；target：放進的目標元素，沒有 chart-target 則為 null
+// active：這次點擊是否顯示了圖（再點收起時為 false）
+```
+
+沒寫 `chart-target` 時 mini-table 不會自己放圖，可用 `link-when` 接起來，需要動畫或排隊時很方便：
+
+```html
+<!-- chart="…" 的徽章：detail.data 是選擇器，和 ui-stream 的徽章相同 -->
+<link-when source="#tbl" event="mini-table:badge" target="#slot" do="feed"></link-when>
+
+<!-- chart-from 的徽章：detail.html 是組好的圖表，用 template 的 {html} 放進去 -->
+<link-when source="#tbl" event="mini-table:badge" target="#slot" do="feed" template="#tpl-html"></link-when>
+<template id="tpl-html">{html}</template>
+```
+
+同時寫了 `chart-target` 又接 `link-when` 時，兩邊各放一次，請擇一。
 
 ## JavaScript API
 

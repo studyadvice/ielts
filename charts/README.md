@@ -115,6 +115,8 @@ JSON 格式：`{ "type": "line", "series": ["A","B"], "rows": [{ "label": "2010"
 <link-when source="#st" event="ui-stream:badge" target="#slot" do="feed"></link-when>
 ```
 
+**點 `mini-table` 儲存格裡的徽章。** 在儲存格寫 `<mt-badge chart="#tpl">` 指向 template，或 `<mt-badge chart-from="row">` 由表格數字自動組圖；表格加 `chart-target="#slot"`，點徽章就在目標區域畫圖，不需要 `link-when`。細節見 [`mini-table` 的徽章章節](../mini/README.md#可點擊徽章與圖表)。
+
 **在 `md-editor` 寫資料。** 標記為 `chart` 的程式碼區塊，設定列加資料列，預覽與送出都變成 `<ui-chart>`；`md-submit` 的 `detail.charts` 帶解析好的資料。用 `link-when` 搭配 `template`（內容寫 `{html}`）就能把圖表放進指定格子。
 
 ````

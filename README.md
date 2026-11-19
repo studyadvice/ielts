@@ -87,7 +87,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | [`lens/`](lens/README.md) | `lens-read.js` | `<lens-read>` `<lens-word>` | 點擊式放大鏡標註，適合觸控筆與螢幕錄影。 |
 | [`lw/`](lw/README.md) | `link-when.js` | `<link-when>` | 元件串接：A 播完時對 B 執行動作，可讓 A 退場、B 原地替換，並可用 `detail-match` 只在特定事件內容時觸發。 |
 | [`maze/`](maze/README.md) | `maze-quiz.js` | `<maze-quiz>` | 迷宮填空動畫，走出迷宮後答案飛進空格。 |
-| [`mini/`](mini/README.md) | `mini-table.js` | `<mini-table>` | 用 `\|` 分欄的輕量表格。 |
+| [`mini/`](mini/README.md) | `mini-table.js` | `<mini-table>` `<mt-badge>` | 用 `\|` 分欄的輕量表格，儲存格可放可點擊徽章，用 `ui-charts.js` 在目標區域產生圖表。 |
 | [`msk/`](msk/README.md) | `ui-mask.js` | `<ui-mask>` | 行內文字遮罩，點擊揭曉。 |
 | [`nk/`](nk/README.md) | `ui-network.js` | `<ui-network>` `<ui-node>` | 圖示節點自動排列並以三角網格連線。 |
 | [`note/`](note/README.md) | `bp-popnote.js` | （JavaScript 工具） | 頁面提示工具包。 |
