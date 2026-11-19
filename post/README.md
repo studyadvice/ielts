@@ -6,11 +6,12 @@
 - 建立日期：11-13-26（1.1.0：11-15-26 新增 `mode="live"` 與 `add()`）
 - 11-17-26：`post-item` 新增 `bg-color`、`border-color`、`border-width`、`border-style`；新增 `<mark-fx>` 文字標記、`tag-icons` 標籤圖示、`drop-cap` 首字放大、`post-item` 的可點擊自訂徽章（`badge`，需搭配 `bp-popnote.js`）
 - 11-18-26：新增 `head-style="linkedin"`、`headline`、`follow` 系列屬性與 `post-follow` 事件；`compact` 再縮小一輪（頭像 30px 改 24px，內距與字級縮小，會改變既有 compact 頁面的外觀）。
+- 11-19-26：`post-item` 新增 `electric` 金色電流框特殊訊息（含 `electric-color`、`electric-hot-color`、`electric-speed`）與 `pause`（停住等按「繼續」）；新增 `<remove-fx>` 移除先前的效果；`ui-post` 新增 `btn-color`（控制列按鈕反色）與 `continue-label`；新增 `post-pause`、`post-continue` 事件。
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
-| `ui-post-demo-11-18-26.html` | | 整合範例 24 則（新增 LinkedIn 作者區塊與更緊湊的 compact、基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-13 到 11-16 的四份舊範例。 |
+| `ui-post-demo-11-19-26.html` | | 整合範例 32 則（新增 `remove-fx`、`pause`、`btn-color`、`electric` 金色電流框，另含 LinkedIn 作者區塊與更緊湊的 compact、基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-18-26 的整合範例。 |
 
 ## 目錄
 
@@ -20,6 +21,9 @@
 - [post-item 屬性](#post-item-屬性)
 - [live 模式](#live-模式)
 - [mark-fx 文字標記](#mark-fx-文字標記)
+- [electric 金色電流框](#electric-金色電流框)
+- [pause 播到一半等按繼續](#pause-播到一半等按繼續)
+- [remove-fx 移除先前的效果](#remove-fx-移除先前的效果)
 - [可點擊的自訂徽章](#可點擊的自訂徽章)
 - [事件與方法](#事件與方法)
 - [授權](#授權)
@@ -46,6 +50,7 @@
 3. 愛心爆發：`best` 的數字加速飆升、愛心從按鈕噴出；其他留言慢慢增加到 `likes`。
 4. 評判：最佳回答變成實心愛心、蓋上徽章並置頂；`low` 的留言變灰或摺疊；`tags` 講評標籤出現。
 5. `examiner` 與 `after` 的留言最後出現。
+6. 留言有 `pause` 時，出現後停住，按「繼續」才往下播。
 
 愛心不使用透明度，以縮小的方式消失。愛心數為 0 時只顯示空心愛心。
 
@@ -86,6 +91,8 @@
 | `bg-color`、`bubble-color`、`text-color` | `#0C0D0C`、`bg-alternative`、`vanilla` | 底色、留言泡泡色、文字色。 |
 | `heart-color`、`best-color`、`examiner-color` | `urgent`、`yellow`、`key` | 愛心、最佳回答、考官的顏色。 |
 | `controls` | 顯示 | 控制列：播放／暫停、重播、0.5×、1×、2×；`false` 隱藏。 |
+| `btn-color` | `pink` | 控制列按鈕滑鼠移上去的外框與文字色、目前倍速的底色，以及 `pause` 的「繼續」按鈕顏色；色名或色碼。 |
+| `continue-label` | `繼續` | `post-item` 的 `pause` 所出現按鈕的文字；單則 `post-item` 也能設，單則優先。 |
 | `best-label`、`examiner-label`、`fold-label` | `最佳回答`、`考官`、摺疊說明 | 徽章與摺疊文字。 |
 | `typing-label`、`comment-label`、`like-label` | `正在輸入`、`則留言`、`讚` | 介面文字。 |
 | `drop-cap`、`drop-cap-color` | 無、同文字色 | 首字放大：留言整則是英文、開頭是字母，而且排版後有兩行以上時，第一個字母放大成兩行高；不符合條件的留言不變，寬度改變時會重新判斷。`drop-cap-color` 指定首字顏色。 |
@@ -114,6 +121,8 @@
 | `liked` | 愛心一開始就是實心。 |
 | `grip` | `grip="false"` 讓這一則不顯示握把；寫 `grip` 則讓這一則單獨顯示握把。 |
 | `delay`、`typing` | 這一則的間隔與「正在輸入」毫秒數；`typing="0"` 不顯示輸入中。 |
+| `electric`、`electric-color`、`electric-hot-color`、`electric-speed` | 特殊訊息：金色電流框，詳見 [electric 金色電流框](#electric-金色電流框)。 |
+| `pause`、`continue-label` | 這則出現後停住，等按「繼續」才往下播，詳見 [pause 播到一半等按繼續](#pause-播到一半等按繼續)。 |
 
 行內可用 `<b>`、`<i>`、`<c-key>` 等色名標籤。
 
@@ -172,6 +181,67 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 | `start`、`delay`、`speed` | `after`、`0`、`600`（`color` 為 `300`） | `start="with"` 與前一個特效同時開始；開始前等待與動畫時間（毫秒）。 |
 | `stay`、`fade-out` | `forever`、`300` | 停留幾毫秒後淡出移除；`kind="color"` 則是換回原色。 |
 
+## electric 金色電流框
+
+`post-item` 加上 `electric`，這則留言變成特殊訊息：沒有頭像、時間與愛心列，外框是金色，電流繞著框跑，外圈有劈啪抖動的細電弧，出現時閃一下。適合放老師的重點提示。
+
+```html
+<post-item electric>
+  把題目用字和句型複製貼上當成開場，在詞彙資源、語法多樣毫無加分機會
+</post-item>
+
+<post-item electric author="Nelson" max-width="420px" electric-color="pink" electric-hot-color="vanilla" electric-speed="1.2">
+  限制寬度、換顏色、轉快一點
+</post-item>
+```
+
+- `author` 可以省略；有寫時以金色顯示在框內上方，仍然沒有頭像。
+- 沒設 `width` 或 `max-width` 時，框的寬度等於留言區內容寬度（橫跨左右）；設了就限制寬度並靠左。
+- `electric-color`（預設 `yellow`）是外框與電流色，`electric-hot-color`（預設 `salmon`）是電流亮點色，`electric-speed` 是繞一圈的秒數（0.4 到 20，預設 2.4）。
+- 預設不顯示「正在輸入」；明確寫 `typing` 才會顯示。`electric="false"` 關閉。
+- 不參與愛心與最佳回答；`stamp-fx`、`note-fx`、`mark-fx`、`tags`、`low` 照常可用。
+- live 模式的 `add()` 寫 `electric: true`。
+
+## pause 播到一半等按繼續
+
+`post-item` 加上 `pause`，這則出現（含效果播完）後播放停住，貼文下方出現提示文字與「繼續」按鈕，按了才往下播。
+
+```html
+<post-item author="Nelson" pause="先想想，這句答案放掉了什麼機會？">
+  為什麼第一句這樣答，等同於白白放掉展現實力的機會？
+</post-item>
+<post-item author="Nelson" pause continue-label="看解方">想好了嗎？</post-item>
+```
+
+- `pause` 的值是提示文字，可省略；`pause="false"` 關閉。
+- 按鈕文字用 `continue-label`（`ui-post` 或單則 `post-item`），顏色跟著 `btn-color`。
+- 控制列的狀態列會顯示「等待按『繼續』」；按重播會取消等待。
+- 只對劇本播放有效，`mode="live"` 忽略。事件：`post-pause`、`post-continue`。
+
+## remove-fx 移除先前的效果
+
+`<remove-fx>` 寫在 `post-item` 裡，放在要移除的效果後面，把先前的 `stamp-fx`、`note-fx`、`mark-fx` 淡出移除。標籤不需要內文。
+
+```html
+<post-item author="Nelson">
+  I reached at the hotel on time and entered into the lobby.
+  <mark-fx kind="strike" text="at"></mark-fx>
+  <mark-fx kind="strike" text="into"></mark-fx>
+  <stamp-fx color="salmon" icon="check2" anchor="right" offset-x="40">受中文影響</stamp-fx>
+  <remove-fx effect="stamp" delay="1200" fade-out="500"></remove-fx>
+  <remove-fx text="at" effect="mark" delay="600"></remove-fx>
+</post-item>
+```
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `target`、`text`、`nth` | 這則內容、無、`1` | 指到先前效果作用的位置，寫法同其他效果標籤；沒寫 `target` 就是這則留言文字。可以跨留言：`target` 指到頁面上唯一的元素（例如 id）即可。 |
+| `effect` | 全部 | `stamp`、`note`、`mark`，只移除該類。 |
+| `fade-out` | `300` | 淡出毫秒數；`kind="color"` 的 `mark-fx` 被移除時，文字還原原色。 |
+| `start`、`delay` | `after`、`0` | 用法同其他效果標籤。 |
+
+按重播會清空效果的登記，從頭再跑。
+
 ## 可點擊的自訂徽章
 
 `post-item` 的 `badge` 在名字旁加一個徽章。再寫 `badge-target`、`badge-content`、`badge-title` 任一個，徽章就會變成按鈕，點擊後由 [bp-popnote.js](../note/README.md) 跳出窗格。ui-post 不自己做窗格，頁面必須另外載入 `bp-popnote.js`。
@@ -210,6 +280,8 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 | `post-follow` | LinkedIn 排版的追蹤按鈕被點擊時觸發，`detail = { author, following }`，會冒泡。 |
 | `post-surge-end` | 愛心爆發、置頂與標籤完成時觸發。 |
 | `post-end` | 全部播完時觸發。 |
+| `post-pause` | `pause` 的留言停住、出現「繼續」按鈕時觸發，`detail = { index, author }`，會冒泡。 |
+| `post-continue` | 使用者按下「繼續」時觸發，`detail = { index, author }`，會冒泡。 |
 | `post-add-end` | live 模式中，`add()` 送進的一則留言播完時觸發，`detail = { index, author, best }`。 |
 | `add(item)` | 加一則留言，回傳留言總數。 |
 | `live`、`total` | 唯讀：是否為 live 模式、留言總數。 |

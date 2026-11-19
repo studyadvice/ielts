@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ui-post 元件示範（11-18-26 整合版）</title>
+<title>ui-post 元件示範（11-19-26 整合版）</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
@@ -47,10 +47,206 @@ a{color:#51DBCF;}
 <body>
 <div class="page">
   <h1>&lt;ui-post&gt; 社群貼文留言動畫</h1>
-  <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。11-17-26 新增第五段：<code>&lt;mark-fx&gt;</code> 文字標記、講評標籤圖示、<code>drop-cap</code> 首字放大、可點擊的自訂徽章（搭配 bp-popnote）。</p>
+  <p class="sub">模擬社群貼文：留言一則一則冒出來，接著愛心數開始跳動，最佳回答的愛心爆棚、蓋上徽章並置頂，差的答案變灰或摺疊，最後接考官留言與講評標籤。適合螢幕錄影教學。這份是 11-13-26 到 11-16-26 四份範例的整合版，每個範例左邊是實際元件，右邊是同一段原始碼；live 與特效範例的按鈕程式碼也是實際執行的那一份。事件（post-end、post-add-end、post-item-hide）會以右下角的提示顯示。11-17-26 新增第五段：<code>&lt;mark-fx&gt;</code> 文字標記、講評標籤圖示、<code>drop-cap</code> 首字放大、可點擊的自訂徽章（搭配 bp-popnote）。　11-19-26 新增：<code>post-item</code> 的 <code>electric</code> 金色電流框與 <code>pause</code>、<code>&lt;remove-fx&gt;</code>、<code>ui-post</code> 的 <code>btn-color</code>。</p>
   <nav class="toc">
-    <a href="#new">新增：LinkedIn 作者區塊與更緊湊的 compact</a><a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
+    <a href="#remove-fx">新增：remove-fx</a><a href="#pause">新增：pause</a><a href="#btn-color">新增：btn-color</a><a href="#electric">新增：electric 金色電流框</a><a href="#new">新增：LinkedIn 作者區塊與更緊湊的 compact</a><a href="#basic">一、基本播放</a><a href="#look">二、外框與版面</a><a href="#live">三、live 模式與 add()</a><a href="#fx">四、特效與握把</a><a href="#mark">五、文字標記、標籤圖示、首字放大、可點徽章、單則樣式與寬度</a><a href="#ref">屬性速查</a><a href="#ver">版本紀錄</a>
   </nav>
+
+  <!-- ══════════ 新增（11-19-26） ══════════ -->
+  <section class="part" id="remove-fx">
+    <h2>新增（11-19-26）：&lt;remove-fx&gt; 移除先前的效果</h2>
+    <p class="lead">寫在 <code>post-item</code> 裡，放在要移除的效果後面。用 <code>target</code>、<code>text</code>、<code>nth</code> 指到先前效果作用的位置；沒寫 <code>target</code> 就是這則留言文字本身。<code>effect</code> 可填 <code>stamp</code>、<code>note</code>、<code>mark</code> 只移除該類；<code>fade-out</code> 是淡出毫秒數（預設 300）；<code>delay</code>、<code>start="with"</code> 與其他效果標籤用法相同。移除也可以跨留言：<code>target</code> 指到頁面上唯一的元素（例如 id）即可。</p>
+
+    <div class="ex">
+      <h3>範例 19-7：同一則留言內，先標記再移除</h3>
+      <p class="note">先在 <code>at</code> 與 <code>into</code> 畫刪除線並蓋章，過一會兒用 <code>effect="stamp"</code> 只拿掉印章，再用 <code>text</code> 指定拿掉 <code>at</code> 的刪除線；<code>into</code> 的刪除線保留。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Nancy" compact time="2h" width="880" font-size="0.9rem" start-delay="300" typing="300">
+  我以為我說得很順，結果錯很大
+  <post-item author="Nelson" typing="300">
+    I reached at the hotel on time and entered into the lobby to meet my friend.
+    <mark-fx kind="strike" text="at"></mark-fx>
+    <mark-fx kind="strike" text="into"></mark-fx>
+    <stamp-fx color="salmon" icon="check2" anchor="right" offset-x="40" size="1.1rem">受中文影響</stamp-fx>
+    <remove-fx effect="stamp" delay="1200" fade-out="500"></remove-fx>
+    <remove-fx text="at" effect="mark" delay="600"></remove-fx>
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 19-8：跨留言移除</h3>
+      <p class="note">第一則在貼文文字（id 為 <code>rm-q</code>）畫波浪線，第二則用同一個 <code>target</code> 把它拿掉。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Henry" compact time="3h" width="880" font-size="0.9rem" start-delay="300">
+  Do you <span id="rm-q">work or are you a student</span>?
+  <post-item author="Nelson" typing="300">
+    先看題目：這就是你不該照抄的部分
+    <mark-fx kind="wavy" color="red" target="#rm-q"></mark-fx>
+  </post-item>
+  <post-item author="Nelson" typing="300" delay="1200">
+    好，標記收掉，直接說你的實際情況
+    <remove-fx target="#rm-q" delay="300"></remove-fx>
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="pause">
+    <h2>新增（11-19-26）：post-item 的 pause</h2>
+    <p class="lead">這則留言出現（含效果播完）後，播放停住，貼文下方出現「繼續」按鈕，按了才往下播。<code>pause</code> 的值是提示文字，可省略；按鈕文字用 <code>continue-label</code>（<code>ui-post</code> 或單則 <code>post-item</code> 都能設），顏色跟著 <code>btn-color</code>。按重播會取消等待。只對劇本播放有效，<code>mode="live"</code> 忽略。事件：<code>post-pause</code>、<code>post-continue</code>。</p>
+
+    <div class="ex">
+      <h3>範例 19-6：播到一半等你按繼續</h3>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Henry" compact time="3h" width="880" font-size="0.9rem" start-delay="300" btn-color="key">
+  Do you work or are you a student?
+  <post-item author="Henry" typing="300">I'm a student at a university.</post-item>
+  <post-item author="Nelson" typing="300" pause="先想想，這句答案放掉了什麼機會？">
+    為什麼第一句這樣答，等同於白白放掉展現實力的機會？
+  </post-item>
+  <post-item author="Nelson" typing="300" pause continue-label="看解方">
+    想好了嗎？
+  </post-item>
+  <post-item author="Nelson" typing="300">解方：不要複製題目，直接說明你的實際情況。</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="btn-color">
+    <h2>新增（11-19-26）：控制列按鈕的反色 btn-color</h2>
+    <p class="lead">控制列的播放、重播、倍速按鈕，滑鼠移上去的外框與文字顏色，以及目前倍速（<code>is-on</code>）的底色，原本固定是 pink。<code>ui-post</code> 新增 <code>btn-color</code>，可寫色票名稱或色碼，沒寫仍是 pink。</p>
+
+    <div class="ex">
+      <h3>範例 19-5：預設與自訂 btn-color</h3>
+      <p class="note">上面沒設屬性，維持 pink；中間 <code>btn-color="key"</code>；下面 <code>btn-color="energetic"</code>。滑鼠移到按鈕上看反色，目前倍速 1× 的底色也跟著換。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Default" compact time="1h" width="880" font-size="0.9rem" autoplay="false" start-delay="0">
+  沒設 btn-color，反色是 pink
+  <post-item author="Amy">Hello.</post-item>
+</ui-post>
+<div style="height:16px"></div>
+<ui-post author="Key" compact time="1h" width="880" font-size="0.9rem" autoplay="false" start-delay="0" btn-color="key">
+  btn-color="key"
+  <post-item author="Amy">Hello.</post-item>
+</ui-post>
+<div style="height:16px"></div>
+<ui-post author="Energetic" compact time="1h" width="880" font-size="0.9rem" autoplay="false" start-delay="0" btn-color="energetic">
+  btn-color="energetic"
+  <post-item author="Amy">Hello.</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="electric">
+    <h2>新增（11-19-26）：post-item 的 electric（金色電流框）</h2>
+    <p class="lead">電流框出現時有一次點燃閃光；特殊訊息預設不顯示「正在輸入」，也不參與愛心與最佳回答的計算。</p>
+
+    <div class="ex">
+      <h3>範例 19-1：不設 author，橫跨左右</h3>
+      <p class="note">教材中最常見的用法：老師的解說或重點提示。外框撐滿留言區寬度，內容照一般留言的方式換行。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Henry" compact badge="雅思考生" time="3h" width="880" theme="calm" font-size="0.9rem" burst="sm" best-label="最佳解答">
+  Do you work or are you a student?<br>
+  I'm a university student.
+  <post-item author="Nelson" bg-color="RGB(36,36,36)" border-color="yellow">
+    第一句這樣答等同於白白放掉在詞彙和語法上展現實力的第一個機會
+  </post-item>
+  <post-item electric>
+    把題目用字和句型複製貼上當成開場，在詞彙資源、語法多樣毫無加分機會<br>
+    你巨資重兵準備半年，卻在第一句錯失展現語言能力的機會？
+  </post-item>
+  <post-item author="Henry">Oh!</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 19-2：加上 author</h3>
+      <p class="note">有設定 <code>author</code> 時，名字以金色顯示在框內上方；仍然沒有頭像。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="IELTS Examiner" compact time="1h" width="880" theme="calm" font-size="0.9rem">
+  What do you do in your free time?
+  <post-item electric author="Nelson">
+    考官聽的是句型有沒有變化，不是你背了幾個高級單字
+  </post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 19-3：限制寬度、換顏色與速度</h3>
+      <p class="note">寫了 <code>max-width</code> 或 <code>width</code>，框就不再撐滿，靠左排列。<code>electric-color</code> 換外框顏色，<code>electric-hot-color</code> 換電流亮點，<code>electric-speed</code> 是繞一圈的秒數（預設 2.4）。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<ui-post author="Coach" compact time="2h" width="880" theme="calm" font-size="0.9rem">
+  Which one would you pick?
+  <post-item electric max-width="420px">預設金色，限制最大寬度 420px</post-item>
+  <post-item electric max-width="420px" electric-color="pink" electric-hot-color="vanilla" electric-speed="1.2">
+    粉紅外框，轉得比較快
+  </post-item>
+  <post-item electric width="300">固定寬度 300px</post-item>
+</ui-post>
+</script>
+      </div>
+    </div>
+
+    <div class="ex">
+      <h3>範例 19-4：live 模式用 add() 送進特殊訊息</h3>
+      <p class="note"><code>add()</code> 的鍵名同屬性：<code>electric: true</code>。特殊訊息直接出現，不顯示「正在輸入」。</p>
+      <div class="grid2" data-demo>
+        <div class="stage"></div>
+        <div><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+<script type="text/plain" class="demo-src">
+<div class="btns">
+  <button type="button" class="btn btn-outline-warning btn-sm" id="zap-add">送進特殊訊息</button>
+</div>
+<ui-post id="zap-live" mode="live" compact author="Coach" time="1h" width="880" min-height="60" font-size="0.9rem">
+  Do you like cooking?
+</ui-post>
+</script>
+<script type="text/plain" class="demo-js">
+document.getElementById('zap-add').addEventListener('click', () => {
+  document.getElementById('zap-live').add({
+    electric: true,
+    html: '這一題用到的語塊很多，我們逐一拆開。<b>在維持自然流暢的前提下，力求亮點多。</b>'
+  });
+});
+</script>
+      </div>
+    </div>
+
+      </section>
 
   <!-- ══════════ 新增（11-18-26） ══════════ -->
   <section class="part" id="new">
@@ -702,6 +898,8 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>bg-color</code>、<code>bubble-color</code>、<code>text-color</code></td><td>#0C0D0C、bg-alternative、vanilla</td><td>底色、留言泡泡色、文字色。</td></tr>
         <tr><td><code>heart-color</code>、<code>best-color</code>、<code>examiner-color</code></td><td>urgent、yellow、key</td><td>愛心、最佳回答、考官的顏色。</td></tr>
         <tr><td><code>controls</code></td><td>顯示</td><td>控制列：播放／暫停、重播、0.5×、1×、2×。</td></tr>
+        <tr><td><code>btn-color</code></td><td>pink</td><td>11-19-26 新增。控制列按鈕滑鼠移上去的外框與文字色、目前倍速的底色，以及「繼續」按鈕的顏色。色名或色碼。</td></tr>
+        <tr><td><code>continue-label</code></td><td>繼續</td><td>11-19-26 新增。<code>post-item</code> 的 <code>pause</code> 所出現按鈕的文字；單則 post-item 也能設，單則優先。</td></tr>
         <tr><td><code>best-label</code>、<code>examiner-label</code>、<code>fold-label</code></td><td>最佳回答、考官、摺疊說明</td><td>徽章與摺疊文字。</td></tr>
         <tr><td><code>typing-label</code>、<code>comment-label</code>、<code>like-label</code></td><td>正在輸入、則留言、讚</td><td>介面文字。</td></tr>
         <tr><td><code>drop-cap</code>、<code>drop-cap-color</code></td><td>無、同文字色</td><td>11-17-26 新增。首字放大：留言整則是英文、開頭是字母，而且有兩行以上時，第一個字母放大成兩行高；不符合條件的留言不變。<code>drop-cap-color</code> 指定首字顏色。</td></tr>
@@ -730,6 +928,8 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>badge-target</code>、<code>badge-content</code>、<code>badge-title</code></td><td>寫任一個，徽章就是可點的按鈕，點擊後由 bp-popnote 跳出窗格。<code>badge-target</code> 填 template 的 id；<code>badge-popover-xxx</code> 原樣轉成 <code>data-popover-xxx</code>（如 <code>badge-popover-placement</code>）。播放中與暫停都不能點，播完才解除；頁面沒載入 <code>bp-popnote.js</code> 時維持不可點。</td></tr>
         <tr><td><code>drop-cap</code>、<code>drop-cap-color</code></td><td>只讓這一則判斷首字放大；<code>drop-cap="false"</code> 讓這一則不放大。<code>drop-cap-color</code> 指定這一則的首字顏色。</td></tr>
         <tr><td><code>delay</code>、<code>typing</code></td><td>這一則的間隔與「正在輸入」毫秒數，<code>typing="0"</code> 不顯示輸入中。</td></tr>
+        <tr><td><code>electric</code>、<code>electric-color</code>、<code>electric-hot-color</code>、<code>electric-speed</code></td><td>11-19-26 新增。特殊訊息：金色電流框，沒有頭像、時間與愛心列，<code>author</code> 可省略（有寫就以金色顯示在框內上方）。沒設 <code>width</code> 或 <code>max-width</code> 時橫跨留言區左右。<code>electric-color</code>（預設 yellow）外框與電流色、<code>electric-hot-color</code>（預設 salmon）亮點色、<code>electric-speed</code> 繞一圈的秒數（0.4 到 20，預設 2.4）。預設不顯示「正在輸入」，<code>electric="false"</code> 關閉。</td></tr>
+        <tr><td><code>pause</code>、<code>continue-label</code></td><td>11-19-26 新增。這則出現（含效果播完）後停住，貼文下方出現提示文字與「繼續」按鈕，按了才往下播；<code>pause</code> 的值是提示文字，可省略，<code>pause="false"</code> 關閉。按重播會取消等待。<code>mode="live"</code> 忽略。</td></tr>
       </tbody>
     </table>
 
@@ -742,6 +942,8 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td><code>post-surge-end</code></td><td>愛心爆發、置頂與標籤完成時觸發。</td></tr>
         <tr><td><code>post-add-end</code></td><td>add() 送進的一則留言播完（含最佳回答判定、置頂、標籤）時觸發，<code>detail = { index, author, best }</code>。</td></tr>
         <tr><td><code>post-end</code></td><td>全部播完時觸發。</td></tr>
+        <tr><td><code>post-pause</code></td><td>11-19-26 新增。<code>pause</code> 的留言停住、出現「繼續」按鈕時觸發，<code>detail = { index, author }</code>，會冒泡。</td></tr>
+        <tr><td><code>post-continue</code></td><td>11-19-26 新增。使用者按下「繼續」時觸發，<code>detail = { index, author }</code>，會冒泡。</td></tr>
         <tr><td><code>play()</code>、<code>pause()</code>、<code>restart()</code>、<code>rate</code></td><td>播放或繼續、暫停、從頭播放；<code>rate</code> 為播放倍率，可讀寫。</td></tr>
         <tr><td><code>add(item)</code></td><td>加一則留言，回傳留言總數。鍵名同 post-item 屬性（駝峰或連字號），內容用 <code>html</code> 或 <code>text</code>，<code>html</code> 裡的特效標籤會自動拆出來執行。live 模式立刻排入播放；其他模式只加進清單，下次重播才出現。</td></tr>
         <tr><td><code>live</code>、<code>total</code></td><td>唯讀：是否為 live 模式、目前留言總數（含排隊中）。</td></tr>
@@ -810,6 +1012,17 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
       </tbody>
     </table>
 
+    <p class="ref-title fx">remove-fx 移除先前的效果（11-19-26 新增，標籤不需要內文）</p>
+    <table class="ref">
+      <thead><tr><th style="width:260px">屬性</th><th style="width:200px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>target</code>、<code>text</code>、<code>nth</code></td><td>這則內容、無、1</td><td>指到先前效果作用的位置，寫法同 stamp-fx、note-fx、mark-fx。要放在被移除的效果後面。可以跨留言：<code>target</code> 指到頁面上唯一的元素（例如 id）即可。</td></tr>
+        <tr><td><code>effect</code></td><td>全部</td><td><code>stamp</code>、<code>note</code>、<code>mark</code>，只移除該類。</td></tr>
+        <tr><td><code>fade-out</code></td><td>300</td><td>淡出毫秒數。<code>kind="color"</code> 的 mark-fx 被移除時，文字還原原色。</td></tr>
+        <tr><td><code>start</code>、<code>delay</code></td><td>after、0</td><td>用法同其他效果標籤。</td></tr>
+      </tbody>
+    </table>
+
     <p class="ref-title">與播放控制的關係</p>
     <table class="ref">
       <thead><tr><th style="width:260px">操作</th><th style="width:200px">結果</th><th>說明</th></tr></thead>
@@ -817,6 +1030,7 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
         <tr><td>暫停</td><td>特效停住</td><td>按繼續後從停下的地方接著做完，再出現下一則留言。</td></tr>
         <tr><td>0.5×、1×、2×、<code>rate</code></td><td>特效跟著倍速</td><td>動畫、<code>delay</code>、<code>stay</code> 都依倍速縮放。</td></tr>
         <tr><td>重播、<code>restart()</code></td><td>全部清除</td><td>特效從頭再跑，被握把隱藏的留言也會回來。</td></tr>
+        <tr><td>等待「繼續」（<code>pause</code>）</td><td>停在這則</td><td>按「繼續」才往下播；按重播會取消等待，效果登記一併清空。</td></tr>
         <tr><td><code>mode="live"</code> 預先寫好的留言</td><td>直接畫出</td><td>不播動畫。</td></tr>
         <tr><td><code>low="fold"</code></td><td>一起摺疊</td><td>留言被摺疊時，上面的章和評語一起隱藏。</td></tr>
       </tbody>
@@ -826,7 +1040,70 @@ document.getElementById('p3-b').onclick = () => p3.add({ examiner: true, author:
   <!-- ══════════ 版本紀錄 ══════════ -->
   <section class="part" id="ver">
     <h2>版本紀錄</h2>
-    <p class="lead">除了 11-17-26 的標籤圖示會改變既有標籤的外觀以外，其他項目都向下相容，沒寫新屬性的舊頁面不受影響。</p>
+    <p class="lead">除了 11-17-26 的標籤圖示會改變既有標籤的外觀以外，其他項目都向下相容，沒寫新屬性的舊頁面不受影響；11-19-26 的四項新增也都向下相容。</p>
+    <div class="ver">
+      <div><h4 class="old">修改前：特殊訊息只能用一般留言加 bg-color、border-color</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Nelson" bg-color="RGB(36,36,36)" border-color="yellow">
+  你巨資重兵準備半年，卻在第一句錯失機會？
+</post-item>
+</script>
+      </div>
+      <div><h4 class="new">修改後：electric 金色電流框，author 可省略，預設橫跨左右</h4>
+<script type="text/plain" class="code-src">
+<post-item electric>
+  你巨資重兵準備半年，卻在第一句錯失機會？
+</post-item>
+</script>
+      </div>
+    </div>
+    <div class="ver">
+      <div><h4 class="old">修改前：控制列按鈕的反色固定是 pink</h4>
+<script type="text/plain" class="code-src">
+<ui-post author="Henry">…</ui-post>
+</script>
+      </div>
+      <div><h4 class="new">修改後：btn-color 指定反色</h4>
+<script type="text/plain" class="code-src">
+<ui-post author="Henry" btn-color="key">…</ui-post>
+</script>
+      </div>
+    </div>
+    <div class="ver">
+      <div><h4 class="old">修改前：播到一半停住只能靠控制列的暫停</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Nelson">
+  為什麼第一句這樣答，等同於白白放掉機會？
+</post-item>
+</script>
+      </div>
+      <div><h4 class="new">修改後：pause 停住，按「繼續」才往下播</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Nelson" pause="先想想">
+  為什麼第一句這樣答，等同於白白放掉機會？
+</post-item>
+</script>
+      </div>
+    </div>
+    <div class="ver">
+      <div><h4 class="old">修改前：效果只能用 stay 自動消失</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Nelson">
+  I reached at the hotel…
+  <mark-fx kind="strike" text="at" stay="2000"></mark-fx>
+</post-item>
+</script>
+      </div>
+      <div><h4 class="new">修改後：remove-fx 在指定時間移除先前的效果</h4>
+<script type="text/plain" class="code-src">
+<post-item author="Nelson">
+  I reached at the hotel…
+  <mark-fx kind="strike" text="at"></mark-fx>
+  <remove-fx text="at" effect="mark" delay="1500"></remove-fx>
+</post-item>
+</script>
+      </div>
+    </div>
     <div class="ver">
       <div><h4 class="old">修改前：只能用 tags 在最後顯示講評標籤</h4>
 <script type="text/plain" class="code-src">
@@ -969,6 +1246,8 @@ document.querySelectorAll('[data-demo] .demo-js').forEach(s => new Function(s.te
   document.addEventListener('post-end', () => notice('post-end：播放完畢'));
   document.addEventListener('post-add-end', (e) => notice('post-add-end：' + JSON.stringify(e.detail)));
   document.addEventListener('post-item-hide', (e) => notice('post-item-hide：' + JSON.stringify(e.detail)));
+  document.addEventListener('post-pause', (e) => notice('post-pause：' + JSON.stringify(e.detail)));
+  document.addEventListener('post-continue', (e) => notice('post-continue：' + JSON.stringify(e.detail)));
 })();
 </script>
 </body>

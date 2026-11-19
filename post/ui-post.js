@@ -136,10 +136,15 @@ ui-post .upo-dots{display:inline-flex;gap:4px;margin:0 0 0 2px;}
 ui-post .upo-dots span{display:block;width:6px;height:6px;border-radius:50%;background:#86877F;animation:upo-dot 1s ease-in-out infinite;}
 ui-post .upo-dots span:nth-child(2){animation-delay:.15s;}
 ui-post .upo-dots span:nth-child(3){animation-delay:.3s;}
+ui-post .upo-pause{display:flex;align-items:center;justify-content:center;gap:12px;padding:6px 16px 14px 16px;}
+ui-post .upo-pause[hidden]{display:none;}
+ui-post .upo-pause-hint{font-size:.875rem;color:#C6C7BD;}
+ui-post .upo-continue{font-family:inherit;font-size:.875rem;font-weight:700;line-height:1.4;background:var(--upo-btn,#FF91D7);color:#0C0D0C;border:2px solid var(--upo-btn,#FF91D7);border-radius:6px;padding:4px 18px;cursor:pointer;animation:upo-pop .45s ease-out;}
+ui-post .upo-continue:hover{background:#0C0D0C;color:var(--upo-btn,#FF91D7);}
 ui-post .upo-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--upo-div,var(--upo-bc,#86877F));background:#141614;}
 ui-post .upo-btn{font-family:inherit;font-size:.8125rem;line-height:1.4;background:#0C0D0C;color:#C6C7BD;border:1px solid #86877F;border-radius:6px;padding:4px 10px;cursor:pointer;}
-ui-post .upo-btn:hover{border-color:#FF91D7;color:#FF91D7;}
-ui-post .upo-btn.is-on,ui-post .upo-btn.is-on:hover{background:#FF91D7;border-color:#FF91D7;color:#0C0D0C;}
+ui-post .upo-btn:hover{border-color:var(--upo-btn,#FF91D7);color:var(--upo-btn,#FF91D7);}
+ui-post .upo-btn.is-on,ui-post .upo-btn.is-on:hover{background:var(--upo-btn,#FF91D7);border-color:var(--upo-btn,#FF91D7);color:#0C0D0C;}
 ui-post .upo-btn:disabled,ui-post .upo-btn:disabled:hover{background:#0C0D0C;border-color:#3B2A20;color:#86877F;cursor:not-allowed;}
 ui-post .upo-sep{width:1px;height:20px;background:var(--upo-div,var(--upo-bc,#86877F));margin:0 4px;}
 ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
@@ -152,6 +157,19 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 .ui-post-pop-close{position:absolute;top:8px;right:8px;background:#0C0D0C;border:1px solid #86877F;color:#C6C7BD;border-radius:6px;padding:2px 8px;font-size:0.9rem;cursor:pointer;}
 .ui-post-pop-close:hover{border-color:#FF91D7;color:#FF91D7;}
 .ui-post-pop-body{padding:20px 20px 16px 20px;}
+ui-post .upo-item.is-electric .upo-main{flex:1 1 auto;min-width:0;}
+ui-post .upo-bubble.is-electric{--upo-zap:#E3D322;--upo-zap-hot:#FFC88A;--upo-zap-sec:2.4s;position:relative;display:block;width:auto;max-width:none;background:#242424;border:2px solid var(--upo-zap);border-radius:14px;padding:12px 18px;box-shadow:0 0 6px var(--upo-zap),inset 0 0 10px #3B2A20;animation:upo-zap-glow 1.6s ease-in-out infinite,upo-ignite .7s ease-out;}
+ui-post .upo-bubble.is-electric::before,ui-post .upo-bubble.is-electric::after{content:"";position:absolute;border-radius:16px;pointer-events:none;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;}
+ui-post .upo-bubble.is-electric::before{left:-4px;top:-4px;right:-4px;bottom:-4px;padding:4px;background:conic-gradient(from var(--upo-ang),transparent 0deg 200deg,var(--upo-zap) 290deg,var(--upo-zap-hot) 335deg,#DBEDD8 358deg,transparent 360deg);animation:upo-zap-run var(--upo-zap-sec) linear infinite;filter:drop-shadow(0 0 4px var(--upo-zap-hot));}
+ui-post .upo-bubble.is-electric::after{left:-5px;top:-5px;right:-5px;bottom:-5px;padding:2px;background:var(--upo-zap);filter:url(#upo-zap-filter) drop-shadow(0 0 3px var(--upo-zap));animation:upo-zap-flicker .22s steps(1) infinite;}
+ui-post .upo-bubble.is-electric .upo-name{color:var(--upo-zap);margin:0 0 2px 0;}
+ui-post .upo-bubble.is-electric .upo-name:empty{display:none;}
+ui-post .upo-bubble.is-electric .upo-text{margin:0;color:#DBEDD8;}
+@property --upo-ang{syntax:"<angle>";inherits:false;initial-value:0deg;}
+@keyframes upo-zap-run{from{--upo-ang:0deg}to{--upo-ang:360deg}}
+@keyframes upo-zap-flicker{0%{opacity:.95}25%{opacity:.4}50%{opacity:.8}75%{opacity:.25}}
+@keyframes upo-zap-glow{0%,100%{box-shadow:0 0 5px var(--upo-zap),inset 0 0 8px #3B2A20}45%{box-shadow:0 0 12px var(--upo-zap),inset 0 0 14px #3B2A20}50%{box-shadow:0 0 3px var(--upo-zap),inset 0 0 6px #3B2A20}55%{box-shadow:0 0 14px var(--upo-zap-hot),inset 0 0 14px #3B2A20}}
+@keyframes upo-ignite{0%{filter:brightness(2.4)}30%{filter:brightness(1)}40%{filter:brightness(2)}100%{filter:none}}
 @keyframes upo-in{from{transform:translateY(14px) scale(.97)}to{transform:none}}
 @keyframes upo-pop{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
 @keyframes upo-beat{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
@@ -160,14 +178,14 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 
   const UpoFx = (() => {
     const CANCEL = { cancelled: true, fx: true };
-    const TAGS = 'stamp-fx, note-fx, mark-fx';
+    const TAGS = 'stamp-fx, note-fx, mark-fx, remove-fx';
     const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
     const len = (v) => { if (v == null || v === '') return null; const s = String(v).trim(); return /^-?\d+(\.\d+)?$/.test(s) ? s + 'px' : s; };
     const col = (v, d) => color(v) || d;
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
     const CSS = `
-ui-post stamp-fx,ui-post note-fx,ui-post mark-fx{display:none;}
+ui-post stamp-fx,ui-post note-fx,ui-post mark-fx,ui-post remove-fx{display:none;}
 ui-post .upo-fxmark{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1;}
 ui-post .upo-fxl{position:relative;}
 ui-post .upo-fxnote{position:absolute;z-index:2;width:max-content;box-sizing:border-box;padding:8px 12px;border:1px solid;border-radius:8px;line-height:1.5;text-align:left;font-weight:400;
@@ -180,7 +198,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
 
     function extract(html) {
-      if (!html || !/<(stamp|note|mark)-fx\b/i.test(html)) return { html, fx: [] };
+      if (!html || !/<(stamp|note|mark|remove)-fx\b/i.test(html)) return { html, fx: [] };
       const t = document.createElement('template'); t.innerHTML = html;
       const fx = [...t.content.querySelectorAll(TAGS)].map((n) => { const s = n.outerHTML; n.remove(); return s; });
       return { html: t.innerHTML.trim(), fx };
@@ -346,6 +364,11 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const r = el.getBoundingClientRect();
       return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
     }
+    /* 記錄每個已出現的效果，讓 <remove-fx> 事後找得到並移除 */
+    function reg(ctx, el, kind, tg, node, drop, undo) {
+      if (!ctx.reg) return;
+      ctx.reg.push({ kind, sel: (el.getAttribute('target') || '').trim(), text: el.getAttribute('text') || '', nth: String(parseInt(el.getAttribute('nth'), 10) || 1), targets: tg, node, drop, undo });
+    }
     function keep(ctx, place) { ctx.live.push(place); return () => { const i = ctx.live.indexOf(place); if (i >= 0) ctx.live.splice(i, 1); }; }
     function stayFor(run, el, node, drop, def) {
       const stay = el.getAttribute('stay') || 'forever';
@@ -405,6 +428,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       place();
       nt.style.visibility = '';
       const drop = keep(ctx, place);
+      reg(ctx, el, 'note', [t], nt, drop);
       const dy = side === 'bottom' ? '-6px' : '6px';
       await run.anim(nt, [{ opacity: 0, transform: `translateY(${dy})` }, { opacity: 1, transform: 'none' }], num(el.getAttribute('speed'), 300));
       stayFor(run, el, nt, drop, 300);
@@ -501,6 +525,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       s.style.transform = T(1);
       s.style.visibility = '';
       const drop = keep(ctx, place);
+      reg(ctx, el, 'stamp', [t], s, drop);
       const impact = 0.72;
       const landing = run.anim(s, [
         { opacity: 0, transform: T(drop0), easing: 'cubic-bezier(.55,0,.9,.4)' },
@@ -568,6 +593,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         const c = col(el.getAttribute('color'), '#51DBCF');
         const old = list.map((t) => t.style.color);
         list.forEach((t) => { t.style.transition = run.skipping ? '' : `color ${Math.max(1, speed / run.rate())}ms`; t.style.color = c; });
+        reg(ctx, el, 'mark', list, null, null, () => list.forEach((t, i) => { t.style.color = old[i]; }));
         await run.sleep(speed);
         const stay = el.getAttribute('stay') || 'forever';
         if (stay !== 'forever') run.sleep(num(stay, 2000)).then(() => list.forEach((t, i) => { t.style.color = old[i]; }), () => {});
@@ -670,6 +696,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       draw();
       if (!paths.length) { svg.remove(); return; }
       const drop = keep(ctx, () => { if (svg.isConnected) draw(); });
+      reg(ctx, el, 'mark', list, svg, drop);
       const first = paths.slice();
       const lens = first.map((p) => (p.getTotalLength ? p.getTotalLength() : 100) || 1);
       const total = lens.reduce((x, y) => x + y, 0) || 1;
@@ -679,6 +706,28 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         first[i].style.strokeDasharray = 'none'; first[i].style.strokeDashoffset = '0';
       }
       stayFor(run, el, svg, drop, 300);
+    }
+
+    /* <remove-fx target="..." text="..." nth="..." effect="stamp|note|mark" fade-out="300">：移除先前指定的效果 */
+    async function removeFx(run, el, ctx) {
+      const list = ctx.reg || [];
+      const sel = (el.getAttribute('target') || '').trim();
+      const text = el.getAttribute('text') || '';
+      const nth = String(parseInt(el.getAttribute('nth'), 10) || 1);
+      const only = (el.getAttribute('effect') || '').trim().toLowerCase();
+      const cur = targets(el, ctx);
+      const hit = list.filter((e) => (!only || e.kind === only) && (e.targets.some((t) => cur.includes(t)) || (sel && e.sel === sel && e.text === text && e.nth === nth)));
+      if (!hit.length) return;
+      const ms = num(el.getAttribute('fade-out'), 300);
+      await Promise.all(hit.map(async (e) => {
+        const i = list.indexOf(e); if (i >= 0) list.splice(i, 1);
+        if (e.undo) e.undo();
+        if (e.node && e.node.isConnected) {
+          await run.anim(e.node, [{ opacity: 1 }, { opacity: 0 }], ms, { fill: 'forwards' });
+          e.node.remove();
+        }
+        if (e.drop) e.drop();
+      }));
     }
 
     async function play(run, specs, ctx) {
@@ -693,6 +742,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
           await run.sleep(num(el.getAttribute('delay'), 0));
           if (el.tagName === 'STAMP-FX') await stamp(run, el, ctx);
           else if (el.tagName === 'MARK-FX') await mark(run, el, ctx);
+          else if (el.tagName === 'REMOVE-FX') await removeFx(run, el, ctx);
           else await note(run, el, ctx);
           if (ctx.onStep) ctx.onStep();
         }));
@@ -708,6 +758,23 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
     s.id = STYLE_ID;
     s.textContent = STYLE_TEXT;
     document.head.appendChild(s);
+  }
+
+  /* 金色電流框：頁面只放一份 SVG 濾鏡（讓外框像電流一樣抖動），並用計時器定時換亂數種子製造劈啪感 */
+  let zapTimer = null;
+  function ensureZap() {
+    if (document.getElementById('upo-zap-svg')) return;
+    const wrap = document.createElement('div');
+    wrap.innerHTML = '<svg id="upo-zap-svg" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><filter id="upo-zap-filter" x="-10%" y="-30%" width="120%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';
+    document.body.appendChild(wrap.firstChild);
+    const turb = document.querySelector('#upo-zap-svg feTurbulence');
+    let seed = 1;
+    zapTimer = setInterval(() => {
+      if (document.hidden) return;
+      if (!document.querySelector('ui-post .is-electric')) return;
+      seed = seed % 997 + 1;
+      turb.setAttribute('seed', String(seed));
+    }, 110);
   }
 
   let openPop = null;
@@ -744,6 +811,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       if (this._onLoad) { window.removeEventListener('load', this._onLoad); this._onLoad = null; }
       if (openPop && openPop.owner === this) closeProfile();
       if (this._io) { this._io.disconnect(); this._io = null; }
+      if (this._holdCancel) this._holdCancel();
     }
 
     get rate() { return this._rate || 1; }
@@ -763,6 +831,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._resumeQ = [];
       this._fxRuns = new Set();
       this._fxLive = [];
+      this._fxReg = [];
       this._dropItems = [];
       this._started = false;
       this._ended = false;
@@ -796,6 +865,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       css('--upo-share', color(this.getAttribute('share-color')));
       css('--upo-grip', color(this.getAttribute('grip-color')));
       css('--upo-follow', color(this.getAttribute('follow-color')));
+      css('--upo-btn', color(this.getAttribute('btn-color')));
       css('--upo-grip-hover', color(this.getAttribute('grip-hover-color')));
       const theme = color(this.getAttribute('theme'));
       css('--upo-bc', color(this.getAttribute('border-color')) || theme);
@@ -868,11 +938,16 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       typing.className = 'upo-typing';
       typing.hidden = true;
 
-      box.append(card, list, typing);
+      const pausebar = document.createElement('div');
+      pausebar.className = 'upo-pause';
+      pausebar.hidden = true;
+
+      box.append(card, list, typing, pausebar);
       this._box = box;
       if (window.ResizeObserver) { this._fxRO = new ResizeObserver(() => { this._dropItems.forEach((m) => this._dropCap(m)); UpoFx.relayout(this._fxLive); }); this._fxRO.observe(box); }
       this._list = list;
       this._typing = typing;
+      this._pausebar = pausebar;
 
       if (bool(this.getAttribute('controls'), true) && !this._live) {
         const bar = document.createElement('div');
@@ -1228,6 +1303,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       this._fxRuns.forEach((r) => r.cancel());
       this._fxRuns.clear();
       this._fxLive.length = 0;
+      this._fxReg.length = 0;
+      if (this._holdCancel) this._holdCancel();
       this._dropItems.length = 0;
       this._closeBadgePop();
       this._started = true;
@@ -1289,6 +1366,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
       return {
         src, index, likes, best, examiner, after, low,
+        electric: src.hasAttribute('electric') && bool(src.getAttribute('electric'), true),
+        pause: (src.hasAttribute('pause') && bool(src.getAttribute('pause'), true)) ? (src.getAttribute('pause') || '').trim() : null,
         reply: src.hasAttribute('reply') && bool(src.getAttribute('reply'), true), replyParent: null,
         start: Math.round(num(src.getAttribute('start-likes'), defStart, 0, 1e9)),
         shares: src.hasAttribute('shares') ? Math.round(num(src.getAttribute('shares'), 0, 0, 1e9)) : null,
@@ -1303,7 +1382,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const src = m.src;
       const author = src.getAttribute('author') || (m.examiner ? 'IELTS Examiner' : 'User');
       await this._wait(num(src.getAttribute('delay'), live ? 0 : A('item-delay', 700, 0, 60000), 0, 60000), run);
-      const typingMs = num(src.getAttribute('typing'), A('typing', 1100, 0, 60000), 0, 60000);
+      const zapQuiet = m.electric && !src.hasAttribute('typing');
+      const typingMs = zapQuiet ? 0 : num(src.getAttribute('typing'), A('typing', 1100, 0, 60000), 0, 60000);
       if (typingMs > 0) {
         this._typing.replaceChildren(
           this._avatar(src.getAttribute('avatar'), src.getAttribute('avatar-color'), author),
@@ -1320,19 +1400,63 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       }
       this._makeItem(m);
       if (m.fx.length) await this._runFx(m, run, false);
+      if (!live && m.pause !== null) await this._holdForClick(m, run);
+    }
+
+    /* post-item 的 pause：這則出現後停住，等使用者按「繼續」才往下播；重播或換一輪時自動取消 */
+    _holdForClick(m, run) {
+      return new Promise((resolve, reject) => {
+        const bar = this._pausebar;
+        if (!bar) { resolve(); return; }
+        bar.replaceChildren();
+        if (m.pause) {
+          const hint = document.createElement('span');
+          hint.className = 'upo-pause-hint';
+          hint.textContent = m.pause;
+          bar.appendChild(hint);
+        }
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'upo-continue';
+        btn.textContent = m.src.getAttribute('continue-label') || this.getAttribute('continue-label') || '繼續';
+        bar.appendChild(btn);
+        bar.hidden = false;
+        this._setState('等待按「' + btn.textContent + '」');
+        this._reveal(bar);
+        const end = (ok) => {
+          if (this._holdCancel !== end) return;
+          this._holdCancel = null;
+          bar.hidden = true;
+          bar.replaceChildren();
+          if (ok) { this._setState(''); this.dispatchEvent(new CustomEvent('post-continue', { bubbles: true, detail: { index: m.index, author: m.author } })); resolve(); } else reject(CANCEL);
+        };
+        this._holdCancel = end;
+        btn.addEventListener('click', () => end(true));
+        this.dispatchEvent(new CustomEvent('post-pause', { bubbles: true, detail: { index: m.index, author: m.author } }));
+      });
     }
 
     _makeItem(m) {
       const src = m.src;
-      const author = src.getAttribute('author') || (m.examiner ? 'IELTS Examiner' : 'User');
+      const zap = !!m.electric;
+      const author = src.getAttribute('author') || (m.examiner ? 'IELTS Examiner' : (zap ? '' : 'User'));
       m.author = author;
       const el = document.createElement('div');
-      el.className = 'upo-item' + (m.examiner ? ' is-examiner' : '');
-      el.appendChild(this._avatar(src.getAttribute('avatar'), src.getAttribute('avatar-color'), author));
+      el.className = 'upo-item' + (m.examiner ? ' is-examiner' : '') + (zap ? ' is-electric' : '');
+      if (!zap) el.appendChild(this._avatar(src.getAttribute('avatar'), src.getAttribute('avatar-color'), author));
       const main = document.createElement('div');
       main.className = 'upo-main';
       const bubble = document.createElement('div');
-      bubble.className = 'upo-bubble';
+      bubble.className = 'upo-bubble' + (zap ? ' is-electric' : '');
+      if (zap) {
+        ensureZap();
+        const zc = color(src.getAttribute('electric-color'));
+        if (zc) bubble.style.setProperty('--upo-zap', zc);
+        const zh = color(src.getAttribute('electric-hot-color'));
+        if (zh) bubble.style.setProperty('--upo-zap-hot', zh);
+        const zs = num(src.getAttribute('electric-speed'), 0, 0.4, 20);
+        if (zs) bubble.style.setProperty('--upo-zap-sec', zs + 's');
+      }
       /* 單則留言寬度：width 固定寬度（超過貼文會縮回去），max-width 只限制上限，短留言維持原本大小 */
       const iw = len(src.getAttribute('width')), imw = len(src.getAttribute('max-width'));
       if (iw) bubble.style.width = iw;
@@ -1375,7 +1499,8 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
         m.curShares = m.after ? m.shares : Math.min(m.startShares, m.shares);
         m.shareEl.textContent = this._fmt(m.curShares);
       }
-      main.append(bubble, foot);
+      main.appendChild(bubble);
+      if (!zap) main.appendChild(foot);
       el.appendChild(main);
       if (bool(src.getAttribute('grip'), bool(this.getAttribute('grip'), false))) {
         const g = document.createElement('button');
@@ -1584,7 +1709,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const r = new UpoFx.Run({ rate: () => this.rate, instant, detached: instant, hold: this._paused, cancel: CANCEL });
       this._fxRuns.add(r);
       const ctx = {
-        layer: m.main, scope: m.text, shake: m.bubble, live: this._fxLive,
+        layer: m.main, scope: m.text, shake: m.bubble, live: this._fxLive, reg: this._fxReg,
         accent: color(this.getAttribute('examiner-color')) || '#51DBCF',
         onStep: () => { if (!instant) this._reveal(m.el); },
         bounds: () => { const b = this._box.getBoundingClientRect(), l = m.main.getBoundingClientRect(); return { x: b.left - l.left, y: b.top - l.top, w: b.width, h: b.height }; }
