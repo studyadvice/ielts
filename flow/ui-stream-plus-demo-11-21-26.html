@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-stream-plus：reveal 後再暫停、醒目與不醒目的泡泡</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;}
+  .wrap{max-width:1600px;margin:0 auto;padding:24px 32px 64px 32px;}
+  h1{font-size:1.7rem;font-weight:800;color:#DBEDD8;margin:0 0 6px 0;}
+  h1 code{color:#51DBCF;font-size:1.2rem;}
+  .sub{color:#86877F;font-size:0.95rem;margin:0 0 28px 0;}
+  h2.part{font-size:1.45rem;font-weight:800;color:#E3D322;margin:48px 0 20px 0;padding:0 0 10px 0;border-bottom:2px solid #3B2A20;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  .two h3{font-size:1rem;font-weight:700;margin:0 0 10px 0;}
+  .two h3.old{color:#EF6661;}
+  .two h3.new{color:#71CD76;}
+  pre{background:#161716;border:1px solid #3B2A20;border-radius:8px;padding:14px 18px;color:#C6C7BD;font-size:0.78rem;margin:12px 0 0 0;white-space:pre-wrap;}
+  pre code{color:inherit;font-size:inherit;}
+  p.note{font-size:0.9rem;color:#C6C7BD;margin:0 0 16px 0;}
+  p.note code{color:#51DBCF;}
+  table.attr{width:100%;border-collapse:collapse;font-size:0.88rem;margin:0 0 28px 0;}
+  table.attr th{text-align:left;color:#0C0D0C;background:#C6C7BD;padding:6px 12px;font-weight:700;}
+  table.attr td{padding:7px 12px;border-bottom:1px solid #3B2A20;vertical-align:top;color:#DBEDD8;}
+  table.attr td:first-child{color:#51DBCF;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;}
+  table.attr td:nth-child(2){color:#E3D322;white-space:nowrap;}
+  .alert{font-size:0.9rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>ui-stream-plus.js</code> ui-stream 的相依增強</h1>
+  <p class="sub">不修改 ui-stream.js，另外掛上兩項功能：reveal 顯示完再暫停一次，以及醒目與不醒目的泡泡樣式。</p>
+
+  <div class="alert alert-warning" role="alert">
+    載入順序：請把 <code>ui-stream-plus.js</code> 放在 <code>ui-stream.js</code> 之前，<code>reveal-pause</code> 才讀得到屬性。只用 <code>data-style</code> 的話，順序不拘。
+  </div>
+
+  <!-- ===== 一、reveal-pause ===== -->
+  <h2 class="part">一、reveal-pause：reveal 顯示完，再停一次</h2>
+  <p class="note">左邊是原本的 <code>pause</code> + <code>reveal</code>：按下按鈕後，說明一出現就接著播下一則。右邊多加 <code>reveal-pause</code>：說明出現後再停一次，按了才出現下一則。</p>
+
+  <template id="r-old"><div class="p-3" style="border:1px dashed #86877F;border-radius:8px;">對等連接詞不適合連接名詞片語和子句，所以要說 working，不要說 and I work。</div></template>
+  <template id="r-new"><div class="p-3" style="border:1px dashed #86877F;border-radius:8px;">對等連接詞不適合連接名詞片語和子句，所以要說 working，不要說 and I work。</div></template>
+
+  <div class="two">
+    <div>
+      <h3 class="old">原本：pause + reveal</h3>
+      <ui-stream controls counter controls-position="bottom" student-color="gray" animation="fade">
+        <stream-item from="teacher" name="Nelson">補上空格：A third-year design student at an art school, ______ part-time as a convenience store clerk.</stream-item>
+        <stream-item from="student" name="考生" pause="看解說" reveal="r-old">and I work</stream-item>
+        <stream-item from="teacher" name="Nelson">【問題】這個回答有一項增加語法多樣的特徵，你發現了嗎？</stream-item>
+      </ui-stream>
+      <pre><code>&lt;stream-item from="student" pause="看解說" reveal="r-old"&gt;
+  and I work
+&lt;/stream-item&gt;</code></pre>
+    </div>
+    <div>
+      <h3 class="new">加上 reveal-pause</h3>
+      <ui-stream controls counter controls-position="bottom" student-color="gray" animation="fade">
+        <stream-item from="teacher" name="Nelson">補上空格：A third-year design student at an art school, ______ part-time as a convenience store clerk.</stream-item>
+        <stream-item from="student" name="考生" pause="看解說" reveal="r-new" reveal-pause="讀完了再繼續">and I work</stream-item>
+        <stream-item from="teacher" name="Nelson">【問題】這個回答有一項增加語法多樣的特徵，你發現了嗎？</stream-item>
+      </ui-stream>
+      <pre><code>&lt;stream-item from="student" pause="看解說" reveal="r-new"
+             reveal-pause="讀完了再繼續"&gt;
+  and I work
+&lt;/stream-item&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ===== 二、data-style ===== -->
+  <h2 class="part">二、data-style：spot 醒目、faint 不醒目</h2>
+  <p class="note">兩個新值可以寫在 <code>stream-item</code>，也可以寫在 <code>stream-role</code> 讓整個角色套用。顏色仍然跟著角色色或 <code>color</code> 屬性走。</p>
+
+  <div class="two">
+    <div>
+      <ui-stream controls counter controls-position="bottom" student-color="gray" animation="fade">
+        <stream-item from="teacher" name="Nelson">一般的老師泡泡（預設 filled）</stream-item>
+        <stream-item from="teacher" name="Nelson" data-style="spot">重點：第一句不要照搬題目</stream-item>
+        <stream-item from="teacher" name="Nelson" data-style="faint">補充：這只是提醒，錄影時可以口述帶過</stream-item>
+        <stream-item from="student" name="考生">一般的考生泡泡（預設 outline）</stream-item>
+        <stream-item from="student" name="考生" data-style="spot" color="yellow">醒目，並改用黃色</stream-item>
+        <stream-item from="student" name="考生" data-style="faint">不醒目</stream-item>
+      </ui-stream>
+    </div>
+    <div>
+      <pre><code>&lt;stream-item from="teacher" data-style="spot"&gt;
+  重點：第一句不要照搬題目
+&lt;/stream-item&gt;
+
+&lt;stream-item from="teacher" data-style="faint"&gt;
+  補充：這只是提醒
+&lt;/stream-item&gt;
+
+&lt;!-- 整個角色套用 --&gt;
+&lt;stream-role name="hint" color="gray" data-style="faint"&gt;&lt;/stream-role&gt;</code></pre>
+      <p class="note" style="margin:12px 0 0 0;"><code>layout</code> 為 <code>flat</code> 或 <code>tail</code> 時，ui-stream 本來就不套用 <code>data-style</code>，這兩個值也不會生效。</p>
+    </div>
+  </div>
+
+  <!-- ===== 三、屬性總覽 ===== -->
+  <h2 class="part">三、屬性總覽</h2>
+  <table class="attr">
+    <tr><th>屬性</th><th>用在</th><th>說明</th></tr>
+    <tr><td>reveal-pause</td><td>stream-item</td><td>reveal 顯示完再停一次，值是按鈕文字；不寫值則沿用 ui-stream 的 <code>pause-text</code>（預設「點一下繼續」）與 <code>pause-icon</code>。需搭配 <code>pause</code> 與 <code>reveal</code>。</td></tr>
+    <tr><td>data-style="spot"</td><td>stream-item、stream-role</td><td>醒目：3px 粗框、外圈、淡色底、字加粗放大。</td></tr>
+    <tr><td>data-style="faint"</td><td>stream-item、stream-role</td><td>不醒目：灰框灰字、字縮小、頭像轉灰階。</td></tr>
+  </table>
+  <p class="note">補充：停在 <code>reveal-pause</code> 時，按控制列的「播放」或「下一則」都能繼續；最後一則帶 <code>reveal-pause</code> 時，按完仍會正常送出 <code>ui-stream:done</code>。</p>
+</div>
+
+<script src="ui-stream-plus.js"></script>
+<script src="ui-stream.js"></script>
+</body>
+</html>

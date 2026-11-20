@@ -7,6 +7,7 @@
 | `ui-play.js` | `<ui-play>` `<stage-item>` `<script-item>` 與各種 `-fx` | 教學錄影用的模擬畫面播放器：在既有內容上依劇本標記、註解、蓋印章、改寫，鍵盤或滑鼠控制節奏。 | [`ui-play-demo-11-18-26.html`](ui-play-demo-11-18-26.html)（合併版：新範例在上，11-13、11-14 的範例與修改對照接在下方） |
 | `play-maker.js` | `<play-maker>` | ui-play 與 ui-fillin 的劇本製作器：貼上句子，選取文字按按鈕，自動產生錄影版與練習版程式碼。 | [`play-maker-demo-11-14-26.html`](play-maker-demo-11-14-26.html) |
 | `ui-stream.js` | `<ui-stream>` `<stream-role>` `<stream-item>` | 聊天室回放式的內容流，逐則出現、逐字打出、暫停後揭露答案；`mode="live"` 接收外部送進來的訊息；`layout` 切換平鋪、尾巴氣泡、雙欄對照排版；`stage` 在旁邊切出畫面區，逐則切換圖片或 template。 | [`ui-stream-demo-11-18-26.html`](ui-stream-demo-11-18-26.html)（合併版） |
+| `ui-stream-plus.js` | `<stream-item reveal-pause>`、`data-style="spot"`、`data-style="faint"` | ui-stream 的相依增強，不修改 `ui-stream.js`：reveal 顯示完再暫停一次，以及醒目與不醒目的泡泡樣式。 | [`ui-stream-plus-demo-11-21-26.html`](ui-stream-plus-demo-11-21-26.html) |
 | `ui-contacts.js` | `<ui-contacts>` `<p-card>` `<p-msg>` | 通訊錄：預先寫好人物與訊息，把人物拖到 ui-stream 產生他的下一則訊息，或拖到 ui-post 變成一則留言。 | [`ui-contacts-demo-11-15-26.html`](ui-contacts-demo-11-15-26.html)（範例 5：拖到 ui-post） |
 | `ui-orbit.js` | `<ui-orbit>` `<orbit-core>` `<orbit-item>` | 核心概念居中，相關想法沿軌道環繞；點一個想法，它會停進右側插槽並顯示說明。 | [`ui-orbit-demo-11-11-26.html`](ui-orbit-demo-11-11-26.html) |
 
@@ -16,6 +17,7 @@
 
 - [ui-play.js](#ui-playjs)
 - [ui-stream.js](#ui-streamjs)
+- [ui-stream-plus.js](#ui-stream-plusjs)
 - [ui-contacts.js](#ui-contactsjs)
 - [ui-orbit.js](#ui-orbitjs)
 - [授權](#授權)
@@ -592,6 +594,54 @@ s.live;            // 是否為 mode="live"
 s.export('text');  // 匯出文字；'html' 匯出 HTML
 s.index; s.total;
 ```
+
+---
+
+## ui-stream-plus.js
+
+`ui-stream-plus.js` 是 `<ui-stream>` 的相依增強。不修改 `ui-stream.js`，另外掛上兩項功能：reveal 顯示完再暫停一次，以及醒目與不醒目的泡泡樣式。沒有新增標籤，只新增一個屬性與兩個 `data-style` 值。單一 `.js` 檔，載入後自動注入樣式，不使用 Shadow DOM。
+
+### 快速開始
+
+```html
+<script src="ui-stream-plus.js"></script>
+<script src="ui-stream.js"></script>
+
+<ui-stream controls counter>
+  <stream-item from="student" pause="看解說" reveal="a1" reveal-pause="讀完了再繼續">and I work</stream-item>
+  <stream-item from="teacher" data-style="spot">重點</stream-item>
+  <stream-item from="teacher" data-style="faint">補充說明</stream-item>
+</ui-stream>
+<template id="a1"><div>解說內容</div></template>
+```
+
+`ui-stream-plus.js` 要放在 `ui-stream.js` 之前：ui-stream 建好後會清掉原始的 `<stream-item>`，之後就讀不到 `reveal-pause`。只用 `data-style` 的話，載入順序不拘。
+
+### reveal-pause
+
+ui-stream 的 `pause` 是「這一則出現後停住，按了才顯示 `reveal`」，所以 reveal 一出現就接著播下一則。加上 `reveal-pause` 後，reveal 顯示完會再停一次，再按一下才出現下一則。
+
+| 屬性 | 用在 | 說明 |
+| --- | --- | --- |
+| `reveal-pause` | `<stream-item>` | 值是按鈕文字；只寫屬性名稱不寫值，沿用 ui-stream 的 `pause-text`（預設「點一下繼續」）與 `pause-icon`。需搭配 `pause` 與 `reveal`。 |
+
+停在 `reveal-pause` 時，按控制列的「播放」或「下一則」也能繼續。最後一則帶 `reveal-pause` 時，按完仍會正常送出 `ui-stream:done`。
+
+### data-style 新增兩個值
+
+ui-stream 會把 `data-style` 的值變成 `.us-值` 這個 class，所以補上樣式就能新增外觀。可寫在 `<stream-item>`，也可寫在 `<stream-role>` 讓整個角色套用，顏色仍跟著角色色或 `color` 屬性走。
+
+| 值 | 外觀 |
+| --- | --- |
+| `spot` | 醒目：3px 粗框、外圈、淡色底、字加粗放大。 |
+| `faint` | 不醒目：灰框灰字、字縮小、頭像轉灰階。 |
+
+### 注意事項
+
+- `layout` 為 `flat` 或 `tail` 時，ui-stream 本來就不套用 `data-style`，這兩個值也不會生效。
+- `reveal-pause` 依賴 ui-stream 在按下繼續後會依序顯示 reveal、送出 `ui-stream:resume`、呼叫 `this.play()` 這個內部做法。ui-stream 日後改了這段，這個檔案要跟著調整。
+- `pause-style="overlay"` 時，第二顆按鈕仍是一般按鈕樣式。
+- 由 JavaScript 事後插入的 `<ui-stream>`，讀不到 `reveal-pause`；可在插入前對尚未加入頁面的節點呼叫 `UiStreamPlus.scan(節點)`。
 
 ---
 
