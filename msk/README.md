@@ -11,8 +11,7 @@
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-mask.js` | `<ui-mask>`、`<mask-cover>` | 行內或區塊文字遮罩，以及區塊的圖片遮罩，點擊或滑過揭曉。 |
-| `ui-mask-demo-11-09-26.html` | | 互動範例，含 ui-table 與 ui-cards 內的用法（v1.0.0）。 |
-| `ui-mask-demo-11-11-26.html` | | v1.1.0 提示文字修改前後對照，以及 v1.2.0 圖片遮罩範例。 |
+| `ui-mask-demo-11-20-26.html` | | 互動範例，含 ui-table 與 ui-cards 內的用法（v1.0.0）、v1.1.0 提示文字修改前後對照，以及 v1.2.0 圖片遮罩範例。 |
 | `classroom_adult_illu.svg` | | 圖片遮罩範例用的插圖。 |
 
 ## 目錄

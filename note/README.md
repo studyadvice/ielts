@@ -247,7 +247,7 @@ BpPopnote.clearAnnotations('#article');  // 清除指定範圍內的加註，不
 
 全域預設：`PopoverConfig.set({ foldSide: 'right', foldWidth: '280px', foldCorner: 22 })`。
 
-範例：`bp-popnote-demo-11-12-26.html`。
+範例：`bp-popnote-demo-11-20-26.html`。
 
 ## 金色電流主題
 

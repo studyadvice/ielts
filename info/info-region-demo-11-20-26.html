@@ -1,4 +1,174 @@
 <!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>info-region 範例（合併 3 個版本）</title>
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
+    --gray: #86877F; --line: #3B2A20;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; line-height: 1.7; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note a { color: var(--blue); text-decoration: none; }
+  .lead-note a:hover { text-decoration: underline; }
+  .lead-note b { color: var(--yellow); }
+  .version { color: var(--blue); font-size: 1.25rem; font-weight: 700; margin: 32px 0 12px 0; }
+  .frame { display: block; width: 100%; height: 480px; border: 1px solid var(--line); border-radius: 8px; background: #FFFFFF; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>info-region</h1>
+  <p class="lead-note">本檔合併 3 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>11-05-26</b>：<a href="#v-11-05-26">info-region 填空題</a><br>
+  <b>10-24-26</b>：<a href="#v-10-24-26">info-region 範例</a><br>
+  <b>10-19-26</b>：<a href="#v-10-19-26">info-region — show-retry Demo</a></p>
+
+  <section class="ver" id="v-11-05-26">
+    <h2 class="version">11-05-26：info-region 填空題</h2>
+    <iframe class="frame" id="f-11-05-26" data-src="src-11-05-26" title="info-region 11-05-26" scrolling="no"></iframe>
+  </section>
+  <section class="ver" id="v-10-24-26">
+    <h2 class="version">10-24-26：info-region 範例</h2>
+    <iframe class="frame" id="f-10-24-26" data-src="src-10-24-26" title="info-region 10-24-26" scrolling="no"></iframe>
+  </section>
+  <section class="ver" id="v-10-19-26">
+    <h2 class="version">10-19-26：info-region — show-retry Demo</h2>
+    <iframe class="frame" id="f-10-19-26" data-src="src-10-19-26" title="info-region 10-19-26" scrolling="no"></iframe>
+  </section>
+</div>
+
+<script type="text/plain" id="src-11-05-26">
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>info-region 填空題</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
+    --red: #EF6661; --energetic: #B6FF00; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --violet: #B484E8; --gray: #86877F; --line: #2A2B29;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid var(--line); border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.82rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 620px; overflow: auto; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  .attr-table th { color: var(--vanilla); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>info-region：填空題</h1>
+  <p class="lead-note">修改日期 11-05-26。測驗區塊新增 <code>&lt;ir-input&gt;</code> 填空題。計分、解說、重試、答對答錯分支都和選擇題共用同一套流程。</p>
+
+  <section class="demo">
+    <h2>屬性一覽</h2>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>寫在哪裡</th><th>預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>answer</code></td><td><code>&lt;info-region&gt;</code></td><td>無</td><td>正確答案，多個可接受答案用 <code>|</code> 分隔。忽略前後空白與多餘空格。</td></tr>
+        <tr><td><code>case-sensitive</code></td><td><code>&lt;info-region&gt;</code></td><td>無</td><td>區分大小寫。</td></tr>
+        <tr><td><code>max-attempts</code></td><td><code>&lt;info-region&gt;</code></td><td><code>1</code></td><td>可嘗試次數。用完前答錯只顯示提示訊息，不計分。</td></tr>
+        <tr><td><code>retry-msg</code></td><td><code>&lt;info-region&gt;</code></td><td><code>✗ 再想想。</code></td><td>還有機會時的訊息，後面自動加上剩餘次數。</td></tr>
+        <tr><td><code>hint</code>、<code>hint-label</code>、<code>hint-color</code></td><td><code>&lt;info-region&gt;</code></td><td>無、<code>提示</code>、<code>yellow</code></td><td>提示內容、按鈕文字與顏色。有 <code>hint</code> 才出現提示按鈕。</td></tr>
+        <tr><td><code>hide-answer</code></td><td><code>&lt;info-region&gt;</code></td><td>無</td><td>最後一次答錯時不顯示正確答案。</td></tr>
+        <tr><td><code>placeholder</code></td><td><code>&lt;ir-input&gt;</code></td><td><code>請輸入答案</code></td><td>輸入框提示文字。</td></tr>
+        <tr><td><code>submit-label</code></td><td><code>&lt;ir-input&gt;</code></td><td><code>送出</code></td><td>送出按鈕文字。按 Enter 也能送出。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：單題填空，三次機會與提示</h2>
+    <p class="desc"><code>answer="mitigate|alleviate"</code> 兩個答案都算對；<code>max-attempts="3"</code> 前兩次答錯只提醒，第三次答錯才顯示正確答案。<code>show-retry</code> 讓讀者可以重做。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：填空與選擇混合，答錯進補充說明</h2>
+    <p class="desc">第 1 題填空答錯時進入補充說明，再回到第 2 題選擇題。上方計分板與進度條同時計算兩種題型。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex1">
+<info-region-group auto-start show-controls="false">
+  <info-region id="f1" quiz color="blue" quiz-label="填空"
+               answer="mitigate|alleviate" max-attempts="3" hint="m 開頭，八個字母"
+               explain="mitigate the impact of：減輕影響。" show-retry>
+    <p>「使某事不那麼嚴重」的動詞是？</p>
+    <ir-input placeholder="輸入英文"></ir-input>
+  </info-region>
+</info-region-group>
+</template>
+
+<template id="ex2">
+<info-region-group show-score global-progress show-percent progress-color="green">
+  <info-region id="m1" quiz quiz-item color="indigo" quiz-label="第 1 題" manual-next
+               answer="not much of a morning person" correct-next="m2" wrong-next="m1-help"
+               explain="Part 1 回答偏好的常用語塊。">
+    <p>Do you like mornings? Honestly, I'm ______.（我不太是早起的人）</p>
+    <ir-input placeholder="輸入語塊" submit-label="對答案"></ir-input>
+  </info-region>
+
+  <info-region id="m1-help" color="energetic" next="m2" manual manual-label="我懂了 ▶">
+    <h4>補充</h4>
+    <p><c-green>not much of a ...</c-green> 是委婉的「不太是……」，比 I don't like 更自然。</p>
+  </info-region>
+
+  <info-region id="m2" quiz quiz-item color="indigo" quiz-label="第 2 題" answer="b"
+               explain="用時間描述距離，比 near 更有畫面。">
+    <p>哪一句比較好？</p>
+    <ir-choices layout="column">
+      <ir-choice value="a">I live near my school.</ir-choice>
+      <ir-choice value="b">It's about a ten-minute walk to my school.</ir-choice>
+    </ir-choices>
+  </info-region>
+</info-region-group>
+</template>
+
+<script>
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    document.querySelector('pre[data-code="' + box.dataset.tpl + '"]').textContent = tpl.innerHTML.trim().replace(/=""/g, '');
+  });
+<\/script>
+<script src="info-region.js"><\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="src-10-24-26">
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -342,8 +512,8 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
     btnFontSize:    '1.125rem',   /* 群組的開始、重設按鈕 */
     btnPadding:     '8px 20px'
   };
-</script>
-<script src="info-region.js"></script>
+<\/script>
+<script src="info-region.js"><\/script>
 <script>
 (function(){
   function render(id){
@@ -369,6 +539,196 @@ InfoRegion.resetAll(&#x27;#stage-d9 info-region&#x27;);</code></pre></details>
   document.getElementById('b-a').onclick=function(){InfoRegion.activate('d9-a');note('已呼叫 InfoRegion.activate("d9-a")。');};
   document.getElementById('b-b').onclick=function(){InfoRegion.activate('d9-b');note('已呼叫 InfoRegion.activate("d9-b")。');};
   document.getElementById('b-r').onclick=function(){InfoRegion.resetAll('#stage-d9 info-region');note('已呼叫 InfoRegion.resetAll("#stage-d9 info-region")。');};
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="src-10-19-26">
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>info-region — show-retry Demo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --violet: #B484E8; --blue: #5DBAE8;
+    --blue: #5DBAE8; --green: #71CD76; --warning: #EF6661; --energetic: #B6FF00;
+    --green: #71CD76; --energetic: #B6FF00; --region: #333333; --indigo: #778CE1;
+  }
+  body {
+    background: var(--bg); color: var(--shell);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 1.125rem; line-height: 1.5;
+    padding: 40px 48px; max-width: 960px; margin: 0 auto;
+  }
+  h1 { font-size: 1.6rem; color: var(--blue); margin-bottom: 6px; }
+  .subtitle { font-size: 1rem; color: rgba(198,199,189,0.6); margin-bottom: 40px; }
+  section { margin-bottom: 52px; }
+  h2 { font-size: 1.15rem; color: var(--violet); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  h2 code { font-size: 0.9rem; color: var(--green); background: rgba(179,222,115,0.1); padding: 2px 8px; border-radius: 4px; }
+  .desc { font-size: 0.95rem; color: rgba(198,199,189,0.65); margin-bottom: 16px; line-height: 1.5; }
+  .desc code { font-size: 0.88em; color: var(--green); background: rgba(179,222,115,0.1); padding: 1px 6px; border-radius: 3px; }
+  .trigger-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--region); border: 1px solid rgba(130,200,229,0.4);
+    border-radius: 6px; padding: 8px 22px; font-size: 0.95rem;
+    color: var(--blue); cursor: pointer; margin-bottom: 16px; transition: background 0.2s;
+  }
+  .trigger-btn:hover { background: #3a3b3a; }
+  .divider { border: none; border-top: 1px solid rgba(198,199,189,0.12); margin: 40px 0; }
+
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 8px; }
+  .attr-table th {
+    text-align: left; padding: 10px 16px;
+    background: rgba(195,165,229,0.1); color: var(--violet);
+    border-bottom: 1px solid rgba(195,165,229,0.25);
+  }
+  .attr-table td { padding: 10px 16px; border-bottom: 1px solid rgba(198,199,189,0.1); vertical-align: top; }
+  .attr-table tr:last-child td { border-bottom: none; }
+  .attr-table code { color: var(--green); background: rgba(179,222,115,0.08); padding: 1px 6px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<h1>quiz 重試小按鈕：show-retry</h1>
+<p class="subtitle">info-region.js &nbsp;·&nbsp; 功能更新 Demo &nbsp;·&nbsp; 2026-10-19</p>
+
+<\!-- ① 基本用法 -->
+<section>
+  <h2>① 基本用法 <code>show-retry</code></h2>
+  <p class="desc">
+    加上 <code>show-retry</code> 屬性後，答題完畢（答對或答錯）都會在解說區塊下方出現
+    小型重試按鈕，點擊後原地還原選項狀態、清除解說，重新開放作答。
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo1').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo1" color="blue" quiz answer="b" show-retry
+    explain="補述用法的, <strong>which</strong> 主格關代，<br>代替前句(結果)，導出原因">
+    <p style="margin-bottom:14px;">Which 補述子句代替的是？</p>
+    <ir-choices>
+      <ir-choice value="a">單一名詞</ir-choice>
+      <ir-choice value="b">整個前句（正確）</ir-choice>
+      <ir-choice value="c">形容詞片語</ir-choice>
+      <ir-choice value="d">副詞子句</ir-choice>
+    </ir-choices>
+  </info-region>
+</section>
+
+<hr class="divider">
+
+<\!-- ② 自訂文字與顏色 -->
+<section>
+  <h2>② 自訂文字與顏色 <code>retry-label</code> / <code>retry-color</code></h2>
+  <p class="desc">
+    預設文字為 <code>↺ 重試</code>、顏色為 <code>warning</code>。<br>
+    可自訂為任意文字與品牌色票名稱。
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo2').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo2" color="violet" quiz answer="c"
+    show-retry retry-label="⟳ 再答一次" retry-color="blue"
+    explain="<em>非限定子句</em>前必須加逗號，且 <code>that</code> 不可用於補述子句。">
+    <p style="margin-bottom:14px;">補述關代子句中，下列何者<u>不可</u>使用？</p>
+    <ir-choices>
+      <ir-choice value="a">which</ir-choice>
+      <ir-choice value="b">who</ir-choice>
+      <ir-choice value="c">that（正確）</ir-choice>
+      <ir-choice value="d">whom</ir-choice>
+    </ir-choices>
+  </info-region>
+</section>
+
+<hr class="divider">
+
+<\!-- ③ 搭配 manual-next（重試 + 手動繼續並存） -->
+<section>
+  <h2>③ 搭配 <code>manual-next</code>（重試與繼續並存）</h2>
+  <p class="desc">
+    重試按鈕（左）與繼續按鈕（右）同時出現；點重試不影響繼續按鈕，
+    反之亦然。適合允許使用者自行決定是否跳題的情境。
+  </p>
+  <button class="trigger-btn" onclick="document.getElementById('demo3').setAttribute('active','true')">▶ 觸發</button>
+  <info-region id="demo3" color="green" quiz answer="a"
+    show-retry retry-label="↺ 重試" retry-color="red"
+    manual-next quiz-next-label="下一題 ▶" correct-next="demo3-end" wrong-next="demo3-end"
+    explain="<span style='color:#5DBAE8'>She missed the bus</span>，which made her late.<br><small>↑ which 代替整個前句，非單一名詞</small>">
+    <p style="margin-bottom:14px;">which 在此句中代替的是？</p>
+    <ir-choices>
+      <ir-choice value="a">整個前句（正確）</ir-choice>
+      <ir-choice value="b">the bus</ir-choice>
+      <ir-choice value="c">her</ir-choice>
+      <ir-choice value="d">late</ir-choice>
+    </ir-choices>
+  </info-region>
+  <info-region id="demo3-end" color="green">
+    <p>🎉 作答完畢！</p>
+  </info-region>
+</section>
+
+<hr class="divider">
+
+<\!-- 屬性一覽 -->
+<section>
+  <h2>屬性一覽</h2>
+  <table class="attr-table">
+    <thead>
+      <tr><th>屬性</th><th>型別</th><th>預設值</th><th>說明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>show-retry</code></td>
+        <td>boolean（有無）</td>
+        <td>無（不顯示）</td>
+        <td>答題後在解說區塊下方顯示重試小按鈕</td>
+      </tr>
+      <tr>
+        <td><code>retry-label</code></td>
+        <td>string</td>
+        <td><code>↺ 重試</code></td>
+        <td>重試按鈕文字</td>
+      </tr>
+      <tr>
+        <td><code>retry-color</code></td>
+        <td>色票名稱</td>
+        <td><code>warning</code></td>
+        <td>重試按鈕顏色，同 BrandColors 色票</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<script src="info-region.js"><\/script>
+</body>
+</html>
+
+</script>
+
+<script>
+(function () {
+  /* 每個版本的完整原始 HTML 放在 script[type="text/plain"]，載入時才寫入 iframe。
+     原始碼裡的結束 script 標籤與 HTML 註解開頭，為了能放進 script 標籤而被轉義，這裡還原。 */
+  var HELPER = '<style>html,body{min-height:0!important;height:auto!important}</style>' +
+    '<script>(function(){var id="__ID__",last=0;' +
+    'function post(){var h=Math.ceil(document.documentElement.getBoundingClientRect().height);' +
+    'if(Math.abs(h-last)>1){last=h;parent.postMessage({demoFrame:id,h:h},"*");}}' +
+    'new ResizeObserver(post).observe(document.documentElement);addEventListener("load",post);' +
+    'document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\'#\']");' +
+    'if(!a)return;e.preventDefault();var k=a.getAttribute("href").slice(1);' +
+    'var t=k&&document.getElementById(decodeURIComponent(k));if(t)t.scrollIntoView();});})();<\/script>';
+  var frames = document.querySelectorAll('iframe.frame');
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || !d.demoFrame) return;
+    var f = document.getElementById(d.demoFrame);
+    if (f && !f.classList.contains('fixed')) f.style.height = Math.min(d.h, 30000) + 'px';
+  });
+  frames.forEach(function (f) {
+    var src = document.getElementById(f.dataset.src).textContent
+      .replace(/<\\\/script/g, '<' + '/script').replace(/<\\!--/g, '<' + '!--');
+    f.srcdoc = src + HELPER.replace('__ID__', f.id);
+  });
 })();
 </script>
 </body>

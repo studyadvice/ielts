@@ -319,7 +319,7 @@ document.addEventListener('dot-go', function (e) {
 
 ## 示範
 
-`ink-pen-demo-10-31-26.html` 與 `ink-pen.js`、`dot-go.js` 放在同一資料夾，用瀏覽器開啟即可。NG 標記的示範在 `ink-pen-demo-11-10-26.html`，`<dot-go>` 轉場的示範在 `ink-pen-demo-11-11-26.html`，拆分前後的對照與兩支檔案的配合在 `dot-go-demo-11-11-26.html`。
+`ink-pen-demo-11-20-26.html` 與 `ink-pen.js`、`dot-go.js` 放在同一資料夾，用瀏覽器開啟即可。這個檔案合併了四個版本的範例（跳轉圓點、捲動鎖定與組合鍵、NG 標記、extra-color 與 `<dot-go>` 轉場），新的在上面，拆分前後的對照與兩支檔案的配合在 `dot-go-demo-11-11-26.html`。
 
 ## 授權
 

@@ -1,3 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-inputs 範例（合併 2 個版本）</title>
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
+    --gray: #86877F; --line: #3B2A20;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; line-height: 1.7; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note a { color: var(--blue); text-decoration: none; }
+  .lead-note a:hover { text-decoration: underline; }
+  .lead-note b { color: var(--yellow); }
+  .version { color: var(--blue); font-size: 1.25rem; font-weight: 700; margin: 32px 0 12px 0; }
+  .frame { display: block; width: 100%; height: 480px; border: 1px solid var(--line); border-radius: 8px; background: #FFFFFF; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-inputs</h1>
+  <p class="lead-note">本檔合併 2 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>11-12-26</b>：<a href="#v-11-12-26">ui-blank CLI 模式示範</a><br>
+  <b>10-23-26</b>：<a href="#v-10-23-26">ui-inputs 示範</a></p>
+
+  <section class="ver" id="v-11-12-26">
+    <h2 class="version">11-12-26：ui-blank CLI 模式示範</h2>
+    <iframe class="frame" id="f-11-12-26" data-src="src-11-12-26" title="ui-inputs 11-12-26" scrolling="no"></iframe>
+  </section>
+  <section class="ver" id="v-10-23-26">
+    <h2 class="version">10-23-26：ui-inputs 示範</h2>
+    <iframe class="frame" id="f-10-23-26" data-src="src-10-23-26" title="ui-inputs 10-23-26" scrolling="no"></iframe>
+  </section>
+</div>
+
+<script type="text/plain" id="src-11-12-26">
 <!doctype html>
 <html lang="zh-Hant" data-bs-theme="dark">
 <head>
@@ -66,7 +108,7 @@ code{color:#FFA987;}
   <cli-in prompt="you $">The seafood, definitely. And the weather is warm all year round.</cli-in>
   <cli-out theme="green">[band 7] good use of "definitely" + reason</cli-out>
 </ui-blank>
-</script>
+<\/script>
     </div>
   </section>
 
@@ -89,7 +131,7 @@ code{color:#FFA987;}
            sample="I usually catch up with friends over brunch."></cli-ask>
   <cli-out theme="key">Thanks! Answer saved.</cli-out>
 </ui-blank>
-</script>
+<\/script>
     </div>
   </section>
 
@@ -116,7 +158,7 @@ code{color:#FFA987;}
   <cli-in>example</cli-in>
   <cli-out>I need to <c-pink>make</c-pink> a decision before I <c-key>do</c-key> my homework.</cli-out>
 </ui-blank>
-</script>
+<\/script>
     </div>
     <div class="demo" data-demo>
       <h3>不加外框、細直線游標、隱藏控制列</h3>
@@ -132,7 +174,7 @@ code{color:#FFA987;}
   <cli-wait ms="600"></cli-wait>
   <cli-out theme="playful">tip: look forward to + V-ing</cli-out>
 </ui-blank>
-</script>
+<\/script>
     </div>
   </section>
 
@@ -152,7 +194,7 @@ code{color:#FFA987;}
   <cli-in speed="30" delay="300">I went to Tainan last month with my family.</cli-in>
   <cli-out theme="green">Good opening: time + people.</cli-out>
 </ui-blank>
-</script>
+<\/script>
     </div>
   </section>
 
@@ -217,7 +259,7 @@ code{color:#FFA987;}
       <script type="text/plain" class="demo-src">
 <p class="bp-text-shell">I usually go _____ before work.</p>
 <ui-blank expected-value="jogging" button-icon="bi-send" label-valid="Correct!"></ui-blank>
-</script>
+<\/script>
     </div>
     <div class="grid2">
       <div class="side"><p class="cap">修改前：只有填充題</p><pre class="code-box"><code>connectedCallback() {
@@ -267,9 +309,9 @@ Object.defineProperties(UiBlank.prototype,
     d.querySelector('.code-box code').textContent = html;
   });
 })();
-</script>
-<script src="ui-inputs.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<\/script>
+<script src="ui-inputs.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"><\/script>
 <script>
 /* 以 Bootstrap alert 顯示 cli-answer 事件，不使用 alert() */
 document.addEventListener('cli-answer', (e) => {
@@ -287,6 +329,323 @@ document.addEventListener('cli-answer', (e) => {
     if (window.bootstrap) bootstrap.Alert.getOrCreateInstance(box).close(); else box.remove();
   }, 5000);
 });
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="src-10-23-26">
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>ui-inputs 示範</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{
+    background:#0C0D0C;
+    color:#C6C7BD;
+    font-size:1.125rem;
+    line-height:1.5;
+    font-family:"Noto Sans TC","PingFang TC",system-ui,sans-serif;
+    max-width:760px;
+    margin:40px auto;
+    padding:0 24px 80px;
+  }
+  h1{ color:#B484E8; }
+  h2{ color:#5DBAE8; margin-top:48px; font-size:1.3rem; }
+  p.desc{ color:rgba(198,199,189,0.85); max-width:640px; }
+  code{ color:#E3D322; }
+  .panel{ margin:16px 0 8px; }
+  .hint{ font-size:0.9rem; color:rgba(198,199,189,0.6); }
+  button.go{
+    margin-top:12px;
+    padding:8px 18px;
+    border-radius:6px;
+    border:1px solid rgba(198,199,189,0.78);
+    background:transparent;
+    color:#C6C7BD;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>ui-inputs 示範</h1>
+<p class="desc">兩個輸入／驗證元件：<code>&lt;ui-otp&gt;</code> 單一 input 版 OTP 輸入／驗證，<code>&lt;ui-blank&gt;</code> 單行輸入填充題（自帶 Bootstrap Icons 送出鈕）。</p>
+
+<h1 style="margin-top:56px;">一、ui-otp</h1>
+<p class="desc">點任一格即可聚焦，支援鍵盤輸入、刪除、整段貼上；畫面上的格子只是展示用，實際輸入都發生在背後那個透明的 input 裡。</p>
+
+<h2>1. 預設（numeric，6 碼，無分組）</h2>
+<div class="panel">
+  <ui-otp length="6" accent-color="blue"></ui-otp>
+</div>
+
+<h2>2. 分組 + 分隔符（groups="3,3"，比照 Bootstrap 6 截圖效果）</h2>
+<div class="panel">
+  <ui-otp length="6" groups="3,3" separator="-" accent-color="violet"></ui-otp>
+</div>
+
+<h2>3. 英文字母、強制大寫</h2>
+<div class="panel">
+  <ui-otp length="4" type="alpha" case="upper" accent-color="green" cell-size="52px"></ui-otp>
+  <p class="hint">type="alpha" case="upper"：只接受英文字母，自動轉大寫。</p>
+</div>
+
+<h2>4. 前端比對模式（expected-value="123456"，試打 123456 或其他數字）</h2>
+<div class="panel">
+  <ui-otp
+    length="6"
+    groups="3,3"
+    expected-value="123456"
+    label-invalid="驗證碼錯誤，請重新輸入。"
+    label-valid="驗證成功！"
+    accent-color="blue"
+    valid-color="green"
+    error-color="red"
+  ></ui-otp>
+  <p class="hint">填滿 6 碼即自動比對；答對顯示綠框＋成功訊息，答錯顯示紅框＋錯誤訊息。</p>
+</div>
+
+<h2>5. 前端比對 + clear-on-invalid（答錯會自動清空重輸）</h2>
+<div class="panel">
+  <ui-otp
+    length="6"
+    expected-value="000000"
+    clear-on-invalid
+    clear-delay="700"
+    label-invalid="驗證碼錯誤，請重新輸入一次。"
+    accent-color="energetic"
+    error-color="red"
+  ></ui-otp>
+  <p class="hint">正確答案是 000000；輸入其他任何 6 碼都會先閃紅框，約 0.7 秒後（clear-delay="700"）自動清空讓你重打。</p>
+</div>
+
+<h2>6. 外部非同步驗證模式（不給 expected-value，自行監聽 otp-complete）</h2>
+<div class="panel">
+  <ui-otp id="asyncOtp" length="6" accent-color="indigo" show-message="true" label-invalid="伺服器驗證失敗，請重新輸入。"></ui-otp>
+  <p class="hint">模擬打 API：輸入 888888 會驗證成功，其他 6 碼會顯示失敗（0.6 秒後才回應，模擬網路延遲）。</p>
+</div>
+
+<h2>7. focus ring 粗細／顏色自訂</h2>
+<div class="panel">
+  <ui-otp length="4" accent-color="pink" focus-ring-width="5px" focus-ring-color="pink" border-color="rgba(198,199,189,0.78)" radius="12px"></ui-otp>
+  <p class="hint">focus-ring-width="5px" focus-ring-color="pink"：聚焦中的那一格外框變粗、顏色改用 pink。</p>
+</div>
+
+<h2>8. 遮蔽模式（mask，顯示圓點而非實際字元）</h2>
+<div class="panel">
+  <ui-otp length="6" mask accent-color="green"></ui-otp>
+</div>
+
+<h2>9. disabled</h2>
+<div class="panel">
+  <ui-otp length="6" disabled value-preview="------"></ui-otp>
+</div>
+
+<h1 style="margin-top:72px;">一之二、ui-otp mode="generate"（隨機產生＋複製到剪貼簿）</h1>
+<p class="desc">同一個 <code>&lt;ui-otp&gt;</code> 標籤，加上 <code>mode="generate"</code> 就變成唯讀展示＋複製功能，不再是輸入框。</p>
+
+<h2>1. 基本生成（預設 16 碼、exclude-ambiguous 預設開啟）</h2>
+<div class="panel">
+  <ui-otp mode="generate" groups="4,4,4,4" accent-color="blue"></ui-otp>
+  <p class="hint">每次重新整理頁面都會是不同的一組碼；已自動排除 0/O、1/I/l 這類容易看錯的字元。</p>
+</div>
+
+<h2>2. format 自訂版型（優先於 length/groups）</h2>
+<div class="panel">
+  <ui-otp mode="generate" format="OOOO-OOOOO-OOOOOO" type="alnum" accent-color="violet"></ui-otp>
+</div>
+
+<h2>3. 關閉 exclude-ambiguous + 指定字元集</h2>
+<div class="panel">
+  <ui-otp mode="generate" length="10" type="numeric" exclude-ambiguous="false" accent-color="energetic"></ui-otp>
+  <p class="hint">exclude-ambiguous="false"：允許出現 0、1 這些字元。</p>
+</div>
+
+<h2>4. 複製按鈕自訂（文字、位置、圖示）</h2>
+<div class="panel">
+  <ui-otp mode="generate" length="8" groups="4,4" copy-text="複製" copy-position="left" copy-icon="bi-stickies" copy-icon-success="bi-stickies-fill" accent-color="green"></ui-otp>
+</div>
+
+<h2>5. check-url 後端查重（這裡用假的 fetch 模擬，實際請指到你的 PHP）</h2>
+<div class="panel">
+  <ui-otp id="checkGen" mode="generate" length="6" type="numeric" check-url="/fake/check_code.php" check-max-retries="5" accent-color="green"></ui-otp>
+  <p class="hint" id="checkGenHint">模擬後端：前兩次回報「已存在」自動重骰，第三次才通過。打開主控台可以看到 otp-check-* 事件紀錄。</p>
+</div>
+
+<script>
+  // 只是示範用的假後端，攔截 fetch 到 /fake/check_code.php 的請求。
+  // 實際使用時把 check-url 指到你自己的 PHP（例如 check_code.php），
+  // 該檔案收到 POST 的 code 參數、查資料庫後回傳 {"exists": true/false} 即可。
+  const realFetch = window.fetch;
+  let fakeCallCount = 0;
+  window.fetch = function (url, options) {
+    if (typeof url === 'string' && url.indexOf('/fake/check_code.php') !== -1) {
+      fakeCallCount++;
+      const exists = fakeCallCount <= 2;
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ exists })
+      });
+    }
+    return realFetch.apply(this, arguments);
+  };
+
+  const checkGen = document.getElementById('checkGen');
+  ['otp-check-start', 'otp-check-result', 'otp-generated', 'otp-check-exhausted', 'otp-check-error'].forEach((evt) => {
+    checkGen.addEventListener(evt, (e) => console.log(evt, e.detail));
+  });
+<\/script>
+
+<h1 style="margin-top:72px;">二、ui-blank</h1>
+<p class="desc">單行輸入填充題，永遠區分大小寫。送出鈕用 Bootstrap Icons（圖示固定不隨結果變化），訊息預設顯示在元件正下方，也可指定顯示在頁面上別的 div。</p>
+
+<h2>1. 基本用法（前端比對，單一正解）</h2>
+<div class="panel">
+  <ui-blank
+    placeholder="請輸入答案"
+    expected-value="apple"
+    button-icon="bi-send"
+    accent-color="blue"
+    label-invalid="答案不正確，請再試一次。"
+    label-valid="答對了！"
+  ></ui-blank>
+  <p class="hint">正解是 apple（區分大小寫，Apple 算錯）。</p>
+</div>
+
+<h2>2. 多個可接受答案（"|" 分隔）＋ 按鈕文字＋icon-left</h2>
+<div class="panel">
+  <ui-blank
+    placeholder="台北 或 臺北"
+    expected-value="台北|臺北"
+    button-icon="bi-check2-circle"
+    button-text="檢查"
+    button-position="icon-left"
+    accent-color="violet"
+    valid-color="green"
+    error-color="red"
+  ></ui-blank>
+</div>
+
+<h2>3. clear-on-invalid + clear-delay（答錯 0.7 秒後自動清空）</h2>
+<div class="panel">
+  <ui-blank
+    placeholder="輸入 banana"
+    expected-value="banana"
+    clear-on-invalid
+    clear-delay="700"
+    button-icon="bi-arrow-right-circle"
+    accent-color="energetic"
+  ></ui-blank>
+</div>
+
+<h2>4. normalize-width（全形轉半形後再比對）</h2>
+<div class="panel">
+  <ui-blank
+    placeholder="輸入 2024（可用全形輸入法打）"
+    expected-value="2024"
+    normalize-width
+    button-icon="bi-send"
+    accent-color="green"
+  ></ui-blank>
+  <p class="hint">用全形輸入法打「２０２４」送出，比對前會自動轉成半形再跟 2024 比對。</p>
+</div>
+
+<h2>5. message-style 五種樣式</h2>
+<div class="panel">
+  <p class="hint">plain（預設）</p>
+  <ui-blank id="msgPlain" placeholder="輸入 ok" expected-value="ok" message-style="plain" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
+</div>
+<div class="panel">
+  <p class="hint">bordered</p>
+  <ui-blank id="msgBordered" placeholder="輸入 ok" expected-value="ok" message-style="bordered" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
+</div>
+<div class="panel">
+  <p class="hint">filled</p>
+  <ui-blank id="msgFilled" placeholder="輸入 ok" expected-value="ok" message-style="filled" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
+</div>
+<div class="panel">
+  <p class="hint">accent-bar</p>
+  <ui-blank id="msgAccentBar" placeholder="輸入 ok" expected-value="ok" message-style="accent-bar" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
+</div>
+<div class="panel">
+  <p class="hint">icon-banner</p>
+  <ui-blank id="msgIconBanner" placeholder="輸入 ok" expected-value="ok" message-style="icon-banner" label-valid="答對了！" button-icon="bi-send" accent-color="blue"></ui-blank>
+</div>
+
+<h2>6. message-target（訊息顯示在頁面上別的 div，不套用元件樣式）</h2>
+<div class="panel">
+  <ui-blank id="msgTarget" placeholder="輸入 ok" expected-value="ok" message-target="customMsgBox" button-icon="bi-send" accent-color="pink"></ui-blank>
+  <div id="customMsgBox" style="margin-top:8px;font-weight:700;"></div>
+  <p class="hint">這個 div 本身的排版（字重、顏色、位置）完全由你自己的 CSS 控制，元件只負責把文字塞進去。</p>
+</div>
+
+<h2>7. 外部非同步驗證模式（不給 expected-value）</h2>
+<div class="panel">
+  <ui-blank id="asyncBlank" placeholder="輸入 remote" button-icon="bi-send" accent-color="indigo" message-style="filled"></ui-blank>
+  <p class="hint">模擬打 API：輸入 remote 驗證成功，其他任何內容驗證失敗（0.5 秒後才回應）。</p>
+</div>
+
+<script>
+  // 範例 6：外部非同步驗證（模擬打 API）
+  const asyncOtp = document.getElementById('asyncOtp');
+  asyncOtp.addEventListener('otp-complete', (e) => {
+    const { value } = e.detail;
+    setTimeout(() => {
+      asyncOtp.setState(value === '888888' ? 'valid' : 'invalid');
+    }, 600);
+  });
+
+  // 其餘元件也可以監聽 otp-input / otp-complete 做紀錄
+  document.querySelectorAll('ui-otp').forEach((el) => {
+    el.addEventListener('otp-complete', (e) => {
+      console.log('otp-complete', el.id || '(no id)', e.detail);
+    });
+  });
+
+  // ui-blank 外部非同步驗證範例
+  const asyncBlank = document.getElementById('asyncBlank');
+  asyncBlank.addEventListener('blank-submit', (e) => {
+    const { value } = e.detail;
+    setTimeout(() => {
+      asyncBlank.setState(value === 'remote' ? 'valid' : 'invalid');
+    }, 500);
+  });
+<\/script>
+
+<script src="ui-inputs.js"><\/script>
+</body>
+</html>
+
+</script>
+
+<script>
+(function () {
+  /* 每個版本的完整原始 HTML 放在 script[type="text/plain"]，載入時才寫入 iframe。
+     原始碼裡的結束 script 標籤與 HTML 註解開頭，為了能放進 script 標籤而被轉義，這裡還原。 */
+  var HELPER = '<style>html,body{min-height:0!important;height:auto!important}</style>' +
+    '<script>(function(){var id="__ID__",last=0;' +
+    'function post(){var h=Math.ceil(document.documentElement.getBoundingClientRect().height);' +
+    'if(Math.abs(h-last)>1){last=h;parent.postMessage({demoFrame:id,h:h},"*");}}' +
+    'new ResizeObserver(post).observe(document.documentElement);addEventListener("load",post);' +
+    'document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\'#\']");' +
+    'if(!a)return;e.preventDefault();var k=a.getAttribute("href").slice(1);' +
+    'var t=k&&document.getElementById(decodeURIComponent(k));if(t)t.scrollIntoView();});})();<\/script>';
+  var frames = document.querySelectorAll('iframe.frame');
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || !d.demoFrame) return;
+    var f = document.getElementById(d.demoFrame);
+    if (f && !f.classList.contains('fixed')) f.style.height = Math.min(d.h, 30000) + 'px';
+  });
+  frames.forEach(function (f) {
+    var src = document.getElementById(f.dataset.src).textContent
+      .replace(/<\\\/script/g, '<' + '/script').replace(/<\\!--/g, '<' + '!--');
+    f.srcdoc = src + HELPER.replace('__ID__', f.id);
+  });
+})();
 </script>
 </body>
 </html>

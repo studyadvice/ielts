@@ -4,16 +4,16 @@
 
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
-| `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-10-21-26.html`](arrow-flow-demo-10-21-26.html) |
-| `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-11-26.html`](bp-stepper-demo-11-11-26.html) |
+| `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-11-20-26.html`](arrow-flow-demo-11-20-26.html) |
+| `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-20-26.html`](bp-stepper-demo-11-20-26.html) |
 | `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 | [`chunk-demo-demo-11-12-26.html`](chunk-demo-demo-11-12-26.html) |
-| `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 | [`dual-line-demo-10-15-26.html`](dual-line-demo-10-15-26.html) |
-| `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-10-22-26.html`](numeric-list-demo-10-22-26.html) |
+| `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 | [`dual-line-demo-11-20-26.html`](dual-line-demo-11-20-26.html) |
+| `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-11-20-26.html`](numeric-list-demo-11-20-26.html) |
 | `phrase-chip.js` | `<phrase-chip>` `<phrase-upgrade>` | 可收藏的片語標籤與片語升級動畫。 | [`phrase-chip-demo-10-23-26.html`](phrase-chip-demo-10-23-26.html) |
 | `practice-tracker.js` | `<practice-tracker>` `<pt-done-btn>` | 學習進度面板、片語收藏與定時彈出視窗。 | [`practice-tracker-demo-11-10-26.html`](practice-tracker-demo-11-10-26.html)、[使用手冊](practice-tracker-manual-10-24-26.html) |
 | `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 | [`slider-show-demo-11-10-26.html`](slider-show-demo-11-10-26.html) |
 | `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 | [`ui-fillin-demo-11-12-26.html`](ui-fillin-demo-11-12-26.html) |
-| `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-12-26.html`](ui-inputs-demo-11-12-26.html) |
+| `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-20-26.html`](ui-inputs-demo-11-20-26.html) |
 | `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` | 閱讀輔助標記與展開按鈕。 | [`ui-plus-demo-11-12-26.html`](ui-plus-demo-11-12-26.html) |
 
 跨元件範例：[`data-flow-demo-11-11-26.html`](data-flow-demo-11-11-26.html) 示範 `ui-cards`、`arrow-flow`、`ui-drill`、`ui-table` 組合成資料流動中心。
@@ -1698,7 +1698,7 @@ UF.resolveColor('blue/0.9');  // 把顏色值轉成 CSS 色值，無法辨識時
 
 輸入與驗證類元件。`<ui-otp>` 是驗證碼輸入格，也能切換成「產生模式」隨機產生一組碼讓使用者複製，並可呼叫後端 API 查重；`<ui-blank>` 是附送出按鈕的單行填充題，設定 `mode="cli"` 時改為模擬 CLI 畫面的對話播放器。兩者都提供前端比對與外部驗證兩種方式。圖示使用 Bootstrap Icons，顏色屬性可填品牌色名稱或任何 CSS 顏色。
 
-互動範例：`ui-inputs-demo-10-23-26.html`；CLI 模式：`ui-inputs-demo-11-12-26.html`。
+互動範例與 CLI 模式都在 `ui-inputs-demo-11-20-26.html`。
 
 ### 標籤
 

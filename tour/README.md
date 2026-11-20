@@ -5,7 +5,7 @@
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
 | `page-tour.js` | `<page-tour>` `<tour-world>` `<tour-panel>` `<tour-step>` 與 `<fx-*>` | 鏡頭漫遊：原本的教材 HTML 包進 `<tour-world>`，鏡頭依劇本移動、縮放，並加上光圈、大箭頭、螢光筆、連線、彩帶等特效。 | [`page-tour-demo-11-16-26.html`](page-tour-demo-11-16-26.html) |
-| `route-map.js` | `<route-map>` `<route-line>` `<route-stop>` `<route-transfer>` `<route-zone>` `<route-here>` `<route-train>` | 捷運路線圖：路線是類別、車站是項目、轉乘站是共有項目、分區是階段、亮暗是進度；站名可 hover 放大；`show-grid` 顯示座標格線；火車可沿線跑並跨線。 | [`route-map-demo-11-18-26.html`](route-map-demo-11-18-26.html) |
+| `route-map.js` | `<route-map>` `<route-line>` `<route-stop>` `<route-transfer>` `<route-zone>` `<route-here>` `<route-train>` | 捷運路線圖：路線是類別、車站是項目、轉乘站是共有項目、分區是階段、亮暗是進度；站名可 hover 放大；`show-grid` 顯示座標格線；火車可沿線跑並跨線。 | [`route-map-demo-11-20-26.html`](route-map-demo-11-20-26.html) |
 
 ## 目錄
 

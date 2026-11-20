@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote 範例（合併 3 個版本）</title>
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
+    --gray: #86877F; --line: #3B2A20;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; line-height: 1.7; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note a { color: var(--blue); text-decoration: none; }
+  .lead-note a:hover { text-decoration: underline; }
+  .lead-note b { color: var(--yellow); }
+  .version { color: var(--blue); font-size: 1.25rem; font-weight: 700; margin: 32px 0 12px 0; }
+  .frame { display: block; width: 100%; height: 480px; border: 1px solid var(--line); border-radius: 8px; background: #FFFFFF; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>bp-popnote</h1>
+  <p class="lead-note">本檔合併 3 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>11-12-26</b>：<a href="#v-11-12-26">bp-popnote 摺角便條</a><br>
+  <b>10-26-26</b>：<a href="#v-10-26-26">bp-popnote｜data-popover-url</a><br>
+  <b>10-18-26</b>：<a href="#v-10-18-26">bp-popnote show-btn Demo</a></p>
+
+  <section class="ver" id="v-11-12-26">
+    <h2 class="version">11-12-26：bp-popnote 摺角便條</h2>
+    <iframe class="frame" id="f-11-12-26" data-src="src-11-12-26" title="bp-popnote 11-12-26" scrolling="no"></iframe>
+  </section>
+  <section class="ver" id="v-10-26-26">
+    <h2 class="version">10-26-26：bp-popnote｜data-popover-url</h2>
+    <iframe class="frame" id="f-10-26-26" data-src="src-10-26-26" title="bp-popnote 10-26-26" scrolling="no"></iframe>
+  </section>
+  <section class="ver" id="v-10-18-26">
+    <h2 class="version">10-18-26：bp-popnote show-btn Demo</h2>
+    <iframe class="frame" id="f-10-18-26" data-src="src-10-18-26" title="bp-popnote 10-18-26" scrolling="no"></iframe>
+  </section>
+</div>
+
+<script type="text/plain" id="src-11-12-26">
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote 摺角便條</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<style>
+/* 只用底色、文字色與一個強調色（紫），間距一律 px */
+:root{font-size:16px;}
+body{background:#0C0D0C;color:#C6C7BD;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;min-width:988px;}
+.page{max-width:1500px;margin:0 auto;padding:32px 40px 80px 40px;}
+h1{font-size:1.8rem;color:#DBEDD8;margin:0 0 8px 0;}
+.sub{color:#86877F;font-size:1rem;line-height:1.7;margin:0 0 24px 0;}
+code{color:#B484E8;}
+section{margin:0 0 44px 0;}
+h2{font-size:1.25rem;color:#DBEDD8;margin:0 0 6px 0;padding:0 0 8px 0;border-bottom:1px solid #3B2A20;}
+.note{color:#86877F;font-size:0.92rem;margin:0 0 16px 0;line-height:1.7;}
+.stage{border:1px solid #3B2A20;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;}
+.stage p{margin:0;line-height:1.75;font-size:1.05rem;}
+#essay{display:flex;flex-direction:column;gap:20px;}
+.code-box{border:1px solid #3B2A20;border-radius:8px;padding:16px;margin:16px 0 0 0;background:#0C0D0C;max-height:440px;overflow:auto;}
+.code-box code{font-size:0.8rem;white-space:pre;color:#A3C4BC;font-family:ui-monospace,monospace;}
+.ctrl{display:flex;gap:8px;}
+.ctrl button{background:#0C0D0C;color:#DBEDD8;border:1px solid #86877F;border-radius:6px;padding:6px 14px;font-size:0.9rem;}
+.ctrl button:hover{border-color:#B484E8;color:#B484E8;}
+.ref{width:100%;border-collapse:collapse;font-size:0.92rem;}
+.ref th,.ref td{border-bottom:1px solid #3B2A20;padding:8px 12px;text-align:left;vertical-align:top;}
+.ref th{color:#DBEDD8;}
+#log{position:sticky;top:0;z-index:20;}
+#log .alert{background:#B484E8;color:#0C0D0C;border:none;font-size:0.95rem;padding:10px 16px;margin:0 0 16px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>bp-popnote 摺角便條</h1>
+  <p class="sub">在段落加上 <code>data-popover-fold</code>，右上角會出現摺起的紙角。點摺角，便條像紙張翻開一樣展開在段落旁邊，正文位置不動；再點一次摺回去。內容與主題沿用 bp-popnote 原有的 <code>data-popover-title</code>、<code>data-popover-content</code>、<code>data-popover-target</code>、<code>data-popover-theme</code>。新增日期 11-12-26。</p>
+  <div id="log"></div>
+
+  <section data-demo>
+    <h2>範例一：範文批改，一段一張便條</h2>
+    <p class="note">點各段右上角的摺角看評語。下方按鈕呼叫 <code>BpPopnote.foldAll()</code>，一次全部展開或收合，適合複習。</p>
+    <div class="stage"></div>
+    <pre class="code-box"><code></code></pre>
+    <script type="text/plain" class="demo-src">
+<div class="ctrl">
+  <button type="button" onclick="BpPopnote.foldAll(true, '#essay')">全部展開</button>
+  <button type="button" onclick="BpPopnote.foldAll(false, '#essay')">全部收合</button>
+</div>
+<div id="essay">
+  <p data-popover-fold data-popover-title="開頭段"
+     data-popover-content="改寫題目而不是照抄：<b>working from home</b> 換成 <b>remote work</b>，並在最後一句清楚表態。">
+    In recent years, remote work has become increasingly common. While some argue that it boosts
+    productivity, I believe its drawbacks outweigh its benefits for most employees.
+  </p>
+  <p data-popover-fold data-popover-title="主體段一"
+     data-popover-content="主題句清楚，但例子太籠統。加一個具體情境，例如 <i>a parent juggling meetings and childcare</i>。">
+    Supporters claim that working from home saves time and allows people to focus.
+    Without a daily commute, employees have more energy for their tasks.
+  </p>
+  <p data-popover-fold data-popover-title="主體段二" data-popover-target="#fb-p3">
+    However, remote work blurs the line between work and personal life, which can lead to burnout.
+  </p>
+</div>
+
+<template id="fb-p3">
+  <p>好的論點，可以再展開兩步：</p>
+  <ul><li>為什麼界線會模糊：家裡就是辦公室</li><li>結果：難以下班、長期疲勞</li></ul>
+</template>
+    <\/script>
+  </section>
+
+  <section data-demo>
+    <h2>範例二：同組只開一張，固定寬度</h2>
+    <p class="note"><code>data-popover-fold-group</code> 相同的段落，打開一張時其他自動摺回。<code>data-popover-fold-width</code> 設定便條寬度。</p>
+    <div class="stage"></div>
+    <pre class="code-box"><code></code></pre>
+    <script type="text/plain" class="demo-src">
+<p data-popover-fold data-popover-fold-group="t1" data-popover-fold-width="320"
+   data-popover-title="Overview" data-popover-content="Task 1 的總覽句不放數字，只寫最明顯的兩個趨勢。">
+  Overall, the number of visitors rose steadily, while spending per visitor remained stable.
+</p>
+<p data-popover-fold data-popover-fold-group="t1" data-popover-fold-width="320"
+   data-popover-title="Details" data-popover-content="細節段要比較，不要逐年列數字：<b>twice as many as</b>、<b>by contrast</b>。">
+  In 2010, around two million tourists visited the city, roughly twice as many as in 2000.
+</p>
+    <\/script>
+  </section>
+
+  <section data-demo>
+    <h2>範例三：便條在左側或下方，換主題色</h2>
+    <p class="note"><code>data-popover-fold="left"</code> 摺角在左上，便條開在左邊；<code>"below"</code> 便條往下展開，適合窄欄。第二段示範 <code>data-popover-theme="note"</code> 換成黃色，其餘維持預設紫色。</p>
+    <div class="stage"></div>
+    <pre class="code-box"><code></code></pre>
+    <script type="text/plain" class="demo-src">
+<p data-popover-fold="left" data-popover-title="開頭"
+   data-popover-content="Part 2 第一句直接回答題目，不要先講背景。">
+  The skill I would like to talk about is cooking, which I picked up during my first year at university.
+</p>
+<p data-popover-fold="below" data-popover-theme="note" data-popover-title="延伸"
+   data-popover-content="用一個小故事收尾：第一次煮給室友吃的經驗，比列出好處更自然。">
+  I learned it mainly because I was tired of eating instant noodles every night.
+</p>
+<p data-popover-fold data-popover-fold-open data-popover-title="預設展開"
+   data-popover-content="加上 <code>data-popover-fold-open</code>，載入時就是展開狀態。">
+  This paragraph starts with its note already open.
+</p>
+    <\/script>
+  </section>
+
+  <section>
+    <h2>屬性與 API</h2>
+    <table class="ref">
+      <thead><tr><th style="width:280px">屬性</th><th style="width:160px">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-popover-fold</code></td><td><code>right</code></td><td>開啟摺角便條。<code>right</code>、<code>left</code>、<code>below</code> 決定便條的位置。只寫屬性不給值即為 right。</td></tr>
+        <tr><td><code>data-popover-fold-width</code></td><td><code>280px</code></td><td>便條寬度（right、left），純數字視為 px。</td></tr>
+        <tr><td><code>data-popover-fold-corner</code></td><td><code>22</code></td><td>摺角大小（px）。</td></tr>
+        <tr><td><code>data-popover-fold-group</code></td><td>無</td><td>同組只能同時開一張。</td></tr>
+        <tr><td><code>data-popover-fold-open</code></td><td>無</td><td>載入時就展開。</td></tr>
+        <tr><td><code>data-popover-title</code>、<code>data-popover-content</code>、<code>data-popover-target</code></td><td></td><td>沿用原有屬性：標題、內容（HTML）、讀取 <code>&lt;template&gt;</code> 的選擇器。</td></tr>
+        <tr><td><code>data-popover-theme</code>、<code>data-popover-fontsize</code>、<code>data-popover-border</code></td><td>沿用全域</td><td>沿用原有主題與外觀；摺角顏色跟著主題的框線色。</td></tr>
+        <tr><td><code>BpPopnote.fold(el, open)</code></td><td></td><td>開啟或收合單張；省略 <code>open</code> 為切換。<code>el</code> 可以是元素或選擇器。</td></tr>
+        <tr><td><code>BpPopnote.foldAll(open, scope)</code></td><td></td><td>一次開啟或收合，<code>scope</code> 可限定範圍。</td></tr>
+        <tr><td><code>BpPopnote.initFolds()</code></td><td></td><td>手動初始化；動態插入的段落會自動初始化，通常不需要呼叫。</td></tr>
+        <tr><td><code>bpn-fold</code> 事件</td><td></td><td>開合時從段落冒泡，<code>e.detail.open</code> 為 true 或 false。</td></tr>
+        <tr><td><code>PopoverConfig.set()</code></td><td></td><td>全域預設：<code>foldSide</code>、<code>foldWidth</code>、<code>foldCorner</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼，確保範例與程式碼一致 */
+(() => {
+  const dedent = s => {
+    const lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+    return lines.map(l => l.slice(ind)).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(sec => {
+    const src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+  /* 用 Bootstrap alert 顯示最近一次開合 */
+  document.addEventListener('bpn-fold', e => {
+    const t = e.target.getAttribute('data-popover-title') || '便條';
+    document.getElementById('log').innerHTML = '<div class="alert alert-dismissible fade show" role="alert">bpn-fold：「' + t + '」' +
+      (e.detail.open ? '展開' : '收合') + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  });
+})();
+<\/script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"><\/script>
+<script src="bp-popnote.js"><\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="src-10-26-26">
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote｜data-popover-url</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0D0C;
+    --shell:#C6C7BD;
+    --area:#141514;
+    --card-border:#2E2F2E;
+    --violet:#B484E8;
+    --blue:#5DBAE8;
+    --blue:#5DBAE8;
+    --green:#71CD76;
+    --green:#71CD76;
+    --yellow:#E3D322;
+    --energetic:#B6FF00;
+    --pink:#FF91D7;
+    --energetic:#B6FF00;
+    --green:#71CD76;
+    --focus:#DBEDD8;
+    --indigo:#778CE1;
+    --info:#778CE1;
+    --warning:#EF6661;
+  }
+  body{
+    background:var(--bg);
+    color:var(--shell);
+    font-family:'Segoe UI','PingFang TC','Microsoft JhengHei',sans-serif;
+    line-height:1.5;
+    font-size:1rem;
+    padding:32px 40px 80px;
+  }
+  .wrap{max-width:100%;}
+  h1{font-size:1.75rem;color:var(--violet);font-weight:700;margin-bottom:6px;}
+  h2{
+    font-size:1.25rem;color:var(--blue);font-weight:700;
+    margin-top:44px;margin-bottom:14px;
+    padding-bottom:8px;border-bottom:1px solid var(--card-border);
+  }
+  h3{font-size:1.02rem;color:var(--green);font-weight:600;margin:24px 0 10px;}
+  .lead-note{font-size:.94rem;color:var(--energetic);margin-bottom:8px;}
+  .card-x{
+    background:var(--area);
+    border:1px solid var(--card-border);
+    border-radius:10px;
+    padding:20px 22px;
+    margin-bottom:18px;
+  }
+  .demo-row{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:20px;
+    align-items:start;
+  }
+  @media (max-width:1100px){ .demo-row{grid-template-columns:minmax(0,1fr);} }
+  .pane-label{
+    font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--green);margin-bottom:8px;
+  }
+  pre{
+    background:#0A0B0A;
+    border:1px solid var(--card-border);
+    border-radius:8px;
+    padding:14px 16px;
+    margin:0;
+    overflow-x:auto;
+    font-size:.82rem;
+    line-height:1.5;
+    color:var(--vanilla,#DBEDD8);
+  }
+  pre code{color:#DBEDD8;white-space:pre;}
+  p{margin-bottom:12px;}
+  .attr-table{width:100%;font-size:.88rem;border-collapse:collapse;}
+  .attr-table th,.attr-table td{
+    border:1px solid var(--card-border);
+    padding:9px 12px;
+    vertical-align:top;
+  }
+  .attr-table th{background:#1A1B1A;color:var(--yellow);text-align:left;font-weight:600;}
+  .attr-table code{color:var(--blue);}
+  #side-panel{min-height:120px;}
+  .panel-hint{font-size:.82rem;color:#7E8077;}
+  .changelog{font-size:.88rem;}
+  .changelog li{margin-bottom:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>bp-popnote 示範</h1>
+  <p class="lead-note">本頁對照說明新增的 <code>data-popover-url</code> 屬性：只要給網址，說明方框底部就自動出現一顆 pill 樣式的連結按鈕。</p>
+
+  <h2>1. 最小寫法：只給網址</h2>
+  <div class="card-x">
+    <div class="demo-row">
+      <div>
+        <div class="pane-label">範例</div>
+        <p>
+          雅思口說第二部分常被稱為
+          <mark
+            data-popover-title="Long Turn"
+            data-popover-content="考生抽題卡後有 1 分鐘準備，接著不中斷地講 1 至 2 分鐘。"
+            data-popover-theme="violet"
+            data-popover-url="https://www.ielts.org/for-test-takers/test-format"
+            style="background:none;color:inherit;">Long Turn</mark>，
+          也有人直接叫它 cue card。
+        </p>
+        <p class="panel-hint">未指定按鈕文字時，外部連結自動取網域名當標籤，並附上外開圖示、<code>target="_blank"</code> 與 <code>rel="noopener noreferrer"</code>。</p>
+      </div>
+      <div>
+        <div class="pane-label">程式碼</div>
+<pre><code>&lt;mark
+  data-popover-title="Long Turn"
+  data-popover-content="考生抽題卡後有 1 分鐘準備…"
+  data-popover-theme="violet"
+  data-popover-url="https://www.ielts.org/for-test-takers/test-format"&gt;Long Turn&lt;/mark&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>2. 自訂按鈕文字與對齊</h2>
+  <div class="card-x">
+    <div class="demo-row">
+      <div>
+        <div class="pane-label">範例</div>
+        <p>
+          <mark
+            data-popover-title="Band Descriptors"
+            data-popover-content="官方公開的四項評分標準：流暢度與連貫性、詞彙資源、文法範圍與正確性、發音。"
+            data-popover-theme="blue"
+            data-popover-url="https://www.ielts.org/for-test-takers/how-to-prepare"
+            data-popover-url-text="下載官方評分表"
+            style="background:none;color:inherit;">評分標準</mark>
+          是備考時最值得先讀的一份文件。
+        </p>
+        <p>
+          置中對齊版本：
+          <mark
+            data-popover-title="Part 3 延伸討論"
+            data-popover-content="考官會就 Part 2 的主題往抽象層面追問，答題長度約 30 至 45 秒。"
+            data-popover-theme="green"
+            data-popover-url="/lessons/part3.html"
+            data-popover-url-text="前往第三部分課程"
+            data-popover-url-align="center"
+            style="background:none;color:inherit;">Part 3</mark>
+          （站內連結會改用箭頭圖示，並在同分頁開啟）。
+        </p>
+        <p>
+          滿寬版本：
+          <mark
+            data-popover-title="模擬考報名"
+            data-popover-content="每月兩場線上模擬考，含 15 分鐘個別回饋。"
+            data-popover-theme="energetic"
+            data-popover-url="https://example.com/mock-test"
+            data-popover-url-text="立即報名本月模擬考"
+            data-popover-url-align="full"
+            data-popover-hint-style="pill"
+            data-popover-color="energetic"
+            style="background:none;color:inherit;">模擬考</mark>
+        </p>
+      </div>
+      <div>
+        <div class="pane-label">程式碼</div>
+<pre><code>&lt;!-- 自訂文字 --&gt;
+&lt;mark
+  data-popover-title="Band Descriptors"
+  data-popover-content="官方公開的四項評分標準…"
+  data-popover-theme="blue"
+  data-popover-url="https://www.ielts.org/for-test-takers/how-to-prepare"
+  data-popover-url-text="下載官方評分表"&gt;評分標準&lt;/mark&gt;
+
+&lt;!-- 站內連結＋置中 --&gt;
+&lt;mark
+  data-popover-title="Part 3 延伸討論"
+  data-popover-content="考官會就 Part 2 的主題往抽象層面追問…"
+  data-popover-theme="green"
+  data-popover-url="/lessons/part3.html"
+  data-popover-url-text="前往第三部分課程"
+  data-popover-url-align="center"&gt;Part 3&lt;/mark&gt;
+
+&lt;!-- 滿寬按鈕 --&gt;
+&lt;mark
+  data-popover-title="模擬考報名"
+  data-popover-content="每月兩場線上模擬考…"
+  data-popover-theme="energetic"
+  data-popover-url="https://example.com/mock-test"
+  data-popover-url-text="立即報名本月模擬考"
+  data-popover-url-align="full"
+  data-popover-hint-style="pill"
+  data-popover-color="energetic"&gt;模擬考&lt;/mark&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>3. 在 panel／modal／offcanvas 一樣生效</h2>
+  <div class="card-x">
+    <div class="demo-row">
+      <div>
+        <div class="pane-label">範例</div>
+        <p>
+          <mark
+            data-popover-title="Fluency and Coherence"
+            data-popover-content="&lt;p&gt;評估說話的連貫度、停頓位置與自我修正的頻率。&lt;/p&gt;&lt;p&gt;常見失分點是以背誦句型填補思考時間。&lt;/p&gt;"
+            data-popover-theme="green"
+            data-popover-panel="#side-panel"
+            data-popover-label="評分項目"
+            data-popover-url="https://example.com/fluency"
+            data-popover-url-text="延伸閱讀"
+            style="background:none;color:inherit;">Panel 模式</mark>
+          ｜
+          <mark
+            data-popover-title="詞彙資源"
+            data-popover-content="&lt;p&gt;重點在精準與搭配詞，而非冷僻字。&lt;/p&gt;"
+            data-popover-theme="indigo"
+            data-popover-modal
+            data-popover-modal-size="lg"
+            data-popover-url="https://example.com/lexical"
+            data-popover-url-text="查看完整詞表"
+            style="background:none;color:inherit;">Modal 模式</mark>
+          ｜
+          <mark
+            data-popover-title="發音"
+            data-popover-content="&lt;p&gt;含重音、節奏與語調三個面向。&lt;/p&gt;"
+            data-popover-theme="pink"
+            data-popover-modal="end"
+            data-popover-modal-size="420px"
+            data-popover-url="https://example.com/pronunciation"
+            style="background:none;color:inherit;">Offcanvas 模式</mark>
+        </p>
+        <div id="side-panel"></div>
+        <p class="panel-hint">panel 內容會顯示在上方容器中，再點一次同一個觸發器即可收起。</p>
+      </div>
+      <div>
+        <div class="pane-label">程式碼</div>
+<pre><code>&lt;!-- panel --&gt;
+&lt;mark
+  data-popover-title="Fluency and Coherence"
+  data-popover-content="&amp;lt;p&amp;gt;評估說話的連貫度…&amp;lt;/p&amp;gt;"
+  data-popover-theme="green"
+  data-popover-panel="#side-panel"
+  data-popover-label="評分項目"
+  data-popover-url="https://example.com/fluency"
+  data-popover-url-text="延伸閱讀"&gt;Panel 模式&lt;/mark&gt;
+
+&lt;!-- modal --&gt;
+&lt;mark
+  data-popover-title="詞彙資源"
+  data-popover-theme="indigo"
+  data-popover-modal
+  data-popover-modal-size="lg"
+  data-popover-url="https://example.com/lexical"
+  data-popover-url-text="查看完整詞表"&gt;Modal 模式&lt;/mark&gt;
+
+&lt;!-- offcanvas（右側） --&gt;
+&lt;mark
+  data-popover-title="發音"
+  data-popover-theme="pink"
+  data-popover-modal="end"
+  data-popover-modal-size="420px"
+  data-popover-url="https://example.com/pronunciation"&gt;Offcanvas 模式&lt;/mark&gt;
+
+&lt;div id="side-panel"&gt;&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>4. JS 標註 API</h2>
+  <div class="card-x">
+    <div class="demo-row">
+      <div>
+        <div class="pane-label">範例</div>
+        <p id="js-demo-target">
+          許多考生以為 collocation 只是背單字，其實它決定了詞彙資源這一項的上限。
+        </p>
+        <p class="panel-hint">上句中的「collocation」由 <code>BpPopnote.annotate()</code> 在載入後動態包成觸發器。</p>
+      </div>
+      <div>
+        <div class="pane-label">程式碼</div>
+<pre><code>BpPopnote.annotate({
+  text    : 'collocation',
+  within  : '#js-demo-target',
+  title   : 'Collocation',
+  content : '自然搭配詞，例如 heavy rain 而非 strong rain。',
+  theme   : 'yellow',
+  color   : 'yellow',
+  url     : 'https://example.com/collocation',
+  urlText : '搭配詞練習題',
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>5. 屬性總表</h2>
+  <div class="card-x">
+    <table class="attr-table">
+      <thead>
+        <tr><th style="width:22%;">屬性</th><th style="width:18%;">預設值</th><th>說明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>data-popover-url</code></td>
+          <td>（無）</td>
+          <td>設定後，說明方框底部自動產生 pill 連結按鈕。可為完整網址或站內路徑。</td>
+        </tr>
+        <tr>
+          <td><code>data-popover-url-text</code></td>
+          <td>網域名／「前往」</td>
+          <td>按鈕文字。外部連結省略時取網域名（自動去除 www.），站內連結省略時顯示「前往」。</td>
+        </tr>
+        <tr>
+          <td><code>data-popover-url-align</code></td>
+          <td><code>end</code></td>
+          <td>按鈕對齊：<code>start</code>、<code>center</code>、<code>end</code>、<code>full</code>（滿寬）。</td>
+        </tr>
+        <tr>
+          <td><code>data-popover-show-btn</code><br><code>data-popover-btn-href</code></td>
+          <td>（無）</td>
+          <td>舊版寫法，方角按鈕，維持相容。與 <code>data-popover-url</code> 並存時以後者為準。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>6. 本次改動</h2>
+  <div class="card-x">
+    <ul class="changelog">
+      <li>新增 <code>data-popover-url</code>、<code>data-popover-url-text</code>、<code>data-popover-url-align</code> 三個屬性。</li>
+      <li><code>buildShowBtnEl()</code> 改寫，優先讀 <code>data-popover-url</code>，否則走舊的 show-btn 流程。</li>
+      <li>外部連結自動判斷：改用 <code>bi-box-arrow-up-right</code> 圖示、開新分頁、加 <code>rel="noopener noreferrer"</code>，並把完整網址放進 <code>title</code>。</li>
+      <li>新增 <code>.xpop-url-pill</code> 樣式（圓角 999px、長標籤自動省略），以及 <code>[data-align]</code> 的對齊規則。</li>
+      <li><code>BpPopnote.annotate()</code> 支援 <code>url</code>、<code>urlText</code>、<code>urlAlign</code> 三個欄位。</li>
+      <li>按鈕文字改以 <code>textContent</code> 寫入，避免標籤字串被當成 HTML 解析。</li>
+    </ul>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
+<script src="bp-popnote.js"><\/script>
+<script>
+  BpPopnote.annotate({
+    text    : 'collocation',
+    within  : '#js-demo-target',
+    title   : 'Collocation',
+    content : '自然搭配詞，例如 heavy rain 而非 strong rain。',
+    theme   : 'yellow',
+    color   : 'yellow',
+    url     : 'https://example.com/collocation',
+    urlText : '搭配詞練習題',
+  });
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="src-10-18-26">
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-popnote show-btn Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root {
+  --bg:       #0C0D0C;
+  --shell:    #C6C7BD;
+  --violet: #B484E8;
+  --blue:      #5DBAE8;
+  --warning:  #EF6661;
+  --energetic:   #B6FF00;
+  --blue:    #5DBAE8;
+  --green:     #71CD76;
+  --green:     #71CD76;
+  --vanilla:  #DBEDD8;
+  --yellow:   #E3D322;
+  --focus:    #DBEDD8;
+  --green:  #71CD76;
+  --info:     #778CE1;
+  --indigo:   #778CE1;
+  --pink:     #FF91D7;
+  --energetic:   #B6FF00;
+  --area:     #141514;
+  --card:     #1a1b1a;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 18px; }
+body {
+  background: var(--bg);
+  color: var(--shell);
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── Layout ── */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 32px 120px;
+}
+h1 { color: var(--violet); font-size: 1.55rem; font-weight: 700; margin-bottom: 6px; }
+.subtitle { color: rgba(198,199,189,0.78); font-size: 0.88rem; margin-bottom: 40px; }
+h2 { color: var(--blue); font-size: 1.1rem; font-weight: 600;
+     border-bottom: 1px solid rgba(130,200,229,0.22); padding-bottom: 8px; margin: 40px 0 20px; }
+
+/* ── Demo cards ── */
+.demo-card {
+  background: var(--card);
+  border: 1px solid rgba(198,199,189,0.12);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+}
+.demo-label {
+  font-size: 0.75rem;
+  color: rgba(198,199,189,0.6);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.code-badge {
+  display: inline-block;
+  background: rgba(195,165,229,0.12);
+  color: var(--violet);
+  border: 1px solid rgba(195,165,229,0.28);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  padding: 2px 8px;
+  margin: 2px 3px;
+}
+
+/* ── Inline sentence demo ── */
+.sentence {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 0;
+}
+
+/* ── Panel target ── */
+#side-panel {
+  background: var(--area);
+  border: 1px solid rgba(198,199,189,0.1);
+  border-radius: 8px;
+  min-height: 60px;
+  padding: 0;
+}
+#side-panel:empty::after {
+  content: '（點擊左側觸發詞後，內容顯示於此）';
+  display: block;
+  color: rgba(198,199,189,0.35);
+  font-size: 0.82rem;
+  padding: 18px 20px;
+}
+
+/* ── Anchor target sections ── */
+.anchor-section {
+  background: var(--area);
+  border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  padding: 20px 24px;
+  margin-top: 16px;
+}
+.anchor-section h3 { color: var(--green); font-size: 1rem; margin-bottom: 8px; }
+
+/* ── Tag highlight for trigger words ── */
+[data-popover-content],
+[data-popover-target] {
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <h1><i class="bi bi-chat-square-text-fill me-2"></i>bp-popnote v2.1 — show-btn 詳情按鈕 Demo</h1>
+  <p class="subtitle">新增屬性：<span class="code-badge">data-popover-show-btn</span> + <span class="code-badge">data-popover-btn-href</span>，支援書籤跳轉或跳至外部網址。</p>
+
+  <\!-- ① 原始用法（基準） -->
+  <h2>① 原始用法（無 show-btn）</h2>
+  <div class="demo-card">
+    <div class="demo-label">floating popover · theme=yellow · panel 模式</div>
+    <p class="sentence">
+      I <span
+        data-popover-panel="#cc1"
+        data-popover-content="在詞彙資源和語法多樣性毫無加分機會"
+        data-popover-theme="yellow"
+        data-popover-label="照抄題目用詞和句型">
+        do exercise
+      </span> every day.
+    </p>
+    <div id="cc1" class="mt-3"></div>
+  </div>
+
+  <\!-- ② show-btn + 書籤跳轉 -->
+  <h2>② show-btn + 書籤跳轉（同頁 #anchor）</h2>
+  <div class="demo-card">
+    <div class="demo-label">panel 模式 · theme=yellow · show-btn 跳至 #grammar-section</div>
+    <p class="sentence">
+      I <span
+        data-popover-panel="#cc2"
+        data-popover-content="在詞彙資源和語法多樣性毫無加分機會"
+        data-popover-theme="yellow"
+        data-popover-label="照抄題目用詞和句型"
+        data-popover-show-btn="語法說明"
+        data-popover-btn-href="#grammar-section">
+        do exercise
+      </span> every day.
+    </p>
+    <div id="cc2" class="mt-3"></div>
+    <div class="anchor-section mt-3" id="grammar-section">
+      <h3><i class="bi bi-bookmark-fill me-1"></i>#grammar-section</h3>
+      <p style="color:rgba(198,199,189,0.82);font-size:0.9rem;margin:0;">
+        這裡是書籤錨點目標。按鈕點擊後頁面會跳至此處，適合在同一長篇文章內部導航，
+        例如從句子標注跳至文末的詳細語法解說區塊。
+      </p>
+    </div>
+  </div>
+
+  <\!-- ③ show-btn + 外部連結 -->
+  <h2>③ show-btn + 外部連結（自動 _blank）</h2>
+  <div class="demo-card">
+    <div class="demo-label">floating popover · theme=blue · show-btn 跳至外部 URL</div>
+    <p class="sentence">
+      The IELTS exam uses a <span
+        data-popover-content="考官評分時，字彙豐富度與精準度佔 25% 分數。"
+        data-popover-theme="blue"
+        data-popover-title="詞彙資源（Lexical Resource）"
+        data-popover-show-btn="IELTS 官方說明"
+        data-popover-btn-href="https://www.ielts.org/about-ielts/what-is-ielts">
+        band scoring system
+      </span> from 0 to 9.
+    </p>
+  </div>
+
+  <\!-- ④ Modal 模式 + show-btn -->
+  <h2>④ Modal 模式 + show-btn</h2>
+  <div class="demo-card">
+    <div class="demo-label">data-popover-modal="dialog" · theme=indigo · show-btn 書籤跳轉</div>
+    <p class="sentence">
+      雅思口說第二部分要求考生在兩分鐘內說明一個
+      <span
+        data-popover-title="Personal Experience（個人經歷）"
+        data-popover-content="考官希望聽到具體的時間、地點、人物與感受，而非泛泛而談的總結。"
+        data-popover-modal="dialog"
+        data-popover-theme="indigo"
+        data-popover-show-btn="評分標準詳情"
+        data-popover-btn-href="#scoring-anchor">
+        個人經歷
+      </span>。
+    </p>
+    <div class="anchor-section" id="scoring-anchor">
+      <h3><i class="bi bi-bookmark-fill me-1"></i>#scoring-anchor</h3>
+      <p style="color:rgba(198,199,189,0.82);font-size:0.9rem;margin:0;">
+        口說評分四項維度：流利度與連貫性、詞彙資源、語法範圍與精準度、發音。
+      </p>
+    </div>
+  </div>
+
+  <\!-- ⑤ Offcanvas 模式 + show-btn -->
+  <h2>⑤ Offcanvas 模式 + show-btn</h2>
+  <div class="demo-card">
+    <div class="demo-label">data-popover-modal="end" · theme=green · show-btn 外部連結</div>
+    <p class="sentence">
+      Band 7 requires demonstrating
+      <span
+        data-popover-title="Cohesion & Coherence"
+        data-popover-content="有效使用連接詞、指稱詞與詞彙鏈，使篇章邏輯連貫，而非僅靠列舉。"
+        data-popover-modal="end"
+        data-popover-theme="green"
+        data-popover-show-btn="Band Descriptors"
+        data-popover-btn-href="https://www.ielts.org/globalassets/assets/pdf/ielts-writing-band-descriptors-task-2.pdf">
+        cohesion and coherence
+      </span> at the discourse level.
+    </p>
+  </div>
+
+  <\!-- ⑥ show-btn 僅有屬性（空字串 → 預設「詳情」） -->
+  <h2>⑥ 屬性值為空字串 → 按鈕文字自動為「詳情」</h2>
+  <div class="demo-card">
+    <div class="demo-label">data-popover-show-btn=""（空值）→ 顯示「詳情」</div>
+    <p class="sentence">
+      過度使用
+      <span
+        data-popover-content="連接詞如 however、therefore 若濫用，反而顯得生硬不自然。"
+        data-popover-theme="energetic"
+        data-popover-show-btn=""
+        data-popover-btn-href="#grammar-section">
+        連接詞
+      </span>
+      會影響語言自然度。
+    </p>
+  </div>
+
+  <\!-- ⑦ annotate API 使用 showBtn / btnHref -->
+  <h2>⑦ BpPopnote.annotate() API — showBtn + btnHref</h2>
+  <div class="demo-card">
+    <div class="demo-label">事後標注 · theme=green · show-btn 書籤</div>
+    <p class="sentence" id="annotate-target">
+      Writing task 2 expects candidates to present a well-structured argument with clear topic sentences and logical conclusions.
+    </p>
+  </div>
+
+</div><\!-- /page-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
+<script src="bp-popnote.js"><\/script>
+<script>
+  // ⑦ 事後標注
+  BpPopnote.annotate({
+    text      : 'topic sentences',
+    content   : '每段開頭的主題句應清楚陳述該段論點，避免以細節開場。',
+    theme     : 'green',
+    title     : 'Topic Sentence',
+    showBtn   : '寫作技巧詳情',
+    btnHref   : '#grammar-section',
+    within    : '#annotate-target',
+  });
+<\/script>
+</body>
+</html>
+
+</script>
+
+<script>
+(function () {
+  /* 每個版本的完整原始 HTML 放在 script[type="text/plain"]，載入時才寫入 iframe。
+     原始碼裡的結束 script 標籤與 HTML 註解開頭，為了能放進 script 標籤而被轉義，這裡還原。 */
+  var HELPER = '<style>html,body{min-height:0!important;height:auto!important}</style>' +
+    '<script>(function(){var id="__ID__",last=0;' +
+    'function post(){var h=Math.ceil(document.documentElement.getBoundingClientRect().height);' +
+    'if(Math.abs(h-last)>1){last=h;parent.postMessage({demoFrame:id,h:h},"*");}}' +
+    'new ResizeObserver(post).observe(document.documentElement);addEventListener("load",post);' +
+    'document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^=\'#\']");' +
+    'if(!a)return;e.preventDefault();var k=a.getAttribute("href").slice(1);' +
+    'var t=k&&document.getElementById(decodeURIComponent(k));if(t)t.scrollIntoView();});})();<\/script>';
+  var frames = document.querySelectorAll('iframe.frame');
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || !d.demoFrame) return;
+    var f = document.getElementById(d.demoFrame);
+    if (f && !f.classList.contains('fixed')) f.style.height = Math.min(d.h, 30000) + 'px';
+  });
+  frames.forEach(function (f) {
+    var src = document.getElementById(f.dataset.src).textContent
+      .replace(/<\\\/script/g, '<' + '/script').replace(/<\\!--/g, '<' + '!--');
+    f.srcdoc = src + HELPER.replace('__ID__', f.id);
+  });
+})();
+</script>
+</body>
+</html>
