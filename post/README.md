@@ -11,6 +11,7 @@
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
 | `ui-post.js` | `<ui-post>`、`<post-item>` | 社群貼文與留言動畫。 |
+| `ui-post-beyond.js` | `<post-item avatar-glow>`、`<ui-post avatar-glow>` | ui-post 的相依增強。 |
 | `ui-post-demo-11-19-26.html` | | 整合範例 33 則（新增 `remove-fx`、`pause`、`btn-color`、`electric` 金色電流框，另含 LinkedIn 作者區塊與更緊湊的 compact、基本播放、外框與版面、live 模式、特效與握把、文字標記、標籤圖示、首字放大、可點徽章）、完整屬性速查與版本紀錄；取代 11-18-26 的整合範例。 |
 
 ## 目錄
@@ -25,6 +26,7 @@
 - [pause 播到一半等按繼續](#pause-播到一半等按繼續)
 - [remove-fx 移除先前的效果](#remove-fx-移除先前的效果)
 - [可點擊的自訂徽章](#可點擊的自訂徽章)
+- [ui-post-beyond.js](#ui-post-beyondjs)
 - [事件與方法](#事件與方法)
 - [授權](#授權)
 
@@ -278,6 +280,29 @@ p.add({ author: 'IELTS Examiner', examiner: true, roleLabel: '考官', text: 'Na
 - **沒載入 `bp-popnote.js`：** 徽章維持不可點，console 會警告一次。載入順序不影響，頁面載入完成後會再檢查。
 - **`mode="live"` 不支援。** 徽章整個忽略，`add()` 也不需要 `badge` 系列鍵名。
 - 只寫 `badge` 沒有 target、content、title 時，是不可點的一般徽章。
+
+## ui-post-beyond.js
+
+`ui-post-beyond.js` 是 `<ui-post>` 的相依增強，不修改 `ui-post.js`。檔名規則：`{元件名}-beyond.js`。目前提供頭像光暈。
+
+```html
+<script src="ui-post-beyond.js"></script>
+<script src="ui-post.js"></script>
+
+<ui-post author="Amy" avatar-glow>
+  <post-item author="Ben" avatar-glow="yellow">重點留言</post-item>
+  <post-item author="Cat">一般留言</post-item>
+</ui-post>
+```
+
+| 屬性 | 位置 | 說明 |
+| --- | --- | --- |
+| `avatar-glow` | `<post-item>` | 這一則留言的頭像加光暈，頭像出現時先閃三下，之後維持。只寫屬性名稱，光暈用頭像本身的底色；值可寫色票名稱或任何 CSS 顏色，例如 `avatar-glow="yellow"`。 |
+| `avatar-glow` | `<ui-post>` | 貼文作者（板主）的頭像加光暈，規則同上。 |
+
+- 載入順序：放在 `ui-post.js` 之前或之後都可以。
+- 光暈靠 `post-item-show` 事件掛上；`mode="live"` 以 `add()` 送進的留言不支援。
+- 「正在輸入」那一行的小頭像不加光暈。
 
 ## 事件與方法
 
