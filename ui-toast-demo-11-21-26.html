@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-toast 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: #0C0D0C; color: #C6C7BD; font-family: system-ui, "Noto Sans TC", sans-serif; font-size: 1rem; line-height: 1.7; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 120px 40px; }
+  h1 { color: #5DBAE8; font-size: 1.8rem; margin: 0 0 8px 0; }
+  .lead { color: #86877F; margin: 0 0 32px 0; }
+  .sec { margin: 0 0 40px 0; }
+  .sec > h2 { color: #E3D322; font-size: 1.3rem; margin: 0 0 6px 0; padding: 0 0 8px 0; border-bottom: 1px solid #2D2D2D; }
+  .sec > .desc { color: #86877F; font-size: 0.95rem; margin: 0 0 16px 0; }
+  .cmp { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .stage { background: #2D2D2D; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .cap { color: #8EA4DE; font-size: 0.85rem; margin: 0; }
+  pre { background: #2D2D2D; color: #DBEDD8; border-radius: 8px; padding: 16px; margin: 0; font-size: 0.8rem; white-space: pre-wrap; overflow-x: auto; }
+  code { color: #FF91D7; }
+  .nb { background: #0C0D0C; color: #DBEDD8; border: 1px solid #86877F; border-radius: 6px; padding: 6px 14px; font: inherit; font-size: 0.95rem; cursor: pointer; }
+  .nb:hover { border-color: #5DBAE8; color: #5DBAE8; }
+  .nb:disabled { opacity: 0.45; cursor: not-allowed; }
+  .chip { display: inline-block; background: #51DBCF; color: #0C0D0C; border-radius: 999px; padding: 1px 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+  .note { color: #86877F; font-size: 0.85rem; margin: 0; }
+  dialog { background: #2D2D2D; color: #C6C7BD; border: 1px solid #86877F; border-radius: 12px; padding: 24px; width: 420px; max-width: 90vw; }
+  dialog h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #B484E8; }
+  dialog p { margin: 0 0 16px 0; }
+  table.attrs { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  table.attrs th, table.attrs td { border: 1px solid #2D2D2D; padding: 8px 12px; text-align: left; vertical-align: top; }
+  table.attrs th { background: #2D2D2D; color: #DBEDD8; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-toast</h1>
+  <p class="lead">浮動提示訊息。任何元素加上 <code>toast</code> 屬性，點擊就跳出提示，不必寫 JavaScript。提示放在瀏覽器的最上層，所以 <code>&lt;dialog&gt;</code> 開著時也看得到。</p>
+
+  <section class="sec">
+    <h2>1. 最簡單的用法</h2>
+    <p class="desc">原生按鈕、連結、文字都可以。沒有指定外觀時，使用綠色實心、顯示在畫面上方中間、3 秒後消失。滑鼠停在提示上會暫停倒數，點提示可以立刻關掉。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div class="row">
+          <button class="nb" toast="已儲存">儲存</button>
+          <button class="nb" toast="已複製到剪貼簿" toast-icon="clipboard-check">複製</button>
+          <a href="#" toast="這是連結，也能觸發" onclick="return false" style="color:#5DBAE8">連結</a>
+        </div>
+      </div>
+      <pre>&lt;button toast="已儲存"&gt;儲存&lt;/button&gt;
+
+&lt;button toast="已複製到剪貼簿" toast-icon="clipboard-check"&gt;
+  複製
+&lt;/button&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>2. 外觀：顏色、樣式、位置、寬度、時間</h2>
+    <p class="desc"><code>toast-theme</code> 可用色票名稱、色碼或任何 CSS 顏色；<code>toast-variant</code> 有 <code>fill</code>（實心，預設）、<code>outline</code>（外框）、<code>square</code>（長方形實心）與 <code>square-border</code>（長方形空心，只有上下 3px 邊框）；位置有六種。<code>toast-duration="0"</code> 不會自動消失，要自己關閉。</p>
+    <div class="cmp">
+      <div class="stage">
+        <p class="cap">顏色</p>
+        <div class="row">
+          <button class="nb" toast="成功" toast-theme="green" toast-icon="check-circle-fill">green</button>
+          <button class="nb" toast="資訊" toast-theme="blue" toast-icon="info-circle-fill">blue</button>
+          <button class="nb" toast="注意" toast-theme="yellow" toast-icon="exclamation-triangle-fill">yellow</button>
+          <button class="nb" toast="失敗" toast-theme="red" toast-icon="x-circle-fill">red</button>
+          <button class="nb" toast="自訂色碼" toast-theme="#FFC88A">#FFC88A</button>
+          <button class="nb" toast="深色底" toast-theme="bg-alternative">bg-alternative</button>
+        </div>
+        <p class="cap">樣式</p>
+        <div class="row">
+          <button class="nb" toast="fill 實心" toast-theme="violet">fill</button>
+          <button class="nb" toast="outline 外框" toast-theme="violet" toast-variant="outline">outline</button>
+          <button class="nb" toast="square 長方形" toast-theme="violet" toast-variant="square">square</button>
+          <button class="nb" toast="square-border 上下邊框" toast-theme="violet" toast-variant="square-border">square-border</button>
+        </div>
+        <p class="cap">位置</p>
+        <div class="row">
+          <button class="nb" toast="top" toast-position="top">top</button>
+          <button class="nb" toast="top-left" toast-position="top-left">top-left</button>
+          <button class="nb" toast="top-right" toast-position="top-right">top-right</button>
+          <button class="nb" toast="bottom" toast-position="bottom">bottom</button>
+          <button class="nb" toast="bottom-left" toast-position="bottom-left">bottom-left</button>
+          <button class="nb" toast="bottom-right" toast-position="bottom-right">bottom-right</button>
+        </div>
+        <p class="cap">寬度與時間</p>
+        <div class="row">
+          <button class="nb" toast="固定寬度 360px，文字很長的時候會自動換行，不會把畫面撐破。" toast-width="360px" toast-theme="indigo">寬度</button>
+          <button class="nb" toast="10 秒後才消失" toast-duration="10000" toast-theme="pink">10 秒</button>
+          <button class="nb" toast="不會自動消失，請按 ×" toast-duration="0" toast-theme="salmon">不自動消失</button>
+        </div>
+      </div>
+      <pre>&lt;button toast="成功" toast-theme="green"
+        toast-icon="check-circle-fill"&gt;green&lt;/button&gt;
+
+&lt;button toast="自訂色碼" toast-theme="#FFC88A"&gt;&lt;/button&gt;
+
+&lt;button toast="outline 外框" toast-theme="violet"
+        toast-variant="outline"&gt;&lt;/button&gt;
+
+&lt;button toast="square 長方形" toast-theme="violet"
+        toast-variant="square"&gt;&lt;/button&gt;
+
+&lt;button toast="square-border 上下邊框" toast-theme="violet"
+        toast-variant="square-border"&gt;&lt;/button&gt;
+
+&lt;button toast="top-right" toast-position="top-right"&gt;&lt;/button&gt;
+
+&lt;button toast="固定寬度" toast-width="360px"&gt;&lt;/button&gt;
+&lt;button toast="10 秒後消失" toast-duration="10000"&gt;&lt;/button&gt;
+&lt;button toast="不自動消失" toast-duration="0"&gt;&lt;/button&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>3. 訊息放在 &lt;ui-toast&gt;（可含 HTML）</h2>
+    <p class="desc">訊息較長或要用粗體、連結時，寫在 <code>&lt;ui-toast&gt;</code> 裡，再用 <code>toast-target</code> 指向它的 id。<code>&lt;ui-toast&gt;</code> 本身不會顯示，外觀屬性寫在它上面；觸發元素的 <code>toast-*</code> 屬性優先。同一則訊息可以給多個按鈕共用。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div class="row">
+          <button class="nb" toast-target="t-done">完成</button>
+          <button class="nb" toast-target="t-done" toast-position="bottom">完成（改放下方）</button>
+          <button class="nb" toast-target="t-tip">提醒</button>
+        </div>
+        <ui-toast id="t-done" theme="green" icon="check-circle-fill"><b>練習完成</b>，成績已經記錄。</ui-toast>
+        <ui-toast id="t-tip" theme="yellow" variant="outline" icon="lightbulb" duration="6000">小提醒：答案可以<b>先寫關鍵字</b>，再補成完整句子。</ui-toast>
+      </div>
+      <pre>&lt;ui-toast id="t-done" theme="green" icon="check-circle-fill"&gt;
+  &lt;b&gt;練習完成&lt;/b&gt;，成績已經記錄。
+&lt;/ui-toast&gt;
+
+&lt;ui-toast id="t-tip" theme="yellow" variant="outline"
+          icon="lightbulb" duration="6000"&gt;
+  小提醒：答案可以&lt;b&gt;先寫關鍵字&lt;/b&gt;，再補成完整句子。
+&lt;/ui-toast&gt;
+
+&lt;button toast-target="t-done"&gt;完成&lt;/button&gt;
+&lt;button toast-target="t-done" toast-position="bottom"&gt;
+  完成（改放下方）
+&lt;/button&gt;
+&lt;button toast-target="t-tip"&gt;提醒&lt;/button&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>4. 在其他元件裡面使用</h2>
+    <p class="desc">元件內容裡的原生按鈕、可點擊的小標籤都可以直接帶 <code>toast</code>，之後才產生或重繪的元素也一樣有效。即使元件自己攔截點擊事件（<code>stopPropagation</code>），提示仍會跳出。</p>
+
+    <div class="cmp" style="margin:0 0 24px 0">
+      <div class="stage">
+        <p class="cap">ui-btn：寫在 &lt;ui-btn&gt; 上即可（取代原本的 alert 屬性）</p>
+        <div class="row">
+          <ui-btn size="md" icon="bi-send-fill" theme="key" toast="已送出" toast-icon="check-lg">送出</ui-btn>
+          <ui-btn size="md" icon="bi-trash" theme="red" variant="outline" toast="已刪除" toast-theme="red" toast-position="bottom">刪除</ui-btn>
+          <ui-btn size="md" icon="bi-lock-fill" theme="gray" disabled toast="停用的按鈕不會觸發">停用</ui-btn>
+        </div>
+      </div>
+      <pre>&lt;ui-btn size="md" icon="bi-send-fill" theme="key"
+        toast="已送出" toast-icon="check-lg"&gt;送出&lt;/ui-btn&gt;
+
+&lt;ui-btn icon="bi-trash" theme="red" variant="outline"
+        toast="已刪除" toast-theme="red"
+        toast-position="bottom"&gt;刪除&lt;/ui-btn&gt;</pre>
+    </div>
+
+    <div class="cmp" style="margin:0 0 24px 0">
+      <div class="stage">
+        <p class="cap">ui-cards：卡片內文、背面裡的按鈕與小標籤</p>
+        <ui-cards cols="2" flip-toggle>
+          <card-item label="mitigate" note="點卡片翻面" badge="單字" badge-color="blue"
+            back="減輕、緩和<br><br><button class='nb' toast='已加入收藏' toast-theme='pink' toast-icon='heart-fill'>收藏</button> <span class='chip' toast='例句：Trees mitigate the impact of heat.' toast-theme='key' toast-width='320px'>例句</span>"
+            back-badge="答案" back-badge-color="green">
+          </card-item>
+          <card-item label="resilient" note="內文裡的按鈕">
+            <button class="nb" toast="已標記為熟悉" toast-theme="green">我會了</button>
+            <span class="chip" toast="有韌性的" toast-theme="yellow">意思</span>
+          </card-item>
+        </ui-cards>
+      </div>
+      <pre>&lt;card-item label="resilient" note="內文裡的按鈕"&gt;
+  &lt;button toast="已標記為熟悉"&gt;我會了&lt;/button&gt;
+  &lt;span class="chip" toast="有韌性的"
+        toast-theme="yellow"&gt;意思&lt;/span&gt;
+&lt;/card-item&gt;
+
+&lt;!-- 背面（back）裡面也可以 --&gt;
+&lt;card-item label="mitigate"
+  back="減輕、緩和
+    &lt;button toast='已加入收藏'&gt;收藏&lt;/button&gt;"&gt;
+&lt;/card-item&gt;</pre>
+    </div>
+
+    <div class="cmp">
+      <div class="stage">
+        <p class="cap">ui-table：儲存格裡的按鈕</p>
+        <ui-table theme="blue">
+          <ui-row col-widths="1:2" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+            <ui-col>Part 2 題目</ui-col>
+            <ui-col>Describe a skill you learned. <button class="nb" toast="已複製題目" toast-icon="clipboard-check">複製</button></ui-col>
+          </ui-row>
+          <ui-row col-widths="1:2" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+            <ui-col>提示</ui-col>
+            <ui-col>先說是什麼技能 <span class="chip" toast="再說為什麼學、怎麼學" toast-theme="playful">下一步</span></ui-col>
+          </ui-row>
+        </ui-table>
+      </div>
+      <pre>&lt;ui-col&gt;
+  Describe a skill you learned.
+  &lt;button toast="已複製題目"
+          toast-icon="clipboard-check"&gt;複製&lt;/button&gt;
+&lt;/ui-col&gt;
+
+&lt;ui-col&gt;
+  先說是什麼技能
+  &lt;span class="chip" toast="再說為什麼學、怎麼學"
+        toast-theme="playful"&gt;下一步&lt;/span&gt;
+&lt;/ui-col&gt;</pre>
+    </div>
+    <p class="note" style="margin:12px 0 0 0">目前只有 <code>&lt;ui-btn&gt;</code> 會自動把 <code>toast</code> 屬性帶到畫面上的按鈕。元件自己用屬性產生的 badge（例如 ui-cards 的 <code>badge</code>）還不能直接帶 <code>toast</code>，要用內容裡的標籤；之後可以逐一補上。</p>
+  </section>
+
+  <section class="sec">
+    <h2>5. &lt;dialog&gt; 開著時</h2>
+    <p class="desc">提示放在瀏覽器最上層，所以 <code>showModal()</code> 開啟的對話框不會蓋住它。注意：對話框開著時，對話框外的東西（包括提示的 ×）無法點擊，提示會照常倒數後自己消失。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div class="row">
+          <button class="nb" onclick="document.getElementById('dlg').showModal()">開啟對話框</button>
+        </div>
+        <dialog id="dlg">
+          <h3>對話框</h3>
+          <p>在這裡按按鈕，提示會顯示在對話框上方。</p>
+          <div class="row">
+            <button class="nb" toast="對話框內的提示" toast-theme="blue" toast-icon="chat-dots-fill">跳出提示</button>
+            <button class="nb" toast="顯示在下方" toast-position="bottom" toast-theme="violet">下方提示</button>
+            <button class="nb" onclick="this.closest('dialog').close()">關閉</button>
+          </div>
+        </dialog>
+      </div>
+      <pre>&lt;dialog id="dlg"&gt;
+  &lt;button toast="對話框內的提示"&gt;跳出提示&lt;/button&gt;
+&lt;/dialog&gt;
+
+&lt;button onclick="dlg.showModal()"&gt;開啟對話框&lt;/button&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>6. 屬性速覽</h2>
+    <table class="attrs">
+      <thead><tr><th style="width:22%">屬性</th><th style="width:22%">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>toast</code></td><td>無</td><td>寫在任何元素上。點擊時顯示這段文字（純文字）。</td></tr>
+        <tr><td><code>toast-target</code></td><td>無</td><td>指向 <code>&lt;ui-toast&gt;</code> 的 id，顯示它的內容（可含 HTML）。與 <code>toast</code> 同時寫時，以 <code>toast-target</code> 為準。</td></tr>
+        <tr><td><code>toast-theme</code></td><td><code>green</code></td><td>色票名稱、色碼或 CSS 顏色。</td></tr>
+        <tr><td><code>toast-variant</code></td><td><code>fill</code></td><td><code>fill</code> 實心、<code>outline</code> 外框、<code>square</code> 長方形實心、<code>square-border</code> 長方形空心（只有上下 3px 邊框）。</td></tr>
+        <tr><td><code>toast-position</code></td><td><code>top</code></td><td><code>top</code>、<code>top-left</code>、<code>top-right</code>、<code>bottom</code>、<code>bottom-left</code>、<code>bottom-right</code>。</td></tr>
+        <tr><td><code>toast-duration</code></td><td><code>3000</code></td><td>顯示毫秒數，<code>0</code> 表示不會自動消失。</td></tr>
+        <tr><td><code>toast-width</code></td><td>自動</td><td>固定寬度，只接受 <code>px</code> 或 <code>%</code>。</td></tr>
+        <tr><td><code>toast-icon</code></td><td>無</td><td>Bootstrap Icons 名稱，<code>bi-</code> 前綴可寫可不寫。</td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="margin:12px 0 0 0">&lt;ui-toast&gt; 上的 <code>theme</code>、<code>variant</code>、<code>position</code>、<code>duration</code>、<code>width</code>、<code>icon</code> 是這則訊息的預設外觀。全頁預設值可以在載入 ui-toast.js 之前設定 <code>window.UiToastConfig</code>。</p>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-toast.js"></script>
+<script src="ui-plus.js"></script>
+<script src="layout/ui-cards.js"></script>
+<script src="tbl/ui-table.js"></script>
+</body>
+</html>

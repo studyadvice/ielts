@@ -14,6 +14,7 @@
 | `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 | [`ui-fillin-demo-11-12-26.html`](ui-fillin-demo-11-12-26.html) |
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-20-26.html`](ui-inputs-demo-11-20-26.html) |
 | `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` `<dual-hr>` `<dual-vr>` `<ui-arc-menu>` `<ui-arc-item>` | 閱讀輔助標記、展開按鈕、雙色分隔線與弧形菜單。 | [`ui-plus-demo-11-21-26.html`](ui-plus-demo-11-21-26.html) |
+| `ui-toast.js` | `<ui-toast>` | 浮動提示訊息：任何元素加上 `toast` 屬性，點擊就跳出提示；放在瀏覽器最上層，`<dialog>` 開著也看得到。 | [`ui-toast-demo-11-21-26.html`](ui-toast-demo-11-21-26.html) |
 
 跨元件範例：[`data-flow-demo-11-11-26.html`](data-flow-demo-11-11-26.html) 示範 `ui-cards`、`arrow-flow`、`ui-drill`、`ui-table` 組合成資料流動中心。
 
@@ -116,6 +117,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 - [ui-fillin.js](#ui-fillinjs)
 - [ui-inputs.js](#ui-inputsjs)
 - [ui-plus.js](#ui-plusjs)
+- [ui-toast.js](#ui-toastjs)
 
 ---
 
@@ -2066,7 +2068,7 @@ cli.rate = 2;                              // 播放倍率
 **自訂尺寸**：`size` 填長度時代表按鈕字級，其餘尺寸以 `md`（1rem）為基準等比例換算，內距、圓角、間距一律輸出為 px。
 
 ```html
-<ui-btn size="2rem" icon="bi-lightning-fill" theme="key" alert="已送出">送出</ui-btn>
+<ui-btn size="2rem" icon="bi-lightning-fill" theme="key" toast="已送出">送出</ui-btn>
 <ui-btn size="3rem" icon="bi-eye" icon-active="bi-eye-slash" theme="blue" target="tip"></ui-btn>
 <ui-btn size="24px" chevron theme="green" target="tip">看提示</ui-btn>
 <div id="tip" style="display:none">先找出題目中的關鍵字，再決定立場。</div>
@@ -2102,14 +2104,7 @@ cli.rate = 2;                              // 播放倍率
 
 **浮動提示**
 
-| 屬性 | 預設 | 說明 |
-| --- | --- | --- |
-| `alert` | 空 | 點擊時在畫面頂端或底部跳出的訊息。 |
-| `alert-theme` | `green` | 提示底色。 |
-| `alert-position` | `top` | `top` 或 `bottom`。 |
-| `alert-duration` | `3000` | 顯示毫秒數，`0` 表示不會自動消失。 |
-| `alert-width` | 自動 | 固定寬度，只接受 `px` 或 `%`，例如 `400px`。 |
-| `alert-icon` | 空 | 訊息前的 Bootstrap Icons 類別，需含 `bi-` 前綴。 |
+`<ui-btn>` 本身不再有提示訊息功能。要在點擊時跳出提示，請載入 [`ui-toast.js`](#ui-toastjs)，再把 `toast` 屬性（以及 `toast-theme`、`toast-position` 等）寫在 `<ui-btn>` 上，用法與其他元素相同。
 
 **進階**
 
@@ -2141,7 +2136,7 @@ cli.rate = 2;                              // 播放倍率
 ```
 
 - 元素先依 `animation` 與 `anim-duration` 收合，再從網頁刪除；`animation="none"` 時立即刪除。重新整理網頁前不會復原。
-- 可以和 `target`、`href`、`alert` 等一起使用，同一次點擊會先開合目標，再移除元素。
+- 可以和 `target`、`href`、`toast` 等一起使用，同一次點擊會先開合目標，再移除元素。
 - 只寫 `remove-target` 時，按鈕不會去開合緊接在後面的元素，目標全部移除後按鈕自動停用。
 - 移除後在 `<ui-btn>` 上觸發會冒泡的 `ubtn-removed` 事件，`e.detail` 含 `ids`（這次移除的 id）與 `button`。
 - 範例：`ui-plus-demo-11-21-26.html`。
@@ -2322,13 +2317,6 @@ DualLine.palette;                                        // 目前的色盤
 UiReading.init();   // 處理新插入的 read-pulse、chalk-mark、col-pair
 UiBtn.init();       // 處理新插入的 <ui-btn>
 
-// 直接跳出浮動提示（與 ui-btn 的 alert 屬性相同外觀）
-const a = UiBtn.alert('已儲存', {
-  theme: 'green', position: 'top', duration: 3000, width: '360px', icon: 'bi-check-circle'
-});
-a.dismiss();        // 手動關閉這一則
-UiBtn.alert.clear(); // 清除所有提示
-
 UiReading.config; UiBtn.config;  // 目前生效的設定
 UiReading.colors;                // 色盤
 ```
@@ -2336,6 +2324,78 @@ UiReading.colors;                // 色盤
 已處理過的標籤會被標記，重複呼叫 `init()` 不會重複渲染。
 
 頁面載入後才出現的 `read-pulse`、`chalk-mark`、`col-pair`（例如由 `ui-btn`、`ui-cards` 展開的 template，或用程式插入的內容）會自動初始化，不必手動呼叫 `UiReading.init()`。其他元件用 innerHTML 複製已初始化的 `read-pulse` 時（例如 `ui-table` 的儲存格），副本也會自動恢復動畫，與腳本載入順序無關。
+
+## ui-toast.js
+
+浮動提示訊息。在任何元素加上 `toast` 屬性，點擊時就在畫面上跳出提示，不必寫 JavaScript。提示放在瀏覽器的最上層，所以 `showModal()` 開啟的 `<dialog>` 也不會蓋住它。
+
+互動範例：[`ui-toast-demo-11-21-26.html`](ui-toast-demo-11-21-26.html)
+
+```html
+<script src="ui-toast.js"></script>
+
+<button toast="已儲存">儲存</button>
+<button toast="已刪除" toast-theme="red" toast-icon="trash" toast-position="bottom">刪除</button>
+```
+
+### 屬性
+
+寫在觸發點擊的元素上：
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `toast` | 無 | 點擊時顯示這段文字（純文字）。 |
+| `toast-target` | 無 | 指向 `<ui-toast>` 的 id，顯示它的內容（可含 HTML）。與 `toast` 同時寫時，以 `toast-target` 為準。 |
+| `toast-theme` | `green` | 色票名稱、色碼或任何 CSS 顏色。 |
+| `toast-variant` | `fill` | `fill` 實心、`outline` 外框、`square` 長方形實心、`square-border` 長方形空心（只有上下 3px 邊框）。 |
+| `toast-position` | `top` | `top`、`top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right`。 |
+| `toast-duration` | `3000` | 顯示毫秒數，`0` 表示不會自動消失。 |
+| `toast-width` | 自動 | 固定寬度，只接受 `px` 或 `%`，例如 `400px`。 |
+| `toast-icon` | 無 | Bootstrap Icons 名稱，`bi-` 前綴可寫可不寫。 |
+
+### 訊息放在 `<ui-toast>`
+
+訊息較長或要用粗體、連結時，寫在 `<ui-toast>` 裡，再用 `toast-target` 指向它。`<ui-toast>` 本身不會顯示；它的 `theme`、`variant`、`position`、`duration`、`width`、`icon` 是這則訊息的預設外觀，觸發元素的 `toast-*` 屬性優先。同一則訊息可以給多個按鈕共用。
+
+```html
+<ui-toast id="done" theme="green" icon="check-circle-fill"><b>練習完成</b>，成績已經記錄。</ui-toast>
+<button toast-target="done">完成</button>
+```
+
+### 在其他元件裡使用
+
+- 元件內容裡的原生按鈕、連結、可點擊的小標籤，直接加 `toast` 即可，之後才產生或重繪的元素也有效。
+- 元件自己攔截點擊（`stopPropagation`）也不影響，提示仍會跳出。
+- `<ui-btn>` 會自動把 `toast` 相關屬性帶到畫面上的按鈕；停用的按鈕不會觸發。
+- 元件自己用屬性產生的 badge（例如 `ui-cards` 的 `badge`）目前不能直接帶 `toast`，請改用內容裡的標籤。
+
+### 全頁設定
+
+載入 `ui-toast.js` 之前設定 `window.UiToastConfig`，可以改全頁預設值：
+
+| 設定 | 預設 | 說明 |
+| --- | --- | --- |
+| `theme` | `green` | 預設顏色。 |
+| `position` | `top` | 預設位置。 |
+| `duration` | `3000` | 預設顯示毫秒數。 |
+| `variant` | `fill` | 預設樣式。 |
+| `max` | `5` | 同一位置最多同時顯示幾則，超過時最舊的先收掉。 |
+
+### JavaScript API
+
+```js
+const t = UiToast.show('已儲存', {
+  theme: 'green', position: 'top', duration: 3000, variant: 'fill', width: '360px', icon: 'check-circle'
+});
+t.dismiss();     // 手動關閉這一則
+UiToast.clear(); // 清除所有提示
+```
+
+### 注意事項
+
+- 滑鼠停在提示上會暫停倒數，移開後接著倒數；點提示或按 × 可以立刻關閉。
+- `<dialog>` 以 `showModal()` 開啟時，對話框外的東西都無法點擊，包括提示的 ×，提示會照常倒數後自己消失。
+- 瀏覽器不支援 Popover API 時，改用很高的 `z-index`，仍可顯示，但可能被其他更高層級的元素蓋住。
 
 ## 授權
 

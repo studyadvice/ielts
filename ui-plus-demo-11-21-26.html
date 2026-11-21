@@ -131,20 +131,20 @@ code{color:#FFA987;}
       <script type="text/plain" class="demo-src">
 <div class="size-row">
   <span class="size-label">sm / md / lg</span>
-  <ui-btn size="sm" icon="bi-star-fill" theme="yellow" alert="size=&quot;sm&quot;">按鈕</ui-btn>
-  <ui-btn size="md" icon="bi-star-fill" theme="yellow" alert="size=&quot;md&quot;">按鈕</ui-btn>
-  <ui-btn size="lg" icon="bi-star-fill" theme="yellow" alert="size=&quot;lg&quot;">按鈕</ui-btn>
+  <ui-btn size="sm" icon="bi-star-fill" theme="yellow" toast="size=&quot;sm&quot;">按鈕</ui-btn>
+  <ui-btn size="md" icon="bi-star-fill" theme="yellow" toast="size=&quot;md&quot;">按鈕</ui-btn>
+  <ui-btn size="lg" icon="bi-star-fill" theme="yellow" toast="size=&quot;lg&quot;">按鈕</ui-btn>
 </div>
 <div class="size-row">
   <span class="size-label">rem</span>
-  <ui-btn size="0.75rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;0.75rem&quot;">按鈕</ui-btn>
-  <ui-btn size="1.5rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;1.5rem&quot;">按鈕</ui-btn>
-  <ui-btn size="2rem" icon="bi-lightning-fill" theme="key" alert="size=&quot;2rem&quot;">按鈕</ui-btn>
+  <ui-btn size="0.75rem" icon="bi-lightning-fill" theme="key" toast="size=&quot;0.75rem&quot;">按鈕</ui-btn>
+  <ui-btn size="1.5rem" icon="bi-lightning-fill" theme="key" toast="size=&quot;1.5rem&quot;">按鈕</ui-btn>
+  <ui-btn size="2rem" icon="bi-lightning-fill" theme="key" toast="size=&quot;2rem&quot;">按鈕</ui-btn>
 </div>
 <div class="size-row">
   <span class="size-label">px / 純數字</span>
-  <ui-btn size="20px" icon="bi-heart-fill" theme="pink" variant="outline" alert="size=&quot;20px&quot;">按鈕</ui-btn>
-  <ui-btn size="2.5" icon="bi-heart-fill" theme="pink" variant="outline" alert="size=&quot;2.5&quot;，視為 2.5rem">按鈕</ui-btn>
+  <ui-btn size="20px" icon="bi-heart-fill" theme="pink" variant="outline" toast="size=&quot;20px&quot;">按鈕</ui-btn>
+  <ui-btn size="2.5" icon="bi-heart-fill" theme="pink" variant="outline" toast="size=&quot;2.5&quot;，視為 2.5rem">按鈕</ui-btn>
 </div>
     </script>
     </div>
@@ -183,13 +183,13 @@ code{color:#FFA987;}
       <script type="text/plain" class="demo-src">
 <div class="size-row big-ctx">
   <span class="size-label">父層 1.5rem</span>
-  <ui-btn size="1em" icon="bi-gem" theme="violet" alert="size=&quot;1em&quot;，等於 1.5rem">1em</ui-btn>
-  <ui-btn size="1.5rem" icon="bi-gem" theme="violet" alert="size=&quot;1.5rem&quot;">1.5rem</ui-btn>
+  <ui-btn size="1em" icon="bi-gem" theme="violet" toast="size=&quot;1em&quot;，等於 1.5rem">1em</ui-btn>
+  <ui-btn size="1.5rem" icon="bi-gem" theme="violet" toast="size=&quot;1.5rem&quot;">1.5rem</ui-btn>
 </div>
 <div class="size-row">
   <span class="size-label">錯誤格式</span>
-  <ui-btn size="huge" icon="bi-x-octagon" theme="red" alert="size=&quot;huge&quot; 無效，已改用 md">huge</ui-btn>
-  <ui-btn size="2vw" icon="bi-x-octagon" theme="red" alert="size=&quot;2vw&quot; 無效，已改用 md">2vw</ui-btn>
+  <ui-btn size="huge" icon="bi-x-octagon" theme="red" toast="size=&quot;huge&quot; 無效，已改用 md">huge</ui-btn>
+  <ui-btn size="2vw" icon="bi-x-octagon" theme="red" toast="size=&quot;2vw&quot; 無效，已改用 md">2vw</ui-btn>
 </div>
     </script>
     </div>
@@ -444,7 +444,7 @@ code{color:#FFA987;}
       <thead><tr><th class="bp-text-key" style="width:200px">項目</th><th class="bp-text-key" style="width:300px">範例</th><th class="bp-text-key">說明</th></tr></thead>
       <tbody>
         <tr><td><code>remove-target</code></td><td><code>remove-target="a, b #c"</code></td><td>新增。點擊後要移除的元素 id，逗號或空白分隔，<code>#</code> 可省略。元素先依 <code>animation</code> 收合，再從網頁刪除；重新整理網頁前不會復原。找不到的 id 會在主控台提示。</td></tr>
-        <tr><td>按鈕停用</td><td></td><td>按鈕只設定 <code>remove-target</code>，沒有 <code>target</code>、<code>href</code>、<code>alert</code>、<code>mini-table-id</code>、<code>unlock-chunk</code> 時，目標全部移除後按鈕自動停用。</td></tr>
+        <tr><td>按鈕停用</td><td></td><td>按鈕只設定 <code>remove-target</code>，沒有 <code>target</code>、<code>href</code>、<code>toast</code>、<code>mini-table-id</code>、<code>unlock-chunk</code> 時，目標全部移除後按鈕自動停用。</td></tr>
         <tr><td>緊鄰元素</td><td></td><td>只寫 <code>remove-target</code> 時，按鈕不會再去開合緊接在後面的元素。</td></tr>
         <tr><td><code>ubtn-removed</code> 事件</td><td><code>e.detail.ids</code></td><td>新增。從 <code>&lt;ui-btn&gt;</code> 冒泡，<code>e.detail</code> 含 <code>ids</code>（這次移除的 id）與 <code>button</code>。</td></tr>
       </tbody>
@@ -1939,6 +1939,7 @@ document.addEventListener('ubtn-removed', function (e) {
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui-toast.js"></script>
 <script src="ui-plus.js?v=11-21-26"></script>
 <script src="mini/mini-table.js?v=11-12-26"></script>
 </body>

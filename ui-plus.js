@@ -290,27 +290,7 @@
     /* 揭曉儲存格時，格子內框短暫亮起按鈕顏色再收掉 */
     '@keyframes ubtn-cflash{0%{box-shadow:inset 0 0 0 3px var(--ubtn-c,#C6C7BD)}' +
       '100%{box-shadow:inset 0 0 0 0 var(--ubtn-c,#C6C7BD)}}',
-    '.ubtn-cell-flash{animation:ubtn-cflash 1.2s ease-out}',
-
-    '.ubtn-astack{position:fixed;left:50%;transform:translateX(-50%);z-index:9999;' +
-      'display:flex;flex-direction:column;align-items:center;gap:8px;' +
-      'pointer-events:none;max-width:calc(100vw - 32px)}',
-    '.ubtn-astack-top{top:16px}',
-    '.ubtn-astack-bottom{bottom:16px;flex-direction:column-reverse}',
-
-    '.ubtn-alert{display:flex;align-items:center;gap:8px;' +
-      'padding:10px 14px 10px 18px;border-radius:24px;' +
-      'font-weight:600;font-size:1rem;line-height:1.4;' +
-      'pointer-events:all;white-space:nowrap;max-width:88vw;' +
-      'opacity:0;transition:opacity .25s ease,transform .25s ease}',
-    '.ubtn-astack-top .ubtn-alert{transform:translateY(-14px)}',
-    '.ubtn-astack-bottom .ubtn-alert{transform:translateY(14px)}',
-    '.ubtn-alert.ubtn-alert-in{opacity:1;transform:translateY(0)}',
-
-    '.ubtn-alert-x{background:none;border:none;cursor:pointer;' +
-      'font-size:1.15rem;line-height:1;padding:0;margin-left:6px;' +
-      'opacity:.65;font-weight:700;flex-shrink:0;transition:opacity .15s ease}',
-    '.ubtn-alert-x:hover{opacity:1}'
+    '.ubtn-cell-flash{animation:ubtn-cflash 1.2s ease-out}'
   ].join('\n');
 
   (function () {
@@ -1006,14 +986,8 @@
     this.group       = el.getAttribute('group')        || '';
     this.tooltip     = el.getAttribute('tooltip')      || '';
 
-    this.alertMsg  = el.getAttribute('alert') || '';
-    this.alertOpts = {
-      theme:    el.getAttribute('alert-theme')    || '',
-      position: el.getAttribute('alert-position') || 'top',
-      duration: el.hasAttribute('alert-duration') ? el.getAttribute('alert-duration') : null,
-      width:    el.getAttribute('alert-width')    || '',
-      icon:     el.getAttribute('alert-icon')     || ''
-    };
+    /* 提示訊息交給 ui-toast.js：toast、toast-target 寫在 <ui-btn> 上即可，這裡只用來判斷按鈕是否有動作 */
+    this.hasToast = el.hasAttribute('toast') || el.hasAttribute('toast-target');
 
     this.unlockChunkTargets = parseUnlockChunk(el.getAttribute('unlock-chunk') || '');
     this.scrollGate         = el.hasAttribute('scroll-gate');
@@ -1048,7 +1022,7 @@
       });
     } else if (!this.href && !this.cellTableId && !this.removeIds.length) {
       if (this._nextSib) srcs.push(this._nextSib);
-      else if (!this.alertMsg) console.warn('[ui-btn] 找不到目標元素，請設定 target 或 targets 屬性。');
+      else if (!this.hasToast) console.warn('[ui-btn] 找不到目標元素，請設定 target 或 targets 屬性。');
     }
     if (this.cellTableId && !this.cellSpec) {
       console.warn('[ui-btn] 有 mini-table-id="' + this.cellTableId + '" 但沒有 target-cell，請指定儲存格，例如 target-cell="B2"。');
@@ -1125,6 +1099,10 @@
     btn.className = 'ubtn ubtn-' + this.variant;
     if (this.disabled) btn.setAttribute('disabled', '');
     if (this.tooltip)  btn.title = this.tooltip;
+    /* 畫面上看到的是這顆 <button>，原本的 <ui-btn> 會被隱藏，所以把 toast 屬性複製過來，ui-toast.js 才抓得到點擊 */
+    Array.prototype.forEach.call(this.el.attributes, function (a) {
+      if (a.name === 'toast' || a.name.indexOf('toast-') === 0) btn.setAttribute(a.name, a.value);
+    });
     btn.style.cssText = '--ubtn-c:' + this.color + ';--ubtn-ch:' + hoverBg;
 
     if (iconOnly) {
@@ -1178,7 +1156,6 @@
     btn.addEventListener('click', function (e) {
       if ((!self.href && !self.removeIds.length) || self.targetIds.length || self.cellTableId) self._toggle();
       if (self.removeIds.length) self._removeTargets();
-      if (self.alertMsg) showAlert(self.alertMsg, self.alertOpts);
       if (self.href) {
         var t = self.hrefTarget;
         if (e.ctrlKey || e.metaKey || t === '_blank') {
@@ -1215,7 +1192,7 @@
     });
     if (missing.length) console.warn('[ui-btn] remove-target 找不到元素（可能已經移除）：#' + missing.join('、#'));
     if (_gateInstances.length) _syncGateLimit();
-    var onlyRemove = !this.targetIds.length && !this.href && !this.alertMsg && !this.cellTableId && !this.unlockChunkTargets.length;
+    var onlyRemove = !this.targetIds.length && !this.href && !this.hasToast && !this.cellTableId && !this.unlockChunkTargets.length;
     var left = this.removeIds.some(function (id) {
       var t = document.getElementById(id);
       return t && !t._ubtnRemoving;
@@ -1454,87 +1431,6 @@
       this._lbl.textContent = (this.isOpen && this.labelOpen)
         ? this.labelOpen : this.labelClosed;
     }
-  };
-
-  var _alertStacks = {};
-
-  function ensureAlertStack(pos) {
-    if (!_alertStacks[pos]) {
-      var c = document.createElement('div');
-      c.className = 'ubtn-astack ubtn-astack-' + pos;
-      document.body.appendChild(c);
-      _alertStacks[pos] = c;
-    }
-    return _alertStacks[pos];
-  }
-
-  function showAlert(message, opts) {
-    opts = opts || {};
-    var pos   = opts.position === 'bottom' ? 'bottom' : 'top';
-    var color = resolveColor(opts.theme) || BRAND.green;
-    var dur   = (opts.duration != null) ? +opts.duration : 3000;
-    var icon  = opts.icon || '';
-
-    var width = opts.width ? String(opts.width).trim() : '';
-    if (width && !/^\d+(\.\d+)?(px|%)$/.test(width)) {
-      console.warn('[ui-btn] alert width 格式無效（應為 px 或 %，例如 "400px"、"80%"），已忽略。');
-      width = '';
-    }
-
-    var stack = ensureAlertStack(pos);
-    var item  = document.createElement('div');
-    item.className = 'ubtn-alert';
-    item.style.background = color;
-    item.style.color      = BG;
-
-    if (width) {
-      item.style.width      = width;
-      item.style.maxWidth   = 'none';
-      item.style.whiteSpace = 'normal';
-    }
-
-    if (icon && /^bi-/.test(icon)) {
-      var iEl = document.createElement('i');
-      iEl.className = 'bi ' + icon;
-      iEl.setAttribute('aria-hidden', 'true');
-      iEl.style.flexShrink = '0';
-      item.appendChild(iEl);
-    }
-
-    var txt = document.createElement('span');
-    txt.textContent = message;
-    item.appendChild(txt);
-
-    var x = document.createElement('button');
-    x.type = 'button';
-    x.className = 'ubtn-alert-x';
-    x.innerHTML = '&times;';
-    x.style.color = BG;
-    item.appendChild(x);
-
-    function dismiss() {
-      item.classList.remove('ubtn-alert-in');
-      onTransEnd(item, 'opacity', function () { item.remove(); });
-    }
-
-    x.addEventListener('click', dismiss);
-    var timer = (dur > 0) ? setTimeout(dismiss, dur) : null;
-    item.addEventListener('click', function (e) {
-      if (e.target !== x) { clearTimeout(timer); dismiss(); }
-    });
-
-    stack.appendChild(item);
-    rAF2(function () { item.classList.add('ubtn-alert-in'); });
-
-    return { dismiss: dismiss };
-  }
-
-  showAlert.clear = function () {
-    ['top', 'bottom'].forEach(function (pos) {
-      if (_alertStacks[pos]) {
-        Array.from(_alertStacks[pos].children).forEach(function (c) { c.remove(); });
-      }
-    });
   };
 
   function bootBtn() {
@@ -1916,7 +1812,7 @@
 }(global));
 
   global.UiReading = { init: bootReading, config: UR_CFG, colors: BRAND };
-  global.UiBtn     = { init: bootBtn,     alert: showAlert, config: UB_CFG, colors: BRAND };
+  global.UiBtn     = { init: bootBtn,     config: UB_CFG, colors: BRAND };
 
 })(window);
 /* ── 色名標籤 <c-blue>、<c-key> 等：所有元件共用同一份，頁面上只注入一次 ── */

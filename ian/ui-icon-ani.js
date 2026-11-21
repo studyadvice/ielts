@@ -75,13 +75,6 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
 
 .uia-reveal-fade{animation:uia-fade-in 500ms ease both;}
 .uia-reveal-slide{animation:uia-slide-in 500ms ease both;}
-
-.uia-sys-alert{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;
-  min-width:420px;max-width:90vw;background:#1C1A0E;border:1px solid #FFA987;color:#FFA987;
-  border-radius:8px;padding:12px 44px 12px 16px;font-size:0.95rem;line-height:1.6;}
-.uia-sys-alert code{color:#E3D322;font-size:0.85rem;word-break:break-all;}
-.uia-sys-alert .uia-close{position:absolute;top:8px;right:10px;background:none;border:0;
-  color:#FFA987;font-size:1.25rem;line-height:1;cursor:pointer;padding:0 4px;}
 `;
 
   /* ---------- 工具函式 ---------- */
@@ -135,15 +128,7 @@ ui-icon-anim.uia-leave-shrink{animation:uia-shrink ${LEAVE_MS}ms ease forwards;}
     const content = getComputedStyle(probe, '::before').content;
     probe.remove();
     if (content && content !== 'none' && content !== 'normal') return;
-    showSysAlert('ui-icon-anim：未偵測到 Bootstrap Icons 樣式表，圖示將無法顯示。請在頁面加入：<br><code>https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css</code>');
-  }
-  function showSysAlert(html) {
-    const box = document.createElement('div');
-    box.className = 'alert alert-warning uia-sys-alert';
-    box.setAttribute('role', 'alert');
-    box.innerHTML = html + '<button type="button" class="uia-close" title="關閉">×</button>';
-    box.querySelector('.uia-close').addEventListener('click', () => box.remove());
-    document.body.prepend(box);
+    console.warn('[ui-icon-anim] 未偵測到 Bootstrap Icons 樣式表，圖示將無法顯示。請在頁面加入：https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
   }
 
   /* ---------- 元件本體 ---------- */
