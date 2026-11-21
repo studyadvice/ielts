@@ -10,7 +10,7 @@
   const L = ':where(maze-quiz,maze-quiz-panel)';
   const STYLE_TEXT = `
 maze-quiz,maze-quiz-panel{display:block;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
-maze-quiz .mq-wrap{display:flex;gap:32px;align-items:stretch;background:#0C0D0C;border:1px solid #3B2A20;border-radius:16px;padding:24px}
+maze-quiz .mq-wrap{display:flex;gap:32px;align-items:stretch;background:#0C0D0C;border:1px solid #2D2D2D;border-radius:16px;padding:24px}
 maze-quiz .mq-wrap.is-solo{justify-content:center}
 maze-quiz .mq-wrap.is-fit{width:fit-content;max-width:100%}
 maze-quiz .mq-stage{flex:3 1 0;min-width:0;max-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
@@ -18,8 +18,8 @@ maze-quiz .mq-stage.is-sized{flex:0 0 auto}
 maze-quiz .mq-board{position:relative;width:100%;display:flex;justify-content:center}
 maze-quiz .mq-svg{display:block;width:100%;height:auto;overflow:visible}
 maze-quiz .mq-stage:not(.is-sized) .mq-svg{max-height:72vh}
-maze-quiz .mq-cover{display:none;position:absolute;left:0;top:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#151615;border:2px dashed #3B2A20;border-radius:12px;padding:16px;text-align:center}
-maze-quiz .mq-cover-mark{font-size:4rem;font-weight:800;line-height:1;color:#3B2A20}
+maze-quiz .mq-cover{display:none;position:absolute;left:0;top:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#151615;border:2px dashed #2D2D2D;border-radius:12px;padding:16px;text-align:center}
+maze-quiz .mq-cover-mark{font-size:4rem;font-weight:800;line-height:1;color:#2D2D2D}
 maze-quiz .mq-cover-text{font-size:1rem;color:#86877F}
 maze-quiz .mq-board.is-concealed .mq-cover{display:flex}
 maze-quiz .mq-board.is-concealed .mq-svg{visibility:hidden}
@@ -34,7 +34,7 @@ maze-quiz .mq-icon i::before{display:block;vertical-align:top}
 maze-quiz .mq-mark-icon.is-hit .mq-icon i{animation:mq-pulse .6s ease-out 2}
 maze-quiz .mq-wrap > .mq-panel{flex:2 1 0;min-width:0}
 ${H} .mq-panel{display:flex;flex-direction:column;justify-content:center}
-${L} .mq-panel{gap:24px;background:#3B2A20;border-radius:12px;padding:32px;font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
+${L} .mq-panel{gap:24px;background:#2D2D2D;border-radius:12px;padding:32px;font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
 ${H} .mq-label{font-size:max(.75rem, calc(.875em / 2.25));line-height:1.5;font-weight:700;letter-spacing:.1em;color:#A3C4BC}
 ${H} .mq-label.is-empty{display:none}
 ${H} .mq-question{font-size:1em;line-height:inherit;font-weight:inherit;color:inherit;word-break:break-word}
@@ -85,7 +85,7 @@ ${H} .mq-btn[disabled],${H} .mq-btn[disabled]:hover{border-color:#86877F;color:#
   const CONFETTI_COLORS = ['#E3D322', '#FF91D7', '#EF6661', '#71CD76', '#5DBAE8', '#778CE1',
     '#B484E8', '#51DBCF', '#FFA987', '#B6FF00', '#C394CD', '#FF2E63'];
   const PALETTE = {
-    'background': '#0C0D0C', 'bg-alternative': '#3B2A20', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
+    'background': '#0C0D0C', 'bg-alternative': '#2D2D2D', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
     'yellow': '#E3D322', 'pink': '#FF91D7', 'red': '#EF6661', 'green': '#71CD76', 'blue': '#5DBAE8',
     'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F', 'key': '#51DBCF', 'calm': '#A3C4BC',
     'quiet': '#8EA4DE', 'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#C394CD', 'salmon': '#FFC88A'

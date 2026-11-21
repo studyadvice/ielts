@@ -29,7 +29,7 @@ dash-cell[data-fit] > *{flex:1 1 auto;min-height:0}
 dash-cell[scroll="none"]{overflow:hidden}
 dash-cell[hidden][reserve]{display:flex!important;visibility:hidden}
 dash-cell[heading]::before{content:attr(heading);display:block;flex:0 0 auto;margin-bottom:12px;font-size:.875rem;line-height:1.5;font-weight:700;letter-spacing:.08em;color:#A3C4BC}
-dash-cell[card]{background:rgb(36,36,36);color:#DBEDD8;border:1px solid #3B2A20;border-radius:12px;padding:16px}
+dash-cell[card]{background:rgb(36,36,36);color:#DBEDD8;border:1px solid #2D2D2D;border-radius:12px;padding:16px}
 `;
   const injectStyle = () => {
     if (document.getElementById(STYLE_ID)) return;

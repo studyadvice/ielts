@@ -20,7 +20,7 @@
   const L = ':where(tetris-quiz,tetris-quiz-panel)';
   const STYLE_TEXT = `
 tetris-quiz,tetris-quiz-panel{display:block;color:#DBEDD8;font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
-tetris-quiz .tq-wrap{display:flex;gap:32px;align-items:stretch;background:#0C0D0C;border:1px solid #3B2A20;border-radius:16px;padding:24px}
+tetris-quiz .tq-wrap{display:flex;gap:32px;align-items:stretch;background:#0C0D0C;border:1px solid #2D2D2D;border-radius:16px;padding:24px}
 tetris-quiz .tq-wrap.is-solo{justify-content:center}
 tetris-quiz .tq-wrap.is-fit{width:fit-content;max-width:100%}
 tetris-quiz .tq-stage{flex:0 0 auto;width:min(100%,380px);min-width:0;max-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
@@ -30,8 +30,8 @@ tetris-quiz .tq-board{position:relative;width:100%;display:flex;justify-content:
 tetris-quiz .tq-svg{display:block;width:100%;height:auto;overflow:visible}
 tetris-quiz .tq-stage:not(.is-sized) .tq-svg{max-height:78vh}
 tetris-quiz .tq-c{transform-box:fill-box;transform-origin:center}
-tetris-quiz .tq-cover{display:none;position:absolute;left:0;top:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#151615;border:2px dashed #3B2A20;border-radius:12px;padding:16px;text-align:center}
-tetris-quiz .tq-cover-mark{font-size:4rem;font-weight:800;line-height:1;color:#3B2A20}
+tetris-quiz .tq-cover{display:none;position:absolute;left:0;top:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#151615;border:2px dashed #2D2D2D;border-radius:12px;padding:16px;text-align:center}
+tetris-quiz .tq-cover-mark{font-size:4rem;font-weight:800;line-height:1;color:#2D2D2D}
 tetris-quiz .tq-cover-text{font-size:1rem;color:#86877F}
 tetris-quiz .tq-board.is-concealed .tq-cover{display:flex}
 tetris-quiz .tq-board.is-concealed .tq-svg{visibility:hidden}
@@ -40,11 +40,11 @@ tetris-quiz .tq-hud-row{display:flex;align-items:baseline;gap:12px}
 tetris-quiz .tq-hud-label{font-size:.875rem;font-weight:700;letter-spacing:.08em;color:#A3C4BC}
 tetris-quiz .tq-hud-score{font-size:1.75rem;font-weight:800;line-height:1.2;color:#E3D322;font-variant-numeric:tabular-nums}
 tetris-quiz .tq-hud-target{margin-left:auto;font-size:.875rem;color:#86877F}
-tetris-quiz .tq-hud-bar{height:8px;border-radius:999px;background:#3B2A20;overflow:hidden}
+tetris-quiz .tq-hud-bar{height:8px;border-radius:999px;background:#2D2D2D;overflow:hidden}
 tetris-quiz .tq-hud-fill{height:100%;width:0;border-radius:999px;background:#51DBCF;transition:width .3s}
 tetris-quiz .tq-wrap > .tq-panel{flex:1 1 0;min-width:0}
 ${H} .tq-panel{display:flex;flex-direction:column;justify-content:center}
-${L} .tq-panel{gap:24px;background:#3B2A20;border-radius:12px;padding:32px;font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
+${L} .tq-panel{gap:24px;background:#2D2D2D;border-radius:12px;padding:32px;font-size:2.25rem;line-height:1.6;font-weight:600;color:#DBEDD8}
 ${H} .tq-label{font-size:max(.75rem, calc(.875em / 2.25));line-height:1.5;font-weight:700;letter-spacing:.1em;color:#A3C4BC}
 ${H} .tq-label.is-empty{display:none}
 ${H} .tq-question{font-size:1em;line-height:inherit;font-weight:inherit;color:inherit;word-break:break-word}
@@ -89,7 +89,7 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
   const CONFETTI_COLORS = ['#E3D322', '#FF91D7', '#EF6661', '#71CD76', '#5DBAE8', '#778CE1',
     '#B484E8', '#51DBCF', '#FFA987', '#B6FF00', '#C394CD', '#FF2E63'];
   const PALETTE = {
-    'background': '#0C0D0C', 'bg-alternative': '#3B2A20', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
+    'background': '#0C0D0C', 'bg-alternative': '#2D2D2D', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
     'yellow': '#E3D322', 'pink': '#FF91D7', 'red': '#EF6661', 'green': '#71CD76', 'blue': '#5DBAE8',
     'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F', 'key': '#51DBCF', 'calm': '#A3C4BC',
     'quiet': '#8EA4DE', 'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#C394CD', 'salmon': '#FFC88A'
@@ -1404,7 +1404,7 @@ ${H} .tq-btn[disabled],${H} .tq-btn[disabled]:hover{border-color:#86877F;color:#
       this.$svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       this.$svg.innerHTML = `
 <rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#151615"/>
-<path class="tq-lines" d="${lines}" stroke="#3B2A20" stroke-width="1" fill="none"/>
+<path class="tq-lines" d="${lines}" stroke="#2D2D2D" stroke-width="1" fill="none"/>
 <path d="M${x0} ${y0}H${x1}" stroke="#86877F" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
 <g class="tq-cells"></g>
 <g class="tq-active"></g>

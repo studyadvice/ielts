@@ -3,7 +3,7 @@
   if (window.customElements && customElements.get('ui-drag-ans')) return;
 
   var PALETTE = {
-    background: '#0C0D0C', base: '#0C0D0C', 'bg-alternative': '#3B2A20',
+    background: '#0C0D0C', base: '#0C0D0C', 'bg-alternative': '#2D2D2D',
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
     red: '#EF6661', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1',
     violet: '#B484E8', gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC',
@@ -24,14 +24,14 @@
       'bank-border': 'none', 'bank-bg': 'transparent', 'filled-color': '#E3D322'
     },
     pink: {
-      'accent': '#FF91D7', 'frame-border': '2 solid #3B2A20', 'frame-bg': '#3B2A20', 'frame-color': '#DBEDD8',
+      'accent': '#FF91D7', 'frame-border': '2 solid #2D2D2D', 'frame-bg': '#2D2D2D', 'frame-color': '#DBEDD8',
       'slot-border': '2 solid #FF91D7', 'card-border': '2 solid #FF91D7', 'card-bg': '#0C0D0C', 'card-color': '#FF91D7',
       'bank-border': 'none', 'bank-bg': 'transparent', 'filled-color': '#FF91D7'
     },
     shell: {
       'accent': '#0C0D0C', 'frame-border': '2 solid #0C0D0C', 'frame-bg': '#C6C7BD', 'frame-color': '#0C0D0C',
       'slot-border': '2 solid #0C0D0C', 'card-border': '2 solid #0C0D0C', 'card-bg': '#DBEDD8', 'card-color': '#0C0D0C',
-      'bank-border': 'none', 'bank-bg': 'transparent', 'filled-color': '#3B2A20'
+      'bank-border': 'none', 'bank-bg': 'transparent', 'filled-color': '#2D2D2D'
     }
   };
 

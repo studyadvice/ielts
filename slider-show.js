@@ -176,7 +176,7 @@ class SliderShow extends HTMLElement {
       'energetic': '#B6FF00',
       'dreamy': '#C394CD',
       'salmon': '#FFC88A',
-      'bg-alternative': '#3B2A20'
+      'bg-alternative': '#2D2D2D'
     };
 
     if (brandColors[colorValue.toLowerCase()]) {

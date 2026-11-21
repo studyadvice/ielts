@@ -25,7 +25,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20'
+    'bg-alternative': '#2D2D2D'
   };
   // 別名：bg / background 都指向底層背景色 base
   const BRAND_ALIAS = { bg: 'base', background: 'base' };

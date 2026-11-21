@@ -19,7 +19,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20'
+    'bg-alternative': '#2D2D2D'
   };
   var HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
   /* 繪圖層鎖定捲動時，同頁跳轉可放行的平滑捲動時間 */

@@ -24,7 +24,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20'
+    'bg-alternative': '#2D2D2D'
   };
 
   /* CSS_ATTRS 之中屬於顏色的屬性，值會先經過品牌色名稱轉換 */

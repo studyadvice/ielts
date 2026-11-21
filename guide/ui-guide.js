@@ -36,7 +36,7 @@
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7', red: '#EF6661',
     green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1', violet: '#B484E8',
     gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC', quiet: '#8EA4DE',
-    playful: '#FFA987', urgent: '#FF2E63', energetic: '#B6FF00', dreamy: '#C394CD', salmon: '#FFC88A', 'bg-alternative': '#3B2A20'
+    playful: '#FFA987', urgent: '#FF2E63', energetic: '#B6FF00', dreamy: '#C394CD', salmon: '#FFC88A', 'bg-alternative': '#2D2D2D'
   };
   const BG = '#0C0D0C';
   const color = v => {

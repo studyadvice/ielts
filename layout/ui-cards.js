@@ -22,7 +22,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20'
+    'bg-alternative': '#2D2D2D'
   };
   /* 新色票都偏亮，實心底一律用深色字 */
   const LIGHT_TEXT = new Set(['bg-alternative']);

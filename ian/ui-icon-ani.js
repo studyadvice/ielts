@@ -21,7 +21,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20'
+    'bg-alternative': '#2D2D2D'
   };
   const SIZE_PRESETS = { sm: '1.25rem', md: '2rem', lg: '3rem', xl: '4.5rem' };
   const EFFECTS = ['fade', 'scale', 'flip', 'none'];

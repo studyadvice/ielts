@@ -6,7 +6,7 @@
   'use strict';
   if (customElements.get('route-map')) return;
 
-  const PALETTE = { base:'#0C0D0C', shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#C394CD', salmon:'#FFC88A', 'bg-alternative':'#3B2A20' };
+  const PALETTE = { base:'#0C0D0C', shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#C394CD', salmon:'#FFC88A', 'bg-alternative':'#2D2D2D' };
   const color = v => { if (!v) return ''; const t = String(v).trim(); return PALETTE[t.toLowerCase()] || t; };
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
   const pt = v => String(v || '').split(',').map(x => num(x, 0));
@@ -176,7 +176,7 @@ route-map .rm-err{color:${PALETTE.red};border:1px solid ${PALETTE.red};border-ra
       /* 圖例 */
       if (this.hasAttribute('legend')) {
         const [ax, ay] = pt(a('legend', '0,0')), lx = X(ax), ly = X(ay), rowH = 22, extra = (M.transfers.length ? 1 : 0) + (done != null ? 1 : 0) + (M.here ? 1 : 0);
-        mk('rect', { x: lx, y: ly, width: 214, height: 40 + (M.lines.length + extra) * rowH, rx: 10, fill: '#0C0D0C', stroke: '#3B2A20', 'stroke-width': 1.5 }, svg);
+        mk('rect', { x: lx, y: ly, width: 214, height: 40 + (M.lines.length + extra) * rowH, rx: 10, fill: '#0C0D0C', stroke: '#2D2D2D', 'stroke-width': 1.5 }, svg);
         mk('text', { x: lx + 16, y: ly + 26, class: 'rm-legh' }, svg).textContent = a('legend-title', '圖例');
         let y = ly + 50;
         const row = t => { mk('text', { x: lx + 64, y, class: 'rm-leg' }, svg).textContent = t; y += rowH; };

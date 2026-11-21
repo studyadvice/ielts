@@ -260,7 +260,7 @@ chunk-demo { display: block; }
 
   /* 品牌色名稱轉換：level-colors 等顏色值可填名稱（不分大小寫）、#hex 或任何 CSS 色彩 */
   const BRAND = {
-    base: '#0C0D0C', 'bg-alternative': '#3B2A20',
+    base: '#0C0D0C', 'bg-alternative': '#2D2D2D',
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
     red: '#EF6661', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1',
     violet: '#B484E8', gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC',

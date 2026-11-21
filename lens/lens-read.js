@@ -3,7 +3,7 @@
   if (customElements.get('lens-read')) return;
 
   var PALETTE = {
-    background: '#0C0D0C', base: '#0C0D0C', 'bg-alternative': '#3B2A20',
+    background: '#0C0D0C', base: '#0C0D0C', 'bg-alternative': '#2D2D2D',
     shell: '#C6C7BD', vanilla: '#DBEDD8', yellow: '#E3D322', pink: '#FF91D7',
     red: '#EF6661', green: '#71CD76', blue: '#5DBAE8', indigo: '#778CE1',
     violet: '#B484E8', gray: '#86877F', key: '#51DBCF', calm: '#A3C4BC',
@@ -165,7 +165,7 @@
       var ringColor = color(a('word-color'), '#E3D322');
       s.setProperty('--lr-text', color(a('text-color'), '#C6C7BD'));
       s.setProperty('--lr-page', color(a('page-bg'), '#0C0D0C'));
-      s.setProperty('--lr-bg', color(a('lens-bg'), '#3B2A20'));
+      s.setProperty('--lr-bg', color(a('lens-bg'), '#2D2D2D'));
       s.setProperty('--lr-lens-text', color(a('lens-text'), '#DBEDD8'));
       s.setProperty('--lr-word', ringColor);
       s.setProperty('--lr-below', color(a('below-color') || a('note-color'), '#51DBCF'));

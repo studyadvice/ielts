@@ -5,7 +5,7 @@
   'use strict';
   if (customElements.get('page-tour')) return;
 
-  const PALETTE = { base:'#0C0D0C', shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#C394CD', salmon:'#FFC88A', 'bg-alternative':'#3B2A20' };
+  const PALETTE = { base:'#0C0D0C', shell:'#C6C7BD', vanilla:'#DBEDD8', yellow:'#E3D322', pink:'#FF91D7', red:'#EF6661', green:'#71CD76', blue:'#5DBAE8', indigo:'#778CE1', violet:'#B484E8', gray:'#86877F', key:'#51DBCF', calm:'#A3C4BC', quiet:'#8EA4DE', playful:'#FFA987', urgent:'#FF2E63', energetic:'#B6FF00', dreamy:'#C394CD', salmon:'#FFC88A', 'bg-alternative':'#2D2D2D' };
   const color = v => { if (!v) return ''; const t = String(v).trim(); return PALETTE[t.toLowerCase()] || t; };
   const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
   const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -17,7 +17,7 @@
   const CONFETTI = ['#E3D322', '#FF91D7', '#51DBCF', '#71CD76', '#5DBAE8', '#B484E8', '#FFA987', '#B6FF00', '#EF6661'];
 
   const STYLE = `
-page-tour{display:block;position:relative;overflow:hidden;aspect-ratio:var(--pt-ar,16/9);background:var(--pt-bg);border:1px solid #3B2A20;border-radius:12px;user-select:none;}
+page-tour{display:block;position:relative;overflow:hidden;aspect-ratio:var(--pt-ar,16/9);background:var(--pt-bg);border:1px solid #2D2D2D;border-radius:12px;user-select:none;}
 page-tour:fullscreen{border:0;border-radius:0;width:100vw;height:100vh;aspect-ratio:auto;}
 page-tour > tour-step,page-tour > tour-step *{display:none;}
 page-tour tour-world{display:block;position:absolute;left:0;top:0;transform-origin:0 0;background-color:var(--pt-bg);}

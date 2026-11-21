@@ -3,7 +3,7 @@
   if (customElements.get('ui-post')) return;
 
   const PALETTE = {
-    'background': '#0C0D0C', 'bg-alternative': '#3B2A20', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
+    'background': '#0C0D0C', 'bg-alternative': '#2D2D2D', 'shell': '#C6C7BD', 'vanilla': '#DBEDD8',
     'yellow': '#E3D322', 'pink': '#FF91D7', 'red': '#EF6661', 'green': '#71CD76', 'blue': '#5DBAE8',
     'indigo': '#778CE1', 'violet': '#B484E8', 'gray': '#86877F', 'key': '#51DBCF', 'calm': '#A3C4BC',
     'quiet': '#8EA4DE', 'playful': '#FFA987', 'urgent': '#FF2E63', 'energetic': '#B6FF00', 'dreamy': '#C394CD', 'salmon': '#FFC88A'
@@ -91,7 +91,7 @@ ui-post .upo-list{padding:14px 16px 6px 16px;display:flex;flex-direction:column;
 ui-post .upo-item{display:flex;gap:10px;align-items:flex-start;animation:upo-in .35s ease-out;}
 ui-post .upo-item .upo-av{width:36px;height:36px;font-size:.9rem;}
 ui-post .upo-main{flex:1;min-width:0;}
-ui-post .upo-bubble{display:inline-block;max-width:100%;background:var(--upo-bubble,#3B2A20);border:2px solid var(--upo-bubble,#3B2A20);border-radius:14px;padding:10px 14px;}
+ui-post .upo-bubble{display:inline-block;max-width:100%;background:var(--upo-bubble,#2D2D2D);border:2px solid var(--upo-bubble,#2D2D2D);border-radius:14px;padding:10px 14px;}
 ui-post .upo-text{line-height:1.55;word-break:break-word;margin:4px 0 0 0;}
 ui-post .upo-text.is-dropcap{display:flow-root;}
 ui-post .upo-text.is-dropcap::first-letter{float:left;font-size:3.1em;line-height:.8;font-weight:800;margin:3px 8px 0 0;color:var(--upo-dropcap,inherit);}
@@ -145,7 +145,7 @@ ui-post .upo-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;pad
 ui-post .upo-btn{font-family:inherit;font-size:.8125rem;line-height:1.4;background:#0C0D0C;color:#C6C7BD;border:1px solid #86877F;border-radius:6px;padding:4px 10px;cursor:pointer;}
 ui-post .upo-btn:hover{border-color:var(--upo-btn,#FF91D7);color:var(--upo-btn,#FF91D7);}
 ui-post .upo-btn.is-on,ui-post .upo-btn.is-on:hover{background:var(--upo-btn,#FF91D7);border-color:var(--upo-btn,#FF91D7);color:#0C0D0C;}
-ui-post .upo-btn:disabled,ui-post .upo-btn:disabled:hover{background:#0C0D0C;border-color:#3B2A20;color:#86877F;cursor:not-allowed;}
+ui-post .upo-btn:disabled,ui-post .upo-btn:disabled:hover{background:#0C0D0C;border-color:#2D2D2D;color:#86877F;cursor:not-allowed;}
 ui-post .upo-sep{width:1px;height:20px;background:var(--upo-div,var(--upo-bc,#86877F));margin:0 4px;}
 ui-post .upo-state{flex:1;text-align:right;font-size:.8125rem;color:#86877F;}
 .ui-post-heart{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;width:22px;height:22px;margin:-11px 0 0 -11px;}
@@ -158,7 +158,7 @@ ui-post .upo-av.is-profile:hover{box-shadow:0 0 0 3px #51DBCF;}
 .ui-post-pop-close:hover{border-color:#FF91D7;color:#FF91D7;}
 .ui-post-pop-body{padding:20px 20px 16px 20px;}
 ui-post .upo-item.is-electric .upo-main{flex:1 1 auto;min-width:0;}
-ui-post .upo-bubble.is-electric{--upo-zap:#E3D322;--upo-zap-hot:#FFC88A;--upo-zap-sec:2.4s;position:relative;display:block;width:auto;max-width:none;background:#242424;border:2px solid var(--upo-zap);border-radius:14px;padding:12px 18px;box-shadow:0 0 6px var(--upo-zap),inset 0 0 10px #3B2A20;animation:upo-zap-glow 1.6s ease-in-out infinite,upo-ignite .7s ease-out;}
+ui-post .upo-bubble.is-electric{--upo-zap:#E3D322;--upo-zap-hot:#FFC88A;--upo-zap-sec:2.4s;position:relative;display:block;width:auto;max-width:none;background:#242424;border:2px solid var(--upo-zap);border-radius:14px;padding:12px 18px;box-shadow:0 0 6px var(--upo-zap),inset 0 0 10px #2D2D2D;animation:upo-zap-glow 1.6s ease-in-out infinite,upo-ignite .7s ease-out;}
 ui-post .upo-bubble.is-electric::before,ui-post .upo-bubble.is-electric::after{content:"";position:absolute;border-radius:16px;pointer-events:none;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;}
 ui-post .upo-bubble.is-electric::before{left:-4px;top:-4px;right:-4px;bottom:-4px;padding:4px;background:conic-gradient(from var(--upo-ang),transparent 0deg 200deg,var(--upo-zap) 290deg,var(--upo-zap-hot) 335deg,#DBEDD8 358deg,transparent 360deg);animation:upo-zap-run var(--upo-zap-sec) linear infinite;filter:drop-shadow(0 0 4px var(--upo-zap-hot));}
 ui-post .upo-bubble.is-electric::after{left:-5px;top:-5px;right:-5px;bottom:-5px;padding:2px;background:var(--upo-zap);filter:url(#upo-zap-filter) drop-shadow(0 0 3px var(--upo-zap));animation:upo-zap-flicker .22s steps(1) infinite;}
@@ -168,7 +168,7 @@ ui-post .upo-bubble.is-electric .upo-text{margin:0;color:#DBEDD8;}
 @property --upo-ang{syntax:"<angle>";inherits:false;initial-value:0deg;}
 @keyframes upo-zap-run{from{--upo-ang:0deg}to{--upo-ang:360deg}}
 @keyframes upo-zap-flicker{0%{opacity:.95}25%{opacity:.4}50%{opacity:.8}75%{opacity:.25}}
-@keyframes upo-zap-glow{0%,100%{box-shadow:0 0 5px var(--upo-zap),inset 0 0 8px #3B2A20}45%{box-shadow:0 0 12px var(--upo-zap),inset 0 0 14px #3B2A20}50%{box-shadow:0 0 3px var(--upo-zap),inset 0 0 6px #3B2A20}55%{box-shadow:0 0 14px var(--upo-zap-hot),inset 0 0 14px #3B2A20}}
+@keyframes upo-zap-glow{0%,100%{box-shadow:0 0 5px var(--upo-zap),inset 0 0 8px #2D2D2D}45%{box-shadow:0 0 12px var(--upo-zap),inset 0 0 14px #2D2D2D}50%{box-shadow:0 0 3px var(--upo-zap),inset 0 0 6px #2D2D2D}55%{box-shadow:0 0 14px var(--upo-zap-hot),inset 0 0 14px #2D2D2D}}
 @keyframes upo-ignite{0%{filter:brightness(2.4)}30%{filter:brightness(1)}40%{filter:brightness(2)}100%{filter:none}}
 @keyframes upo-in{from{transform:translateY(14px) scale(.97)}to{transform:none}}
 @keyframes upo-pop{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
@@ -386,7 +386,7 @@ ui-post .upo-fxstamp-in{display:flex;align-items:center;justify-content:center;b
       const layer = ctx.layer;
       const pos = (el.getAttribute('position') || 'auto').toLowerCase();
       const ox = num(el.getAttribute('offset-x'), 0), oy = num(el.getAttribute('offset-y'), 0);
-      const fg = col(el.getAttribute('color'), '#DBEDD8'), bg = col(el.getAttribute('bg-color'), '#3B2A20');
+      const fg = col(el.getAttribute('color'), '#DBEDD8'), bg = col(el.getAttribute('bg-color'), '#2D2D2D');
       const bc = col(el.getAttribute('border-color'), ctx.accent || '#51DBCF');
       const nt = document.createElement('div');
       nt.className = 'upo-fxnote';

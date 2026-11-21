@@ -21,7 +21,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20',
+    'bg-alternative': '#2D2D2D',
   };
   const clr = k => P[k] || k || '#C6C7BD';
   const lum = h => {
