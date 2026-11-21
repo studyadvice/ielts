@@ -25,10 +25,15 @@
 <body>
 <div class="page">
   <h1>ui-cards</h1>
-  <p class="lead-note">本檔合併 2 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <p class="lead-note">本檔合併 3 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>11-21-26</b>：<a href="#v-11-21-26">ui-cards 文字支援 mark-fx 標記效果</a><br>
   <b>11-16-26</b>：<a href="#v-11-16-26">ui-cards：卡片蓋章 stamp（11-16-26）</a><br>
   <b>11-11-26</b>：<a href="#v-11-11-26">ui-cards 範例：翻面牌組 flip-deck</a></p>
 
+  <section class="ver" id="v-11-21-26">
+    <h2 class="version">11-21-26：ui-cards 文字支援 mark-fx 標記效果</h2>
+    <iframe class="frame" id="f-11-21-26" data-src="src-11-21-26" title="ui-cards 11-21-26" scrolling="no"></iframe>
+  </section>
   <section class="ver" id="v-11-16-26">
     <h2 class="version">11-16-26：ui-cards：卡片蓋章 stamp（11-16-26）</h2>
     <iframe class="frame" id="f-11-16-26" data-src="src-11-16-26" title="ui-cards 11-16-26" scrolling="no"></iframe>
@@ -38,6 +43,50 @@
     <iframe class="frame" id="f-11-11-26" data-src="src-11-11-26" title="ui-cards 11-11-26" scrolling="no"></iframe>
   </section>
 </div>
+
+<script type="text/plain" id="src-11-21-26">
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 文字支援 mark-fx 標記效果</title>
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;font-family:system-ui,"Noto Sans TC",sans-serif}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:24px 0 12px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  code{color:#FF91D7}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>ui-cards 文字支援 mark-fx 標記效果</h1>
+<p>卡片背面（<code>back</code>）、內容區與細節裡的文字可以包上 <code>&lt;mark-fx&gt;</code>。內容是翻面或點擊後才出現，標記會在那時才畫出來。</p>
+<div class="cmp">
+  <div><h2>實際元件（點卡片翻面）</h2>
+<ui-cards cols="2" flip-toggle flip-color="green" flip-hint="點擊翻回">
+  <card-item label="mitigate" note="點卡片看意思"
+    back="<b><mark-fx kind='highlight' color='yellow'>減輕、緩和</mark-fx></b><br>mitigate <mark-fx kind='circle' color='pink'>the impact</mark-fx> of"></card-item>
+  <card-item label="resilient" note="點卡片看意思"
+    back="<b><mark-fx kind='underline' color='red'>有韌性的</mark-fx></b><br>bounce back <mark-fx kind='wavy' color='green'>quickly</mark-fx>"></card-item>
+</ui-cards>
+  </div>
+  <div><h2>程式碼對照</h2><pre>&lt;ui-cards cols=&quot;2&quot; flip-toggle flip-color=&quot;green&quot; flip-hint=&quot;點擊翻回&quot;&gt;
+  &lt;card-item label=&quot;mitigate&quot; note=&quot;點卡片看意思&quot;
+    back=&quot;&lt;b&gt;&lt;mark-fx kind='highlight' color='yellow'&gt;減輕、緩和&lt;/mark-fx&gt;&lt;/b&gt;&lt;br&gt;mitigate &lt;mark-fx kind='circle' color='pink'&gt;the impact&lt;/mark-fx&gt; of&quot;&gt;&lt;/card-item&gt;
+  &lt;card-item label=&quot;resilient&quot; note=&quot;點卡片看意思&quot;
+    back=&quot;&lt;b&gt;&lt;mark-fx kind='underline' color='red'&gt;有韌性的&lt;/mark-fx&gt;&lt;/b&gt;&lt;br&gt;bounce back &lt;mark-fx kind='wavy' color='green'&gt;quickly&lt;/mark-fx&gt;&quot;&gt;&lt;/card-item&gt;
+&lt;/ui-cards&gt;</pre></div>
+</div>
+</div>
+<script src="ui-cards.js"><\/script>
+</body>
+</html>
+
+</script>
 
 <script type="text/plain" id="src-11-16-26">
 <!DOCTYPE html>

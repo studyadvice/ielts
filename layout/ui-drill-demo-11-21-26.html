@@ -29,6 +29,31 @@
   <p class="sub">source 或 detail 指向的 &lt;template&gt; 裡，一行寫上 | 就會自動分欄；連續幾行共用欄位、上下對齊。分欄內可以放 detail 按鈕。沒有 | 的 template 完全不受影響。</p>
 
   <section>
+    <h2>範例 0：標記效果 mark-fx</h2>
+    <p class="desc">中欄、右欄裡的文字可以包上 &lt;mark-fx&gt;，用 kind 選擇底線、螢光、圈選、方框、波浪等手繪效果，color 可填色票名稱。點開方塊與例句後，標記才會畫出來。</p>
+    <ui-drill id="exMk" title="標記效果" columns="2,5,5" tile-cols="1" accent="key" mid-title="{label}" right-title="{label}">
+      <drill-tile icon="house" label="居住" source="v-mk"></drill-tile>
+    </ui-drill>
+    <template id="v-mk" cols="auto 1fr auto">
+      <b><mark-fx kind="wavy" color="green">cosy</mark-fx></b> | 溫馨<mark-fx kind="box" color="blue">舒適</mark-fx> | <button detail="e-mk" label="cosy">例句</button>
+    </template>
+    <template id="e-mk" col-divider="dashed">
+      <c-red>bad <mark-fx kind="strike" color="urgent">very</mark-fx></c-red> | <c-green>good <mark-fx kind="underline" color="yellow">cosy</mark-fx></c-green>
+    </template>
+    <pre>&lt;ui-drill title=&quot;標記效果&quot; columns=&quot;2,5,5&quot; tile-cols=&quot;1&quot; accent=&quot;key&quot; mid-title=&quot;{label}&quot; right-title=&quot;{label}&quot;&gt;
+  &lt;drill-tile icon=&quot;house&quot; label=&quot;居住&quot; source=&quot;v-mk&quot;&gt;&lt;/drill-tile&gt;
+&lt;/ui-drill&gt;
+
+&lt;template id=&quot;v-mk&quot; cols=&quot;auto 1fr auto&quot;&gt;
+  &lt;b&gt;&lt;mark-fx kind=&quot;wavy&quot; color=&quot;green&quot;&gt;cosy&lt;/mark-fx&gt;&lt;/b&gt; | 溫馨&lt;mark-fx kind=&quot;box&quot; color=&quot;blue&quot;&gt;舒適&lt;/mark-fx&gt; | &lt;button detail=&quot;e-mk&quot; label=&quot;cosy&quot;&gt;例句&lt;/button&gt;
+&lt;/template&gt;
+
+&lt;template id=&quot;e-mk&quot; col-divider=&quot;dashed&quot;&gt;
+  &lt;c-red&gt;bad &lt;mark-fx kind=&quot;strike&quot; color=&quot;urgent&quot;&gt;very&lt;/mark-fx&gt;&lt;/c-red&gt; | &lt;c-green&gt;good &lt;mark-fx kind=&quot;underline&quot; color=&quot;yellow&quot;&gt;cosy&lt;/mark-fx&gt;&lt;/c-green&gt;
+&lt;/template&gt;</pre>
+  </section>
+
+  <section>
     <h2>範例 1：單字表（中欄）與對照（右欄）</h2>
     <p class="desc">中欄每行三欄：單字、中文、例句按鈕，欄寬用 cols="auto 1fr auto"。右欄是錯誤與正確的對照，加上欄間虛線。</p>
     <ui-drill id="ex1" title="Speaking 主題字彙" columns="2,5,5" tile-cols="2" tile-label="below" accent="key"

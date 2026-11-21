@@ -592,7 +592,17 @@
 | `split-divider-color` | `<ui-drill>` | `accent` | 欄間直線顏色。 |
 | `split-col-gap`、`split-row-gap` | `<ui-drill>` | `16`、`6` | 欄距、列距（px）。 |
 
-範例見 `ui-drill-demo-11-13-26.html`。
+範例見 `ui-drill-demo-11-21-26.html`。
+
+### 標記效果（mark-fx）
+
+`<ui-drill>` 的中欄清單與右欄細節 裡的文字都可以包上 `<mark-fx>`，加上與 `ui-play.js` 相同的手繪標記效果。內容是之後才出現的（點方塊、點細節按鈕後），標記會在內容出現時才畫出來；文字進入畫面才播放動畫，版面改變時自動重畫。不需要呼叫任何函式。
+
+```html
+<b><mark-fx kind="wavy" color="green">cosy</mark-fx></b> | 溫馨<mark-fx kind="box" color="blue">舒適</mark-fx>
+```
+
+屬性：`kind`（`highlight`、`underline`、`strike`、`circle`、`double`、`wavy`、`cross`、`arrow`、`box`、`bracket`，預設 `highlight`）、`color`（色票名稱、`#` 或 RGB，預設 `yellow`）、`text-color`（僅 `highlight`）、`thickness`、`rough`、`padding`、`speed`、`line-style`、`direction`、`arrow-length`、`animate`、`seed`。各屬性的預設值與說明見 [`bp-stepper` 的標記效果章節](../README.md#標記效果mark-fx)。
 
 ### CSS 覆寫
 
@@ -904,6 +914,17 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 <section id="practice-1" hidden>練習內容</section>
 <template id="intro"><p>每題限時兩分鐘。</p></template>
 ```
+
+### 標記效果（mark-fx）
+
+`<ui-cards>` 的卡片背面（`back`）、內容區與細節 裡的文字都可以包上 `<mark-fx>`，加上與 `ui-play.js` 相同的手繪標記效果。內容是之後才出現的（翻面或點擊後），標記會在內容出現時才畫出來；文字進入畫面才播放動畫，版面改變時自動重畫。不需要呼叫任何函式。
+
+```html
+<card-item label="mitigate"
+  back="<mark-fx kind='highlight'>減輕、緩和</mark-fx>"></card-item>
+```
+
+屬性：`kind`（`highlight`、`underline`、`strike`、`circle`、`double`、`wavy`、`cross`、`arrow`、`box`、`bracket`，預設 `highlight`）、`color`（色票名稱、`#` 或 RGB，預設 `yellow`）、`text-color`（僅 `highlight`）、`thickness`、`rough`、`padding`、`speed`、`line-style`、`direction`、`arrow-length`、`animate`、`seed`。各屬性的預設值與說明見 [`bp-stepper` 的標記效果章節](../README.md#標記效果mark-fx)。
 
 ### 事件
 
