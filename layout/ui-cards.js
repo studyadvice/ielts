@@ -181,7 +181,8 @@ ui-cards .uic-foot{border-top:var(--uic-div);padding:10px var(--uic-pad);font-si
 ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;display:inline-flex;align-items:center;gap:4px;background:var(--uic-badge-bg, ${PALETTE.red});color:var(--uic-badge-fg, ${PALETTE.vanilla});font-size:var(--uic-fs-badge, 0.75rem);font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
 /* 角標浮在卡片右上角時，內容區頂端多留一列的高度，避免遮住第一行文字 */
 ui-cards card-item.uic-has-badge > .uic-main:first-child{padding-top:max(var(--uic-pad), calc(var(--uic-fs-badge, 0.75rem) * 2 + 16px));}
-ui-cards card-item > .uic-back.uic-has-badge{padding-top:max(var(--uic-pad), calc(var(--uic-fs-badge, 0.75rem) * 2 + 16px));}
+ui-cards card-item > .uic-back.uic-has-badge,
+ui-cards card-item.uic-has-badge > .uic-back{padding-top:max(var(--uic-pad), calc(var(--uic-fs-badge, 0.75rem) * 2 + 16px));}
 /* 背面有自己的角標時，翻面後隱藏正面角標 */
 ui-cards card-item[data-flipped][data-back-badge] > .uic-badge{display:none;}
 ui-cards .uic-badge .bi{line-height:1;}
