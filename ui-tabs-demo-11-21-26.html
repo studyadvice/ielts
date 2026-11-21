@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-tabs 範例</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: #0C0D0C; color: #C6C7BD; font-family: system-ui, "Noto Sans TC", sans-serif; font-size: 1rem; line-height: 1.7; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 120px 40px; }
+  h1 { color: #5DBAE8; font-size: 1.8rem; margin: 0 0 8px 0; }
+  .lead { color: #86877F; margin: 0 0 32px 0; }
+  .sec { margin: 0 0 40px 0; }
+  .sec > h2 { color: #E3D322; font-size: 1.3rem; margin: 0 0 6px 0; padding: 0 0 8px 0; border-bottom: 1px solid #2D2D2D; }
+  .sec > .desc { color: #86877F; font-size: 0.95rem; margin: 0 0 16px 0; }
+  .cmp { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .stage { background: #0C0D0C; border: 1px solid #2D2D2D; border-radius: 8px; padding: 24px 20px; display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+  .cap { color: #8EA4DE; font-size: 0.85rem; margin: 0 0 8px 0; }
+  pre { background: #2D2D2D; color: #DBEDD8; border-radius: 8px; padding: 16px; margin: 0; font-size: 0.8rem; white-space: pre-wrap; overflow-x: auto; }
+  code { color: #FF91D7; }
+  .note { color: #86877F; font-size: 0.85rem; margin: 12px 0 0 0; }
+  table.attrs { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  table.attrs th, table.attrs td { border: 1px solid #2D2D2D; padding: 8px 12px; text-align: left; vertical-align: top; }
+  table.attrs th { background: #2D2D2D; color: #DBEDD8; }
+  .box { background: #2D2D2D; border-radius: 8px; padding: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ui-tabs</h1>
+  <p class="lead">未選中的頁籤是空心輪廓，選中的變成實心，站在底線上。三種外形、可以疊在一起的負間距、每個頁籤各自的顏色，內容切換時依左右順序滑入。</p>
+
+  <section class="sec">
+    <h2>1. 選中頁籤的圓弧與頁籤太多時的箭頭</h2>
+    <p class="desc"><code>browser</code> 外形選中的頁籤，底部左右兩側會往外張開一段圓弧，接到底線上。大小用 <code>flare</code> 調整（預設 8px），寫 <code>none</code> 關閉。頁籤多到放不下時，不會出現捲軸，而是在頁籤列兩端出現左右箭頭；點選頁籤會自動把它捲到中間，也可以用滑鼠滾輪橫向捲動。所有外形都有這個行為。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div>
+          <p class="cap">flare 預設 8px、14px、none</p>
+          <ui-tabs shape="browser" style="margin:0 0 20px 0"><tab-item label="預設" accent="green">8px</tab-item><tab-item label="B" accent="blue">B</tab-item></ui-tabs>
+          <ui-tabs shape="browser" flare="14px" style="margin:0 0 20px 0"><tab-item label="14px" accent="pink">14px</tab-item><tab-item label="B" accent="blue">B</tab-item></ui-tabs>
+          <ui-tabs shape="browser" flare="none"><tab-item label="none" accent="yellow">none</tab-item><tab-item label="B" accent="blue">B</tab-item></ui-tabs>
+        </div>
+        <div>
+          <p class="cap">頁籤太多（browser，寬度只有 480px）</p>
+          <ui-tabs shape="browser" plus style="max-width:480px">
+            <tab-item label="第一章節" accent="green">第一章節的內容。</tab-item>
+            <tab-item label="第二章節" accent="blue">第二章節的內容。</tab-item>
+            <tab-item label="第三章節" accent="pink">第三章節的內容。</tab-item>
+            <tab-item label="第四章節" accent="yellow">第四章節的內容。</tab-item>
+            <tab-item label="第五章節" accent="violet">第五章節的內容。</tab-item>
+            <tab-item label="第六章節" accent="playful">第六章節的內容。</tab-item>
+            <tab-item label="第七章節" accent="key">第七章節的內容。</tab-item>
+            </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">頁籤太多（trapezoid，寬度只有 360px）</p>
+          <ui-tabs shape="trapezoid" theme-color="blue" style="max-width:360px">
+            <tab-item label="第一章節">1</tab-item><tab-item label="第二章節">2</tab-item><tab-item label="第三章節">3</tab-item><tab-item label="第四章節">4</tab-item><tab-item label="第五章節">5</tab-item>
+          </ui-tabs>
+        </div>
+      </div>
+      <pre>&lt;!-- 圓弧大小 --&gt;
+&lt;ui-tabs shape="browser" flare="14px"&gt;...&lt;/ui-tabs&gt;
+
+&lt;!-- 關閉圓弧 --&gt;
+&lt;ui-tabs shape="browser" flare="none"&gt;...&lt;/ui-tabs&gt;
+
+&lt;!-- 頁籤太多：不必設定。
+     放不下時自動出現左右箭頭，
+     只要限制 ui-tabs 的寬度即可 --&gt;
+&lt;ui-tabs shape="browser" style="max-width:480px"&gt;
+  ...很多個 tab-item...
+&lt;/ui-tabs&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>2. 瀏覽器分頁：shape="browser"</h2>
+    <p class="desc">圓角、斜邊、有色邊框，每個頁籤用自己顏色的深色調填滿。選中的頁籤字比較大，整條底線會變成它的顏色。預設間距是 -6px（右邊疊在左邊上面），斜邊角度用 <code>skew</code> 調整。<code>plus</code> 屬性加上最右邊裝飾用的「+」，它不能點擊，也不屬於任何頁籤；<code>bar-color</code> 改頁籤列的背景色。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div>
+          <p class="cap">plus（顯示裝飾用的 +）</p>
+          <ui-tabs shape="browser" plus>
+            <tab-item label="快速筆記" accent="green">快速筆記的內容。</tab-item>
+            <tab-item label="新的節 1" accent="blue">新的節 1 的內容。</tab-item>
+            <tab-item label="新的節 2" accent="playful">新的節 2 的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">不加 plus</p>
+          <ui-tabs shape="browser">
+            <tab-item label="口說" accent="pink">口說的內容。</tab-item>
+            <tab-item label="寫作" accent="violet">寫作的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">skew="22"、gap="4px"、bar-color="transparent"</p>
+          <ui-tabs shape="browser" plus skew="22" gap="4px" bar-color="transparent" theme-color="key">
+            <tab-item label="閱讀">閱讀的內容。</tab-item>
+            <tab-item label="聽力" accent="yellow">聽力的內容。</tab-item>
+          </ui-tabs>
+        </div>
+      </div>
+      <pre>&lt;ui-tabs shape="browser" plus&gt;
+  &lt;tab-item label="快速筆記" accent="green"&gt;...&lt;/tab-item&gt;
+  &lt;tab-item label="新的節 1" accent="blue"&gt;...&lt;/tab-item&gt;
+  &lt;tab-item label="新的節 2" accent="playful"&gt;...&lt;/tab-item&gt;
+&lt;/ui-tabs&gt;
+
+&lt;!-- 不要 + 就不寫 plus --&gt;
+&lt;ui-tabs shape="browser"&gt;...&lt;/ui-tabs&gt;
+
+&lt;!-- 斜邊更斜、頁籤列沒有背景色 --&gt;
+&lt;ui-tabs shape="browser" plus skew="22" gap="4px"
+         bar-color="transparent"&gt;...&lt;/ui-tabs&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>3. 三種外形：shape</h2>
+    <p class="desc"><code>trapezoid</code> 梯形（預設）、<code>chamfer-right</code> 右上切角、<code>chamfer-left</code> 左上切角（另有第 1 節的 <code>browser</code>）。斜邊大小用 <code>cut</code> 調整，預設 8px，太大會顯得笨重，建議在 6px 到 12px 之間。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div>
+          <p class="cap">trapezoid</p>
+          <ui-tabs shape="trapezoid">
+            <tab-item label="口說" icon="mic">口說的內容。</tab-item>
+            <tab-item label="寫作" icon="pencil">寫作的內容。</tab-item>
+            <tab-item label="閱讀" icon="book">閱讀的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">chamfer-right</p>
+          <ui-tabs shape="chamfer-right" theme-color="violet">
+            <tab-item label="口說" icon="mic">口說的內容。</tab-item>
+            <tab-item label="寫作" icon="pencil">寫作的內容。</tab-item>
+            <tab-item label="閱讀" icon="book">閱讀的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">chamfer-left</p>
+          <ui-tabs shape="chamfer-left" theme-color="playful">
+            <tab-item label="口說" icon="mic">口說的內容。</tab-item>
+            <tab-item label="寫作" icon="pencil">寫作的內容。</tab-item>
+            <tab-item label="閱讀" icon="book">閱讀的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">cut 大小：6px、12px、18px</p>
+          <ui-tabs shape="chamfer-right" cut="6px" theme-color="green"><tab-item label="6px">cut 6px</tab-item></ui-tabs>
+          <ui-tabs shape="chamfer-right" cut="12px" theme-color="green" style="margin:12px 0 0 0"><tab-item label="12px">cut 12px</tab-item></ui-tabs>
+          <ui-tabs shape="chamfer-right" cut="18px" theme-color="green" style="margin:12px 0 0 0"><tab-item label="18px">cut 18px</tab-item></ui-tabs>
+        </div>
+      </div>
+      <pre>&lt;ui-tabs shape="trapezoid"&gt;
+  &lt;tab-item label="口說" icon="mic"&gt;口說的內容。&lt;/tab-item&gt;
+  &lt;tab-item label="寫作" icon="pencil"&gt;寫作的內容。&lt;/tab-item&gt;
+&lt;/ui-tabs&gt;
+
+&lt;ui-tabs shape="chamfer-right" theme-color="violet"&gt;
+  ...
+&lt;/ui-tabs&gt;
+
+&lt;ui-tabs shape="chamfer-left" theme-color="playful"&gt;
+  ...
+&lt;/ui-tabs&gt;
+
+&lt;!-- 斜邊大小 --&gt;
+&lt;ui-tabs shape="chamfer-right" cut="12px"&gt;...&lt;/ui-tabs&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>4. 負間距：頁籤疊在一起</h2>
+    <p class="desc"><code>gap</code> 可以是負值（CSS 本身的 <code>gap</code> 不行，這裡是元件自己處理）。預設右邊的頁籤疊在左邊上面；<code>stack="left"</code> 則相反。選中的頁籤永遠在最上層。被蓋住的那一側會自動多留空間，文字不會被壓到。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div>
+          <p class="cap">gap="-10px"（右蓋左）</p>
+          <ui-tabs shape="trapezoid" gap="-10px" theme-color="blue">
+            <tab-item label="第一章">第一章的內容。</tab-item>
+            <tab-item label="第二章" active>第二章的內容。</tab-item>
+            <tab-item label="第三章">第三章的內容。</tab-item>
+            <tab-item label="第四章">第四章的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">gap="-10px" stack="left"（左蓋右）</p>
+          <ui-tabs shape="trapezoid" gap="-10px" stack="left" theme-color="pink">
+            <tab-item label="第一章">第一章的內容。</tab-item>
+            <tab-item label="第二章" active>第二章的內容。</tab-item>
+            <tab-item label="第三章">第三章的內容。</tab-item>
+            <tab-item label="第四章">第四章的內容。</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">chamfer-right + gap="-10px"：只有最後一個看得到切角</p>
+          <ui-tabs shape="chamfer-right" gap="-10px" theme-color="key">
+            <tab-item label="口說">口說</tab-item>
+            <tab-item label="寫作">寫作</tab-item>
+            <tab-item label="聽力">聽力</tab-item>
+            <tab-item label="閱讀">閱讀</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">正間距：gap="16px"</p>
+          <ui-tabs shape="trapezoid" gap="16px" theme-color="yellow">
+            <tab-item label="口說">口說</tab-item>
+            <tab-item label="寫作">寫作</tab-item>
+            <tab-item label="閱讀">閱讀</tab-item>
+          </ui-tabs>
+        </div>
+      </div>
+      <pre>&lt;ui-tabs shape="trapezoid" gap="-10px" theme-color="blue"&gt;
+  &lt;tab-item label="第一章"&gt;...&lt;/tab-item&gt;
+  &lt;tab-item label="第二章" active&gt;...&lt;/tab-item&gt;
+&lt;/ui-tabs&gt;
+
+&lt;!-- 左邊蓋右邊 --&gt;
+&lt;ui-tabs gap="-10px" stack="left"&gt;...&lt;/ui-tabs&gt;
+
+&lt;!-- 正間距 --&gt;
+&lt;ui-tabs gap="16px"&gt;...&lt;/ui-tabs&gt;</pre>
+    </div>
+    <p class="note">梯形的兩條斜邊相鄰時是「V」字，不會互相貼合；負間距會讓右邊頁籤蓋住左邊頁籤的斜邊，看起來像疊在一起的卡片。</p>
+  </section>
+
+  <section class="sec">
+    <h2>5. 顏色、圖示、停用</h2>
+    <p class="desc"><code>theme-color</code> 是整組的顏色，頁籤自己的 <code>accent</code> 優先。選中時頁籤填滿該顏色，文字顏色依亮度自動選深或淺。滑過未選中的頁籤，輪廓與文字會變成該頁籤的顏色。<code>line-color</code> 是輪廓與底線的顏色。</p>
+    <div class="cmp">
+      <div class="stage">
+        <ui-tabs shape="chamfer-right" gap="4px" theme-color="key">
+          <tab-item label="口說" icon="mic" accent="pink">每個頁籤各有一個顏色。</tab-item>
+          <tab-item label="寫作" icon="pencil" accent="violet">寫作用紫色。</tab-item>
+          <tab-item label="聽力" icon="headphones" accent="blue" disabled>停用的頁籤不能點。</tab-item>
+          <tab-item label="閱讀" icon="book" accent="green">閱讀用綠色。</tab-item>
+        </ui-tabs>
+        <ui-tabs shape="trapezoid" theme-color="salmon" line-color="shell" tab-size="1.15rem" align="center">
+          <tab-item label="置中">align="center"，字級 1.15rem，線色 shell。</tab-item>
+          <tab-item label="第二個">第二個頁籤。</tab-item>
+        </ui-tabs>
+      </div>
+      <pre>&lt;ui-tabs shape="chamfer-right" theme-color="key"&gt;
+  &lt;tab-item label="口說" icon="mic" accent="pink"&gt;...&lt;/tab-item&gt;
+  &lt;tab-item label="寫作" icon="pencil" accent="violet"&gt;...&lt;/tab-item&gt;
+  &lt;tab-item label="聽力" icon="headphones" disabled&gt;...&lt;/tab-item&gt;
+&lt;/ui-tabs&gt;
+
+&lt;ui-tabs theme-color="salmon" line-color="shell"
+         tab-size="1.15rem" align="center"&gt;
+  ...
+&lt;/ui-tabs&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>6. 切換動畫：animation</h2>
+    <p class="desc"><code>slide</code>（預設）依頁籤順序，往右切換時內容從右滑入，往左則從左滑入；<code>fade</code> 淡入；<code>none</code> 直接切換。</p>
+    <div class="cmp">
+      <div class="stage">
+        <div>
+          <p class="cap">slide</p>
+          <ui-tabs shape="trapezoid" theme-color="blue" animation="slide">
+            <tab-item label="一">第一頁</tab-item><tab-item label="二">第二頁</tab-item><tab-item label="三">第三頁</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">fade</p>
+          <ui-tabs shape="trapezoid" theme-color="violet" animation="fade">
+            <tab-item label="一">第一頁</tab-item><tab-item label="二">第二頁</tab-item><tab-item label="三">第三頁</tab-item>
+          </ui-tabs>
+        </div>
+        <div>
+          <p class="cap">none</p>
+          <ui-tabs shape="trapezoid" theme-color="green" animation="none">
+            <tab-item label="一">第一頁</tab-item><tab-item label="二">第二頁</tab-item><tab-item label="三">第三頁</tab-item>
+          </ui-tabs>
+        </div>
+      </div>
+      <pre>&lt;ui-tabs animation="slide"&gt;...&lt;/ui-tabs&gt;
+&lt;ui-tabs animation="fade"&gt;...&lt;/ui-tabs&gt;
+&lt;ui-tabs animation="none"&gt;...&lt;/ui-tabs&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>7. 內容來源與其他元件</h2>
+    <p class="desc">內容可以直接寫在 <code>&lt;tab-item&gt;</code> 裡，也可以用 <code>source</code> 指向頁面上別處的元素（<code>&lt;template&gt;</code> 會複製內容；其他元素則把裡面的東西「搬」進面板，所以裡面的按鈕、輸入內容、已經初始化的元件都不會遺失）。面板裡放表格、卡片也能正常顯示，切換到時會通知它們重新排版。</p>
+    <div class="cmp">
+      <div class="stage">
+        <ui-tabs shape="trapezoid" gap="-8px" theme-color="key">
+          <tab-item label="直接寫">這段內容直接寫在 tab-item 裡。</tab-item>
+          <tab-item label="source" source="src-demo"></tab-item>
+          <tab-item label="template" source="tpl-demo"></tab-item>
+          <tab-item label="表格">
+            <ui-table theme="blue">
+              <ui-row col-widths="1:2" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+                <ui-col>Part 2 題目</ui-col>
+                <ui-col>Describe a skill you learned as an adult.</ui-col>
+              </ui-row>
+              <ui-row col-widths="1:2" border="1px solid" col-border="1px solid" cell-padding="12px 16px">
+                <ui-col>提示</ui-col>
+                <ui-col>先說是什麼技能，再說為什麼學。</ui-col>
+              </ui-row>
+            </ui-table>
+          </tab-item>
+          <tab-item label="卡片">
+            <ui-cards cols="2" flip-toggle>
+              <card-item label="mitigate" note="點卡片看意思" back="減輕、緩和"></card-item>
+              <card-item label="resilient" note="點卡片看意思" back="有韌性的"></card-item>
+            </ui-cards>
+          </tab-item>
+        </ui-tabs>
+        <div id="src-demo"><div class="box">這是頁面上另一個 div 的內容，被搬進面板。<br><input type="text" placeholder="輸入文字後切換頁籤再回來，內容還在" style="width:100%;margin:8px 0 0 0"></div></div>
+        <template id="tpl-demo"><div class="box">這是 template 的內容，每次建立時複製一份。</div></template>
+      </div>
+      <pre>&lt;ui-tabs shape="trapezoid" gap="-8px"&gt;
+  &lt;tab-item label="直接寫"&gt;內容&lt;/tab-item&gt;
+  &lt;tab-item label="source" source="src-demo"&gt;&lt;/tab-item&gt;
+  &lt;tab-item label="template" source="tpl-demo"&gt;&lt;/tab-item&gt;
+  &lt;tab-item label="表格"&gt;
+    &lt;ui-table&gt;...&lt;/ui-table&gt;
+  &lt;/tab-item&gt;
+&lt;/ui-tabs&gt;
+
+&lt;div id="src-demo"&gt;...&lt;/div&gt;
+&lt;template id="tpl-demo"&gt;...&lt;/template&gt;</pre>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>8. 屬性速覽</h2>
+    <p class="cap" style="margin:0 0 8px 0">寫在 &lt;ui-tabs&gt; 上</p>
+    <table class="attrs">
+      <thead><tr><th style="width:20%">屬性</th><th style="width:22%">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>shape</code></td><td><code>trapezoid</code></td><td><code>trapezoid</code> 梯形、<code>chamfer-right</code> 右上切角、<code>chamfer-left</code> 左上切角、<code>browser</code> 瀏覽器分頁。</td></tr>
+        <tr><td><code>skew</code></td><td><code>14</code></td><td>僅 <code>browser</code>：斜邊的傾斜角度，0 到 30。</td></tr>
+        <tr><td><code>flare</code></td><td><code>8px</code></td><td>僅 <code>browser</code>：選中頁籤底部往外張開的圓弧大小，寫 <code>none</code> 關閉。</td></tr>
+        <tr><td><code>bar-color</code></td><td><code>bg-alternative</code></td><td>僅 <code>browser</code>：頁籤列的背景色，可寫 <code>transparent</code>。</td></tr>
+        <tr><td><code>plus</code></td><td>無</td><td>加上這個屬性，在最右邊顯示裝飾用的「+」，不能點擊；寫 <code>plus="false"</code> 等於不顯示。</td></tr>
+        <tr><td><code>cut</code></td><td><code>8px</code></td><td>斜邊或切角的大小，單位 px、rem 或 em。</td></tr>
+        <tr><td><code>gap</code></td><td><code>6px</code></td><td>頁籤間距，可以是負值讓頁籤疊在一起，例如 <code>-10px</code>。</td></tr>
+        <tr><td><code>stack</code></td><td><code>right</code></td><td>疊放順序：<code>right</code> 右蓋左、<code>left</code> 左蓋右。選中的永遠在最上面。</td></tr>
+        <tr><td><code>theme-color</code></td><td><code>key</code></td><td>整組的選中顏色，色票名稱、色碼或 CSS 顏色。</td></tr>
+        <tr><td><code>line-color</code></td><td><code>gray</code></td><td>未選中頁籤的輪廓與底線顏色。</td></tr>
+        <tr><td><code>tab-size</code></td><td><code>1rem</code></td><td>頁籤文字大小，數字視為 rem。</td></tr>
+        <tr><td><code>align</code></td><td><code>start</code></td><td>頁籤列對齊：<code>start</code>、<code>center</code>、<code>end</code>。</td></tr>
+        <tr><td><code>animation</code></td><td><code>slide</code></td><td>內容切換動畫：<code>slide</code>、<code>fade</code>、<code>none</code>。</td></tr>
+        <tr><td><code>panel-padding</code></td><td><code>16px</code></td><td>頁籤列與內容之間的距離，可寫完整的 CSS 簡寫，例如 <code>24px 0 0 0</code>。</td></tr>
+      </tbody>
+    </table>
+    <p class="cap" style="margin:20px 0 8px 0">寫在 &lt;tab-item&gt; 上</p>
+    <table class="attrs">
+      <thead><tr><th style="width:20%">屬性</th><th style="width:22%">預設</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>label</code></td><td>頁籤 1、2、3…</td><td>頁籤上的文字。</td></tr>
+        <tr><td><code>icon</code></td><td>無</td><td>Bootstrap Icons 名稱，<code>bi-</code> 前綴可寫可不寫。</td></tr>
+        <tr><td><code>accent</code></td><td>跟隨 <code>theme-color</code></td><td>這個頁籤的顏色。</td></tr>
+        <tr><td><code>source</code></td><td>無</td><td>內容來源的元素 id；<code>&lt;template&gt;</code> 複製內容，其他元素搬進面板。</td></tr>
+        <tr><td><code>active</code></td><td>第一個</td><td>載入時選中這個頁籤。</td></tr>
+        <tr><td><code>disabled</code></td><td>無</td><td>停用，不能點擊。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script src="ui-tabs.js"></script>
+<script src="tbl/ui-table.js"></script>
+<script src="layout/ui-cards.js"></script>
+</body>
+</html>

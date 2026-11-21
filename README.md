@@ -14,6 +14,7 @@
 | `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 | [`ui-fillin-demo-11-12-26.html`](ui-fillin-demo-11-12-26.html) |
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-20-26.html`](ui-inputs-demo-11-20-26.html) |
 | `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` `<dual-hr>` `<dual-vr>` `<ui-arc-menu>` `<ui-arc-item>` | 閱讀輔助標記、展開按鈕、雙色分隔線與弧形菜單。 | [`ui-plus-demo-11-21-26.html`](ui-plus-demo-11-21-26.html) |
+| `ui-tabs.js` | `<ui-tabs>` `<tab-item>` | 頁籤：梯形、切角與瀏覽器分頁外形、可為負值的頁籤間距、每個頁籤各自的顏色，內容依順序滑入。 | [`ui-tabs-demo-11-21-26.html`](ui-tabs-demo-11-21-26.html) |
 | `ui-toast.js` | `<ui-toast>` | 浮動提示訊息：任何元素加上 `toast` 屬性，點擊就跳出提示；放在瀏覽器最上層，`<dialog>` 開著也看得到。 | [`ui-toast-demo-11-21-26.html`](ui-toast-demo-11-21-26.html) |
 
 跨元件範例：[`data-flow-demo-11-11-26.html`](data-flow-demo-11-11-26.html) 示範 `ui-cards`、`arrow-flow`、`ui-drill`、`ui-table` 組合成資料流動中心。
@@ -117,6 +118,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 - [ui-fillin.js](#ui-fillinjs)
 - [ui-inputs.js](#ui-inputsjs)
 - [ui-plus.js](#ui-plusjs)
+- [ui-tabs.js](#ui-tabsjs)
 - [ui-toast.js](#ui-toastjs)
 
 ---
@@ -2324,6 +2326,52 @@ UiReading.colors;                // 色盤
 已處理過的標籤會被標記，重複呼叫 `init()` 不會重複渲染。
 
 頁面載入後才出現的 `read-pulse`、`chalk-mark`、`col-pair`（例如由 `ui-btn`、`ui-cards` 展開的 template，或用程式插入的內容）會自動初始化，不必手動呼叫 `UiReading.init()`。其他元件用 innerHTML 複製已初始化的 `read-pulse` 時（例如 `ui-table` 的儲存格），副本也會自動恢復動畫，與腳本載入順序無關。
+
+## ui-tabs.js
+
+頁籤元件。未選中的頁籤是空心輪廓，選中的填滿顏色並接在底線上。內容寫在 `<tab-item>` 裡，或用 `source` 指向頁面上其他元素。頁籤多到放不下時，頁籤列兩端會自動出現左右箭頭（不顯示捲軸），選中的頁籤會捲到中間；限制 `<ui-tabs>` 的寬度就能看到效果。
+
+互動範例：[`ui-tabs-demo-11-21-26.html`](ui-tabs-demo-11-21-26.html)
+
+```html
+<script src="ui-tabs.js"></script>
+
+<ui-tabs shape="trapezoid" gap="-10px" theme-color="blue">
+  <tab-item label="口說" icon="mic">口說的內容。</tab-item>
+  <tab-item label="寫作" icon="pencil" accent="violet">寫作的內容。</tab-item>
+  <tab-item label="閱讀" icon="book" disabled>停用的頁籤。</tab-item>
+</ui-tabs>
+```
+
+### `<ui-tabs>` 屬性
+
+| 屬性 | 預設 | 說明 |
+|---|---|---|
+| `shape` | `trapezoid` | `trapezoid` 梯形、`chamfer-right` 右上切角、`chamfer-left` 左上切角、`browser` 瀏覽器分頁（圓角斜邊、有色邊框、底線隨選中頁籤變色）。 |
+| `skew` | `14` | 僅 `browser`：斜邊的傾斜角度，0 到 30。 |
+| `flare` | `8px` | 僅 `browser`：選中頁籤底部往外張開的圓弧大小，寫 `none` 關閉。 |
+| `bar-color` | `bg-alternative` | 僅 `browser`：頁籤列背景色，可寫 `transparent`。 |
+| `plus` | 無 | 加上這個屬性，在最右邊顯示裝飾用的「+」，不能點擊；`plus="false"` 等於不顯示。 |
+| `cut` | `8px` | 斜邊或切角的大小，建議 6px 到 12px。 |
+| `gap` | `6px` | 頁籤間距，可以是負值，讓頁籤疊在一起。 |
+| `stack` | `right` | 負間距時的疊放：`right` 右蓋左，`left` 左蓋右。選中的永遠在最上面。 |
+| `theme-color` | `key` | 選中頁籤的顏色，色票名稱、色碼或 CSS 顏色。 |
+| `line-color` | `gray` | 未選中頁籤的輪廓與底線顏色。 |
+| `tab-size` | `1rem` | 頁籤文字大小。 |
+| `align` | `start` | 頁籤列對齊：`start`、`center`、`end`。 |
+| `animation` | `slide` | 內容切換動畫：`slide`、`fade`、`none`。 |
+| `panel-padding` | `16px` | 內容區的內距。 |
+
+### `<tab-item>` 屬性
+
+| 屬性 | 說明 |
+|---|---|
+| `label` | 頁籤文字。 |
+| `icon` | Bootstrap Icons 名稱。 |
+| `accent` | 這個頁籤的顏色，優先於 `theme-color`。 |
+| `source` | 內容來源的元素 id；`<template>` 複製內容，其他元素搬進面板（保留裡面的輸入內容與已初始化的元件）。 |
+| `active` | 載入時選中這個頁籤，預設第一個。 |
+| `disabled` | 停用，不能點擊。 |
 
 ## ui-toast.js
 
