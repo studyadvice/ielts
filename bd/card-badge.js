@@ -2,7 +2,6 @@ class CardBadge extends HTMLElement {
   constructor() {
     super();
     this.isCollapsed  = false;
-    this.currentCount = 0;
     this.rotateIndex  = 0;
     this.autoRotateTimer = null;
     this._uid  = 'cb-' + Math.random().toString(36).slice(2, 9);
@@ -11,36 +10,21 @@ class CardBadge extends HTMLElement {
 
   static get observedAttributes() {
     return [
-      'type', 'value', 'text', 'icon',
+      'text', 'icon',
       'theme', 'outline', 'size', 'font-size', 'padding',
       'clickable', 'action', 'data-filter',
-      'source', 'target', 'toggle-target', 'removeself',
-      'format', 'warning-days',
-      'alert-message', 'alert-type', 'alert-duration', 'alert-position', 'alert-source',
+      'source', 'target', 'toggle-target', 'reveal-target', 'removeself',
+      'alert-message', 'alert-theme', 'alert-variant', 'alert-duration', 'alert-position', 'alert-source',
       'hover-effect', 'focus-color', 'disabled',
       'font-control', 'font-step',
-      'count', 'max-count', 'show-zero', 'dot-mode', 'count-animate',
       'href', 'href-target',
       'copy-html'
     ];
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     if (!this._root) return;
-
-    if (name === 'count' && oldValue !== newValue) {
-      const oldCount = parseInt(oldValue) || 0;
-      const newCount = parseInt(newValue) || 0;
-      this.currentCount = newCount;
-
-      if (this.getAttribute('count-animate') !== 'false') {
-        this.animateCountChange(oldCount, newCount);
-      } else {
-        this.render();
-      }
-    } else {
-      this.render();
-    }
+    this.render();
   }
 
   getBrandColors() {
@@ -74,47 +58,46 @@ class CardBadge extends HTMLElement {
 
   parseColor(colorValue) {
     if (!colorValue) return null;
-    const brandColors = this.getBrandColors();
-    return brandColors[colorValue.toLowerCase()] || colorValue;
+    const v = String(colorValue).trim();
+    return this.getBrandColors()[v.toLowerCase()] || v;
+  }
+
+  /* 把色名、#rgb、#rrggbb、rgb()、rgba() 或任何 CSS 顏色轉成 [r, g, b] */
+  _rgb(color) {
+    const v = this.parseColor(color);
+    if (!v) return [198, 199, 189];
+    let m = v.match(/^#([0-9a-f]{3})$/i);
+    if (m) return m[1].split('').map(h => parseInt(h + h, 16));
+    m = v.match(/^#([0-9a-f]{6})/i);
+    if (m) return [0, 2, 4].map(i => parseInt(m[1].substr(i, 2), 16));
+    m = v.match(/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i);
+    if (m) return [m[1], m[2], m[3]].map(Number);
+    const t = document.createElement('span');
+    t.style.color = v;
+    document.body.appendChild(t);
+    m = getComputedStyle(t).color.match(/([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/);
+    t.remove();
+    return m ? [m[1], m[2], m[3]].map(Number) : [198, 199, 189];
   }
 
   getContrastColor(bgColor) {
     if (!bgColor) return '#C6C7BD';
-
-    let color = this.parseColor(bgColor);
-    color = color.replace('#', '');
-
-    const r = parseInt(color.substr(0, 2), 16);
-    const g = parseInt(color.substr(2, 2), 16);
-    const b = parseInt(color.substr(4, 2), 16);
-
+    const [r, g, b] = this._rgb(bgColor);
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5 ? '#0C0D0C' : '#C6C7BD';
   }
 
   hexToRgba(hex, alpha = 1) {
     if (!hex) return null;
-
-    hex = this.parseColor(hex);
-    hex = hex.replace('#', '');
-
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-
+    const [r, g, b] = this._rgb(hex);
     // 透明度規範：非黑色陰影一律 >= 0.76
-    const clampedAlpha = Math.max(alpha, 0.76);
-    return `rgba(${r}, ${g}, ${b}, ${clampedAlpha})`;
+    return `rgba(${r}, ${g}, ${b}, ${Math.max(alpha, 0.76)})`;
   }
 
   /* 提供一個允許低透明度的內部 rgba 方法，專用於陰影、outline 底色等視覺輔助元素 */
   _hexToRgbaRaw(hex, alpha = 1) {
     if (!hex) return null;
-    hex = this.parseColor(hex);
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
+    const [r, g, b] = this._rgb(hex);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
@@ -145,82 +128,6 @@ class CardBadge extends HTMLElement {
     return this.parseColor(theme.replace('-outline', ''));
   }
 
-  formatCount(count) {
-    const maxCount = parseInt(this.getAttribute('max-count')) || 99;
-    return count > maxCount ? `${maxCount}+` : count.toString();
-  }
-
-  isCountBadge() { return this.hasAttribute('count'); }
-  isDotMode()    { return this.getAttribute('dot-mode') === 'true'; }
-
-  animateCountChange(oldCount, newCount) {
-    const badge = this.querySelector('.badge');
-    if (!badge) { this.render(); return; }
-
-    badge.classList.add('count-change');
-    this.render();
-
-    setTimeout(() => {
-      const nb = this.querySelector('.badge');
-      if (nb) nb.classList.remove('count-change');
-    }, 300);
-  }
-
-  /* ─────────────────────────────────────────────
-     日期 / 時間格式化
-  ───────────────────────────────────────────── */
-  formatDate(dateString, format = 'YYYY-MM-DD') {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-
-    const year  = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day   = String(date.getDate()).padStart(2, '0');
-
-    if (format === 'YYYY-MM-DD') return `${year}-${month}-${day}`;
-    if (format === 'MM/DD')      return `${month}/${day}`;
-    if (format === 'MM-DD')      return `${month}-${day}`;
-    return `${year}-${month}-${day}`;
-  }
-
-  formatTime(timeString) {
-    const date = new Date(`2000-01-01T${timeString}`);
-    if (isNaN(date.getTime())) return timeString;
-
-    const hours   = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  }
-
-  formatDateTime(datetimeString, format = 'MM/DD HH:mm') {
-    const date = new Date(datetimeString);
-    if (isNaN(date.getTime())) return datetimeString;
-
-    const month   = String(date.getMonth() + 1).padStart(2, '0');
-    const day     = String(date.getDate()).padStart(2, '0');
-    const hours   = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    return `${month}/${day} ${hours}:${minutes}`;
-  }
-
-  formatDeadline(dateString) {
-    const deadline = new Date(dateString);
-    const now      = new Date();
-
-    if (isNaN(deadline.getTime())) return dateString;
-
-    const diffTime = deadline - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const warningDays = parseInt(this.getAttribute('warning-days')) || 3;
-
-    if (diffDays < 0)            return { text: `已逾期 ${Math.abs(diffDays)} 天`, isWarning: true,  isOverdue: true  };
-    if (diffDays === 0)          return { text: '今天到期',                         isWarning: true,  isOverdue: false };
-    if (diffDays === 1)          return { text: '明天到期',                         isWarning: true,  isOverdue: false };
-    if (diffDays <= warningDays) return { text: `還剩 ${diffDays} 天`,             isWarning: true,  isOverdue: false };
-    return                              { text: `還剩 ${diffDays} 天`,             isWarning: false, isOverdue: false };
-  }
-
   /* ─────────────────────────────────────────────
      顯示內容解析
   ───────────────────────────────────────────── */
@@ -241,47 +148,12 @@ class CardBadge extends HTMLElement {
       }
     }
 
-    const type   = this.getAttribute('type');
-    const value  = this.getAttribute('value');
-    const text   = this.getAttribute('text');
-    const icon   = this.getAttribute('icon');
-    const format = this.getAttribute('format');
-
-    // 數量型 badge
-    if (this.isCountBadge()) {
-      const count    = parseInt(this.getAttribute('count')) || 0;
-      const showZero = this.getAttribute('show-zero') === 'true';
-      const dotMode  = this.isDotMode();
-
-      if (count === 0 && !showZero) return null;
-
-      if (dotMode) {
-        return { icon: '', text: '', theme: this.getThemeColor(), isCountBadge: true, isDot: true,  count };
-      }
-      return   { icon: icon || '', text: this.formatCount(count), theme: this.getThemeColor(), isCountBadge: true, isDot: false, count };
-    }
-
-    // 格式化類型
-    if (type && value) {
-      switch (type) {
-        case 'date':
-          return { icon: icon || '', text: this.formatDate(value, format),     theme: this.getThemeColor() };
-        case 'time':
-          return { icon: icon || '', text: this.formatTime(value),             theme: this.getThemeColor() };
-        case 'datetime':
-          return { icon: icon || '', text: this.formatDateTime(value, format), theme: this.getThemeColor() };
-        case 'deadline': {
-          const di = this.formatDeadline(value);
-          const deadlineTheme = di.isOverdue
-            ? this.parseColor('red')
-            : (di.isWarning ? this.parseColor('yellow') : this.getThemeColor());
-          return { icon: icon || (di.isOverdue ? '⚠️' : '📅'), text: di.text, theme: deadlineTheme };
-        }
-      }
-    }
-
     // 一般顯示
-    return { icon: icon || '', text: text || '', theme: this.getThemeColor() };
+    return {
+      icon : this.getAttribute('icon') || '',
+      text : this.getAttribute('text') || '',
+      theme: this.getThemeColor()
+    };
   }
 
   getSizeStyles() {
@@ -308,18 +180,31 @@ class CardBadge extends HTMLElement {
     };
   }
 
-  showPageAlert(message, type = 'info', duration = 4000, position = 'top') {
+  /* alert-theme：色盤名稱、#rgb、#rrggbb、rgb() 或其他 CSS 顏色，無效時用 indigo */
+  resolveAlertColor(value) {
+    const fallback = this.getBrandColors().indigo;
+    if (!value) return fallback;
+    const c = this.parseColor(value);
+    return (typeof CSS !== 'undefined' && CSS.supports('color', c)) ? c : fallback;
+  }
+
+  showPageAlert(message, theme, variant = 'fill', duration = 4000, position = 'top') {
     const existingAlert = document.querySelector('.card-badge-page-alert');
     if (existingAlert) existingAlert.remove();
 
-    const brandColors = this.getBrandColors();
-    const alertAliases = {
-      'success': brandColors.green,
-      'danger' : brandColors.red
-    };
+    const color = this.resolveAlertColor(theme);
+    if (['fill', 'outline', 'double'].indexOf(variant) < 0) variant = 'fill';
 
-    const bgColor   = alertAliases[type] || brandColors[type] || brandColors.indigo;
-    const textColor = this.getContrastColor(bgColor);
+    const BASE = '#2D2D2D';
+    let bg, fg, inset = '';
+    if (variant === 'fill') {
+      bg = color;
+      fg = this.getContrastColor(color);
+    } else {
+      bg = BASE;
+      fg = color;
+      if (variant === 'double') inset = `inset 0 0 0 3px ${BASE}, inset 0 0 0 5px ${color}, `;
+    }
 
     const positionStyles = {
       'top'         : 'top: 20px; left: 50%; transform: translateX(-50%);',
@@ -329,20 +214,37 @@ class CardBadge extends HTMLElement {
       'bottom-left' : 'bottom: 20px; left: 20px;',
       'bottom-right': 'bottom: 20px; right: 20px;'
     };
+    if (!positionStyles[position]) position = 'top';
+    const centered = position === 'top' || position === 'bottom';
+    const dy = position.indexOf('bottom') === 0 ? '20px' : '-20px';
+
+    if (!document.getElementById('card-badge-alert-style')) {
+      const style = document.createElement('style');
+      style.id = 'card-badge-alert-style';
+      style.textContent = `
+        @keyframes cbAlertIn  { from { opacity: 0; transform: translateY(var(--cb-dy)); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cbAlertInC { from { opacity: 0; transform: translateX(-50%) translateY(var(--cb-dy)); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+      `;
+      document.head.appendChild(style);
+    }
 
     const alertDiv = document.createElement('div');
-    alertDiv.className = `card-badge-page-alert alert-${type}`;
+    alertDiv.className = 'card-badge-page-alert';
+    alertDiv.setAttribute('data-variant', variant);
     alertDiv.style.cssText = `
+      --cb-dy: ${dy};
       position: fixed;
-      ${positionStyles[position] || positionStyles['top']}
+      ${positionStyles[position]}
       z-index: 10000;
-      background: ${bgColor};
-      color: ${textColor};
+      box-sizing: border-box;
+      background: ${bg};
+      color: ${fg};
+      border: 2px solid ${color};
       padding: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      box-shadow: ${inset}0 4px 16px rgba(0, 0, 0, 0.4);
       font-size: 1rem;
       font-weight: 500;
-      animation: cbAlertIn 0.3s ease-out;
+      animation: ${centered ? 'cbAlertInC' : 'cbAlertIn'} 0.3s ease-out;
       max-width: 90%;
       word-wrap: break-word;
       letter-spacing: 0.01em;
@@ -350,20 +252,31 @@ class CardBadge extends HTMLElement {
     alertDiv.textContent = message;
     document.body.appendChild(alertDiv);
 
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes cbAlertIn {
-        from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-        to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-      }
-    `;
-    document.head.appendChild(style);
-
     setTimeout(() => {
       alertDiv.style.opacity = '0';
       alertDiv.style.transition = 'opacity 0.3s ease-out';
-      setTimeout(() => { alertDiv.remove(); style.remove(); }, 300);
+      setTimeout(() => { alertDiv.remove(); }, 300);
     }, duration);
+  }
+
+  getRevealIds() {
+    return (this.getAttribute('reveal-target') || '')
+      .split(/[\s,]+/)
+      .map(id => id.replace(/^#/, ''))
+      .filter(Boolean);
+  }
+
+  /* 顯示一個隱藏的區塊：支援 hidden 屬性、行內 display:none 與樣式表的 display:none */
+  revealElement(el) {
+    const wasHidden = el.hidden || getComputedStyle(el).display === 'none';
+    el.hidden = false;
+    el.style.display = '';
+    if (getComputedStyle(el).display === 'none') el.style.display = 'block';
+    if (!wasHidden) return;
+    el.style.opacity    = '0';
+    el.style.transition = 'opacity 0.3s ease';
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+    setTimeout(() => { el.style.opacity = ''; el.style.transition = ''; }, 350);
   }
 
   updateCollapseIndicator() {
@@ -484,6 +397,7 @@ class CardBadge extends HTMLElement {
     const source       = this.getAttribute('source');
     const target       = this.getAttribute('target');
     const toggleTarget = this.getAttribute('toggle-target');
+    const revealTarget = this.getAttribute('reveal-target');
     const removeSelf   = this.getAttribute('removeself') === 'true';
     const fontControl  = this.getAttribute('font-control');
     const disabled     = this.getAttribute('disabled') === 'true';
@@ -491,7 +405,7 @@ class CardBadge extends HTMLElement {
 
     if (disabled) return;
 
-    if (clickable || action || filterValue || toggleTarget || fontControl || href) {
+    if (clickable || action || filterValue || toggleTarget || revealTarget || fontControl || href) {
       this.setAttribute('tabindex', '0');
       this.style.cursor = 'pointer';
 
@@ -539,6 +453,22 @@ class CardBadge extends HTMLElement {
 
             this.updateCollapseIndicator();
           }
+        }
+
+        // 顯示多個區塊
+        const revealIds = this.getRevealIds();
+        if (revealIds.length) {
+          const revealed = [];
+          const missing  = [];
+          revealIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { this.revealElement(el); revealed.push(id); }
+            else    { missing.push(id); console.warn(`Card-Badge: 找不到 reveal-target 元素 #${id}`); }
+          });
+          this.dispatchEvent(new CustomEvent('badge-reveal', {
+            bubbles: true,
+            detail: { ids: revealIds, revealed, missing }
+          }));
         }
 
         // 過濾
@@ -628,12 +558,13 @@ class CardBadge extends HTMLElement {
         }
 
         if (finalAlertMessage) {
-          const alertType     = this.getAttribute('alert-type')     || 'info';
+          const alertTheme    = this.getAttribute('alert-theme')    || 'indigo';
+          const alertVariant  = this.getAttribute('alert-variant')  || 'fill';
           const alertDuration = this.hasAttribute('alert-duration')
             ? parseInt(this.getAttribute('alert-duration'))
             : 4000;
           const alertPosition = this.getAttribute('alert-position') || 'top';
-          this.showPageAlert(finalAlertMessage, alertType, alertDuration, alertPosition);
+          this.showPageAlert(finalAlertMessage, alertTheme, alertVariant, alertDuration, alertPosition);
         }
 
         // 自訂事件
@@ -647,10 +578,8 @@ class CardBadge extends HTMLElement {
             toggleTarget : this.getAttribute('toggle-target'),
             fontControl  : this.getAttribute('font-control'),
             isCollapsed  : this.isCollapsed,
-            type         : this.getAttribute('type'),
-            value        : this.getAttribute('value'),
+            revealTarget : this.getAttribute('reveal-target'),
             text         : this.getAttribute('text'),
-            count        : this.currentCount,
             href         : this.getAttribute('href'),
             alertMessage : finalAlertMessage
           }
@@ -680,8 +609,9 @@ class CardBadge extends HTMLElement {
     const hoverEffect  = this.getAttribute('hover-effect') || 'lift';
     const clickable    = this.getAttribute('clickable') === 'true';
     const toggleTarget = this.getAttribute('toggle-target');
+    const revealTarget = this.getAttribute('reveal-target');
 
-    if (!clickable && !toggleTarget) return '';
+    if (!clickable && !toggleTarget && !revealTarget) return '';
 
     const uid = this._uid;
 
@@ -744,18 +674,12 @@ class CardBadge extends HTMLElement {
   render() {
     const content = this.getDisplayContent();
 
-    if (content === null) {
-      this.style.display = 'none';
-      return;
-    } else {
-      this.style.display = '';
-    }
-
     const themeInfo     = this.parseTheme();
     const manualOutline = this.getAttribute('outline') === 'true';
     const sizeStyles    = this.getSizeStyles();
     const clickable     = this.getAttribute('clickable') === 'true';
     const toggleTarget  = this.getAttribute('toggle-target');
+    const revealTarget  = this.getAttribute('reveal-target');
     const fontControl   = this.getAttribute('font-control');
     const disabled      = this.getAttribute('disabled') === 'true';
     const focusColor    = this.parseColor(this.getAttribute('focus-color')) || content.theme;
@@ -783,17 +707,6 @@ class CardBadge extends HTMLElement {
     const uid         = this._uid;
     const hoverStyles = disabled ? '' : this.getHoverEffect(scope);
     const useBootstrapIcons = content.icon && content.icon.startsWith('bi-');
-    const isDotMode   = content.isDot;
-
-    const dotStyles = isDotMode ? `
-      width: ${sizeStyles.width};
-      height: ${sizeStyles.height};
-      padding: 0;
-      border-radius: 50%;
-      min-width: ${sizeStyles.width};
-      min-height: ${sizeStyles.height};
-    ` : '';
-
     const glowColor = this._hexToRgbaRaw(content.theme, 0.55);
     const focusRingColor = this.hexToRgba(focusColor, 0.72);
     this._root.innerHTML = `
@@ -823,23 +736,12 @@ class CardBadge extends HTMLElement {
           margin: 4px;
           user-select: none;
           letter-spacing: 0.01em;
-          ${dotStyles}
           ${disabled ? 'opacity: 0.6; cursor: not-allowed;' : ''}
-        }
-
-        ${scope} .badge.count-change {
-          animation: count-pop-${uid} 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes count-pop-${uid} {
-          0%   { transform: scale(1); }
-          50%  { transform: scale(1.2); }
-          100% { transform: scale(1); }
         }
 
         ${hoverStyles}
 
-        ${(clickable || toggleTarget || fontControl) && !disabled ? `
+        ${(clickable || toggleTarget || revealTarget || fontControl) && !disabled ? `
           ${scope}:focus {
             outline: none;
           }
@@ -876,8 +778,8 @@ class CardBadge extends HTMLElement {
       </style>
 
       <div class="badge">
-        ${!isDotMode ? this.renderIcon(content.icon) : ''}
-        ${!isDotMode && content.text ? `<span class="text">${content.text}</span>` : ''}
+        ${this.renderIcon(content.icon)}
+        ${content.text ? `<span class="text">${content.text}</span>` : ''}
       </div>
     `;
 

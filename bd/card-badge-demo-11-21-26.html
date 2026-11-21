@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>card-badge 示範</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<script src="card-badge.js"></script>
+<style>
+:root { font-size: 16px; }
+body { background: #0C0D0C; color: #C6C7BD; font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif; min-width: 988px; }
+.page { max-width: 1600px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+h1 { font-size: 1.8rem; color: #51DBCF; margin: 0 0 8px 0; }
+.sub { color: #A3C4BC; font-size: 1rem; line-height: 1.7; margin: 0 0 20px 0; }
+code { color: #FFA987; }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px 0; }
+.toc a { color: #DBEDD8; border: 1px solid #86877F; border-radius: 20px; padding: 4px 14px; font-size: 0.9rem; text-decoration: none; }
+.toc a:hover { border-color: #51DBCF; color: #51DBCF; }
+#log { position: sticky; top: 0; z-index: 20; }
+#log .alert { background: #51DBCF; color: #0C0D0C; border: none; font-size: 0.95rem; padding: 10px 16px; margin: 0 0 16px 0; }
+.part { margin: 0 0 48px 0; }
+.part > h2 { font-size: 1.4rem; color: #E3D322; margin: 0 0 6px 0; padding: 0 0 8px 0; border-bottom: 1px solid #2D2D2D; }
+.part > .lead { color: #86877F; font-size: 0.95rem; margin: 0 0 20px 0; line-height: 1.7; }
+.demo { margin: 0 0 28px 0; }
+.demo h3 { font-size: 1.1rem; color: #B484E8; margin: 0 0 6px 0; }
+.demo .desc { color: #86877F; font-size: 0.9rem; margin: 0 0 12px 0; line-height: 1.7; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.stage { border: 1px solid #2D2D2D; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.side { min-width: 0; }
+.cap { font-size: 0.8rem; color: #86877F; margin: 0 0 6px 0; }
+.code-box { border: 1px solid #2D2D2D; border-radius: 8px; padding: 16px; margin: 0; background: #0C0D0C; max-height: 520px; overflow: auto; }
+.code-box code { font-size: 0.8rem; white-space: pre; color: #A3C4BC; font-family: ui-monospace, monospace; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.row .lab { width: 110px; flex-shrink: 0; font-family: ui-monospace, monospace; font-size: 0.85rem; color: #8EA4DE; }
+.box { background: #2D2D2D; border-radius: 8px; padding: 12px 16px; line-height: 1.7; }
+.ref { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.ref th, .ref td { border-bottom: 1px solid #2D2D2D; padding: 8px 12px; text-align: left; vertical-align: top; color: #DBEDD8; }
+.ref th { color: #51DBCF; }
+.controls { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.controls label { display: block; font-size: 0.8125rem; margin: 0 0 4px 0; color: #DBEDD8; }
+.hid { display: none; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>card-badge 示範</h1>
+  <p class="sub"><code>&lt;card-badge&gt;</code> 是多功能徽章。本頁合併了先前的示範、說明書與視覺編輯器。每個範例左邊是實際元件，右邊是同一段原始碼。格式化日期與計數功能已移除；<code>alert-type</code> 改為 <code>alert-theme</code> 並新增 <code>alert-variant</code>；新增 <code>reveal-target</code>。</p>
+  <nav class="toc">
+    <a href="#basic">外觀</a><a href="#alert">提示訊息</a><a href="#reveal">reveal-target</a><a href="#action">互動</a><a href="#live">即時設定器</a><a href="#ref">屬性速查</a>
+  </nav>
+  <div id="log"></div>
+
+  <section class="part" id="basic">
+    <h2>外觀：主題、外框、尺寸與圖示</h2>
+    <p class="lead"><code>theme</code> 可填色盤名稱，加 <code>-outline</code> 後綴或設 <code>outline="true"</code> 為外框樣式。沒寫 <code>theme</code> 時，在 <code>&lt;card-v3&gt;</code> 裡會沿用該卡片的主題。</p>
+    <div class="demo" data-demo>
+      <h3>主題與外框</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <card-badge theme="violet" text="violet"></card-badge>
+  <card-badge theme="green" text="green"></card-badge>
+  <card-badge theme="energetic" text="energetic"></card-badge>
+  <card-badge theme="pink" text="pink"></card-badge>
+  <card-badge theme="key" text="key"></card-badge>
+</div>
+<div class="row">
+  <card-badge theme="blue-outline" text="blue-outline"></card-badge>
+  <card-badge theme="red" outline="true" text="outline=true"></card-badge>
+  <card-badge theme="#FFA987" text="#FFA987"></card-badge>
+  <card-badge theme="rgb(180,132,232)" text="rgb()"></card-badge>
+  <card-badge theme="blue" text="停用" disabled="true"></card-badge>
+</div>
+      </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>尺寸與圖示</h3>
+      <p class="desc"><code>size</code> 為 xs、sm、md、re（預設）、lg、xl，也可用 <code>font-size</code>、<code>padding</code> 自訂。<code>icon</code> 以 <code>bi-</code> 開頭顯示 Bootstrap Icons，其他字串（含 emoji）原樣顯示。</p>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <span class="lab">xs sm md re lg xl</span>
+  <card-badge size="xs" theme="indigo" text="xs"></card-badge>
+  <card-badge size="sm" theme="indigo" text="sm"></card-badge>
+  <card-badge size="md" theme="indigo" text="md"></card-badge>
+  <card-badge size="re" theme="indigo" text="re"></card-badge>
+  <card-badge size="lg" theme="indigo" text="lg"></card-badge>
+  <card-badge size="xl" theme="indigo" text="xl"></card-badge>
+</div>
+<div class="row">
+  <span class="lab">圖示</span>
+  <card-badge theme="red" icon="bi-heart-fill" text="收藏"></card-badge>
+  <card-badge theme="blue" icon="bi-gear" text="設定"></card-badge>
+  <card-badge theme="yellow" icon="bi-star-fill"></card-badge>
+  <card-badge theme="green" icon="✅" text="已完成"></card-badge>
+  <card-badge theme="salmon" icon="📌"></card-badge>
+</div>
+      </script>
+    </div>
+  </section>
+
+  <section class="part" id="alert">
+    <h2>提示訊息：alert-theme 與 alert-variant</h2>
+    <p class="lead"><code>alert-theme</code> 的值是色盤名稱，或 <code>#</code>、<code>rgb()</code> 開頭的 CSS 顏色，預設 <code>indigo</code>。<code>alert-variant</code> 有 <code>fill</code>（填滿，文字色自動調整）、<code>outline</code>（單線）、<code>double</code>（雙線）。點下面的徽章會在頁面上跳出提示。</p>
+    <div class="demo" data-demo>
+      <h3>三種樣式與三種顏色寫法</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <span class="lab">fill</span>
+  <card-badge clickable="true" theme="green" icon="bi-check-circle" text="色盤名稱"
+    alert-message="已儲存" alert-theme="green" alert-variant="fill"></card-badge>
+  <card-badge clickable="true" theme="yellow" icon="bi-palette" text="#E3D322"
+    alert-message="色碼 #E3D322" alert-theme="#E3D322"></card-badge>
+  <card-badge clickable="true" theme="red" icon="bi-eyedropper" text="rgb()"
+    alert-message="rgb(239,102,97)" alert-theme="rgb(239,102,97)"></card-badge>
+</div>
+<div class="row">
+  <span class="lab">outline</span>
+  <card-badge clickable="true" theme="blue-outline" icon="bi-info-circle" text="單線"
+    alert-message="單線外框" alert-theme="blue" alert-variant="outline"></card-badge>
+  <card-badge clickable="true" theme="pink-outline" icon="bi-heart" text="單線 #FF91D7"
+    alert-message="單線外框" alert-theme="#FF91D7" alert-variant="outline"></card-badge>
+</div>
+<div class="row">
+  <span class="lab">double</span>
+  <card-badge clickable="true" theme="violet-outline" icon="bi-stars" text="雙線"
+    alert-message="雙線外框" alert-theme="violet" alert-variant="double"></card-badge>
+  <card-badge clickable="true" theme="key-outline" icon="bi-bell" text="雙線右下角"
+    alert-message="雙線外框，右下角" alert-theme="key" alert-variant="double"
+    alert-position="bottom-right"></card-badge>
+</div>
+      </script>
+    </div>
+  </section>
+
+  <section class="part" id="reveal">
+    <h2>reveal-target：一次顯示多個區塊</h2>
+    <p class="lead"><code>reveal-target="id1,id2,id3"</code> 點擊後把這些元素顯示出來。id 以逗號或空白分隔，<code>#</code> 可省略。目標先用 <code>hidden</code>、行內 <code>display:none</code> 或樣式表的 <code>display:none</code> 隱藏均可。顯示後不會再收起，找不到的 id 會在主控台警告，並由 <code>badge-reveal</code> 事件的 <code>missing</code> 回報。</p>
+    <div class="demo" data-demo>
+      <h3>三個區塊依序用不同方式隱藏</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <card-badge theme="energetic" icon="bi-eye" text="顯示三個區塊"
+    reveal-target="rv-1, rv-2, #rv-3"></card-badge>
+</div>
+<div id="rv-1" class="box" hidden>區塊 1：用 hidden 屬性隱藏。</div>
+<div id="rv-2" class="box" style="display:none">區塊 2：用行內 display:none 隱藏。</div>
+<div id="rv-3" class="box hid">區塊 3：用樣式表的 display:none 隱藏。</div>
+      </script>
+    </div>
+  </section>
+
+  <section class="part" id="action">
+    <h2>互動：折疊、過濾、複製、字級、輪播</h2>
+    <p class="lead">互動功能需要 <code>clickable="true"</code> 或 <code>action</code>、<code>toggle-target</code>、<code>reveal-target</code>、<code>href</code> 等屬性才會啟用。</p>
+    <div class="demo" data-demo>
+      <h3>折疊（toggle-target）</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row"><card-badge theme="blue" icon="bi-chevron-down" text="展開說明" toggle-target="tg-1"></card-badge></div>
+<div id="tg-1" class="box">可折疊的內容，圖示會自動旋轉 180 度。</div>
+      </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>過濾（action="filter"）</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <card-badge clickable="true" action="filter" data-filter="all" text="全部"></card-badge>
+  <card-badge clickable="true" action="filter" data-filter="design" theme="pink" text="設計"></card-badge>
+  <card-badge clickable="true" action="filter" data-filter="dev" theme="blue" text="開發"></card-badge>
+</div>
+<div class="box" data-filter-group="design">UI 設計</div>
+<div class="box" data-filter-group="dev">後端開發</div>
+<div class="box" data-filter-group="dev,design">前端開發</div>
+      </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>複製與字級控制</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <card-badge clickable="true" action="copy" source="cp-src" target="cp-out" icon="bi-clipboard" text="複製"
+    alert-message="已複製" alert-theme="green" alert-variant="outline" alert-position="bottom-right"></card-badge>
+</div>
+<p id="cp-src" class="box">這段文字可以被複製。</p>
+<p id="cp-out" class="box">複製到這裡：</p>
+<div class="row">
+  <card-badge clickable="true" action="font-increase" font-control="fs-1" icon="bi-plus" text="放大"></card-badge>
+  <card-badge clickable="true" action="font-decrease" font-control="fs-1" icon="bi-dash" text="縮小" font-step="4"></card-badge>
+  <card-badge clickable="true" action="font-reset" font-control="fs-1" icon="bi-arrow-counterclockwise" text="還原"></card-badge>
+</div>
+<article id="fs-1" class="box">這段文字的大小可以被調整。</article>
+      </script>
+    </div>
+    <div class="demo" data-demo>
+      <h3>輪播（badge-item）</h3>
+      <div class="grid2">
+        <div class="stage"></div>
+        <div class="side"><p class="cap">HTML</p><pre class="code-box"><code></code></pre></div>
+      </div>
+      <script type="text/plain" class="demo-src">
+<div class="row">
+  <card-badge clickable="true" action="rotate-self">
+    <badge-item text="Part 1" theme="blue"></badge-item>
+    <badge-item text="Part 2" theme="violet"></badge-item>
+    <badge-item text="Part 3" theme="pink"></badge-item>
+  </card-badge>
+  <card-badge action="rotate-self-auto" interval="1.8s" target="tip-box">
+    <badge-item text="技巧一" theme="key">先讀題再聽。</badge-item>
+    <badge-item text="技巧二" theme="yellow">注意轉折詞。</badge-item>
+  </card-badge>
+</div>
+<div id="tip-box" class="box">點自動輪播的徽章，這裡會顯示目前項目。</div>
+      </script>
+    </div>
+  </section>
+
+  <section class="part" id="live">
+    <h2>即時設定器</h2>
+    <p class="lead">調整下方選項，上面的徽章會即時更新；點徽章會跳出提示。</p>
+    <div class="demo">
+      <div class="stage">
+        <div class="controls">
+          <div><label for="c-theme">theme</label><select id="c-theme" class="form-select form-select-sm"></select></div>
+          <div><label for="c-size">size</label><select id="c-size" class="form-select form-select-sm"><option>xs</option><option>sm</option><option>md</option><option selected>re</option><option>lg</option><option>xl</option></select></div>
+          <div><label for="c-hover">hover-effect</label><select id="c-hover" class="form-select form-select-sm"><option>lift</option><option>scale</option><option>glow</option><option>pulse</option><option>rotate</option><option>none</option></select></div>
+          <div><label for="c-outline">外框</label><select id="c-outline" class="form-select form-select-sm"><option value="false">fill</option><option value="true">outline</option></select></div>
+          <div><label for="a-theme">alert-theme</label><select id="a-theme" class="form-select form-select-sm"></select></div>
+          <div><label for="a-variant">alert-variant</label><select id="a-variant" class="form-select form-select-sm"><option>fill</option><option>outline</option><option>double</option></select></div>
+          <div><label for="a-pos">alert-position</label><select id="a-pos" class="form-select form-select-sm"><option>top</option><option>top-left</option><option>top-right</option><option>bottom</option><option>bottom-left</option><option>bottom-right</option></select></div>
+          <div><label for="a-custom">自訂 alert-theme（# 或 rgb）</label><input id="a-custom" class="form-control form-control-sm" placeholder="#FF91D7"></div>
+        </div>
+        <div class="row"><card-badge id="live-badge" clickable="true" theme="key" icon="bi-bell" text="點我試試" alert-message="這是提示訊息" alert-theme="key" alert-variant="fill"></card-badge></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="ref">
+    <h2>屬性速查</h2>
+    <p class="lead">完整屬性見 <code>bd/README.md</code>。</p>
+    <div class="demo"><table class="ref">
+      <thead><tr><th style="width:200px">屬性</th><th style="width:300px">範例</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>alert-theme</code></td><td><code>alert-theme="#FF91D7"</code></td><td>取代舊的 <code>alert-type</code>。色盤名稱、<code>#</code> 色碼或 <code>rgb()</code>，預設 <code>indigo</code>。</td></tr>
+        <tr><td><code>alert-variant</code></td><td><code>alert-variant="double"</code></td><td><code>fill</code>（預設）、<code>outline</code> 單線、<code>double</code> 雙線。</td></tr>
+        <tr><td><code>reveal-target</code></td><td><code>reveal-target="a, b, c"</code></td><td>點擊後顯示多個元素。顯示後觸發 <code>badge-reveal</code> 事件，<code>e.detail</code> 含 <code>ids</code>、<code>revealed</code>、<code>missing</code>。</td></tr>
+        <tr><td>已移除</td><td><code>type</code>、<code>value</code>、<code>format</code>、<code>warning-days</code>、<code>count</code>、<code>max-count</code>、<code>show-zero</code>、<code>dot-mode</code>、<code>count-animate</code>、<code>alert-type</code></td><td>格式化日期與計數功能整組移除，<code>badge-click</code> 的 <code>detail</code> 也不再含 <code>type</code>、<code>value</code>、<code>count</code>。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+</div>
+
+<script>
+/* 由同一段原始碼同時產生實例與程式碼 */
+(function () {
+  var dedent = function (s) {
+    var lines = s.replace(/^\n+|\s+$/g, '').split('\n');
+    var ind = Math.min.apply(null, lines.filter(function (l) { return l.trim(); }).map(function (l) { return l.match(/^\s*/)[0].length; }));
+    return lines.map(function (l) { return l.slice(ind); }).join('\n');
+  };
+  document.querySelectorAll('[data-demo]').forEach(function (sec) {
+    var src = dedent(sec.querySelector('script.demo-src').textContent);
+    sec.querySelector('.code-box code').textContent = src;
+    sec.querySelector('.stage').insertAdjacentHTML('beforeend', src);
+  });
+
+  /* 即時設定器 */
+  var NAMES = ['shell', 'vanilla', 'yellow', 'indigo', 'pink', 'red', 'green', 'blue', 'violet', 'key', 'calm', 'quiet', 'playful', 'urgent', 'energetic', 'dreamy', 'salmon'];
+  ['c-theme', 'a-theme'].forEach(function (id) {
+    var sel = document.getElementById(id);
+    NAMES.forEach(function (n) { var o = document.createElement('option'); o.textContent = n; sel.appendChild(o); });
+    sel.value = 'key';
+  });
+  var live = document.getElementById('live-badge');
+  function bind(id, attr) {
+    document.getElementById(id).onchange = function (e) { live.setAttribute(attr, e.target.value); };
+  }
+  bind('c-theme', 'theme'); bind('c-size', 'size'); bind('c-hover', 'hover-effect'); bind('c-outline', 'outline');
+  bind('a-theme', 'alert-theme'); bind('a-variant', 'alert-variant'); bind('a-pos', 'alert-position');
+  document.getElementById('a-custom').oninput = function (e) {
+    if (e.target.value.trim()) live.setAttribute('alert-theme', e.target.value.trim());
+    else live.setAttribute('alert-theme', document.getElementById('a-theme').value);
+  };
+
+  /* 用 Bootstrap alert 顯示 reveal 事件 */
+  document.addEventListener('badge-reveal', function (e) {
+    var d = e.detail;
+    document.getElementById('log').innerHTML =
+      '<div class="alert alert-dismissible fade show" role="alert">badge-reveal：已顯示 #' + d.revealed.join('、#') +
+      (d.missing.length ? '；找不到 #' + d.missing.join('、#') : '') +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

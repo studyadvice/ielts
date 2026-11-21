@@ -61,7 +61,6 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | --- | --- |
 | [`layout/ui-conventions.html`](layout/ui-conventions.html) | `ui-drill`、`ui-cards`、`ui-steps` 共用的屬性命名約定。 |
 | [`layout/ui-cards-templates-11-05-26.html`](layout/ui-cards-templates-11-05-26.html) | `ui-cards` 十種資料呈現版型，每個版型附可複製的程式碼。 |
-| [`bd/card-badge-docs.html`](bd/card-badge-docs.html) | `card-badge` 使用手冊與視覺編輯器。 |
 
 ## 子資料夾元件
 
@@ -69,7 +68,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 
 | 資料夾 | 檔案 | 主要標籤 | 用途 |
 | --- | --- | --- | --- |
-| [`bd/`](bd/README.md) | `card-badge.js` | `<card-badge>` | 多功能徽章：日期與截止日、未讀計數、過濾清單、複製文字、折疊、輪播等。 |
+| [`bd/`](bd/README.md) | `card-badge.js` | `<card-badge>` | 多功能徽章：過濾清單、複製文字、折疊與顯示區塊、輪播、提示訊息等。 |
 | [`charts/`](charts/README.md) | `ui-charts.js` | `<ui-chart>` `<chart-row>` | 靜態圖表：直式長條、橫條、折線、圓餅（含甜甜圈），可放進儀表板格子，也能由 `ui-stream` 徽章或 `md-editor` 的 `chart` 區塊產生。 |
 | [`chk/`](chk/README.md) | `ui-check.js` | `<ui-check>` | 閱讀檢核點按鈕，可把紀錄送到後端。 |
 | [`dash/`](dash/README.md) | `ui-dashboard.js` | `<ui-dashboard>` `<dash-cell>` | 儀表板快速布局：用屬性排出欄與列，每個格子放純 HTML 或任何元件。 |

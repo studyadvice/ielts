@@ -1,17 +1,15 @@
 # card-badge
 
-`<card-badge>` 是多功能徽章元件。最基本的用法是一顆帶主題色的小標籤，也能顯示格式化的日期與截止日、未讀計數或小圓點，並支援點擊後過濾清單、複製文字、折疊區塊、調整字級、輪播內容與跳出提示訊息。元件不使用 Shadow DOM，圖示使用 Bootstrap Icons。
+`<card-badge>` 是多功能徽章元件。最基本的用法是一顆帶主題色的小標籤，並支援點擊後過濾清單、複製文字、折疊或顯示區塊、調整字級、輪播內容與跳出提示訊息。元件不使用 Shadow DOM，圖示使用 Bootstrap Icons。
 
 | 檔案 | 標籤 | 用途 |
 | --- | --- | --- |
-| `card-badge.js` | `<card-badge>` `<badge-item>` | 主題徽章、日期與計數徽章、可點擊的互動徽章。 |
+| `card-badge.js` | `<card-badge>` `<badge-item>` | 主題徽章與可點擊的互動徽章。 |
 
 ## 目錄
 
 - [標籤](#標籤)
 - [屬性：外觀](#屬性外觀)
-- [屬性：格式化日期](#屬性格式化日期)
-- [屬性：計數](#屬性計數)
 - [屬性：互動](#屬性互動)
 - [屬性：提示訊息](#屬性提示訊息)
 - [屬性：輪播](#屬性輪播)
@@ -39,25 +37,6 @@
 | `icon` | `bi-` 類別或任意文字 | 無 | `bi-` 開頭顯示 Bootstrap Icons，其他字串（含 emoji）原樣顯示。 |
 | `disabled` | 布林 | 關閉 | 停用：不能點擊，顯示半透明灰色。 |
 
-## 屬性：格式化日期
-
-| 屬性 | 值 | 預設 | 說明 |
-| --- | --- | --- | --- |
-| `type` | `date`、`time`、`datetime`、`deadline` | 無 | 格式化模式，需搭配 `value`。 |
-| `value` | 文字 | 無 | 來源值。`date` 為 `YYYY-MM-DD`；`time` 為 `HH:mm:ss`；`deadline` 為日期字串。 |
-| `format` | `YYYY-MM-DD`、`MM/DD`、`MM-DD` | 依類型 | `date` 的輸出格式；`datetime` 目前固定為 `MM/DD HH:mm`。 |
-| `warning-days` | 整數 | `3` | `deadline` 距截止日幾天內顯示黃色警告，逾期自動變紅色。 |
-
-## 屬性：計數
-
-| 屬性 | 值 | 預設 | 說明 |
-| --- | --- | --- | --- |
-| `count` | 整數 | 無 | 設定後進入計數模式。 |
-| `max-count` | 整數 | `99` | 超過時顯示「N+」，例如 `99+`。 |
-| `show-zero` | `true` | `false` | `count="0"` 時仍顯示；否則整個徽章隱藏。 |
-| `dot-mode` | `true` | `false` | 只顯示有色小圓點，不顯示數字。 |
-| `count-animate` | `false` | `true` | `count` 改變時的彈跳動畫。 |
-
 ## 屬性：互動
 
 | 屬性 | 值 | 預設 | 說明 |
@@ -69,6 +48,7 @@
 | `href` | 網址 | 無 | 點擊後前往。 |
 | `href-target` | `_self`、`_blank` 等 | `_self` | 連結開啟位置。 |
 | `toggle-target` | 元素 id | 無 | 點擊折疊或展開該元素，圖示自動旋轉 180 度。 |
+| `reveal-target` | 元素 id，可多個 | 無 | 點擊後顯示這些元素，例如 `reveal-target="id1,id2,id3"`。id 以逗號或空白分隔，`#` 可省略。 |
 | `data-filter` | 文字或 `all` | 無 | 搭配 `action="filter"`，只顯示 `data-filter-group` 含有此值的元素。 |
 | `removeself` | `true` | `false` | 點擊後淡出並移除自己。 |
 | `source` | 元素 id | 無 | `copy` 的來源；輸入框取其值，其他元素取文字。沒設時複製 `text`。 |
@@ -83,7 +63,8 @@
 | --- | --- | --- | --- |
 | `alert-message` | 文字 | 無 | 點擊後在頁面上顯示的浮動提示。 |
 | `alert-source` | 元素 id | 無 | 從該元素讀取提示文字，優先順序低於 `alert-message`。 |
-| `alert-type` | `info`、`success`、`warning`、`danger` | `info` | 提示樣式。 |
+| `alert-theme` | 品牌色名稱、`#` 色碼或 `rgb()` | `indigo` | 提示的主題色。無法辨識的值改用 `indigo`。 |
+| `alert-variant` | `fill`、`outline`、`double` | `fill` | 提示樣式：填滿（文字色依底色自動調整）、單線、雙線。 |
 | `alert-duration` | 毫秒 | `4000` | 顯示時間。 |
 | `alert-position` | `top`、`top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right` | `top` | 顯示位置。 |
 
@@ -101,8 +82,9 @@
 ## 屬性解說
 
 - **主題繼承**：沒寫 `theme` 時，若徽章在 `<card-v3>` 裡，會沿用該卡片的 `theme`。
-- **計數隱藏**：`count="0"` 且沒有 `show-zero` 時整個徽章會隱藏，`count` 變回正數就重新出現。
-- **截止日顏色**：`type="deadline"` 依剩餘天數自動切換一般、警告（`warning-days` 內）與逾期三種顏色。
+- **顯示多個區塊**：`reveal-target` 的目標請先用 `hidden` 屬性、行內 `display:none` 或樣式表的 `display:none` 隱藏。點擊後顯示並淡入，不會再收起；找不到的 id 會在主控台警告，並列在 `badge-reveal` 事件的 `missing`。
+- **提示樣式**：`outline` 與 `double` 的底色為 `#2D2D2D`，文字與線條使用 `alert-theme`；`fill` 的文字色依底色亮度自動選深或淺。
+- **已移除的功能**：格式化日期（`type`、`value`、`format`、`warning-days`）、計數（`count`、`max-count`、`show-zero`、`dot-mode`、`count-animate`）與 `alert-type` 已整組移除。
 - **樣式隔離**：每個實例有自己的 `data-badge-id`，樣式只作用在自己身上，外部 CSS 仍可直接覆寫。
 
 ## 範例
@@ -116,13 +98,12 @@
 <card-badge theme="energetic" size="lg" font-size="1.2rem" padding="4px 16px" text="大尺寸"></card-badge>
 ```
 
-**日期、截止日與計數**
+**提示訊息的主題與樣式**
 
 ```html
-<card-badge theme="blue" type="date" value="2026-11-20" format="MM/DD"></card-badge>
-<card-badge type="deadline" value="2026-11-08" warning-days="5"></card-badge>
-<card-badge theme="pink" icon="bi-bell" count="120" max-count="99"></card-badge>
-<card-badge theme="red" dot-mode="true" count="1"></card-badge>
+<card-badge clickable="true" text="填滿" alert-message="已儲存" alert-theme="green"></card-badge>
+<card-badge clickable="true" text="單線" alert-message="單線外框" alert-theme="#FF91D7" alert-variant="outline"></card-badge>
+<card-badge clickable="true" text="雙線" alert-message="雙線外框" alert-theme="rgb(180,132,232)" alert-variant="double" alert-position="bottom-right"></card-badge>
 ```
 
 **折疊、過濾與複製**
@@ -131,13 +112,18 @@
 <card-badge theme="blue" icon="bi-chevron-down" text="展開說明" toggle-target="more-1"></card-badge>
 <div id="more-1">可折疊的內容。</div>
 
+<card-badge theme="energetic" text="顯示三個區塊" reveal-target="rv-1, rv-2, rv-3"></card-badge>
+<div id="rv-1" hidden>區塊 1</div>
+<div id="rv-2" hidden>區塊 2</div>
+<div id="rv-3" hidden>區塊 3</div>
+
 <card-badge clickable="true" action="filter" data-filter="all" text="全部"></card-badge>
 <card-badge clickable="true" action="filter" data-filter="design" text="設計" theme="pink"></card-badge>
 <div data-filter-group="design">UI 設計</div>
 <div data-filter-group="dev,design">前端開發</div>
 
 <card-badge clickable="true" action="copy" source="src-1" target="out-1" text="複製"
-            alert-message="已複製" alert-type="success" alert-position="bottom-right"></card-badge>
+            alert-message="已複製" alert-theme="green" alert-position="bottom-right"></card-badge>
 <p id="src-1">這段文字可以被複製</p>
 <p id="out-1"></p>
 ```
@@ -166,6 +152,9 @@
 
 | 事件 | `detail` | 觸發時機 |
 | --- | --- | --- |
-| `badge-click` | `{ action, filter, source, target, toggleTarget, fontControl, isCollapsed, type, value, text, count, href, alertMessage }` | 點擊徽章。 |
+| `badge-click` | `{ action, filter, source, target, toggleTarget, revealTarget, fontControl, isCollapsed, text, href, alertMessage }` | 點擊徽章。 |
+| `badge-reveal` | `{ ids, revealed, missing }` | `reveal-target` 顯示區塊後觸發；`missing` 是找不到的 id。 |
 | `badge-rotate` | `{ mode, currentIndex, totalItems, isAuto, targetId }` | 輪播切換，`mode` 為 `self` 或 `content`。 |
 | `badge-expand` | `{ currentIndex, totalItems, targetId }` | 自動輪播時點擊展開目前項目。 |
+
+互動範例：[`card-badge-demo-11-21-26.html`](card-badge-demo-11-21-26.html)（合併了先前的示範、說明書與視覺編輯器）。
