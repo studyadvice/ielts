@@ -7,14 +7,13 @@
 | `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-11-21-26.html`](arrow-flow-demo-11-21-26.html) |
 | `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-20-26.html`](bp-stepper-demo-11-20-26.html) |
 | `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 | [`chunk-demo-demo-11-12-26.html`](chunk-demo-demo-11-12-26.html) |
-| `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 | [`dual-line-demo-11-20-26.html`](dual-line-demo-11-20-26.html) |
 | `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-11-20-26.html`](numeric-list-demo-11-20-26.html) |
 | `phrase-chip.js` | `<phrase-chip>` `<phrase-upgrade>` | 可收藏的片語標籤與片語升級動畫。 | [`phrase-chip-demo-10-23-26.html`](phrase-chip-demo-10-23-26.html) |
 | `practice-tracker.js` | `<practice-tracker>` `<pt-done-btn>` | 學習進度面板、片語收藏與定時彈出視窗。 | [`practice-tracker-demo-11-10-26.html`](practice-tracker-demo-11-10-26.html)、[使用手冊](practice-tracker-manual-10-24-26.html) |
 | `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 | [`slider-show-demo-11-10-26.html`](slider-show-demo-11-10-26.html) |
 | `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 | [`ui-fillin-demo-11-12-26.html`](ui-fillin-demo-11-12-26.html) |
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-20-26.html`](ui-inputs-demo-11-20-26.html) |
-| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` | 閱讀輔助標記與展開按鈕。 | [`ui-plus-demo-11-12-26.html`](ui-plus-demo-11-12-26.html) |
+| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` `<dual-hr>` `<dual-vr>` | 閱讀輔助標記、展開按鈕與雙色分隔線。 | [`ui-plus-demo-11-21-26.html`](ui-plus-demo-11-21-26.html) |
 
 跨元件範例：[`data-flow-demo-11-11-26.html`](data-flow-demo-11-11-26.html) 示範 `ui-cards`、`arrow-flow`、`ui-drill`、`ui-table` 組合成資料流動中心。
 
@@ -112,7 +111,6 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 - [arrow-flow.js](#arrow-flowjs)
 - [bp-stepper.js](#bp-stepperjs)
 - [chunk-demo.js](#chunk-demojs)
-- [dual-line.js](#dual-linejs)
 - [numeric-list.js](#numeric-listjs)
 - [phrase-chip.js](#phrase-chipjs)
 - [practice-tracker.js](#practice-trackerjs)
@@ -662,104 +660,6 @@ window.ChunkDemoConfig = { defaultTheme: 'blue', showPreview: true, mode: 'dots'
 | --- | --- | --- |
 | `chunk-change` | `{ id, level }` | 使用者換了一個意群的寫法。 |
 | `chunk-end` | `{ total }` | 每個未鎖定的意群都至少換過一次寫法，只觸發一次。 |
-
----
-
-## dual-line.js
-
-雙色分隔線。`<dual-hr>` 是水平線，`<dual-vr>` 是垂直線，兩段顏色可依比例分配，支援實線、虛線、點線與兩端箭頭。屬性改變時會立即重新繪製。
-
-### 標籤
-
-| 標籤 | 用途 |
-| --- | --- |
-| `<dual-hr>` | 水平雙色線，寬度填滿父元素。 |
-| `<dual-vr>` | 垂直雙色線，為行內元素，可放在文字或 `flex` 版面中。 |
-
-### `<dual-hr>` 屬性
-
-| 屬性 | 值 | 預設 | 說明 |
-| --- | --- | --- | --- |
-| `color-left` | 品牌色名稱、色碼或 `transparent` | `yellow` | 左段顏色。 |
-| `color-right` | 品牌色名稱、色碼或 `transparent` | `blue` | 右段顏色。 |
-| `ratio` | `左:右` | `5:5` | 兩段長度比例，例如 `3:7`。 |
-| `thickness` | 長度 | `1px` | 線條粗細。 |
-| `margin` | CSS `margin` 值 | `8px 0` | 外距。 |
-| `line-style` | `solid`、`dashed`、`dotted`、`none` | `solid` | 線條樣式。 |
-| `dash` | 長度（px） | `8px` | 虛線每段長度；點線時為圓點直徑。 |
-| `gap` | 長度（px） | `5px` | 虛線或點線的間隔。 |
-| `arrow` | `left`、`right`、`start`、`end`、`both` | 無 | 箭頭位置。`start` 等於 `left`，`end` 等於 `right`。 |
-| `arrow-size` | 數字（px） | `8` | 箭頭大小。 |
-| `extraclass` | 類別名稱 | 無 | 附加到元素上的類別。 |
-
-### `<dual-vr>` 屬性
-
-| 屬性 | 值 | 預設 | 說明 |
-| --- | --- | --- | --- |
-| `color-top` | 品牌色名稱、色碼或 `transparent` | `yellow` | 上段顏色，也可寫成 `color-left`。 |
-| `color-bottom` | 品牌色名稱、色碼或 `transparent` | `blue` | 下段顏色，也可寫成 `color-right`。 |
-| `ratio` | `上:下` | `5:5` | 兩段長度比例。 |
-| `thickness` | 長度 | `1px` | 線條粗細。 |
-| `height` | 長度 | `80px` | 總高度。 |
-| `margin` | CSS `margin` 值 | `0 8px` | 外距。 |
-| `line-style` | `solid`、`dashed`、`dotted`、`none` | `solid` | 線條樣式。 |
-| `dash` | 長度（px） | `8px` | 虛線每段長度；點線時為圓點直徑。 |
-| `gap` | 長度（px） | `5px` | 虛線或點線的間隔。 |
-| `arrow` | `top`、`bottom`、`start`、`end`、`both` | 無 | 箭頭位置。`start` 等於 `top`，`end` 等於 `bottom`。 |
-| `arrow-size` | 數字（px） | `8` | 箭頭大小。 |
-| `extraclass` | 類別名稱 | 無 | 附加到元素上的類別。 |
-
-### 屬性解說
-
-- **比例**：`ratio` 決定兩段的 `flex` 比例，箭頭另外佔固定空間，不會壓縮比例。
-- **箭頭顏色**：起點箭頭沿用第一段顏色，終點箭頭沿用第二段顏色。
-- **`extraclass` 與外距**：設定 `extraclass` 且沒寫 `margin` 時，元件不寫入行內外距，讓外部 CSS 的類別控制間距。
-- **只要一段線**：把其中一段設為 `transparent`，或用 `line-style="none"` 隱藏兩段。
-
-### 範例
-
-**水平線**
-
-```html
-<dual-hr></dual-hr>
-<dual-hr color-left="pink" color-right="indigo" ratio="2:8" thickness="3px"></dual-hr>
-<dual-hr color-left="energetic" color-right="transparent" ratio="3:7" thickness="2px"></dual-hr>
-```
-
-**虛線、點線與箭頭**
-
-```html
-<dual-hr line-style="dashed" dash="10" gap="6" arrow="right" arrow-size="12"></dual-hr>
-<dual-hr line-style="dotted" dash="4" gap="6" arrow="both" color-left="#71CD76" color-right="#5DBAE8"></dual-hr>
-```
-
-**垂直線放在文字之間**
-
-```html
-<p>
-  左欄文字
-  <dual-vr height="1.5rem" color-top="yellow" color-bottom="red" thickness="2px"></dual-vr>
-  右欄文字
-</p>
-<dual-vr height="120px" ratio="6:4" arrow="bottom" line-style="dashed"></dual-vr>
-```
-
-**交給外部類別控制間距**
-
-```html
-<style>.sec-line { margin: 24px 0; }</style>
-<dual-hr extraclass="sec-line" color-left="violet" color-right="green"></dual-hr>
-```
-
-### JavaScript API
-
-```js
-DualLine.addColor('brand', '#71CD76');                   // 新增可用的顏色名稱
-DualLine.configureHR({ 'color-left': 'pink', thickness: '2px' });  // 改水平線預設值並重繪
-DualLine.configureVR({ height: '60px' });                // 改垂直線預設值並重繪
-DualLine.configure({ 'line-style': 'dashed' });         // 兩種線一起改
-DualLine.palette;                                        // 目前的色盤
-```
 
 ---
 
@@ -1968,9 +1868,9 @@ cli.rate = 2;                              // 播放倍率
 
 ## ui-plus.js
 
-一個檔案內含兩組互相獨立的元件：閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`），以及展開按鈕 `ui-btn`。兩組共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
+一個檔案內含三組互相獨立的元件：閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`）、展開按鈕 `ui-btn`，以及雙色分隔線（`dual-hr`、`dual-vr`）。閱讀輔助標記與展開按鈕共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
 
-互動範例：`ui-plus-demo-11-12-26.html`（合併了先前所有的 ui-plus 示範檔）。
+互動範例：`ui-plus-demo-11-21-26.html`（合併了先前所有的 ui-plus 示範檔）。
 
 顏色屬性可填色盤名稱，或以 `#`、`rgb` 開頭的 CSS 顏色。
 
@@ -1982,6 +1882,8 @@ cli.rate = 2;                              // 播放倍率
 | `<chalk-mark>` | 行內 | 粉筆圈字。 |
 | `<col-pair>` | 行內 | 搭配詞連動。 |
 | `<ui-btn>` | 任意位置 | 展開按鈕。 |
+| `<dual-hr>` | 區塊 | 水平雙色分隔線。 |
+| `<dual-vr>` | 行內 | 垂直雙色分隔線。 |
 
 ### 閱讀輔助標記
 
@@ -2198,7 +2100,7 @@ cli.rate = 2;                              // 播放倍率
 - 可以和 `target`、`href`、`alert` 等一起使用，同一次點擊會先開合目標，再移除元素。
 - 只寫 `remove-target` 時，按鈕不會去開合緊接在後面的元素，目標全部移除後按鈕自動停用。
 - 移除後在 `<ui-btn>` 上觸發會冒泡的 `ubtn-removed` 事件，`e.detail` 含 `ids`（這次移除的 id）與 `button`。
-- 範例：`ui-plus-demo-11-12-26.html`。
+- 範例：`ui-plus-demo-11-21-26.html`。
 
 **揭曉 mini-table 的儲存格**
 
@@ -2223,6 +2125,102 @@ cli.rate = 2;                              // 播放倍率
 - 不存在的格子會在主控台警告並略過。
 
 **全域設定**：在載入腳本之前定義 `window.UiBtnConfig`，可用鍵為 `theme`、`size`、`variant`、`animation`、`animDuration`、`chevron`。`size` 同樣可以填長度值，例如 `'1.25rem'`。
+
+### dual-hr、dual-vr：雙色分隔線
+
+雙色分隔線。`<dual-hr>` 是水平線，`<dual-vr>` 是垂直線，兩段顏色可依比例分配，支援實線、虛線、點線與兩端箭頭。屬性改變時會立即重新繪製。
+
+#### 標籤
+
+| 標籤 | 用途 |
+| --- | --- |
+| `<dual-hr>` | 水平雙色線，寬度填滿父元素。 |
+| `<dual-vr>` | 垂直雙色線，為行內元素，可放在文字或 `flex` 版面中。 |
+
+#### `<dual-hr>` 屬性
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `color-left` | 品牌色名稱、色碼或 `transparent` | `yellow` | 左段顏色。 |
+| `color-right` | 品牌色名稱、色碼或 `transparent` | `blue` | 右段顏色。 |
+| `ratio` | `左:右` | `5:5` | 兩段長度比例，例如 `3:7`。 |
+| `thickness` | 長度 | `1px` | 線條粗細。 |
+| `margin` | CSS `margin` 值 | `8px 0` | 外距。 |
+| `line-style` | `solid`、`dashed`、`dotted`、`none` | `solid` | 線條樣式。 |
+| `dash` | 長度（px） | `8px` | 虛線每段長度；點線時為圓點直徑。 |
+| `gap` | 長度（px） | `5px` | 虛線或點線的間隔。 |
+| `arrow` | `left`、`right`、`start`、`end`、`both` | 無 | 箭頭位置。`start` 等於 `left`，`end` 等於 `right`。 |
+| `arrow-size` | 數字（px） | `8` | 箭頭大小。 |
+| `extraclass` | 類別名稱 | 無 | 附加到元素上的類別。 |
+
+#### `<dual-vr>` 屬性
+
+| 屬性 | 值 | 預設 | 說明 |
+| --- | --- | --- | --- |
+| `color-top` | 品牌色名稱、色碼或 `transparent` | `yellow` | 上段顏色，也可寫成 `color-left`。 |
+| `color-bottom` | 品牌色名稱、色碼或 `transparent` | `blue` | 下段顏色，也可寫成 `color-right`。 |
+| `ratio` | `上:下` | `5:5` | 兩段長度比例。 |
+| `thickness` | 長度 | `1px` | 線條粗細。 |
+| `height` | 長度 | `80px` | 總高度。 |
+| `margin` | CSS `margin` 值 | `0 8px` | 外距。 |
+| `line-style` | `solid`、`dashed`、`dotted`、`none` | `solid` | 線條樣式。 |
+| `dash` | 長度（px） | `8px` | 虛線每段長度；點線時為圓點直徑。 |
+| `gap` | 長度（px） | `5px` | 虛線或點線的間隔。 |
+| `arrow` | `top`、`bottom`、`start`、`end`、`both` | 無 | 箭頭位置。`start` 等於 `top`，`end` 等於 `bottom`。 |
+| `arrow-size` | 數字（px） | `8` | 箭頭大小。 |
+| `extraclass` | 類別名稱 | 無 | 附加到元素上的類別。 |
+
+#### 屬性解說
+
+- **比例**：`ratio` 決定兩段的 `flex` 比例，箭頭另外佔固定空間，不會壓縮比例。
+- **箭頭顏色**：起點箭頭沿用第一段顏色，終點箭頭沿用第二段顏色。
+- **`extraclass` 與外距**：設定 `extraclass` 且沒寫 `margin` 時，元件不寫入行內外距，讓外部 CSS 的類別控制間距。
+- **只要一段線**：把其中一段設為 `transparent`，或用 `line-style="none"` 隱藏兩段。
+
+#### 範例
+
+**水平線**
+
+```html
+<dual-hr></dual-hr>
+<dual-hr color-left="pink" color-right="indigo" ratio="2:8" thickness="3px"></dual-hr>
+<dual-hr color-left="energetic" color-right="transparent" ratio="3:7" thickness="2px"></dual-hr>
+```
+
+**虛線、點線與箭頭**
+
+```html
+<dual-hr line-style="dashed" dash="10" gap="6" arrow="right" arrow-size="12"></dual-hr>
+<dual-hr line-style="dotted" dash="4" gap="6" arrow="both" color-left="#71CD76" color-right="#5DBAE8"></dual-hr>
+```
+
+**垂直線放在文字之間**
+
+```html
+<p>
+  左欄文字
+  <dual-vr height="1.5rem" color-top="yellow" color-bottom="red" thickness="2px"></dual-vr>
+  右欄文字
+</p>
+<dual-vr height="120px" ratio="6:4" arrow="bottom" line-style="dashed"></dual-vr>
+```
+
+**交給外部類別控制間距**
+
+```html
+<style>.sec-line { margin: 24px 0; }</style>
+<dual-hr extraclass="sec-line" color-left="violet" color-right="green"></dual-hr>
+```
+
+#### JavaScript API
+
+```js
+DualLine.addColor('brand', '#71CD76');                   // 新增可用的顏色名稱
+DualLine.configureHR({ 'color-left': 'pink', thickness: '2px' });  // 改水平線預設值並重繪
+DualLine.configureVR({ height: '60px' });                // 改垂直線預設值並重繪
+DualLine.configure({ 'line-style': 'dashed' });         // 兩種線一起改
+DualLine.palette;                                        // 目前的色盤
+```
 
 ### JavaScript API
 
