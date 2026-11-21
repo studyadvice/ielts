@@ -22,7 +22,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20',
+    'bg-alternative': '#2D2D2D',
   };
 
   /* 品牌色名稱轉換：不分大小寫，base 為 bg 的別名；不是名稱時原樣回傳 */
@@ -1432,7 +1432,10 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
     endingEl.classList.add('bps-ending-reveal');
   }
 
-  customElements.define('bp-stepper', class extends HTMLElement {
+  /* 同一頁重複載入本檔時不重複註冊，避免丟出 NotSupportedError */
+  const define = (name, cls) => { if (!customElements.get(name)) customElements.define(name, cls); };
+
+  define('bp-stepper', class extends HTMLElement {
     /* 只初始化一次：元素被搬移（例如 link-when 的 in-place）時不重建 */
     connectedCallback() { if (this._bpsInit) return; this._bpsInit = true; setTimeout(() => initEl(this), 0); }
     disconnectedCallback() { this.pause(); }
@@ -1467,9 +1470,9 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
     pause() { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
     reset() { this.pause(); resetStates(this); }
   });
-  customElements.define('bp-step',         class extends HTMLElement {});
-  customElements.define('bp-step-title',   class extends HTMLElement {});
-  customElements.define('bp-step-content', class extends HTMLElement {});
+  define('bp-step',         class extends HTMLElement {});
+  define('bp-step-title',   class extends HTMLElement {});
+  define('bp-step-content', class extends HTMLElement {});
 
   window.BPStepper = { defaults, BRAND, THEMES, init, setActive, setError, resetStates, progressShowNext };
 

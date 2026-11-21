@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>arrow-flow 範例（合併 2 個版本）</title>
+<title>arrow-flow 範例</title>
 <style>
   :root {
     --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
@@ -25,10 +25,15 @@
 <body>
 <div class="page">
   <h1>arrow-flow</h1>
-  <p class="lead-note">本檔合併 2 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <p class="lead-note">本檔合併 3 組範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>程式化控制</b>：<a href="#v-api">next()、reset()、current、total</a><br>
   <b>10-21-26</b>：<a href="#v-10-21-26">arrow-flow v2.0 Demo</a><br>
   <b>09-22-26</b>：<a href="#v-09-22-26">arrow-flow 元件示範</a></p>
 
+  <section class="ver" id="v-api">
+    <h2 class="version">程式化控制：next()、reset()、current、total</h2>
+    <iframe class="frame" id="f-api" data-src="src-api" title="arrow-flow 程式化控制" scrolling="no"></iframe>
+  </section>
   <section class="ver" id="v-10-21-26">
     <h2 class="version">10-21-26：arrow-flow v2.0 Demo</h2>
     <iframe class="frame" id="f-10-21-26" data-src="src-10-21-26" title="arrow-flow 10-21-26" scrolling="no"></iframe>
@@ -38,6 +43,116 @@
     <iframe class="frame" id="f-09-22-26" data-src="src-09-22-26" title="arrow-flow 09-22-26" scrolling="no"></iframe>
   </section>
 </div>
+
+<script type="text/plain" id="src-api">
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arrow-flow 程式化控制</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #0C0D0C; color: #C6C7BD; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 1.125rem; }
+  .page { max-width: 1400px; margin: 0 auto; padding: 32px 32px 48px 32px; }
+  .section { margin-bottom: 56px; }
+  .section-h2 { font-size: 1.5rem; font-weight: 700; color: #DBEDD8; margin-bottom: 8px; }
+  .section-desc { font-size: 1rem; color: #86877F; margin-bottom: 20px; line-height: 1.6; }
+  .section-desc code { color: #B484E8; font-family: 'Courier New', monospace; }
+  .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 20px 0 0 0; }
+  .btn { padding: 8px 20px; border: 2px solid #5DBAE8; border-radius: 4px; background: #0C0D0C; color: #5DBAE8; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .btn:hover { background: #5DBAE8; color: #0C0D0C; }
+  .btn.reset { border-color: #EF6661; color: #EF6661; }
+  .btn.reset:hover { background: #EF6661; color: #0C0D0C; }
+  .btn.pick { border-color: #B6FF00; color: #B6FF00; }
+  .btn.pick:hover { background: #B6FF00; color: #0C0D0C; }
+  .status { margin-top: 16px; padding: 12px 20px; background: #2D2D2D; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 1rem; color: #DBEDD8; }
+  .status b { color: #E3D322; }
+  .done-msg { margin-top: 20px; padding: 14px 20px; background: #2D2D2D; border-left: 3px solid #71CD76; color: #71CD76; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <section class="section">
+    <h2 class="section-h2">直線流程：next() 與 reset()</h2>
+    <p class="section-desc">按鈕呼叫 <code>flow.next()</code> 與 <code>flow.reset()</code>，箭頭仍然可以點。走完後出現結尾區塊，重設後再次隱藏。</p>
+    <arrow-flow id="f1" theme="blue" arrow-glow on-complete="done-1">
+      <flow-step title="讀題">先圈出題目的關鍵字。</flow-step>
+      <flow-step title="定位">回到文章找出對應段落。</flow-step>
+      <flow-step title="作答">比對同義改寫後作答。</flow-step>
+    </arrow-flow>
+    <div class="done-msg" id="done-1">流程完成，接著做練習題。</div>
+    <div class="ctrl">
+      <button class="btn" id="b1-next" type="button">next()</button>
+      <button class="btn reset" id="b1-reset" type="button">reset()</button>
+    </div>
+    <div class="status" id="s1"></div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-h2">分支流程：next(label) 選路線</h2>
+    <p class="section-desc">停在分支時，<code>next()</code> 沒有參數不會動作，要傳序號或 <code>label</code> 選路線。選好之後，<code>next()</code> 推進該路線的下一步，走完後後面的主流程步驟自動揭示。<code>total</code> 只算主流程，所以這裡是 2。</p>
+    <arrow-flow id="f2" theme="green" branch-label-theme="energetic" arrow-glow on-complete="done-2">
+      <flow-step title="確認題型">判斷是圖表題還是流程題。</flow-step>
+      <flow-branch>
+        <branch-option label="圖表題" theme="blue">
+          <flow-step title="找趨勢">先看最高點與最低點。</flow-step>
+          <flow-step title="找比較">挑兩組資料互相比較。</flow-step>
+        </branch-option>
+        <branch-option label="流程題" theme="playful">
+          <flow-step title="找階段">依順序列出每個階段。</flow-step>
+        </branch-option>
+        <branch-option label="沒設 theme">
+          <flow-step title="預設色">按鈕顏色取自 branch-label-theme。</flow-step>
+        </branch-option>
+      </flow-branch>
+      <flow-step title="寫總結">兩種題型都以概述收尾。</flow-step>
+    </arrow-flow>
+    <div class="done-msg" id="done-2">分支流程完成。</div>
+    <div class="ctrl">
+      <button class="btn pick" id="b2-a" type="button">next('圖表題')</button>
+      <button class="btn pick" id="b2-b" type="button">next(1)</button>
+      <button class="btn" id="b2-next" type="button">next()</button>
+      <button class="btn reset" id="b2-reset" type="button">reset()</button>
+    </div>
+    <div class="status" id="s2"></div>
+  </section>
+
+</div>
+
+<script src="arrow-flow.js"><\/script>
+<script>
+  window.addEventListener('load', function () {
+    function wire(flow, out, hint) {
+      var last = '';
+      function show() {
+        out.innerHTML = 'current = <b>' + flow.current + '</b>，total = <b>' + flow.total + '</b>' + (last ? '，上一次呼叫回傳 <b>' + last + '</b>' : '');
+      }
+      ['step-change', 'branch-select', 'flow-complete'].forEach(function (n) { flow.addEventListener(n, show); });
+      show();
+      return {
+        call: function (fn) { last = String(fn()); show(); },
+        reset: function () { last = ''; flow.reset(); show(); }
+      };
+    }
+
+    var f1 = document.getElementById('f1');
+    var w1 = wire(f1, document.getElementById('s1'));
+    document.getElementById('b1-next').addEventListener('click', function () { w1.call(function () { return f1.next(); }); });
+    document.getElementById('b1-reset').addEventListener('click', function () { w1.reset(); });
+
+    var f2 = document.getElementById('f2');
+    var w2 = wire(f2, document.getElementById('s2'));
+    document.getElementById('b2-a').addEventListener('click', function () { w2.call(function () { return f2.next('圖表題'); }); });
+    document.getElementById('b2-b').addEventListener('click', function () { w2.call(function () { return f2.next(1); }); });
+    document.getElementById('b2-next').addEventListener('click', function () { w2.call(function () { return f2.next(); }); });
+    document.getElementById('b2-reset').addEventListener('click', function () { w2.reset(); });
+  });
+<\/script>
+</body>
+</html>
+</script>
 
 <script type="text/plain" id="src-10-21-26">
 <!DOCTYPE html>
@@ -97,7 +212,6 @@
     margin-top: 20px; padding: 14px 20px;
     background: rgba(39,174,96,0.10); border-left: 3px solid var(--green);
     color: var(--green); font-size: 1rem; font-weight: 600;
-    display: none;
   }
 
   /* ── 分隔線 ── */

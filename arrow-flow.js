@@ -61,6 +61,14 @@
  *  label               — 分支選擇按鈕文字
  *  theme               — 分支色系（palette key 或 hex）
  *
+ * ─── 程式化控制（可搭配 link-when 或自己的腳本）──────────────────────────────────
+ *  el.next()          — 前進一步，有前進回傳 true。停在尚未選擇的分支時，需傳入
+ *                       el.next(0) 或 el.next('方案 A')（序號從 0 起算，或 label）選路線；
+ *                       已選路線但未走完時，推進該路線的下一步
+ *  el.reset()         — 回到初始狀態（依 current 屬性），結尾區塊重新隱藏
+ *  el.current         — 主流程已揭示的步驟數（從 1 起算，分支內的進度不計入）
+ *  el.total           — 主流程步驟總數（不含分支內的步驟）
+ *
  * ─── Events (bubble) ─────────────────────────────────────────────────────────
  *  step-change    → e.detail = { index, path, branchId }
  *  branch-select  → e.detail = { branchId, label }
@@ -90,7 +98,7 @@
     energetic: '#B6FF00',
     dreamy: '#C394CD',
     salmon: '#FFC88A',
-    'bg-alternative': '#3B2A20',
+    'bg-alternative': '#2D2D2D',
   };
 
   /* ── 箭頭尖端尺寸 ──────────────────────────────────────────────────────────── */
@@ -386,6 +394,7 @@ arrow-flow { display: block; }
   }
 
   /* ── SVG 箭頭製作 ─────────────────────────────────────────────────────────── */
+  let glowSeq = 0;   // 每個發光箭頭使用獨立的濾鏡 id，避免多個箭頭顏色不同時互相覆蓋
   function makeSVG(tipKey, fill, style, glow) {
     const t  = TIPS[tipKey] || TIPS.md;
     const W  = 80;
@@ -402,7 +411,8 @@ arrow-flow { display: block; }
     if (glow) {
       const defs = document.createElementNS(ns, 'defs');
       const filt = document.createElementNS(ns, 'filter');
-      filt.setAttribute('id', 'af-glow');
+      const gid = 'af-glow-' + (++glowSeq);
+      filt.setAttribute('id', gid);
       filt.setAttribute('x', '-20%'); filt.setAttribute('y', '-60%');
       filt.setAttribute('width', '140%'); filt.setAttribute('height', '220%');
       const fe = document.createElementNS(ns, 'feDropShadow');
@@ -413,7 +423,7 @@ arrow-flow { display: block; }
       filt.appendChild(fe);
       defs.appendChild(filt);
       svg.appendChild(defs);
-      svg.setAttribute('filter', 'url(#af-glow)');
+      svg.setAttribute('filter', `url(#${gid})`);
     }
 
     let shaft;
@@ -548,7 +558,8 @@ arrow-flow { display: block; }
 
       const animCls = { fade:'af-fade', slide:'af-slide', none:'af-none' }[anim] ?? 'af-fade';
 
-      /* 清空並重建 */
+      /* 清空並重建（原始標記存起來，reset() 要用） */
+      if (this._src === undefined) this._src = this.innerHTML;
       this.innerHTML = '';
 
       /* ── 渲染 ── */
@@ -616,8 +627,8 @@ arrow-flow { display: block; }
             /* 選擇按鈕 */
             const btn = document.createElement('button');
             btn.className = 'af-branch-btn';
-            btn.style.setProperty('--af-btn-clr', brBtnClr);
-            btn.style.setProperty('--af-btn-clr', optClr);
+            /* branch-option 自己有 theme 就用它；沒有才用 branch-label-theme */
+            btn.style.setProperty('--af-btn-clr', opt.theme ? optClr : brBtnClr);
             btn.textContent = opt.label || `路徑 ${oi+1}`;
             btnsDiv.appendChild(btn);
 
@@ -842,6 +853,9 @@ arrow-flow { display: block; }
       const cur  = segs.find(m => m.segIdx === si);
       if (!cur) return;
 
+      /* 緊接著的是分支：必須先選路線，箭頭不能跳過分支直接揭示後面的步驟 */
+      if (segs.find(m => m.segIdx === si + 1)?.type === 'branch') return;
+
       /* 找緊接的下一個 step */
       const nextStepMeta = segs.find(m => m.type === 'step' && m.segIdx > si);
       if (!nextStepMeta) return;
@@ -879,8 +893,8 @@ arrow-flow { display: block; }
 
       if (this._eqH) requestAnimationFrame(() => this._eqHt());
 
-      /* 判斷是否完成（最後一個 step 沒有後續未解鎖的 branch） */
-      this._checkDone(si);
+      /* 判斷是否完成：以「剛揭示的這一步」為準，而不是前一步 */
+      this._checkDone(nextStepMeta.segIdx);
     }
 
     /* ── 分支選擇 ────────────────────────────────────────────────────────────── */
@@ -985,6 +999,8 @@ arrow-flow { display: block; }
         /* 啟用緊接的那個箭頭 */
         const nextAr = this._ar.find(a => a.segIdx === nextStepMeta.segIdx);
         if (nextAr) this._setArState(nextAr.el, 'ac');
+        /* 分支後面只剩這一步時，揭示它就代表流程結束 */
+        this._checkDone(nextStepMeta.segIdx);
       } else {
         /* 沒有後續主流程步驟，整體完成 */
         this._done();
@@ -1007,6 +1023,57 @@ arrow-flow { display: block; }
         this._oc.style.display = '';
         this._oc.classList.add('af-reveal');
       }
+    }
+
+    /* ── 公開 API ────────────────────────────────────────────────────────────── */
+
+    /* 主流程步驟總數（不含分支內的步驟）；尚未初始化時為 0 */
+    get total() { return this._mainStepCount || 0; }
+
+    /* 主流程已揭示的步驟數（從 1 起算）；分支內的進度不計入 */
+    get current() {
+      return this._bx ? this._bx.filter(b => b.classList.contains('af-on')).length : 0;
+    }
+
+    /* 前進一步，有前進回傳 true。
+       停在尚未選擇的分支時：next(0) 或 next('方案 A') 依序號或 label 選路線，沒傳參數則不動作。
+       已選路線但未走完：推進該路線的下一步。 */
+    next(choice) {
+      if (!this._bx) return false;
+      const r = this.current;
+      const last = r > 0 ? this._segMeta.find(m => m.type === 'step' && m.mainIdx === r - 1) : null;
+      const nxt  = this._segMeta.find(m => m.segIdx === (last ? last.segIdx + 1 : 0));
+      if (!nxt) return false;
+
+      if (nxt.type === 'step') {
+        if (!last) return false;
+        this._mainFwd(last.segIdx);
+        return true;
+      }
+
+      const br = this._branchEls[nxt.branchIdx];
+      if (!br || br.resolved) return false;
+      const chosen = br.pathsData.find(p => p.pathEl.classList.contains('active'));
+      if (chosen) {
+        if (chosen.done || chosen.cur >= chosen.steps.length - 1) return false;
+        this._branchFwd(chosen, chosen.cur);
+        return true;
+      }
+      if (choice === undefined || choice === null) return false;
+      const pick = typeof choice === 'number'
+        ? br.pathsData[choice]
+        : br.pathsData.find(p => p.label === choice);
+      if (!pick) return false;
+      this._selectBranch(br.si, br.pathsData, pick, this._segMeta);
+      return true;
+    }
+
+    /* 回到初始狀態（依 current 屬性），on-complete 的結尾區塊重新隱藏 */
+    reset() {
+      if (this._src === undefined) return;
+      if (this._oc) this._oc.classList.remove('af-reveal');
+      this.innerHTML = this._src;
+      this._init();
     }
 
     /* ── 工具 ────────────────────────────────────────────────────────────────── */

@@ -4,7 +4,7 @@
 
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
-| `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-11-20-26.html`](arrow-flow-demo-11-20-26.html) |
+| `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-11-21-26.html`](arrow-flow-demo-11-21-26.html) |
 | `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-20-26.html`](bp-stepper-demo-11-20-26.html) |
 | `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 | [`chunk-demo-demo-11-12-26.html`](chunk-demo-demo-11-12-26.html) |
 | `dual-line.js` | `<dual-hr>` `<dual-vr>` | 雙色分隔線，支援虛線、點線與箭頭。 | [`dual-line-demo-11-20-26.html`](dual-line-demo-11-20-26.html) |
@@ -168,7 +168,7 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 | `header-letter-spacing` | 長度 | `0` | 標題字距。 |
 | `content-font-size` | 長度 | `1.125rem` | 內文字級。 |
 | `content-line-height` | 數字 | `1.5` | 內文行高。 |
-| `branch-label-theme` | 品牌色名稱或色碼 | `green` | 分支選項按鈕的顏色。 |
+| `branch-label-theme` | 品牌色名稱或色碼 | `green` | 分支選項按鈕的預設顏色；`<branch-option>` 自己設了 `theme` 時，以該 `theme` 為準。 |
 | `branch-dim` | `0.78` 到 `1` | `0.80` | 沒被選中的分支變淡後的不透明度。 |
 
 ### `<flow-step>` 屬性
@@ -263,6 +263,23 @@ I've <c-key>managed to stick to</c-key> a routine, <c-playful>rain or shine</c-p
 
 ```js
 ArrowFlow.config({ theme: 'blue', arrowTip: 'lg', gap: '80px', headerGradient: 'down', arrowGlow: true });
+```
+
+元素本身也能用程式控制，方便從外部按鈕、`<link-when>` 或自己的腳本推進流程。
+
+| 成員 | 說明 |
+| --- | --- |
+| `el.next()` | 前進一步，有前進回傳 `true`，否則回傳 `false`。停在尚未選擇的分支時，要傳入 `el.next(0)` 或 `el.next('方案 A')`（序號從 0 起算，或 `label` 文字）才會選路線，沒傳參數則不動作。已選路線但還沒走完時，推進該路線的下一步。 |
+| `el.reset()` | 回到初始狀態（依 `current` 屬性），`on-complete` 指定的結尾區塊重新隱藏。 |
+| `el.current` | 主流程已揭示的步驟數，從 1 起算。分支內的進度不計入。 |
+| `el.total` | 主流程步驟總數，不含分支內的步驟。 |
+
+```js
+const flow = document.querySelector('arrow-flow');
+flow.next();               // 揭示下一步
+flow.next('圖表題');       // 停在分支時，依 label 選路線
+flow.reset();              // 重來
+console.log(flow.current, flow.total);
 ```
 
 ---
