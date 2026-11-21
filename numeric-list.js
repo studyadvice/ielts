@@ -260,7 +260,7 @@
         'user-select:none;box-sizing:border-box;' +
         '-webkit-appearance:none;appearance:none' +
       '}' +
-      '.nl-fab-btn:hover{' +
+      '.nl-fab-btn:hover,.nl-fab-btn--active{' +
         'border-color:var(--nl-fab-hover,' + c.borderHoverColor + ');' +
         'background:color-mix(in srgb,var(--nl-fab-hover,' + c.borderHoverColor + ') 15%,' + c.backgroundColor + ');' +
         'color:var(--nl-fab-hover,' + c.borderHoverColor + ')' +
@@ -465,7 +465,17 @@
     return li;
   }
 
-  function buildFabBtn(data, idx, listTheme) {
+  /* 取得 href（#id 形式）指向的頁面元素；#、#top 或無效選擇器回傳 null */
+  function findPanel(href) {
+    if (!href || href.charAt(0) !== '#' || href === '#' || href === '#top') return null;
+    try { return document.querySelector(href); } catch (e) { return null; }
+  }
+
+  function isHidden(el) {
+    return window.getComputedStyle(el).display === 'none';
+  }
+
+  function buildFabBtn(data, idx, listTheme, group) {
     var accent = resolveColor(data.accent, 'accent')
       || listTheme
       || resolveColor(Config.themeColor, 'themeColor')
@@ -487,9 +497,36 @@
         el.addEventListener('click', function () {
           if (scrollTarget === '#' || scrollTarget === '#top') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          var anchor = findPanel(scrollTarget);
+          if (!anchor) return;
+
+          /* 目標原本是隱藏的（或先前由本元件開啟過）→ 當作面板：顯示 / 收合；否則維持原本的捲動錨點行為 */
+          if (!anchor.hasAttribute('data-nl-panel') && !isHidden(anchor)) {
+            anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          }
+
+          var opening = isHidden(anchor);
+
+          /* 同一組 fab 內一次只顯示一個面板：收起其他已開啟的面板 */
+          for (var k = 0; k < group.length; k++) {
+            if (group[k].href === scrollTarget) continue;
+            var other = findPanel(group[k].href);
+            if (other && other.hasAttribute('data-nl-panel')) other.style.display = 'none';
+            group[k].el.classList.remove('nl-fab-btn--active');
+          }
+
+          anchor.setAttribute('data-nl-panel', '');
+          if (opening) {
+            anchor.style.display = '';
+            if (isHidden(anchor)) anchor.style.display = 'block';
+            el.classList.add('nl-fab-btn--active');
+            anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
           } else {
-            var anchor = document.querySelector(scrollTarget);
-            if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            anchor.style.display = 'none';
+            el.classList.remove('nl-fab-btn--active');
           }
         });
       }
@@ -546,8 +583,11 @@
     listEl.style.right         = (pos !== 'left') ? offset : '';
 
     listEl.innerHTML = '';
+    var group = [];   /* 同一組 fab 的按鈕，供面板互斥與 active 狀態使用 */
     for (var i = 0; i < itemData.length; i++) {
-      listEl.appendChild(buildFabBtn(itemData[i], i, theme));
+      var btn = buildFabBtn(itemData[i], i, theme, group);
+      group.push({ el: btn, href: itemData[i].href });
+      listEl.appendChild(btn);
     }
   }
 

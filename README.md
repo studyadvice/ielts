@@ -7,7 +7,7 @@
 | `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-11-21-26.html`](arrow-flow-demo-11-21-26.html) |
 | `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-21-26.html`](bp-stepper-demo-11-21-26.html) |
 | `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 | [`chunk-demo-demo-11-12-26.html`](chunk-demo-demo-11-12-26.html) |
-| `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-11-20-26.html`](numeric-list-demo-11-20-26.html) |
+| `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-11-21-26.html`](numeric-list-demo-11-21-26.html) |
 | `phrase-chip.js` | `<phrase-chip>` `<phrase-upgrade>` | 可收藏的片語標籤與片語升級動畫。 | [`phrase-chip-demo-10-23-26.html`](phrase-chip-demo-10-23-26.html) |
 | `practice-tracker.js` | `<practice-tracker>` `<pt-done-btn>` | 學習進度面板、片語收藏與定時彈出視窗。 | [`practice-tracker-demo-11-10-26.html`](practice-tracker-demo-11-10-26.html)、[使用手冊](practice-tracker-manual-10-24-26.html) |
 | `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 | [`slider-show-demo-11-10-26.html`](slider-show-demo-11-10-26.html) |
@@ -781,9 +781,26 @@ window.ChunkDemoConfig = { defaultTheme: 'blue', showPreview: true, mode: 'dots'
 | `<ui-list>` | `theme-color` | 所有按鈕的顏色。 |
 | `<list-item>` | `icon` | Bootstrap Icons 名稱，不加 `bi-` 前綴。 |
 | `<list-item>` | `label` | 圖示下方的小字。 |
-| `<list-item>` | `href` | `#錨點` 會平滑捲動到該處，`#` 或 `#top` 捲回頂端；其他網址則為一般連結。 |
+| `<list-item>` | `href` | `#錨點` 會平滑捲動到該處，`#` 或 `#top` 捲回頂端；其他網址則為一般連結。若 `#錨點` 指向的元素原本是隱藏的，則改為顯示該元素，見下方「顯示隱藏區塊」。 |
 | `<list-item>` | `link-target` | 外部連結的開啟位置。 |
 | `<list-item>` | `accent` | 這顆按鈕的顏色。 |
+
+#### 顯示隱藏區塊
+
+`href` 指向的元素若原本是隱藏的（例如 `style="display: none;"`），點擊按鈕會顯示該元素並捲動過去；再點一次同一顆按鈕就收合。同一組 `<ui-list>` 內一次只顯示一個區塊，切換到另一顆按鈕時，前一個區塊會自動收起。顯示中的區塊，對應按鈕會保持高亮。
+
+```html
+<ui-list mode="fab" position="left" bottom="140px" theme-color="calm">
+  <list-item icon="house-fill" href="#top"></list-item>
+  <list-item icon="star-fill" href="#compare-1"></list-item>
+  <list-item icon="moon-fill" href="#compare-2"></list-item>
+</ui-list>
+
+<div id="compare-1" style="display: none;">第一個區塊</div>
+<div id="compare-2" style="display: none;">第二個區塊</div>
+```
+
+目標元素原本就是可見的，維持平滑捲動的行為。
 
 ### 全域設定
 
