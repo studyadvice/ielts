@@ -13,7 +13,7 @@
 | `slider-show.js` | `<slider-show>` | 分段投影片，內建補充說明、防劇透遮罩與填空小測驗。 | [`slider-show-demo-11-10-26.html`](slider-show-demo-11-10-26.html) |
 | `ui-fillin.js` | `<ui-fillin>` `<main-box>` `<ans-box>` | 選擇題與輸入題的挖空練習。 | [`ui-fillin-demo-11-12-26.html`](ui-fillin-demo-11-12-26.html) |
 | `ui-inputs.js` | `<ui-otp>` `<ui-blank>` | 驗證碼輸入與產生、單行填充題，以及 `mode="cli"` 的 CLI 對話播放器。 | [`ui-inputs-demo-11-20-26.html`](ui-inputs-demo-11-20-26.html) |
-| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` `<dual-hr>` `<dual-vr>` | 閱讀輔助標記、展開按鈕與雙色分隔線。 | [`ui-plus-demo-11-21-26.html`](ui-plus-demo-11-21-26.html) |
+| `ui-plus.js` | `<read-pulse>` `<chalk-mark>` `<col-pair>` `<ui-btn>` `<dual-hr>` `<dual-vr>` `<ui-arc-menu>` `<ui-arc-item>` | 閱讀輔助標記、展開按鈕、雙色分隔線與弧形菜單。 | [`ui-plus-demo-11-21-26.html`](ui-plus-demo-11-21-26.html) |
 
 跨元件範例：[`data-flow-demo-11-11-26.html`](data-flow-demo-11-11-26.html) 示範 `ui-cards`、`arrow-flow`、`ui-drill`、`ui-table` 組合成資料流動中心。
 
@@ -1868,7 +1868,7 @@ cli.rate = 2;                              // 播放倍率
 
 ## ui-plus.js
 
-一個檔案內含三組互相獨立的元件：閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`）、展開按鈕 `ui-btn`，以及雙色分隔線（`dual-hr`、`dual-vr`）。閱讀輔助標記與展開按鈕共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
+一個檔案內含四組互相獨立的元件：閱讀輔助標記（`read-pulse`、`chalk-mark`、`col-pair`）、展開按鈕 `ui-btn`、雙色分隔線（`dual-hr`、`dual-vr`），以及弧形菜單（`ui-arc-menu`、`ui-arc-item`）。閱讀輔助標記與展開按鈕共用一份樣式，於 `DOMContentLoaded` 自動初始化；腳本在文件就緒後才載入時立即執行。原始標籤渲染後會被隱藏或取代。
 
 互動範例：`ui-plus-demo-11-21-26.html`（合併了先前所有的 ui-plus 示範檔）。
 
@@ -1884,6 +1884,7 @@ cli.rate = 2;                              // 播放倍率
 | `<ui-btn>` | 任意位置 | 展開按鈕。 |
 | `<dual-hr>` | 區塊 | 水平雙色分隔線。 |
 | `<dual-vr>` | 行內 | 垂直雙色分隔線。 |
+| `<ui-arc-menu>` | 固定在視窗邊緣 | 弧形單層菜單，內含 `<ui-arc-item>`。 |
 
 ### 閱讀輔助標記
 
@@ -2221,6 +2222,56 @@ DualLine.configureVR({ height: '60px' });                // 改垂直線預設�
 DualLine.configure({ 'line-style': 'dashed' });         // 兩種線一起改
 DualLine.palette;                                        // 目前的色盤
 ```
+
+### ui-arc-menu：弧形菜單
+
+固定在視窗左、右、上或下緣的正中央，項目沿著朝向畫面內側的半圓（180 度）平均分布。預設展開；設了 `collapsible` 之後，只有點擊中心鈕才會收合或展開，不使用 hover。點選項目後自動收合，並可用隧道轉場前往 `href`。
+
+```html
+<ui-arc-menu position="right" collapsible variant="double" size="56" theme="blue" tunnel="rings">
+  <ui-arc-item href="#home" icon="bi-house">首頁</ui-arc-item>
+  <ui-arc-item href="#about" icon="bi-person">關於</ui-arc-item>
+  <ui-arc-item href="#contact" icon="bi-envelope" theme="pink" variant="fill">聯絡</ui-arc-item>
+</ui-arc-menu>
+```
+
+**`<ui-arc-menu>` 屬性**
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `position` | `right` | `left`、`right`、`top`、`bottom`，貼齊該邊並置中。 |
+| `collapsible` | 無 | 布林。有寫才可收合；沒寫就永遠展開，中心鈕只是圓點。 |
+| `collapsed` | 無 | 布林。可收合時，載入當下先收合；沒寫就預設展開。 |
+| `open` | 展開時存在 | 目前展開狀態，會隨點擊同步，也可由外部設定。 |
+| `theme` | 輪流取色盤 | 項目預設主題色，項目自己的 `theme` 優先。 |
+| `variant` | `fill` | 圓圈樣式：`fill` 填滿、`outline` 單線、`double` 雙線。項目自己的 `variant` 優先。 |
+| `size` | `48` | 項目圓圈直徑，單位 px。項目自己的 `size` 優先。中心鈕固定為 `size + 8`。 |
+| `radius` | 160 | 弧半徑 px。未指定時隨 `size` 放大（最小 160）。 |
+| `tunnel` | `rings` | 隧道轉場：`rings` 同心圓環、`lines` 放射線條、`both` 兩者疊加、`none` 無轉場。 |
+| `duration` | `800` | 隧道轉場毫秒數。 |
+
+**`<ui-arc-item>` 屬性**
+
+| 屬性 | 說明 |
+| --- | --- |
+| `href` | 點擊後以隧道轉場前往。以 `#` 開頭時，轉場結束後淡出回到同一頁。`target="_blank"` 則不播放轉場，直接開新視窗。 |
+| `icon` | 有設定就只顯示圖示，沒設定就只顯示文字，兩者不會同時出現。`bi-` 開頭視為 Bootstrap Icons 的 class，否則當文字符號；標籤文字會放進 `title`。 |
+| `theme`、`variant`、`size` | 只覆蓋這個項目。 |
+| `disabled` | 布林。停用這個項目。 |
+
+- `outline` 與 `double` 的底色為 `#0C0D0C`，文字與線條使用主題色；滑鼠移到項目上會填滿主題色。
+- 動畫播放期間會鎖住其他點擊。
+- 可以在執行中修改 `position`、`size`、`variant`、`theme`、`radius` 等屬性，選單會立即重新排列。
+
+**事件**（皆在 `<ui-arc-menu>` 上觸發並冒泡）
+
+| 事件 | `e.detail` | 說明 |
+| --- | --- | --- |
+| `arc-select` | `item`、`href`、`label`、`index` | 點選項目時觸發，`preventDefault()` 可取消，取消後不會收合也不會轉場。 |
+| `arc-navigate` | 同上 | 隧道結束後、前往 `href` 前觸發，`preventDefault()` 可取消，改由頁面自行處理切換，隧道會淡出。 |
+| `arc-toggle` | `open` | 展開狀態改變時觸發。 |
+
+方法：`expand()`、`collapse()`、`toggle()`。範例：`ui-plus-demo-11-21-26.html`。
 
 ### JavaScript API
 

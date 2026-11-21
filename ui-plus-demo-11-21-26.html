@@ -51,8 +51,10 @@ code{color:#FFA987;}
 <body>
 <div class="page">
   <h1>ui-plus 示範</h1>
-  <p class="sub">ui-plus.js 內含三組元件：雙色分隔線 <code>&lt;dual-hr&gt;</code>、<code>&lt;dual-vr&gt;</code>，展開按鈕 <code>&lt;ui-btn&gt;</code>，以及閱讀輔助標記 <code>&lt;read-pulse&gt;</code>、<code>&lt;chalk-mark&gt;</code>、<code>&lt;col-pair&gt;</code>。本頁合併了先前所有的 ui-plus 示範檔（11-12-26），每個範例左邊是實際元件，右邊是同一段原始碼。</p>
+  <p class="sub">ui-plus.js 內含四組元件：弧形菜單 <code>&lt;ui-arc-menu&gt;</code>，雙色分隔線 <code>&lt;dual-hr&gt;</code>、<code>&lt;dual-vr&gt;</code>，展開按鈕 <code>&lt;ui-btn&gt;</code>，以及閱讀輔助標記 <code>&lt;read-pulse&gt;</code>、<code>&lt;chalk-mark&gt;</code>、<code>&lt;col-pair&gt;</code>。本頁合併了先前所有的 ui-plus 示範檔（11-12-26），每個範例左邊是實際元件，右邊是同一段原始碼。</p>
   <nav class="toc">
+    <span class="grp">弧形菜單</span>
+    <a href="#arc-style">樣式與尺寸</a><a href="#arc-live">即時設定器</a><a href="#arc-ref">屬性速查</a>
     <span class="grp">ui-btn</span>
     <a href="#btn-size">尺寸</a><a href="#btn-multi">多目標與 template</a><a href="#btn-cell">mini-table 儲存格</a><a href="#btn-remove">移除元素</a><a href="#btn-ref">屬性速查</a>
     <span class="grp">閱讀輔助</span>
@@ -62,6 +64,52 @@ code{color:#FFA987;}
     <a href="#history">舊示範檔對照</a>
   </nav>
   <div id="log"></div>
+
+  <section class="part" id="arc-style">
+    <h2>ui-arc-menu：樣式與尺寸</h2>
+    <p class="lead"><code>variant</code> 決定填滿（<code>fill</code>）、單線（<code>outline</code>）或雙線（<code>double</code>），<code>size</code> 決定圓圈直徑（px），中心鈕固定比圓圈大 8px。下方三個選單分別貼在左、右、下緣，各用不同的 variant 與 size。</p>
+    <iframe class="frame" id="f-arc-1" data-src="src-arc-1" title="弧形菜單樣式與尺寸" scrolling="no"></iframe>
+    <div class="demo"><pre class="code-box"><code>&lt;ui-arc-menu position="left" variant="fill" size="40" radius="130"&gt;
+  &lt;ui-arc-item icon="bi-house"&gt;首頁&lt;/ui-arc-item&gt;
+  ……
+&lt;/ui-arc-menu&gt;
+
+&lt;ui-arc-menu position="right" variant="outline" size="48" radius="130" collapsible&gt;
+  &lt;ui-arc-item&gt;首頁&lt;/ui-arc-item&gt;
+  ……
+&lt;/ui-arc-menu&gt;
+
+&lt;ui-arc-menu position="bottom" variant="double" size="64" radius="150"&gt;
+  &lt;ui-arc-item icon="bi-house"&gt;首頁&lt;/ui-arc-item&gt;
+  &lt;ui-arc-item icon="bi-envelope" theme="pink" variant="fill" size="48"&gt;聯絡&lt;/ui-arc-item&gt;
+&lt;/ui-arc-menu&gt;</code></pre></div>
+  </section>
+
+  <section class="part" id="arc-live">
+    <h2>ui-arc-menu：即時設定器與隧道轉場</h2>
+    <p class="lead">預設展開，只有點擊中心鈕才會收合或展開（不是 hover）。點選項目會自動收合，並以隧道轉場切換頁面。<code>tunnel</code> 可設 <code>rings</code>、<code>lines</code>、<code>both</code>、<code>none</code>。</p>
+    <iframe class="frame" id="f-arc-2" data-src="src-arc-2" title="弧形菜單即時設定器" scrolling="no"></iframe>
+  </section>
+
+  <section class="part" id="arc-ref">
+    <h2>ui-arc-menu：屬性速查</h2>
+    <p class="lead">完整說明見 README。</p>
+    <div class="demo"><table class="ref">
+      <thead><tr><th class="bp-text-key" style="width:200px">屬性</th><th class="bp-text-key" style="width:260px">範例</th><th class="bp-text-key">說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>position</code></td><td><code>position="right"</code></td><td><code>left</code>、<code>right</code>、<code>top</code>、<code>bottom</code>，貼齊該邊並置中，弧線朝畫面內側展開 180 度。</td></tr>
+        <tr><td><code>collapsible</code></td><td><code>collapsible</code></td><td>布林。有寫才可收合；沒寫就永遠展開，中心鈕只是圓點。</td></tr>
+        <tr><td><code>collapsed</code></td><td><code>collapsed</code></td><td>布林。可收合時載入當下先收合，預設展開。</td></tr>
+        <tr><td><code>variant</code></td><td><code>variant="double"</code></td><td><code>fill</code>（預設）、<code>outline</code>、<code>double</code>。項目自己的 <code>variant</code> 優先。</td></tr>
+        <tr><td><code>size</code></td><td><code>size="64"</code></td><td>圓圈直徑 px，預設 48。項目自己的 <code>size</code> 優先。未指定 <code>radius</code> 時，弧半徑會隨 size 放大。</td></tr>
+        <tr><td><code>radius</code></td><td><code>radius="130"</code></td><td>弧半徑 px，預設 160（size 大於 48 時隨之放大）。</td></tr>
+        <tr><td><code>theme</code></td><td><code>theme="blue"</code></td><td>項目預設主題色；項目自己的 <code>theme</code> 優先；都沒寫就輪流取色盤。</td></tr>
+        <tr><td><code>icon</code>（項目）</td><td><code>icon="bi-house"</code></td><td>有設定就只顯示圖示，沒設定就只顯示文字，兩者不會同時出現。</td></tr>
+        <tr><td><code>tunnel</code>、<code>duration</code></td><td><code>tunnel="lines" duration="1000"</code></td><td>轉場風格與毫秒數。項目 <code>href</code> 以 <code>#</code> 開頭時，隧道結束後淡出回到同一頁。</td></tr>
+        <tr><td>事件</td><td><code>arc-select</code>、<code>arc-navigate</code>、<code>arc-toggle</code></td><td><code>arc-select</code> 與 <code>arc-navigate</code> 可用 <code>preventDefault()</code> 取消。<code>e.detail</code> 含 <code>item</code>、<code>href</code>、<code>label</code>、<code>index</code>。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
 
   <section class="part" id="dual-line">
     <h2>雙色分隔線：dual-hr、dual-vr</h2>
@@ -600,6 +648,124 @@ document.addEventListener('ubtn-removed', function (e) {
     '<div class="alert alert-dismissible fade show" role="alert">ubtn-removed：已移除 #' + e.detail.ids.join('、#') +
     '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button></div>';
 });
+</script>
+<script type="text/plain" id="src-arc-1">
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ui-arc-menu</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <script src="ui-plus.js?v=11-21-26"><\/script>
+  <style>
+    html, body { margin: 0; background: #0C0D0C; color: #C6C7BD; font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif; font-size: 1rem; }
+    .box { height: 600px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.8; padding: 0 240px; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+<div class="box"><p>左：fill、size 40。右：outline、size 48，可收合。下：double、size 64，其中「聯絡」自訂為粉紅填滿、size 48。滑鼠移到項目上，outline 與 double 會填滿。</p></div>
+
+<ui-arc-menu position="left" variant="fill" size="40" radius="130" theme="key">
+  <ui-arc-item icon="bi-house">首頁</ui-arc-item>
+  <ui-arc-item icon="bi-person">關於</ui-arc-item>
+  <ui-arc-item icon="bi-grid">作品</ui-arc-item>
+  <ui-arc-item icon="bi-envelope">聯絡</ui-arc-item>
+</ui-arc-menu>
+
+<ui-arc-menu position="right" variant="outline" size="48" radius="130" theme="yellow" collapsible>
+  <ui-arc-item>首頁</ui-arc-item>
+  <ui-arc-item>關於</ui-arc-item>
+  <ui-arc-item>作品</ui-arc-item>
+  <ui-arc-item>聯絡</ui-arc-item>
+</ui-arc-menu>
+
+<ui-arc-menu position="bottom" variant="double" size="64" radius="150" theme="violet">
+  <ui-arc-item icon="bi-house">首頁</ui-arc-item>
+  <ui-arc-item icon="bi-person">關於</ui-arc-item>
+  <ui-arc-item icon="bi-grid">作品</ui-arc-item>
+  <ui-arc-item icon="bi-envelope" theme="pink" variant="fill" size="48">聯絡</ui-arc-item>
+</ui-arc-menu>
+</body>
+</html>
+</script>
+<script type="text/plain" id="src-arc-2">
+<!DOCTYPE html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ui-arc-menu</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <script src="ui-plus.js?v=11-21-26"><\/script>
+  <style>
+    html, body { margin: 0; background: #0C0D0C; color: #C6C7BD; font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif; font-size: 1rem; }
+    .box { min-height: 640px; padding: 24px 240px; box-sizing: border-box; }
+    .panel { background: #2D2D2D; border-radius: 12px; padding: 16px; margin: 0 0 16px 0; }
+    .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .controls label { display: block; font-size: 0.8125rem; margin: 0 0 4px 0; color: #DBEDD8; }
+    #st { font-size: 0.9375rem; margin: 0 0 16px 0; }
+    .page h2 { font-size: 1.75rem; margin: 0 0 8px 0; color: var(--ac); }
+    .page p { line-height: 1.8; margin: 0; }
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="panel"><div class="controls">
+    <div><label for="position">position</label><select id="position" class="form-select form-select-sm"><option>right</option><option>left</option><option>top</option><option>bottom</option></select></div>
+    <div><label for="variant">variant</label><select id="variant" class="form-select form-select-sm"><option>fill</option><option>outline</option><option>double</option></select></div>
+    <div><label for="tunnel">tunnel</label><select id="tunnel" class="form-select form-select-sm"><option>rings</option><option>lines</option><option>both</option><option>none</option></select></div>
+    <div><label for="theme">menu theme</label><select id="theme" class="form-select form-select-sm"><option value="">（輪流配色）</option><option>key</option><option>pink</option><option>yellow</option><option>green</option><option>blue</option><option>indigo</option><option>violet</option><option>playful</option><option>urgent</option><option>energetic</option><option>dreamy</option><option>salmon</option></select></div>
+    <div><label for="size">size：<span id="sv">48</span> px</label><input id="size" type="range" class="form-range" min="32" max="80" step="4" value="48"></div>
+    <div><label for="content">項目內容</label><select id="content" class="form-select form-select-sm"><option value="text">只有文字</option><option value="icon">只有圖示</option></select></div>
+    <div><label for="duration">duration：<span id="dv">800</span> ms</label><input id="duration" type="range" class="form-range" min="400" max="1600" step="100" value="800"></div>
+    <div class="form-check form-switch" style="padding-left:2.5em;margin-top:24px"><input id="col" class="form-check-input" type="checkbox" role="switch" checked><label for="col" class="form-check-label">collapsible</label></div>
+  </div></div>
+  <div id="st" class="alert alert-secondary">尚未點選任何項目。</div>
+  <section class="page" id="home" style="--ac:#51DBCF"><h2>首頁</h2><p>預設展開。點擊中心鈕才會收合或展開。</p></section>
+  <section class="page" id="about" style="--ac:#FF91D7" hidden><h2>關於</h2><p>項目沿著朝向畫面內側的半圓平均分布。</p></section>
+  <section class="page" id="works" style="--ac:#E3D322" hidden><h2>作品</h2><p>variant 與 size 可以放在選單上統一設定，也可以在單一項目覆蓋。</p></section>
+  <section class="page" id="contact" style="--ac:#FF91D7" hidden><h2>聯絡</h2><p>「聯絡」項目自訂為粉紅色，示範項目 theme 優先於選單 theme。</p></section>
+</div>
+
+<ui-arc-menu id="menu" position="right" collapsible tunnel="rings" duration="800">
+  <ui-arc-item href="#home" data-icon="bi-house">首頁</ui-arc-item>
+  <ui-arc-item href="#about" data-icon="bi-person">關於</ui-arc-item>
+  <ui-arc-item href="#works" data-icon="bi-grid">作品</ui-arc-item>
+  <ui-arc-item href="#contact" data-icon="bi-envelope" theme="pink">聯絡</ui-arc-item>
+</ui-arc-menu>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var menu = $('menu');
+  function say(t, x) { var e = $('st'); e.className = 'alert alert-' + t; e.textContent = x; }
+  menu.addEventListener('arc-select', function (e) { say('info', '點選：' + e.detail.label + '（' + e.detail.href + '）'); });
+  menu.addEventListener('arc-navigate', function (e) {
+    e.preventDefault();
+    var id = e.detail.href.slice(1);
+    document.querySelectorAll('.page').forEach(function (p) { p.hidden = p.id !== id; });
+    say('success', '已切換到：' + e.detail.label);
+  });
+  menu.addEventListener('arc-toggle', function (e) { say('secondary', e.detail.open ? '選單已展開' : '選單已收合'); });
+  ['position', 'variant', 'tunnel'].forEach(function (k) {
+    $(k).onchange = function (e) { menu.setAttribute(k, e.target.value); };
+  });
+  $('theme').onchange = function (e) { if (e.target.value) menu.setAttribute('theme', e.target.value); else menu.removeAttribute('theme'); };
+  $('size').oninput = function (e) { menu.setAttribute('size', e.target.value); $('sv').textContent = e.target.value; };
+  $('duration').oninput = function (e) { menu.setAttribute('duration', e.target.value); $('dv').textContent = e.target.value; };
+  $('col').onchange = function (e) { if (e.target.checked) menu.setAttribute('collapsible', ''); else menu.removeAttribute('collapsible'); };
+  $('content').onchange = function (e) {
+    menu.querySelectorAll('ui-arc-item').forEach(function (it) {
+      if (e.target.value === 'icon') it.setAttribute('icon', it.dataset.icon); else it.removeAttribute('icon');
+    });
+  };
+})();
+<\/script>
+</body>
+</html>
 </script>
 <script type="text/plain" id="src-dl-1">
 <!DOCTYPE html>
