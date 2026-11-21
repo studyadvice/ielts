@@ -23,7 +23,7 @@
   --bp-violet:      #B484E8;
   --bp-gray:        #86877F;
   --bp-key:           #51DBCF;
-  --bp-bg-alternative:      #3B2A20;
+  --bp-bg-alternative:      #2D2D2D;
   --bp-calm:          #A3C4BC;
   --bp-quiet:         #8EA4DE;
   --bp-playful:       #FFA987;
@@ -487,18 +487,18 @@ blockquote::before {
   --bs-btn-focus-shadow-rgb: 81, 219, 207;
 }
 .btn-bg-alternative {
-  --bs-btn-color: #FFFFFF; --bs-btn-bg: #3B2A20; --bs-btn-border-color: #3B2A20;
-  --bs-btn-hover-color: #FFFFFF; --bs-btn-hover-bg: #584A41; --bs-btn-hover-border-color: #584A41;
-  --bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #32241B; --bs-btn-active-border-color: #32241B;
-  --bs-btn-disabled-color: #FFFFFF; --bs-btn-disabled-bg: #3B2A20; --bs-btn-disabled-border-color: #3B2A20;
-  --bs-btn-focus-shadow-rgb: 59, 42, 32;
+  --bs-btn-color: #FFFFFF; --bs-btn-bg: #2D2D2D; --bs-btn-border-color: #2D2D2D;
+  --bs-btn-hover-color: #FFFFFF; --bs-btn-hover-bg: #4D4D4D; --bs-btn-hover-border-color: #4D4D4D;
+  --bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #262626; --bs-btn-active-border-color: #262626;
+  --bs-btn-disabled-color: #FFFFFF; --bs-btn-disabled-bg: #2D2D2D; --bs-btn-disabled-border-color: #2D2D2D;
+  --bs-btn-focus-shadow-rgb: 45, 45, 45;
 }
 .btn-bg-alternative-outline {
-  --bs-btn-color: #FFFFFF; --bs-btn-bg: transparent; --bs-btn-border-color: #3B2A20;
-  --bs-btn-hover-color: #FFFFFF; --bs-btn-hover-bg: #3B2A20; --bs-btn-hover-border-color: #3B2A20;
-  --bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #32241B; --bs-btn-active-border-color: #32241B;
-  --bs-btn-disabled-color: #FFFFFF; --bs-btn-disabled-bg: transparent; --bs-btn-disabled-border-color: #3B2A20;
-  --bs-btn-focus-shadow-rgb: 59, 42, 32;
+  --bs-btn-color: #FFFFFF; --bs-btn-bg: transparent; --bs-btn-border-color: #2D2D2D;
+  --bs-btn-hover-color: #FFFFFF; --bs-btn-hover-bg: #2D2D2D; --bs-btn-hover-border-color: #2D2D2D;
+  --bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #262626; --bs-btn-active-border-color: #262626;
+  --bs-btn-disabled-color: #FFFFFF; --bs-btn-disabled-bg: transparent; --bs-btn-disabled-border-color: #2D2D2D;
+  --bs-btn-focus-shadow-rgb: 45, 45, 45;
 }
 .btn-calm {
   --bs-btn-color: #0C0D0C; --bs-btn-bg: #A3C4BC; --bs-btn-border-color: #A3C4BC;
