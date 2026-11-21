@@ -166,6 +166,8 @@ ui-cards .uic-body > :first-child{margin-top:0;}
 ui-cards .uic-body > :last-child{margin-bottom:0;}
 ui-cards .uic-foot{border-top:var(--uic-div);padding:10px var(--uic-pad);font-size:var(--uic-fs-footer, 0.85rem);color:${PALETTE.indigo};}
 ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;display:inline-flex;align-items:center;gap:4px;background:var(--uic-badge-bg, ${PALETTE.red});color:var(--uic-badge-fg, ${PALETTE.vanilla});font-size:var(--uic-fs-badge, 0.75rem);font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
+/* 角標浮在卡片右上角時，內容區頂端多留一列的高度，避免遮住第一行文字 */
+ui-cards card-item.uic-has-badge > .uic-main:first-child{padding-top:max(var(--uic-pad), calc(var(--uic-fs-badge, 0.75rem) * 2 + 16px));}
 ui-cards .uic-badge .bi{line-height:1;}
 ui-cards .uic-badge.uic-badge-only{justify-content:center;width:2em;height:2em;padding:0;}
 
@@ -562,7 +564,7 @@ ui-cards .uic-stamp-in{display:flex;align-items:center;justify-content:center;bo
       else if (!hasBack && (fa('stamp') || '').trim()) c.setAttribute('data-stamp', '');
       const bd = badgeEl(ta('badge'), ta('badge-icon'));
       if (bd && head) head.append(bd);
-      else if (bd) parts.push(bd);
+      else if (bd) { parts.push(bd); c.classList.add('uic-has-badge'); }
       c.replaceChildren(...parts);
       applyBadgeColor(c, ta('badge-color'));
 
