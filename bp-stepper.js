@@ -1350,6 +1350,324 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
 
     // 8. btn-js 自訂呼叫按鈕（獨立於 progress 模式，任何步驟均可使用）
     injectJsBtns(el);
+
+    // 9. mark-fx 標記效果（標題、內文、總標題裡的文字）
+    initMarks(el);
+  }
+
+  // ─── mark-fx 行內標記效果 ────────────────────────────────────────────────────
+  // <mark-fx kind="underline" color="red">文字</mark-fx>
+  // 把 ui-play 的 mark-fx 效果用在標題、內文與總標題的文字上：highlight、underline、strike、circle、
+  // double、wavy、cross、arrow、box、bracket。文字出現在畫面上時才播放手繪動畫，版面改變時自動重畫。
+  const MFX_KINDS = ['highlight', 'underline', 'strike', 'circle', 'double', 'wavy', 'cross', 'arrow', 'box', 'bracket'];
+  const MFX_NS = 'http://www.w3.org/2000/svg';
+
+  const mfxNum = (v, d) => { const n = parseFloat(v); return isNaN(n) ? d : n; };
+  const mfxHash = (s) => {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  };
+  const mfxRng = (seed) => {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+  const mfxLine = (x1, y1, x2, y2, rough, rnd) => {
+    const j = () => (rnd() - 0.5) * rough * 4;
+    const L = Math.hypot(x2 - x1, y2 - y1) || 1;
+    const nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+    const bow = (rnd() - 0.5) * rough * (2 + L * 0.02);
+    const mx = (x1 + x2) / 2 + nx * bow, my = (y1 + y2) / 2 + ny * bow;
+    return `M${(x1 + j()).toFixed(1)} ${(y1 + j()).toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${(x2 + j()).toFixed(1)} ${(y2 + j()).toFixed(1)}`;
+  };
+  const mfxEllipse = (cx, cy, rx, ry, rough, rnd) => {
+    const a0 = -Math.PI * (0.55 + rnd() * 0.3);
+    const over = 0.25 + rough * 0.45;
+    const n = 64, total = Math.PI * 2 + over;
+    const drift = (rnd() - 0.5) * 0.12 * rough;
+    let d = '';
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, a = a0 + total * t;
+      const k = 1 + drift * t + (rnd() - 0.5) * 0.025 * rough;
+      d += (i ? 'L' : 'M') + (cx + Math.cos(a) * rx * k).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * k).toFixed(1);
+    }
+    return d;
+  };
+  const mfxJagged = (rough, rnd) => {
+    const pts = [], n = 6;
+    const j = () => (rnd() * rough * 14).toFixed(1);
+    for (let i = 0; i <= n; i++) pts.push(`${(i / n * 100).toFixed(1)}% ${j()}%`);
+    for (let i = n; i >= 0; i--) pts.push(`${(i / n * 100).toFixed(1)}% ${(100 - j()).toFixed(1)}%`);
+    return `polygon(${pts.join(',')})`;
+  };
+
+  /* 文字每一行的矩形（座標相對於 origin 的左上角）。只看文字節點，不含效果圖層本身 */
+  function mfxLines(el, origin) {
+    const rects = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => n.parentNode.closest('.bps-mfx-layer') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+    });
+    let node;
+    while ((node = walker.nextNode())) {
+      const rg = document.createRange();
+      rg.selectNodeContents(node);
+      Array.from(rg.getClientRects()).forEach((r) => { if (r.width > 0.5 && r.height > 0.5) rects.push(r); });
+    }
+    const merged = [];
+    rects.forEach((r) => {
+      const m = merged.find((q) => Math.abs(q.top - r.top) < r.height * 0.5);
+      if (m) {
+        m.left = Math.min(m.left, r.left); m.right = Math.max(m.right, r.right);
+        m.top = Math.min(m.top, r.top);    m.bottom = Math.max(m.bottom, r.bottom);
+      } else {
+        merged.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+      }
+    });
+    return merged.map((m) => ({ x: m.left - origin.left, y: m.top - origin.top, w: m.right - m.left, h: m.bottom - m.top }));
+  }
+
+  /* 線條類效果的 SVG 路徑（highlight 不用路徑） */
+  function mfxPaths(kind, lines, o) {
+    const { pad, thick, rough, rnd } = o;
+    const ds = [];
+    const u = lines.reduce((a, r) => ({
+      x1: Math.min(a.x1, r.x), y1: Math.min(a.y1, r.y), x2: Math.max(a.x2, r.x + r.w), y2: Math.max(a.y2, r.y + r.h),
+    }), { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity });
+    let x1, y1, x2, y2;
+    if (kind === 'underline') {
+      lines.forEach((r) => { const y = r.y + r.h * 0.92 + pad * 0.5; ds.push(mfxLine(r.x - pad * 0.5, y, r.x + r.w + pad * 0.5, y, rough, rnd)); });
+    } else if (kind === 'strike') {
+      lines.forEach((r) => { const y = r.y + r.h * 0.55; ds.push(mfxLine(r.x - pad * 0.5, y, r.x + r.w + pad * 0.5, y, rough, rnd)); });
+    } else if (kind === 'circle') {
+      ds.push(mfxEllipse((u.x1 + u.x2) / 2, (u.y1 + u.y2) / 2, (u.x2 - u.x1) / 2 + pad * 2.5, (u.y2 - u.y1) / 2 + pad * 1.5, rough, rnd));
+    } else if (kind === 'double') {
+      lines.forEach((r) => {
+        const y = r.y + r.h * 0.9 + pad * 0.5, a = r.x - pad * 0.5, b = r.x + r.w + pad * 0.5;
+        ds.push(mfxLine(a, y, b, y, rough, rnd), mfxLine(a, y + thick * 2.4, b, y + thick * 2.4, rough, rnd));
+      });
+    } else if (kind === 'wavy') {
+      const A = Math.max(1.5, thick * 0.8);
+      lines.forEach((r) => {
+        const y = r.y + r.h * 0.92 + pad * 0.5, n = Math.max(2, Math.ceil((r.w + pad) / 6));
+        ds.push(`M${(r.x - pad * 0.5).toFixed(1)} ${y.toFixed(1)} q3 ${-A} 6 0` + ' t6 0'.repeat(n - 1));
+      });
+    } else if (kind === 'cross') {
+      x1 = u.x1 - pad; y1 = u.y1 - pad * 0.5; x2 = u.x2 + pad; y2 = u.y2 + pad * 0.5;
+      ds.push(mfxLine(x1, y1, x2, y2, rough, rnd), mfxLine(x1, y2, x2, y1, rough, rnd));
+    } else if (kind === 'arrow') {
+      /* 箭頭從 direction 那一側指向文字：left（預設）、right、top、bottom */
+      const L = o.arrowLen, hd = Math.max(8, thick * 3.2);
+      const cx = (u.x1 + u.x2) / 2, cy = (u.y1 + u.y2) / 2, gap = pad + 6;
+      const V = { left: [1, 0], right: [-1, 0], top: [0, 1], bottom: [0, -1] }[o.direction] || [1, 0];
+      const ex = V[0] === 1 ? u.x1 - gap : V[0] === -1 ? u.x2 + gap : cx;
+      const ey = V[1] === 1 ? u.y1 - gap : V[1] === -1 ? u.y2 + gap : cy;
+      const sx = ex - V[0] * L, sy = ey - V[1] * L, px = -V[1], py = V[0];
+      ds.push(mfxLine(sx, sy, ex, ey, rough * 0.6, rnd),
+        `M${(ex - V[0] * hd + px * hd * 0.55).toFixed(1)} ${(ey - V[1] * hd + py * hd * 0.55).toFixed(1)} L${ex.toFixed(1)} ${ey.toFixed(1)} L${(ex - V[0] * hd - px * hd * 0.55).toFixed(1)} ${(ey - V[1] * hd - py * hd * 0.55).toFixed(1)}`);
+    } else if (kind === 'box') {
+      x1 = u.x1 - pad; y1 = u.y1 - pad * 0.5; x2 = u.x2 + pad; y2 = u.y2 + pad * 0.5;
+      ds.push(mfxLine(x1, y1, x2, y1, rough, rnd), mfxLine(x2, y1, x2, y2, rough, rnd), mfxLine(x2, y2, x1, y2, rough, rnd), mfxLine(x1, y2, x1, y1, rough, rnd));
+    } else if (kind === 'bracket') {
+      const bw = Math.min(12, (u.y2 - u.y1) * 0.25);
+      x1 = u.x1 - pad; x2 = u.x2 + pad; y1 = u.y1 - pad * 0.5; y2 = u.y2 + pad * 0.5;
+      ds.push(mfxLine(x1 + bw, y1, x1, y1, rough, rnd) + mfxLine(x1, y1, x1, y2, rough, rnd).replace(/^M/, 'L') + mfxLine(x1, y2, x1 + bw, y2, rough, rnd).replace(/^M/, 'L'));
+      ds.push(mfxLine(x2 - bw, y1, x2, y1, rough, rnd) + mfxLine(x2, y1, x2, y2, rough, rnd).replace(/^M/, 'L') + mfxLine(x2, y2, x2 - bw, y2, rough, rnd).replace(/^M/, 'L'));
+    }
+    return ds;
+  }
+
+  function mfxPlay(node, frames, ms) {
+    if (!node.animate) return Promise.resolve();
+    const a = node.animate(frames, { duration: Math.max(1, ms), easing: 'ease-in-out', fill: 'forwards' });
+    return a.finished.then(() => a, () => a);
+  }
+
+  /* 最近的非行內祖先，版面寬度改變時才需要重畫 */
+  function mfxHost(el) {
+    let p = el.parentElement;
+    while (p && p !== document.body && getComputedStyle(p).display.indexOf('inline') === 0) p = p.parentElement;
+    return p || document.body;
+  }
+
+  function injectMfxCSS() {
+    if (document.getElementById('bp-stepper-mfx-style')) return;
+    const s = document.createElement('style');
+    s.id = 'bp-stepper-mfx-style';
+    s.textContent = [
+      'bp-stepper mark-fx{display:inline;position:relative;z-index:0;background:transparent;color:inherit}',
+      '.bps-mfx-layer{position:absolute;left:0;top:0;width:0;height:0;overflow:visible;pointer-events:none}',
+      '.bps-mfx-under{z-index:-1}',
+      '.bps-mfx-over{z-index:1}',
+      '.bps-mfx-hl{position:absolute;transform-origin:left center}',
+      '.bps-mfx-layer svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible}',
+    ].join('\n');
+    document.head.appendChild(s);
+  }
+
+  function bootMark(el) {
+    /* _uitm 與 ui-table.js 共用：已被任一元件啟動的標記不重複處理 */
+    if (el._uitm) return;
+    el._uitm = true;
+
+    let kind = String(el.getAttribute('kind') || 'highlight').trim().toLowerCase();
+    if (MFX_KINDS.indexOf(kind) < 0) {
+      console.warn(`[bp-stepper] mark-fx kind="${kind}" 不是有效的值（${MFX_KINDS.join(' / ')}），已改用 highlight。`);
+      kind = 'highlight';
+    }
+    const colRaw = el.getAttribute('color');
+    let col = colRaw ? brandOf(colRaw) : null;
+    if (colRaw && col === colRaw && !/^#|^rgb/i.test(colRaw.trim())) {
+      console.warn(`[bp-stepper] mark-fx color="${colRaw}" 不是有效的色彩，已改用 yellow。`);
+      col = null;
+    }
+    col = col || BRAND.yellow;
+
+    const thick = mfxNum(el.getAttribute('thickness'), 3);
+    const rough = Math.min(1, Math.max(0, mfxNum(el.getAttribute('rough'), 0.5)));
+    const pad = mfxNum(el.getAttribute('padding'), 4);
+    const speed = mfxNum(el.getAttribute('speed'), 600);
+    const lineStyle = String(el.getAttribute('line-style') || 'solid').trim().toLowerCase();
+    const animate = el.getAttribute('animate') !== 'false';
+    const seedAttr = el.getAttribute('seed');
+    const seed = seedAttr != null && seedAttr !== ''
+      ? (/^\d+$/.test(seedAttr) ? parseInt(seedAttr, 10) : mfxHash(seedAttr))
+      : mfxHash(kind + '|' + el.textContent);
+    const opts = {
+      pad, thick, rough,
+      direction: String(el.getAttribute('direction') || 'left').trim().toLowerCase(),
+      arrowLen: mfxNum(el.getAttribute('arrow-length'), 48),
+    };
+
+    injectMfxCSS();
+    Array.from(el.children).forEach((c) => { if (c.classList.contains('bps-mfx-layer')) el.removeChild(c); });
+    const layer = document.createElement('span');
+    layer.className = 'bps-mfx-layer ' + (kind === 'highlight' ? 'bps-mfx-under' : 'bps-mfx-over');
+    layer.setAttribute('aria-hidden', 'true');
+    el.appendChild(layer);
+    if (kind === 'highlight') {
+      const tc = el.getAttribute('text-color');
+      el.style.color = (tc && brandOf(tc)) || '#0C0D0C';
+    }
+
+    let tok = 0;
+    let started = false;
+
+    function render(anim) {
+      const my = ++tok;
+      while (layer.firstChild) layer.removeChild(layer.firstChild);
+      const lines = mfxLines(el, layer.getBoundingClientRect());
+      if (!lines.length) return false;
+      const rnd = mfxRng(seed);
+      let seq = Promise.resolve();
+
+      if (kind === 'highlight') {
+        const nodes = lines.map((r) => {
+          const d = document.createElement('div');
+          d.className = 'bps-mfx-hl';
+          const ey = r.h * 0.08;
+          d.style.left = (r.x - pad) + 'px';
+          d.style.top = (r.y - ey) + 'px';
+          d.style.width = (r.w + pad * 2) + 'px';
+          d.style.height = (r.h + ey * 2) + 'px';
+          d.style.background = col;
+          d.style.clipPath = rough > 0 ? mfxJagged(rough, rnd) : 'none';
+          d.style.borderRadius = rough > 0 ? '0' : '3px';
+          if (anim) d.style.transform = 'scaleX(0)';
+          layer.appendChild(d);
+          return d;
+        });
+        if (anim) {
+          const total = nodes.reduce((s, n) => s + n.offsetWidth, 0) || 1;
+          nodes.forEach((n) => {
+            seq = seq.then(() => {
+              if (my !== tok) return;
+              return mfxPlay(n, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], speed * n.offsetWidth / total)
+                .then((a) => { if (my === tok) { n.style.transform = ''; if (a && a.cancel) a.cancel(); } });
+            });
+          });
+        }
+        return true;
+      }
+
+      const ds = mfxPaths(kind, lines, Object.assign({ rnd }, opts));
+      const svg = document.createElementNS(MFX_NS, 'svg');
+      layer.appendChild(svg);
+      const dash = lineStyle === 'dashed' ? '10 7' : lineStyle === 'dotted' ? '0.1 ' + (thick * 2.6).toFixed(1) : 'none';
+      const paths = ds.map((d) => {
+        const p = document.createElementNS(MFX_NS, 'path');
+        p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', col);
+        p.setAttribute('stroke-width', thick);
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        p.setAttribute('d', d);
+        svg.appendChild(p);
+        return p;
+      });
+      if (!anim) { paths.forEach((p) => { p.style.strokeDasharray = dash; }); return true; }
+      const lens = paths.map((p) => p.getTotalLength());
+      const total = lens.reduce((a, b) => a + b, 0) || 1;
+      paths.forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
+      paths.forEach((p, i) => {
+        seq = seq.then(() => {
+          if (my !== tok) return;
+          return mfxPlay(p, [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }], speed * lens[i] / total)
+            .then((a) => {
+              if (my !== tok) return;
+              p.style.strokeDasharray = dash;
+              p.style.strokeDashoffset = '0';
+              if (a && a.cancel) a.cancel();
+            });
+        });
+      });
+      return true;
+    }
+
+    /* 版面寬度變動（換行位置改變）時重畫，不再播放動畫 */
+    function watch() {
+      const host = mfxHost(el);
+      const last = host.getBoundingClientRect();
+      let lw = last.width, lh = last.height, raf = 0;
+      const relayout = () => {
+        if (!el.isConnected) return;
+        const r = host.getBoundingClientRect();
+        if (Math.abs(r.width - lw) < 0.5 && Math.abs(r.height - lh) < 0.5) return;
+        lw = r.width; lh = r.height;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => render(false));
+      };
+      if (window.ResizeObserver) new ResizeObserver(relayout).observe(host);
+      else window.addEventListener('resize', relayout);
+    }
+
+    function start() {
+      if (started || !el.isConnected) return false;
+      if (render(animate)) { started = true; watch(); return true; }
+      return false;
+    }
+
+    /* 文字進入畫面才開始畫，所以 progress-show 尚未揭示的步驟不會在看不到時就畫完 */
+    if (window.IntersectionObserver) {
+      const io = new IntersectionObserver((entries) => {
+        if (!el.isConnected) { io.disconnect(); return; }
+        if (entries.some((e) => e.isIntersecting) && start()) io.disconnect();
+      }, { threshold: 0.01 });
+      io.observe(el);
+    } else {
+      requestAnimationFrame(start);
+    }
+
+    el._uitmReplay = () => { if (started) render(true); else start(); };
+  }
+
+  /* 啟動 root 內（預設整頁）所有 <bp-stepper> 裡的 mark-fx */
+  function initMarks(root) {
+    (root || document).querySelectorAll('bp-stepper mark-fx').forEach(bootMark);
   }
 
   function init(root) {
@@ -1474,7 +1792,11 @@ bp-step[btn-js]:not(.bps-prog-btn-present) {
   define('bp-step-title',   class extends HTMLElement {});
   define('bp-step-content', class extends HTMLElement {});
 
-  window.BPStepper = { defaults, BRAND, THEMES, init, setActive, setError, resetStates, progressShowNext };
+  window.BPStepper = {
+    defaults, BRAND, THEMES, init, setActive, setError, resetStates, progressShowNext,
+    initMarks,                                    // 啟動動態插入的 mark-fx
+    replayMark: (el) => { if (el && el._uitmReplay) el._uitmReplay(); },   // 重播 mark-fx 動畫
+  };
 
   injectCSS();
 

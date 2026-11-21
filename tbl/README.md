@@ -38,6 +38,7 @@
   - [文字色彩標籤](#文字色彩標籤)
   - [注意力動畫：ui-flash](#注意力動畫ui-flash)
   - [行內翻譯：ui-trans](#行內翻譯ui-trans)
+  - [文字標記效果：mark-fx](#文字標記效果mark-fx)
   - [樹狀巢狀（僅 ui-row-enhance）](#樹狀巢狀僅-ui-row-enhance)
   - [icons-list 滑入動畫（僅 ui-row-enhance）](#icons-list-滑入動畫僅-ui-row-enhance)
 - [JSON 資料模式](#json-資料模式)
@@ -79,6 +80,7 @@
 | `<cell-item>` | 輪播項目，寫在設了 `carousel-interval` 的 `<ui-col>` 裡。 |
 | `<ui-flash>` | 閃電按鈕，可放在頁面任何地方，按下後讓指定格子播放注意力動畫。 |
 | `<ui-trans>` | 行內翻譯，滑鼠移入時以 浮動框 顯示來源區塊的內容。可放在格子內或一般段落。 |
+| `<mark-fx>` | 行內標記效果，替格子裡的文字畫上螢光、底線、圈選、方框、箭頭等手繪效果。 |
 | `<c-blue>` 等 17 個色名標籤 | 文字色彩標籤，見[文字色彩標籤](#文字色彩標籤)。 |
 
 ```
@@ -525,6 +527,41 @@ ui-table
 
 `ui-trans` 寫在格子、輪播項目、extra-info 來源或 JSON 的 `content` 字串裡都有效，點擊時不會觸發格子的 `show-next`。
 
+### 文字標記效果：mark-fx
+
+把 `ui-play` 的 `<mark-fx>` 效果用在格子裡的文字。把要標記的字包在 `<mark-fx>` 裡，文字出現在畫面上時，會以手繪動畫畫出效果；版面改變、文字換行位置不同時會自動重畫。
+
+```html
+<ui-col>
+  This is a <mark-fx kind="underline" color="red">key phrase</mark-fx>,
+  and this one is <mark-fx kind="highlight" color="yellow">highlighted</mark-fx>.
+  <mark-fx kind="circle" color="key" thickness="2">circle</mark-fx>
+  <mark-fx kind="arrow" color="energetic" direction="right">arrow</mark-fx>
+</ui-col>
+```
+
+| 屬性 | 說明 |
+|---|---|
+| `kind` | `highlight`（預設，螢光底色）、`underline`、`strike`、`circle`、`double`（雙底線）、`wavy`（波浪線）、`cross`、`arrow`、`box`、`bracket`。 |
+| `color` | 色名或 `#`、`rgb` 開頭的色碼，預設 `yellow`。 |
+| `thickness` | 線條粗細 px，預設 `3`。 |
+| `rough` | 手繪的粗糙程度 0 到 1，預設 `0.5`；`0` 為工整。 |
+| `padding` | 效果超出文字的距離 px，預設 `4`。 |
+| `speed` | 畫完全部效果的毫秒數，預設 `600`。 |
+| `animate` | 設 `false` 就不播放動畫，直接畫好。 |
+| `line-style` | `solid`（預設）、`dashed`、`dotted`，適用線條類效果。 |
+| `text-color` | 只用於 `highlight`，螢光底色上的文字色，預設 `#0C0D0C`。 |
+| `direction` | 只用於 `arrow`，箭頭從哪一側指向文字：`left`（預設）、`right`、`top`、`bottom`。 |
+| `arrow-length` | 只用於 `arrow`，箭桿長度 px，預設 `48`。 |
+| `seed` | 手繪的亂數種子，數字或任意字串。沒寫時依效果種類與文字決定，所以同一段文字每次畫出來都一樣。 |
+
+- `mark-fx` 寫在格子、輪播項目、extra-info 與 toggle 的內容、hover-target、`ui-trans` 浮動框或一般段落裡都有效。
+- 效果會在文字進入畫面時才開始畫，所以遮罩、`toggle` 展開前、輪播其他項目裡的文字，會在看得到時才播放。格子有遮罩時，遮罩下的文字在畫面內就會開始畫，不想錯過動畫可以加 `animate="false"`。
+- 格子預設 `overflow:hidden`，超出格子邊界的效果（例如貼邊文字的圈選、較長的箭頭）會被裁掉，可以加大格子的 `cell-padding`。
+- `highlight` 畫在文字下方，其他效果畫在文字上方，都不會擋住滑鼠操作。
+- 在 `<ui-play>` 的 `<script-item>` 裡的 `<mark-fx>` 仍是 `ui-play` 的效果標籤，`ui-table` 不會處理。
+- 重播動畫：`UiTable.replayMark(元素)`。
+
 ### 樹狀巢狀（僅 ui-row-enhance）
 
 把子列直接寫在父列裡面，父列就會出現展開鈕，點擊後子列由上往下滑順展開，層數不限。只有展開鈕會切換，不會觸發儲存格的其他點擊。
@@ -643,6 +680,7 @@ UiTable.expandAll();                    // 省略目標 = 頁面上所有表格
 UiTable.showHidden('#tbl-1');           // 把 can-hide 隱藏的列全部顯示回來，回傳恢復的列數；省略目標 = 全部表格
 UiTable.flash('w-mitigate', { flashWidth: 4, flashSpeed: 1200, flashLoops: 3 });  // 播放注意力動畫，回傳是否成功
 UiTable.stopFlash('w-mitigate');        // 立即停止動畫
+UiTable.replayMark(markFxElement);       // 重播某個 <mark-fx> 的動畫
 UiTable.config;                         // 目前的全域設定
 UiTable.colors;                         // 色票對照表
 ```
@@ -683,6 +721,23 @@ t.addEventListener('uit-hover', function (e) {
 **uit-row-hide 事件**
 
 `can-hide` 的整列隱藏動畫結束後，原本的 `<ui-table>` 元素會發出 `uit-row-hide`，`e.detail.rowEl` 是被隱藏的列，`e.detail.hasChildren` 表示是否連同子列一起隱藏。
+
+**uit-countdown-end 事件**
+
+`icons-list` 的倒數動畫自然播完時（最後一個圖示出現後、內容恢復原狀的那一刻），`<ui-table>` 會發出 `uit-countdown-end`（會冒泡）。播放途中滑鼠重新移入、動畫被重新開始時不會發出。`e.detail.id` 是該 `<ui-col>` 的 `id`（沒寫則為空字串），`e.detail.cell` 是格子元素，`e.detail.icons` 是圖示數量。
+
+用 `link-when` 串接，`detail-match` 指定是哪一格：
+
+```html
+<ui-table id="tb">
+  <ui-row-enhance col-widths="1:1">
+    <ui-col id="cdA" icons-list="3, 2, 1, bi-play-fill" icons-list-interval="1000">開始倒數</ui-col>
+    <ui-col>說明</ui-col>
+  </ui-row-enhance>
+</ui-table>
+<div id="go" hidden>開始！</div>
+<link-when source="#tb" event="uit-countdown-end" detail-match="id:cdA" target="#go" do="show"></link-when>
+```
 
 後來才用 JavaScript 加入的 `<ui-table>`、`<ui-flash>`、`<ui-trans>`，呼叫一次 `UiTable.init()` 即可啟動。
 

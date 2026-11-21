@@ -38,6 +38,7 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
       <button type="button" class="part-btn" data-go="ui-table-10-29-26"><span class="d bp-text-yellow">10-29-26</span><span class="t">ui-table 範例 10-29-26</span></button>
       <button type="button" class="part-btn" data-go="ui-table-10-30-26"><span class="d bp-text-yellow">10-30-26</span><span class="t">ui-table 範例：can-hide、色彩標籤、列最小高度、注意力動畫、行內翻譯</span></button>
       <button type="button" class="part-btn" data-go="ui-table-11-06-26"><span class="d bp-text-yellow">11-06-26</span><span class="t">ui-table toggle 與滑過顯示</span></button>
+      <button type="button" class="part-btn" data-go="ui-table-11-21-26"><span class="d bp-text-yellow">11-21-26</span><span class="t">ui-table 格子文字的 mark-fx 標記效果</span></button>
   </nav>
   <main class="main">
     <div class="bar"><span class="now bp-text-vanilla" id="now"></span><span class="from bp-text-gray" id="from"></span></div>
@@ -2018,6 +2019,187 @@ body{background:var(--bp-base);color:var(--bp-vanilla);font-family:system-ui,-ap
   }
   document.addEventListener('uit-toggle', function (e) {
     showAlert((e.detail.open ? '展開：' : '收起：') + e.detail.source);
+  });
+</script>
+<script src="ui-table.js"></script>
+</template>
+
+<template data-part id="ui-table-11-21-26" data-component="ui-table" data-date="11-21-26"
+          data-title="ui-table 格子文字的 mark-fx 標記效果" data-html-attrs="lang=&quot;zh-Hant&quot;" data-from="ui-table-demo-11-21-26.html">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-table mark-fx 標記效果</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --pink: #FF91D7;
+    --red: #EF6661; --energetic: #B6FF00; --green: #71CD76; --blue: #5DBAE8; --indigo: #778CE1;
+    --violet: #B484E8; --gray: #86877F; --key: #51DBCF; --line: #2A2B29;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--shell); }
+  body { font-family: "微軟正黑體", "Inter", sans-serif; font-size: 1rem; margin: 0; }
+  .page { max-width: 1680px; margin: 0 auto; padding: 32px 40px 80px 40px; }
+  h1 { color: var(--vanilla); font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; }
+  .lead-note { color: var(--gray); margin: 0 0 24px 0; }
+  .lead-note code, .demo code { color: var(--yellow); background: transparent; }
+  .demo { border: 1px solid var(--line); border-radius: 10px; padding: 24px; margin: 0 0 28px 0; background: #121312; }
+  .demo h2 { font-size: 1.35rem; color: var(--blue); margin: 0 0 6px 0; }
+  .demo .desc { font-size: 0.95rem; margin: 0 0 16px 0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pair-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; margin: 0 0 8px 0; }
+  pre.code { margin: 0; padding: 16px; border-radius: 8px; background: #1A1B1A; color: var(--vanilla);
+             font-size: 0.82rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 620px; overflow: auto; }
+  .attr-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .attr-table th, .attr-table td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  .attr-table th { color: var(--vanilla); font-weight: 600; }
+  .preview-box { margin: 12px 0 0 0; min-height: 90px; padding: 14px 18px; border: 1px dashed var(--key); border-radius: 8px; color: var(--vanilla); }
+  .preview-box:empty::before { content: "滑到左邊的單字上"; color: var(--gray); }
+  .alert-zone { position: fixed; top: 16px; right: 16px; z-index: 2000; width: 360px; display: flex; flex-direction: column; gap: 8px; }
+  .alert-zone .alert { margin: 0; background: #1B1C1B; color: var(--vanilla); border: 1px solid var(--blue); font-size: 0.9rem; }
+</style>
+<!-- ===== body ===== -->
+<div class="page">
+  <h1>ui-table：格子文字的 mark-fx 標記效果</h1>
+  <p class="lead-note">修改日期 11-21-26。參照 <code>ui-play</code> 的 <code>&lt;mark-fx&gt;</code>，把效果用在格子裡的文字：把要標記的字包進 <code>&lt;mark-fx&gt;</code>，文字出現在畫面上時以手繪動畫畫出，版面改變時自動重畫。</p>
+
+  <section class="demo">
+    <h2>屬性一覽</h2>
+    <table class="attr-table">
+      <thead><tr><th>屬性</th><th>值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>kind</code></td><td>highlight、underline、strike、circle、double、wavy、cross、arrow、box、bracket</td><td>效果種類，預設 <code>highlight</code>。</td></tr>
+        <tr><td><code>color</code></td><td>色名或色碼</td><td>預設 <code>yellow</code>。</td></tr>
+        <tr><td><code>thickness</code>、<code>rough</code>、<code>padding</code>、<code>speed</code></td><td>數字</td><td>線條粗細（px）、手繪粗糙程度（0 到 1）、超出文字的距離（px）、動畫毫秒數。</td></tr>
+        <tr><td><code>animate</code></td><td><code>false</code></td><td>不播放動畫，直接畫好。</td></tr>
+        <tr><td><code>line-style</code></td><td>solid、dashed、dotted</td><td>線條類效果的線型。</td></tr>
+        <tr><td><code>text-color</code></td><td>色名或色碼</td><td>只用於 highlight 的文字色。</td></tr>
+        <tr><td><code>direction</code>、<code>arrow-length</code></td><td>left、right、top、bottom；數字</td><td>只用於 arrow。</td></tr>
+        <tr><td><code>seed</code></td><td>數字或字串</td><td>手繪亂數種子，固定就會畫出相同的線條。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="demo">
+    <h2>範例 1：十種效果</h2>
+    <p class="desc">每一列使用一種 <code>kind</code>。文字進入畫面才開始畫；超出格子的部分（例如圈選與箭頭）會被格子邊界裁掉，所以格子要留一些 <code>cell-padding</code>。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex1"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex1"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 2：換行、線型與參數</h2>
+    <p class="desc">標記的文字換行時每一行各畫一段；<code>line-style</code> 換線型，<code>rough="0"</code> 畫得工整，<code>animate="false"</code> 直接畫好，<code>text-color</code> 調整螢光底色上的文字色。縮放視窗時，效果會依新的換行位置重畫。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex2"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex2"></pre></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>範例 3：遮罩、toggle 與輪播裡的文字</h2>
+    <p class="desc">遮罩格子的文字、按 toggle 才展開的內容，會在看得到時才開始畫。第二列的輪播項目也各自帶有 <code>mark-fx</code>，換頁時重新畫。</p>
+    <div class="pair">
+      <div><p class="pair-label">畫面</p><div class="live" data-tpl="ex3"></div></div>
+      <div><p class="pair-label">程式碼</p><pre class="code" data-code="ex3"></pre></div>
+    </div>
+  </section>
+</div>
+
+<template id="ex1">
+<ui-table theme="blue" row-border="1px solid">
+  <ui-row col-widths="1:3">
+    <ui-col>highlight</ui-col>
+    <ui-col>The report was <mark-fx kind="highlight" color="yellow">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>underline</ui-col>
+    <ui-col>The report was <mark-fx kind="underline" color="red">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>strike</ui-col>
+    <ui-col>The report was <mark-fx kind="strike" color="pink">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>circle</ui-col>
+    <ui-col>The report was <mark-fx kind="circle" color="key">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>double</ui-col>
+    <ui-col>The report was <mark-fx kind="double" color="violet">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>wavy</ui-col>
+    <ui-col>The report was <mark-fx kind="wavy" color="green">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>cross</ui-col>
+    <ui-col>The report was <mark-fx kind="cross" color="red">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>box</ui-col>
+    <ui-col>The report was <mark-fx kind="box" color="salmon">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>bracket</ui-col>
+    <ui-col>The report was <mark-fx kind="bracket" color="blue">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>arrow</ui-col>
+    <ui-col>The report was <mark-fx kind="arrow" color="energetic">a key phrase</mark-fx> in the second paragraph.</ui-col>
+  </ui-row>
+</ui-table>
+</template>
+
+<template id="ex2">
+<ui-table theme="violet" row-border="1px solid" cell-padding="14px 18px">
+  <ui-row col-widths="1:3">
+    <ui-col>換行</ui-col>
+    <ui-col>Governments should <mark-fx kind="wavy" color="green">invest heavily in public transport instead of building more roads for private cars</mark-fx> if they want to cut emissions.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>line-style</ui-col>
+    <ui-col><mark-fx kind="underline" color="key" line-style="dashed">dashed</mark-fx>、<mark-fx kind="underline" color="pink" line-style="dotted" thickness="4">dotted</mark-fx>、<mark-fx kind="double" color="yellow" rough="0">rough=0</mark-fx></ui-col>
+  </ui-row>
+  <ui-row col-widths="1:3">
+    <ui-col>其他參數</ui-col>
+    <ui-col><mark-fx kind="highlight" color="pink" text-color="#0C0D0C" speed="1200">speed 1200</mark-fx>、<mark-fx kind="underline" color="red" animate="false">animate=false</mark-fx>、<mark-fx kind="arrow" color="energetic" direction="top" arrow-length="28">top</mark-fx></ui-col>
+  </ui-row>
+</ui-table>
+</template>
+
+<template id="ex3">
+<ui-table theme="green" toggle-color="key" row-border="1px dashed" cell-padding="14px 18px">
+  <ui-row col-widths="1:2">
+    <ui-col>遮罩</ui-col>
+    <ui-col mask-text="先想再看">I <mark-fx kind="circle" color="yellow">strongly agree</mark-fx> with the statement.</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:2">
+    <ui-col>toggle</ui-col>
+    <ui-col toggle="ex-mfx-tip">按右邊的按鈕</ui-col>
+  </ui-row>
+  <ui-row col-widths="1:2">
+    <ui-col>輪播</ui-col>
+    <ui-col carousel-interval="2500">
+      <cell-item>It <mark-fx kind="underline" color="red">goes without saying</mark-fx> that practice matters.</cell-item>
+      <cell-item>She is <mark-fx kind="highlight" color="key">second to none</mark-fx> in the class.</cell-item>
+    </ui-col>
+  </ui-row>
+</ui-table>
+
+<template id="ex-mfx-tip"><p>展開後才畫：<mark-fx kind="box" color="salmon">a stone's throw from</mark-fx> the station。</p></template>
+</template>
+
+<div class="alert-zone" id="alerts"></div>
+
+<script>
+  document.querySelectorAll('.live[data-tpl]').forEach(function (box) {
+    var tpl = document.getElementById(box.dataset.tpl);
+    box.appendChild(tpl.content.cloneNode(true));
+    document.querySelector('pre[data-code="' + box.dataset.tpl + '"]').textContent = tpl.innerHTML.trim().replace(/=""/g, '');
   });
 </script>
 <script src="ui-table.js"></script>

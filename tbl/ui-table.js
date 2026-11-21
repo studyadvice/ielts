@@ -438,6 +438,13 @@
 
     /* ui-flash 閃電按鈕：可以放在頁面任何地方 */
     'ui-flash{display:inline-block;vertical-align:middle}',
+    /* mark-fx 行內標記效果：圖層放在文字上方（線條）或下方（highlight） */
+    'mark-fx{display:inline;position:relative;z-index:0}',
+    '.uit-mfx-layer{position:absolute;left:0;top:0;width:0;height:0;overflow:visible;pointer-events:none}',
+    '.uit-mfx-under{z-index:-1}',
+    '.uit-mfx-over{z-index:1}',
+    '.uit-mfx-hl{position:absolute;transform-origin:left center}',
+    '.uit-mfx-layer svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible}',
     '.uit-fb{display:inline-flex;align-items:center;gap:6px;background:#0C0D0C;color:var(--uit-fbc,#E3D322);border:1px solid currentColor;padding:4px 10px;margin:0;font-size:var(--uit-fbs,1rem);line-height:1.3;cursor:pointer;user-select:none;transition:transform .15s ease,filter .2s ease}',
     '.uit-fb:hover{filter:brightness(1.18);transform:translateY(-1px)}',
     '.uit-fb:active{transform:scale(.95)}',
@@ -1640,7 +1647,7 @@
     if (useIL) {
       var ilRaw = parseInt(colEl.getAttribute('icons-list-interval'), 10);
       var ilMs  = ilRaw > 0 ? ilRaw : (parseInt(CFG.iconsListInterval, 10) || 500);
-      this._setupIconsList(div, ci, ilList, ilMs);
+      this._setupIconsList(div, ci, ilList, ilMs, colEl);
     }
 
     return div;
@@ -1721,6 +1728,7 @@
       if (self.fontColor) panel.style.setProperty('--uit-tgt', self.fontColor);
       panel.innerHTML = '';
       panel.appendChild(frag);
+      bootMarkIn(panel);
       panel.style.animation = 'none'; void panel.offsetHeight; panel.style.animation = '';
       row._uitTgBtn = btn;
       setIcon(btn, true);
@@ -1746,6 +1754,7 @@
       if (!frag) { console.error('[ui-table] hover-source 找不到 id="' + sid + '" 的元素。'); return; }
       tgt.innerHTML = '';
       tgt.appendChild(frag);
+      bootMarkIn(tgt);
       self.el.dispatchEvent(new CustomEvent('uit-hover', { bubbles: true, detail: { source: sid, target: tid, cell: div } }));
     });
   };
@@ -1777,7 +1786,8 @@
   /* icons-list 動畫：每次滑鼠移入都從頭播放。
      時間軸（n 個圖示、間隔 ms）：0 清空內容並顯示第 1 個，之後每隔 ms 再顯示下一個，
      最後一個出現後再過 ms 恢復原本的內容，總長 n × ms。播放途中再次移入會重新開始。 */
-  UiTable.prototype._setupIconsList = function (cell, ci, names, ms) {
+  UiTable.prototype._setupIconsList = function (cell, ci, names, ms, colEl) {
+    var self    = this;
     var strip   = mk('span', 'uit-ils');
     var timers  = [];
     var checked = false;
@@ -1837,6 +1847,12 @@
         ci.classList.remove('uit-il-on');
         ci.classList.add('uit-il-back');
         timers.push(setTimeout(function () { ci.classList.remove('uit-il-back'); }, 320));
+        /* 倒數自然播完才發出 uit-countdown-end；播放途中被重新開始或中斷則不會發出。
+           link-when 可用 source="#表格id" event="uit-countdown-end" detail-match="id:格子id" 串接 */
+        self.el.dispatchEvent(new CustomEvent('uit-countdown-end', {
+          bubbles: true,
+          detail: { id: (colEl && colEl.getAttribute('id')) || '', cell: cell, icons: names.length }
+        }));
       }, spans.length * ms));
     }
 
@@ -2281,6 +2297,7 @@
     var color = anchor._uitTrc || BRAND.blue;
     var el = tpEl();
     el.innerHTML = src.innerHTML;          /* 移入當下才讀取，內容之後有變動也會顯示最新的 */
+    bootMarkIn(el);
     el.style.borderColor = color;
     el.style.color       = color;
     /* 字級：hint-font-size > UiTableConfig.transFontSize > 標示文字本身的字級 */
@@ -2373,9 +2390,328 @@
 
   function bootTransIn(root) {
     if (!root || !root.querySelectorAll) return;
+    bootMarkIn(root);   /* 格子、輪播項目、extra-info 內容裡的 mark-fx 一併啟動 */
     root.querySelectorAll('ui-trans').forEach(function (t) {
       if (t.closest('ui-table')) return;   /* 隱藏中的原始標記不處理，等渲染後的複本 */
       bootTrans(t);
+    });
+  }
+
+  /* ---------- mark-fx 行內標記效果 ---------- */
+  /* <mark-fx kind="underline" color="red">文字</mark-fx>
+     把 ui-play 的 mark-fx 效果用在格子裡的文字：highlight、underline、strike、circle、double、
+     wavy、cross、arrow、box、bracket。文字出現在畫面上時才播放手繪動畫，之後隨版面變動自動重畫。 */
+  var MFX_KINDS = ['highlight', 'underline', 'strike', 'circle', 'double', 'wavy', 'cross', 'arrow', 'box', 'bracket'];
+  var MFX_NS    = 'http://www.w3.org/2000/svg';
+
+  function mfxNum(v, d) { var n = parseFloat(v); return isNaN(n) ? d : n; }
+
+  function mfxHash(s) {
+    var h = 2166136261;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+
+  function mfxRng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function mfxLine(x1, y1, x2, y2, rough, rnd) {
+    var j = function () { return (rnd() - 0.5) * rough * 4; };
+    var L = Math.hypot(x2 - x1, y2 - y1) || 1;
+    var nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+    var bow = (rnd() - 0.5) * rough * (2 + L * 0.02);
+    var mx = (x1 + x2) / 2 + nx * bow, my = (y1 + y2) / 2 + ny * bow;
+    return 'M' + (x1 + j()).toFixed(1) + ' ' + (y1 + j()).toFixed(1) + ' Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + (x2 + j()).toFixed(1) + ' ' + (y2 + j()).toFixed(1);
+  }
+
+  function mfxEllipse(cx, cy, rx, ry, rough, rnd) {
+    var a0 = -Math.PI * (0.55 + rnd() * 0.3);
+    var over = 0.25 + rough * 0.45;
+    var n = 64, total = Math.PI * 2 + over;
+    var drift = (rnd() - 0.5) * 0.12 * rough;
+    var d = '';
+    for (var i = 0; i <= n; i++) {
+      var t = i / n, a = a0 + total * t;
+      var k = 1 + drift * t + (rnd() - 0.5) * 0.025 * rough;
+      d += (i ? 'L' : 'M') + (cx + Math.cos(a) * rx * k).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * k).toFixed(1);
+    }
+    return d;
+  }
+
+  function mfxJagged(rough, rnd) {
+    var pts = [], n = 6, i;
+    var j = function () { return (rnd() * rough * 14).toFixed(1); };
+    for (i = 0; i <= n; i++) pts.push((i / n * 100).toFixed(1) + '% ' + j() + '%');
+    for (i = n; i >= 0; i--) pts.push((i / n * 100).toFixed(1) + '% ' + (100 - j()).toFixed(1) + '%');
+    return 'polygon(' + pts.join(',') + ')';
+  }
+
+  /* 文字每一行的矩形（座標相對於 origin 的左上角）。只看文字節點，不含效果圖層本身 */
+  function mfxLines(el, origin) {
+    var rects = [];
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        return n.parentNode.closest('.uit-mfx-layer') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var node;
+    while ((node = walker.nextNode())) {
+      var rg = document.createRange();
+      rg.selectNodeContents(node);
+      var rs = rg.getClientRects();
+      for (var i = 0; i < rs.length; i++) {
+        if (rs[i].width > 0.5 && rs[i].height > 0.5) rects.push(rs[i]);
+      }
+    }
+    var merged = [];
+    rects.forEach(function (r) {
+      var m = null;
+      for (var i = 0; i < merged.length; i++) {
+        if (Math.abs(merged[i].top - r.top) < r.height * 0.5) { m = merged[i]; break; }
+      }
+      if (m) {
+        m.left = Math.min(m.left, r.left); m.right = Math.max(m.right, r.right);
+        m.top = Math.min(m.top, r.top);    m.bottom = Math.max(m.bottom, r.bottom);
+      } else {
+        merged.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+      }
+    });
+    return merged.map(function (m) {
+      return { x: m.left - origin.left, y: m.top - origin.top, w: m.right - m.left, h: m.bottom - m.top };
+    });
+  }
+
+  /* 線條類效果的 SVG 路徑（highlight 不用路徑） */
+  function mfxPaths(kind, lines, o) {
+    var pad = o.pad, thick = o.thick, rough = o.rough, rnd = o.rnd, ds = [];
+    var u = lines.reduce(function (a, r) {
+      return { x1: Math.min(a.x1, r.x), y1: Math.min(a.y1, r.y), x2: Math.max(a.x2, r.x + r.w), y2: Math.max(a.y2, r.y + r.h) };
+    }, { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity });
+    var x1, y1, x2, y2;
+    if (kind === 'underline') {
+      lines.forEach(function (r) { var y = r.y + r.h * 0.92 + pad * 0.5; ds.push(mfxLine(r.x - pad * 0.5, y, r.x + r.w + pad * 0.5, y, rough, rnd)); });
+    } else if (kind === 'strike') {
+      lines.forEach(function (r) { var y = r.y + r.h * 0.55; ds.push(mfxLine(r.x - pad * 0.5, y, r.x + r.w + pad * 0.5, y, rough, rnd)); });
+    } else if (kind === 'circle') {
+      ds.push(mfxEllipse((u.x1 + u.x2) / 2, (u.y1 + u.y2) / 2, (u.x2 - u.x1) / 2 + pad * 2.5, (u.y2 - u.y1) / 2 + pad * 1.5, rough, rnd));
+    } else if (kind === 'double') {
+      lines.forEach(function (r) {
+        var y = r.y + r.h * 0.9 + pad * 0.5, a = r.x - pad * 0.5, b = r.x + r.w + pad * 0.5;
+        ds.push(mfxLine(a, y, b, y, rough, rnd), mfxLine(a, y + thick * 2.4, b, y + thick * 2.4, rough, rnd));
+      });
+    } else if (kind === 'wavy') {
+      var A = Math.max(1.5, thick * 0.8);
+      lines.forEach(function (r) {
+        var y = r.y + r.h * 0.92 + pad * 0.5, n = Math.max(2, Math.ceil((r.w + pad) / 6));
+        ds.push('M' + (r.x - pad * 0.5).toFixed(1) + ' ' + y.toFixed(1) + ' q3 ' + (-A) + ' 6 0' + ' t6 0'.repeat(n - 1));
+      });
+    } else if (kind === 'cross') {
+      x1 = u.x1 - pad; y1 = u.y1 - pad * 0.5; x2 = u.x2 + pad; y2 = u.y2 + pad * 0.5;
+      ds.push(mfxLine(x1, y1, x2, y2, rough, rnd), mfxLine(x1, y2, x2, y1, rough, rnd));
+    } else if (kind === 'arrow') {
+      /* 箭頭從 direction 那一側指向文字：left（預設）、right、top、bottom */
+      var dir = o.direction, L = o.arrowLen, hd = Math.max(8, thick * 3.2);
+      var cx = (u.x1 + u.x2) / 2, cy = (u.y1 + u.y2) / 2, gap = pad + 6;
+      var V = { left: [1, 0], right: [-1, 0], top: [0, 1], bottom: [0, -1] }[dir] || [1, 0];
+      var ex = V[0] === 1 ? u.x1 - gap : V[0] === -1 ? u.x2 + gap : cx;
+      var ey = V[1] === 1 ? u.y1 - gap : V[1] === -1 ? u.y2 + gap : cy;
+      var sx = ex - V[0] * L, sy = ey - V[1] * L, px = -V[1], py = V[0];
+      ds.push(mfxLine(sx, sy, ex, ey, rough * 0.6, rnd),
+        'M' + (ex - V[0] * hd + px * hd * 0.55).toFixed(1) + ' ' + (ey - V[1] * hd + py * hd * 0.55).toFixed(1) +
+        ' L' + ex.toFixed(1) + ' ' + ey.toFixed(1) +
+        ' L' + (ex - V[0] * hd - px * hd * 0.55).toFixed(1) + ' ' + (ey - V[1] * hd - py * hd * 0.55).toFixed(1));
+    } else if (kind === 'box') {
+      x1 = u.x1 - pad; y1 = u.y1 - pad * 0.5; x2 = u.x2 + pad; y2 = u.y2 + pad * 0.5;
+      ds.push(mfxLine(x1, y1, x2, y1, rough, rnd), mfxLine(x2, y1, x2, y2, rough, rnd), mfxLine(x2, y2, x1, y2, rough, rnd), mfxLine(x1, y2, x1, y1, rough, rnd));
+    } else if (kind === 'bracket') {
+      var bw = Math.min(12, (u.y2 - u.y1) * 0.25);
+      x1 = u.x1 - pad; x2 = u.x2 + pad; y1 = u.y1 - pad * 0.5; y2 = u.y2 + pad * 0.5;
+      ds.push(mfxLine(x1 + bw, y1, x1, y1, rough, rnd) + mfxLine(x1, y1, x1, y2, rough, rnd).replace(/^M/, 'L') + mfxLine(x1, y2, x1 + bw, y2, rough, rnd).replace(/^M/, 'L'));
+      ds.push(mfxLine(x2 - bw, y1, x2, y1, rough, rnd) + mfxLine(x2, y1, x2, y2, rough, rnd).replace(/^M/, 'L') + mfxLine(x2, y2, x2 - bw, y2, rough, rnd).replace(/^M/, 'L'));
+    }
+    return ds;
+  }
+
+  function mfxPlay(node, frames, ms, opt) {
+    if (!node.animate) return Promise.resolve();
+    var a = node.animate(frames, { duration: Math.max(1, ms), easing: 'ease-in-out', fill: 'forwards' });
+    return a.finished.then(function () { return a; }, function () { return a; });
+  }
+
+  /* 最近的非行內祖先，版面寬度改變時才需要重畫 */
+  function mfxHost(el) {
+    var p = el.parentElement;
+    while (p && p !== document.body && getComputedStyle(p).display.indexOf('inline') === 0) p = p.parentElement;
+    return p || document.body;
+  }
+
+  function bootMark(el) {
+    if (el._uitm) return;
+    el._uitm = true;
+
+    var kind = String(el.getAttribute('kind') || 'highlight').trim().toLowerCase();
+    if (MFX_KINDS.indexOf(kind) < 0) {
+      console.warn('[ui-table] mark-fx kind="' + kind + '" 不是有效的值（' + MFX_KINDS.join(' / ') + '），已改用 highlight。');
+      kind = 'highlight';
+    }
+    var colRaw = el.getAttribute('color');
+    var col = resolveColor(colRaw);
+    if (colRaw && !col) console.warn('[ui-table] mark-fx color="' + colRaw + '" 不是有效的色彩，已改用 yellow。');
+    col = col || BRAND.yellow;
+
+    var thick = mfxNum(el.getAttribute('thickness'), 3);
+    var rough = Math.min(1, Math.max(0, mfxNum(el.getAttribute('rough'), 0.5)));
+    var pad   = mfxNum(el.getAttribute('padding'), 4);
+    var speed = mfxNum(el.getAttribute('speed'), 600);
+    var lineStyle = String(el.getAttribute('line-style') || 'solid').trim().toLowerCase();
+    var animate   = el.getAttribute('animate') !== 'false';
+    var seedAttr  = el.getAttribute('seed');
+    var seed = seedAttr != null && seedAttr !== ''
+      ? (/^\d+$/.test(seedAttr) ? parseInt(seedAttr, 10) : mfxHash(seedAttr))
+      : mfxHash(kind + '|' + el.textContent);
+    var opts = {
+      pad: pad, thick: thick, rough: rough,
+      direction: String(el.getAttribute('direction') || 'left').trim().toLowerCase(),
+      arrowLen: mfxNum(el.getAttribute('arrow-length'), 48)
+    };
+
+    /* 經由 innerHTML 複製而來的元素會帶著舊圖層，先清掉再重建 */
+    Array.prototype.slice.call(el.children).forEach(function (c) {
+      if (c.classList.contains('uit-mfx-layer')) el.removeChild(c);
+    });
+    var layer = mk('span', 'uit-mfx-layer ' + (kind === 'highlight' ? 'uit-mfx-under' : 'uit-mfx-over'));
+    layer.setAttribute('aria-hidden', 'true');
+    el.appendChild(layer);
+    el.classList.add('uit-mfx');
+    if (kind === 'highlight') el.style.color = resolveColor(el.getAttribute('text-color')) || '#0C0D0C';
+
+    var tok = 0;           /* 重畫時遞增，讓還在播放的舊動畫停止 */
+    var started = false;
+
+    function render(anim) {
+      var my = ++tok;
+      while (layer.firstChild) layer.removeChild(layer.firstChild);
+      var lines = mfxLines(el, layer.getBoundingClientRect());
+      if (!lines.length) return false;
+      var rnd = mfxRng(seed);
+      var total, seq = Promise.resolve();
+
+      if (kind === 'highlight') {
+        var nodes = lines.map(function (r) {
+          var d = mk('div', 'uit-mfx-hl');
+          var ey = r.h * 0.08;
+          d.style.left = (r.x - pad) + 'px';
+          d.style.top = (r.y - ey) + 'px';
+          d.style.width = (r.w + pad * 2) + 'px';
+          d.style.height = (r.h + ey * 2) + 'px';
+          d.style.background = col;
+          d.style.clipPath = rough > 0 ? mfxJagged(rough, rnd) : 'none';
+          d.style.borderRadius = rough > 0 ? '0' : '3px';
+          if (anim) d.style.transform = 'scaleX(0)';
+          layer.appendChild(d);
+          return d;
+        });
+        if (anim) {
+          total = nodes.reduce(function (s, n) { return s + n.offsetWidth; }, 0) || 1;
+          nodes.forEach(function (n) {
+            seq = seq.then(function () {
+              if (my !== tok) return;
+              return mfxPlay(n, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], speed * n.offsetWidth / total)
+                .then(function (a) { if (my === tok) { n.style.transform = ''; if (a && a.cancel) a.cancel(); } });
+            });
+          });
+        }
+        return true;
+      }
+
+      var o = { pad: pad, thick: thick, rough: rough, rnd: rnd, direction: opts.direction, arrowLen: opts.arrowLen };
+      var ds = mfxPaths(kind, lines, o);
+      var svg = document.createElementNS(MFX_NS, 'svg');
+      layer.appendChild(svg);
+      var dash = lineStyle === 'dashed' ? '10 7' : lineStyle === 'dotted' ? '0.1 ' + (thick * 2.6).toFixed(1) : 'none';
+      var paths = ds.map(function (d) {
+        var p = document.createElementNS(MFX_NS, 'path');
+        p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', col);
+        p.setAttribute('stroke-width', thick);
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        p.setAttribute('d', d);
+        svg.appendChild(p);
+        return p;
+      });
+      if (!anim) {
+        paths.forEach(function (p) { p.style.strokeDasharray = dash; });
+        return true;
+      }
+      var lens = paths.map(function (p) { return p.getTotalLength(); });
+      total = lens.reduce(function (a, b) { return a + b; }, 0) || 1;
+      paths.forEach(function (p, i) { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
+      paths.forEach(function (p, i) {
+        seq = seq.then(function () {
+          if (my !== tok) return;
+          return mfxPlay(p, [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }], speed * lens[i] / total)
+            .then(function (a) {
+              if (my !== tok) return;
+              p.style.strokeDasharray = dash;
+              p.style.strokeDashoffset = '0';
+              if (a && a.cancel) a.cancel();
+            });
+        });
+      });
+      return true;
+    }
+
+    /* 版面寬度變動（換行位置改變）時重畫，不再播放動畫 */
+    function watch() {
+      var host = mfxHost(el);
+      var last = host.getBoundingClientRect();
+      var lw = last.width, lh = last.height, raf = 0;
+      var relayout = function () {
+        if (!el.isConnected) return;
+        var r = host.getBoundingClientRect();
+        if (Math.abs(r.width - lw) < 0.5 && Math.abs(r.height - lh) < 0.5) return;
+        lw = r.width; lh = r.height;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () { render(false); });
+      };
+      if (window.ResizeObserver) new ResizeObserver(relayout).observe(host);
+      else window.addEventListener('resize', relayout);
+    }
+
+    function start() {
+      if (started || !el.isConnected) return;
+      if (render(animate)) { started = true; watch(); return true; }
+      return false;
+    }
+
+    /* 文字進入畫面才開始畫，所以遮罩、toggle、輪播裡的文字不會在看不到時就畫完 */
+    if (window.IntersectionObserver) {
+      var io = new IntersectionObserver(function (entries) {
+        if (!el.isConnected) { io.disconnect(); return; }
+        if (entries.some(function (e) { return e.isIntersecting; }) && start()) io.disconnect();
+      }, { threshold: 0.01 });
+      io.observe(el);
+    } else {
+      requestAnimationFrame(start);
+    }
+
+    /* 重播動畫：el._uitmReplay() 或 UiTable.replayMark(el) */
+    el._uitmReplay = function () { if (started) render(true); else start(); };
+  }
+
+  function bootMarkIn(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('mark-fx').forEach(function (m) {
+      if (m.closest('ui-table') || m.closest('script-item')) return;   /* 隱藏中的原始標記與 ui-play 的腳本不處理 */
+      bootMark(m);
     });
   }
 
@@ -2431,7 +2767,8 @@
     expandAll: expandAll, collapseAll: collapseAll,
     showHidden: showHidden,
     flash: flash,             /* UiTable.flash('格子id', { flashWidth: 4, flashSpeed: 1200, flashLoops: 3 }) */
-    stopFlash: function (id) { var c = findCell(id); if (c) stopFlash(c); }
+    stopFlash: function (id) { var c = findCell(id); if (c) stopFlash(c); },
+    replayMark: function (el) { if (el && el._uitmReplay) el._uitmReplay(); }   /* 重播 mark-fx 動畫 */
   };
 
   if (document.readyState === 'loading') {

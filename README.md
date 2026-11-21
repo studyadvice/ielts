@@ -5,7 +5,7 @@
 | 檔案 | 標籤 | 用途 | 範例頁 |
 | --- | --- | --- | --- |
 | `arrow-flow.js` | `<arrow-flow>` `<flow-step>` `<flow-branch>` `<branch-option>` | 以箭頭逐步揭示的橫向流程，支援分支與合流。 | [`arrow-flow-demo-11-21-26.html`](arrow-flow-demo-11-21-26.html) |
-| `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-20-26.html`](bp-stepper-demo-11-20-26.html) |
+| `bp-stepper.js` | `<bp-stepper>` `<bp-step>` | 步驟流程圖，支援水平、垂直、換行版型與推進模式。 | [`bp-stepper-demo-11-21-26.html`](bp-stepper-demo-11-21-26.html) |
 | `chunk-demo.js` | `<chunk-demo>` `<cd-chunk>` `<cd-level>` | 意群替換示範，同一句子在不同程度的寫法間切換。 | [`chunk-demo-demo-11-12-26.html`](chunk-demo-demo-11-12-26.html) |
 | `numeric-list.js` | `<ui-list>` `<list-item>` `<list-item-ad>` | 大數字編號清單、網格排列與浮動按鈕列。 | [`numeric-list-demo-11-20-26.html`](numeric-list-demo-11-20-26.html) |
 | `phrase-chip.js` | `<phrase-chip>` `<phrase-upgrade>` | 可收藏的片語標籤與片語升級動畫。 | [`phrase-chip-demo-10-23-26.html`](phrase-chip-demo-10-23-26.html) |
@@ -365,6 +365,32 @@ console.log(flow.current, flow.total);
 | `data-content-opacity` | `0.9` | 內文不透明度。 |
 | `data-content-opacity-done` | `0.65` | 完成狀態的內文不透明度。 |
 
+### 標記效果（mark-fx）
+
+標題（`<bp-step-title>`）、內文（`<bp-step-content>`）與總標題裡的文字，都可以包上 `<mark-fx>`，加上與 `ui-play.js` 相同的手繪標記效果。文字進入畫面時才播放動畫，版面寬度改變導致換行位置變動時會自動重畫。
+
+```html
+<bp-step-title>先讀 <mark-fx kind="underline" color="red">題目</mark-fx></bp-step-title>
+<bp-step-content>用 <mark-fx kind="highlight" color="yellow">一句話</mark-fx> 點題。</bp-step-content>
+```
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `kind` | `highlight` | `highlight`、`underline`、`strike`、`circle`、`double`、`wavy`、`cross`、`arrow`、`box`、`bracket`。 |
+| `color` | `yellow` | 品牌色名稱、`#` 或 RGB。 |
+| `text-color` | `#0C0D0C` | 只用於 `highlight`，螢光底上的文字色。 |
+| `thickness` | `3` | 線條粗細（px）。 |
+| `rough` | `0.5` | 手繪粗糙度，0 到 1。 |
+| `padding` | `4` | 效果與文字的間距（px）。 |
+| `speed` | `600` | 動畫總時間（毫秒）。 |
+| `line-style` | `solid` | `solid`、`dashed`、`dotted`，線條類效果適用。 |
+| `direction` | `left` | `arrow` 的來向：`left`、`right`、`top`、`bottom`。 |
+| `arrow-length` | `48` | `arrow` 的長度（px）。 |
+| `animate` | `true` | 設 `false` 則直接顯示，不播放動畫。 |
+| `seed` | 依文字 | 固定亂數種子，讓每次畫出的筆跡一樣。 |
+
+動態插入的 `<mark-fx>` 用 `BPStepper.initMarks(root)` 啟動；`BPStepper.replayMark(el)` 可重播動畫。
+
 ### `<bp-step>` 屬性
 
 | 屬性 | 值 | 說明 |
@@ -489,6 +515,8 @@ BPStepper.setError(el, index);          // 第 index 步標記為錯誤
 BPStepper.resetStates(el);              // 清除所有狀態；progress-show 模式會重新隱藏後續步驟
 BPStepper.progressShowNext(el, index);  // progress-show 模式下，從第 index 步推進到下一步
 BPStepper.init(root);                   // 重新初始化 root（預設 document）內的所有 <bp-stepper>
+BPStepper.initMarks(root);               // 啟動 root 內 <bp-stepper> 裡動態插入的 <mark-fx>
+BPStepper.replayMark(markEl);           // 重播某個 <mark-fx> 的動畫
 BPStepper.defaults;                     // 全域預設值，鍵名為駝峰式，例如 cardWidth
 BPStepper.THEMES;                       // 主題設定
 ```

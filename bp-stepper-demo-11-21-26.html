@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>bp-stepper 範例（合併 2 個版本）</title>
+<title>bp-stepper 範例（合併 3 個版本）</title>
 <style>
   :root {
     --bg: #0C0D0C; --shell: #C6C7BD; --vanilla: #DBEDD8; --yellow: #E3D322; --blue: #5DBAE8;
@@ -25,10 +25,15 @@
 <body>
 <div class="page">
   <h1>bp-stepper</h1>
-  <p class="lead-note">本檔合併 2 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <p class="lead-note">本檔合併 3 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>11-21-26</b>：<a href="#v-11-21-26">bp-stepper 文字支援 mark-fx 標記效果</a><br>
   <b>11-11-26</b>：<a href="#v-11-11-26">bp-stepper 連接線標籤顏色支援品牌色名稱</a><br>
   <b>11-10-26</b>：<a href="#v-11-10-26">bp-stepper 範例</a></p>
 
+  <section class="ver" id="v-11-21-26">
+    <h2 class="version">11-21-26：bp-stepper 文字支援 mark-fx 標記效果</h2>
+    <iframe class="frame" id="f-11-21-26" data-src="src-11-21-26" title="bp-stepper 11-21-26" scrolling="no"></iframe>
+  </section>
   <section class="ver" id="v-11-11-26">
     <h2 class="version">11-11-26：bp-stepper 連接線標籤顏色支援品牌色名稱</h2>
     <iframe class="frame" id="f-11-11-26" data-src="src-11-11-26" title="bp-stepper 11-11-26" scrolling="no"></iframe>
@@ -38,6 +43,74 @@
     <iframe class="frame" id="f-11-10-26" data-src="src-11-10-26" title="bp-stepper 11-10-26" scrolling="no"></iframe>
   </section>
 </div>
+
+<script type="text/plain" id="src-11-21-26">
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bp-stepper 文字支援 mark-fx 標記效果</title>
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;font-family:system-ui,"Noto Sans TC",sans-serif}
+  .page{max-width:1400px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:24px 0 12px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  pre{background:#161816;color:#DBEDD8;border:1px solid #2a2b29;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  code{color:#FF91D7}
+  .stage{border:1px solid #2a2b29;border-radius:8px;padding:16px}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>bp-stepper 文字支援 mark-fx 標記效果</h1>
+<p>標題與內文裡的文字可以包上 <code>&lt;mark-fx&gt;</code>，用 <code>kind</code> 選擇底線、螢光、圈選、方框、波浪等手繪效果，<code>color</code> 可填色票名稱。文字進入畫面時才播放動畫。</p>
+<div class="cmp">
+  <div>
+<h2>實際元件</h2>
+<div class="stage">
+<bp-stepper data-theme="key" data-card-width="210px" data-gap="40px">
+  <bp-step data-state="active">
+    <bp-step-title>先讀 <mark-fx kind="underline" color="red">題目</mark-fx></bp-step-title>
+    <bp-step-content>用 <mark-fx kind="highlight" color="yellow">螢光筆</mark-fx> 標出關鍵字，再把 <mark-fx kind="circle" color="pink">時態</mark-fx> 圈起來。</bp-step-content>
+  </bp-step>
+  <bp-step>
+    <bp-step-title>寫 <mark-fx kind="wavy" color="green">語塊</mark-fx></bp-step-title>
+    <bp-step-content>不要用 <mark-fx kind="strike" color="urgent">very good</mark-fx>，改用 <mark-fx kind="box" color="blue">remarkable</mark-fx>。</bp-step-content>
+  </bp-step>
+  <bp-step>
+    <bp-step-title>開口說</bp-step-title>
+    <bp-step-content>這一步最 <mark-fx kind="double" color="playful">重要</mark-fx>。</bp-step-content>
+  </bp-step>
+</bp-stepper>
+</div>
+  </div>
+  <div>
+<h2>程式碼對照</h2>
+<pre>&lt;bp-stepper data-theme=&quot;key&quot; data-card-width=&quot;210px&quot; data-gap=&quot;40px&quot;&gt;
+  &lt;bp-step data-state=&quot;active&quot;&gt;
+    &lt;bp-step-title&gt;先讀 &lt;mark-fx kind=&quot;underline&quot; color=&quot;red&quot;&gt;題目&lt;/mark-fx&gt;&lt;/bp-step-title&gt;
+    &lt;bp-step-content&gt;用 &lt;mark-fx kind=&quot;highlight&quot; color=&quot;yellow&quot;&gt;螢光筆&lt;/mark-fx&gt; 標出關鍵字，再把 &lt;mark-fx kind=&quot;circle&quot; color=&quot;pink&quot;&gt;時態&lt;/mark-fx&gt; 圈起來。&lt;/bp-step-content&gt;
+  &lt;/bp-step&gt;
+  &lt;bp-step&gt;
+    &lt;bp-step-title&gt;寫 &lt;mark-fx kind=&quot;wavy&quot; color=&quot;green&quot;&gt;語塊&lt;/mark-fx&gt;&lt;/bp-step-title&gt;
+    &lt;bp-step-content&gt;不要用 &lt;mark-fx kind=&quot;strike&quot; color=&quot;urgent&quot;&gt;very good&lt;/mark-fx&gt;，改用 &lt;mark-fx kind=&quot;box&quot; color=&quot;blue&quot;&gt;remarkable&lt;/mark-fx&gt;。&lt;/bp-step-content&gt;
+  &lt;/bp-step&gt;
+  &lt;bp-step&gt;
+    &lt;bp-step-title&gt;開口說&lt;/bp-step-title&gt;
+    &lt;bp-step-content&gt;這一步最 &lt;mark-fx kind=&quot;double&quot; color=&quot;playful&quot;&gt;重要&lt;/mark-fx&gt;。&lt;/bp-step-content&gt;
+  &lt;/bp-step&gt;
+&lt;/bp-stepper&gt;</pre>
+  </div>
+</div>
+</div>
+<script src="bp-stepper.js"><\/script>
+
+</body>
+</html>
+
+</script>
 
 <script type="text/plain" id="src-11-11-26">
 <!doctype html>
