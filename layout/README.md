@@ -688,6 +688,8 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `divider` | `solid`、`dashed`、`dotted`、`none` | 無 | 卡片頁尾上方的分隔線。只寫屬性不給值時為 `solid`。 |
 | `divider-color` | 顏色 | 跟隨 `color` | 分隔線顏色。 |
 | `badge-color` | 顏色 | 內建 | 所有卡片角標的底色，文字色自動取對比。 |
+| `tag-color` | 顏色 | `blue` | 所有卡片標籤的顏色，實心樣式的文字色自動取對比。 |
+| `tag-style` | `outline`、`fill`、`soft`、`square`、`dot`、`underline` | `outline` | 所有卡片標籤的樣式：空心 pill、實心、淡底、直角空心、前置圓點、底線。 |
 | `label-size`、`note-size`、`tag-size`、`body-size`、`footer-size`、`badge-size` | 數字（rem）或長度 | 內建 | 卡片各部位字級。 |
 
 ### `<ui-cards>` 屬性：內容區與互動
@@ -721,7 +723,9 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | `label` | 文字 | 卡片標題。 |
 | `note` | 文字 | 標題下方的次要說明。 |
 | `card-style` | `filled`、`plain`、`outline` | 只設定這張卡片的外觀，優先於 `<ui-cards>` 的 `card-style`。整組實心時，可用 `outline` 讓這張恢復外框。 |
-| `tags` | 逗號分隔文字 | 一排小標籤。 |
+| `tags` | 逗號分隔文字 | 一排小標籤。個別標籤可用 `\|` 指定自己的顏色，例如 `tags="Part 2\|pink,口說\|green,雅思"`。 |
+| `tag-color` | 顏色 | 這張卡片所有標籤的顏色，優先於 `<ui-cards>`；標籤自己的 `\|顏色` 最優先。 |
+| `tag-style` | `outline`、`fill`、`soft`、`square`、`dot`、`underline` | 這張卡片的標籤樣式，優先於 `<ui-cards>`。 |
 | `icon` | Bootstrap Icons 名稱 | 卡片圖示，`star` 或 `bi-star` 皆可。 |
 | `image` | 圖片網址 | 卡片圖片，優先於 `icon`。 |
 | `source` | 元素 id | 把該元素（或 `<template>`）的內容複製到卡片內文。 |
@@ -749,6 +753,9 @@ ui-drill drill-tile[data-active] .uid-box { box-shadow: 0 0 0 4px rgba(93, 186, 
 | 屬性 | 寫在哪裡 | 值 | 說明 |
 | --- | --- | --- | --- |
 | `back` | `<card-item>` | HTML | 背面內容。 |
+| `back-badge` | `<card-item>` | 文字 | 背面右上角的角標文字。翻到背面時，正面角標會隱藏，換成這個。沒寫則正面角標在背面照常顯示。 |
+| `back-badge-icon` | `<card-item>` | Bootstrap Icons 名稱 | 背面角標圖示。 |
+| `back-badge-color` | `<card-item>` | 顏色 | 背面角標底色，沒寫則沿用 `badge-color`。 |
 | `back-source` | `<card-item>` | 元素 id | 以該元素（建議用 `<template>`）的內容當背面，優先於 `back`。 |
 | `flip-toggle` | 兩者皆可 | 布林 | 背面可再點一次翻回正面，並顯示「點擊翻回」。沒設時翻面後固定。卡片可寫 `flip-toggle="false"` 例外。 |
 | `flip-hint` | 兩者皆可 | 文字 | 翻回提示文字，預設「點擊翻回」；設空字串不顯示。 |

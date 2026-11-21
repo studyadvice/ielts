@@ -25,11 +25,16 @@
 <body>
 <div class="page">
   <h1>ui-cards</h1>
-  <p class="lead-note">本檔合併 3 個版本的範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <p class="lead-note">本檔合併 4 組範例，越新的放越上面。每個版本維持原本的畫面與程式碼，放在各自獨立的區塊，所以樣式與腳本不會互相影響。<br>
+  <b>標籤樣式與翻面角標</b>：<a href="#v-tag-badge">ui-cards 標籤樣式與翻面卡片角標</a><br>
   <b>11-21-26</b>：<a href="#v-11-21-26">ui-cards 文字支援 mark-fx 標記效果</a><br>
   <b>11-16-26</b>：<a href="#v-11-16-26">ui-cards：卡片蓋章 stamp（11-16-26）</a><br>
   <b>11-11-26</b>：<a href="#v-11-11-26">ui-cards 範例：翻面牌組 flip-deck</a></p>
 
+  <section class="ver" id="v-tag-badge">
+    <h2 class="version">ui-cards 標籤樣式與翻面卡片角標</h2>
+    <iframe class="frame" id="f-tag-badge" data-src="src-tag-badge" title="ui-cards 標籤樣式與翻面卡片角標" scrolling="no"></iframe>
+  </section>
   <section class="ver" id="v-11-21-26">
     <h2 class="version">11-21-26：ui-cards 文字支援 mark-fx 標記效果</h2>
     <iframe class="frame" id="f-11-21-26" data-src="src-11-21-26" title="ui-cards 11-21-26" scrolling="no"></iframe>
@@ -44,6 +49,91 @@
   </section>
 </div>
 
+<script type="text/plain" id="src-tag-badge">
+<!doctype html>
+<html lang="zh-Hant" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ui-cards 標籤樣式與翻面卡片角標</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body{background:#0C0D0C;color:#C6C7BD;font-size:1rem;font-family:system-ui,"Noto Sans TC",sans-serif}
+  .page{max-width:1680px;margin:0 auto;padding:32px 40px}
+  h1{color:#5DBAE8;font-size:1.6rem;margin:0 0 8px 0}
+  h2{color:#B484E8;font-size:1.2rem;margin:24px 0 12px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  pre{background:#2D2D2D;color:#DBEDD8;border:1px solid #86877F;border-radius:8px;padding:16px;font-size:.8rem;margin:0;white-space:pre-wrap}
+  code{color:#FF91D7}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>標籤樣式與翻面卡片角標</h1>
+
+<h2>1. tag-style：六種標籤樣式</h2>
+<p>預設是空心 pill（<code>outline</code>）。<code>tag-color</code> 改整排顏色，標籤文字後面接 <code>|顏色</code> 可以讓個別標籤用自己的顏色。</p>
+<div class="cmp">
+  <div>
+<ui-cards cols="3">
+  <card-item label="outline" tags="Part 1,Part 2,Part 3" note="預設"></card-item>
+  <card-item label="fill" tags="Part 1,Part 2,Part 3" tag-style="fill" tag-color="pink"></card-item>
+  <card-item label="soft" tags="Part 1,Part 2,Part 3" tag-style="soft" tag-color="violet"></card-item>
+  <card-item label="square" tags="Part 1,Part 2,Part 3" tag-style="square" tag-color="salmon"></card-item>
+  <card-item label="dot" tags="Part 1,Part 2,Part 3" tag-style="dot" tag-color="green"></card-item>
+  <card-item label="underline" tags="Part 1,Part 2,Part 3" tag-style="underline" tag-color="yellow"></card-item>
+</ui-cards>
+<ui-cards cols="1" tag-style="fill">
+  <card-item label="個別標籤各自一色" tags="口說|pink,寫作|green,聽力|blue,閱讀"></card-item>
+</ui-cards>
+  </div>
+  <div><pre>&lt;ui-cards cols="3"&gt;
+  &lt;card-item label="fill" tags="Part 1,Part 2"
+             tag-style="fill" tag-color="pink"&gt;&lt;/card-item&gt;
+  &lt;card-item label="soft" tags="Part 1,Part 2"
+             tag-style="soft" tag-color="violet"&gt;&lt;/card-item&gt;
+  &lt;!-- square、dot、underline 寫法相同 --&gt;
+&lt;/ui-cards&gt;
+
+&lt;!-- tag-style 也可以寫在 ui-cards 上當整組預設 --&gt;
+&lt;ui-cards cols="1" tag-style="fill"&gt;
+  &lt;card-item label="個別標籤各自一色"
+             tags="口說|pink,寫作|green,聽力|blue,閱讀"&gt;&lt;/card-item&gt;
+&lt;/ui-cards&gt;</pre></div>
+</div>
+
+<h2>2. 翻面卡片：正面與背面各自的角標</h2>
+<p>正面用 <code>badge</code>，背面用 <code>back-badge</code>。翻到背面時正面角標會隱藏，換成背面的。第二張沒寫 <code>back-badge</code>，所以角標在背面照常顯示。</p>
+<div class="cmp">
+  <div>
+<ui-cards cols="2" flip-toggle flip-hint="點擊翻回">
+  <card-item label="mitigate" note="點卡片看意思"
+    badge="單字" badge-icon="book" badge-color="blue"
+    back="減輕、緩和" back-badge="答案" back-badge-icon="check-lg" back-badge-color="green"></card-item>
+  <card-item label="resilient" note="點卡片看意思"
+    badge="形容詞" badge-color="pink"
+    back="有韌性的"></card-item>
+</ui-cards>
+  </div>
+  <div><pre>&lt;ui-cards cols="2" flip-toggle&gt;
+  &lt;card-item label="mitigate"
+    badge="單字" badge-icon="book" badge-color="blue"
+    back="減輕、緩和"
+    back-badge="答案" back-badge-icon="check-lg"
+    back-badge-color="green"&gt;&lt;/card-item&gt;
+
+  &lt;!-- 沒寫 back-badge：背面沿用正面角標 --&gt;
+  &lt;card-item label="resilient"
+    badge="形容詞" badge-color="pink"
+    back="有韌性的"&gt;&lt;/card-item&gt;
+&lt;/ui-cards&gt;</pre></div>
+</div>
+</div>
+<script src="ui-cards.js"><\/script>
+</body>
+</html>
+
+</script>
 <script type="text/plain" id="src-11-21-26">
 <!doctype html>
 <html lang="zh-Hant" data-bs-theme="dark">

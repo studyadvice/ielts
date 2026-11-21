@@ -57,6 +57,13 @@
     const [r, g, b] = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255);
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.5 ? PALETTE.vanilla : PALETTE.base;
   };
+  /* 標籤樣式：outline 空心 pill（預設）、fill 實心、soft 淡底、square 直角空心、dot 前置圓點、underline 底線 */
+  const TAG_STYLES = ['outline', 'fill', 'soft', 'square', 'dot', 'underline'];
+  const applyTagColor = (node, v) => {
+    if (!v) return;
+    node.style.setProperty('--uic-tag-c', color(v));
+    node.style.setProperty('--uic-tag-on', textOn(v));
+  };
   const applyBadgeColor = (node, v) => {
     if (!v) return;
     node.style.setProperty('--uic-badge-bg', color(v));
@@ -120,7 +127,7 @@ ${sel} .uic-label,
 ${sel} .uic-note,
 ${sel} .uic-foot{color:var(--uic-on);}
 ${sel} .uic-media{color:var(--uic-icon, var(--uic-on));}
-${sel} .uic-tag{border-color:var(--uic-on);color:var(--uic-on);}
+${sel} .uic-tag{--uic-tag-def:var(--uic-on);--uic-tag-on-def:var(--uic-fill);}
 ${sel} .uic-foot{border-top-color:var(--uic-on);}`;
   const SEL_FILLED = 'ui-cards card-item[data-style="filled"]';
   const SEL_ACTIVE_FILLED = 'ui-cards[active-style="filled"] card-item[data-active]';
@@ -160,7 +167,13 @@ ui-cards .uic-main{flex:1 1 auto;padding:var(--uic-pad);display:flex;flex-direct
 ui-cards .uic-label{font-size:var(--uic-fs-label, 1.1rem);font-weight:700;line-height:1.4;color:var(--uic-c);}
 ui-cards .uic-note{font-size:var(--uic-fs-note, 0.85rem);line-height:1.5;color:${PALETTE.indigo};}
 ui-cards .uic-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:var(--uic-jc);}
-ui-cards .uic-tag{font-size:var(--uic-fs-tag, 0.75rem);line-height:1.5;border:1px solid ${PALETTE.blue};color:${PALETTE.blue};border-radius:999px;padding:1px 8px;}
+ui-cards .uic-tag{--tg:var(--uic-tag-c, var(--uic-tag-def, ${PALETTE.blue}));--tg-on:var(--uic-tag-on, var(--uic-tag-on-def, ${PALETTE.base}));font-size:var(--uic-fs-tag, 0.75rem);line-height:1.5;border:1px solid var(--tg);color:var(--tg);border-radius:999px;padding:1px 8px;}
+ui-cards .uic-tags[data-tstyle="fill"] .uic-tag{background:var(--tg);color:var(--tg-on);}
+ui-cards .uic-tags[data-tstyle="soft"] .uic-tag{background:color-mix(in srgb,var(--tg) 18%,${PALETTE.base});border-color:color-mix(in srgb,var(--tg) 40%,${PALETTE.base});}
+ui-cards .uic-tags[data-tstyle="square"] .uic-tag{border-radius:4px;}
+ui-cards .uic-tags[data-tstyle="dot"] .uic-tag{display:inline-flex;align-items:center;gap:6px;border-color:transparent;color:inherit;padding:1px 4px;}
+ui-cards .uic-tags[data-tstyle="dot"] .uic-tag::before{content:'';flex:none;width:0.55em;height:0.55em;border-radius:50%;background:var(--tg);}
+ui-cards .uic-tags[data-tstyle="underline"] .uic-tag{border-width:0 0 2px 0;border-radius:0;padding:0 2px;}
 ui-cards .uic-body{font-size:var(--uic-fs-body, 0.95rem);line-height:1.7;}
 ui-cards .uic-body > :first-child{margin-top:0;}
 ui-cards .uic-body > :last-child{margin-bottom:0;}
@@ -168,6 +181,9 @@ ui-cards .uic-foot{border-top:var(--uic-div);padding:10px var(--uic-pad);font-si
 ui-cards .uic-badge{position:absolute;top:8px;right:8px;z-index:1;display:inline-flex;align-items:center;gap:4px;background:var(--uic-badge-bg, ${PALETTE.red});color:var(--uic-badge-fg, ${PALETTE.vanilla});font-size:var(--uic-fs-badge, 0.75rem);font-weight:700;line-height:1.5;border-radius:999px;padding:1px 8px;}
 /* 角標浮在卡片右上角時，內容區頂端多留一列的高度，避免遮住第一行文字 */
 ui-cards card-item.uic-has-badge > .uic-main:first-child{padding-top:max(var(--uic-pad), calc(var(--uic-fs-badge, 0.75rem) * 2 + 16px));}
+ui-cards card-item > .uic-back.uic-has-badge{padding-top:max(var(--uic-pad), calc(var(--uic-fs-badge, 0.75rem) * 2 + 16px));}
+/* 背面有自己的角標時，翻面後隱藏正面角標 */
+ui-cards card-item[data-flipped][data-back-badge] > .uic-badge{display:none;}
 ui-cards .uic-badge .bi{line-height:1;}
 ui-cards .uic-badge.uic-badge-only{justify-content:center;width:2em;height:2em;padding:0;}
 
@@ -522,9 +538,20 @@ ui-cards .uic-stamp-in{display:flex;align-items:center;justify-content:center;bo
         main.append(head);
       } else if (ta('label')) main.append(el('div', 'uic-label', ta('label')));
       if (ta('note')) main.append(el('div', 'uic-note', ta('note')));
+      const fa = n => (c.hasAttribute(n) ? c.getAttribute(n) : this.getAttribute(n));
       if (ta('tags')) {
         const tg = el('div', 'uic-tags');
-        ta('tags').split(',').map(t => t.trim()).filter(Boolean).forEach(t => tg.append(el('span', 'uic-tag', t)));
+        const ts = (fa('tag-style') || 'outline').trim().toLowerCase();
+        if (!TAG_STYLES.includes(ts)) console.warn('[ui-cards] tag-style 可用 ' + TAG_STYLES.join('、') + '，目前為「' + ts + '」，改用 outline');
+        tg.setAttribute('data-tstyle', TAG_STYLES.includes(ts) ? ts : 'outline');
+        applyTagColor(tg, fa('tag-color'));
+        /* 每個標籤可用 | 指定自己的顏色，例如 tags="Part 2|pink,口說|green,雅思" */
+        ta('tags').split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
+          const [txt, col] = t.split('|').map(x => x.trim());
+          const tag = el('span', 'uic-tag', txt);
+          applyTagColor(tag, col);
+          tg.append(tag);
+        });
         main.append(tg);
       }
 
@@ -537,7 +564,6 @@ ui-cards .uic-stamp-in{display:flex;align-items:center;justify-content:center;bo
       if (ta('footer')) parts.push(el('div', 'uic-foot', ta('footer')));
 
       /* 翻面：back 或 back-source；flip-* 屬性可寫在 ui-cards 上當整組預設 */
-      const fa = n => (c.hasAttribute(n) ? c.getAttribute(n) : this.getAttribute(n));
       const hasBack = c.hasAttribute('back') || c.hasAttribute('back-source');
       if (hasBack) {
         const back = el('div', 'uic-back');
@@ -545,6 +571,14 @@ ui-cards .uic-stamp-in{display:flex;align-items:center;justify-content:center;bo
         if (ta('back-source')) bb.append(cloneOf(ta('back-source')) || alertEl(ta('back-source')));
         else bb.innerHTML = ta('back') || '';
         back.append(bb);
+        /* 背面角標：翻面後取代正面角標；沒寫 back-badge 時，正面角標在背面照常顯示 */
+        const bbd = badgeEl(ta('back-badge'), ta('back-badge-icon'));
+        if (bbd) {
+          applyBadgeColor(bbd, ta('back-badge-color'));
+          back.append(bbd);
+          back.classList.add('uic-has-badge');
+          c.setAttribute('data-back-badge', '');
+        }
         const tg = fa('flip-toggle');
         c._flipToggle = tg != null && tg !== 'false';
         if (c._flipToggle && fa('flip-hint') !== '') back.append(el('div', 'uic-flip-hint', fa('flip-hint') || '點擊翻回'));
